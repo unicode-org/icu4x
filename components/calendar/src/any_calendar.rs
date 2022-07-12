@@ -219,12 +219,12 @@ impl Calendar for AnyCalendar {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         match_cal_and_date!(match (self, date): (c, d) => c.year(d))
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         match_cal_and_date!(match (self, date): (c, d) => c.month(d))
     }
 

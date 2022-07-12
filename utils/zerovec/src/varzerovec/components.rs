@@ -11,10 +11,16 @@ use core::cmp::Ordering;
 use core::convert::TryFrom;
 use core::marker::PhantomData;
 use core::ops::Range;
-use core::{iter, mem};
 
-fn usizeify(x: RawBytesULE<4>) -> usize {
-    u32::from_unaligned(x) as usize
+// Also used by owned.rs
+pub(super) const LENGTH_WIDTH: usize = 4;
+pub(super) const METADATA_WIDTH: usize = 0;
+pub(super) const INDEX_WIDTH: usize = 4;
+pub(super) const MAX_LENGTH: usize = u32::MAX as usize;
+pub(super) const MAX_INDEX: usize = u32::MAX as usize;
+
+fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
+    x.as_unsigned_int() as usize
 }
 
 /// A more parsed version of `VarZeroSlice`. This type is where most of the VarZeroVec
@@ -27,8 +33,10 @@ fn usizeify(x: RawBytesULE<4>) -> usize {
 ///
 /// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
 pub struct VarZeroVecComponents<'a, T: ?Sized> {
+    /// The number of elements
+    len: u32,
     /// The list of indices into the `things` slice
-    indices: &'a [RawBytesULE<4>],
+    indices: &'a [u8],
     /// The contiguous list of `T::VarULE`s
     things: &'a [u8],
     /// The original slice this was constructed from
@@ -42,6 +50,7 @@ impl<'a, T: ?Sized> Copy for VarZeroVecComponents<'a, T> {}
 impl<'a, T: ?Sized> Clone for VarZeroVecComponents<'a, T> {
     fn clone(&self) -> Self {
         VarZeroVecComponents {
+            len: self.len,
             indices: self.indices,
             things: self.things,
             entire_slice: self.entire_slice,
@@ -61,6 +70,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     #[inline]
     pub fn new() -> Self {
         Self {
+            len: 0,
             indices: &[],
             things: &[],
             entire_slice: &[],
@@ -80,29 +90,36 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
         if slice.is_empty() {
             return Ok(VarZeroVecComponents {
+                len: 0,
                 indices: &[],
                 things: &[],
                 entire_slice: slice,
                 marker: PhantomData,
             });
         }
-        let len_bytes = slice.get(0..4).ok_or(ZeroVecError::VarZeroVecFormatError)?;
-        let len_ule = RawBytesULE::<4>::parse_byte_slice(len_bytes)
+        let len_bytes = slice
+            .get(0..LENGTH_WIDTH)
+            .ok_or(ZeroVecError::VarZeroVecFormatError)?;
+        let len_ule = RawBytesULE::<LENGTH_WIDTH>::parse_byte_slice(len_bytes)
             .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
 
-        let len = u32::from_unaligned(*len_ule.get(0).ok_or(ZeroVecError::VarZeroVecFormatError)?)
-            as usize;
+        let len = len_ule
+            .get(0)
+            .ok_or(ZeroVecError::VarZeroVecFormatError)?
+            .as_unsigned_int();
         let indices_bytes = slice
-            .get(4..4 * len + 4)
+            .get(
+                LENGTH_WIDTH + METADATA_WIDTH
+                    ..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize),
+            )
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
-        let indices = RawBytesULE::<4>::parse_byte_slice(indices_bytes)
-            .map_err(|_| ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
-            .get(4 * len + 4..)
+            .get(INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
-            indices,
+            len,
+            indices: indices_bytes,
             things,
             entire_slice: slice,
             marker: PhantomData,
@@ -126,22 +143,27 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     pub unsafe fn from_bytes_unchecked(slice: &'a [u8]) -> Self {
         if slice.is_empty() {
             return VarZeroVecComponents {
+                len: 0,
                 indices: &[],
                 things: &[],
                 entire_slice: slice,
                 marker: PhantomData,
             };
         }
-        let len_bytes = slice.get_unchecked(0..4);
-        let len_ule = RawBytesULE::<4>::from_byte_slice_unchecked(len_bytes);
+        let len_bytes = slice.get_unchecked(0..LENGTH_WIDTH);
+        let len_ule = RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(len_bytes);
 
-        let len = u32::from_unaligned(*len_ule.get_unchecked(0)) as usize;
-        let indices_bytes = slice.get_unchecked(4..4 * len + 4);
-        let indices = RawBytesULE::<4>::from_byte_slice_unchecked(indices_bytes);
-        let things = slice.get_unchecked(4 * len + 4..);
+        let len = len_ule.get_unchecked(0).as_unsigned_int();
+        let indices_bytes = slice.get_unchecked(
+            LENGTH_WIDTH + METADATA_WIDTH
+                ..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize),
+        );
+        let things =
+            slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
-            indices,
+            len,
+            indices: indices_bytes,
             things,
             entire_slice: slice,
             marker: PhantomData,
@@ -151,7 +173,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     /// Get the number of elements in this vector
     #[inline]
     pub fn len(self) -> usize {
-        self.indices.len()
+        self.len as usize
     }
 
     /// Returns `true` if the vector contains no elements.
@@ -186,11 +208,11 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
     unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
-        let start = usizeify(*self.indices.get_unchecked(idx));
+        let start = usizeify(*self.indices_slice().get_unchecked(idx));
         let end = if idx + 1 == self.len() {
             self.things.len()
         } else {
-            usizeify(*self.indices.get_unchecked(idx + 1))
+            usizeify(*self.indices_slice().get_unchecked(idx + 1))
         };
         debug_assert!(start <= end);
         start..end
@@ -221,82 +243,57 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     /// assume that the slice has been passed through iter_checked
     #[inline]
     fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ZeroVecError>> {
-        let last = iter::from_fn(move || {
-            if !self.is_empty() {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(self.indices[self.len() - 1]);
-                let end = self.things.len();
-                Some(
-                    self.things
-                        .get(start..end)
-                        .ok_or(ZeroVecError::VarZeroVecFormatError),
-                )
-            } else {
-                None
-            }
-        })
-        .take(1);
-        self.indices
-            .windows(2)
-            .map(move |win| {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(win[0]);
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let end = usizeify(win[1]);
-                // the .get() here automatically verifies that end>=start
+        self.indices_slice()
+            .iter()
+            .map(|i| i.as_unsigned_int() as usize)
+            .zip(
+                self.indices_slice()
+                    .iter()
+                    .map(|i| i.as_unsigned_int() as usize)
+                    .skip(1)
+                    .chain(core::iter::once(self.things.len())),
+            )
+            .map(move |(start, end)| {
                 self.things
                     .get(start..end)
                     .ok_or(ZeroVecError::VarZeroVecFormatError)
             })
-            .chain(last)
-            .map(|s| s.and_then(|s| T::parse_byte_slice(s)))
+            .map(|bytes_result| bytes_result.and_then(|bytes| T::parse_byte_slice(bytes)))
     }
 
     /// Create an iterator over the Ts contained in VarZeroVecComponents
     #[inline]
     pub fn iter(self) -> impl Iterator<Item = &'a T> {
-        let last = iter::from_fn(move || {
-            if !self.is_empty() {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(self.indices[self.len() - 1]);
-                let end = self.things.len();
-                Some(unsafe { self.things.get_unchecked(start..end) })
-            } else {
-                None
-            }
-        })
-        .take(1);
-        self.indices
-            .windows(2)
-            .map(move |win| {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let start = usizeify(win[0]);
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let end = usizeify(win[1]);
-                unsafe { self.things.get_unchecked(start..end) }
-            })
-            .chain(last)
-            .map(|s| unsafe { T::from_byte_slice_unchecked(s) })
+        self.indices_slice()
+            .iter()
+            .map(|i| i.as_unsigned_int() as usize)
+            .zip(
+                self.indices_slice()
+                    .iter()
+                    .map(|i| i.as_unsigned_int() as usize)
+                    .skip(1)
+                    .chain(core::iter::once(self.things.len())),
+            )
+            .map(move |(start, end)| unsafe { self.things.get_unchecked(start..end) })
+            .map(|bytes| unsafe { T::from_byte_slice_unchecked(bytes) })
     }
 
     pub fn to_vec(self) -> Vec<Box<T>> {
         self.iter().map(T::to_boxed).collect()
     }
 
+    #[inline]
+    fn indices_slice(&self) -> &'a [RawBytesULE<INDEX_WIDTH>] {
+        unsafe { RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(self.indices) }
+    }
+
     // Dump a debuggable representation of this type
     #[allow(unused)] // useful for debugging
     pub(crate) fn dump(&self) -> String {
         let indices = self
-            .indices
+            .indices_slice()
             .iter()
-            .copied()
-            .map(u32::from_unaligned)
+            .map(|i| i.as_unsigned_int())
             .collect::<Vec<_>>();
         format!("VarZeroVecComponents {{ indices: {:?} }}", indices)
     }
@@ -311,7 +308,7 @@ where
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
     pub fn binary_search(&self, needle: &T) -> Result<usize, usize> {
-        self.binary_search_impl(|probe| probe.cmp(needle), self.indices)
+        self.binary_search_impl(|probe| probe.cmp(needle), self.indices_slice())
     }
 
     pub fn binary_search_in_range(
@@ -319,7 +316,7 @@ where
         needle: &T,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        let indices_slice = self.indices.get(range)?;
+        let indices_slice = self.indices_slice().get(range)?;
         Some(self.binary_search_impl(|probe| probe.cmp(needle), indices_slice))
     }
 }
@@ -332,7 +329,7 @@ where
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given predicate. For more information, see
     /// the primitive function [`binary_search_by`](slice::binary_search_by).
     pub fn binary_search_by(&self, predicate: impl FnMut(&T) -> Ordering) -> Result<usize, usize> {
-        self.binary_search_impl(predicate, self.indices)
+        self.binary_search_impl(predicate, self.indices_slice())
     }
 
     pub fn binary_search_in_range_by(
@@ -340,7 +337,7 @@ where
         predicate: impl FnMut(&T) -> Ordering,
         range: Range<usize>,
     ) -> Option<Result<usize, usize>> {
-        let indices_slice = self.indices.get(range)?;
+        let indices_slice = self.indices_slice().get(range)?;
         Some(self.binary_search_impl(predicate, indices_slice))
     }
 
@@ -349,7 +346,7 @@ where
     fn binary_search_impl(
         &self,
         mut predicate: impl FnMut(&T) -> Ordering,
-        indices_slice: &[RawBytesULE<4>],
+        indices_slice: &[RawBytesULE<INDEX_WIDTH>],
     ) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
         // code is known to the State of California to cause cancer.
@@ -377,9 +374,9 @@ where
         // only searching a subslice of it.
         let zero_index = self.indices.as_ptr() as *const _ as usize;
         indices_slice.binary_search_by(|probe: &_| {
-            // `self.indices` is a vec of unaligned u32s, so we divide by sizeof(u32)
+            // `self.indices` is a vec of unaligned INDEX_WIDTH values, so we divide by INDEX_WIDTH
             // to get the actual index
-            let index = (probe as *const _ as usize - zero_index) / mem::size_of::<u32>();
+            let index = (probe as *const _ as usize - zero_index) / INDEX_WIDTH;
             // safety: we know this is in bounds
             let actual_probe = unsafe { self.get_unchecked(index) };
             predicate(actual_probe)
@@ -394,7 +391,7 @@ where
     A: EncodeAsVarULE<T>,
 {
     let len = compute_serializable_len(elements)?;
-    debug_assert!(len >= 4);
+    debug_assert!(len >= LENGTH_WIDTH as u32);
     let mut output: Vec<u8> = alloc::vec![0; len as usize];
     write_serializable_bytes(elements, &mut output);
     Some(output)
@@ -412,30 +409,31 @@ where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
 {
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let num_elements = u32::try_from(elements.len()).ok().unwrap();
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    output[0..4].copy_from_slice(&num_elements.to_unaligned().0);
+    assert!(elements.len() <= MAX_LENGTH);
+    let num_elements_bytes = elements.len().to_le_bytes();
+    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
+    output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
 
     // idx_offset = offset from the start of the buffer for the next index
-    let mut idx_offset: usize = 4;
+    let mut idx_offset: usize = LENGTH_WIDTH + METADATA_WIDTH;
     // first_dat_offset = offset from the start of the buffer of the first data block
-    let first_dat_offset: usize = 4 + elements.len() * 4;
+    let first_dat_offset: usize = idx_offset + elements.len() * INDEX_WIDTH;
     // dat_offset = offset from the start of the buffer of the next data block
     let mut dat_offset: usize = first_dat_offset;
 
     for element in elements.iter() {
         let element_len = element.encode_var_ule_len();
 
-        let idx_limit = idx_offset + 4;
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        let idx_limit = idx_offset + INDEX_WIDTH;
+        #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
-        let offset = (dat_offset - first_dat_offset) as u32;
-        idx_slice.copy_from_slice(&offset.to_unaligned().0);
+        let idx = dat_offset - first_dat_offset;
+        assert!(idx <= MAX_INDEX);
+        idx_slice.copy_from_slice(&idx.to_le_bytes()[..INDEX_WIDTH]);
 
         let dat_limit = dat_offset + element_len;
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let dat_slice = &mut output[dat_offset..dat_limit];
         element.encode_var_ule_write(dat_slice);
         debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));
@@ -444,7 +442,10 @@ where
         dat_offset = dat_limit;
     }
 
-    debug_assert_eq!(idx_offset, 4 + 4 * elements.len());
+    debug_assert_eq!(
+        idx_offset,
+        LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * elements.len()
+    );
     assert_eq!(dat_offset, output.len());
 }
 
@@ -453,11 +454,11 @@ where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
 {
-    // 4 for length + 4 for each offset + the body
     let idx_len: u32 = u32::try_from(elements.len())
         .ok()?
-        .checked_mul(4)?
-        .checked_add(4)?;
+        .checked_mul(INDEX_WIDTH as u32)?
+        .checked_add(LENGTH_WIDTH as u32)?
+        .checked_add(METADATA_WIDTH as u32)?;
     let data_len: u32 = elements
         .iter()
         .map(|v| u32::try_from(v.encode_var_ule_len()).ok())
