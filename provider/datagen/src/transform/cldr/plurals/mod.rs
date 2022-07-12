@@ -4,6 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
+use icu_locid::Locale;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::datagen::IterableResourceProvider;
@@ -70,14 +71,14 @@ icu_provider::make_exportable_provider!(PluralsProvider, [OrdinalV1Marker, Cardi
 impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>
     for PluralsProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(self
             .get_rules_for(M::KEY)?
             .0
             .keys()
             // TODO(#568): Avoid the clone
             .cloned()
-            .map(ResourceOptions::from)
+            .map(Locale::from)
             .collect())
     }
 }

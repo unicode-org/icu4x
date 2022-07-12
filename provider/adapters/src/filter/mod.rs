@@ -46,7 +46,7 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynProvider::supported_options_for_key`].
+/// by [`datagen::IterableDynProvider::supported_locales_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -147,20 +147,19 @@ where
     F: Fn(&DataRequest) -> bool,
     D: datagen::IterableDynProvider<M>,
 {
-    fn supported_options_for_key(
+    fn supported_locales_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
-        self.inner.supported_options_for_key(key).map(|vec| {
+    ) -> Result<alloc::vec::Vec<icu_locid::Locale>, DataError> {
+        self.inner.supported_locales_for_key(key).map(|vec| {
             // Use filter_map instead of filter to avoid cloning the options
             vec.into_iter()
-                .filter_map(move |options| {
-                    let request = DataRequest {
-                        options,
+                .filter_map(move |locale| {
+                    if (self.predicate)(&DataRequest {
+                        options: (&locale).into(),
                         metadata: Default::default(),
-                    };
-                    if (self.predicate)(&request) {
-                        Some(request.options)
+                    }) {
+                        Some(locale)
                     } else {
                         None
                     }
@@ -177,17 +176,16 @@ where
     F: Fn(&DataRequest) -> bool,
     D: datagen::IterableResourceProvider<M>,
 {
-    fn supported_options(&self) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
-        self.inner.supported_options().map(|vec| {
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_locid::Locale>, DataError> {
+        self.inner.supported_locales().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the options
             vec.into_iter()
-                .filter_map(move |options| {
-                    let request = DataRequest {
-                        options,
+                .filter_map(move |locale| {
+                    if (self.predicate)(&DataRequest {
+                        options: (&locale).into(),
                         metadata: Default::default(),
-                    };
-                    if (self.predicate)(&request) {
-                        Some(request.options)
+                    }) {
+                        Some(locale)
                     } else {
                         None
                     }

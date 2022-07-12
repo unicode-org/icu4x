@@ -280,10 +280,11 @@ pub fn datagen(
 
     keys.into_par_iter().try_for_each(|&key| {
         log::info!("Writing key: {}", key);
-        let options = provider
-            .supported_options_for_key(key)
+        let locales = provider
+            .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
-        let res = options.into_par_iter().try_for_each(|options| {
+        let res = locales.into_par_iter().try_for_each(|locale| {
+            let options = ResourceOptions::from(locale);
             let req = DataRequest {
                 options: options.clone(),
                 metadata: Default::default(),

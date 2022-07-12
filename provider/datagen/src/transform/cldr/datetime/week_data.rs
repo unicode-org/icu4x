@@ -9,6 +9,7 @@ use crate::transform::cldr::cldr_serde::{
 use crate::SourceData;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
+use icu_locid::Locale;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -29,14 +30,14 @@ impl From<&SourceData> for WeekDataProvider {
 
 impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
-        let regions: HashSet<ResourceOptions> = week_data
+        let regions: HashSet<_> = week_data
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
@@ -45,7 +46,7 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                 Territory::Region(r) => Some(Some(*r)),
                 _ => None,
             })
-            .map(ResourceOptions::temp_for_region)
+            .map(Locale::from)
             .collect();
         Ok(regions.into_iter().collect())
     }

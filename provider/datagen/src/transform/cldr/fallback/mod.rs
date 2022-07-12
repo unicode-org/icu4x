@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 
-use icu_locid::LanguageIdentifier;
+use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::provider::*;
@@ -86,13 +86,13 @@ icu_provider::make_exportable_provider!(
 );
 
 impl IterableResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

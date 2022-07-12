@@ -5,6 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_decimal::provider::*;
+use icu_locid::Locale;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -101,13 +102,13 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
 
 impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(self
             .source
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(Into::<ResourceOptions>::into)
+            .map(Locale::from)
             .collect())
     }
 }

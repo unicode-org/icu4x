@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider;
 use crate::SourceData;
 use icu_list::provider::*;
-use icu_locid::subtags_language as language;
+use icu_locid::{subtags_language as language, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 
@@ -137,13 +137,13 @@ icu_provider::make_exportable_provider!(
 impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>
     for ListProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(self
             .source
             .cldr()?
             .misc()
             .list_langs()?
-            .map(Into::<ResourceOptions>::into)
+            .map(Locale::from)
             .collect())
     }
 }

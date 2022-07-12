@@ -58,7 +58,7 @@ macro_rules! make_exportable_provider {
         );
 
         impl $crate::datagen::IterableDynProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Vec<$crate::ResourceOptions>, $crate::DataError> {
+            fn supported_locales_for_key(&self, key: $crate::ResourceKey) -> Result<Vec<icu_locid::Locale>, $crate::DataError> {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
@@ -67,7 +67,7 @@ macro_rules! make_exportable_provider {
                 match key.get_hash() {
                     $(
                         $struct_m => {
-                            $crate::datagen::IterableResourceProvider::<$struct_m>::supported_options(self)
+                            $crate::datagen::IterableResourceProvider::<$struct_m>::supported_locales(self)
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(key))

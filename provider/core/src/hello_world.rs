@@ -156,40 +156,35 @@ impl BufferProvider for HelloWorldJsonProvider {
 
 #[cfg(feature = "datagen")]
 impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<icu_locid::Locale>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
-        Ok(Self::DATA
-            .iter()
-            .map(|(s, _)| s.parse::<icu_locid::LanguageIdentifier>().unwrap())
-            .map(ResourceOptions::from)
-            .collect())
+        Ok(Self::DATA.iter().map(|(s, _)| s.parse().unwrap()).collect())
     }
 }
 
 #[test]
 fn test_iter() {
     use icu_locid::locale;
-    let supported_langids: Vec<ResourceOptions> = HelloWorldProvider.supported_options().unwrap();
 
     assert_eq!(
-        supported_langids,
-        vec![
-            locale!("bn").into(),
-            locale!("cs").into(),
-            locale!("de").into(),
-            locale!("el").into(),
-            locale!("en").into(),
-            locale!("eo").into(),
-            locale!("fa").into(),
-            locale!("fi").into(),
-            locale!("is").into(),
-            locale!("ja").into(),
-            locale!("la").into(),
-            locale!("pt").into(),
-            locale!("ro").into(),
-            locale!("ru").into(),
-            locale!("vi").into(),
-            locale!("zh").into()
-        ]
+        HelloWorldProvider.supported_locales(),
+        Ok(vec![
+            locale!("bn"),
+            locale!("cs"),
+            locale!("de"),
+            locale!("el"),
+            locale!("en"),
+            locale!("eo"),
+            locale!("fa"),
+            locale!("fi"),
+            locale!("is"),
+            locale!("ja"),
+            locale!("la"),
+            locale!("pt"),
+            locale!("ro"),
+            locale!("ru"),
+            locale!("vi"),
+            locale!("zh"),
+        ]),
     );
 }

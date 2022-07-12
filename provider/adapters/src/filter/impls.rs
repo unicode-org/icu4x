@@ -22,7 +22,7 @@ where
     ///
     /// ```
     /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid::{langid, subtags_language as language, locale};
+    /// use icu_locid::{subtags_language as language, locale};
     /// use icu_provider::datagen::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
@@ -55,14 +55,9 @@ where
     /// ));
     ///
     /// // English should not appear in the iterator result:
-    /// let supported_langids = provider
-    ///     .supported_options()
-    ///     .expect("Should successfully make an iterator of supported locales")
-    ///     .into_iter()
-    ///     .map(|options| options.get_langid())
-    ///     .collect::<Vec<LanguageIdentifier>>();
-    /// assert!(supported_langids.contains(&langid!("de")));
-    /// assert!(!supported_langids.contains(&langid!("en")));
+    /// let locales = provider.supported_locales().expect("HelloWorldProvider infallible");
+    /// assert!(locales.contains(&locale!("de")));
+    /// assert!(!locales.contains(&locale!("en")));
     /// ```
     pub fn filter_by_langid<'a>(
         self,

@@ -137,7 +137,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableResourceProvider<$marker> for CollationProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+                fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
                     Ok(self
                         .source
                         .icuexport()?
@@ -152,7 +152,6 @@ macro_rules! collation_provider {
                                 .map(ToString::to_string)
                         )
                         .filter_map(|s|file_name_to_locale(&s))
-                        .map(ResourceOptions::from)
                         .collect()
                     )
                 }

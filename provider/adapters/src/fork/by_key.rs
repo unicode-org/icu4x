@@ -6,6 +6,8 @@
 
 use alloc::vec::Vec;
 #[cfg(feature = "datagen")]
+use icu_locid::Locale;
+#[cfg(feature = "datagen")]
 use icu_provider::datagen;
 use icu_provider::prelude::*;
 
@@ -170,15 +172,12 @@ where
     P0: datagen::IterableDynProvider<M>,
     P1: datagen::IterableDynProvider<M>,
 {
-    fn supported_options_for_key(
-        &self,
-        key: ResourceKey,
-    ) -> Result<Vec<ResourceOptions>, DataError> {
-        let result = self.0.supported_options_for_key(key);
+    fn supported_locales_for_key(&self, key: ResourceKey) -> Result<Vec<Locale>, DataError> {
+        let result = self.0.supported_locales_for_key(key);
         if !result_is_err_missing_resource_key(&result) {
             return result;
         }
-        self.1.supported_options_for_key(key)
+        self.1.supported_locales_for_key(key)
     }
 }
 
@@ -304,12 +303,9 @@ where
     M: DataMarker,
     P: datagen::IterableDynProvider<M>,
 {
-    fn supported_options_for_key(
-        &self,
-        key: ResourceKey,
-    ) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales_for_key(&self, key: ResourceKey) -> Result<Vec<Locale>, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.supported_options_for_key(key);
+            let result = provider.supported_locales_for_key(key);
             if !result_is_err_missing_resource_key(&result) {
                 return result;
             }

@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_calendar::provider::*;
-use icu_locid::langid;
+use icu_locid::{langid, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -194,7 +194,7 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,]);
 
 impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

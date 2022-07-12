@@ -71,9 +71,9 @@ where
 /// }
 ///
 /// impl IterableResourceProvider<HelloWorldV1Marker> for MyProvider {
-///     fn supported_options(
+///     fn supported_locales(
 ///         &self,
-///     ) -> Result<Vec<ResourceOptions>, DataError> {
+///     ) -> Result<Vec<icu_locid::Locale>, DataError> {
 ///         Ok(vec![Default::default()])
 ///     }
 /// }
@@ -122,8 +122,8 @@ where
 /// }
 ///
 /// impl IterableDynProvider<HelloWorldV1Marker> for MyProvider {
-///     fn supported_options_for_key(&self, _: ResourceKey)
-///         -> Result<Vec<ResourceOptions>, DataError> {
+///     fn supported_locales_for_key(&self, _: ResourceKey)
+///         -> Result<Vec<icu_locid::Locale>, DataError> {
 ///         Ok(vec![Default::default()])
 ///     }
 /// }

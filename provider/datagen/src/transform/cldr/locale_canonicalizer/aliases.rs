@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
-use icu_locid::{subtags, subtags_language as language, LanguageIdentifier};
+use icu_locid::{subtags, subtags_language as language, LanguageIdentifier, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
@@ -50,7 +50,7 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
 icu_provider::make_exportable_provider!(AliasesProvider, [AliasesV1Marker,]);
 
 impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

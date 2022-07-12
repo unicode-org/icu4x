@@ -68,7 +68,7 @@ impl ResourceProvider<HelloWorldV1Marker> for DataWarehouse {
 }
 
 impl IterableResourceProvider<HelloWorldV1Marker> for DataWarehouse {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<icu_locid::Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -100,7 +100,7 @@ impl ResourceProvider<HelloWorldV1Marker> for DataProvider2 {
 }
 
 impl IterableResourceProvider<HelloWorldV1Marker> for DataProvider2 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<icu_locid::Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -115,7 +115,7 @@ impl ResourceProvider<HelloAltMarker> for DataProvider2 {
 }
 
 impl IterableResourceProvider<HelloAltMarker> for DataProvider2 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<icu_locid::Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

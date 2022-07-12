@@ -6,6 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
 use crate::SourceData;
 use icu_datetime::provider::time_zones::*;
+use icu_locid::Locale;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -93,13 +94,13 @@ macro_rules! impl_resource_provider {
             }
 
             impl IterableResourceProvider<$marker> for TimeZonesProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+                fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
                     Ok(self
                         .source
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
-                        .map(Into::<ResourceOptions>::into)
+                        .map(Locale::from)
                         .collect())
                 }
             }

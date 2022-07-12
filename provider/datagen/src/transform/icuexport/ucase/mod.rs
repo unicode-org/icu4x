@@ -10,6 +10,7 @@ use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
 use icu_codepointtrie::toml::CodePointDataSlice;
 use icu_codepointtrie::CodePointTrieHeader;
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
@@ -79,7 +80,7 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
 impl icu_provider::datagen::IterableResourceProvider<CaseMappingV1Marker>
     for CaseMappingDataProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

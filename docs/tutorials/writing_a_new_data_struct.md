@@ -216,16 +216,16 @@ impl ResourceProvider<FooV1Marker> for FooProvider {
         // Load the data from CLDR JSON and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
-        // This method will be called once per option returned by supported_options.
+        // This method will be called once per option returned by supported_locales.
         // Use internal mutability (RwLock) to avoid duplicating work.
     }
 }
 
 impl IterableResourceProvider<FooV1Marker> for FooProvider {
-    fn supported_options(
+    fn supported_locales(
         &self,
-    ) -> Result<Vec<ResourceOptions>, DataError> {
-        // This should list all supported locales, for example.
+    ) -> Result<Vec<Locale>, DataError> {
+        // This should list all supported locales.
     }
 }
 

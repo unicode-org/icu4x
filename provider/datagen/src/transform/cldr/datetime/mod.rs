@@ -114,7 +114,7 @@ macro_rules! impl_resource_provider {
             }
 
             impl IterableResourceProvider<$marker> for CommonDateProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+                fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(self
@@ -128,7 +128,7 @@ macro_rules! impl_resource_provider {
                                     .unicode
                                     .keywords
                                     .set(key!("ca"), cal_value.clone());
-                                ResourceOptions::from(locale)
+                                locale
                             }));
                     }
                     Ok(r)

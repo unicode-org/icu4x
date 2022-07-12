@@ -10,7 +10,7 @@ use crate::transform::icuexport::uprops::{
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-use icu_locid::{langid, locale};
+use icu_locid::{langid, locale, Locale};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
@@ -696,25 +696,25 @@ icu_provider::make_exportable_provider!(
 );
 
 impl IterableResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -784,13 +784,13 @@ icu_provider::make_exportable_provider!(
 );
 
 impl IterableResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![
-            locale!("th").into(),
-            locale!("km").into(),
-            locale!("lo").into(),
-            locale!("my").into(),
-            locale!("ja").into(),
+            locale!("th"),
+            locale!("km"),
+            locale!("lo"),
+            locale!("my"),
+            locale!("ja"),
         ])
     }
 }

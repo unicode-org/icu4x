@@ -5,26 +5,24 @@
 //! Collection of iteration APIs for data providers.
 
 use crate::prelude::*;
+use icu_locid::Locale;
 
-/// A [`DynProvider`] that can iterate over all supported [`ResourceOptions`] for a certain key.
+/// A [`DynProvider`] that can iterate over all supported [`Locale`]s for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDynProvider<M: DataMarker>: DynProvider<M> {
-    /// Given a [`ResourceKey`], returns a list of [`ResourceOptions`].
-    fn supported_options_for_key(
-        &self,
-        key: ResourceKey,
-    ) -> Result<Vec<ResourceOptions>, DataError>;
+    /// Given a [`ResourceKey`], returns a list of [`Locale`]s.
+    fn supported_locales_for_key(&self, key: ResourceKey) -> Result<Vec<Locale>, DataError>;
 }
 
-/// A [`ResourceProvider`] that can iterate over all supported [`ResourceOptions`] for a certain key.
+/// A [`ResourceProvider`] that can iterate over all supported [`Locale`]s for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableResourceProvider<M: ResourceMarker>: ResourceProvider<M> {
-    /// Returns a list of [`ResourceOptions`].
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError>;
+    /// Returns a list of [`Locale`]s.
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError>;
 }
 
 impl<M, P> IterableDynProvider<M> for Box<P>
@@ -32,10 +30,7 @@ where
     M: DataMarker,
     P: IterableDynProvider<M> + ?Sized,
 {
-    fn supported_options_for_key(
-        &self,
-        key: ResourceKey,
-    ) -> Result<Vec<ResourceOptions>, DataError> {
-        (**self).supported_options_for_key(key)
+    fn supported_locales_for_key(&self, key: ResourceKey) -> Result<Vec<Locale>, DataError> {
+        (**self).supported_locales_for_key(key)
     }
 }

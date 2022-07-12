@@ -80,14 +80,14 @@ impl<M: DataMarker, P0: datagen::IterableDynProvider<M>, P1: datagen::IterableDy
     datagen::IterableDynProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_options_for_key(
+    fn supported_locales_for_key(
         &self,
         key: ResourceKey,
-    ) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
+    ) -> Result<alloc::vec::Vec<icu_locid::Locale>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.supported_options_for_key(key),
-            B(p) => p.supported_options_for_key(key),
+            A(p) => p.supported_locales_for_key(key),
+            B(p) => p.supported_locales_for_key(key),
         }
     }
 }
@@ -100,11 +100,11 @@ impl<
     > datagen::IterableResourceProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_options(&self) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_locid::Locale>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.supported_options(),
-            B(p) => p.supported_options(),
+            A(p) => p.supported_locales(),
+            B(p) => p.supported_locales(),
         }
     }
 }
