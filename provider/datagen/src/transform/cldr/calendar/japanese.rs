@@ -70,7 +70,6 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 
         let mut ret = JapaneseErasV1 {
             dates_to_eras: ZeroVec::new(),
-            dates_to_historical_eras: ZeroVec::new(),
         };
 
         for (era_id, era_name) in era_name_map.iter() {
@@ -198,9 +197,8 @@ pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
     let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
         .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
     snapshot
-        .dates_to_historical_eras
+        .dates_to_eras
         .iter()
-        .chain(snapshot.dates_to_eras.iter())
         .enumerate()
         .map(|(i, (_, value))| (i.to_string(), value))
         .collect()

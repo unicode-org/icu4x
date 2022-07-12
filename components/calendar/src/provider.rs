@@ -45,8 +45,6 @@ pub struct EraStartDate {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dates_to_historical_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
 
