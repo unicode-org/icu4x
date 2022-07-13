@@ -62,9 +62,8 @@ pub struct Japanese {
 /// The inner date type used for representing Date<Japanese>
 pub struct JapaneseDateInner {
     inner: IsoDateInner,
+    adjusted_year: i32,
     era: TinyStr16,
-    // The year this era started
-    era_start: i32,
 }
 
 impl Japanese {
@@ -96,11 +95,11 @@ impl Japanese {
 impl Calendar for Japanese {
     type DateInner = JapaneseDateInner;
     fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
-        let (era_start, era) = self.era_for(iso.inner());
+        let (adjusted_year, era) = self.adjusted_year_for(iso.inner());
         JapaneseDateInner {
             inner: *iso.inner(),
+            adjusted_year,
             era,
-            era_start: era_start.year,
         }
     }
 
@@ -121,7 +120,10 @@ impl Calendar for Japanese {
     }
 
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
-        Iso.offset_date(&mut date.inner, offset.cast_unit())
+        Iso.offset_date(&mut date.inner, offset.cast_unit());
+        let (adjusted_year, era) = self.adjusted_year_for(&date.inner);
+        date.adjusted_year = adjusted_year;
+        date.era = era
     }
 
     fn until(
@@ -146,7 +148,7 @@ impl Calendar for Japanese {
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         types::FormattableYear {
             era: types::Era(date.era),
-            number: date.adjusted_year(),
+            number: date.adjusted_year,
             related_iso: None,
         }
     }
@@ -190,18 +192,6 @@ impl Calendar for Japanese {
     }
 }
 
-impl JapaneseDateInner {
-    /// Returns the current year relative to the era
-    fn adjusted_year(&self) -> i32 {
-        // The year in which an era starts is Year 1, and it may be short
-        // The only time this function will experience dates that are *before*
-        // the era start date are for the first era (Currently, taika-645),
-        // where we elect to still report the year as year 1 when it is in the same
-        // Gregorian year, and use zero/negative years before that.
-        self.inner.0.year - self.era_start + 1
-    }
-}
-
 const MEIJI_START: EraStartDate = EraStartDate {
     year: 1868,
     month: 9,
@@ -231,9 +221,30 @@ const REIWA_START: EraStartDate = EraStartDate {
 const FALLBACK_ERA: (EraStartDate, TinyStr16) = (REIWA_START, tinystr!(16, "reiwa"));
 
 impl Japanese {
-    /// Given an ISO date, obtain the era data
-    fn era_for(&self, date: &IsoDateInner) -> (EraStartDate, TinyStr16) {
+    /// Given an ISO date, give year and era for that date in the Japanese calendar
+    ///
+    /// This will also use Gregorian eras for eras that are before the earliest era
+    fn adjusted_year_for(&self, date: &IsoDateInner) -> (i32, TinyStr16) {
         let date: EraStartDate = date.into();
+        let (start, era) = self.japanese_era_for(date);
+        // The year in which an era starts is Year 1, and it may be short
+        // The only time this function will experience dates that are *before*
+        // the era start date are for the first era (Currently, taika-645
+        // for japanext, meiji for japanese),
+        // In such a case, we instead fall back to Gregorian era codes
+        if date < start {
+            if date.year < 0 {
+                (1 - date.year, tinystr!(16, "bce"))
+            } else {
+                (date.year, tinystr!(16, "ce"))
+            }
+        } else {
+            (date.year - start.year + 1, era)
+        }
+    }
+
+    /// Given an date, obtain the era data (not counting spliced gregorian eras)
+    fn japanese_era_for(&self, date: EraStartDate) -> (EraStartDate, TinyStr16) {
         let era_data = self.eras.get();
         // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
         // array and also hardcoded. The hardcoded version is not used if data indicates the
