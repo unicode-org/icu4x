@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657669771816,
+  "lastUpdate": 1657684467963,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36311,6 +36311,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 71913,
             "range": "± 276",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b9925154fecc029a67c04a7b1e3bbdc062a038ef",
+          "message": "Fix Windows CI (#2172)",
+          "timestamp": "2022-07-12T20:42:34-07:00",
+          "tree_id": "1a16952eb5fb0defd48166448aa633bf4f655702",
+          "url": "https://github.com/unicode-org/icu4x/commit/b9925154fecc029a67c04a7b1e3bbdc062a038ef"
+        },
+        "date": 1657684437936,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123017,
+            "range": "± 336",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24983,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71712,
+            "range": "± 294",
             "unit": "ns/iter"
           },
           {
