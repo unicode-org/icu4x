@@ -13,24 +13,34 @@ use crate::helpers::result_is_err_missing_resource_options;
 /// ```
 /// use icu_locid::locale;
 /// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
 /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// // The provider does not have data for "ar-SA":
-/// PluralRules::try_new_cardinal(locale!("ar-SA"), &provider)
-///     .map(|_| ())
-///     .expect_err("No data for ar-SA");
+/// let req = DataRequest {
+///     options: locale!("ja-JP").into(),
+///     metadata: Default::default(),
+/// };
+///
+/// // The provider does not have data for "ja-JP":
+/// let result: Result<DataResponse<HelloWorldV1Marker>, DataError> =
+///     provider.load_resource(&req);
+/// assert!(matches!(result, Err(_)));
 ///
 /// // But if we wrap the provider in a fallback provider...
 /// let provider = LocaleFallbackProvider::try_new(provider)
 ///     .expect("Fallback data present");
 ///
-/// // ...then we can load "ar-SA" based on "ar" data
-/// let pr = PluralRules::try_new_cardinal(locale!("ar-SA"), &provider)
-///     .expect("Using fallback provider");
+/// // ...then we can load "ja-JP" based on "ja" data
+/// let result: Result<DataResponse<HelloWorldV1Marker>, DataError> =
+///     provider.load_resource(&req);
+/// assert!(matches!(result, Ok(_)));
 ///
-/// assert_eq!(pr.select(5_usize), icu_plurals::PluralCategory::Few);
+/// assert_eq!(
+///     "こんにちは世界",
+///     result.unwrap().take_payload().unwrap().get().message
+/// );
 /// ```
 pub struct LocaleFallbackProvider<P> {
     pub inner: P,
