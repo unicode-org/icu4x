@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657705054097,
+  "lastUpdate": 1657727235245,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36449,6 +36449,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 70,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8630047933107c05b56164bd0bd115cbf96af90c",
+          "message": "Adding size to data fingerprints (#2177)",
+          "timestamp": "2022-07-13T17:34:28+02:00",
+          "tree_id": "ba49bdcd12839b27d7c323853ff907221938fab9",
+          "url": "https://github.com/unicode-org/icu4x/commit/8630047933107c05b56164bd0bd115cbf96af90c"
+        },
+        "date": 1657727204327,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 138894,
+            "range": "± 7936",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 29100,
+            "range": "± 1422",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 81025,
+            "range": "± 4402",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 233,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 108,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 100,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
