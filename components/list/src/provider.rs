@@ -363,7 +363,7 @@ pub(crate) mod test {
         ])
         .unwrap();
         patterns
-            .make_conditional("{0}. {1}", "A", "{0} :o {1}")
+            .make_conditional("{0}. {1}", &StringMatcher::new("A").unwrap(), "{0} :o {1}")
             .unwrap();
         patterns
     }
