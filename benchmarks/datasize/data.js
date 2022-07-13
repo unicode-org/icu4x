@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657726610965,
+  "lastUpdate": 1657730456857,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19943,6 +19943,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8630047933107c05b56164bd0bd115cbf96af90c"
         },
         "date": 1657726573050,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d465df1c14ed76dbe1be5e5f5613dd4a721de767",
+          "message": "Comparing rules without `LanguageIdentifier: Ord` (#2167)",
+          "timestamp": "2022-07-13T18:39:01+02:00",
+          "tree_id": "e03f875a31860853fe53d966176bb2c4ed9ce0a1",
+          "url": "https://github.com/unicode-org/icu4x/commit/d465df1c14ed76dbe1be5e5f5613dd4a721de767"
+        },
+        "date": 1657730426933,
         "tool": "ndjson",
         "benches": [
           {
