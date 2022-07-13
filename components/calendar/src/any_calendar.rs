@@ -543,7 +543,7 @@ pub trait IncludedInAnyCalendar: Calendar + Sized {
     /// Convert a date for this calendar into an [`AnyDateInner`]
     ///
     /// You should not need to call this method directly
-    fn date_to_any(d: &Self::DateInner, c: &Self) -> AnyDateInner;
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner;
 }
 
 impl IncludedInAnyCalendar for Gregorian {
@@ -553,7 +553,7 @@ impl IncludedInAnyCalendar for Gregorian {
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Gregorian(Gregorian)
     }
-    fn date_to_any(d: &Self::DateInner, _c: &Self) -> AnyDateInner {
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Gregorian(*d)
     }
 }
@@ -565,7 +565,7 @@ impl IncludedInAnyCalendar for Buddhist {
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Buddhist(Buddhist)
     }
-    fn date_to_any(d: &Self::DateInner, _c: &Self) -> AnyDateInner {
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Buddhist(*d)
     }
 }
@@ -585,8 +585,8 @@ impl IncludedInAnyCalendar for Japanese {
             AnyCalendar::Japanese(self.clone())
         }
     }
-    fn date_to_any(d: &Self::DateInner, c: &Self) -> AnyDateInner {
-        if c.japanext {
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        if self.japanext {
             AnyDateInner::Japanext(*d)
         } else {
             AnyDateInner::Japanese(*d)
@@ -602,7 +602,7 @@ impl IncludedInAnyCalendar for Ethiopic {
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Ethiopic(*self)
     }
-    fn date_to_any(d: &Self::DateInner, _c: &Self) -> AnyDateInner {
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Ethiopic(*d)
     }
 }
@@ -614,7 +614,7 @@ impl IncludedInAnyCalendar for Indian {
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Indian(Indian)
     }
-    fn date_to_any(d: &Self::DateInner, _c: &Self) -> AnyDateInner {
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Indian(*d)
     }
 }
@@ -626,7 +626,7 @@ impl IncludedInAnyCalendar for Coptic {
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Coptic(Coptic)
     }
-    fn date_to_any(d: &Self::DateInner, _c: &Self) -> AnyDateInner {
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Coptic(*d)
     }
 }
@@ -638,7 +638,7 @@ impl IncludedInAnyCalendar for Iso {
     fn to_any_cloned(&self) -> AnyCalendar {
         AnyCalendar::Iso(Iso)
     }
-    fn date_to_any(d: &Self::DateInner, _c: &Self) -> AnyDateInner {
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Iso(*d)
     }
 }
