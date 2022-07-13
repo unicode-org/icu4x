@@ -5,11 +5,12 @@
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{extensions_unicode_key as key, Locale};
+use icu_locid::Locale;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
+    calendar,
     date::ZonedDateTimeInput,
     format::zoned_datetime::FormattedZonedDateTime,
     options::DateTimeFormatOptions,
@@ -140,14 +141,8 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
         DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         let mut locale = locale.into();
-        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
-        if cal.is_none() {
-            locale
-                .extensions
-                .unicode
-                .keywords
-                .set(key!("ca"), C::BCP_47_IDENTIFIER);
-        }
+
+        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
             raw::ZonedDateTimeFormat::try_new(
                 locale,

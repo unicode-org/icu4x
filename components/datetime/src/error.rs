@@ -61,9 +61,14 @@ pub enum DateTimeFormatError {
     /// An error originating from FixedDecimalFormat
     #[displaydoc("{0}")]
     FixedDecimalFormat(FixedDecimalFormatError),
-    /// An error from mixing calendar types
-    #[displaydoc("AnyDateTimeFormat for {0} calendar was given a {0:?} calendar")]
+    /// An error from mixing calendar types in AnyDateTimeFormat
+    #[displaydoc("AnyDateTimeFormat for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
+    /// An error from mixing calendar types in DateTimeFormat
+    #[displaydoc(
+        "DateTimeFormat<{0}> was given a locale asking for incompatible calendar u-ca-{1}"
+    )]
+    MismatchedCalendarLocale(&'static str, TinyStr16),
 }
 
 #[cfg(feature = "std")]

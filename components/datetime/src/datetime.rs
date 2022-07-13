@@ -17,11 +17,11 @@ use crate::{
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::{extensions_unicode_key as key, Locale};
+use icu_locid::Locale;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
-use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDateTime};
+use crate::{calendar, date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDateTime};
 
 /// [`TimeFormat`] is a structure of the [`icu_datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected [`Locale`] and provided preferences to
@@ -92,14 +92,8 @@ impl<C: CldrCalendar> TimeFormat<C> {
             + ?Sized,
     {
         let mut locale = locale.into();
-        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
-        if cal.is_none() {
-            locale
-                .extensions
-                .unicode
-                .keywords
-                .set(key!("ca"), C::BCP_47_IDENTIFIER);
-        }
+
+        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
             raw::TimeFormat::try_new(locale, data_provider, length, preferences)?,
             PhantomData,
@@ -264,19 +258,7 @@ impl<C: CldrCalendar> DateFormat<C> {
             + ?Sized,
     {
         let mut locale = locale.into();
-        if locale
-            .extensions
-            .unicode
-            .keywords
-            .get(&key!("ca"))
-            .is_none()
-        {
-            locale
-                .extensions
-                .unicode
-                .keywords
-                .set(key!("ca"), C::BCP_47_IDENTIFIER);
-        }
+        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
             raw::DateFormat::try_new(locale, data_provider, length)?,
             PhantomData,
@@ -483,19 +465,8 @@ where {
             + ?Sized,
     {
         let mut locale = locale.into();
-        if locale
-            .extensions
-            .unicode
-            .keywords
-            .get(&key!("ca"))
-            .is_none()
-        {
-            locale
-                .extensions
-                .unicode
-                .keywords
-                .set(key!("ca"), C::BCP_47_IDENTIFIER);
-        }
+
+        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
             raw::DateTimeFormat::try_new(locale, data_provider, options)?,
             PhantomData,
