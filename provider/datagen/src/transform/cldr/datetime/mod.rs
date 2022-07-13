@@ -137,6 +137,28 @@ macro_rules! impl_resource_provider {
                         data.eras.names.retain(|e, _| set.contains(e));
                         data.eras.abbr.retain(|e, _| set.contains(e));
                         data.eras.narrow.retain(|e, _| set.contains(e));
+
+
+                        // Splice in gregorian data
+
+                        let greg =
+                            resource
+                                .main
+                                .0
+                                .get(&langid)
+                                .expect("CLDR file contains the expected language")
+                                .dates
+                                .calendars
+                                .get("gregory")
+                                .expect("CLDR file contains a gregorian calendar")
+                                .clone();
+
+                        data.eras.names.insert("bc".into(), greg.eras.names.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.names.insert("ad".into(), greg.eras.names.get("1").expect("Gregorian calendar must have data for AD").into());
+                        data.eras.abbr.insert("bc".into(), greg.eras.abbr.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.abbr.insert("ad".into(), greg.eras.abbr.get("1").expect("Gregorian calendar must have data for AD").into());
+                        data.eras.narrow.insert("bc".into(), greg.eras.narrow.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.narrow.insert("ad".into(), greg.eras.narrow.get("1").expect("Gregorian calendar must have data for AD").into());
                     }
 
                     let metadata = DataResponseMetadata::default();
