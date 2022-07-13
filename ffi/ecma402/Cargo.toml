@@ -28,15 +28,13 @@ all-features = true
 
 [dependencies]
 ecma402_traits = { version = "0.2.0" }
-icu = { version = "0.6", path = "../../components/icu", default-features = false }
+icu = { version = "0.6", path = "../../components/icu", features = ["std"] }
 icu_provider = { version = "0.6", path = "../../provider/core" }
-icu_plurals = { version = "0.6", path = "../../components/plurals", features = ["std"] }
 
+# Bake dependencies
+icu_plurals = { version = "0.6", path = "../../components/plurals" }
+zerovec = { version = "0.7", path = "../../utils/zerovec" }
 
-[dev-dependencies]
-criterion = "0.3"
-serde = { version = "1.0", default-features = false, features = ["derive", "alloc"] }
-serde_json = {version = "1.0" }
-icu_locid = { version = "0.6", path = "../../components/locid" }
-icu_provider = { version = "0.6", path = "../../provider/core" }
-icu_testdata = { version = "0.6", path = "../../provider/testdata" }
+[build-dependencies]
+icu = { version = "0.6", path = "../../components/icu", features = ["std"] }
+icu_datagen = { version = "0.6", path = "../../provider/datagen" }
