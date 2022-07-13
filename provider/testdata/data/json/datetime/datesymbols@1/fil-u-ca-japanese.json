@@ -116,6 +116,8 @@
   },
   "eras": {
     "names": {
+      "bce": "Before Christ",
+      "ce": "Anno Domini",
       "heisei": "Heisei",
       "meiji": "Meiji",
       "reiwa": "Reiwa",
@@ -123,6 +125,8 @@
       "taisho": "Taishō"
     },
     "abbr": {
+      "bce": "BC",
+      "ce": "AD",
       "heisei": "Heisei",
       "meiji": "Meiji",
       "reiwa": "Reiwa",
@@ -130,6 +134,8 @@
       "taisho": "Taishō"
     },
     "narrow": {
+      "bce": "BC",
+      "ce": "AD",
       "heisei": "H",
       "meiji": "M",
       "reiwa": "R",

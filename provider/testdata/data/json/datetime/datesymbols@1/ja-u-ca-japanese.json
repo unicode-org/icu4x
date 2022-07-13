@@ -96,6 +96,8 @@
   },
   "eras": {
     "names": {
+      "bce": "紀元前",
+      "ce": "西暦",
       "heisei": "平成",
       "meiji": "明治",
       "reiwa": "令和",
@@ -103,6 +105,8 @@
       "taisho": "大正"
     },
     "abbr": {
+      "bce": "紀元前",
+      "ce": "西暦",
       "heisei": "平成",
       "meiji": "明治",
       "reiwa": "令和",
@@ -110,6 +114,8 @@
       "taisho": "大正"
     },
     "narrow": {
+      "bce": "BC",
+      "ce": "AD",
       "heisei": "H",
       "meiji": "M",
       "reiwa": "R",

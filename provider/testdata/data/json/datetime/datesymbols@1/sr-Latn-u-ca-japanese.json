@@ -96,6 +96,8 @@
   },
   "eras": {
     "names": {
+      "bce": "pre nove ere",
+      "ce": "nove ere",
       "heisei": "Haisei",
       "meiji": "Meiđi",
       "reiwa": "Reiva",
@@ -103,6 +105,8 @@
       "taisho": "Taišo"
     },
     "abbr": {
+      "bce": "p. n. e.",
+      "ce": "n. e.",
       "heisei": "Haisei",
       "meiji": "Meiđi",
       "reiwa": "Reiva",
@@ -110,6 +114,8 @@
       "taisho": "Taišo"
     },
     "narrow": {
+      "bce": "p.n.e.",
+      "ce": "n.e.",
       "heisei": "H",
       "meiji": "M",
       "reiwa": "R",

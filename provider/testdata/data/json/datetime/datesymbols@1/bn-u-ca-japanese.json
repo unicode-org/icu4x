@@ -116,6 +116,8 @@
   },
   "eras": {
     "names": {
+      "bce": "খ্রিস্টপূর্ব",
+      "ce": "খ্রীষ্টাব্দ",
       "heisei": "Heisei",
       "meiji": "Meiji",
       "reiwa": "Reiwa",
@@ -123,6 +125,8 @@
       "taisho": "Taishō"
     },
     "abbr": {
+      "bce": "খ্রিস্টপূর্ব",
+      "ce": "খৃষ্টাব্দ",
       "heisei": "Heisei",
       "meiji": "Meiji",
       "reiwa": "Reiwa",
@@ -130,6 +134,8 @@
       "taisho": "Taishō"
     },
     "narrow": {
+      "bce": "খ্রিস্টপূর্ব",
+      "ce": "খৃষ্টাব্দ",
       "heisei": "H",
       "meiji": "M",
       "reiwa": "R",
