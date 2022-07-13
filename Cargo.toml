@@ -26,7 +26,6 @@ members = [
     "ffi/capi_cdylib",
     "ffi/diplomat",
     "ffi/capi_staticlib",
-    "ffi/ecma402",
     "ffi/freertos",
     "provider/adapters",
     "provider/blob",
@@ -55,7 +54,11 @@ members = [
     "utils/zerovec",
     "utils/zerovec/derive",
 ]
-exclude = ["provider/testdata/data/const"]
+exclude = [
+    # This crate uses datagen which requires downloading ZIP files during build,
+    # so we don't want to build it as part of the workspace.
+    "ffi/ecma402",
+]
 
 # LTO is needed for WASM and other size-optimized builds,
 # and it improve the performance of benchmarks
