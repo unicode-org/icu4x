@@ -13,7 +13,6 @@ use crate::helpers::result_is_err_missing_resource_options;
 /// ```
 /// use icu_locid::locale;
 /// use icu_provider::prelude::*;
-/// use icu_plurals::PluralRules;
 /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
 ///
 /// let provider = icu_testdata::get_provider();

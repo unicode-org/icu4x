@@ -1755,7 +1755,6 @@ version = "0.6.0"
 dependencies = [
  "databake",
  "icu_locid",
- "icu_plurals",
  "icu_provider",
  "icu_testdata",
  "serde",

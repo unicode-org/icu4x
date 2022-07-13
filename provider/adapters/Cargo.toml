@@ -34,7 +34,6 @@ tinystr = { path = "../../utils/tinystr", features = ["zerovec"] }
 
 [dev-dependencies]
 icu_testdata = { path = "../testdata" }
-icu_plurals = { path = "../../components/plurals", features = ["serde"] }
 
 [features]
 std = ["icu_locid/std"]
