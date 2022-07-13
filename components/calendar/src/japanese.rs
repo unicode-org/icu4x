@@ -55,7 +55,7 @@ use tinystr::{tinystr, TinyStr16};
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
     eras: DataPayload<provider::JapaneseErasV1Marker>,
-    japanext: bool,
+    pub(crate) japanext: bool,
 }
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
