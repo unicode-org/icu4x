@@ -173,18 +173,23 @@ pub struct LocaleFallbackerWithConfig<'a> {
     config: LocaleFallbackConfig,
 }
 
+/// Inner iteration type. Does not own the item under fallback.
+struct LocaleFallbackIteratorInner<'a, 'b> {
+    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
+    parents: &'a LocaleFallbackParentsV1<'a>,
+    config: &'b LocaleFallbackConfig,
+    backup_extension: Option<Value>,
+    backup_subdivision: Option<Value>,
+    backup_variants: Option<Variants>,
+}
+
 /// Iteration type for locale fallback operations.
 ///
 /// Because the `Iterator` trait does not allow items to borrow from the iterator, this class does
 /// not implement that trait. Instead, use `.step()` and `.get()`.
 pub struct LocaleFallbackIterator<'a, 'b, T> {
-    likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
-    parents: &'a LocaleFallbackParentsV1<'a>,
-    config: &'b LocaleFallbackConfig,
     current: T,
-    backup_extension: Option<Value>,
-    backup_subdivision: Option<Value>,
-    backup_variants: Option<Variants>,
+    inner: LocaleFallbackIteratorInner<'a, 'b>,
 }
 
 impl LocaleFallbacker {
@@ -273,13 +278,15 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     {
         self.normalize(ro.borrow_mut());
         LocaleFallbackIterator {
-            likely_subtags: self.likely_subtags,
-            parents: self.parents,
-            config: &self.config,
             current: ro,
-            backup_extension: None,
-            backup_subdivision: None,
-            backup_variants: None,
+            inner: LocaleFallbackIteratorInner {
+                likely_subtags: self.likely_subtags,
+                parents: self.parents,
+                config: &self.config,
+                backup_extension: None,
+                backup_subdivision: None,
+                backup_variants: None,
+            },
         }
     }
 }
@@ -288,5 +295,18 @@ impl<'a, 'b, T> LocaleFallbackIterator<'a, 'b, T> {
     /// Gets the current [`ResourceOptions`] under fallback.
     pub fn get(&self) -> &T {
         &self.current
+    }
+}
+
+impl<'a, 'b, T> LocaleFallbackIterator<'a, 'b, T>
+where
+    T: BorrowMut<ResourceOptions>,
+{
+    /// Performs one step of the locale fallback algorithm.
+    ///
+    /// The fallback is completed once the inner [`ResourceOptions`] becomes `und`.
+    pub fn step(&mut self) -> &mut Self {
+        self.inner.step(self.current.borrow_mut());
+        self
     }
 }

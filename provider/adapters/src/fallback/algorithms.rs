@@ -69,26 +69,18 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     }
 }
 
-impl<'a, 'b, T> LocaleFallbackIterator<'a, 'b, T>
-where
-    T: BorrowMut<ResourceOptions>,
-{
-    /// Performs one step of the locale fallback algorithm.
-    ///
-    /// The fallback is completed once the inner [`ResourceOptions`] becomes `und`.
-    pub fn step(&mut self) -> &mut Self {
+impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
+    pub fn step(&mut self, ro: &mut ResourceOptions) {
         match self.config.priority {
-            FallbackPriority::Language => self.step_language(),
-            FallbackPriority::Region => self.step_region(),
+            FallbackPriority::Language => self.step_language(ro),
+            FallbackPriority::Region => self.step_region(ro),
             // This case should not normally happen, but `FallbackPriority` is non_exhaustive.
             // Make it go directly to `und`.
-            _ => *self.current.borrow_mut() = Default::default(),
-        };
-        self
+            _ => *ro = Default::default(),
+        }
     }
 
-    fn step_language(&mut self) {
-        let ro = self.current.borrow_mut();
+    fn step_language(&mut self, ro: &mut ResourceOptions) {
         // 1. Remove the extension fallback keyword
         if let Some(extension_key) = self.config.extension_key {
             if let Some(value) = ro.remove_unicode_ext(&extension_key) {
@@ -116,7 +108,7 @@ where
         {
             let lid = LanguageIdentifier::from(parent);
             ro.set_langid(lid);
-            self.restore_extensions_variants();
+            self.restore_extensions_variants(ro);
             return;
         }
         // 6. Add the script subtag if necessary
@@ -129,7 +121,7 @@ where
                     .get_copied(&language.into(), &region.into())
                 {
                     ro.set_script(Some(script));
-                    self.restore_extensions_variants();
+                    self.restore_extensions_variants(ro);
                     return;
                 }
             }
@@ -145,8 +137,7 @@ where
         ro.set_language(Language::UND);
     }
 
-    fn step_region(&mut self) {
-        let ro = self.current.borrow_mut();
+    fn step_region(&mut self, ro: &mut ResourceOptions) {
         // 1. Remove the extension fallback keyword
         if let Some(extension_key) = self.config.extension_key {
             if let Some(value) = ro.remove_unicode_ext(&extension_key) {
@@ -170,7 +161,7 @@ where
         if !ro.language().is_empty() || ro.script().is_some() {
             ro.set_script(None);
             ro.set_language(Language::UND);
-            self.restore_extensions_variants();
+            self.restore_extensions_variants(ro);
             return;
         }
         // 6. Remove region
@@ -178,8 +169,7 @@ where
         ro.set_region(None);
     }
 
-    fn restore_extensions_variants(&mut self) {
-        let ro = self.current.borrow_mut();
+    fn restore_extensions_variants(&mut self, ro: &mut ResourceOptions) {
         if let Some(value) = self.backup_extension.take() {
             #[allow(clippy::unwrap_used)] // not reachable unless extension_key is present
             ro.set_unicode_ext(self.config.extension_key.unwrap(), value);
