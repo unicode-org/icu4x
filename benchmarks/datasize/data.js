@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657704197883,
+  "lastUpdate": 1657726610965,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19913,6 +19913,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1175630884e7ae7e700f5ea8501f4865afbad901"
         },
         "date": 1657704168708,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8630047933107c05b56164bd0bd115cbf96af90c",
+          "message": "Adding size to data fingerprints (#2177)",
+          "timestamp": "2022-07-13T17:34:28+02:00",
+          "tree_id": "ba49bdcd12839b27d7c323853ff907221938fab9",
+          "url": "https://github.com/unicode-org/icu4x/commit/8630047933107c05b56164bd0bd115cbf96af90c"
+        },
+        "date": 1657726573050,
         "tool": "ndjson",
         "benches": [
           {
