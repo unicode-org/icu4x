@@ -70,7 +70,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// use icu_provider::prelude::*;
     /// use icu_provider_adapters::fallback::{LocaleFallbacker, LocaleFallbackProvider};
     ///
-    /// let provider = HelloWorldProvider::new_with_placeholder_data();
+    /// let provider = HelloWorldProvider;
     ///
     /// let req = DataRequest {
     ///     options: locale!("de-CH").into(),
