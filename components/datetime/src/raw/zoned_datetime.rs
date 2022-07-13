@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use icu_decimal::{
-    options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+    options::{FixedDecimalFormatOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormat,
 };
