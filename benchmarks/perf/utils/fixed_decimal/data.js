@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657731121465,
+  "lastUpdate": 1657731566347,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36569,6 +36569,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 91,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fa6189afd1863f63bfd634c83f0f8b14af744e77",
+          "message": "Datagen performance improvements (#2178)",
+          "timestamp": "2022-07-13T18:47:24+02:00",
+          "tree_id": "be3c4f6954b4abe2134074170df23bee0170f75a",
+          "url": "https://github.com/unicode-org/icu4x/commit/fa6189afd1863f63bfd634c83f0f8b14af744e77"
+        },
+        "date": 1657731533888,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105569,
+            "range": "± 450",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21366,
+            "range": "± 100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64512,
+            "range": "± 342",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
