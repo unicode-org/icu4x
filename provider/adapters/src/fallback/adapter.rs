@@ -102,6 +102,27 @@ impl<P> LocaleFallbackProvider<P> {
             fallbacker,
         }
     }
+
+    fn run_fallback<F, R>(
+        &self,
+        key: ResourceKey,
+        base_req: &DataRequest,
+        mut f: F,
+    ) -> Result<R, DataError>
+    where
+        F: FnMut(&DataRequest) -> Result<R, DataError>,
+    {
+        let key_fallbacker = self.fallbacker.for_key(key);
+        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.clone());
+        while !fallback_iterator.get().options.is_empty() {
+            let result = f(fallback_iterator.get());
+            if !result_is_err_missing_resource_options(&result) {
+                return result;
+            }
+            fallback_iterator.step();
+        }
+        Err(DataErrorKind::MissingResourceOptions.with_req(key, base_req))
+    }
 }
 
 impl<P> AnyProvider for LocaleFallbackProvider<P>
@@ -109,16 +130,7 @@ where
     P: AnyProvider,
 {
     fn load_any(&self, key: ResourceKey, base_req: &DataRequest) -> Result<AnyResponse, DataError> {
-        let key_fallbacker = self.fallbacker.for_key(key);
-        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.clone());
-        while !fallback_iterator.get().options.is_empty() {
-            let result = self.inner.load_any(key, fallback_iterator.get());
-            if !result_is_err_missing_resource_options(&result) {
-                return result;
-            }
-            fallback_iterator.step();
-        }
-        Err(DataErrorKind::MissingResourceOptions.with_req(key, base_req))
+        self.run_fallback(key, base_req, |req| self.inner.load_any(key, req))
     }
 }
 
@@ -131,16 +143,7 @@ where
         key: ResourceKey,
         base_req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        let key_fallbacker = self.fallbacker.for_key(key);
-        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.clone());
-        while !fallback_iterator.get().options.is_empty() {
-            let result = self.inner.load_buffer(key, fallback_iterator.get());
-            if !result_is_err_missing_resource_options(&result) {
-                return result;
-            }
-            fallback_iterator.step();
-        }
-        Err(DataErrorKind::MissingResourceOptions.with_req(key, base_req))
+        self.run_fallback(key, base_req, |req| self.inner.load_buffer(key, req))
     }
 }
 
@@ -154,16 +157,7 @@ where
         key: ResourceKey,
         base_req: &DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
-        let key_fallbacker = self.fallbacker.for_key(key);
-        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.clone());
-        while !fallback_iterator.get().options.is_empty() {
-            let result = self.inner.load_payload(key, fallback_iterator.get());
-            if !result_is_err_missing_resource_options(&result) {
-                return result;
-            }
-            fallback_iterator.step();
-        }
-        Err(DataErrorKind::MissingResourceOptions.with_req(key, base_req))
+        self.run_fallback(key, base_req, |req| self.inner.load_payload(key, req))
     }
 }
 
@@ -173,15 +167,6 @@ where
     M: ResourceMarker,
 {
     fn load_resource(&self, base_req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let key_fallbacker = self.fallbacker.for_key(M::KEY);
-        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.clone());
-        while !fallback_iterator.get().options.is_empty() {
-            let result = self.inner.load_resource(fallback_iterator.get());
-            if !result_is_err_missing_resource_options(&result) {
-                return result;
-            }
-            fallback_iterator.step();
-        }
-        Err(DataErrorKind::MissingResourceOptions.with_req(M::KEY, base_req))
+        self.run_fallback(M::KEY, base_req, |req| self.inner.load_resource(req))
     }
 }
