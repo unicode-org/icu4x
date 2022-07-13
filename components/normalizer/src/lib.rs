@@ -81,6 +81,7 @@ use crate::provider::Uts46DecompositionSupplementV1Marker;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::char::REPLACEMENT_CHARACTER;
+use core::str::from_utf8_unchecked;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
@@ -386,9 +387,17 @@ impl CharacterAndTrieValue {
     }
     #[inline(always)]
     pub fn potential_passthrough(&self) -> bool {
+        self.potential_passthrough_impl(BACKWARD_COMBINING_STARTER_MARKER)
+    }
+    #[inline(always)]
+    pub fn potential_passthrough_and_cannot_combine_backwards(&self) -> bool {
+        self.potential_passthrough_impl(0)
+    }
+    #[inline(always)]
+    fn potential_passthrough_impl(&self, bound: u32) -> bool {
         // This methods looks badly branchy, but most characters
         // take the first return.
-        if self.trie_val <= BACKWARD_COMBINING_STARTER_MARKER {
+        if self.trie_val <= bound {
             return true;
         }
         if self.from_supplement {
@@ -568,13 +577,39 @@ where
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         decomposition_passthrough_bound: u8,
     ) -> Self {
+        let mut ret = Self::new_with_supplements_raw(
+            delegate,
+            decompositions,
+            supplementary_decompositions,
+            tables,
+            supplementary_tables,
+            decomposition_passthrough_bound,
+        );
+        let _ = ret.next(); // Remove the U+FFFF placeholder
+        ret
+    }
+
+    /// Constructs a decomposing iterator adapter from a delegate
+    /// iterator and references to the necessary data, including
+    /// supplementary data.
+    ///
+    /// Leaves the iterator in a state where the first item that it
+    /// yields is a U+FFFF placeholder.
+    fn new_with_supplements_raw(
+        delegate: I,
+        decompositions: &'data DecompositionDataV1,
+        supplementary_decompositions: Option<&'data DecompositionSupplementV1>,
+        tables: &'data DecompositionTablesV1,
+        supplementary_tables: Option<&'data DecompositionTablesV1>,
+        decomposition_passthrough_bound: u8,
+    ) -> Self {
         let half_width_voicing_marks_become_non_starters =
             if let Some(supplementary) = supplementary_decompositions {
                 supplementary.half_width_voicing_marks_become_non_starters()
             } else {
                 false
             };
-        let mut ret = Decomposition::<I> {
+        Decomposition::<I> {
             delegate,
             buffer: SmallVec::new(), // Normalized
             buffer_pos: 0,
@@ -597,9 +632,7 @@ where
             },
             half_width_voicing_marks_become_non_starters,
             decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
-        };
-        let _ = ret.next(); // Remove the U+FFFF placeholder
-        ret
+        }
     }
 
     fn push_decomposition16(
@@ -672,6 +705,29 @@ where
         }
     }
 
+    #[inline(always)]
+    fn attach_trie_value(&self, c: char) -> CharacterAndTrieValue {
+        if let Some(supplementary) = self.supplementary_trie {
+            let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
+            if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
+                return CharacterAndTrieValue::new(
+                    if voicing_mark == 0 {
+                        '\u{3099}'
+                    } else {
+                        '\u{309A}'
+                    },
+                    0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
+                );
+            }
+            let trie_value = supplementary.get(u32::from(c));
+            if trie_value != 0 {
+                return CharacterAndTrieValue::new_from_supplement(c, trie_value);
+            }
+        }
+
+        CharacterAndTrieValue::new(c, self.trie.get(u32::from(c)))
+    }
+
     fn delegate_next_no_pending(&mut self) -> Option<CharacterAndTrieValue> {
         debug_assert!(self.pending.is_none());
         let c = self.delegate.next()?;
@@ -683,25 +739,7 @@ where
             return Some(CharacterAndTrieValue::new(c, 0));
         }
 
-        if let Some(supplementary) = self.supplementary_trie {
-            let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
-            if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
-                return Some(CharacterAndTrieValue::new(
-                    if voicing_mark == 0 {
-                        '\u{3099}'
-                    } else {
-                        '\u{309A}'
-                    },
-                    0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
-                ));
-            }
-            let trie_value = supplementary.get(u32::from(c));
-            if trie_value != 0 {
-                return Some(CharacterAndTrieValue::new_from_supplement(c, trie_value));
-            }
-        }
-
-        Some(CharacterAndTrieValue::new(c, self.trie.get(u32::from(c))))
+        Some(self.attach_trie_value(c))
     }
 
     fn delegate_next(&mut self) -> Option<CharacterAndTrieValue> {
@@ -884,7 +922,7 @@ where
                     _ => {
                         // GIGO case
                         debug_assert!(false);
-                        CharacterAndClass::new_with_placeholder('\u{FFFD}')
+                        CharacterAndClass::new_with_placeholder(REPLACEMENT_CHARACTER)
                     }
                 };
                 self.buffer.push(mapped);
@@ -1171,11 +1209,223 @@ where
     }
 }
 
+macro_rules! composing_normalize_to {
+    ($(#[$meta:meta])*,
+     $normalize_to:ident,
+     $write:path,
+     $slice:ty,
+     $prolog:block,
+     $always_valid_utf:literal,
+     $as_slice:ident,
+     $fast:block,
+     $text:ident,
+     $sink:ident,
+     $composition:ident,
+     $composition_passthrough_bound:ident,
+     $undecomposed_starter:ident,
+     $pending_slice:ident,
+    ) => {
+        $(#[$meta])*
+        pub fn $normalize_to<W: $write + ?Sized>(
+            &self,
+            $text: $slice,
+            $sink: &mut W,
+        ) -> core::fmt::Result {
+            $prolog
+            let mut $composition = Composition::new(
+                Decomposition::new_with_supplements_raw(
+                    $text.chars(),
+                    self.decomposing_normalizer.decompositions.get(),
+                    self.decomposing_normalizer
+                        .supplementary_decompositions
+                        .as_ref()
+                        .map(|s| s.get()),
+                    self.decomposing_normalizer.tables.get(),
+                    self.decomposing_normalizer
+                        .supplementary_tables
+                        .as_ref()
+                        .map(|s| s.get()),
+                    self.decomposing_normalizer.decomposition_passthrough_bound
+                ),
+                ZeroFrom::zero_from(&self.canonical_compositions.get().canonical_compositions),
+                self.decomposing_normalizer.composition_passthrough_bound
+            );
+            let placeholder = $composition.decomposition.next();
+            debug_assert_eq!(placeholder, Some('\u{FFFF}'));
+            for cc in $composition.decomposition.buffer.drain(..) {
+                $sink.write_char(cc.character())?;
+            }
+
+            // Try to get the compiler to hoist the bound to a register.
+            let $composition_passthrough_bound = $composition.composition_passthrough_bound;
+            'outer: loop {
+                debug_assert_eq!($composition.decomposition.buffer_pos, 0);
+                let mut $undecomposed_starter =
+                    if let Some(pending) = $composition.decomposition.pending.take() {
+                        pending
+                    } else {
+                        return Ok(());
+                    };
+                // Allowing indexed slicing, because the a failure would be a code bug and
+                // not a data issue.
+                #[allow(clippy::indexing_slicing)]
+                if u32::from($undecomposed_starter.character) < $composition_passthrough_bound ||
+                    $undecomposed_starter.potential_passthrough()
+                {
+                    let mut already_read =
+                        $text[..$text.len() - $composition.decomposition.delegate.$as_slice().len()].chars();
+                    let back = already_read.next_back();
+                    debug_assert_eq!(back, Some($undecomposed_starter.character));
+                    // We don't know if a REPLACEMENT CHARACTER occurred in the slice or
+                    // was returned in response to an error by the iterator. Assume the
+                    // latter for correctness even though it pessimizes the former.
+                    if $always_valid_utf || back != Some(REPLACEMENT_CHARACTER) {
+                        let $pending_slice = &$text[already_read.$as_slice().len()..];
+                        // The `$fast` block must either:
+                        // 1. Return due to reaching EOF
+                        // 2. Leave a starter with its trie value in `$undecomposed_starter`
+                        //    and, if there is still more input, leave the next character
+                        //    and its trie value in `$composition.decomposition.pending`.
+                        $fast
+                    }
+                }
+                // Fast track above, full algorithm below
+                let mut starter = $composition
+                    .decomposition
+                    .decomposing_next($undecomposed_starter);
+                'bufferloop: loop {
+                    // We first loop by index to avoid moving the contents of `buffer`, but
+                    // if there's a discontiguous match, we'll start modifying `buffer` instead.
+                    loop {
+                        let (character, ccc) = if let Some((character, ccc)) = $composition
+                            .decomposition
+                            .buffer
+                            .get($composition.decomposition.buffer_pos)
+                            .map(|c| c.character_and_ccc())
+                        {
+                            (character, ccc)
+                        } else {
+                            $composition.decomposition.buffer.clear();
+                            $composition.decomposition.buffer_pos = 0;
+                            break;
+                        };
+                        if let Some(composed) = $composition.compose(starter, character) {
+                            starter = composed;
+                            $composition.decomposition.buffer_pos += 1;
+                            continue;
+                        }
+                        let mut most_recent_skipped_ccc = ccc;
+                        if most_recent_skipped_ccc == CanonicalCombiningClass::NotReordered {
+                            // We failed to compose a starter. Discontiguous match not allowed.
+                            // Write the current `starter` we've been composing, make the unmatched
+                            // starter in the buffer the new `starter` (we know it's been decomposed)
+                            // and process the rest of the buffer with that as the starter.
+                            $sink.write_char(starter)?;
+                            starter = character;
+                            $composition.decomposition.buffer_pos += 1;
+                            continue 'bufferloop;
+                        } else {
+                            {
+                                let _ = $composition
+                                    .decomposition
+                                    .buffer
+                                    .drain(0..$composition.decomposition.buffer_pos);
+                            }
+                            $composition.decomposition.buffer_pos = 0;
+                        }
+                        let mut i = 1; // We have skipped one non-starter.
+                        while let Some((character, ccc)) = $composition
+                            .decomposition
+                            .buffer
+                            .get(i)
+                            .map(|c| c.character_and_ccc())
+                        {
+                            if ccc == CanonicalCombiningClass::NotReordered {
+                                // Discontiguous match not allowed.
+                                $sink.write_char(starter)?;
+                                for cc in $composition.decomposition.buffer.drain(..i) {
+                                    $sink.write_char(cc.character())?;
+                                }
+                                starter = character;
+                                {
+                                    let removed = $composition.decomposition.buffer.remove(0);
+                                    debug_assert_eq!(starter, removed.character());
+                                }
+                                debug_assert_eq!($composition.decomposition.buffer_pos, 0);
+                                continue 'bufferloop;
+                            }
+                            debug_assert!(ccc >= most_recent_skipped_ccc);
+                            if ccc != most_recent_skipped_ccc {
+                                // Using the non-Hangul version as a micro-optimization, since
+                                // we already rejected the case where `second` is a starter
+                                // above, and conjoining jamo are starters.
+                                if let Some(composed) =
+                                    $composition.compose_non_hangul(starter, character)
+                                {
+                                    $composition.decomposition.buffer.remove(i);
+                                    starter = composed;
+                                    continue;
+                                }
+                            }
+                            most_recent_skipped_ccc = ccc;
+                            i += 1;
+                        }
+                        break;
+                    }
+                    debug_assert_eq!($composition.decomposition.buffer_pos, 0);
+
+                    if !$composition.decomposition.buffer.is_empty() {
+                        $sink.write_char(starter)?;
+                        for cc in $composition.decomposition.buffer.drain(..) {
+                            $sink.write_char(cc.character())?;
+                        }
+                        // We had non-empty buffer, so can't compose with upcoming.
+                        continue 'outer;
+                    }
+                    // Now we need to check if composition with an upcoming starter is possible.
+                    if $composition.decomposition.pending.is_some() {
+                        // We know that `pending_starter` decomposes to start with a starter.
+                        // Otherwise, it would have been moved to `composition.decomposition.buffer`
+                        // by `composition.decomposing_next()`. We do this set lookup here in order
+                        // to get an opportunity to go back to the fast track.
+                        // Note that this check has to happen _after_ checking that `pending`
+                        // holds a character, because this flag isn't defined to be meaningful
+                        // when `pending` isn't holding a character.
+                        let pending = $composition.decomposition.pending.as_ref().unwrap();
+                        if u32::from(pending.character) < $composition.composition_passthrough_bound
+                            || !pending.can_combine_backwards()
+                        {
+                            // Won't combine backwards anyway.
+                            $sink.write_char(starter)?;
+                            continue 'outer;
+                        }
+                        let pending_starter = $composition.decomposition.pending.take().unwrap();
+                        let decomposed = $composition.decomposition.decomposing_next(pending_starter);
+                        if let Some(composed) = $composition.compose(starter, decomposed) {
+                            starter = composed;
+                        } else {
+                            $sink.write_char(starter)?;
+                            starter = decomposed;
+                        }
+                        continue 'bufferloop;
+                    }
+                    // End of input
+                    $sink.write_char(starter)?;
+                    return Ok(());
+                } // 'bufferloop
+            }
+        }
+    };
+}
+
 macro_rules! normalizer_methods {
     () => {
         /// Normalize a string slice into a `String`.
         pub fn normalize(&self, text: &str) -> String {
-            self.normalize_iter(text.chars()).collect()
+            let mut ret = String::new();
+            ret.reserve(text.len());
+            let _ = self.normalize_to(text, &mut ret);
+            ret
         }
 
         /// Check whether a string slice is normalized.
@@ -1183,50 +1433,14 @@ macro_rules! normalizer_methods {
             self.normalize_iter(text.chars()).eq(text.chars())
         }
 
-        /// Normalize a string slice into a `Write` sink.
-        pub fn normalize_to<W: core::fmt::Write + ?Sized>(
-            &self,
-            text: &str,
-            sink: &mut W,
-        ) -> core::fmt::Result {
-            for c in self.normalize_iter(text.chars()) {
-                sink.write_char(c)?;
-            }
-            Ok(())
-        }
-
         /// Normalize a slice of potentially-invalid UTF-16 into a `Vec`.
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
         pub fn normalize_utf16(&self, text: &[u16]) -> Vec<u16> {
-            let mut ret = Vec::with_capacity(text.len());
-            for c in self.normalize_iter(text.chars()) {
-                // This is measurably faster than `encode_utf16`.
-                if c <= '\u{FFFF}' {
-                    ret.push(c as u16);
-                } else {
-                    let u = u32::from(c);
-                    ret.push((0xD7C0 + (u >> 10)) as u16);
-                    ret.push((0xDC00 + (u & 0x3FF)) as u16);
-                }
-            }
+            let mut ret = Vec::new();
+            let _ = self.normalize_utf16_to(text, &mut ret);
             ret
-        }
-
-        /// Normalize a slice of potentially-invalid UTF-16 into a `Write` sink.
-        ///
-        /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
-        /// before normalizing.
-        pub fn normalize_utf16_to<W: write16::Write16 + ?Sized>(
-            &self,
-            text: &[u16],
-            sink: &mut W,
-        ) -> core::fmt::Result {
-            for c in self.normalize_iter(text.chars()) {
-                sink.write_char(c)?;
-            }
-            Ok(())
         }
 
         /// Checks whether a slice of potentially-invalid UTF-16 is normalized.
@@ -1241,22 +1455,10 @@ macro_rules! normalizer_methods {
         /// Errors are mapped to the REPLACEMENT CHARACTER according
         /// to the WHATWG Encoding Standard.
         pub fn normalize_utf8(&self, text: &[u8]) -> String {
-            self.normalize_iter(text.chars()).collect()
-        }
-
-        /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
-        ///
-        /// Errors are mapped to the REPLACEMENT CHARACTER according
-        /// to the WHATWG Encoding Standard.
-        pub fn normalize_utf8_to<W: core::fmt::Write + ?Sized>(
-            &self,
-            text: &[u8],
-            sink: &mut W,
-        ) -> core::fmt::Result {
-            for c in self.normalize_iter(text.chars()) {
-                sink.write_char(c)?;
-            }
-            Ok(())
+            let mut ret = String::new();
+            ret.reserve(text.len());
+            let _ = self.normalize_utf8_to(text, &mut ret);
+            ret
         }
 
         /// Check if a slice of potentially-invalid UTF-8 is normalized.
@@ -1475,6 +1677,49 @@ impl DecomposingNormalizer {
     }
 
     normalizer_methods!();
+
+    /// Normalize a string slice into a `Write` sink.
+    pub fn normalize_to<W: core::fmt::Write + ?Sized>(
+        &self,
+        text: &str,
+        sink: &mut W,
+    ) -> core::fmt::Result {
+        for c in self.normalize_iter(text.chars()) {
+            sink.write_char(c)?;
+        }
+        Ok(())
+    }
+
+    /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
+    ///
+    /// Errors are mapped to the REPLACEMENT CHARACTER according
+    /// to the WHATWG Encoding Standard.
+    pub fn normalize_utf8_to<W: core::fmt::Write + ?Sized>(
+        &self,
+        text: &[u8],
+        sink: &mut W,
+    ) -> core::fmt::Result {
+        for c in self.normalize_iter(text.chars()) {
+            sink.write_char(c)?;
+        }
+        Ok(())
+    }
+
+    /// Normalize a slice of potentially-invalid UTF-16 into a `Write16` sink.
+    ///
+    /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
+    /// before normalizing.
+    pub fn normalize_utf16_to<W: write16::Write16 + ?Sized>(
+        &self,
+        text: &[u16],
+        sink: &mut W,
+    ) -> core::fmt::Result {
+        sink.size_hint(text.len())?;
+        for c in self.normalize_iter(text.chars()) {
+            sink.write_char(c)?;
+        }
+        Ok(())
+    }
 }
 
 /// A normalizer for performing composing normalization.
@@ -1632,6 +1877,277 @@ impl ComposingNormalizer {
     }
 
     normalizer_methods!();
+
+    composing_normalize_to!(
+        /// Normalize a string slice into a `Write` sink.
+        ,
+        normalize_to,
+        core::fmt::Write,
+        &str,
+        {},
+        false,
+        as_str,
+        {
+            // Let's hope LICM hoists this outside `'outer`.
+            let composition_passthrough_byte_bound = if composition_passthrough_bound == 0x300 {
+                0xCCu8
+            } else {
+                // We can make this fancy if a normalization other than NFC where looking at
+                // non-ASCII lead bytes is worthwhile is ever introduced.
+                composition_passthrough_bound.min(0x80) as u8
+            };
+            // This is basically an `Option` discriminant for `undecomposed_starter`,
+            // but making it a boolean so that writes in the tightest loop are as
+            // simple as possible (and potentially as peel-hoistable as possible).
+            // Furthermore, this reduces `unwrap()` later.
+            let mut undecomposed_starter_valid = true;
+            // Annotation belongs really on inner statements, but Rust doesn't
+            // allow it there.
+            #[allow(clippy::unwrap_used)]
+            'fast: loop {
+                let mut code_unit_iter = composition.decomposition.delegate.as_str().as_bytes().iter();
+                'fastest: loop {
+                    if let Some(&upcoming_byte) = code_unit_iter.next() {
+                        if upcoming_byte < composition_passthrough_byte_bound {
+                            // Fast-track succeeded!
+                            undecomposed_starter_valid = false;
+                            continue 'fastest;
+                        }
+                        break 'fastest;
+                    }
+                    // End of stream
+                    sink.write_str(pending_slice)?;
+                    return Ok(());
+                }
+                composition.decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
+                // `unwrap()` OK, because the slice is valid UTF-8 and we know there
+                // is an upcoming byte.
+                let upcoming = composition.decomposition.delegate.next().unwrap();
+                let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
+                if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
+                    // Can't combine backwards, hence a plain (non-backwards-combining)
+                    // starter albeit past `composition_passthrough_bound`
+
+                    // Fast-track succeeded!
+                    undecomposed_starter = upcoming_with_trie_value;
+                    undecomposed_starter_valid = true;
+                    continue 'fast;
+                }
+                // We need to fall off the fast path.
+                composition.decomposition.pending = Some(upcoming_with_trie_value);
+                let consumed_so_far_slice = if undecomposed_starter_valid {
+                    &pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8() - undecomposed_starter.character.len_utf8()]
+                } else {
+                    // slicing and unwrap OK, because we've just evidently read enough previously.
+                    let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_str().len() - upcoming.len_utf8()].chars();
+                    // `unwrap` OK, because we've previously manage to read the previous character
+                    undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
+                    undecomposed_starter_valid = true;
+                    consumed_so_far.as_str()
+                };
+                sink.write_str(consumed_so_far_slice)?;
+                break 'fast;
+            }
+            debug_assert!(undecomposed_starter_valid);
+        },
+        text,
+        sink,
+        composition,
+        composition_passthrough_bound,
+        undecomposed_starter,
+        pending_slice,
+    );
+
+    composing_normalize_to!(
+        /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
+        ///
+        /// Errors are mapped to the REPLACEMENT CHARACTER according
+        /// to the WHATWG Encoding Standard.
+        ,
+        normalize_utf8_to,
+        core::fmt::Write,
+        &[u8],
+        {},
+        false,
+        as_slice,
+        {
+            // This is basically an `Option` discriminant for `undecomposed_starter`,
+            // but making it a boolean so that writes in the tightest loop are as
+            // simple as possible (and potentially as peel-hoistable as possible).
+            // Furthermore, this reduces `unwrap()` later.
+            let mut undecomposed_starter_valid = true;
+            'fast: loop {
+                if let Some(upcoming) = composition.decomposition.delegate.next() {
+                    if u32::from(upcoming) < composition_passthrough_bound {
+                        // Fast-track succeeded!
+                        undecomposed_starter_valid = false;
+                        continue 'fast;
+                    }
+                    // TODO(#2006): Annotate as unlikely
+                    if upcoming == REPLACEMENT_CHARACTER {
+                        // Can't tell if this is an error or a literal U+FFFD in
+                        // the input. Assuming the former to be sure.
+
+                        // Since the U+FFFD might signify an error, we can't
+                        // assume `upcoming.len_utf8()` for the backoff length.
+                        let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len()].chars();
+                        let back = consumed_so_far.next_back();
+                        debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
+                        let consumed_so_far_slice = consumed_so_far.as_slice();
+                        sink.write_str(unsafe{ from_utf8_unchecked(consumed_so_far_slice)})?;
+                        undecomposed_starter = CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
+                        undecomposed_starter_valid = true;
+                        composition.decomposition.pending = None;
+                        break 'fast;
+                    }
+                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
+                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
+                        // Can't combine backwards, hence a plain (non-backwards-combining)
+                        // starter albeit past `composition_passthrough_bound`
+
+                        // Fast-track succeeded!
+                        undecomposed_starter = upcoming_with_trie_value;
+                        undecomposed_starter_valid = true;
+                        continue 'fast;
+                    }
+                    // We need to fall off the fast path.
+                    composition.decomposition.pending = Some(upcoming_with_trie_value);
+                    // Annotation belongs really on inner statement, but Rust doesn't
+                    // allow it there.
+                    #[allow(clippy::unwrap_used)]
+                    let consumed_so_far_slice = if undecomposed_starter_valid {
+                        &pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8() - undecomposed_starter.character.len_utf8()]
+                    } else {
+                        // slicing and unwrap OK, because we've just evidently read enough previously.
+                        let mut consumed_so_far = pending_slice[..pending_slice.len() - composition.decomposition.delegate.as_slice().len() - upcoming.len_utf8()].chars();
+                        // `unwrap` OK, because we've previously manage to read the previous character
+                        undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
+                        undecomposed_starter_valid = true;
+                        consumed_so_far.as_slice()
+                    };
+                    sink.write_str(unsafe { from_utf8_unchecked(consumed_so_far_slice)})?;
+                    break 'fast;
+                }
+                // End of stream
+                sink.write_str(unsafe {from_utf8_unchecked(pending_slice) })?;
+                return Ok(());
+            }
+            debug_assert!(undecomposed_starter_valid);
+        },
+        text,
+        sink,
+        composition,
+        composition_passthrough_bound,
+        undecomposed_starter,
+        pending_slice,
+    );
+
+    composing_normalize_to!(
+        /// Normalize a slice of potentially-invalid UTF-16 into a `Write16` sink.
+        ///
+        /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
+        /// before normalizing.
+        ,
+        normalize_utf16_to,
+        write16::Write16,
+        &[u16],
+        {
+            sink.size_hint(text.len())?;
+        },
+        false,
+        as_slice,
+        {
+            let mut code_unit_iter = composition.decomposition.delegate.as_slice().iter();
+            let mut upcoming32;
+            // This is basically an `Option` discriminant for `undecomposed_starter`,
+            // but making it a boolean so that writes in the tightest loop are as
+            // simple as possible (and potentially as peel-hoistable as possible).
+            // Furthermore, this reduces `unwrap()` later.
+            let mut undecomposed_starter_valid = true;
+            'fast: loop {
+                if let Some(&upcoming_code_unit) = code_unit_iter.next() {
+                    upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
+                    if upcoming32 < composition_passthrough_bound {
+                        // No need for surrogate or U+FFFD check, because
+                        // `composition_passthrough_bound` cannot be higher than
+                        // U+0300.
+                        // Fast-track succeeded!
+                        undecomposed_starter_valid = false;
+                        continue 'fast;
+                    }
+                    // The loop is only broken out of as goto forward
+                    #[allow(clippy::never_loop)]
+                    'surrogateloop: loop {
+                        let surrogate_base = upcoming32.wrapping_sub(0xD800);
+                        if surrogate_base > (0xDFFF - 0xD800) {
+                            // Not surrogate
+                            break 'surrogateloop;
+                        }
+                        if surrogate_base <= (0xDBFF - 0xD800) {
+                            let iter_backup = code_unit_iter.clone();
+                            if let Some(&low) = code_unit_iter.next() {
+                                if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
+                                    upcoming32 = (upcoming32 << 10) + u32::from(low)
+                                        - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
+                                    break 'surrogateloop;
+                                } else {
+                                    code_unit_iter = iter_backup;
+                                }
+                            }
+                        }
+                        // unpaired surrogate
+                        let slice_to_write = &pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - 1];
+                        sink.write_slice(slice_to_write)?;
+                        undecomposed_starter = CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
+                        undecomposed_starter_valid = true;
+                        composition.decomposition.pending = None;
+                        break 'fast;
+                    }
+                    // Not unpaired surrogate
+                    let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
+                    let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
+                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
+                        // Can't combine backwards, hence a plain (non-backwards-combining)
+                        // starter albeit past `composition_passthrough_bound`
+
+                        // Fast-track succeeded!
+                        undecomposed_starter_valid = true;
+                        undecomposed_starter = upcoming_with_trie_value;
+                        continue 'fast;
+                    }
+                    // We need to fall off the fast path.
+                    composition.decomposition.pending = Some(upcoming_with_trie_value);
+                    // Annotation belongs really on inner statement, but Rust doesn't
+                    // allow it there.
+                    #[allow(clippy::unwrap_used)]
+                    let consumed_so_far_slice = if undecomposed_starter_valid {
+                        &pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16() - undecomposed_starter.character.len_utf16()]
+                    } else {
+                        // slicing and unwrap OK, because we've just evidently read enough previously.
+                        let mut consumed_so_far = pending_slice[..pending_slice.len() - code_unit_iter.as_slice().len() - upcoming.len_utf16()].chars();
+                        // `unwrap` OK, because we've previously manage to read the previous character
+                        undecomposed_starter = composition.decomposition.attach_trie_value(consumed_so_far.next_back().unwrap());
+                        undecomposed_starter_valid = true;
+                        consumed_so_far.as_slice()
+                    };
+                    sink.write_slice(consumed_so_far_slice)?;
+                    break 'fast;
+                }
+                // End of stream
+                sink.write_slice(pending_slice)?;
+                return Ok(());
+            }
+            debug_assert!(undecomposed_starter_valid);
+            // Sync the main iterator
+            composition.decomposition.delegate = code_unit_iter.as_slice().chars();
+        },
+        text,
+        sink,
+        composition,
+        composition_passthrough_bound,
+        undecomposed_starter,
+        pending_slice,
+    );
 }
 
 #[cfg(all(test, feature = "serde"))]
