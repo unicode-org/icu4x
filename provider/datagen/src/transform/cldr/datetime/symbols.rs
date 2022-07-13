@@ -71,8 +71,8 @@ fn get_month_code_map(calendar: &str) -> &'static [TinyStr4] {
 fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
     match calendar {
         "gregory" => vec![
-            ("0".to_string(), tinystr!(16, "bc")),
-            ("1".to_string(), tinystr!(16, "ad")),
+            ("0".to_string(), tinystr!(16, "bce")),
+            ("1".to_string(), tinystr!(16, "ce")),
         ]
         .into_iter()
         .collect(),
