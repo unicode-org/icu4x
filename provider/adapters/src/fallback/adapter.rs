@@ -127,7 +127,8 @@ impl<P> LocaleFallbackProvider<P> {
         while !fallback_iterator.get().options.is_empty() {
             let result = f(fallback_iterator.get());
             if !result_is_err_missing_resource_options(&result) {
-                return result;
+                // Log the original request rather than the fallback request
+                return result.map_err(|e| e.with_req(key, base_req));
             }
             fallback_iterator.step();
         }
