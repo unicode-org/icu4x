@@ -808,12 +808,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "ecma402_traits"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98c62dda8ca85aa46241d90f1c86c42833847cd838403eb71524aaf77073fbcc"
-
-[[package]]
 name = "either"
 version = "1.6.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1319,21 +1313,6 @@ name = "icu4x"
 version = "0.1.0"
 
 [[package]]
-name = "icu4x_ecma402"
-version = "0.6.0"
-dependencies = [
- "criterion",
- "ecma402_traits",
- "icu",
- "icu_locid",
- "icu_plurals",
- "icu_provider",
- "icu_testdata",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "icu_benchmark_binsize"
 version = "0.1.0"
 dependencies = [
@@ -1528,6 +1507,7 @@ dependencies = [
  "icu_testdata",
  "icu_uniset",
  "itertools",
+ "lazy_static",
  "log",
  "proc-macro2",
  "quote",
