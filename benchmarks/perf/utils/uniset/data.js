@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657704976862,
+  "lastUpdate": 1657727117813,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36125,6 +36125,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44116810,
             "range": "± 2027959",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8630047933107c05b56164bd0bd115cbf96af90c",
+          "message": "Adding size to data fingerprints (#2177)",
+          "timestamp": "2022-07-13T17:34:28+02:00",
+          "tree_id": "ba49bdcd12839b27d7c323853ff907221938fab9",
+          "url": "https://github.com/unicode-org/icu4x/commit/8630047933107c05b56164bd0bd115cbf96af90c"
+        },
+        "date": 1657727083268,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 51079923,
+            "range": "± 816387",
             "unit": "ns/iter"
           },
           {
