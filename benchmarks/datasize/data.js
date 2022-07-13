@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657683871481,
+  "lastUpdate": 1657704197883,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19888,6 +19888,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 3938223,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1175630884e7ae7e700f5ea8501f4865afbad901",
+          "message": "Add helloworld to testdata (#2173)",
+          "timestamp": "2022-07-13T11:21:20+02:00",
+          "tree_id": "2517ce6523bdf3c720a086bb71f1cd0fed9f35f7",
+          "url": "https://github.com/unicode-org/icu4x/commit/1175630884e7ae7e700f5ea8501f4865afbad901"
+        },
+        "date": 1657704168708,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
             "unit": "bytes",
             "biggerIsBetter": false
           }
