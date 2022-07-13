@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657669201915,
+  "lastUpdate": 1657683871481,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19853,6 +19853,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6cf37c58c95bbb3944119aeffaffaee5122ac6ed"
         },
         "date": 1657669172415,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938223,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b9925154fecc029a67c04a7b1e3bbdc062a038ef",
+          "message": "Fix Windows CI (#2172)",
+          "timestamp": "2022-07-12T20:42:34-07:00",
+          "tree_id": "1a16952eb5fb0defd48166448aa633bf4f655702",
+          "url": "https://github.com/unicode-org/icu4x/commit/b9925154fecc029a67c04a7b1e3bbdc062a038ef"
+        },
+        "date": 1657683839619,
         "tool": "ndjson",
         "benches": [
           {
