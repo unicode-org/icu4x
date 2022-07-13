@@ -8,7 +8,7 @@ use icu_decimal::{
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormat,
 };
-use icu_locid::Locale;
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -49,7 +49,7 @@ impl ZonedDateTimeFormat {
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
     pub fn try_new<DP, ZP, PP, DEP>(
-        locale: Locale,
+        mut locale: Locale,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
@@ -75,6 +75,14 @@ impl ZonedDateTimeFormat {
         PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
         DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
+        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
+        if cal == Some(&value!("ethioaa")) {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("ethiopic"));
+        }
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,
             &locale,
@@ -137,7 +145,7 @@ impl ZonedDateTimeFormat {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
+        fixed_decimal_format_options.sign_display = SignDisplay::Negative;
 
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions.clone(),

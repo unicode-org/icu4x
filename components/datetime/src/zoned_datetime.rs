@@ -140,12 +140,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormat<C> {
         DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         let mut locale = locale.into();
-        // TODO(#419): Resolve the locale calendar with the API calendar.
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(key!("ca"), C::BCP_47_IDENTIFIER);
+        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
+        if cal.is_none() {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), C::BCP_47_IDENTIFIER);
+        }
         Ok(Self(
             raw::ZonedDateTimeFormat::try_new(
                 locale,

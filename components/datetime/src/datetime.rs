@@ -92,13 +92,14 @@ impl<C: CldrCalendar> TimeFormat<C> {
             + ?Sized,
     {
         let mut locale = locale.into();
-        // TODO(#419): Resolve the locale calendar with the API calendar.
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(key!("ca"), C::BCP_47_IDENTIFIER);
-
+        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
+        if cal.is_none() {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), C::BCP_47_IDENTIFIER);
+        }
         Ok(Self(
             raw::TimeFormat::try_new(locale, data_provider, length, preferences)?,
             PhantomData,
@@ -263,13 +264,19 @@ impl<C: CldrCalendar> DateFormat<C> {
             + ?Sized,
     {
         let mut locale = locale.into();
-        // TODO(#419): Resolve the locale calendar with the API calendar.
-        locale
+        if locale
             .extensions
             .unicode
             .keywords
-            .set(key!("ca"), C::BCP_47_IDENTIFIER);
-
+            .get(&key!("ca"))
+            .is_none()
+        {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), C::BCP_47_IDENTIFIER);
+        }
         Ok(Self(
             raw::DateFormat::try_new(locale, data_provider, length)?,
             PhantomData,
@@ -476,12 +483,19 @@ where {
             + ?Sized,
     {
         let mut locale = locale.into();
-        // TODO(#419): Resolve the locale calendar with the API calendar.
-        locale
+        if locale
             .extensions
             .unicode
             .keywords
-            .set(key!("ca"), C::BCP_47_IDENTIFIER);
+            .get(&key!("ca"))
+            .is_none()
+        {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), C::BCP_47_IDENTIFIER);
+        }
         Ok(Self(
             raw::DateTimeFormat::try_new(locale, data_provider, options)?,
             PhantomData,

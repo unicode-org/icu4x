@@ -107,7 +107,8 @@
         },
         "output": {
             "values": {
-                "en-u-ca-japanese": "12 Kansei (1789–1801)"
+                "en-u-ca-japanese": "-67 Meiji",
+                "en-u-ca-japanext": "12 Kansei (1789–1801)"
             }
         }
     },
@@ -123,7 +124,8 @@
         },
         "output": {
             "values": {
-                "en-u-ca-japanese": "5 Keichō (1596–1615)"
+                "en-u-ca-japanese": "-267 Meiji",
+                "en-u-ca-japanext": "5 Keichō (1596–1615)"
             }
         }
     }

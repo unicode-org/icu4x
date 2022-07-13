@@ -27,7 +27,7 @@ use icu_decimal::{
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormat,
 };
-use icu_locid::Locale;
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -84,7 +84,7 @@ impl TimeFormat {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
+        fixed_decimal_format_options.sign_display = SignDisplay::Negative;
 
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions,
@@ -183,7 +183,7 @@ impl DateFormat {
     /// a list of options, then collects all data necessary to format date values into the given locale.
     #[inline(never)]
     pub fn try_new<D>(
-        locale: Locale,
+        mut locale: Locale,
         data_provider: &D,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatError>
@@ -195,6 +195,14 @@ impl DateFormat {
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,
     {
+        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
+        if cal == Some(&value!("ethioaa")) {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("ethiopic"));
+        }
         let patterns =
             provider::date_time::pattern_for_date_length(data_provider, &locale, length)?;
 
@@ -245,7 +253,7 @@ impl DateFormat {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
+        fixed_decimal_format_options.sign_display = SignDisplay::Negative;
 
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions,
@@ -399,7 +407,7 @@ impl DateTimeFormat {
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     #[inline(never)]
     pub fn try_new<D>(
-        locale: Locale,
+        mut locale: Locale,
         data_provider: &D,
         options: &DateTimeFormatOptions,
     ) -> Result<Self, DateTimeFormatError>
@@ -414,6 +422,14 @@ impl DateTimeFormat {
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,
     {
+        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
+        if cal == Some(&value!("ethioaa")) {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("ethiopic"));
+        }
         let patterns =
             provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
 
@@ -474,7 +490,7 @@ impl DateTimeFormat {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
+        fixed_decimal_format_options.sign_display = SignDisplay::Negative;
 
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions,
