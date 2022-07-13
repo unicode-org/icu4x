@@ -220,8 +220,8 @@ pub enum Out {
 ///   Otherwise, all locales supported by the source data will be generated.
 /// * `keys`: The keys for which to generate data. See [`all_keys`], [`keys`], [`keys_from_file`], [`keys_from_bin`].
 /// * `sources`: The underlying source data. CLDR and/or ICU data can be missing if no
-///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_ICUEXPORT_ERROR`]
-///   will be returned.
+///   requested key requires them, otherwise an error satisfying [`is_missing_cldr_error`]
+///   or [`is_missing_icuexport_error`] will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
