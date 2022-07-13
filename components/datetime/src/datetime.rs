@@ -220,7 +220,7 @@ impl<C: CldrCalendar> TimeFormat<C> {
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// DateFormat::<Gregorian>::try_new(locale!("en"), &provider, Date::Full)
+/// let df = DateFormat::<Gregorian>::try_new(locale!("en"), &provider, Date::Full)
 ///     .expect("Failed to create DateFormat instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
