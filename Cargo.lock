@@ -658,7 +658,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -668,7 +668,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -1528,7 +1528,6 @@ dependencies = [
  "icu_testdata",
  "icu_uniset",
  "itertools",
- "litemap",
  "log",
  "proc-macro2",
  "quote",
@@ -1738,7 +1737,6 @@ dependencies = [
  "icu_locid",
  "icu_provider_adapters",
  "icu_provider_macros",
- "litemap",
  "log",
  "postcard",
  "serde",
@@ -1772,7 +1770,6 @@ version = "0.6.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
- "litemap",
  "log",
  "postcard",
  "serde",

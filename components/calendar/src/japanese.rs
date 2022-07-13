@@ -126,16 +126,16 @@ impl Calendar for Japanese {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year {
-        types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        types::FormattableYear {
             era: types::Era(date.era),
             number: date.adjusted_year(),
-            related_iso: date.inner.0.year,
+            related_iso: None,
         }
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         Iso.month(&date.inner)
     }
 

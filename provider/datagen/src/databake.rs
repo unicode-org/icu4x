@@ -6,7 +6,6 @@ use databake::{quote, CrateEnv, TokenStream};
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use itertools::Itertools;
-use litemap::LiteMap;
 use rayon::prelude::*;
 use std::collections::HashMap;
 use std::fs::File;
@@ -31,8 +30,8 @@ pub(crate) struct BakedDataExporter {
     mod_directory: PathBuf,
     pretty: bool,
     insert_feature_gates: bool,
-    // Temporary storage for put_payload: key -> (marker path, options -> bake)
-    data: Mutex<LiteMap<ResourceKey, (SyncTokenStream, LiteMap<ResourceOptions, SyncTokenStream>)>>,
+    // Temporary storage for put_payload: key -> (marker path, bake -> [options])
+    data: Mutex<HashMap<ResourceKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
     mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
@@ -117,15 +116,15 @@ impl DataExporter for BakedDataExporter {
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
-        let payload_string = payload.to_string();
-        let mut map = self.data.lock().expect("poison");
-        if !map.contains_key(&key) {
-            map.insert(key, (marker_type.to_string(), LiteMap::new()));
-        }
-        map.get_mut(&key)
-            .unwrap()
+        self.data
+            .lock()
+            .expect("poison")
+            .entry(key)
+            .or_insert_with(|| (marker_type.to_string(), Default::default()))
             .1
-            .insert(options.clone(), payload_string);
+            .entry(payload.to_string())
+            .or_default()
+            .push(options.to_string());
         Ok(())
     }
 
@@ -136,21 +135,11 @@ impl DataExporter for BakedDataExporter {
             .expect("poison")
             .remove(&key)
             .ok_or_else(|| DataError::custom("No data").with_key(key))?;
-        let mut sorted = raw.into_tuple_vec();
-        // Sort by payload bake so we can deduplicate.
-        sorted.sort_by(|(_, a), (_, b)| a.cmp(b));
-
         let mut statics = Vec::new();
         let mut all_options = Vec::new();
 
-        for (payload_bake_string, group) in &sorted
-            .into_iter()
-            .group_by(|(_, payload_bake_string)| payload_bake_string.clone())
-        {
-            // These are sorted because we stably sorted earlier.
-            let options = group
-                .map(|(options, _)| options.to_string())
-                .collect::<Vec<_>>();
+        for (payload_bake_string, mut options) in raw {
+            options.sort();
             let ident_string = options
                 .iter()
                 .map(|options| {
@@ -171,7 +160,6 @@ impl DataExporter for BakedDataExporter {
             statics.push((ident_string, payload_bake_string));
         }
 
-        // Not necessary for functionality, but prettier
         statics.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
 
         let statics = statics
@@ -288,18 +276,25 @@ impl DataExporter for BakedDataExporter {
             .into_inner()
             .expect("poison");
         marker_data_feature.sort();
-        let marker_data_feature = marker_data_feature
+        let marker_data_feature_ident = marker_data_feature
             .into_iter()
             .map(|(marker_str, data_str, feature_str)| {
                 (
                     marker_str.parse::<TokenStream>().unwrap(),
                     data_str.parse::<TokenStream>().unwrap(),
                     feature_str.parse::<TokenStream>().unwrap(),
+                    marker_str
+                        .split(' ')
+                        .next_back()
+                        .unwrap()
+                        .to_ascii_uppercase()
+                        .parse::<TokenStream>()
+                        .unwrap(),
                 )
             })
             .collect::<Vec<_>>();
 
-        let resource_impls = marker_data_feature.iter().map(|(marker, data, feature)| {
+        let resource_impls = marker_data_feature_ident.iter().map(|(marker, data, feature, _)| {
             quote! {
                 #feature
                 impl ResourceProvider<#marker> for BakedDataProvider {
@@ -348,12 +343,21 @@ impl DataExporter for BakedDataExporter {
         )
         .map_err(|e| e.with_path_context(&PathBuf::from("mod.rs")))?;
 
-        let any_cases = marker_data_feature.iter().map(|(marker, data, feature)| {
+        let any_consts = marker_data_feature_ident
+            .iter()
+            .map(|(marker, _, feature, ident)| {
+                quote! {
+                    #feature
+                    const #ident: ::icu_provider::ResourceKeyHash = #marker::KEY.get_hash();
+                }
+            });
+
+        let any_cases = marker_data_feature_ident.iter().map(|(marker, data, feature, ident)| {
             // TODO(#1678): Remove the special case
             if marker.to_string() == ":: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker" {
                 quote! {
                     #feature
-                    <#marker as ResourceMarker>::KEY => {
+                    #ident => {
                         AnyPayload::from_rc_payload::<#marker>(
                             alloc::rc::Rc::new(
                                 DataPayload::from_owned(
@@ -365,7 +369,7 @@ impl DataExporter for BakedDataExporter {
             } else {
                 quote!{
                     #feature
-                    <#marker as ResourceMarker>::KEY => {
+                    #ident => {
                         AnyPayload::from_static_ref::<<#marker as DataMarker>::Yokeable>(litemap_slice_get(#data::DATA, key, req)?)
                     }
                 }
@@ -377,8 +381,9 @@ impl DataExporter for BakedDataExporter {
             quote! {
                 impl AnyProvider for BakedDataProvider {
                     fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+                        #(#any_consts)*
                         Ok(AnyResponse {
-                            payload: Some(match key {
+                            payload: Some(match key.get_hash() {
                                 #(#any_cases)*
                                 _ => return Err(DataErrorKind::MissingResourceKey.with_req(key, req)),
                             }),

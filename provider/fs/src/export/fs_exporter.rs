@@ -52,7 +52,7 @@ pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
     serializer: Box<dyn AbstractSerializer + Sync>,
-    fingerprints: Option<Mutex<Vec<(ResourceKey, ResourceOptions, String)>>>,
+    fingerprints: Option<Mutex<Vec<String>>>,
 }
 
 impl FilesystemExporter {
@@ -133,7 +133,7 @@ impl DataExporter for FilesystemExporter {
                 .expect("present iff file.1 is present")
                 .lock()
                 .expect("poison")
-                .push((key, options.clone(), format!("{:x}", hash.finalize())));
+                .push(format!("{}/{}: {:x}", key, options, hash.finalize()));
         }
         Ok(())
     }
@@ -147,9 +147,9 @@ impl DataExporter for FilesystemExporter {
                 std::fs::File::create(&path)
                     .map_err(|e| DataError::from(e).with_path_context(&path))?,
             );
-            for (key, options, hash) in fingerprints {
+            for line in fingerprints {
                 use std::io::Write;
-                writeln!(file, "{key}/{options}: {hash}")?;
+                writeln!(file, "{}", line)?;
             }
         }
         Ok(())

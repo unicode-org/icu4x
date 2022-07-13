@@ -89,7 +89,7 @@ where
         }
     }
 
-    /// Convert a [`LiteMap`] into a `Vec<(K, V)>`.
+    /// Convert a [`LiteMap`] into a sorted `Vec<(K, V)>`.
     #[inline]
     pub fn into_tuple_vec(self) -> S {
         self.values

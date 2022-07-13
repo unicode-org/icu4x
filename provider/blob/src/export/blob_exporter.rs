@@ -2,11 +2,16 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// This is "export" feature, and there are many internal invariants
+#![allow(clippy::expect_used)]
+
 use crate::blob_schema::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use std::collections::HashMap;
 use std::sync::Mutex;
 use writeable::Writeable;
+use zerovec::VarZeroVec;
 use zerovec::ZeroMap2d;
 
 use postcard::ser_flavors::{AllocVec, Flavor};
@@ -14,8 +19,11 @@ use postcard::ser_flavors::{AllocVec, Flavor};
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
+    /// List of (key hash, resource options byte string, blob ID)
     #[allow(clippy::type_complexity)]
-    resources: Mutex<Vec<(ResourceKeyHash, Vec<u8>, Vec<u8>)>>,
+    resources: Mutex<Vec<(ResourceKeyHash, Vec<u8>, usize)>>,
+    /// Map from blob to blob ID
+    unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
 }
 
@@ -24,6 +32,7 @@ impl<'w> BlobExporter<'w> {
     pub fn new_with_sink(sink: Box<dyn std::io::Write + Sync + 'w>) -> Self {
         Self {
             resources: Mutex::new(Vec::new()),
+            unique_resources: Mutex::new(HashMap::new()),
             sink,
         }
     }
@@ -41,31 +50,64 @@ impl DataExporter for BlobExporter<'_> {
             output: AllocVec::new(),
         };
         payload.serialize(&mut serializer)?;
-
-        let output = serializer.output;
+        let output = serializer
+            .output
+            .finalize()
+            .expect("Failed to finalize serializer output");
+        let idx = {
+            let mut unique_resources = self.unique_resources.lock().expect("poison");
+            let len = unique_resources.len();
+            *unique_resources.entry(output).or_insert(len)
+        };
         #[allow(clippy::expect_used)]
         self.resources.lock().expect("poison").push((
             key.get_hash(),
             options.write_to_string().into_owned().into_bytes(),
-            output
-                .finalize()
-                .expect("Failed to finalize serializer output"),
+            idx,
         ));
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
-        #[allow(clippy::expect_used)]
+        // The blob IDs are unstable due to the parallel nature of datagen.
+        // In order to make a canonical form, we sort them lexicographically now.
+
+        // This is a sorted list of blob to old ID; the index in the vec is the new ID
+        let sorted: Vec<(Vec<u8>, usize)> = {
+            let mut unique_resources = self.unique_resources.lock().expect("poison");
+            let mut sorted: Vec<(Vec<u8>, usize)> = unique_resources.drain().collect();
+            sorted.sort();
+            sorted
+        };
+
+        // This is a map from old ID to new ID
+        let remap: HashMap<usize, usize> = sorted
+            .iter()
+            .enumerate()
+            .map(|(new_id, (_, old_id))| (*old_id, new_id))
+            .collect();
+
+        // Now build up the ZeroMap2d, changing old ID to new ID
         let zm = self
             .resources
             .get_mut()
             .expect("poison")
             .drain(..)
+            .map(|(hash, locale, old_id)| {
+                (hash, locale, remap.get(&old_id).expect("in-bound index"))
+            })
             .collect::<ZeroMap2d<_, _, _>>();
+
+        // Convert the sorted list to a VarZeroVec
+        let vzv: VarZeroVec<[u8]> = {
+            let buffers: Vec<Vec<u8>> = sorted.into_iter().map(|(blob, _)| blob).collect();
+            buffers.as_slice().into()
+        };
 
         if !zm.is_empty() {
             let blob = BlobSchema::V001(BlobSchemaV1 {
-                resources: zm.as_borrowed(),
+                keys: zm.as_borrowed(),
+                buffers: &vzv,
             });
             log::info!("Serializing blob to output stream...");
 

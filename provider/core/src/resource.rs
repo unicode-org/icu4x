@@ -178,7 +178,7 @@ impl Default for ResourceKeyMetadata {
 /// # use icu_provider::prelude::ResourceKey;
 /// const K: ResourceKey = icu_provider::resource_key!("foo/../bar@1");
 /// ```
-#[derive(PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+#[derive(Copy, Clone)]
 pub struct ResourceKey {
     // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
     // in a compiled binary.
@@ -187,8 +187,21 @@ pub struct ResourceKey {
     metadata: ResourceKeyMetadata,
 }
 
-#[cfg(test)]
-static_assertions::const_assert_eq!(24, core::mem::size_of::<ResourceKey>());
+impl PartialEq for ResourceKey {
+    #[inline]
+    fn eq(&self, other: &Self) -> bool {
+        self.hash == other.hash && self.get_path() == other.get_path()
+    }
+}
+
+impl Eq for ResourceKey {}
+
+impl core::hash::Hash for ResourceKey {
+    #[inline]
+    fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
+        self.hash.hash(state)
+    }
+}
 
 impl ResourceKey {
     /// Gets a human-readable representation of a [`ResourceKey`].
@@ -199,7 +212,7 @@ impl ResourceKey {
     /// Useful for reading and writing data to a file system.
     #[inline]
     pub fn get_path(&self) -> &'static str {
-        // This becomes const with `const_ptr_offset` and `const_slice_from_raw_parts`.
+        // This becomes const in 1.64
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
             core::str::from_utf8_unchecked(core::slice::from_raw_parts(
@@ -209,11 +222,9 @@ impl ResourceKey {
         }
     }
 
-    /// Gets a machine-readable representation of a [`ResourceKey`].
+    /// Gets a platform-independent hash of a [`ResourceKey`].
     ///
-    /// The machine-readable hash is 4 bytes and can be used as the key in a map.
-    ///
-    /// The hash is a 32-bit FxHash of the path, computed as if on a little-endian platform.
+    /// The hash is 4 bytes and allows for fast key comparison.
     #[inline]
     pub const fn get_hash(&self) -> ResourceKeyHash {
         self.hash

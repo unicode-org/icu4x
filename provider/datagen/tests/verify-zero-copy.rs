@@ -9,8 +9,8 @@ use icu_provider_adapters::filter::Filterable;
 use icu_provider::prelude::*;
 
 use icu_datagen::{all_keys, CldrLocaleSubset, SourceData};
-use litemap::LiteMap;
 use std::cmp;
+use std::collections::BTreeSet;
 use std::mem::ManuallyDrop;
 
 #[global_allocator]
@@ -61,12 +61,10 @@ fn main() {
 
     let provider = icu_testdata::get_postcard_provider();
 
-    // Litemap keeps it sorted, convenient
-
     // violations for net_bytes_allocated
-    let mut net_violations: LiteMap<&'static str, usize> = LiteMap::new();
+    let mut net_violations = BTreeSet::new();
     // violations for total_bytes_allocated (but not net_bytes_allocated)
-    let mut total_violations: LiteMap<&'static str, u64> = LiteMap::new();
+    let mut total_violations = BTreeSet::new();
 
     for key in all_keys().into_iter() {
         let mut max_total_violation = 0;
@@ -100,20 +98,17 @@ fn main() {
         }
         if max_total_violation != 0 {
             if max_net_violation != 0 {
-                net_violations.insert(key.get_path(), max_net_violation);
+                net_violations.insert(key.get_path());
             } else {
-                total_violations.insert(key.get_path(), max_total_violation);
+                total_violations.insert(key.get_path());
             }
         }
     }
 
-    let total_vio_vec: Vec<_> = total_violations.iter_keys().copied().collect();
-    let net_vio_vec: Vec<_> = net_violations.iter_keys().copied().collect();
-
-    assert!(total_vio_vec == EXPECTED_TOTAL_VIOLATIONS && net_vio_vec == EXPECTED_NET_VIOLATIONS,
+    assert!(total_violations.iter().eq(EXPECTED_TOTAL_VIOLATIONS.iter()) && net_violations.iter().eq(EXPECTED_NET_VIOLATIONS.iter()),
         "Expected violations list does not match found violations!\n\
         If the new list is smaller, please update EXPECTED_VIOLATIONS in verify-zero-copy.rs\n\
         If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
         to temporarily allow for this key to be allowlisted.\n\
-        Expected (net):\n{:?}\nFound (net):\n{:?}\nExpected (total):\n{:?}\nFound (total):\n{:?}", EXPECTED_NET_VIOLATIONS, net_vio_vec, EXPECTED_TOTAL_VIOLATIONS, total_vio_vec)
+        Expected (net):\n{:?}\nFound (net):\n{:?}\nExpected (total):\n{:?}\nFound (total):\n{:?}", EXPECTED_NET_VIOLATIONS, total_violations, EXPECTED_TOTAL_VIOLATIONS, net_violations)
 }

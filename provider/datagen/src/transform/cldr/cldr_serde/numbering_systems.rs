@@ -7,8 +7,8 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/master/cldr-json/cldr-core/supplemental/numberingSystems.json>
 
-use litemap::LiteMap;
 use serde::Deserialize;
+use std::collections::HashMap;
 use tinystr::TinyStr8;
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -31,7 +31,7 @@ pub struct NumberingSystem {
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct SupplementalData {
     #[serde(rename = "numberingSystems")]
-    pub numbering_systems: LiteMap<TinyStr8, NumberingSystem>,
+    pub numbering_systems: HashMap<TinyStr8, NumberingSystem>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
