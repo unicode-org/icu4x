@@ -284,23 +284,20 @@ impl SegmenterRuleProvider {
 
         // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
         // summarized in the following list. See details in the property txt in
-        // https://www.unicode.org/Public/14.0.0/ucd/auxiliary/.
+        // https://www.unicode.org/Public/14.0.0/ucd/
         //
+        // Line Break Property: U+E01EF ; CM [1]
         // Grapheme Break Property: U+E0FFF ; Control
         // Sentence Break Property: U+E01EF ; Extend
         // Word Break Property: U+E01EF ; Extend
         //
         // The table length should be large enough to contain all codepoints.
-        const UAX29_CODEPOINT_TABLE_LEN: usize = 0xE1000;
+        //
+        // [1] In LineBreak.txt, it defines F0000..FFFFD and 100000..10FFFD to be "XX", which are
+        // the default unassigned values, so it's ok to omit them in the table.
+        const CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
-        // The property values of codepoints >= U+0x20000 are built into the line segmenter.
-        const UAX14_CODEPOINT_TABLE_LEN: usize = 0x20000;
-
-        let mut properties_map = if segmenter.segmenter_type == "line" {
-            vec![0; UAX14_CODEPOINT_TABLE_LEN]
-        } else {
-            vec![0; UAX29_CODEPOINT_TABLE_LEN]
-        };
+        let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
         let mut properties_names = Vec::<String>::new();
         let mut simple_properties_count = 0;
 
@@ -346,7 +343,7 @@ impl SegmenterRuleProvider {
                         }
 
                         let prop = get_word_segmenter_value_from_name(&*p.name);
-                        for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if wb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
@@ -369,7 +366,7 @@ impl SegmenterRuleProvider {
                         }
 
                         let prop = get_grapheme_segmenter_value_from_name(&*p.name);
-                        for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if gb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
@@ -379,7 +376,7 @@ impl SegmenterRuleProvider {
 
                     "sentence" => {
                         let prop = get_sentence_segmenter_value_from_name(&*p.name);
-                        for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if sb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
@@ -395,7 +392,7 @@ impl SegmenterRuleProvider {
                             || p.name == "PO_EAW"
                             || p.name == "PR_EAW"
                         {
-                            for i in 0..0x20000 {
+                            for i in 0..(CODEPOINT_TABLE_LEN as u32) {
                                 match lb.get_u32(i) {
                                     LineBreak::OpenPunctuation => {
                                         if (p.name == "OP_OP30"
@@ -453,7 +450,7 @@ impl SegmenterRuleProvider {
                         }
 
                         let prop = get_line_segmenter_value_from_name(&*p.name);
-                        for c in 0..0x20000 {
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
                             if lb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
@@ -471,7 +468,7 @@ impl SegmenterRuleProvider {
                 simple_properties_count += 1;
                 for c in codepoint {
                     let c = *c as usize;
-                    if c > UAX29_CODEPOINT_TABLE_LEN {
+                    if c > CODEPOINT_TABLE_LEN {
                         continue;
                     }
                     properties_map[c] = property_index;
@@ -601,6 +598,24 @@ impl SegmenterRuleProvider {
             trie_type: self.source.trie_type().to_internal(),
         }
         .build();
+
+        if segmenter.segmenter_type == "line" {
+            // Note: The following match statement had been used in line.rs:
+            //
+            // match codepoint {
+            //     0x20000..=0x2fffd => ID,
+            //     0x30000..=0x3fffd => ID,
+            //     0xe0001 => CM,
+            //     0xe0020..=0xe007f => CM,
+            //     0xe0100..=0xe01ef => CM,
+            //     _ => XX,
+            // }
+            debug_assert_eq!(property_trie.get(0x20000), ID);
+            debug_assert_eq!(property_trie.get(0x3fffd), ID);
+            debug_assert_eq!(property_trie.get(0xd0000), XX);
+            debug_assert_eq!(property_trie.get(0xe0001), CM);
+            debug_assert_eq!(property_trie.get(0xe0020), CM);
+        }
 
         Ok(RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),

@@ -224,10 +224,12 @@ fn main() {
 
         println!("[memory] Starting example {:?}", example);
 
-        let mut run_example = Command::new("cargo")
+        let mut run_example = Command::new("rustup")
+            .arg("run")
             // +nightly is required for unstable options. This option is used by the CI to provide
             // a pinned version number for nightly.
-            .arg(format!("+{}", toolchain))
+            .arg(&toolchain)
+            .arg("cargo")
             .arg("run")
             .arg("--example")
             .arg(example)

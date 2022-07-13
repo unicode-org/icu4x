@@ -70,6 +70,7 @@ exec --fail-on-error make
 description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
 dependencies = [ "diplomat-gen-c" ]
+install_crate = { rustup_component_name = "rust-src" }
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -146,6 +147,7 @@ exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source --
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
 toolchain = "nightly-2022-04-05"
+install_crate = { rustup_component_name = "rust-src" }
 env = { "RUSTFLAGS" = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
 command = "cargo"
 args = ["build", "--package", "icu_freertos",
@@ -158,6 +160,7 @@ args = ["build", "--package", "icu_freertos",
 description = "Ensure ICU4X core builds on no-std"
 category = "ICU4X FFI"
 toolchain = "nightly-2022-04-05"
+install_crate = { rustup_component_name = "rust-src" }
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
 

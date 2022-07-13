@@ -19,9 +19,12 @@ use zerovec::ule::AsULE;
 pub struct Era(pub TinyStr16);
 
 /// Representation of a formattable year.
+///
+/// More fields may be added in the future, for things like
+/// the cyclic or extended year
 #[derive(Copy, Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct Year {
+#[non_exhaustive]
+pub struct FormattableYear {
     /// The era containing the year.
     pub era: Era,
 
@@ -30,9 +33,25 @@ pub struct Year {
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
-    pub related_iso: i32,
+    ///
+    /// Can be None if the calendar does not typically use related_iso (and CLDR does not contain patterns
+    /// using it)
+    pub related_iso: Option<i32>,
 }
 
+impl FormattableYear {
+    /// Construct a new Year given an era and number
+    ///
+    /// Other fields can be set mutably after construction
+    /// as needed
+    pub fn new(era: Era, number: i32) -> Self {
+        Self {
+            era,
+            number,
+            related_iso: None,
+        }
+    }
+}
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[cfg_attr(
@@ -68,7 +87,7 @@ impl fmt::Display for MonthCode {
 /// Representation of a formattable month.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct Month {
+pub struct FormattableMonth {
     /// The month number in this given year. For calendars with leap months, all months after
     /// the leap month will end up with an incremented number.
     ///
@@ -90,11 +109,11 @@ pub struct DayOfYearInfo {
     /// The number of days in a year.
     pub days_in_year: u32,
     /// The previous year.
-    pub prev_year: Year,
+    pub prev_year: FormattableYear,
     /// The number of days in the previous year.
     pub days_in_prev_year: u32,
     /// The next year.
-    pub next_year: Year,
+    pub next_year: FormattableYear,
 }
 
 /// A day number in a month. Usually 1-based.

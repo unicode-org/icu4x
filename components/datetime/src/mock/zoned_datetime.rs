@@ -101,11 +101,11 @@ impl FromStr for MockZonedDateTime {
 
 impl DateInput for MockZonedDateTime {
     type Calendar = Gregorian;
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         self.datetime.year()
     }
 
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         self.datetime.month()
     }
 
