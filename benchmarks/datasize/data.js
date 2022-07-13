@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657730456857,
+  "lastUpdate": 1657730964392,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -19973,6 +19973,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d465df1c14ed76dbe1be5e5f5613dd4a721de767"
         },
         "date": 1657730426933,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fa6189afd1863f63bfd634c83f0f8b14af744e77",
+          "message": "Datagen performance improvements (#2178)",
+          "timestamp": "2022-07-13T18:47:24+02:00",
+          "tree_id": "be3c4f6954b4abe2134074170df23bee0170f75a",
+          "url": "https://github.com/unicode-org/icu4x/commit/fa6189afd1863f63bfd634c83f0f8b14af744e77"
+        },
+        "date": 1657730934699,
         "tool": "ndjson",
         "benches": [
           {
