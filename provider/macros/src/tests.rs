@@ -171,11 +171,7 @@ fn test_attributes() {
             }
             impl icu_provider::ResourceMarker for BarV1Marker {
                 const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(
-                    "demo/bar@1",
-                    icu_provider::ResourceKeyMetadata::from_fallback_priority_and_extension_key(
-                        icu_provider::FallbackPriority::Region,
-                        Some(icu_provider::_internal::extensions_unicode_key!("ca")),
-                    )
+                    "demo/bar@1[R][u-ca]"
                 );
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]

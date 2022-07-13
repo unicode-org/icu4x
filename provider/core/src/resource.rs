@@ -488,9 +488,6 @@ fn test_metadata_parsing() {
 #[macro_export]
 macro_rules! resource_key {
     ($path:expr) => {{
-        $crate::resource_key!($path, $crate::ResourceKeyMetadata::const_default())
-    }};
-    ($path:expr, $metadata:expr) => {{
         // Force the ResourceKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
             match $crate::ResourceKey::construct_internal($crate::tagged!($path)) {

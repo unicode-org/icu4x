@@ -19,6 +19,7 @@ extern crate proc_macro;
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
+use std::fmt::Write;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
 use syn::AttributeArgs;
@@ -66,7 +67,7 @@ mod tests;
 ///     None
 /// );
 ///
-/// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1");
+/// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1[R][u-ca]");
 /// assert_eq!(
 ///     BazV1Marker::KEY.get_metadata().fallback_priority,
 ///     icu_provider::FallbackPriority::Region
@@ -209,41 +210,22 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         ));
 
         if let Some(key_lit) = &key_lit {
-            if fallback_by.is_some() || extension_key.is_some() {
-                let fallback_by_expression = match &fallback_by {
-                    Some(fallback_by) => match fallback_by.value().as_str() {
-                        "language" => quote!(icu_provider::FallbackPriority::Language),
-                        "region" => quote!(icu_provider::FallbackPriority::Region),
-                        _ => panic!("Invalid value for fallback_by"),
-                    },
-                    None => quote!(icu_provider::FallbackPriority::const_default()),
+            let mut key_str = key_lit.value();
+            if let Some(fallback_by_lit) = fallback_by {
+                match fallback_by_lit.value().as_str() {
+                    "region" => write!(key_str, "[R]").unwrap(),
+                    "language" => (),
+                    _ => panic!("Invalid value for fallback_by"),
                 };
-                let extension_key_expression = match &extension_key {
-                    Some(extension_key) => {
-                        quote!(Some(
-                            icu_provider::_internal::extensions_unicode_key!(#extension_key)
-                        ))
-                    }
-                    None => quote!(None),
-                };
-                result.extend(quote!(
-                    impl icu_provider::ResourceMarker for #marker_name {
-                        const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(
-                            #key_lit,
-                            icu_provider::ResourceKeyMetadata::from_fallback_priority_and_extension_key(
-                                #fallback_by_expression,
-                                #extension_key_expression,
-                            )
-                        );
-                    }
-                ));
-            } else {
-                result.extend(quote!(
-                    impl icu_provider::ResourceMarker for #marker_name {
-                        const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_lit);
-                    }
-                ));
             }
+            if let Some(extension_key_lit) = extension_key {
+                write!(key_str, "[u-{}]", extension_key_lit.value()).unwrap();
+            }
+            result.extend(quote!(
+                impl icu_provider::ResourceMarker for #marker_name {
+                    const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_str);
+                }
+            ));
         }
     }
 
