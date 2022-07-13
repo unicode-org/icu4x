@@ -1528,6 +1528,7 @@ dependencies = [
  "icu_testdata",
  "icu_uniset",
  "itertools",
+ "lazy_static",
  "log",
  "proc-macro2",
  "quote",
