@@ -137,28 +137,35 @@ macro_rules! impl_resource_provider {
                         data.eras.names.retain(|e, _| set.contains(e));
                         data.eras.abbr.retain(|e, _| set.contains(e));
                         data.eras.narrow.retain(|e, _| set.contains(e));
+                    }
+                    if calendar == value!("japanese") || calendar == value!("japanext") {
 
-
-                        // Splice in gregorian data
+                        // Splice in gregorian data for pre-meiji
+                        let greg_resource: &cldr_serde::ca::Resource = self
+                            .source
+                            .cldr()?
+                            .dates("gregorian").read_and_parse(&langid, "ca-gregorian.json")?;
 
                         let greg =
-                            resource
+                            greg_resource
                                 .main
                                 .0
                                 .get(&langid)
                                 .expect("CLDR file contains the expected language")
                                 .dates
                                 .calendars
-                                .get("gregory")
+                                .get("gregorian")
                                 .expect("CLDR file contains a gregorian calendar")
                                 .clone();
 
-                        data.eras.names.insert("bc".into(), greg.eras.names.get("0").expect("Gregorian calendar must have data for BC").into());
-                        data.eras.names.insert("ad".into(), greg.eras.names.get("1").expect("Gregorian calendar must have data for AD").into());
-                        data.eras.abbr.insert("bc".into(), greg.eras.abbr.get("0").expect("Gregorian calendar must have data for BC").into());
-                        data.eras.abbr.insert("ad".into(), greg.eras.abbr.get("1").expect("Gregorian calendar must have data for AD").into());
-                        data.eras.narrow.insert("bc".into(), greg.eras.narrow.get("0").expect("Gregorian calendar must have data for BC").into());
-                        data.eras.narrow.insert("ad".into(), greg.eras.narrow.get("1").expect("Gregorian calendar must have data for AD").into());
+                        // The "eras" map is largely keyed by a number, but instead of trying to
+                        // come up with a number that the japanese era map would not use, we just use a regular string
+                        data.eras.names.insert("bce".into(), greg.eras.names.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.names.insert("ce".into(), greg.eras.names.get("1").expect("Gregorian calendar must have data for AD").into());
+                        data.eras.abbr.insert("bce".into(), greg.eras.abbr.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.abbr.insert("ce".into(), greg.eras.abbr.get("1").expect("Gregorian calendar must have data for AD").into());
+                        data.eras.narrow.insert("bce".into(), greg.eras.narrow.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.narrow.insert("ce".into(), greg.eras.narrow.get("1").expect("Gregorian calendar must have data for AD").into());
                     }
 
                     let metadata = DataResponseMetadata::default();

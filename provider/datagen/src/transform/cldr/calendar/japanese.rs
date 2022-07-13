@@ -11,6 +11,7 @@ use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::env;
 use std::str::FromStr;
+use tinystr::tinystr;
 use tinystr::TinyStr16;
 use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
@@ -196,10 +197,14 @@ impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
     let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
         .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
-    snapshot
+    let mut map: BTreeMap<_, _> = snapshot
         .dates_to_eras
         .iter()
         .enumerate()
         .map(|(i, (_, value))| (i.to_string(), value))
-        .collect()
+        .collect();
+    // Splice in details about gregorian eras for pre-meiji dates
+    map.insert("bce".to_string(), tinystr!(16, "bce"));
+    map.insert("ce".to_string(), tinystr!(16, "ce"));
+    map
 }
