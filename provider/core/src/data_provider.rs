@@ -37,16 +37,8 @@ impl fmt::Display for DataRequest {
     }
 }
 
-// XXX: DataRequest should technically not implement `Borrow<ResourceOptions>` since it has
-// multiple fields, but there is no `AsRefMut` and we need a mutable reference.
-impl core::borrow::Borrow<ResourceOptions> for DataRequest {
-    fn borrow(&self) -> &ResourceOptions {
-        &self.options
-    }
-}
-
-impl core::borrow::BorrowMut<ResourceOptions> for DataRequest {
-    fn borrow_mut(&mut self) -> &mut ResourceOptions {
+impl AsMut<ResourceOptions> for DataRequest {
+    fn as_mut(&mut self) -> &mut ResourceOptions {
         &mut self.options
     }
 }

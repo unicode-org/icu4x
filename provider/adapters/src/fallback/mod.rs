@@ -38,8 +38,6 @@
 //! assert_eq!(fallback_iterator.get().to_string(), "und");
 //! ```
 
-use core::borrow::BorrowMut;
-
 use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
@@ -274,9 +272,9 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     /// [`Locale`]: icu_locid::Locale
     pub fn fallback_for<'b, T>(&'b self, mut ro: T) -> LocaleFallbackIterator<'a, 'b, T>
     where
-        T: BorrowMut<ResourceOptions>,
+        T: AsMut<ResourceOptions>,
     {
-        self.normalize(ro.borrow_mut());
+        self.normalize(ro.as_mut());
         LocaleFallbackIterator {
             current: ro,
             inner: LocaleFallbackIteratorInner {
@@ -300,13 +298,13 @@ impl<'a, 'b, T> LocaleFallbackIterator<'a, 'b, T> {
 
 impl<'a, 'b, T> LocaleFallbackIterator<'a, 'b, T>
 where
-    T: BorrowMut<ResourceOptions>,
+    T: AsMut<ResourceOptions>,
 {
     /// Performs one step of the locale fallback algorithm.
     ///
     /// The fallback is completed once the inner [`ResourceOptions`] becomes `und`.
     pub fn step(&mut self) -> &mut Self {
-        self.inner.step(self.current.borrow_mut());
+        self.inner.step(self.current.as_mut());
         self
     }
 }

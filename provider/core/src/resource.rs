@@ -568,6 +568,12 @@ impl fmt::Display for ResourceOptions {
     }
 }
 
+impl AsMut<ResourceOptions> for ResourceOptions {
+    fn as_mut(&mut self) -> &mut ResourceOptions {
+        self
+    }
+}
+
 impl Writeable for ResourceOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.langid.write_to(sink)?;
