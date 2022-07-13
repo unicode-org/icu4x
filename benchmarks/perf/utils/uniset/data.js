@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657731494543,
+  "lastUpdate": 1657731711559,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36304,6 +36304,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/best",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "93d57245e6513f51bcfd88c2e10cf8a3a7d0a3cc",
+          "message": "Baking data into `icu4x_ecma402` (#2158)",
+          "timestamp": "2022-07-13T18:51:07+02:00",
+          "tree_id": "f9a75b6cdd202dc5db09103fd80e2d682e4ac03f",
+          "url": "https://github.com/unicode-org/icu4x/commit/93d57245e6513f51bcfd88c2e10cf8a3a7d0a3cc"
+        },
+        "date": 1657731679837,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 55582359,
+            "range": "± 737276",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           },
