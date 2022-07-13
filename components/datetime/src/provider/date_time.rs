@@ -308,7 +308,7 @@ pub trait DateSymbols {
         length: fields::FieldLength,
         day: date::IsoWeekday,
     ) -> Result<&str>;
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str>;
+    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str;
 }
 
 impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
@@ -397,15 +397,17 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
             .ok_or(DateTimeFormatError::MissingMonthSymbol(code))
     }
 
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str> {
+    /// Get the era symbol
+    ///
+    /// This will fall back to the era code directly, if, for example,
+    /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
+    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str {
         let symbols = match length {
             fields::FieldLength::Wide => &self.eras.names,
             fields::FieldLength::Narrow => &self.eras.narrow,
             _ => &self.eras.abbr,
         };
-        symbols
-            .get(&era_code.0)
-            .ok_or(DateTimeFormatError::MissingEraSymbol(era_code.0))
+        symbols.get(&era_code.0).unwrap_or(&era_code.0)
     }
 }
 

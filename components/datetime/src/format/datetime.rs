@@ -205,17 +205,15 @@ where
 {
     match field.symbol {
         FieldSymbol::Era => {
+            let era = datetime
+                .datetime()
+                .year()
+                .ok_or(Error::MissingInputField)?
+                .era;
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = date_symbols
                 .expect("Expect date symbols to be present")
-                .get_symbol_for_era(
-                    field.length,
-                    datetime
-                        .datetime()
-                        .year()
-                        .ok_or(Error::MissingInputField)?
-                        .era,
-                )?;
+                .get_symbol_for_era(field.length, &era);
             w.write_str(symbol)?
         }
         FieldSymbol::Year(year) => match year {
@@ -502,6 +500,29 @@ mod tests {
     use super::*;
     use icu_decimal::options::{FixedDecimalFormatOptions, GroupingStrategy};
 
+    #[test]
+    #[cfg(feature = "serde")]
+    fn test_mixed_calendar_eras() {
+        use icu::calendar::{japanese::Japanese, DateTime};
+        use icu::datetime::options::length;
+        use icu::datetime::DateTimeFormat;
+
+        let provider = icu_testdata::get_provider();
+        let locale: Locale = "en-u-ca-japanese".parse().unwrap();
+        let options =
+            length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
+        let dtf = DateTimeFormat::<Japanese>::try_new(locale, &provider, &options)
+            .expect("DateTimeFormat construction succeeds");
+
+        let japanext = Japanese::try_new(&provider, true).expect("Cannot load japanese data");
+        let datetime = DateTime::new_gregorian_datetime(1800, 9, 1, 12, 34, 28)
+            .expect("Failed to construct DateTime.");
+        let datetime = datetime.to_calendar(japanext);
+
+        let result = dtf.format_to_string(&datetime);
+
+        assert_eq!(result, "Sep 1, 12 kansei-1789, 12:34 PM")
+    }
     #[test]
     #[cfg(feature = "serde")]
     fn test_basic() {
