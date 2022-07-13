@@ -13,3 +13,26 @@ pub(crate) fn result_is_err_missing_resource_key<T>(result: &Result<T, DataError
         })
     )
 }
+
+pub(crate) fn result_is_err_missing_resource_options<T>(result: &Result<T, DataError>) -> bool {
+    // TODO(#2117): Fold MissingLocale and MissingVariant into MissingResourceOptions.
+    matches!(
+        result,
+        Err(DataError {
+            kind: DataErrorKind::MissingResourceOptions,
+            ..
+        })
+    ) || matches!(
+        result,
+        Err(DataError {
+            kind: DataErrorKind::MissingLocale,
+            ..
+        })
+    ) || matches!(
+        result,
+        Err(DataError {
+            kind: DataErrorKind::MissingVariant,
+            ..
+        })
+    )
+}
