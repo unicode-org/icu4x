@@ -4,6 +4,7 @@
 
 use icu_datagen::*;
 use icu_locid::langid;
+use icu_provider::ResourceMarker;
 use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
 use std::fs::File;
@@ -71,6 +72,9 @@ fn main() {
         &icu_datagen::all_keys()
             .into_iter()
             .filter(|k| !IGNORED_KEYS.contains(&k.get_path()))
+            .chain(core::iter::once(
+                icu_provider::hello_world::HelloWorldV1Marker::KEY,
+            ))
             .collect::<Vec<_>>(),
         &source_data,
         vec![json_out, blob_out, mod_out, postcard_out],

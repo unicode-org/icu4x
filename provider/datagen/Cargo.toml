@@ -79,6 +79,7 @@ writeable = { version = "0.4", path = "../../utils/writeable" }
 zip = "0.6"
 cached-path = "0.5"
 reqwest = { version = "*", features = ["blocking"] }
+lazy_static = "1"
 
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }

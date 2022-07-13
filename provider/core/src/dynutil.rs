@@ -132,7 +132,7 @@ where
 /// // Match HelloWorldV1Marker::KEY and delegate to DynProvider<HelloWorldV1Marker>.
 /// // Send the wildcard match also to DynProvider<HelloWorldV1Marker>.
 /// icu_provider::impl_dyn_provider!(MyProvider, {
-///     HelloWorldV1Marker::KEY => HelloWorldV1Marker,
+///     HW = HelloWorldV1Marker::KEY => HelloWorldV1Marker,
 ///     _ => HelloWorldV1Marker,
 /// }, AnyMarker);
 ///
@@ -175,7 +175,7 @@ macro_rules! impl_dyn_provider {
         );
     };
 
-    ($provider:ty, { $($pat:pat $(if $guard:expr)? => $struct_m:ty),+, }, $dyn_m:path) => {
+    ($provider:ty, { $($ident:ident = $key:path => $struct_m:ty),+, $(_ => $struct_d:ty,)?}, $dyn_m:ty) => {
         impl $crate::DynProvider<$dyn_m> for $provider
         {
             fn load_payload(
@@ -186,9 +186,12 @@ macro_rules! impl_dyn_provider {
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
             > {
-                match key {
+                $(
+                    const $ident: ResourceKeyHash = $key.get_hash();
+                )+
+                match key.get_hash() {
                     $(
-                        $pat $(if $guard)? => {
+                        $ident => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::DynProvider::<$struct_m>::load_payload(self, key, req)?;
                             Ok(DataResponse {
@@ -199,13 +202,25 @@ macro_rules! impl_dyn_provider {
                             })
                         }
                     )+,
+                    $(
+                        _ => {
+                            let result: $crate::DataResponse<$struct_d> =
+                                $crate::DynProvider::<$struct_d>::load_payload(self, key, req)?;
+                            Ok(DataResponse {
+                                metadata: result.metadata,
+                                payload: result.payload.map(|p| {
+                                    $crate::dynutil::UpcastDataPayload::<$struct_d>::upcast(p)
+                                }),
+                            })
+                        }
+                    )?
                     _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
                 }
             }
         }
 
     };
-    ($provider:ty, [ $($struct_m:ty),+, ], $dyn_m:path) => {
+    ($provider:ty, [ $($struct_m:ident),+, ], $dyn_m:path) => {
         impl $crate::DynProvider<$dyn_m> for $provider
         {
             fn load_payload(
@@ -216,9 +231,14 @@ macro_rules! impl_dyn_provider {
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
             > {
-                match key {
+                #![allow(non_upper_case_globals)]
+                // Reusing the struct names as identifiers
+                $(
+                    const $struct_m: $crate::ResourceKeyHash = $struct_m::KEY.get_hash();
+                )+
+                match key.get_hash() {
                     $(
-                        <$struct_m as $crate::ResourceMarker>::KEY => {
+                        $struct_m => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::ResourceProvider::load_resource(self, req)?;
                             Ok(DataResponse {

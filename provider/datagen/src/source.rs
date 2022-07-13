@@ -7,12 +7,15 @@ pub use crate::transform::cldr::source::LocaleSubset as CldrLocaleSubset;
 use elsa::sync::FrozenMap;
 use icu_provider::DataError;
 use std::any::Any;
+use std::collections::HashSet;
 use std::fmt::Debug;
-use std::fs::File;
+use std::io::Cursor;
 use std::io::Read;
 use std::path::Path;
 use std::path::PathBuf;
 use std::sync::Arc;
+use std::sync::RwLock;
+use zip::ZipArchive;
 
 /// Bag of options for datagen source data.
 #[derive(Clone, Debug)]
@@ -278,14 +281,14 @@ impl TomlCache {
 
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
-        self.root.list(path).map(Vec::into_iter)
+        self.root.list(path)
     }
 }
 
 #[derive(Debug)]
 pub(crate) enum AbstractFs {
     Fs(PathBuf),
-    Zip(PathBuf),
+    Zip(RwLock<ZipArchive<Cursor<Vec<u8>>>>),
 }
 
 impl AbstractFs {
@@ -296,9 +299,10 @@ impl AbstractFs {
         {
             Ok(Self::Fs(root.as_ref().to_path_buf()))
         } else {
-            zip::ZipArchive::new(File::open(&root)?)
-                .map_err(|e| DataError::custom("Zip").with_display_context(&e))?;
-            Ok(Self::Zip(root.as_ref().into()))
+            Ok(Self::Zip(RwLock::new(
+                ZipArchive::new(Cursor::new(std::fs::read(&root)?))
+                    .map_err(|e| DataError::custom("Zip").with_display_context(&e))?,
+            )))
         }
     }
 
@@ -309,11 +313,11 @@ impl AbstractFs {
                 std::fs::read(&root.join(path))
                     .map_err(|e| DataError::from(e).with_path_context(&root.join(path)))
             }
-            Self::Zip(root) => {
-                log::trace!("Reading: {}/{}", root.display(), path);
+            Self::Zip(zip) => {
+                log::trace!("Reading: <zip>/{}", path);
                 let mut buf = Vec::new();
-                zip::ZipArchive::new(File::open(root)?)
-                    .expect("validated in constructor")
+                zip.write()
+                    .expect("poison")
                     .by_name(path)
                     .map_err(|e| {
                         DataError::custom("Zip")
@@ -326,19 +330,22 @@ impl AbstractFs {
         }
     }
 
-    pub fn list(&self, path: &str) -> Result<Vec<PathBuf>, DataError> {
+    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
         Ok(match self {
             Self::Fs(root) => std::fs::read_dir(&root.join(path))
                 .map_err(|e| DataError::from(e).with_display_context(path))?
                 .map(|e| -> Result<_, DataError> { Ok(PathBuf::from(e?.file_name())) })
-                .collect::<Result<_, DataError>>()?,
-            Self::Zip(root) => zip::ZipArchive::new(File::open(root)?)
-                .expect("validated in constructor")
+                .collect::<Result<HashSet<_>, DataError>>()
+                .map(HashSet::into_iter)?,
+            Self::Zip(zip) => zip
+                .read()
+                .expect("poison")
                 .file_names()
                 .filter_map(|p| p.strip_prefix(path))
                 .filter_map(|suffix| suffix.split('/').find(|s| !s.is_empty()))
                 .map(PathBuf::from)
-                .collect(),
+                .collect::<HashSet<_>>()
+                .into_iter(),
         })
     }
 }
