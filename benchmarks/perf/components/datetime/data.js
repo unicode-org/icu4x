@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657756820593,
+  "lastUpdate": 1657837968538,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -47879,6 +47879,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5141,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "17a7494fa33c1b7385261fb3c034b95a53f18139",
+          "message": "Adding list Ecma402 implementations (#2179)",
+          "timestamp": "2022-07-14T23:19:55+01:00",
+          "tree_id": "111c7653556c5c0f17bbed503cf1996f50d04695",
+          "url": "https://github.com/unicode-org/icu4x/commit/17a7494fa33c1b7385261fb3c034b95a53f18139"
+        },
+        "date": 1657837936069,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 105139,
+            "range": "± 7159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1004062,
+            "range": "± 93596",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 213090,
+            "range": "± 25292",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 104554,
+            "range": "± 10567",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 114915,
+            "range": "± 8287",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 122495,
+            "range": "± 8270",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 130142,
+            "range": "± 9791",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 211073,
+            "range": "± 15601",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 220622,
+            "range": "± 18878",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 216016,
+            "range": "± 15761",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 234408,
+            "range": "± 21325",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5831,
+            "range": "± 403",
             "unit": "ns/iter"
           }
         ]
