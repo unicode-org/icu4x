@@ -2732,26 +2732,122 @@ fn test_sign_display() {
     let negative_nonzero = FixedDecimal::from(-163);
     let positive_zero = FixedDecimal::from(0);
     let negative_zero = FixedDecimal::from(0).with_sign(Sign::Negative);
-    assert_eq!("163", positive_nonzero.clone().with_sign_display(Auto).to_string());
-    assert_eq!("-163", negative_nonzero.clone().with_sign_display(Auto).to_string());
-    assert_eq!("0", positive_zero.clone().with_sign_display(Auto).to_string());
-    assert_eq!("-0", negative_zero.clone().with_sign_display(Auto).to_string());
-    assert_eq!("+163", positive_nonzero.clone().with_sign_display(Always).to_string());
-    assert_eq!("-163", negative_nonzero.clone().with_sign_display(Always).to_string());
-    assert_eq!("+0", positive_zero.clone().with_sign_display(Always).to_string());
-    assert_eq!("-0", negative_zero.clone().with_sign_display(Always).to_string());
-    assert_eq!("163", positive_nonzero.clone().with_sign_display(Never).to_string());
-    assert_eq!("163", negative_nonzero.clone().with_sign_display(Never).to_string());
-    assert_eq!("0", positive_zero.clone().with_sign_display(Never).to_string());
-    assert_eq!("0", negative_zero.clone().with_sign_display(Never).to_string());
-    assert_eq!("+163", positive_nonzero.clone().with_sign_display(ExceptZero).to_string());
-    assert_eq!("-163", negative_nonzero.clone().with_sign_display(ExceptZero).to_string());
-    assert_eq!("0", positive_zero.clone().with_sign_display(ExceptZero).to_string());
-    assert_eq!("0", negative_zero.clone().with_sign_display(ExceptZero).to_string());
-    assert_eq!("163", positive_nonzero.clone().with_sign_display(Negative).to_string());
-    assert_eq!("-163", negative_nonzero.clone().with_sign_display(Negative).to_string());
-    assert_eq!("0", positive_zero.clone().with_sign_display(Negative).to_string());
-    assert_eq!("0", negative_zero.clone().with_sign_display(Negative).to_string());
+    assert_eq!(
+        "163",
+        positive_nonzero.clone().with_sign_display(Auto).to_string()
+    );
+    assert_eq!(
+        "-163",
+        negative_nonzero.clone().with_sign_display(Auto).to_string()
+    );
+    assert_eq!(
+        "0",
+        positive_zero.clone().with_sign_display(Auto).to_string()
+    );
+    assert_eq!(
+        "-0",
+        negative_zero.clone().with_sign_display(Auto).to_string()
+    );
+    assert_eq!(
+        "+163",
+        positive_nonzero
+            .clone()
+            .with_sign_display(Always)
+            .to_string()
+    );
+    assert_eq!(
+        "-163",
+        negative_nonzero
+            .clone()
+            .with_sign_display(Always)
+            .to_string()
+    );
+    assert_eq!(
+        "+0",
+        positive_zero.clone().with_sign_display(Always).to_string()
+    );
+    assert_eq!(
+        "-0",
+        negative_zero.clone().with_sign_display(Always).to_string()
+    );
+    assert_eq!(
+        "163",
+        positive_nonzero
+            .clone()
+            .with_sign_display(Never)
+            .to_string()
+    );
+    assert_eq!(
+        "163",
+        negative_nonzero
+            .clone()
+            .with_sign_display(Never)
+            .to_string()
+    );
+    assert_eq!(
+        "0",
+        positive_zero.clone().with_sign_display(Never).to_string()
+    );
+    assert_eq!(
+        "0",
+        negative_zero.clone().with_sign_display(Never).to_string()
+    );
+    assert_eq!(
+        "+163",
+        positive_nonzero
+            .clone()
+            .with_sign_display(ExceptZero)
+            .to_string()
+    );
+    assert_eq!(
+        "-163",
+        negative_nonzero
+            .clone()
+            .with_sign_display(ExceptZero)
+            .to_string()
+    );
+    assert_eq!(
+        "0",
+        positive_zero
+            .clone()
+            .with_sign_display(ExceptZero)
+            .to_string()
+    );
+    assert_eq!(
+        "0",
+        negative_zero
+            .clone()
+            .with_sign_display(ExceptZero)
+            .to_string()
+    );
+    assert_eq!(
+        "163",
+        positive_nonzero
+            .clone()
+            .with_sign_display(Negative)
+            .to_string()
+    );
+    assert_eq!(
+        "-163",
+        negative_nonzero
+            .clone()
+            .with_sign_display(Negative)
+            .to_string()
+    );
+    assert_eq!(
+        "0",
+        positive_zero
+            .clone()
+            .with_sign_display(Negative)
+            .to_string()
+    );
+    assert_eq!(
+        "0",
+        negative_zero
+            .clone()
+            .with_sign_display(Negative)
+            .to_string()
+    );
 }
 
 #[test]
