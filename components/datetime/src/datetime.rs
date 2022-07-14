@@ -39,6 +39,7 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{options::length::Time, TimeFormat};
 /// use icu::locid::locale;
+/// use writeable::assert_writeable_eq;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
@@ -53,7 +54,7 @@ use crate::{date::DateTimeInput, CldrCalendar, DateTimeFormatError, FormattedDat
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// println!("{}", tf.format_to_string(&datetime));
+/// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -120,6 +121,7 @@ impl<C: CldrCalendar> TimeFormat<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::length::Time, TimeFormat};
+    /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
@@ -129,9 +131,7 @@ impl<C: CldrCalendar> TimeFormat<C> {
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let formatted = tf.format(&datetime);
-    ///
-    /// println!("Time: {}", formatted);
+    /// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
@@ -166,7 +166,7 @@ impl<C: CldrCalendar> TimeFormat<C> {
     /// tf.format_to_write(&mut buffer, &datetime)
     ///     .expect("Failed to write to a buffer.");
     ///
-    /// println!("Time: {}", buffer);
+    /// assert_eq!(buffer, "12:34 PM");
     /// ```
     #[inline]
     pub fn format_to_write(
@@ -193,7 +193,7 @@ impl<C: CldrCalendar> TimeFormat<C> {
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// println!("{}", tf.format_to_string(&datetime));
+    /// assert_eq!(tf.format_to_string(&datetime), "12:34 PM");
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
@@ -226,7 +226,7 @@ impl<C: CldrCalendar> TimeFormat<C> {
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// println!("{}", df.format_to_string(&datetime));
+/// assert_eq!(df.format_to_string(&datetime), "Tuesday, September 1, 2020");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -288,6 +288,7 @@ impl<C: CldrCalendar> DateFormat<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::{options::length::Date, DateFormat};
+    /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let df = DateFormat::<Gregorian>::try_new(locale, &provider, Date::Full)
@@ -296,9 +297,7 @@ impl<C: CldrCalendar> DateFormat<C> {
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let formatted = df.format(&datetime);
-    ///
-    /// println!("Time: {}", formatted);
+    /// assert_writeable_eq!(df.format(&datetime), "Tuesday, September 1, 2020");
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
@@ -332,7 +331,7 @@ impl<C: CldrCalendar> DateFormat<C> {
     /// df.format_to_write(&mut buffer, &datetime)
     ///     .expect("Failed to write to a buffer.");
     ///
-    /// println!("Time: {}", buffer);
+    /// assert_eq!(buffer, "9/1/20");
     /// ```
     #[inline]
     pub fn format_to_write(
@@ -358,7 +357,7 @@ impl<C: CldrCalendar> DateFormat<C> {
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// println!("{}", df.format_to_string(&datetime));
+    /// assert_eq!(df.format_to_string(&datetime), "9/1/20");
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
@@ -400,7 +399,7 @@ impl<C: CldrCalendar> DateFormat<C> {
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// println!("{}", dtf.format_to_string(&datetime));
+/// assert_eq!(dtf.format_to_string(&datetime), "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -513,6 +512,7 @@ where {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::DateTimeFormat;
+    /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
@@ -522,9 +522,7 @@ where {
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let formatted_date = dtf.format(&datetime);
-    ///
-    /// println!("Date: {}", formatted_date);
+    /// assert_writeable_eq!(dtf.format(&datetime), "12:34:28 PM");
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
@@ -559,7 +557,7 @@ where {
     /// dtf.format_to_write(&mut buffer, &datetime)
     ///     .expect("Failed to write to a buffer.");
     ///
-    /// println!("Date: {}", buffer);
+    /// assert_eq!(buffer, "12:34:28 PM");
     /// ```
     #[inline]
     pub fn format_to_write(
@@ -586,7 +584,7 @@ where {
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// println!("{}", dtf.format_to_string(&datetime));
+    /// assert_eq!(dtf.format_to_string(&datetime), "12:34:28 PM");
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
