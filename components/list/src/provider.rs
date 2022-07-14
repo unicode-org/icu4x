@@ -262,14 +262,14 @@ mod datagen {
         pub fn make_conditional(
             &mut self,
             pattern: &str,
-            regex: &str,
+            regex: &StringMatcher<'static>,
             alternative_pattern: &str,
         ) -> Result<(), DataError> {
             let old = ListJoinerPattern::from_str(pattern, true, true)?;
             for i in 0..12 {
                 if self.0[i].default == old {
                     self.0[i].special_case = Some(SpecialCasePattern {
-                        condition: StringMatcher::new(regex)?,
+                        condition: regex.clone(),
                         pattern: ListJoinerPattern::from_str(
                             alternative_pattern,
                             i % 4 == 0 || i % 4 == 3, // allow_prefix = start or pair
@@ -363,7 +363,7 @@ pub(crate) mod test {
         ])
         .unwrap();
         patterns
-            .make_conditional("{0}. {1}", "A", "{0} :o {1}")
+            .make_conditional("{0}. {1}", &StringMatcher::new("A").unwrap(), "{0} :o {1}")
             .unwrap();
         patterns
     }

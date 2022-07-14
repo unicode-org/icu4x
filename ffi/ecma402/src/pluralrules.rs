@@ -241,7 +241,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         L: ecma402_traits::Locale,
         Self: Sized,
     {
-        todo!("Introduce a global data provider here");
+        Self::try_new_with_provider(l, opts, &crate::BakedDataProvider)
     }
 
     fn select<W>(&self, number: f64, writer: &mut W) -> std::fmt::Result
@@ -328,13 +328,9 @@ mod testing {
                 expected: vec!["other", "other", "other", "other", "other", "other"],
             },
         ];
-        let provider = icu_testdata::get_provider();
         for (i, test) in tests.into_iter().enumerate() {
-            let plr = super::PluralRules::try_new_with_provider(
-                crate::Locale::FromLocale(test.locale),
-                test.opts,
-                &provider,
-            )?;
+            let plr =
+                super::PluralRules::try_new(crate::Locale::FromLocale(test.locale), test.opts)?;
             assert_eq!(
                 test.numbers
                     .iter()
