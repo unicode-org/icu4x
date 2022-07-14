@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657756214108,
+  "lastUpdate": 1657837322297,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20063,6 +20063,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3465386b4a7c7cbeeedfc3577973e44a66f1b56c"
         },
         "date": 1657756175903,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "17a7494fa33c1b7385261fb3c034b95a53f18139",
+          "message": "Adding list Ecma402 implementations (#2179)",
+          "timestamp": "2022-07-14T23:19:55+01:00",
+          "tree_id": "111c7653556c5c0f17bbed503cf1996f50d04695",
+          "url": "https://github.com/unicode-org/icu4x/commit/17a7494fa33c1b7385261fb3c034b95a53f18139"
+        },
+        "date": 1657837288583,
         "tool": "ndjson",
         "benches": [
           {
