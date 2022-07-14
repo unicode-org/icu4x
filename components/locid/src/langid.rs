@@ -351,18 +351,6 @@ impl FromStr for LanguageIdentifier {
     }
 }
 
-impl Ord for LanguageIdentifier {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.strict_cmp(other.to_string().as_bytes())
-    }
-}
-
-impl PartialOrd for LanguageIdentifier {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
 impl_writeable_for_each_subtag_str_no_test!(LanguageIdentifier);
 
 #[test]

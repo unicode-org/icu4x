@@ -24,7 +24,7 @@ use icu_locid::LanguageIdentifier;
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
-#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest {
     pub options: ResourceOptions,

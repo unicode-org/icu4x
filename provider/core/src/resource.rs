@@ -394,18 +394,6 @@ impl fmt::Display for ResourceOptions {
     }
 }
 
-impl Ord for ResourceOptions {
-    fn cmp(&self, other: &Self) -> Ordering {
-        self.strict_cmp(other.to_string().as_bytes())
-    }
-}
-
-impl PartialOrd for ResourceOptions {
-    fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
 impl Writeable for ResourceOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.langid.write_to(sink)?;
