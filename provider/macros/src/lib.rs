@@ -12,15 +12,19 @@
         clippy::panic
     )
 )]
+// Panics are OK in proc macros
+#![allow(clippy::panic)]
 
 extern crate proc_macro;
 use proc_macro::TokenStream;
 use proc_macro2::TokenStream as TokenStream2;
 use quote::quote;
+use std::fmt::Write;
 use syn::parse_macro_input;
 use syn::spanned::Spanned;
 use syn::AttributeArgs;
 use syn::DeriveInput;
+use syn::Lit;
 use syn::Meta;
 use syn::NestedMeta;
 
@@ -44,7 +48,7 @@ mod tests;
 /// #[icu_provider::data_struct(
 ///     FooV1Marker,
 ///     BarV1Marker = "demo/bar@1",
-///     BazV1Marker = "demo/baz@1"
+///     marker(BazV1Marker, "demo/baz@1", fallback_by = "region", extension_key = "ca")
 /// )]
 /// pub struct FooV1<'data> {
 ///     message: Cow<'data, str>,
@@ -54,7 +58,24 @@ mod tests;
 /// // The other two implement `ResourceMarker`.
 ///
 /// assert_eq!(BarV1Marker::KEY.get_path(), "demo/bar@1");
-/// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1");
+/// assert_eq!(
+///     BarV1Marker::KEY.get_metadata().fallback_priority,
+///     icu_provider::FallbackPriority::Language
+/// );
+/// assert_eq!(
+///     BarV1Marker::KEY.get_metadata().extension_key,
+///     None
+/// );
+///
+/// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1[R][u-ca]");
+/// assert_eq!(
+///     BazV1Marker::KEY.get_metadata().fallback_priority,
+///     icu_provider::FallbackPriority::Region
+/// );
+/// assert_eq!(
+///     BazV1Marker::KEY.get_metadata().extension_key,
+///     Some(icu_locid::extensions_unicode_key!("ca"))
+/// );
 /// ```
 ///
 /// If the `#[databake(path = ...)]` attribute is present on the data struct, this will also
@@ -107,44 +128,104 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
     let mut result = TokenStream2::new();
 
     for single_attr in attr.into_iter() {
+        let mut marker_name: Option<syn::Path> = None;
+        let mut key_lit: Option<syn::LitStr> = None;
+        let mut fallback_by: Option<syn::LitStr> = None;
+        let mut extension_key: Option<syn::LitStr> = None;
+
         match single_attr {
+            NestedMeta::Meta(Meta::List(meta_list)) => {
+                match meta_list.path.get_ident() {
+                    Some(ident) if ident.to_string().as_str() == "marker" => (),
+                    _ => panic!("Meta list must be `marker(...)`"),
+                }
+                for inner_meta in meta_list.nested.into_iter() {
+                    match inner_meta {
+                        NestedMeta::Meta(Meta::Path(path)) => {
+                            marker_name = Some(path);
+                        }
+                        NestedMeta::Lit(Lit::Str(lit_str)) => {
+                            key_lit = Some(lit_str);
+                        }
+                        NestedMeta::Meta(Meta::NameValue(name_value)) => {
+                            let lit_str = match name_value.lit {
+                                Lit::Str(lit_str) => lit_str,
+                                _ => panic!("Values in marker() must be strings"),
+                            };
+                            let name_ident_str = match name_value.path.get_ident() {
+                                Some(ident) => ident.to_string(),
+                                None => panic!("Names in marker() must be identifiers"),
+                            };
+                            match name_ident_str.as_str() {
+                                "fallback_by" => fallback_by = Some(lit_str),
+                                "extension_key" => extension_key = Some(lit_str),
+                                _ => panic!("Invalid argument name in marker()"),
+                            }
+                        }
+                        _ => panic!("Invalid argument in marker()"),
+                    }
+                }
+            }
             NestedMeta::Meta(Meta::NameValue(name_value)) => {
-                let marker_name = &name_value.path;
-                let key_lit = &name_value.lit;
-                let key_str = match key_lit {
-                    syn::Lit::Str(lit_str) => lit_str.value(),
-                    #[allow(clippy::panic)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
+                marker_name = Some(name_value.path);
+                match name_value.lit {
+                    syn::Lit::Str(lit_str) => key_lit = Some(lit_str),
                     _ => panic!("Key must be a string"),
                 };
-                let docs = format!("Marker type for [`{}`]: \"{}\"", name, key_str);
-                result.extend(quote!(
-                    #[doc = #docs]
-                    #bake_derive
-                    pub struct #marker_name;
-                    impl icu_provider::DataMarker for #marker_name {
-                        type Yokeable = #name_with_lt;
-                    }
-                    impl icu_provider::ResourceMarker for #marker_name {
-                        const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_lit);
-                    }
-                ));
             }
-            NestedMeta::Meta(Meta::Path(marker_name)) => {
-                let docs = format!("Marker type for [`{}`]", name);
-                result.extend(quote!(
-                    #[doc = #docs]
-                    #bake_derive
-                    pub struct #marker_name;
-                    impl icu_provider::DataMarker for #marker_name {
-                        type Yokeable = #name_with_lt;
-                    }
-                ));
+            NestedMeta::Meta(Meta::Path(path)) => {
+                marker_name = Some(path);
             }
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
             _ => {
                 panic!("Invalid attribute to #[data_struct]")
             }
+        }
+
+        let marker_name = match marker_name {
+            Some(path) => path,
+            None => panic!("#[data_struct] arguments must include a marker name"),
+        };
+
+        let docs = if let Some(key_lit) = &key_lit {
+            let fallback_by_docs_str = match &fallback_by {
+                Some(fallback_by) => fallback_by.value(),
+                None => "language (default)".to_string(),
+            };
+            let extension_key_docs_str = match &extension_key {
+                Some(extension_key) => extension_key.value(),
+                None => "none (default)".to_string(),
+            };
+            format!("Marker type for [`{}`]: \"{}\"\n\n- Fallback priority: {}\n- Extension keyword: {}", name, key_lit.value(), fallback_by_docs_str, extension_key_docs_str)
+        } else {
+            format!("Marker type for [`{}`]", name)
+        };
+
+        result.extend(quote!(
+            #[doc = #docs]
+            #bake_derive
+            pub struct #marker_name;
+            impl icu_provider::DataMarker for #marker_name {
+                type Yokeable = #name_with_lt;
+            }
+        ));
+
+        if let Some(key_lit) = &key_lit {
+            let mut key_str = key_lit.value();
+            if let Some(fallback_by_lit) = fallback_by {
+                match fallback_by_lit.value().as_str() {
+                    "region" => write!(key_str, "[R]").unwrap(),
+                    "language" => (),
+                    _ => panic!("Invalid value for fallback_by"),
+                };
+            }
+            if let Some(extension_key_lit) = extension_key {
+                write!(key_str, "[u-{}]", extension_key_lit.value()).unwrap();
+            }
+            result.extend(quote!(
+                impl icu_provider::ResourceMarker for #marker_name {
+                    const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_str);
+                }
+            ));
         }
     }
 

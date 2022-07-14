@@ -20,7 +20,7 @@ use core::fmt::Debug;
 use core::marker::PhantomData;
 use icu_locid::LanguageIdentifier;
 
-#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
@@ -34,6 +34,12 @@ pub struct DataRequest {
 impl fmt::Display for DataRequest {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.options, f)
+    }
+}
+
+impl AsMut<ResourceOptions> for DataRequest {
+    fn as_mut(&mut self) -> &mut ResourceOptions {
+        &mut self.options
     }
 }
 
