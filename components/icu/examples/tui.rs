@@ -8,11 +8,11 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu::calendar::Gregorian;
-use icu::datetime::DateTimeFormatOptions;
+use icu::datetime::DateTimeFormatterOptions;
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
 use icu_datetime::{
-    mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatOptions, ZonedDateTimeFormat,
+    mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
 };
 use icu_uniset::UnicodeSetBuilder;
 use std::env;
@@ -46,16 +46,16 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     print(format!("User: {}", user_name));
 
     {
-        let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
+        let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
             locale,
             &provider,
             &provider,
             &provider,
             &provider,
-            &DateTimeFormatOptions::default(),
-            &TimeZoneFormatOptions::default(),
+            &DateTimeFormatterOptions::default(),
+            &TimeZoneFormatterOptions::default(),
         )
-        .expect("Failed to create DateTimeFormat.");
+        .expect("Failed to create DateTimeFormatter.");
         let today: MockZonedDateTime = "2020-10-10T18:56:00Z"
             .parse()
             .expect("Failed to parse date");

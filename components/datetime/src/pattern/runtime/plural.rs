@@ -4,7 +4,7 @@
 
 use crate::{
     date::{DateTimeInput, LocalizedDateTimeInput},
-    error::DateTimeFormatError,
+    error::DateTimeFormatterError,
     fields::{Field, FieldSymbol, Week},
     pattern::{runtime::Pattern, PatternError, PatternItem},
 };
@@ -153,7 +153,7 @@ impl<'data> PatternPlurals<'data> {
         &self,
         loc_datetime: &impl LocalizedDateTimeInput<T>,
         ordinal_rules: Option<&PluralRules>,
-    ) -> Result<&Pattern, DateTimeFormatError>
+    ) -> Result<&Pattern, DateTimeFormatterError>
     where
         T: DateTimeInput,
     {

@@ -213,7 +213,9 @@ impl DateInput for ExtractedDateTimeInput {
         self.any_calendar_kind
     }
     fn to_iso(&self) -> Date<Iso> {
-        unreachable!("ExtractedDateTimeInput should never be directly passed to AnyDateTimeFormat")
+        unreachable!(
+            "ExtractedDateTimeInput should never be directly passed to AnyDateTimeFormatter"
+        )
     }
 }
 
@@ -256,7 +258,7 @@ impl DateInput for ExtractedZonedDateTimeInput {
     }
     fn to_iso(&self) -> Date<Iso> {
         unreachable!(
-            "ExtractedZonedDateTimeInput should never be directly passed to AnyDateTimeFormat"
+            "ExtractedZonedDateTimeInput should never be directly passed to AnyDateTimeFormatter"
         )
     }
 }

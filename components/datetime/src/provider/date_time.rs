@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::date;
-use crate::error::DateTimeFormatError;
+use crate::error::DateTimeFormatterError;
 use crate::fields;
-use crate::options::{components, length, preferences, DateTimeFormatOptions};
+use crate::options::{components, length, preferences, DateTimeFormatterOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
@@ -19,7 +19,7 @@ use icu_calendar::types::{Era, MonthCode};
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 
-type Result<T> = core::result::Result<T, DateTimeFormatError>;
+type Result<T> = core::result::Result<T, DateTimeFormatterError>;
 
 fn pattern_for_time_length_inner<'data>(
     data: TimePatternsV1<'data>,
@@ -177,15 +177,15 @@ where
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
         locale: &'a Locale,
-        options: &DateTimeFormatOptions,
+        options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
             data_provider,
             locale,
         };
         match options {
-            DateTimeFormatOptions::Length(bag) => selector.pattern_for_length_bag(bag),
-            DateTimeFormatOptions::Components(bag) => selector.patterns_for_components_bag(bag),
+            DateTimeFormatterOptions::Length(bag) => selector.pattern_for_length_bag(bag),
+            DateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
         }
     }
 
@@ -267,7 +267,7 @@ where
             | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(pattern),
             skeleton::BestSkeleton::NoMatch => None,
         }
-        .ok_or(DateTimeFormatError::UnsupportedOptions)?;
+        .ok_or(DateTimeFormatterError::UnsupportedOptions)?;
         Ok(DataPayload::from_owned(PatternPluralsV1(
             patterns.into_owned(),
         )))
@@ -326,7 +326,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
                             .0
                             .get(idx)
                             .map(|x| &**x)
-                            .ok_or(DateTimeFormatError::MissingWeekdaySymbol(idx));
+                            .ok_or(DateTimeFormatterError::MissingWeekdaySymbol(idx));
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -347,7 +347,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
             .0
             .get(idx)
             .map(|x| &**x)
-            .ok_or(DateTimeFormatError::MissingWeekdaySymbol(idx))
+            .ok_or(DateTimeFormatterError::MissingWeekdaySymbol(idx))
     }
 
     fn get_symbol_for_month(
@@ -368,7 +368,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
                     if let Some(symbols) = symbols {
                         return symbols
                             .get(code)
-                            .ok_or(DateTimeFormatError::MissingMonthSymbol(code));
+                            .ok_or(DateTimeFormatterError::MissingMonthSymbol(code));
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, code);
                     }
@@ -384,7 +384,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
         };
         symbols
             .get(code)
-            .ok_or(DateTimeFormatError::MissingMonthSymbol(code))
+            .ok_or(DateTimeFormatterError::MissingMonthSymbol(code))
     }
 
     fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str> {
@@ -395,7 +395,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
         };
         symbols
             .get(&era_code.0)
-            .ok_or(DateTimeFormatError::MissingEraSymbol(era_code.0))
+            .ok_or(DateTimeFormatterError::MissingEraSymbol(era_code.0))
     }
 }
 

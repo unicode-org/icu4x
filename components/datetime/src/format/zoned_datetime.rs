@@ -8,7 +8,7 @@ use crate::date::ZonedDateTimeInput;
 use crate::date::{
     ExtractedZonedDateTimeInput, LocalizedDateTimeInput, ZonedDateTimeInputWithLocale,
 };
-use crate::error::DateTimeFormatError as Error;
+use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::pattern::{runtime, PatternItem};
 use crate::{raw, FormattedTimeZone};
@@ -19,7 +19,7 @@ use super::datetime;
 
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct FormattedZonedDateTime<'l> {
-    pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormat,
+    pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormatter,
     pub(crate) zoned_datetime: ExtractedZonedDateTimeInput,
 }
 
@@ -40,7 +40,7 @@ impl<'l> fmt::Display for FormattedZonedDateTime<'l> {
 }
 
 pub(crate) fn write_pattern<T, W>(
-    zoned_datetime_format: &raw::ZonedDateTimeFormat,
+    zoned_datetime_format: &raw::ZonedDateTimeFormatter,
     zoned_datetime: &T,
     w: &mut W,
 ) -> Result<(), Error>
@@ -87,7 +87,7 @@ fn write_field<T, W>(
     pattern: &runtime::Pattern,
     field: fields::Field,
     next_item: Option<&PatternItem>,
-    zoned_datetime_format: &raw::ZonedDateTimeFormat,
+    zoned_datetime_format: &raw::ZonedDateTimeFormatter,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
     w: &mut W,
 ) -> Result<(), Error>

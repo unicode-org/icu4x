@@ -1,21 +1,21 @@
 import Benchmark from 'benchmark';
 
-import { FixedDecimal, Locale, StaticDataProvider, FixedDecimalFormat } from "../lib/high-level.mjs"
+import { FixedDecimal, Locale, StaticDataProvider, FixedDecimalFormatter } from "../lib/high-level.mjs"
 
 const locale = new Locale("bn");
 const dataProvider = new StaticDataProvider();
 
 let suite = new Benchmark.Suite();
 
-suite = suite.add("new FixedDecimalFormat", () => {
-  (new FixedDecimalFormat(locale, dataProvider, {})).underlying > 0;
+suite = suite.add("new FixedDecimalFormatter", () => {
+  (new FixedDecimalFormatter(locale, dataProvider, {})).underlying > 0;
 });
 
-const format = new FixedDecimalFormat(locale, dataProvider, {});
+const format = new FixedDecimalFormatter(locale, dataProvider, {});
 const decimal = new FixedDecimal(BigInt(1234));
 decimal.multiply_pow10(-2);
 
-suite = suite.add("FixedDecimalFormat.format", () => {
+suite = suite.add("FixedDecimalFormatter.format", () => {
   format.format(decimal);
 });
 
