@@ -192,9 +192,9 @@ pub mod prelude {
 pub use prelude::*;
 
 // Less important non-prelude items
-pub use crate::response::RcWrap;
 pub use crate::marker::FallbackPriority;
 pub use crate::marker::ResourceKeyMetadata;
+pub use crate::response::RcWrap;
 
 // For macros
 #[doc(hidden)]

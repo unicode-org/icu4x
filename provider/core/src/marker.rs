@@ -361,11 +361,13 @@ impl ResourceKey {
                     MetaUDashB
                 }
                 (MetaUDashB, Some(b @ b'a'..=b'z')) => {
-                    extension_key =
-                        match icu_locid::extensions::unicode::Key::from_bytes(&[extension_key_first_byte, b]) {
-                            Ok(v) => Some(v),
-                            Err(_) => unreachable!(),
-                        };
+                    extension_key = match icu_locid::extensions::unicode::Key::from_bytes(&[
+                        extension_key_first_byte,
+                        b,
+                    ]) {
+                        Ok(v) => Some(v),
+                        Err(_) => unreachable!(),
+                    };
                     MetaClose
                 }
                 (MetaClose, Some(b']')) => MetaAfter,
