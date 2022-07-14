@@ -93,13 +93,10 @@ where
     D: ResourceProvider<TimePatternsV1Marker> + ?Sized,
 {
     let patterns_data = time_patterns_data_payload(data_provider, locale)?;
-    Ok(patterns_data.map_project_with_capture(
-        (length, preferences),
-        |data, (length, preferences), _| {
-            let pattern = pattern_for_time_length_inner(data, length, &preferences).clone();
-            pattern.into()
-        },
-    ))
+    Ok(patterns_data.map_project(|data, _| {
+        let pattern = pattern_for_time_length_inner(data, length, &preferences).clone();
+        pattern.into()
+    }))
 }
 
 fn date_patterns_data_payload<D>(
@@ -128,12 +125,10 @@ where
     D: ResourceProvider<DatePatternsV1Marker> + ?Sized,
 {
     let patterns_data = date_patterns_data_payload(data_provider, locale)?;
-    Ok(
-        patterns_data.map_project_with_capture(length, |data, length, _| {
-            let pattern = pattern_for_date_length_inner(data, length);
-            pattern.into()
-        }),
-    )
+    Ok(patterns_data.map_project(|data, _| {
+        let pattern = pattern_for_date_length_inner(data, length);
+        pattern.into()
+    }))
 }
 
 /// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
@@ -146,18 +141,16 @@ where
     D: ResourceProvider<DatePatternsV1Marker> + ?Sized,
 {
     let patterns_data = date_patterns_data_payload(data_provider, locale)?;
-    Ok(
-        patterns_data.map_project_with_capture(length, |data, length, _| {
-            let pattern = match length {
-                length::Date::Full => data.length_combinations.full,
-                length::Date::Long => data.length_combinations.long,
-                length::Date::Medium => data.length_combinations.medium,
-                length::Date::Short => data.length_combinations.short,
-            };
+    Ok(patterns_data.map_project(|data, _| {
+        let pattern = match length {
+            length::Date::Full => data.length_combinations.full,
+            length::Date::Long => data.length_combinations.long,
+            length::Date::Medium => data.length_combinations.medium,
+            length::Date::Short => data.length_combinations.short,
+        };
 
-            pattern.into()
-        }),
-    )
+        pattern.into()
+    }))
 }
 
 pub struct PatternSelector<'a, D: ?Sized> {
@@ -231,30 +224,27 @@ where
         let time_patterns_data = time_patterns_data_payload(self.data_provider, self.locale)?;
 
         let date_patterns_data = date_patterns_data_payload(self.data_provider, self.locale)?;
-        date_patterns_data.try_map_project_with_capture(
-            (date_length, time_length, preferences, time_patterns_data),
-            |data, (date_length, time_length, preferences, time_patterns_data), _| {
-                // TODO (#1131) - We may be able to remove the clone here.
-                let date = pattern_for_date_length_inner(data.clone(), date_length)
-                    .expect_pattern("Lengths are single patterns");
-
-                let pattern = match date_length {
-                    length::Date::Full => data.length_combinations.full,
-                    length::Date::Long => data.length_combinations.long,
-                    length::Date::Medium => data.length_combinations.medium,
-                    length::Date::Short => data.length_combinations.short,
-                };
-
-                // TODO (#1131) - We may be able to remove the clone here.
-                let time = pattern_for_time_length_inner(
-                    time_patterns_data.get().clone(),
-                    time_length,
-                    &preferences,
-                )
+        date_patterns_data.try_map_project(|data, _| {
+            // TODO (#1131) - We may be able to remove the clone here.
+            let date = pattern_for_date_length_inner(data.clone(), date_length)
                 .expect_pattern("Lengths are single patterns");
-                Ok(PatternPlurals::from(pattern.combined(date, time)?).into())
-            },
-        )
+
+            let pattern = match date_length {
+                length::Date::Full => data.length_combinations.full,
+                length::Date::Long => data.length_combinations.long,
+                length::Date::Medium => data.length_combinations.medium,
+                length::Date::Short => data.length_combinations.short,
+            };
+
+            // TODO (#1131) - We may be able to remove the clone here.
+            let time = pattern_for_time_length_inner(
+                time_patterns_data.get().clone(),
+                time_length,
+                &preferences,
+            )
+            .expect_pattern("Lengths are single patterns");
+            Ok(PatternPlurals::from(pattern.combined(date, time)?).into())
+        })
     }
 
     /// Determine the appropriate `PatternPlurals` for a given `options::components::Bag`.
