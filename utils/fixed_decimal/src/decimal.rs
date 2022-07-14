@@ -2822,32 +2822,14 @@ fn test_sign_display() {
     );
     assert_eq!(
         "163",
-        positive_nonzero
-            .clone()
-            .with_sign_display(Negative)
-            .to_string()
+        positive_nonzero.with_sign_display(Negative).to_string()
     );
     assert_eq!(
         "-163",
-        negative_nonzero
-            .clone()
-            .with_sign_display(Negative)
-            .to_string()
+        negative_nonzero.with_sign_display(Negative).to_string()
     );
-    assert_eq!(
-        "0",
-        positive_zero
-            .clone()
-            .with_sign_display(Negative)
-            .to_string()
-    );
-    assert_eq!(
-        "0",
-        negative_zero
-            .clone()
-            .with_sign_display(Negative)
-            .to_string()
-    );
+    assert_eq!("0", positive_zero.with_sign_display(Negative).to_string());
+    assert_eq!("0", negative_zero.with_sign_display(Negative).to_string());
 }
 
 #[test]
