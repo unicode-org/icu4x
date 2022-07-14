@@ -12,7 +12,7 @@ use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 
-#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest {
     pub options: ResourceOptions,
@@ -25,7 +25,13 @@ impl fmt::Display for DataRequest {
     }
 }
 
-#[derive(Default, Debug, PartialEq, Eq, PartialOrd, Ord)]
+impl AsMut<ResourceOptions> for DataRequest {
+    fn as_mut(&mut self) -> &mut ResourceOptions {
+        &mut self.options
+    }
+}
+
+#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
@@ -47,6 +53,12 @@ impl fmt::Debug for ResourceOptions {
 impl fmt::Display for ResourceOptions {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeable::Writeable::write_to(self, f)
+    }
+}
+
+impl AsMut<ResourceOptions> for ResourceOptions {
+    fn as_mut(&mut self) -> &mut ResourceOptions {
+        self
     }
 }
 

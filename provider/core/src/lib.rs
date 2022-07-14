@@ -191,5 +191,13 @@ pub mod prelude {
 // Also include the same symbols at the top level for selective inclusion
 pub use prelude::*;
 
-// Less important non-prelude item
+// Less important non-prelude items
 pub use crate::response::RcWrap;
+pub use crate::marker::FallbackPriority;
+pub use crate::marker::ResourceKeyMetadata;
+
+// For macros
+#[doc(hidden)]
+pub mod _internal {
+    pub use icu_locid::extensions_unicode_key;
+}

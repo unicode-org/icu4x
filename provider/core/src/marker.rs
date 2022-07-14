@@ -130,6 +130,74 @@ impl AsULE for ResourceKeyHash {
 // Safe since the ULE type is `self`.
 unsafe impl EqULE for ResourceKeyHash {}
 
+/// Hint for what to prioritize during fallback when data is unavailable.
+///
+/// For example, if `"en-US"` is requested, but we have no data for that specific locale,
+/// fallback may take us to `"en"` or `"und-US"` to check for data.
+#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+#[non_exhaustive]
+pub enum FallbackPriority {
+    /// Prioritize the language. This is the default behavior.
+    ///
+    /// For example, `"en-US"` should go to `"en"` and then `"und"`.
+    Language,
+    /// Prioritize the region.
+    ///
+    /// For example, `"en-US"` should go to `"und-US"` and then `"und"`.
+    Region,
+}
+
+impl FallbackPriority {
+    /// Const-friendly version of [`Default::default`].
+    pub const fn const_default() -> Self {
+        Self::Language
+    }
+}
+
+impl Default for FallbackPriority {
+    fn default() -> Self {
+        Self::const_default()
+    }
+}
+
+/// Metadata statically associated with a particular [`ResourceKey`].
+#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+#[non_exhaustive]
+pub struct ResourceKeyMetadata {
+    /// What to prioritize when fallbacking on this [`ResourceKey`].
+    pub fallback_priority: FallbackPriority,
+    /// A Unicode extension keyword to consider when loading data for this [`ResourceKey`].
+    pub extension_key: Option<icu_locid::extensions::unicode::Key>,
+}
+
+impl ResourceKeyMetadata {
+    /// Const-friendly version of [`Default::default`].
+    pub const fn const_default() -> Self {
+        Self {
+            fallback_priority: FallbackPriority::const_default(),
+            extension_key: None,
+        }
+    }
+
+    /// Create a new [`ResourceKeyMetadata`] with the specified options.
+    pub const fn from_fallback_priority_and_extension_key(
+        fallback_priority: FallbackPriority,
+        extension_key: Option<icu_locid::extensions::unicode::Key>,
+    ) -> Self {
+        // Note: We need this function because the struct is non-exhaustive.
+        Self {
+            fallback_priority,
+            extension_key,
+        }
+    }
+}
+
+impl Default for ResourceKeyMetadata {
+    fn default() -> Self {
+        Self::const_default()
+    }
+}
+
 /// Used for loading data from an ICU4X data provider.
 ///
 /// A resource key is tightly coupled with the code that uses it to load data at runtime.
@@ -159,6 +227,7 @@ pub struct ResourceKey {
     // in a compiled binary.
     path: &'static str,
     hash: ResourceKeyHash,
+    metadata: ResourceKeyMetadata,
 }
 
 impl PartialEq for ResourceKey {
@@ -204,6 +273,12 @@ impl ResourceKey {
         self.hash
     }
 
+    /// Gets the metadata associated with this [`ResourceKey`].
+    #[inline]
+    pub const fn get_metadata(&self) -> ResourceKeyMetadata {
+        self.metadata
+    }
+
     #[doc(hidden)]
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
@@ -238,10 +313,19 @@ impl ResourceKey {
             Body,
             At,
             Version,
+            MetaOpen,
+            MetaU,
+            MetaUDash,
+            MetaUDashB,
+            MetaClose,
+            MetaAfter,
         }
         use State::*;
         i = start;
         let mut state = Empty;
+        let mut fallback_priority = FallbackPriority::const_default();
+        let mut extension_key_first_byte = b'\0';
+        let mut extension_key = None;
         loop {
             let byte = if i < end {
                 Some(path.as_bytes()[i])
@@ -254,16 +338,48 @@ impl ResourceKey {
                 (Body, Some(b'@')) => At,
                 (At | Version, Some(b'0'..=b'9')) => Version,
                 // One of these cases will be hit at the latest when i == end, so the loop converges.
-                (Version, None) => {
+                (Version | MetaAfter, None) => {
                     return Ok(Self {
                         path,
                         hash: ResourceKeyHash::compute_from_str(path),
+                        metadata: ResourceKeyMetadata {
+                            fallback_priority,
+                            extension_key,
+                        },
                     })
                 }
 
+                (Version | MetaAfter, Some(b'[')) => MetaOpen,
+                (MetaOpen, Some(b'R')) => {
+                    fallback_priority = FallbackPriority::Region;
+                    MetaClose
+                }
+                (MetaOpen, Some(b'u')) => MetaU,
+                (MetaU, Some(b'-')) => MetaUDash,
+                (MetaUDash, Some(b @ b'a'..=b'z')) => {
+                    extension_key_first_byte = b;
+                    MetaUDashB
+                }
+                (MetaUDashB, Some(b @ b'a'..=b'z')) => {
+                    extension_key =
+                        match icu_locid::extensions::unicode::Key::from_bytes(&[extension_key_first_byte, b]) {
+                            Ok(v) => Some(v),
+                            Err(_) => unreachable!(),
+                        };
+                    MetaClose
+                }
+                (MetaClose, Some(b']')) => MetaAfter,
+
                 (Empty, _) => return Err(("[a-zA-Z0-9_]", i)),
                 (Body, _) => return Err(("[a-zA-z0-9_/@]", i)),
-                (At | Version, _) => return Err(("[0-9]", i)),
+                (At, _) => return Err(("[0-9]", i)),
+                (Version, _) => return Err(("[0-9\\[]", i)),
+                (MetaOpen, _) => return Err(("[uR]", i)),
+                (MetaU, _) => return Err(("[-]", i)),
+                (MetaUDash, _) => return Err(("[a-z]", i)),
+                (MetaUDashB, _) => return Err(("[a-z]", i)),
+                (MetaClose, _) => return Err(("[\\]]", i)),
+                (MetaAfter, _) => return Err(("[\\[]", i)),
             };
             i += 1;
         }
@@ -318,8 +434,7 @@ macro_rules! resource_key {
         const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
             match $crate::ResourceKey::construct_internal($crate::tagged!($path)) {
                 Ok(v) => v,
-                #[allow(clippy::panic)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::panic)] // Const context
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
                 // TODO Once formatting is const:
                 // Err((expected, index)) => panic!(
@@ -366,12 +481,15 @@ impl Writeable for ResourceKey {
 #[test]
 fn test_path_syntax() {
     // Valid keys:
-    assert!(ResourceKey::construct_internal(tagged!("hello/world@1")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello/world/foo@1")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello/world@999")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello_world/foo@1")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello_458/world@1")).is_ok());
-    assert!(ResourceKey::construct_internal(tagged!("hello_world@1")).is_ok());
+    ResourceKey::construct_internal(tagged!("hello/world@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello/world/foo@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello/world@999")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello_world/foo@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello_458/world@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("hello_world@1")).unwrap();
+    ResourceKey::construct_internal(tagged!("foo@1[R]")).unwrap();
+    ResourceKey::construct_internal(tagged!("foo@1[u-ca]")).unwrap();
+    ResourceKey::construct_internal(tagged!("foo@1[R][u-ca]")).unwrap();
 
     // No version:
     assert_eq!(
@@ -392,7 +510,29 @@ fn test_path_syntax() {
     );
     assert_eq!(
         ResourceKey::construct_internal(tagged!("hello/world@1foo")),
-        Err(("[0-9]", concat!(leading_tag!(), "hello/world@1").len()))
+        Err(("[0-9\\[]", concat!(leading_tag!(), "hello/world@1").len()))
+    );
+
+    // Invalid meta:
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[U]")),
+        Err(("[uR]", concat!(leading_tag!(), "foo@1[").len()))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[uca]")),
+        Err(("[-]", concat!(leading_tag!(), "foo@1[u").len()))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[u-")),
+        Err(("[a-z]", concat!(leading_tag!(), "foo@1[u-").len()))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[u-caa]")),
+        Err(("[\\]]", concat!(leading_tag!(), "foo@1[u-ca").len()))
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("foo@1[R")),
+        Err(("[\\]]", concat!(leading_tag!(), "foo@1[u").len()))
     );
 
     // Invalid characters:
@@ -403,16 +543,50 @@ fn test_path_syntax() {
 
     // Invalid tag:
     assert_eq!(
-        ResourceKey::construct_internal(concat!("hello/world@1", trailing_tag!())),
+        ResourceKey::construct_internal(concat!("hello/world@1", trailing_tag!()),),
         Err(("tag", 0))
     );
     assert_eq!(
-        ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1")),
+        ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1"),),
         Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
     );
     assert_eq!(
         ResourceKey::construct_internal("hello/world@1"),
         Err(("tag", 0))
+    );
+}
+
+#[test]
+fn test_metadata_parsing() {
+    use icu_locid::extensions_unicode_key as key;
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1")).map(|k| k.get_metadata()),
+        Ok(ResourceKeyMetadata {
+            fallback_priority: FallbackPriority::Language,
+            extension_key: None
+        })
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.get_metadata()),
+        Ok(ResourceKeyMetadata {
+            fallback_priority: FallbackPriority::Region,
+            extension_key: None
+        })
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.get_metadata()),
+        Ok(ResourceKeyMetadata {
+            fallback_priority: FallbackPriority::Language,
+            extension_key: Some(key!("ca"))
+        })
+    );
+    assert_eq!(
+        ResourceKey::construct_internal(tagged!("hello/world@1[R][u-ca]"))
+            .map(|k| k.get_metadata()),
+        Ok(ResourceKeyMetadata {
+            fallback_priority: FallbackPriority::Region,
+            extension_key: Some(key!("ca"))
+        })
     );
 }
 
