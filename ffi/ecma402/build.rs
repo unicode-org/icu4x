@@ -7,9 +7,17 @@ fn main() {
 
     icu_datagen::datagen(
         None,
-        &icu_datagen::keys(&["plurals/cardinal@1", "plurals/ordinal@1"]),
+        &icu_datagen::keys(&[
+            "list/and@1",
+            "list/or@1",
+            "list/unit@1",
+            "plurals/cardinal@1",
+            "plurals/ordinal@1",
+        ]),
         &icu_datagen::SourceData::default()
             .with_cldr_latest(icu_datagen::CldrLocaleSubset::Full)
+            .unwrap()
+            .with_icuexport_latest()
             .unwrap(),
         vec![icu_datagen::Out::Module {
             mod_directory: std::path::PathBuf::from(std::env::var("OUT_DIR").unwrap())
