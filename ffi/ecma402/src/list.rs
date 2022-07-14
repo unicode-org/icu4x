@@ -5,14 +5,14 @@
 use core::fmt::{self, Display, Write};
 use ecma402_traits::listformat::{
     options::{Style, Type},
-    Format, Options,
+    Options,
 };
 use ecma402_traits::Locale;
 use writeable::Writeable;
 
 pub struct ListFormat(icu::list::ListFormatter);
 
-impl Format for ListFormat {
+impl ecma402_traits::listformat::Format for ListFormat {
     type Error = icu_provider::DataError;
 
     #[allow(unused_variables)]
