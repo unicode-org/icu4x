@@ -6,7 +6,9 @@ use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use tinystr::TinyStr8;
 
 use crate::date::*;
+use crate::metazone::MetaZoneCalculator;
 use core::str::FromStr;
+use icu_calendar::{DateTime, Iso};
 
 /// A temporary struct that implements [`TimeZoneInput`]
 /// and is used in tests, benchmarks and examples of this component.
@@ -61,6 +63,48 @@ impl MockTimeZone {
             metazone_id,
             time_variant,
         }
+    }
+
+    /// Overwrite the metazone id in MockTimeZone.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::date::GmtOffset;
+    /// use icu::datetime::metazone::MetaZoneCalculator;
+    /// use icu::datetime::mock::time_zone::MockTimeZone;
+    /// use icu_calendar::DateTime;
+    /// use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+    /// use icu_locid::locale;
+    /// use tinystr::tinystr;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let mzc = MetaZoneCalculator::new(locale!("en"), &provider);
+    /// let mut tz = MockTimeZone::new(
+    /// GmtOffset::default(),
+    ///     /* time_zone_id */ Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
+    ///     /* metazone_id */ None,
+    ///     /* time_variaint */ None,
+    /// );
+    /// tz.try_set_metazone(
+    /// DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
+    /// mzc.unwrap(),
+    /// );
+    /// assert_eq!(tz.metazone_id, Some(MetaZoneId(tinystr!(4, "guam"))));
+    /// ```
+    pub fn try_set_metazone(
+        &mut self,
+        local_datetime: DateTime<Iso>,
+        metazone_calculator: MetaZoneCalculator,
+    ) -> &mut Self {
+        if let Some(time_zone_id) = self.time_zone_id {
+            extern crate std;
+            std::println!("try_set_metazone");
+
+            self.metazone_id =
+                metazone_calculator.compute_metazone_from_timezone(time_zone_id, local_datetime);
+        }
+        self
     }
 }
 

@@ -321,7 +321,7 @@ impl DateTime<Iso> {
                 + i32::from(self.time.hour.number()) * minutes_a_hour
                 + i32::from(self.time.minute.number())
         } else {
-            0
+            -1
         }
     }
 

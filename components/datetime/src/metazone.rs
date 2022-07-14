@@ -10,31 +10,30 @@ use icu_calendar::DateTime;
 use icu_calendar::Iso;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
+use zerovec::ule::AsULE;
 
 pub struct MetaZoneCalculator {
     pub(super) metazone_period: DataPayload<MetaZonePeriodV1Marker>,
 }
 
+/// [`MetaZoneCalculator`] uses data from the [data provider], the selected [`Locale`] to calculate
+/// metazone id.
 impl MetaZoneCalculator {
-    /// Constructor that loads data to calculate metazone id.
+    /// Constructor that loads data before calculating metazone id.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
-    /// use icu_datetime::{TimeZoneFormat, TimeZoneFormatConfig, TimeZoneFormatOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     /// use icu::datetime::metazone::MetaZoneCalculator;
     ///
-    /// let provider = InvariantDataProvider;
-    ///
-    /// let tzf = MetaZoneCalculator::new(
+    /// let provider = icu_testdata::get_provider();
+    /// let mzc = MetaZoneCalculator::new(
     ///     locale!("en"),
     ///     &provider,
     /// );
     ///
-    /// assert!(tzf.is_ok());
+    /// assert!(mzc.is_ok());
     /// ```
     pub fn new<L, ZP>(locale: L, zone_provider: &ZP) -> Result<Self, DateTimeFormatError>
     where
@@ -51,20 +50,71 @@ impl MetaZoneCalculator {
         Ok(Self { metazone_period })
     }
 
+    /// Calculate metazone id from timezone id and local datetime.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::metazone::MetaZoneCalculator;
+    /// use icu_calendar::DateTime;
+    /// use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+    /// use icu_locid::locale;
+    /// use tinystr::tinystr;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let mzc = MetaZoneCalculator::new(locale!("en"), &provider);
+    ///
+    /// assert_eq!(
+    ///     mzc.as_ref().unwrap().compute_metazone_from_timezone(
+    ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
+    ///         DateTime::new_iso_datetime(1969, 1, 1, 0, 0, 0).unwrap()
+    ///     ),
+    ///     None
+    /// );
+    ///
+    /// assert_eq!(
+    ///     mzc.as_ref().unwrap().compute_metazone_from_timezone(
+    ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
+    ///         DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap()
+    ///     ),
+    ///     Some(MetaZoneId(tinystr!(4, "guam")))
+    /// );
+    ///
+    /// assert_eq!(
+    ///     mzc.as_ref().unwrap().compute_metazone_from_timezone(
+    ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
+    ///         DateTime::new_iso_datetime(1975, 1, 1, 0, 0, 0).unwrap()
+    ///     ),
+    ///     Some(MetaZoneId(tinystr!(4, "guam")))
+    /// );
+    ///
+    /// assert_eq!(
+    ///     mzc.as_ref().unwrap().compute_metazone_from_timezone(
+    ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
+    ///         DateTime::new_iso_datetime(2000, 12, 22, 15, 0, 0).unwrap()
+    ///     ),
+    ///     Some(MetaZoneId(tinystr!(4, "cham")))
+    /// );
+    /// ```
     pub fn compute_metazone_from_timezone(
-        self,
+        &self,
         time_zone_id: TimeZoneBcp47Id,
         local_datetime: DateTime<Iso>,
     ) -> Option<MetaZoneId> {
+        extern crate std;
+        std::println!("contains_key0 entry");
         if self.metazone_period.get().0.contains_key0(&time_zone_id) {
+            std::println!("contains_key0");
             match self.metazone_period.get().0.get0(&time_zone_id) {
                 Some(cursor) => {
                     let mut metazone_id = None;
                     let minutes_since_local_unix_epoch =
                         local_datetime.minutes_since_local_unix_epoch();
                     for (minutes, id) in cursor.iter1() {
-                        if minutes_since_local_unix_epoch >= minutes {
-                            metazone_id = id
+                        std::println!("contains_key1");
+                        if minutes_since_local_unix_epoch >= i32::from_unaligned(*minutes) {
+                            std::println!("get it");
+                            metazone_id = id.get()
                         } else {
                             break;
                         }
