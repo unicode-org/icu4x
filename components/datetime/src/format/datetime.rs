@@ -503,7 +503,8 @@ mod tests {
     #[test]
     #[cfg(feature = "serde")]
     fn test_mixed_calendar_eras() {
-        use icu::calendar::{japanese::Japanese, DateTime};
+        use icu::calendar::japanese::{Japanese, JapaneseEraStyle};
+        use icu::calendar::DateTime;
         use icu::datetime::options::length;
         use icu::datetime::DateTimeFormat;
 
@@ -514,7 +515,8 @@ mod tests {
         let dtf = DateTimeFormat::<Japanese>::try_new(locale, &provider, &options)
             .expect("DateTimeFormat construction succeeds");
 
-        let japanext = Japanese::try_new(&provider, true).expect("Cannot load japanese data");
+        let japanext =
+            Japanese::try_new(&provider, JapaneseEraStyle::All).expect("Cannot load japanese data");
         let datetime = DateTime::new_gregorian_datetime(1800, 9, 1, 12, 34, 28)
             .expect("Failed to construct DateTime.");
         let datetime = datetime.to_calendar(japanext);

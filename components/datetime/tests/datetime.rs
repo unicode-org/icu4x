@@ -13,7 +13,7 @@ use icu_calendar::{
     coptic::Coptic,
     ethiopic::Ethiopic,
     indian::Indian,
-    japanese::Japanese,
+    japanese::{Japanese, JapaneseEraStyle},
     provider::JapaneseErasV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
 };
@@ -59,8 +59,10 @@ fn test_fixture(fixture_name: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let japanese = Japanese::try_new(&provider, false).expect("Cannot load japanese data");
-        let japanext = Japanese::try_new(&provider, true).expect("Cannot load japanese data");
+        let japanese = Japanese::try_new(&provider, JapaneseEraStyle::Modern)
+            .expect("Cannot load japanese data");
+        let japanext =
+            Japanese::try_new(&provider, JapaneseEraStyle::All).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);

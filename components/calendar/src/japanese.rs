@@ -51,6 +51,23 @@ use icu_locid::Locale;
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
 
+/// Which eras to include in the calendar.
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+pub enum JapaneseEraStyle {
+    /// This includes all "modern" (post-Meiji) eras,
+    /// using Gregorian eras for dates preceding the Meiji era
+    Modern,
+    /// This includes all known eras, using Gregorian eras for dates
+    /// preceding the earliest known era
+    All,
+}
+
+impl Default for JapaneseEraStyle {
+    fn default() -> Self {
+        Self::Modern
+    }
+}
+
 /// The Japanese Calendar
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
@@ -72,11 +89,12 @@ impl Japanese {
     /// Setting `historical_eras` will load historical (pre-meiji) era data
     pub fn try_new<D: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
-        historical_eras: bool,
+        era_style: JapaneseEraStyle,
     ) -> Result<Self, DataError> {
         let mut request = DataRequest::default();
+        let japanext = era_style == JapaneseEraStyle::All;
         // TODO: can use macro after #1800
-        let cal = if historical_eras {
+        let cal = if japanext {
             "und-u-ca-japanext"
         } else {
             "und-u-ca-japanese"
@@ -85,10 +103,7 @@ impl Japanese {
             .expect("Locale string is known valid")
             .into();
         let eras = data_provider.load_resource(&request)?.take_payload()?;
-        Ok(Self {
-            eras,
-            japanext: historical_eras,
-        })
+        Ok(Self { eras, japanext })
     }
 }
 

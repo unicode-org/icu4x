@@ -10,7 +10,7 @@ use crate::ethiopic::Ethiopic;
 use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
-use crate::japanese::Japanese;
+use crate::japanese::{Japanese, JapaneseEraStyle};
 use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
 
 use icu_locid::{
@@ -289,11 +289,11 @@ impl AnyCalendar {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Japanese => {
                 let p = provider.as_downcasting();
-                AnyCalendar::Japanese(Japanese::try_new(&p, false)?)
+                AnyCalendar::Japanese(Japanese::try_new(&p, JapaneseEraStyle::Modern)?)
             }
             AnyCalendarKind::Japanext => {
                 let p = provider.as_downcasting();
-                AnyCalendar::Japanext(Japanese::try_new(&p, true)?)
+                AnyCalendar::Japanext(Japanese::try_new(&p, JapaneseEraStyle::All)?)
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
@@ -325,11 +325,11 @@ impl AnyCalendar {
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Japanese => {
                 let p = provider.as_deserializing();
-                AnyCalendar::Japanese(Japanese::try_new(&p, false)?)
+                AnyCalendar::Japanese(Japanese::try_new(&p, JapaneseEraStyle::Modern)?)
             }
             AnyCalendarKind::Japanext => {
                 let p = provider.as_deserializing();
-                AnyCalendar::Japanext(Japanese::try_new(&p, true)?)
+                AnyCalendar::Japanext(Japanese::try_new(&p, JapaneseEraStyle::All)?)
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
@@ -353,8 +353,12 @@ impl AnyCalendar {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::try_new(provider, false)?),
-            AnyCalendarKind::Japanext => AnyCalendar::Japanext(Japanese::try_new(provider, true)?),
+            AnyCalendarKind::Japanese => {
+                AnyCalendar::Japanese(Japanese::try_new(provider, JapaneseEraStyle::Modern)?)
+            }
+            AnyCalendarKind::Japanext => {
+                AnyCalendar::Japanext(Japanese::try_new(provider, JapaneseEraStyle::All)?)
+            }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
