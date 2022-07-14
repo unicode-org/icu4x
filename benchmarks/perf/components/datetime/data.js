@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657731865341,
+  "lastUpdate": 1657756820593,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -47783,6 +47783,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5113,
             "range": "± 38",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3465386b4a7c7cbeeedfc3577973e44a66f1b56c",
+          "message": "Add ResourceKey attributes and LocaleFallbackProvider (#2115)\n\n- Adds support for marker() in data_struct\r\n- Adds metadata to ResourceKey\r\n- Makes LocaleFallbackIterator generic over T",
+          "timestamp": "2022-07-13T16:47:56-07:00",
+          "tree_id": "5485a5b1555a39dd2661e1367318379116ebbcd2",
+          "url": "https://github.com/unicode-org/icu4x/commit/3465386b4a7c7cbeeedfc3577973e44a66f1b56c"
+        },
+        "date": 1657756789392,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 86912,
+            "range": "± 579",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 910193,
+            "range": "± 1486",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 193427,
+            "range": "± 437",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 88078,
+            "range": "± 275",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 95632,
+            "range": "± 290",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 97629,
+            "range": "± 290",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 105127,
+            "range": "± 346",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 184405,
+            "range": "± 545",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 195520,
+            "range": "± 890",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 193163,
+            "range": "± 516",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 206611,
+            "range": "± 769",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5141,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
