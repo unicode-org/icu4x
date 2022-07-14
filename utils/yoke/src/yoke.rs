@@ -546,12 +546,9 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// looking at a subfield, and producing a new yoke. This will move cart, and the provided
     /// transformation is only allowed to use data known to be borrowed from the cart.
     ///
-    /// This takes an additional `PhantomData<&()>` parameter as a workaround to the issue
-    /// described in [#86702](https://github.com/rust-lang/rust/issues/86702). This parameter
-    /// should just be ignored in the function.
-    ///
-    /// To capture data and pass it to the closure, use [`Yoke::map_project_with_capture()`].
-    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
+    /// The callback takes an additional `PhantomData<&()>` parameter to anchor lifetimes
+    /// (see [#86702](https://github.com/rust-lang/rust/issues/86702)) This parameter
+    /// should just be ignored in the callback.
     ///
     /// This can be used, for example, to transform data from one format to another:
     ///
@@ -610,15 +607,13 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ```
     //
     // Safety docs can be found below on `__project_safety_docs()`
-    pub fn map_project<P>(
-        self,
-        f: for<'a> fn(
+    pub fn map_project<P, F>(self, f: F) -> Yoke<P, C>
+    where
+        P: for<'a> Yokeable<'a>,
+        F: for<'a> FnOnce(
             <Y as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <P as Yokeable<'a>>::Output,
-    ) -> Yoke<P, C>
-    where
-        P: for<'a> Yokeable<'a>,
     {
         let p = f(self.yokeable.transform_owned(), PhantomData);
         Yoke {
@@ -632,16 +627,14 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     ///
     /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::map_project`]
     /// because then it will not clone fields that are going to be discarded.
-    pub fn map_project_cloned<'this, P>(
-        &'this self,
-        f: for<'a> fn(
-            &'this <Y as Yokeable<'a>>::Output,
-            PhantomData<&'a ()>,
-        ) -> <P as Yokeable<'a>>::Output,
-    ) -> Yoke<P, C>
+    pub fn map_project_cloned<'this, P, F>(&'this self, f: F) -> Yoke<P, C>
     where
         P: for<'a> Yokeable<'a>,
         C: CloneableCart,
+        F: for<'a> FnOnce(
+            &'this <Y as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> <P as Yokeable<'a>>::Output,
     {
         let p = f(self.get(), PhantomData);
         Yoke {
@@ -650,12 +643,107 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::map_project`], but it works around it not being able to
-    /// use `FnOnce` by using an explicit capture input.
+    /// This is similar to [`Yoke::map_project`], however it can also bubble up an error
+    /// from the callback.
+    ///
+    /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::map_project`]
+    /// because then it will not clone fields that are going to be discarded.
+    ///
+    /// ```
+    /// # use std::rc::Rc;
+    /// # use yoke::Yoke;
+    /// #
+    /// fn slice(y: Yoke<&'static str, Rc<[u8]>>) -> Yoke<&'static [u8], Rc<[u8]>> {
+    ///     y.map_project(move |yk, _| yk.as_bytes())
+    /// }
+    /// ```
+    ///
+    /// This can also be used to create a yoke for a subfield
+    ///
+    /// ```
+    /// # use std::borrow::Cow;
+    /// # use yoke::{Yoke, Yokeable};
+    /// # use std::mem;
+    /// # use std::rc::Rc;
+    /// # use std::str::{self, Utf8Error};
+    /// #
+    /// // also safely implements Yokeable<'a>
+    /// struct Bar<'a> {
+    ///     bytes_1: &'a [u8],
+    ///     string_2: &'a str,
+    /// }
+    ///
+    /// fn map_project_string_1(bar: Yoke<Bar<'static>, Rc<[u8]>>) -> Result<Yoke<&'static str, Rc<[u8]>>, Utf8Error> {
+    ///     bar.try_map_project(|bar, _| str::from_utf8(bar.bytes_1))
+    /// }
+    ///
+    /// #
+    /// # unsafe impl<'a> Yokeable<'a> for Bar<'static> {
+    /// #     type Output = Bar<'a>;
+    /// #     fn transform(&'a self) -> &'a Bar<'a> {
+    /// #         self
+    /// #     }
+    /// #
+    /// #     fn transform_owned(self) -> Bar<'a> {
+    /// #         // covariant lifetime cast, can be done safely
+    /// #         self
+    /// #     }
+    /// #
+    /// #     unsafe fn make(from: Bar<'a>) -> Self {
+    /// #         let ret = mem::transmute_copy(&from);
+    /// #         mem::forget(from);
+    /// #         ret
+    /// #     }
+    /// #
+    /// #     fn transform_mut<F>(&'a mut self, f: F)
+    /// #     where
+    /// #         F: 'static + FnOnce(&'a mut Self::Output),
+    /// #     {
+    /// #         unsafe { f(mem::transmute(self)) }
+    /// #     }
+    /// # }
+    /// ```
+    pub fn try_map_project<P, F, E>(self, f: F) -> Result<Yoke<P, C>, E>
+    where
+        P: for<'a> Yokeable<'a>,
+        F: for<'a> FnOnce(
+            <Y as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> Result<<P as Yokeable<'a>>::Output, E>,
+    {
+        let p = f(self.yokeable.transform_owned(), PhantomData)?;
+        Ok(Yoke {
+            yokeable: unsafe { P::make(p) },
+            cart: self.cart,
+        })
+    }
+
+    /// This is similar to [`Yoke::try_map_project`], however it does not move
+    /// [`Self`] and instead clones the cart (only if the cart is a [`CloneableCart`])
+    ///
+    /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::map_project`]
+    /// because then it will not clone fields that are going to be discarded.
+    pub fn try_map_project_cloned<'this, P, F, E>(&'this self, f: F) -> Result<Yoke<P, C>, E>
+    where
+        P: for<'a> Yokeable<'a>,
+        C: CloneableCart,
+        F: for<'a> FnOnce(
+            &'this <Y as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> Result<<P as Yokeable<'a>>::Output, E>,
+    {
+        let p = f(self.get(), PhantomData)?;
+        Ok(Yoke {
+            yokeable: unsafe { P::make(p) },
+            cart: self.cart.clone(),
+        })
+    }
+    /// This is similar to [`Yoke::map_project`], but it works around older versions
+    /// of Rust not being able to use `FnOnce` by using an explicit capture input.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// See the docs of [`Yoke::map_project`] for how this works.
-    pub fn map_project_with_capture<P, T>(
+    pub fn map_project_with_explicit_capture<P, T>(
         self,
         capture: T,
         f: for<'a> fn(
@@ -674,12 +762,12 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// This is similar to [`Yoke::map_project_cloned`], however it works around it not being able to
-    /// use `FnOnce` by using an explicit capture input.
+    /// This is similar to [`Yoke::map_project_cloned`], but it works around older versions
+    /// of Rust not being able to use `FnOnce` by using an explicit capture input.
     /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
     ///
     /// See the docs of [`Yoke::map_project_cloned`] for how this works.
-    pub fn map_project_cloned_with_capture<'this, P, T>(
+    pub fn map_project_cloned_with_explicit_capture<'this, P, T>(
         &'this self,
         capture: T,
         f: for<'a> fn(
@@ -699,10 +787,13 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         }
     }
 
-    /// A version of [`Yoke::map_project`] that takes a capture and bubbles up an error
-    /// from the callback function.
+    /// This is similar to [`Yoke::try_map_project`], but it works around older versions
+    /// of Rust not being able to use `FnOnce` by using an explicit capture input.
+    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
+    ///
+    /// See the docs of [`Yoke::try_map_project`] for how this works.
     #[allow(clippy::type_complexity)]
-    pub fn try_map_project_with_capture<P, T, E>(
+    pub fn try_map_project_with_explicit_capture<P, T, E>(
         self,
         capture: T,
         f: for<'a> fn(
@@ -721,10 +812,13 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
         })
     }
 
-    /// A version of [`Yoke::map_project_cloned`] that takes a capture and bubbles up an error
-    /// from the callback function.
+    /// This is similar to [`Yoke::try_map_project_cloned`], but it works around older versions
+    /// of Rust not being able to use `FnOnce` by using an explicit capture input.
+    /// See [#1061](https://github.com/unicode-org/icu4x/issues/1061).
+    ///
+    /// See the docs of [`Yoke::try_map_project_cloned`] for how this works.
     #[allow(clippy::type_complexity)]
-    pub fn try_map_project_cloned_with_capture<'this, P, T, E>(
+    pub fn try_map_project_cloned_with_explicit_capture<'this, P, T, E>(
         &'this self,
         capture: T,
         f: for<'a> fn(
