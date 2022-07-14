@@ -59,6 +59,7 @@ pub use decimal::DoublePrecision;
 
 pub use decimal::FixedDecimal;
 pub use decimal::Sign;
+pub use decimal::SignDisplay;
 use displaydoc::Display;
 
 #[derive(Display, Debug, PartialEq)]

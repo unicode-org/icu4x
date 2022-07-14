@@ -128,6 +128,31 @@ pub enum Sign {
     Positive,
 }
 
+/// Configuration for when to render the minus sign or plus sign.
+#[non_exhaustive]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum SignDisplay {
+    /// Render the sign according to locale preferences. In most cases, this means a minus sign
+    /// will be shown on negative numbers, and no sign will be shown on positive numbers.
+    Auto,
+
+    /// Do not display the sign. Positive and negative numbers are indistinguishable.
+    Never,
+
+    /// Show a minus sign on negative numbers and a plus sign on positive numbers, including zero.
+    Always,
+
+    /// Show a minus sign on negative numbers and a plus sign on positive numbers, except do not
+    /// show any sign on positive or negative zero.
+    ExceptZero,
+
+    /// Show a minus sign on strictly negative numbers. Do not show a sign on positive numbers or
+    /// on positive or negative zero.
+    ///
+    /// This differs from [`Auto`](SignDisplay::Auto) in that it does not render a sign on negative zero.
+    Negative,
+}
+
 impl Default for FixedDecimal {
     /// Returns a `FixedDecimal` representing zero.
     fn default() -> Self {
@@ -474,6 +499,62 @@ impl FixedDecimal {
     /// ```
     pub fn with_sign(mut self, sign: Sign) -> Self {
         self.set_sign(sign);
+        self
+    }
+
+    /// Sets the sign according to the given sign display strategy.
+    ///
+    /// # Examples
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignDisplay::*;
+    ///
+    /// let mut dec = FixedDecimal::from(1729);
+    /// assert_eq!("1729", dec.to_string());
+    /// dec.apply_sign_display(Always);
+    /// assert_eq!("+1729", dec.to_string());
+    /// ```
+    pub fn apply_sign_display(&mut self, sign_display: SignDisplay) {
+        use Sign::*;
+        match sign_display {
+            SignDisplay::Auto => {
+                if self.sign != Negative {
+                    self.sign = None
+                }
+            }
+            SignDisplay::Always => {
+                if self.sign != Negative {
+                    self.sign = Positive
+                }
+            }
+            SignDisplay::Never => self.sign = None,
+            SignDisplay::ExceptZero => {
+                if self.is_zero() {
+                    self.sign = None
+                } else if self.sign != Negative {
+                    self.sign = Positive
+                }
+            }
+            SignDisplay::Negative => {
+                if self.sign != Negative || self.is_zero() {
+                    self.sign = None
+                }
+            }
+        }
+    }
+
+    /// Sets the sign according to the given sign display strategy, consuming
+    /// self and returning a new object.
+    ///
+    /// # Examples
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignDisplay::*;
+    ///
+    /// assert_eq!("+1729", FixedDecimal::from(1729).with_sign_display(ExceptZero).to_string());
+    /// ```
+    pub fn with_sign_display(mut self, sign_display: SignDisplay) -> Self {
+        self.apply_sign_display(sign_display);
         self
     }
 
@@ -2642,6 +2723,35 @@ fn test_pad() {
 
     dec.pad_left(2);
     assert_eq!("-00.42", dec.to_string());
+}
+
+#[test]
+fn test_sign_display() {
+    use SignDisplay::*;
+    let positive_nonzero = FixedDecimal::from(163);
+    let negative_nonzero = FixedDecimal::from(-163);
+    let positive_zero = FixedDecimal::from(0);
+    let negative_zero = FixedDecimal::from(0).with_sign(Sign::Negative);
+    assert_eq!("163", positive_nonzero.clone().with_sign_display(Auto).to_string());
+    assert_eq!("-163", negative_nonzero.clone().with_sign_display(Auto).to_string());
+    assert_eq!("0", positive_zero.clone().with_sign_display(Auto).to_string());
+    assert_eq!("-0", negative_zero.clone().with_sign_display(Auto).to_string());
+    assert_eq!("+163", positive_nonzero.clone().with_sign_display(Always).to_string());
+    assert_eq!("-163", negative_nonzero.clone().with_sign_display(Always).to_string());
+    assert_eq!("+0", positive_zero.clone().with_sign_display(Always).to_string());
+    assert_eq!("-0", negative_zero.clone().with_sign_display(Always).to_string());
+    assert_eq!("163", positive_nonzero.clone().with_sign_display(Never).to_string());
+    assert_eq!("163", negative_nonzero.clone().with_sign_display(Never).to_string());
+    assert_eq!("0", positive_zero.clone().with_sign_display(Never).to_string());
+    assert_eq!("0", negative_zero.clone().with_sign_display(Never).to_string());
+    assert_eq!("+163", positive_nonzero.clone().with_sign_display(ExceptZero).to_string());
+    assert_eq!("-163", negative_nonzero.clone().with_sign_display(ExceptZero).to_string());
+    assert_eq!("0", positive_zero.clone().with_sign_display(ExceptZero).to_string());
+    assert_eq!("0", negative_zero.clone().with_sign_display(ExceptZero).to_string());
+    assert_eq!("163", positive_nonzero.clone().with_sign_display(Negative).to_string());
+    assert_eq!("-163", negative_nonzero.clone().with_sign_display(Negative).to_string());
+    assert_eq!("0", positive_zero.clone().with_sign_display(Negative).to_string());
+    assert_eq!("0", negative_zero.clone().with_sign_display(Negative).to_string());
 }
 
 #[test]
