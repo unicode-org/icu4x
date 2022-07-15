@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657919101054,
+  "lastUpdate": 1657926710732,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20213,6 +20213,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e3c32af3576978551d06e838dd2cd8e08e686c9d"
         },
         "date": 1657919070407,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b38fc63ecda94d1830a98f8b8de48aa2ace5c24",
+          "message": "Move map_project to closures (#2185)\n\n* Add closures to map_project functions\r\n\r\n* Update core data provider apis",
+          "timestamp": "2022-07-15T23:07:40Z",
+          "tree_id": "e9d61e66b2393d3e8737677373144cf9168b05df",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b38fc63ecda94d1830a98f8b8de48aa2ace5c24"
+        },
+        "date": 1657926672578,
         "tool": "ndjson",
         "benches": [
           {
