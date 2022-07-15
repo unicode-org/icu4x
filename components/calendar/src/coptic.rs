@@ -268,7 +268,7 @@ fn year_as_coptic(year: i32) -> types::FormattableYear {
         }
     } else {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "bc")),
+            era: types::Era(tinystr!(16, "bd")),
             number: 1 - year,
             related_iso: None,
         }
