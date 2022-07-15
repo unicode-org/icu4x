@@ -5,13 +5,14 @@
 //! This module contains types and implementations for the Japanese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{japanese::Japanese, types::Era, Date, DateTime};
+//! use icu::calendar::{types::Era, Date, DateTime};
+//! use icu::calendar::japanese::{Japanese, JapaneseEraStyle};
 //! use tinystr::tinystr;
 //!
 //! // `icu_testdata::get_provider` contains information specifying era dates.
 //! // Production code should probably use its own data provider
 //! let provider = icu_testdata::get_provider();
-//! let japanese_calendar = Japanese::try_new(&provider).expect("Cannot load japanese data");
+//! let japanese_calendar = Japanese::try_new(&provider, JapaneseEraStyle::Modern).expect("Cannot load japanese data");
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date(1970, 1, 2)
