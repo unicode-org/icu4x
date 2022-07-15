@@ -33,21 +33,14 @@ pub fn all_keys() -> Vec<ResourceKey> {
         icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_casemapping::provider::CaseMappingV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY,
@@ -57,7 +50,6 @@ pub fn all_keys() -> Vec<ResourceKey> {
     v.extend(icu_properties::provider::ALL_KEYS);
     #[cfg(feature = "experimental")]
     v.extend(icu_segmenter::ALL_KEYS);
-    #[cfg(feature = "experimental")]
     v.extend(crate::transform::icuexport::collator::ALL_KEYS);
     v
 }
@@ -112,6 +104,16 @@ macro_rules! create_datagen_provider {
                 $crate::transform::cldr::TimeZonesProvider,
                 $crate::transform::cldr::WeekDataProvider,
                 $crate::transform::cldr::ListProvider,
+                $crate::transform::icuexport::collator::CollationProvider,
+                $crate::transform::icuexport::normalizer::CanonicalDecompositionDataProvider,
+                $crate::transform::icuexport::normalizer::CompatibilityDecompositionSupplementProvider,
+                $crate::transform::icuexport::normalizer::Uts46DecompositionSupplementProvider,
+                $crate::transform::icuexport::normalizer::CanonicalDecompositionTablesProvider,
+                $crate::transform::icuexport::normalizer::CompatibilityDecompositionTablesProvider,
+                $crate::transform::icuexport::normalizer::CanonicalCompositionsProvider,
+                $crate::transform::icuexport::normalizer::CanonicalCompositionPassthroughProvider,
+                $crate::transform::icuexport::normalizer::CompatibilityCompositionPassthroughProvider,
+                $crate::transform::icuexport::normalizer::Uts46CompositionPassthroughProvider,
                 $crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::transform::icuexport::uprops::BinaryPropertyUnicodeSetDataProvider,

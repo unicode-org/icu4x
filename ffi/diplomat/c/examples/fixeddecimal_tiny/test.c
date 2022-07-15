@@ -11,9 +11,8 @@ int main() {
     ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create(1000007);
 
-    ICU4XFixedDecimalFormatOptions opts = {ICU4XFixedDecimalGroupingStrategy_Auto, ICU4XFixedDecimalSignDisplay_Auto};
-
-    diplomat_result_box_ICU4XFixedDecimalFormat_ICU4XError fdf_result = ICU4XFixedDecimalFormat_try_new(locale, provider, opts);
+    diplomat_result_box_ICU4XFixedDecimalFormat_ICU4XError fdf_result =
+        ICU4XFixedDecimalFormat_try_new(locale, provider, ICU4XFixedDecimalGroupingStrategy_Auto);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormat\n");
         return 1;
