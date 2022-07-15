@@ -13,9 +13,11 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
-#[icu_provider::data_struct(
-    marker(DateSymbolsV1Marker, "datetime/datesymbols@1", extension_key = "ca")
-)]
+#[icu_provider::data_struct(marker(
+    DateSymbolsV1Marker,
+    "datetime/datesymbols@1",
+    extension_key = "ca"
+))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -33,9 +35,11 @@ pub struct DateSymbolsV1<'data> {
     pub eras: Eras<'data>,
 }
 
-#[icu_provider::data_struct(
-    marker(TimeSymbolsV1Marker, "datetime/timesymbols@1", extension_key = "ca")
-)]
+#[icu_provider::data_struct(marker(
+    TimeSymbolsV1Marker,
+    "datetime/timesymbols@1",
+    extension_key = "ca"
+))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
