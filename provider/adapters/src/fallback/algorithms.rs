@@ -240,14 +240,14 @@ mod tests {
             input: "en-u-hc-h12-sd-usca",
             requires_data: true,
             extension_key: None,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
             input: "en-Latn-u-sd-usca",
             requires_data: true,
             extension_key: None,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
