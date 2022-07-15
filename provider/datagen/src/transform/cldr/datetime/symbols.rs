@@ -92,8 +92,8 @@ fn get_era_code_map(calendar: &str) -> BTreeMap<String, TinyStr16> {
             .into_iter()
             .collect(),
         "ethiopic" => vec![
-            ("0".to_string(), tinystr!(16, "incarnation")),
-            ("1".to_string(), tinystr!(16, "before-incar")),
+            ("0".to_string(), tinystr!(16, "incar")),
+            ("1".to_string(), tinystr!(16, "pre-incar")),
             ("2".to_string(), tinystr!(16, "mundi")),
         ]
         .into_iter()
