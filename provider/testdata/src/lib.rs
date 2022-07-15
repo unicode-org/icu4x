@@ -125,7 +125,7 @@ pub fn get_postcard_provider() -> StaticDataProvider {
 /// Get a small data provider that only contains the `decimal/symbols@1` key for `en` and `bn`.
 #[cfg(feature = "static")]
 pub fn get_smaller_postcard_provider() -> StaticDataProvider {
-    // THe statically compiled data file is valid.
+    // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
     StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
         env!("CARGO_MANIFEST_DIR"),
@@ -150,5 +150,7 @@ pub fn get_baked_provider() -> BakedDataProvider {
 /// with locale fallbacking enabled.
 #[cfg(feature = "static")]
 pub fn get_provider() -> LocaleFallbackProvider<StaticDataProvider> {
+    // The statically compiled data file is valid.
+    #[allow(clippy::unwrap_used)]
     LocaleFallbackProvider::try_new(get_postcard_provider()).unwrap()
 }

@@ -46,8 +46,8 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                 Territory::Region(r) => Some(Some(*r)),
                 _ => None,
             })
-            .map(|region| LanguageIdentifier::from(region))
-            .map(|langid| ResourceOptions::from(langid))
+            .map(LanguageIdentifier::from)
+            .map(ResourceOptions::from)
             .collect();
         Ok(regions.into_iter().collect())
     }
