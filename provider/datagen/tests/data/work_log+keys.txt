@@ -1,7 +1,7 @@
-datetime/datelengths@1
-datetime/skeletons@1
-datetime/datesymbols@1
-datetime/timesymbols@1
+datetime/datelengths@1[u-ca]
+datetime/skeletons@1[u-ca]
+datetime/datesymbols@1[u-ca]
+datetime/timesymbols@1[u-ca]
 datetime/week_data@1
 decimal/symbols@1
 plurals/ordinal@1
