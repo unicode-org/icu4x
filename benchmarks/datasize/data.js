@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657859678264,
+  "lastUpdate": 1657868241912,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20153,6 +20153,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/01599b82fe57a0e461b988b5d6ec44a5f4e924db"
         },
         "date": 1657859645355,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5fa85371fb3c8f97575cbe8c4dd2bc6e2f214d42",
+          "message": "Move collator and normalizer from experimental to components (#2058)\n\nCloses #971. Closes #972.",
+          "timestamp": "2022-07-15T09:55:18+03:00",
+          "tree_id": "9725e641f8c30e6fd3f765b06026ccde0b5ca911",
+          "url": "https://github.com/unicode-org/icu4x/commit/5fa85371fb3c8f97575cbe8c4dd2bc6e2f214d42"
+        },
+        "date": 1657868208689,
         "tool": "ndjson",
         "benches": [
           {
