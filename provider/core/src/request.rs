@@ -12,6 +12,9 @@ use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 
+#[cfg(doc)]
+use icu_locid::subtags::Variant;
+
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest {

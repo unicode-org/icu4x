@@ -100,7 +100,7 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
-//! [`ResourceKey`]: marker::ResourceKey
+//! [`ResourceKey`]: key::ResourceKey
 //! [`ResourceOptions`]: request::ResourceOptions
 //! [`IterableDynProvider`]: datagen::IterableDynProvider
 //! [`IterableResourceProvider`]: datagen::IterableResourceProvider
@@ -168,9 +168,9 @@ pub mod prelude {
     pub use crate::data_provider::ResourceProvider;
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
-    pub use crate::marker::DataMarker;
     pub use crate::key::ResourceKey;
     pub use crate::key::ResourceKeyHash;
+    pub use crate::marker::DataMarker;
     pub use crate::marker::ResourceMarker;
     pub use crate::request::DataRequest;
     pub use crate::request::ResourceOptions;
