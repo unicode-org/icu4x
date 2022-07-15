@@ -237,7 +237,7 @@ impl<'data> ListJoinerPattern<'data> {
 #[cfg(feature = "datagen")]
 mod datagen {
     #![allow(clippy::indexing_slicing)] // datagen
-    
+
     use super::*;
     use icu_provider::DataError;
 
