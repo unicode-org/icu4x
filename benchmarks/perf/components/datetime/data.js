@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657868856798,
+  "lastUpdate": 1657919746490,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48263,6 +48263,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5112,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3c32af3576978551d06e838dd2cd8e08e686c9d",
+          "message": "Make langid and locale macro rules run with a single variant (#2065)\n\n* Change Variants to be a ShortVec<Variant>\r\n\r\n* Remove unused methods and make ShortVec crate-private.\r\n\r\n* Make langid and locale macro rules run with a single variant\r\n\r\n* Fix broken tests\r\n\r\n* Disable clippy type complexity check\r\n\r\n* Update langid const parser and edit macros doc.\r\n\r\n* Address reviewer feedback.\r\n\r\n* Fix issue - langid macors should panic when parsing multiple variants.\r\n\r\n* Fix broken doc test\r\n\r\nCo-authored-by: Yvonne Zhang <yvonnezhang@google.com>",
+          "timestamp": "2022-07-15T21:03:22Z",
+          "tree_id": "67b0863cbea3989fb7591ed72576b623d8b60f29",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3c32af3576978551d06e838dd2cd8e08e686c9d"
+        },
+        "date": 1657919713841,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 94057,
+            "range": "± 3377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 873718,
+            "range": "± 6260",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 179226,
+            "range": "± 195",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 84025,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 92562,
+            "range": "± 250",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 94408,
+            "range": "± 684",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 101632,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 166923,
+            "range": "± 310",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 178679,
+            "range": "± 243",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 179668,
+            "range": "± 2465",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 192699,
+            "range": "± 213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4706,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
