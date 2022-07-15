@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657868950766,
+  "lastUpdate": 1657919909241,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -67331,6 +67331,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 166,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3c32af3576978551d06e838dd2cd8e08e686c9d",
+          "message": "Make langid and locale macro rules run with a single variant (#2065)\n\n* Change Variants to be a ShortVec<Variant>\r\n\r\n* Remove unused methods and make ShortVec crate-private.\r\n\r\n* Make langid and locale macro rules run with a single variant\r\n\r\n* Fix broken tests\r\n\r\n* Disable clippy type complexity check\r\n\r\n* Update langid const parser and edit macros doc.\r\n\r\n* Address reviewer feedback.\r\n\r\n* Fix issue - langid macors should panic when parsing multiple variants.\r\n\r\n* Fix broken doc test\r\n\r\nCo-authored-by: Yvonne Zhang <yvonnezhang@google.com>",
+          "timestamp": "2022-07-15T21:03:22Z",
+          "tree_id": "67b0863cbea3989fb7591ed72576b623d8b60f29",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3c32af3576978551d06e838dd2cd8e08e686c9d"
+        },
+        "date": 1657919869252,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4082,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 971,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1183,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 620,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 94,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 853,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 416,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2613,
+            "range": "± 51",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4408,
+            "range": "± 191",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 1962,
+            "range": "± 108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1476,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1000,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 265,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2049,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 636,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 3983,
+            "range": "± 92",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 186,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 125,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 183,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 175,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
