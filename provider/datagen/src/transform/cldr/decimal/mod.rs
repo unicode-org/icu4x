@@ -89,10 +89,8 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 
         result.digits = self.get_digits_for_numbering_system(numbers.default_numbering_system)?;
 
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(result)),
         })
     }

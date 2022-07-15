@@ -84,7 +84,6 @@ impl BufferProvider for BlobDataProvider {
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard1);
         Ok(DataResponse {
             metadata,

@@ -103,10 +103,8 @@ macro_rules! impl_resource_provider {
                         data.eras.narrow.insert("2".to_string(), mundi_narrow.clone());
                     }
 
-                    let metadata = DataResponseMetadata::default();
-                    // TODO(#1109): Set metadata.data_langid correctly.
                     Ok(DataResponse {
-                        metadata,
+                        metadata: Default::default(),
                         #[allow(clippy::redundant_closure_call)]
                         payload: Some(DataPayload::from_owned(($expr)(&data, &calendar.to_string()))),
                     })

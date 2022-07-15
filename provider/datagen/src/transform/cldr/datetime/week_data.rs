@@ -56,8 +56,6 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         let territory = req
             .options
             .region()
@@ -73,7 +71,7 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
         let week_data = &week_data.supplemental.week_data;
 
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(WeekDataV1(CalendarInfo {
                 first_weekday: week_data
                     .first_day

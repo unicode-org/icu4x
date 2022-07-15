@@ -290,9 +290,14 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
 }
 
 impl<'a, 'b, T> LocaleFallbackIterator<'a, 'b, T> {
-    /// Gets the current [`ResourceOptions`] under fallback.
+    /// Borrows the current [`ResourceOptions`] under fallback.
     pub fn get(&self) -> &T {
         &self.current
+    }
+
+    /// Takes the current [`ResourceOptions`] under fallback.
+    pub fn take(self) -> T {
+        self.current
     }
 }
 
