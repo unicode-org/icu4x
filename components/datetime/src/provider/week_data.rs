@@ -6,7 +6,9 @@ use icu_provider::prelude::*;
 
 /// An ICU4X mapping to a subset of CLDR weekData.
 /// See CLDR-JSON's weekData.json for more context.
-#[icu_provider::data_struct(WeekDataV1Marker = "datetime/week_data@1")]
+#[icu_provider::data_struct(
+    marker(WeekDataV1Marker, "datetime/week_data@1", fallback_by = "region")
+)]
 #[derive(Clone, Copy, Default)]
 #[cfg_attr(
     feature = "datagen",
