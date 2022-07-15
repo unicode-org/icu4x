@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DateTimeFormatError;
+use alloc::string::ToString;
 use core::any;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
@@ -13,7 +14,6 @@ use icu_locid::extensions_unicode_key as key;
 use icu_locid::extensions_unicode_value as value;
 use icu_locid::Locale;
 use tinystr::{tinystr, TinyStr16};
-use alloc::string::ToString;
 /// A calendar that can be found in CLDR
 ///
 /// New implementors of this trait will likely also wish to modify `get_era_code_map()`
