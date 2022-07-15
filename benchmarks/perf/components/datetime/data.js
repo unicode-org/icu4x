@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657846227090,
+  "lastUpdate": 1657860452237,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48071,6 +48071,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4653,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "01599b82fe57a0e461b988b5d6ec44a5f4e924db",
+          "message": "Remove signum and sign display options (#2070)",
+          "timestamp": "2022-07-15T06:32:39+02:00",
+          "tree_id": "6b6d90770f80765e91437a307f6724840ec5f960",
+          "url": "https://github.com/unicode-org/icu4x/commit/01599b82fe57a0e461b988b5d6ec44a5f4e924db"
+        },
+        "date": 1657860414346,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 126272,
+            "range": "± 5553",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1145223,
+            "range": "± 65352",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 241087,
+            "range": "± 10469",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 114949,
+            "range": "± 5196",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 125684,
+            "range": "± 3417",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 126453,
+            "range": "± 7624",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 137678,
+            "range": "± 7500",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 232714,
+            "range": "± 6886",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 253027,
+            "range": "± 11077",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 247727,
+            "range": "± 11525",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 265349,
+            "range": "± 26601",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6181,
+            "range": "± 363",
             "unit": "ns/iter"
           }
         ]
