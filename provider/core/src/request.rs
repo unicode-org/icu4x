@@ -12,7 +12,7 @@ use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale};
 use writeable::{LengthHint, Writeable};
 
-#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest {
     pub options: ResourceOptions,
@@ -38,7 +38,7 @@ pub struct DataRequestMetadata;
 /// A variant and language identifier, used for requesting data from a data provider.
 ///
 /// The fields in a [`ResourceOptions`] are not generally known until runtime.
-#[derive(PartialEq, Clone, Default, PartialOrd, Eq, Ord, Hash)]
+#[derive(PartialEq, Clone, Default, Eq, Hash)]
 pub struct ResourceOptions {
     langid: LanguageIdentifier,
     keywords: unicode_ext::Keywords,
@@ -304,7 +304,7 @@ impl ResourceOptions {
         self.langid.region = region;
     }
 
-    /// Returns whether there are any [`Variant`](icu_locid::subtags::Variant) subtags in this [`ResourceOptions`].
+    /// Returns whether there are any [`Variant`] subtags in this [`ResourceOptions`].
     #[inline]
     pub fn has_variants(&self) -> bool {
         !self.langid.variants.is_empty()
@@ -315,7 +315,7 @@ impl ResourceOptions {
         self.langid.variants = variants;
     }
 
-    /// Removes all [`Variant`](icu_locid::subtags::Variant) subtags in this [`ResourceOptions`].
+    /// Removes all [`Variant`] subtags in this [`ResourceOptions`].
     #[inline]
     pub fn clear_variants(&mut self) -> Variants {
         self.langid.variants.clear()

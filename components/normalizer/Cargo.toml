@@ -59,3 +59,4 @@ bench = false  # This option is required for Benchmark CI
 default = []
 serde = ["dep:serde", "icu_codepointtrie/serde", "zerovec/serde", "icu_uniset/serde", "icu_properties/serde", "icu_char16trie/serde"]
 datagen = ["serde", "databake", "icu_codepointtrie/databake", "zerovec/databake", "icu_uniset/databake", "icu_properties/databake", "icu_char16trie/databake"]
+experimental = []
