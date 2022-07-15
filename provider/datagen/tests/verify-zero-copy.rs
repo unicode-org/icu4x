@@ -23,7 +23,7 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 // Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
 static EXPECTED_NET_VIOLATIONS: &[&str] = &[
     // https://github.com/unicode-org/icu4x/issues/1678
-    "datetime/skeletons@1",
+    "datetime/skeletons@1[u-ca]",
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
@@ -110,5 +110,5 @@ fn main() {
         If the new list is smaller, please update EXPECTED_VIOLATIONS in verify-zero-copy.rs\n\
         If it is bigger and that was unexpected, please make sure the key remains zero-copy, or ask ICU4X team members if it is okay\
         to temporarily allow for this key to be allowlisted.\n\
-        Expected (net):\n{:?}\nFound (net):\n{:?}\nExpected (total):\n{:?}\nFound (total):\n{:?}", EXPECTED_NET_VIOLATIONS, total_violations, EXPECTED_TOTAL_VIOLATIONS, net_violations)
+        Expected (net):\n{:?}\nFound (net):\n{:?}\nExpected (total):\n{:?}\nFound (total):\n{:?}", EXPECTED_NET_VIOLATIONS, net_violations, EXPECTED_TOTAL_VIOLATIONS, total_violations)
 }
