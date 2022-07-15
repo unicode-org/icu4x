@@ -86,7 +86,7 @@ impl ExtensionType {
 }
 
 /// A map of extensions associated with a given [`Locale`](crate::Locale).
-#[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Debug, Default, PartialEq, Eq, Clone, Hash)]
 #[non_exhaustive]
 pub struct Extensions {
     /// A representation of the data for a Unicode extension, when present in the locale identifer.
