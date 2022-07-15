@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657860452237,
+  "lastUpdate": 1657868856798,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48167,6 +48167,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6181,
             "range": "± 363",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5fa85371fb3c8f97575cbe8c4dd2bc6e2f214d42",
+          "message": "Move collator and normalizer from experimental to components (#2058)\n\nCloses #971. Closes #972.",
+          "timestamp": "2022-07-15T09:55:18+03:00",
+          "tree_id": "9725e641f8c30e6fd3f765b06026ccde0b5ca911",
+          "url": "https://github.com/unicode-org/icu4x/commit/5fa85371fb3c8f97575cbe8c4dd2bc6e2f214d42"
+        },
+        "date": 1657868826504,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 93493,
+            "range": "± 300",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 891660,
+            "range": "± 1162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 189523,
+            "range": "± 886",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_write",
+            "value": 84546,
+            "range": "± 167",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormat/format_to_string",
+            "value": 91847,
+            "range": "± 200",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 93754,
+            "range": "± 531",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 101019,
+            "range": "± 170",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_write",
+            "value": 180734,
+            "range": "± 205",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormat/format_to_string",
+            "value": 191780,
+            "range": "± 336",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 190058,
+            "range": "± 1084",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 204544,
+            "range": "± 868",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5112,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
