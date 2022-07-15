@@ -13,7 +13,9 @@ use icu_provider::{yoke, zerofrom};
 pub use skeletons::*;
 pub use symbols::*;
 
-#[icu_provider::data_struct(DatePatternsV1Marker = "datetime/datelengths@1")]
+#[icu_provider::data_struct(
+    marker(DatePatternsV1Marker, "datetime/datelengths@1", extension_key = "ca")
+)]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -30,7 +32,9 @@ pub struct DatePatternsV1<'data> {
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
 }
 
-#[icu_provider::data_struct(TimePatternsV1Marker = "datetime/timelengths@1")]
+#[icu_provider::data_struct(
+    marker(TimePatternsV1Marker, "datetime/timelengths@1", extension_key = "ca")
+)]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
