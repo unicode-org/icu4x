@@ -211,7 +211,7 @@ impl AnyProvider for BakedDataProvider {
                     <::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as DataMarker>::Yokeable,
                 >(litemap_slice_get(time_zone::formats_v1::DATA, key, req)?),
                 WEEKDATAV1MARKER => AnyPayload::from_static_ref::<<::icu_datetime::provider::week_data::WeekDataV1Marker as DataMarker>::Yokeable>(
-                    litemap_slice_get(datetime::week_data_v1::DATA, key, req)?,
+                    litemap_slice_get(datetime::week_data_v1_r::DATA, key, req)?,
                 ),
                 DECIMALSYMBOLSV1MARKER => AnyPayload::from_static_ref::<<::icu_decimal::provider::DecimalSymbolsV1Marker as DataMarker>::Yokeable>(
                     litemap_slice_get(decimal::symbols_v1::DATA, key, req)?,

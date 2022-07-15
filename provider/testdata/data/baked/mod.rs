@@ -303,7 +303,7 @@ impl ResourceProvider<::icu_datetime::provider::week_data::WeekDataV1Marker> for
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 litemap_slice_get(
-                    datetime::week_data_v1::DATA,
+                    datetime::week_data_v1_r::DATA,
                     <::icu_datetime::provider::week_data::WeekDataV1Marker as ResourceMarker>::KEY,
                     req,
                 )?,
