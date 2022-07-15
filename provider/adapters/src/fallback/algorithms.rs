@@ -15,8 +15,8 @@ const SUBDIVISION_KEY: Key = key!("sd");
 impl<'a> LocaleFallbackerWithConfig<'a> {
     pub(crate) fn normalize(&self, ro: &mut ResourceOptions) {
         let language = ro.language();
-        // 1. Populate the region
-        if ro.region().is_none() {
+        // 1. Populate the region (required for region fallback only)
+        if self.config.priority == FallbackPriority::Region && ro.region().is_none() {
             // 1a. First look for region based on language+script
             if let Some(script) = ro.script() {
                 ro.set_region(
