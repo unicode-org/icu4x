@@ -53,6 +53,7 @@ use tinystr::{tinystr, TinyStr16};
 
 /// Which eras to include in the calendar.
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[non_exhaustive]
 pub enum JapaneseEraStyle {
     /// This includes all "modern" (post-Meiji) eras,
     /// using Gregorian eras for dates preceding the Meiji era
