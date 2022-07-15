@@ -132,12 +132,12 @@ impl<P> LocaleFallbackProvider<P> {
         while !fallback_iterator.get().options.is_empty() {
             let result = f1(fallback_iterator.get());
             if !result_is_err_missing_resource_options(&result) {
-                // Log the original request rather than the fallback request
                 return result
                     .map(|mut res| {
                         f2(&mut res).data_locale = Some(fallback_iterator.take().options);
                         res
                     })
+                    // Log the original request rather than the fallback request
                     .map_err(|e| e.with_req(key, base_req));
             }
             fallback_iterator.step();
