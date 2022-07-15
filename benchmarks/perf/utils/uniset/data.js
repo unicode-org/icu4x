@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657919608696,
+  "lastUpdate": 1657927236981,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36665,6 +36665,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 45507602,
             "range": "± 2057530",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7b38fc63ecda94d1830a98f8b8de48aa2ace5c24",
+          "message": "Move map_project to closures (#2185)\n\n* Add closures to map_project functions\r\n\r\n* Update core data provider apis",
+          "timestamp": "2022-07-15T23:07:40Z",
+          "tree_id": "e9d61e66b2393d3e8737677373144cf9168b05df",
+          "url": "https://github.com/unicode-org/icu4x/commit/7b38fc63ecda94d1830a98f8b8de48aa2ace5c24"
+        },
+        "date": 1657927204349,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 55506717,
+            "range": "± 702617",
             "unit": "ns/iter"
           },
           {
