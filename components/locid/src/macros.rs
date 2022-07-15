@@ -129,7 +129,7 @@ macro_rules! subtags_variant {
 /// # Examples
 ///
 /// ```
-/// use icu::locid::{locale, LanguageIdentifier};
+/// use icu::locid::{langid, LanguageIdentifier};
 ///
 /// const DE_AT: LanguageIdentifier = langid!("de_at");
 ///
