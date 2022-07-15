@@ -402,8 +402,8 @@ where
     /// data from its context. Use one of the sister methods if you need these capabilities:
     ///
     /// - [`DataPayload::map_project_cloned()`] if you don't have ownership of `self`
-    /// - [`DataPayload::map_project_with_capture()`] to pass context to the mapping function
-    /// - [`DataPayload::map_project_cloned_with_capture()`] to do both of these things
+    /// - [`DataPayload::try_map_project()`] to bubble up an error
+    /// - [`DataPayload::try_map_project_cloned()`] to do both of the above
     ///
     /// # Examples
     ///
