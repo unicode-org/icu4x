@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657837322297,
+  "lastUpdate": 1657845511833,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20093,6 +20093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/17a7494fa33c1b7385261fb3c034b95a53f18139"
         },
         "date": 1657837288583,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "90648681+snktd@users.noreply.github.com",
+            "name": "snktd",
+            "username": "snktd"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1a4233ee5cd05cc793a89629d7697a40fe3956ab",
+          "message": "Removing auto-derived Ord impl for Locale/LangId (#2142)",
+          "timestamp": "2022-07-14T17:36:21-07:00",
+          "tree_id": "01f9c1f966cb04863905bec37dfcbb6e98aac456",
+          "url": "https://github.com/unicode-org/icu4x/commit/1a4233ee5cd05cc793a89629d7697a40fe3956ab"
+        },
+        "date": 1657845476952,
         "tool": "ndjson",
         "benches": [
           {
