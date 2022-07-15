@@ -101,7 +101,7 @@ icu_provider::make_exportable_provider!(WeekDataProvider, [WeekDataV1Marker,]);
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid::subtags_region as region;
+    use icu_locid::langid;
 
     let provider = WeekDataProvider::from(&SourceData::for_test());
 
