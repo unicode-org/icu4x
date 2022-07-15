@@ -203,7 +203,11 @@ metadata = [
     "std"
 ]
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
-static = ["icu_provider_blob", "icu_provider_adapters"]
+static = [
+    "icu_provider_blob",
+    "icu_provider_adapters",
+    "icu_provider_adapters/serde",
+]
 baked = [
     "icu_list",
     "icu_calendar",
