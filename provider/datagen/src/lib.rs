@@ -346,7 +346,7 @@ fn test_keys_from_file() {
 fn test_keys_from_bin() {
     // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_postcard_provider`
     // and running `cargo +nightly wasm-build-release --examples -p icu_datetime --features serde \
-    // && cp target/wasm32-unknown-unknown/release/examples/work_log.wasm provider/datagen/tests/data/`
+    // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),
