@@ -126,6 +126,7 @@ impl AnyProvider for BakedDataProvider {
         const WORDBREAKV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::WordBreakV1Marker::KEY.get_hash();
         const XIDCONTINUEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::XidContinueV1Marker::KEY.get_hash();
         const XIDSTARTV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::XidStartV1Marker::KEY.get_hash();
+        const HELLOWORLDV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_provider::hello_world::HelloWorldV1Marker::KEY.get_hash();
         const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: ::icu_provider::ResourceKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY.get_hash();
         const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::ResourceKeyHash =
@@ -459,6 +460,9 @@ impl AnyProvider for BakedDataProvider {
                 ),
                 XIDSTARTV1MARKER => AnyPayload::from_static_ref::<<::icu_properties::provider::XidStartV1Marker as DataMarker>::Yokeable>(
                     litemap_slice_get(props::xids_v1::DATA, key, req)?,
+                ),
+                HELLOWORLDV1MARKER => AnyPayload::from_static_ref::<<::icu_provider::hello_world::HelloWorldV1Marker as DataMarker>::Yokeable>(
+                    litemap_slice_get(core::helloworld_v1::DATA, key, req)?,
                 ),
                 LOCALEFALLBACKLIKELYSUBTAGSV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker as DataMarker>::Yokeable,

@@ -104,7 +104,8 @@ pub fn parse_language_identifier(
     parse_language_identifier_from_iter(&mut iter, mode)
 }
 
-pub const fn parse_language_identifier_without_variants_from_iter(
+#[allow(clippy::type_complexity)]
+pub const fn parse_language_identifier_with_single_variant_from_iter(
     mut iter: SubtagIterator,
     mode: ParserMode,
 ) -> Result<
@@ -112,12 +113,14 @@ pub const fn parse_language_identifier_without_variants_from_iter(
         subtags::Language,
         Option<subtags::Script>,
         Option<subtags::Region>,
+        Option<subtags::Variant>,
     ),
     ParserError,
 > {
     let language;
     let mut script = None;
     let mut region = None;
+    let mut variant = None;
 
     if let (i, Some((t, start, end))) = iter.next_manual() {
         iter = i;
@@ -140,12 +143,14 @@ pub const fn parse_language_identifier_without_variants_from_iter(
             if let Ok(s) = subtags::Script::from_bytes_manual_slice(t, start, end) {
                 script = Some(s);
                 position = ParserPosition::Region;
-            } else if let Ok(s) = subtags::Region::from_bytes_manual_slice(t, start, end) {
-                region = Some(s);
+            } else if let Ok(r) = subtags::Region::from_bytes_manual_slice(t, start, end) {
+                region = Some(r);
                 position = ParserPosition::Variant;
-            } else if subtags::Variant::from_bytes_manual_slice(t, start, end).is_ok() {
-                // We cannot handle variants in a const context
-                return Err(ParserError::InvalidSubtag);
+            } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+                // We cannot handle multiple variants in a const context
+                debug_assert!(variant.is_none());
+                variant = Some(v);
+                position = ParserPosition::Variant;
             } else if matches!(mode, ParserMode::Partial) {
                 break;
             } else {
@@ -155,17 +160,23 @@ pub const fn parse_language_identifier_without_variants_from_iter(
             if let Ok(s) = subtags::Region::from_bytes_manual_slice(t, start, end) {
                 region = Some(s);
                 position = ParserPosition::Variant;
-            } else if subtags::Variant::from_bytes_manual_slice(t, start, end).is_ok() {
-                // We cannot handle variants in a const context
-                return Err(ParserError::InvalidSubtag);
+            } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+                // We cannot handle multiple variants in a const context
+                debug_assert!(variant.is_none());
+                variant = Some(v);
+                position = ParserPosition::Variant;
             } else if matches!(mode, ParserMode::Partial) {
                 break;
             } else {
                 return Err(ParserError::InvalidSubtag);
             }
-        } else if subtags::Variant::from_bytes_manual_slice(t, start, end).is_ok() {
-            // We cannot handle variants in a const context
-            return Err(ParserError::InvalidSubtag);
+        } else if let Ok(v) = subtags::Variant::from_bytes_manual_slice(t, start, end) {
+            debug_assert!(matches!(position, ParserPosition::Variant));
+            if variant.is_some() {
+                // We cannot handle multiple variants in a const context
+                return Err(ParserError::InvalidSubtag);
+            }
+            variant = Some(v);
         } else if matches!(mode, ParserMode::Partial) {
             break;
         } else {
@@ -175,10 +186,11 @@ pub const fn parse_language_identifier_without_variants_from_iter(
         iter = iter.next_manual().0;
     }
 
-    Ok((language, script, region))
+    Ok((language, script, region, variant))
 }
 
-pub const fn parse_language_identifier_without_variants(
+#[allow(clippy::type_complexity)]
+pub const fn parse_language_identifier_with_single_variant(
     t: &[u8],
     mode: ParserMode,
 ) -> Result<
@@ -186,9 +198,10 @@ pub const fn parse_language_identifier_without_variants(
         subtags::Language,
         Option<subtags::Script>,
         Option<subtags::Region>,
+        Option<subtags::Variant>,
     ),
     ParserError,
 > {
     let iter = get_subtag_iterator(t);
-    parse_language_identifier_without_variants_from_iter(iter, mode)
+    parse_language_identifier_with_single_variant_from_iter(iter, mode)
 }
