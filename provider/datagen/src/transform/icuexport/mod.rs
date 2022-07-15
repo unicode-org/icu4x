@@ -5,9 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-#[cfg(feature = "experimental")]
 pub mod collator;
-#[cfg(feature = "experimental")]
 pub mod normalizer;
 #[cfg(feature = "experimental")]
 pub mod ucase;
