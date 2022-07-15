@@ -88,6 +88,7 @@ impl Japanese {
     /// Creates a new [`Japanese`] from locale data and an options bag.
     ///
     /// Setting `historical_eras` will load historical (pre-meiji) era data
+    #[allow(clippy::expect_used)] // can be removed after #1800
     pub fn try_new<D: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
         era_style: JapaneseEraStyle,
@@ -100,6 +101,7 @@ impl Japanese {
         } else {
             "und-u-ca-japanese"
         };
+
         request.options = Locale::from_str(cal)
             .expect("Locale string is known valid")
             .into();
@@ -265,21 +267,21 @@ impl Japanese {
         // We optimize for the five "modern" post-Meiji eras, which are stored in a smaller
         // array and also hardcoded. The hardcoded version is not used if data indicates the
         // presence of newer eras.
-        if date >= MEIJI_START {
-            if era_data.dates_to_eras.last().map(|x| x.1) == Some(tinystr!(16, "reiwa")) {
-                // Fast path in case eras have not changed since this code was written
-                return if date >= REIWA_START {
-                    (REIWA_START, tinystr!(16, "reiwa"))
-                } else if date >= HEISEI_START {
-                    (HEISEI_START, tinystr!(16, "heisei"))
-                } else if date >= SHOWA_START {
-                    (SHOWA_START, tinystr!(16, "showa"))
-                } else if date >= TAISHO_START {
-                    (TAISHO_START, tinystr!(16, "taisho"))
-                } else {
-                    (MEIJI_START, tinystr!(16, "meiji"))
-                };
-            }
+        if date >= MEIJI_START
+            && era_data.dates_to_eras.last().map(|x| x.1) == Some(tinystr!(16, "reiwa"))
+        {
+            // Fast path in case eras have not changed since this code was written
+            return if date >= REIWA_START {
+                (REIWA_START, tinystr!(16, "reiwa"))
+            } else if date >= HEISEI_START {
+                (HEISEI_START, tinystr!(16, "heisei"))
+            } else if date >= SHOWA_START {
+                (SHOWA_START, tinystr!(16, "showa"))
+            } else if date >= TAISHO_START {
+                (TAISHO_START, tinystr!(16, "taisho"))
+            } else {
+                (MEIJI_START, tinystr!(16, "meiji"))
+            };
         }
         let data = &era_data.dates_to_eras;
         match data.binary_search_by(|(d, _)| d.cmp(&date)) {
