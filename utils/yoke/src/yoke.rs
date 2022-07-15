@@ -652,9 +652,10 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// ```
     /// # use std::rc::Rc;
     /// # use yoke::Yoke;
+    /// # use std::str::{self, Utf8Error};
     /// #
-    /// fn slice(y: Yoke<&'static str, Rc<[u8]>>) -> Yoke<&'static [u8], Rc<[u8]>> {
-    ///     y.map_project(move |yk, _| yk.as_bytes())
+    /// fn slice(y: Yoke<&'static [u8], Rc<[u8]>>) -> Result<Yoke<&'static str, Rc<[u8]>>, Utf8Error> {
+    ///     y.try_map_project(move |bytes, _| str::from_utf8(bytes))
     /// }
     /// ```
     ///
