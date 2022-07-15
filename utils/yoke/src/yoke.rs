@@ -646,9 +646,6 @@ impl<Y: for<'a> Yokeable<'a>, C> Yoke<Y, C> {
     /// This is similar to [`Yoke::map_project`], however it can also bubble up an error
     /// from the callback.
     ///
-    /// This is a bit more efficient than cloning the [`Yoke`] and then calling [`Yoke::map_project`]
-    /// because then it will not clone fields that are going to be discarded.
-    ///
     /// ```
     /// # use std::rc::Rc;
     /// # use yoke::Yoke;
