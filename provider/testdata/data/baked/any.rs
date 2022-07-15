@@ -168,23 +168,25 @@ impl AnyProvider for BakedDataProvider {
                 >(litemap_slice_get(collator::prim_v1::DATA, key, req)?),
                 DATEPATTERNSV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_datetime::provider::calendar::DatePatternsV1Marker as DataMarker>::Yokeable,
-                >(litemap_slice_get(datetime::datelengths_v1::DATA, key, req)?),
-                DATESKELETONPATTERNSV1MARKER => {
-                    AnyPayload::from_rc_payload::<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>(alloc::rc::Rc::new(
-                        DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(litemap_slice_get(datetime::skeletons_v1::DATA, key, req)?)),
-                    ))
-                }
+                >(litemap_slice_get(datetime::datelengths_v1_u_ca::DATA, key, req)?),
+                DATESKELETONPATTERNSV1MARKER => AnyPayload::from_rc_payload::<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>(
+                    alloc::rc::Rc::new(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(litemap_slice_get(
+                        datetime::skeletons_v1_u_ca::DATA,
+                        key,
+                        req,
+                    )?))),
+                ),
                 DATESYMBOLSV1MARKER => {
                     AnyPayload::from_static_ref::<<::icu_datetime::provider::calendar::DateSymbolsV1Marker as DataMarker>::Yokeable>(
-                        litemap_slice_get(datetime::datesymbols_v1::DATA, key, req)?,
+                        litemap_slice_get(datetime::datesymbols_v1_u_ca::DATA, key, req)?,
                     )
                 }
                 TIMEPATTERNSV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_datetime::provider::calendar::TimePatternsV1Marker as DataMarker>::Yokeable,
-                >(litemap_slice_get(datetime::timelengths_v1::DATA, key, req)?),
+                >(litemap_slice_get(datetime::timelengths_v1_u_ca::DATA, key, req)?),
                 TIMESYMBOLSV1MARKER => {
                     AnyPayload::from_static_ref::<<::icu_datetime::provider::calendar::TimeSymbolsV1Marker as DataMarker>::Yokeable>(
-                        litemap_slice_get(datetime::timesymbols_v1::DATA, key, req)?,
+                        litemap_slice_get(datetime::timesymbols_v1_u_ca::DATA, key, req)?,
                     )
                 }
                 EXEMPLARCITIESV1MARKER => AnyPayload::from_static_ref::<
