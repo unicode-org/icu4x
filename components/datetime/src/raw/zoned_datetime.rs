@@ -95,7 +95,7 @@ impl ZonedDateTimeFormatter {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_for_region(locale.id.region),
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
