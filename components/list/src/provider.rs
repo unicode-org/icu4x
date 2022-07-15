@@ -64,18 +64,22 @@ impl DataMarker for ErasedListV1Marker {
 
 impl<'data> ListFormatterPatternsV1<'data> {
     pub(crate) fn start(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize)]
     }
 
     pub(crate) fn middle(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize) + 1]
     }
 
     pub(crate) fn end(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize) + 2]
     }
 
     pub(crate) fn pair(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize) + 3]
     }
 
@@ -134,13 +138,13 @@ pub struct SpecialCasePattern<'data> {
 pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders
     string: Cow<'data, str>,
-    /// The index of the first placeholder.
+    /// The index of the first placeholder. Always <= index_1.
     // Always 0 for CLDR data, so we don't need to serialize it.
     // In-memory we have free space for it as index_1 doesn't
     // fill a word.
     #[cfg_attr(feature = "datagen", serde(skip))]
     index_0: u8,
-    /// The index of the second placeholder
+    /// The index of the second placeholder. Always < string.len().
     index_1: u8,
 }
 
@@ -215,6 +219,7 @@ impl<'a> ConditionalListJoinerPattern<'a> {
 
 impl<'data> ListJoinerPattern<'data> {
     fn borrow_tuple(&'data self) -> PatternParts<'data> {
+        #![allow(clippy::indexing_slicing)] // by invariant
         let index_0 = self.index_0 as usize;
         let index_1 = self.index_1 as usize;
         (
