@@ -13,7 +13,7 @@ use icu_locid::extensions_unicode_key as key;
 use icu_locid::extensions_unicode_value as value;
 use icu_locid::Locale;
 use tinystr::{tinystr, TinyStr16};
-
+use alloc::string::ToString;
 /// A calendar that can be found in CLDR
 ///
 /// New implementors of this trait will likely also wish to modify `get_era_code_map()`
