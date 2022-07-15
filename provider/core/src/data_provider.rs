@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DataError;
-use crate::marker::ResourceKey;
+use crate::key::ResourceKey;
 use crate::marker::{DataMarker, ResourceMarker};
 use crate::request::DataRequest;
 use crate::response::DataResponse;

@@ -144,8 +144,9 @@ pub mod dynutil;
 mod error;
 pub mod hello_world;
 mod helpers;
-pub mod inv;
 #[macro_use]
+mod key;
+pub mod inv;
 pub mod marker;
 mod request;
 mod response;
@@ -168,8 +169,8 @@ pub mod prelude {
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
     pub use crate::marker::DataMarker;
-    pub use crate::marker::ResourceKey;
-    pub use crate::marker::ResourceKeyHash;
+    pub use crate::key::ResourceKey;
+    pub use crate::key::ResourceKeyHash;
     pub use crate::marker::ResourceMarker;
     pub use crate::request::DataRequest;
     pub use crate::request::ResourceOptions;
@@ -192,8 +193,8 @@ pub mod prelude {
 pub use prelude::*;
 
 // Less important non-prelude items
-pub use crate::marker::FallbackPriority;
-pub use crate::marker::ResourceKeyMetadata;
+pub use crate::key::FallbackPriority;
+pub use crate::key::ResourceKeyMetadata;
 pub use crate::response::RcWrap;
 
 // For macros
