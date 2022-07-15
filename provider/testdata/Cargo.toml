@@ -147,6 +147,7 @@ denylist = ["bench"]
 
 [dependencies]
 icu_provider = { version = "0.6", path = "../core" }
+icu_provider_adapters = { version = "0.6", path = "../adapters", optional = true }
 icu_provider_blob = { version = "0.6", path = "../blob", optional = true }
 icu_provider_fs = { version = "0.6", path = "../fs", optional = true }
 
@@ -179,7 +180,6 @@ icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_ca
 icu_normalizer = { version = "0.6", path = "../../components/normalizer", optional = true }
 icu_plurals = { version = "0.6", path = "../../components/plurals", optional = true }
 icu_properties = { version = "0.6", path = "../../components/properties", optional = true }
-icu_provider_adapters = { path = "../adapters" }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true }
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", optional = true }
 icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", optional = true }
@@ -203,7 +203,7 @@ metadata = [
     "std"
 ]
 fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
-static = ["icu_provider_blob"]
+static = ["icu_provider_blob", "icu_provider_adapters"]
 baked = [
     "icu_list",
     "icu_calendar",

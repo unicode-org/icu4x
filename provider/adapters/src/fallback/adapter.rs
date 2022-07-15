@@ -16,7 +16,9 @@ use crate::helpers::result_is_err_missing_resource_options;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
 ///
-/// let provider = icu_testdata::get_provider();
+/// // Note: icu_testdata::get_provider() is itself a LocaleFallbackProvider,
+/// // so we need to use icu_testdata::get_postcard_provider() instead.
+/// let provider = icu_testdata::get_postcard_provider();
 ///
 /// let req = DataRequest {
 ///     options: locale!("ja-JP").into(),
@@ -136,7 +138,7 @@ impl<P> LocaleFallbackProvider<P> {
     {
         let key_fallbacker = self.fallbacker.for_key(key);
         let mut fallback_iterator = key_fallbacker.fallback_for(base_req.clone());
-        while !fallback_iterator.get().options.is_empty() {
+        loop {
             let result = f1(fallback_iterator.get());
             if !result_is_err_missing_resource_options(&result) {
                 return result
@@ -146,6 +148,10 @@ impl<P> LocaleFallbackProvider<P> {
                     })
                     // Log the original request rather than the fallback request
                     .map_err(|e| e.with_req(key, base_req));
+            }
+            // If we just checked und, break out of the loop.
+            if fallback_iterator.get().options.is_empty() {
+                break;
             }
             fallback_iterator.step();
         }
