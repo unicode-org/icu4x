@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657845511833,
+  "lastUpdate": 1657859678264,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20123,6 +20123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1a4233ee5cd05cc793a89629d7697a40fe3956ab"
         },
         "date": 1657845476952,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "egg.robin.leroy@gmail.com",
+            "name": "Robin Leroy",
+            "username": "eggrobin"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "01599b82fe57a0e461b988b5d6ec44a5f4e924db",
+          "message": "Remove signum and sign display options (#2070)",
+          "timestamp": "2022-07-15T06:32:39+02:00",
+          "tree_id": "6b6d90770f80765e91437a307f6724840ec5f960",
+          "url": "https://github.com/unicode-org/icu4x/commit/01599b82fe57a0e461b988b5d6ec44a5f4e924db"
+        },
+        "date": 1657859645355,
         "tool": "ndjson",
         "benches": [
           {
