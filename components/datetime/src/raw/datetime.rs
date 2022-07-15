@@ -356,14 +356,12 @@ impl DateTimeFormat {
         date: DateFormat,
         time: TimeFormat,
     ) -> Result<Self, DateTimeFormatError> {
+        let generic_pattern = &date.generic_pattern;
+        let time_patterns = &time.patterns;
         let patterns = date
             .patterns
-            .try_map_project_with_capture::<PatternPluralsFromPatternsV1Marker, (
-                DataPayload<GenericPatternV1Marker>,
-                DataPayload<PatternPluralsFromPatternsV1Marker>,
-            ), DateTimeFormatError>(
-                (date.generic_pattern, time.patterns),
-                |data, (generic_pattern, time_patterns), _| {
+            .try_map_project::<PatternPluralsFromPatternsV1Marker, _, DateTimeFormatError>(
+                |data, _| {
                     let date_pattern = data.0.expect_pattern("Lengths are single patterns");
                     let time_pattern: crate::pattern::runtime::Pattern = time_patterns
                         .get()
