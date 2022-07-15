@@ -1,4 +1,4 @@
-import { ICU4XFixedDecimal, ICU4XDataProvider, ICU4XLocale, ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatOptions } from "../lib/api.mjs"
+import { ICU4XFixedDecimal, ICU4XDataProvider, ICU4XLocale, ICU4XFixedDecimalFormat, ICU4XFixedDecimalGroupingStrategy } from "../lib/api.mjs"
 
 const decimal = ICU4XFixedDecimal.create(1234);
 decimal.multiply_pow10(-2);
@@ -9,5 +9,5 @@ const dataProvider = ICU4XDataProvider.create_test().provider;
 
 const locale = ICU4XLocale.create("bn");
 
-const format = ICU4XFixedDecimalFormat.try_new(locale, dataProvider, ICU4XFixedDecimalFormatOptions.default()).fdf;
+const format = ICU4XFixedDecimalFormat.try_new(locale, dataProvider, "Auto").fdf;
 console.log(format.format(decimal));

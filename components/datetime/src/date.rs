@@ -8,7 +8,7 @@
 use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
-use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime};
+use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
 use icu_locid::Locale;
 use tinystr::TinyStr8;
 
@@ -27,10 +27,10 @@ pub trait DateInput {
     /// The calendar this date relates to
     type Calendar: Calendar;
     /// Gets the era and year input.
-    fn year(&self) -> Option<Year>;
+    fn year(&self) -> Option<FormattableYear>;
 
     /// Gets the month input.
-    fn month(&self) -> Option<Month>;
+    fn month(&self) -> Option<FormattableMonth>;
 
     /// Gets the day input.
     fn day_of_month(&self) -> Option<DayOfMonth>;
@@ -44,6 +44,9 @@ pub trait DateInput {
     /// Gets the kind of calendar this date is for, if associated with AnyCalendar
     /// In most cases you'll probably want to return AnyCalendarKind::Iso
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind>;
+
+    /// Converts date to ISO
+    fn to_iso(&self) -> Date<Iso>;
 }
 
 /// Representation of a time of day according to ISO-8601 conventions. Always indexed from
@@ -103,7 +106,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     /// The year number according to week numbering.
     ///
     /// For example, December 31, 2020 is part of the first week of 2021.
-    fn year_week(&self) -> Result<Year, DateTimeError>;
+    fn year_week(&self) -> Result<FormattableYear, DateTimeError>;
 
     /// The week of the month.
     ///
@@ -133,8 +136,8 @@ pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
 ///
 /// See [`DateTimeInput`] for documentation on individual fields
 pub(crate) struct ExtractedDateTimeInput {
-    year: Option<Year>,
-    month: Option<Month>,
+    year: Option<FormattableYear>,
+    month: Option<FormattableMonth>,
     day_of_month: Option<DayOfMonth>,
     iso_weekday: Option<IsoWeekday>,
     day_of_year_info: Option<DayOfYearInfo>,
@@ -149,7 +152,7 @@ pub(crate) struct ExtractedDateTimeInput {
 ///
 /// See [`ZonedDateTimeInput`] for documentation on individual fields
 pub(crate) struct ExtractedZonedDateTimeInput {
-    date_time_input: ExtractedDateTimeInput,
+    pub(crate) date_time_input: ExtractedDateTimeInput,
     gmt_offset: GmtOffset,
     time_zone_id: Option<TimeZoneBcp47Id>,
     metazone_id: Option<MetaZoneId>,
@@ -191,10 +194,10 @@ impl DateInput for ExtractedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant
     type Calendar = icu_calendar::any_calendar::AnyCalendar;
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         self.year
     }
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         self.month
     }
     fn day_of_month(&self) -> Option<DayOfMonth> {
@@ -208,6 +211,9 @@ impl DateInput for ExtractedDateTimeInput {
     }
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         self.any_calendar_kind
+    }
+    fn to_iso(&self) -> Date<Iso> {
+        unreachable!("ExtractedDateTimeInput should never be directly passed to AnyDateTimeFormat")
     }
 }
 
@@ -230,10 +236,10 @@ impl DateInput for ExtractedZonedDateTimeInput {
     /// This actually doesn't matter, by the time we use this
     /// it's purely internal raw code where calendars are irrelevant
     type Calendar = icu_calendar::any_calendar::AnyCalendar;
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         self.date_time_input.year
     }
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         self.date_time_input.month
     }
     fn day_of_month(&self) -> Option<DayOfMonth> {
@@ -247,6 +253,11 @@ impl DateInput for ExtractedZonedDateTimeInput {
     }
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         self.date_time_input.any_calendar_kind
+    }
+    fn to_iso(&self) -> Date<Iso> {
+        unreachable!(
+            "ExtractedZonedDateTimeInput should never be directly passed to AnyDateTimeFormat"
+        )
     }
 }
 
@@ -304,7 +315,7 @@ fn compute_week_of_year<T: DateInput>(
 fn year_week<T: DateInput>(
     datetime: &T,
     calendar: &week_of::CalendarInfo,
-) -> Result<Year, DateTimeError> {
+) -> Result<FormattableYear, DateTimeError> {
     let (doy_info, week) = compute_week_of_year(datetime, calendar)?;
     Ok(match week.unit {
         week_of::RelativeUnit::Previous => doy_info.prev_year,
@@ -386,7 +397,7 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
         self.data
     }
 
-    fn year_week(&self) -> Result<Year, DateTimeError> {
+    fn year_week(&self) -> Result<FormattableYear, DateTimeError> {
         year_week(
             self.data,
             #[allow(clippy::expect_used)]
@@ -432,7 +443,7 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
         self.data
     }
 
-    fn year_week(&self) -> Result<Year, DateTimeError> {
+    fn year_week(&self) -> Result<FormattableYear, DateTimeError> {
         year_week(
             self.data,
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -472,12 +483,12 @@ impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         Some(self.year())
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         Some(self.month())
     }
 
@@ -499,17 +510,21 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for Date<A> {
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         self.calendar().any_calendar_kind()
     }
+
+    fn to_iso(&self) -> Date<Iso> {
+        Date::to_iso(self)
+    }
 }
 
 impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
     type Calendar = C;
     /// Gets the era and year input.
-    fn year(&self) -> Option<Year> {
+    fn year(&self) -> Option<FormattableYear> {
         Some(self.date.year())
     }
 
     /// Gets the month input.
-    fn month(&self) -> Option<Month> {
+    fn month(&self) -> Option<FormattableMonth> {
         Some(self.date.month())
     }
 
@@ -530,6 +545,9 @@ impl<C: Calendar, A: AsCalendar<Calendar = C>> DateInput for DateTime<A> {
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         self.date.calendar().any_calendar_kind()
+    }
+    fn to_iso(&self) -> Date<Iso> {
+        Date::to_iso(&self.date)
     }
 }
 

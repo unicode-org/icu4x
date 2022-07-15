@@ -47,7 +47,7 @@ pub struct TimeZoneFormatsV1<'data> {
 
 /// TimeZone ID in BCP47 format
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE)]
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
@@ -75,7 +75,7 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 
 /// MetaZone ID in a compact format
 #[repr(transparent)]
-#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE)]
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetaZoneId(pub TinyAsciiStr<4>);
@@ -210,7 +210,7 @@ pub struct MetaZoneSpecificNamesShortV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct MetaZonePeriodV1<'data>(
-    /// The default mapping between period and metazone id. The second level key is a timestamp string. It represents when the metazone started to be used.
+    /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as the number of minutes since the local unix epoch. It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZoneBcp47Id, str, Option<MetaZoneId>>,
+    pub ZeroMap2d<'data, TimeZoneBcp47Id, i32, Option<MetaZoneId>>,
 );

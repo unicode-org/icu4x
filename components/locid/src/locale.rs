@@ -68,7 +68,7 @@ use core::str::FromStr;
 /// assert_eq!(loc.id.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Default, PartialEq, Eq, Clone, Hash)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
     /// The basic language/script/region components in the locale identifier along with any variants.

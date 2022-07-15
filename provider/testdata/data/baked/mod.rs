@@ -1,6 +1,7 @@
 // @generated
 mod calendar;
 mod collator;
+mod core;
 mod datetime;
 mod decimal;
 mod fallback;
@@ -1496,6 +1497,23 @@ impl ResourceProvider<::icu_properties::provider::XidStartV1Marker> for BakedDat
         })
     }
 }
+impl ResourceProvider<::icu_provider::hello_world::HelloWorldV1Marker> for BakedDataProvider {
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<::icu_provider::hello_world::HelloWorldV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                litemap_slice_get(
+                    core::helloworld_v1::DATA,
+                    <::icu_provider::hello_world::HelloWorldV1Marker as ResourceMarker>::KEY,
+                    req,
+                )?,
+            ))),
+        })
+    }
+}
 impl
     ResourceProvider<
         ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker,
@@ -1569,6 +1587,17 @@ impl ResourceProvider<::icu_segmenter::provider::SentenceBreakDataV1Marker> for 
                 )?,
             ))),
         })
+    }
+}
+impl ResourceProvider<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>
+    for BakedDataProvider
+{
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>, DataError>
+    {
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (segmenter :: dictionary_v1 :: DATA , < :: icu_segmenter :: provider :: UCharDictionaryBreakDataV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
     }
 }
 impl ResourceProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDataProvider {

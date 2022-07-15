@@ -658,7 +658,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -668,7 +668,7 @@ dependencies = [
 
 [[package]]
 name = "databake-derive"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "databake",
  "proc-macro2",
@@ -806,12 +806,6 @@ dependencies = [
  "dynasm",
  "memmap2",
 ]
-
-[[package]]
-name = "ecma402_traits"
-version = "0.2.0"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "98c62dda8ca85aa46241d90f1c86c42833847cd838403eb71524aaf77073fbcc"
 
 [[package]]
 name = "either"
@@ -1319,21 +1313,6 @@ name = "icu4x"
 version = "0.1.0"
 
 [[package]]
-name = "icu4x_ecma402"
-version = "0.6.0"
-dependencies = [
- "criterion",
- "ecma402_traits",
- "icu",
- "icu_locid",
- "icu_plurals",
- "icu_provider",
- "icu_testdata",
- "serde",
- "serde_json",
-]
-
-[[package]]
 name = "icu_benchmark_binsize"
 version = "0.1.0"
 dependencies = [
@@ -1528,11 +1507,12 @@ dependencies = [
  "icu_testdata",
  "icu_uniset",
  "itertools",
- "litemap",
+ "lazy_static",
  "log",
  "proc-macro2",
  "quote",
  "rayon",
+ "reqwest",
  "serde",
  "serde-aux",
  "serde_json",
@@ -1737,7 +1717,6 @@ dependencies = [
  "icu_locid",
  "icu_provider_adapters",
  "icu_provider_macros",
- "litemap",
  "log",
  "postcard",
  "serde",
@@ -1770,7 +1749,6 @@ version = "0.6.0"
 dependencies = [
  "icu_locid",
  "icu_provider",
- "litemap",
  "log",
  "postcard",
  "serde",
@@ -1803,6 +1781,7 @@ dependencies = [
 name = "icu_provider_macros"
 version = "0.6.0"
 dependencies = [
+ "icu_locid",
  "icu_provider",
  "proc-macro2",
  "quote",
@@ -1817,6 +1796,7 @@ dependencies = [
  "databake",
  "icu_char16trie",
  "icu_codepointtrie",
+ "icu_locid",
  "icu_provider",
  "icu_testdata",
  "lazy_static",

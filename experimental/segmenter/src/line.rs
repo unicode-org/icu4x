@@ -13,6 +13,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
+use icu_locid::locale;
 use icu_provider::prelude::*;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
@@ -124,11 +125,12 @@ impl LineBreakSegmenter {
             .load_resource(&DataRequest::default())?
             .take_payload()?;
 
-        // TODO: Use `provider` parameter after we support loading dictionary data from the
-        // production-ready providers.
-        let inv_provider = icu_provider::inv::InvariantDataProvider;
-        let dictionary_payload = inv_provider
-            .load_resource(&DataRequest::default())?
+        let locale = locale!("th");
+        let dictionary_payload = provider
+            .load_resource(&DataRequest {
+                options: ResourceOptions::from(locale),
+                metadata: Default::default(),
+            })?
             .take_payload()?;
         Ok(Self {
             options,
@@ -189,33 +191,22 @@ fn get_linebreak_property_utf32_with_rule(
     line_break_rule: LineBreakRule,
     word_break_rule: WordBreakRule,
 ) -> u8 {
-    if codepoint < 0x20000 {
-        // Note: Default value is 0 == UNKNOWN
-        let prop = property_table.0.get(codepoint);
+    // Note: Default value is 0 == UNKNOWN
+    let prop = property_table.0.get(codepoint);
 
-        if word_break_rule == WordBreakRule::BreakAll
-            || line_break_rule == LineBreakRule::Loose
-            || line_break_rule == LineBreakRule::Normal
-        {
-            return match prop {
-                CJ => ID, // All CJ's General_Category is Other_Letter (Lo).
-                _ => prop,
-            };
-        }
-
-        // CJ is treated as NS by default, yielding strict line breaking.
-        // https://www.unicode.org/reports/tr14/#CJ
-        return prop;
+    if word_break_rule == WordBreakRule::BreakAll
+        || line_break_rule == LineBreakRule::Loose
+        || line_break_rule == LineBreakRule::Normal
+    {
+        return match prop {
+            CJ => ID, // All CJ's General_Category is Other_Letter (Lo).
+            _ => prop,
+        };
     }
 
-    match codepoint {
-        0x20000..=0x2fffd => ID,
-        0x30000..=0x3fffd => ID,
-        0xe0001 => CM,
-        0xe0020..=0xe007f => CM,
-        0xe0100..=0xe01ef => CM,
-        _ => XX,
-    }
+    // CJ is treated as NS by default, yielding strict line breaking.
+    // https://www.unicode.org/reports/tr14/#CJ
+    prop
 }
 
 #[inline]

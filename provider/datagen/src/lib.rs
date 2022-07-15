@@ -64,7 +64,7 @@ pub mod transform;
 
 pub use error::*;
 pub use registry::all_keys;
-pub use source::{CldrLocaleSubset, IcuTrieType, SourceData};
+pub use source::*;
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
@@ -220,8 +220,8 @@ pub enum Out {
 ///   Otherwise, all locales supported by the source data will be generated.
 /// * `keys`: The keys for which to generate data. See [`all_keys`], [`keys`], [`keys_from_file`], [`keys_from_bin`].
 /// * `sources`: The underlying source data. CLDR and/or ICU data can be missing if no
-///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_ICUEXPORT_ERROR`]
-///   will be returned.
+///   requested key requires them, otherwise an error satisfying [`is_missing_cldr_error`]
+///   or [`is_missing_icuexport_error`] will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
@@ -279,8 +279,10 @@ pub fn datagen(
     }
 
     keys.into_par_iter().try_for_each(|&key| {
-        let options = provider.supported_options_for_key(key)?;
         log::info!("Writing key: {}", key);
+        let options = provider
+            .supported_options_for_key(key)
+            .map_err(|e| e.with_key(key))?;
         let res = options.into_par_iter().try_for_each(|options| {
             let req = DataRequest {
                 options: options.clone(),
@@ -290,13 +292,14 @@ pub fn datagen(
                 .load_payload(key, &req)
                 .and_then(DataResponse::take_payload)
                 .map_err(|e| e.with_req(key, &req))?;
-            exporters
-                .par_iter()
-                .try_for_each(|e| e.put_payload(key, &options, &payload))
+            exporters.par_iter().try_for_each(|e| {
+                e.put_payload(key, &options, &payload)
+                    .map_err(|e| e.with_req(key, &req))
+            })
         });
 
         for e in &exporters {
-            e.flush(key)?;
+            e.flush(key).map_err(|e| e.with_key(key))?;
         }
 
         res

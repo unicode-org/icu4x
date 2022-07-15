@@ -58,7 +58,7 @@ use alloc::string::ToString;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Default, PartialEq, Eq, Clone, Hash)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct LanguageIdentifier {
     /// Language subtag of the language identifier.

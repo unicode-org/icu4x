@@ -8,7 +8,7 @@ use icu_datetime::provider::calendar::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
+use std::collections::HashMap;
 
 mod patterns;
 mod skeletons;
@@ -20,7 +20,7 @@ pub mod week_data;
 pub struct CommonDateProvider {
     source: SourceData,
     // BCP-47 value -> CLDR identifier
-    supported_cals: LiteMap<icu_locid::extensions::unicode::Value, &'static str>,
+    supported_cals: HashMap<icu_locid::extensions::unicode::Value, &'static str>,
 }
 
 impl From<&SourceData> for CommonDateProvider {

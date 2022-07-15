@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use icu_decimal::{
-    options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+    options::{FixedDecimalFormatOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormat,
 };
@@ -137,7 +137,6 @@ impl ZonedDateTimeFormat {
 
         let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
 
         let fixed_decimal_format = FixedDecimalFormat::try_new(
             locale_no_extensions.clone(),
@@ -175,7 +174,7 @@ impl ZonedDateTimeFormat {
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedZonedDateTime<'l>
     where
         T: ZonedDateTimeInput,
     {

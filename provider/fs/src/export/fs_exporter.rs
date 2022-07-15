@@ -52,7 +52,7 @@ pub struct FilesystemExporter {
     root: PathBuf,
     manifest: Manifest,
     serializer: Box<dyn AbstractSerializer + Sync>,
-    fingerprints: Option<Mutex<Vec<(ResourceKey, ResourceOptions, String)>>>,
+    fingerprints: Option<Mutex<Vec<String>>>,
 }
 
 impl FilesystemExporter {
@@ -117,8 +117,8 @@ impl DataExporter for FilesystemExporter {
                         .map_err(|e| DataError::from(e).with_path_context(&path_buf))?,
                 ))
             },
-            hash: if self.fingerprints.is_some() {
-                Some(Sha256::new())
+            hash_size: if self.fingerprints.is_some() {
+                Some((Sha256::new(), 0))
             } else {
                 None
             },
@@ -127,13 +127,13 @@ impl DataExporter for FilesystemExporter {
         self.serializer
             .serialize(obj, &mut file)
             .map_err(|e| e.with_path_context(&path_buf))?;
-        if let Some(hash) = file.hash {
+        if let Some((hash, size)) = file.hash_size {
             self.fingerprints
                 .as_ref()
                 .expect("present iff file.1 is present")
                 .lock()
                 .expect("poison")
-                .push((key, options.clone(), format!("{:x}", hash.finalize())));
+                .push(format!("{key}, {options}, {size}B, {:x}", hash.finalize()));
         }
         Ok(())
     }
@@ -142,14 +142,14 @@ impl DataExporter for FilesystemExporter {
         if let Some(fingerprints) = self.fingerprints.as_mut() {
             let fingerprints = fingerprints.get_mut().expect("poison");
             fingerprints.sort();
-            let path = self.root.join("fingerprints.txt");
+            let path = self.root.join("fingerprints.csv");
             let mut file = crlify::BufWriterWithLineEndingFix::new(
                 std::fs::File::create(&path)
                     .map_err(|e| DataError::from(e).with_path_context(&path))?,
             );
-            for (key, options, hash) in fingerprints {
+            for line in fingerprints {
                 use std::io::Write;
-                writeln!(file, "{key}/{options}: {hash}")?;
+                writeln!(file, "{}", line)?;
             }
         }
         Ok(())
@@ -158,19 +158,20 @@ impl DataExporter for FilesystemExporter {
 
 struct HashingFile {
     file: Box<dyn std::io::Write>,
-    hash: Option<Sha256>,
+    hash_size: Option<(Sha256, usize)>,
 }
 
 impl std::io::Write for HashingFile {
     fn write(&mut self, buf: &[u8]) -> std::io::Result<usize> {
-        if let Some(hash) = self.hash.as_mut() {
+        if let Some((hash, size)) = self.hash_size.as_mut() {
             hash.write_all(buf)?;
+            *size += buf.len();
         }
         self.file.write(buf)
     }
 
     fn flush(&mut self) -> std::io::Result<()> {
-        if let Some(hash) = self.hash.as_mut() {
+        if let Some((hash, _)) = self.hash_size.as_mut() {
             hash.flush()?;
         }
         self.file.flush()

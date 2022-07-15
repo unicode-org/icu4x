@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::ule::AsULE;
 use crate::ZeroSlice;
 
 use core::cmp::Ordering;
@@ -142,6 +141,21 @@ where
     K1: ?Sized,
     V: ?Sized,
 {
+    #[doc(hidden)] // databake internal
+    pub const unsafe fn from_parts_unchecked(
+        keys0: &'a K0::Slice,
+        joiner: &'a ZeroSlice<u32>,
+        keys1: &'a K1::Slice,
+        values: &'a V::Slice,
+    ) -> Self {
+        Self {
+            keys0,
+            joiner,
+            keys1,
+            values,
+        }
+    }
+
     /// The number of elements in the [`ZeroMap2dBorrowed`]
     pub fn len(&self) -> usize {
         self.values.zvl_len()
@@ -284,8 +298,8 @@ impl<'a, K0, K1, V> ZeroMap2dBorrowed<'a, K0, K1, V>
 where
     K0: ZeroMapKV<'a> + Ord,
     K1: ZeroMapKV<'a> + Ord,
-    V: ZeroMapKV<'a, GetType = V::ULE>,
-    V: AsULE + Copy,
+    V: ZeroMapKV<'a>,
+    V: Copy,
     K0: ?Sized,
     K1: ?Sized,
 {

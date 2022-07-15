@@ -19,10 +19,15 @@ use icu::locid::LanguageIdentifier;
 
 /// Implements ECMA-402 [`Intl.PluralRules`][link].
 ///
-/// [link]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRulres/PluralRules
+/// [link]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/PluralRules
 pub mod pluralrules;
 
-/// An adapter between [`icu::locid`] and [`ecma402_traits`].
+/// Implements ECMA-402 [`Intl.ListFormat`][link].
+///
+/// [link]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/ListFormat
+pub mod list;
+
+/// An adapter between [`icu_locid`] and [`ecma402_traits`].
 ///
 /// Specifically, adds an implementation of [`ecma402_traits::Locale`], which is
 /// rudimentary at the moment.
@@ -46,3 +51,9 @@ impl std::fmt::Display for crate::Locale {
         }
     }
 }
+
+mod provider {
+    include!(concat!(env!("OUT_DIR"), "/baked/mod.rs"));
+}
+
+pub(crate) use provider::BakedDataProvider;
