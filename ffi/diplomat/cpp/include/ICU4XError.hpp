@@ -69,6 +69,22 @@ enum struct ICU4XError {
   DecimalLimitError = 1280,
   DecimalSyntaxError = 1281,
   PluralParserError = 1536,
+  DateTimeParseError = 1792,
+  DateTimeOverflowError = 1793,
+  DateTimeUnderflowError = 1794,
+  DateTimeInvalidTimeZoneOffsetError = 1795,
+  DateTimeOutOfRangeError = 1796,
+  DateTimeMissingInputError = 1797,
+  DateTimeFormatPatternError = 2048,
+  DateTimeFormatMissingInputFieldError = 2049,
+  DateTimeFormatSkeletonError = 2050,
+  DateTimeFormatUnsupportedFieldError = 2051,
+  DateTimeFormatUnsupportedOptionsError = 2052,
+  DateTimeFormatMissingWeekdaySymbolError = 2053,
+  DateTimeFormatMissingMonthSymbolError = 2054,
+  DateTimeFormatMissingEraSymbolError = 2055,
+  DateTimeFormatFixedDecimalError = 2056,
+  DateTimeFormatMismatchedAnyCalendarError = 2057,
 };
 
 #endif

@@ -5,6 +5,8 @@
 use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
+use icu_calendar::DateTimeError;
+use icu_datetime::DateTimeFormatError;
 use icu_decimal::FixedDecimalFormatError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
@@ -68,6 +70,26 @@ pub mod ffi {
 
         // plural errors
         PluralParserError = 0x6_00,
+
+        // datetime errors
+        DateTimeParseError = 0x7_00,
+        DateTimeOverflowError = 0x7_01,
+        DateTimeUnderflowError = 0x7_02,
+        DateTimeInvalidTimeZoneOffsetError = 0x7_03,
+        DateTimeOutOfRangeError = 0x7_04,
+        DateTimeMissingInputError = 0x7_05,
+
+        // datetime format errors
+        DateTimeFormatPatternError = 0x8_00,
+        DateTimeFormatMissingInputFieldError = 0x8_01,
+        DateTimeFormatSkeletonError = 0x8_02,
+        DateTimeFormatUnsupportedFieldError = 0x8_03,
+        DateTimeFormatUnsupportedOptionsError = 0x8_04,
+        DateTimeFormatMissingWeekdaySymbolError = 0x8_05,
+        DateTimeFormatMissingMonthSymbolError = 0x8_06,
+        DateTimeFormatMissingEraSymbolError = 0x8_07,
+        DateTimeFormatFixedDecimalError = 0x8_08,
+        DateTimeFormatMismatchedAnyCalendarError = 0x8_09,
     }
 }
 
@@ -116,6 +138,57 @@ impl From<PropertiesError> for ICU4XError {
             PropertiesError::UnknownScriptId(..) => ICU4XError::PropertyUnknownScriptIdError,
             PropertiesError::UnknownGeneralCategoryGroup(..) => {
                 ICU4XError::PropertyUnknownGeneralCategoryGroupError
+            }
+            _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
+impl From<DateTimeError> for ICU4XError {
+    fn from(e: DateTimeError) -> Self {
+        match e {
+            DateTimeError::Parse => ICU4XError::DateTimeParseError,
+            DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
+            DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
+            DateTimeError::InvalidTimeZoneOffset => ICU4XError::DateTimeInvalidTimeZoneOffsetError,
+            DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
+            DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
+            _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
+impl From<DateTimeFormatError> for ICU4XError {
+    fn from(e: DateTimeFormatError) -> Self {
+        match e {
+            DateTimeFormatError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
+            DateTimeFormatError::Format(err) => err.into(),
+            DateTimeFormatError::DataProvider(err) => err.into(),
+            DateTimeFormatError::MissingInputField => {
+                ICU4XError::DateTimeFormatMissingInputFieldError
+            }
+            DateTimeFormatError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
+            DateTimeFormatError::UnsupportedField(_) => {
+                ICU4XError::DateTimeFormatUnsupportedFieldError
+            }
+            DateTimeFormatError::UnsupportedOptions => {
+                ICU4XError::DateTimeFormatUnsupportedOptionsError
+            }
+            DateTimeFormatError::PluralRules(err) => err.into(),
+            DateTimeFormatError::DateTimeInput(err) => err.into(),
+            DateTimeFormatError::MissingWeekdaySymbol(_) => {
+                ICU4XError::DateTimeFormatMissingWeekdaySymbolError
+            }
+            DateTimeFormatError::MissingMonthSymbol(_) => {
+                ICU4XError::DateTimeFormatMissingMonthSymbolError
+            }
+            DateTimeFormatError::MissingEraSymbol(_) => {
+                ICU4XError::DateTimeFormatMissingEraSymbolError
+            }
+            DateTimeFormatError::FixedDecimal => ICU4XError::DateTimeFormatFixedDecimalError,
+            DateTimeFormatError::FixedDecimalFormat(err) => err.into(),
+            DateTimeFormatError::MismatchedAnyCalendar(_, _) => {
+                ICU4XError::DateTimeFormatMismatchedAnyCalendarError
             }
             _ => ICU4XError::UnknownError,
         }
