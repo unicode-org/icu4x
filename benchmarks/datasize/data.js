@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657926710732,
+  "lastUpdate": 1657930138012,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20243,6 +20243,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7b38fc63ecda94d1830a98f8b8de48aa2ace5c24"
         },
         "date": 1657926672578,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "420b8da2614f8e3a610719563a6a62a9f2c5cb52",
+          "message": "Add FFI for DateTimeFormat (#2164)",
+          "timestamp": "2022-07-15T17:07:25-07:00",
+          "tree_id": "7e871ee19c1de193d5fdb7f9d9a524a04db8e57a",
+          "url": "https://github.com/unicode-org/icu4x/commit/420b8da2614f8e3a610719563a6a62a9f2c5cb52"
+        },
+        "date": 1657930107186,
         "tool": "ndjson",
         "benches": [
           {
