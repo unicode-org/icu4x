@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657935301044,
+  "lastUpdate": 1657955720851,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48647,6 +48647,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6226,
             "range": "± 190",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "58269dedcec1d5e43128210b09161d8343c9f49c",
+          "message": "Simplify Hangul handling when trying to compose a starter with a starter (#2189)",
+          "timestamp": "2022-07-16T10:02:14+03:00",
+          "tree_id": "f1b6c8e16e9953fbbe60ff05564036259e29e2b7",
+          "url": "https://github.com/unicode-org/icu4x/commit/58269dedcec1d5e43128210b09161d8343c9f49c"
+        },
+        "date": 1657955684879,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 122400,
+            "range": "± 6375",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1110300,
+            "range": "± 51178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 233316,
+            "range": "± 9736",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 110232,
+            "range": "± 8773",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 126106,
+            "range": "± 6772",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 129142,
+            "range": "± 12255",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 135299,
+            "range": "± 6440",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 225361,
+            "range": "± 12294",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 244277,
+            "range": "± 7901",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 235876,
+            "range": "± 8339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 250031,
+            "range": "± 10920",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5943,
+            "range": "± 253",
             "unit": "ns/iter"
           }
         ]
