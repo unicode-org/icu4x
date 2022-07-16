@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657934621922,
+  "lastUpdate": 1657955041151,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20303,6 +20303,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0dc6d492dd259635005020efc06e56e8c6b1f113"
         },
         "date": 1657934589265,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "58269dedcec1d5e43128210b09161d8343c9f49c",
+          "message": "Simplify Hangul handling when trying to compose a starter with a starter (#2189)",
+          "timestamp": "2022-07-16T10:02:14+03:00",
+          "tree_id": "f1b6c8e16e9953fbbe60ff05564036259e29e2b7",
+          "url": "https://github.com/unicode-org/icu4x/commit/58269dedcec1d5e43128210b09161d8343c9f49c"
+        },
+        "date": 1657955005604,
         "tool": "ndjson",
         "benches": [
           {
