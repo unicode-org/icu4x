@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657930720283,
+  "lastUpdate": 1657935247812,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37169,6 +37169,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 86,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "zibi@unicode.org",
+            "name": "Zibi Braniecki",
+            "username": "zbraniecki"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0dc6d492dd259635005020efc06e56e8c6b1f113",
+          "message": "Format to Formatter rename (#2184)\n\nApply feedback\r\n\r\nRebase on top of main",
+          "timestamp": "2022-07-15T18:21:44-07:00",
+          "tree_id": "ee83762f584c790ba088c6b1e4db8ca11099c5d0",
+          "url": "https://github.com/unicode-org/icu4x/commit/0dc6d492dd259635005020efc06e56e8c6b1f113"
+        },
+        "date": 1657935210738,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 127522,
+            "range": "± 4559",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25760,
+            "range": "± 655",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72162,
+            "range": "± 1360",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 223,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 80,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 94,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
