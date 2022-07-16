@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657927236981,
+  "lastUpdate": 1657930626547,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -36736,6 +36736,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/best",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "dminor@mozilla.com",
+            "name": "Dan Minor",
+            "username": "dminor"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "420b8da2614f8e3a610719563a6a62a9f2c5cb52",
+          "message": "Add FFI for DateTimeFormat (#2164)",
+          "timestamp": "2022-07-15T17:07:25-07:00",
+          "tree_id": "7e871ee19c1de193d5fdb7f9d9a524a04db8e57a",
+          "url": "https://github.com/unicode-org/icu4x/commit/420b8da2614f8e3a610719563a6a62a9f2c5cb52"
+        },
+        "date": 1657930590309,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 53828210,
+            "range": "± 170529",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           },
