@@ -166,6 +166,9 @@ const HANGUL_N_COUNT: u32 = 588;
 /// Syllable count
 const HANGUL_S_COUNT: u32 = 11172;
 
+/// One past the conjoining jamo block
+const HANGUL_JAMO_LIMIT: u32 = 0x1200;
+
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
 ///
@@ -240,11 +243,6 @@ fn split_first_u24(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
-}
-
-#[inline(always)]
-fn in_range_len(c: char, start: u32, len: u32) -> bool {
-    u32::from(c).wrapping_sub(start) < len
 }
 
 /// Pack a `char` and a `CanonicalCombiningClass` in
@@ -818,6 +816,35 @@ where
         }
     }
 
+    /// Performs canonical composition (including Hangul) on a pair of
+    /// characters or returns `None` if these characters don't compose.
+    /// Composition exclusions are taken into account.
+    #[inline]
+    pub fn compose(&self, starter: char, second: char) -> Option<char> {
+        let v = u32::from(second).wrapping_sub(HANGUL_V_BASE);
+        if v >= HANGUL_JAMO_LIMIT - HANGUL_V_BASE {
+            return self.compose_non_hangul(starter, second);
+        }
+        if v < HANGUL_V_COUNT {
+            let l = u32::from(starter).wrapping_sub(HANGUL_L_BASE);
+            if l < HANGUL_L_COUNT {
+                let lv = l * HANGUL_N_COUNT + v * HANGUL_T_COUNT;
+                // Safe, because the inputs are known to be in range.
+                return Some(unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) });
+            }
+            return None;
+        }
+        if in_inclusive_range(second, '\u{11A8}', '\u{11C2}') {
+            let lv = u32::from(starter).wrapping_sub(HANGUL_S_BASE);
+            if lv < HANGUL_S_COUNT && lv % HANGUL_T_COUNT == 0 {
+                let lvt = lv + (u32::from(second) - HANGUL_T_BASE);
+                // Safe, because the inputs are known to be in range.
+                return Some(unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lvt) });
+            }
+        }
+        None
+    }
+
     /// Performs (non-Hangul) canonical composition on a pair of characters
     /// or returns `None` if these characters don't compose. Composition
     /// exclusions are taken into account.
@@ -934,7 +961,11 @@ where
             }
         }
         let mut starter = '\u{0}'; // The compiler can't figure out this gets overwritten before use.
-        let mut composition_action = CompositionAction::EnteringLoop;
+
+        // The point of having this boolean is to have only one call site to
+        // `self.decomposition.decomposing_next`, which is hopefully beneficial for
+        // code size under inlining.
+        let mut attempt_composition = false;
         loop {
             if let Some(unprocessed) = self.unprocessed_starter.take() {
                 debug_assert_eq!(undecomposed_starter, '\u{0}');
@@ -943,39 +974,15 @@ where
             } else {
                 debug_assert_eq!(self.decomposition.buffer_pos, 0);
                 let next_starter = self.decomposition.decomposing_next(undecomposed_starter);
-                match composition_action {
-                    CompositionAction::EnteringLoop => {
-                        starter = next_starter;
-                    }
-                    CompositionAction::NonHangul => {
-                        if let Some(composed) = self.compose_non_hangul(starter, next_starter) {
-                            starter = composed;
-                        } else {
-                            // This is our yield point. We'll pick this up above in the
-                            // next call to `next()`.
-                            self.unprocessed_starter = Some(next_starter);
-                            return Some(starter);
-                        }
-                    }
-                    CompositionAction::HangulVowel => {
-                        // Unicode Standard 14.0, page 145
-                        debug_assert!(in_range_len(starter, HANGUL_L_BASE, HANGUL_L_COUNT));
-                        debug_assert!(in_range_len(next_starter, HANGUL_V_BASE, HANGUL_V_COUNT));
-                        let l = u32::from(starter) - HANGUL_L_BASE;
-                        let v = u32::from(next_starter) - HANGUL_V_BASE;
-                        let lv = l * HANGUL_N_COUNT + v * HANGUL_T_COUNT;
-                        // Safe, because the inputs are known to be in range.
-                        starter = unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) };
-                    }
-                    CompositionAction::HangulTrail => {
-                        // Unicode Standard 14.0, page 146
-                        let lv = u32::from(starter) - HANGUL_S_BASE;
-                        debug_assert_eq!(lv % HANGUL_T_COUNT, 0);
-                        debug_assert!(in_inclusive_range(next_starter, '\u{11A8}', '\u{11C2}'));
-                        let lvt = lv + (u32::from(next_starter) - HANGUL_T_BASE);
-                        // Safe, because the inputs are known to be in range.
-                        starter = unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lvt) };
-                    }
+                if !attempt_composition {
+                    starter = next_starter;
+                } else if let Some(composed) = self.compose(starter, next_starter) {
+                    starter = composed;
+                } else {
+                    // This is our yield point. We'll pick this up above in the
+                    // next call to `next()`.
+                    self.unprocessed_starter = Some(next_starter);
+                    return Some(starter);
                 }
             }
             // Even a Hangul LVT syllable may have decomposed if followed by something that
@@ -1095,61 +1102,19 @@ where
                     // Won't combine backwards anyway.
                     return Some(starter);
                 }
-                if in_inclusive_range(pending_starter, '\u{11A8}', '\u{11C2}') {
-                    // Hangul trail
-                    let lv = u32::from(starter).wrapping_sub(HANGUL_S_BASE);
-                    if lv < HANGUL_S_COUNT && lv % HANGUL_T_COUNT == 0 {
-                        // We need to loop back in order to uphold invariants in case
-                        // the character after decomposes to a non-starter.
-                        undecomposed_starter = pending_starter;
-                        // The following line is OK, because we're about to loop back
-                        // to `self.decomposition.decomposing_next(c);`, which will
-                        // restore the between-`next()`-calls invariant of `pending`
-                        // before this function returns.
-                        self.decomposition.pending = None; // Consume what we peeked
-                        composition_action = CompositionAction::HangulTrail;
-                        continue;
-                    }
-                    // Won't combine in another way anyway
-                    return Some(starter);
-                }
-                if in_range_len(pending_starter, HANGUL_V_BASE, HANGUL_V_COUNT) {
-                    // Hangul vowel
-                    if in_range_len(starter, HANGUL_L_BASE, HANGUL_L_COUNT) {
-                        // We need to loop back in order to uphold invariants in case
-                        // the character after decomposes to a non-starter.
-                        undecomposed_starter = pending_starter;
-                        // The following line is OK, because we're about to loop back
-                        // to `self.decomposition.decomposing_next(c);`, which will
-                        // restore the between-`next()`-calls invariant of `pending`
-                        // before this function returns.
-                        self.decomposition.pending = None; // Consume what we peeked
-                        composition_action = CompositionAction::HangulVowel;
-                        continue;
-                    }
-                    // Won't combine in another way anyway
-                    return Some(starter);
-                }
                 undecomposed_starter = pending_starter;
                 // The following line is OK, because we're about to loop back
                 // to `self.decomposition.decomposing_next(c);`, which will
                 // restore the between-`next()`-calls invariant of `pending`
                 // before this function returns.
                 self.decomposition.pending = None; // Consume what we peeked
-                composition_action = CompositionAction::NonHangul;
+                attempt_composition = true;
                 continue;
             }
             // End of input
             return Some(starter);
         }
     }
-}
-
-enum CompositionAction {
-    EnteringLoop,
-    NonHangul,
-    HangulVowel,
-    HangulTrail,
 }
 
 macro_rules! normalizer_methods {

@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This module contains the untyped [`AnyCalendar`](icu_calendar::any_calendar::AnyCalendar)-based
-//! `DateTimeFormat` APIs that are capable of formatting dates from any calendar
+//! `DateTimeFormatter` APIs that are capable of formatting dates from any calendar
 
 mod datetime;
 mod zoned_datetime;
 
-pub use datetime::AnyDateTimeFormat;
-pub use zoned_datetime::ZonedAnyDateTimeFormat;
+pub use datetime::AnyDateTimeFormatter;
+pub use zoned_datetime::ZonedAnyDateTimeFormatter;

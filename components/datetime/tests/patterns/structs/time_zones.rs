@@ -27,7 +27,7 @@ pub struct TimeZoneTest {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub struct TimeZoneExpectation {
     pub patterns: Vec<String>,
-    pub configs: Vec<TimeZoneFormatConfig>,
+    pub configs: Vec<TimeZoneFormatterConfig>,
     pub fallback_formats: Vec<FallbackFormat>,
     pub expected: Vec<String>,
 }
@@ -38,11 +38,11 @@ pub enum FallbackFormat {
     LocalizedGmt,
 }
 
-impl From<FallbackFormat> for time_zone::TimeZoneFormatOptions {
-    fn from(other: FallbackFormat) -> time_zone::TimeZoneFormatOptions {
+impl From<FallbackFormat> for time_zone::TimeZoneFormatterOptions {
+    fn from(other: FallbackFormat) -> time_zone::TimeZoneFormatterOptions {
         match other {
             FallbackFormat::Iso8601(iso_format, iso_minutes, iso_seconds) => {
-                time_zone::TimeZoneFormatOptions {
+                time_zone::TimeZoneFormatterOptions {
                     fallback_format: time_zone::FallbackFormat::Iso8601(
                         iso_format.into(),
                         iso_minutes.into(),
@@ -50,7 +50,7 @@ impl From<FallbackFormat> for time_zone::TimeZoneFormatOptions {
                     ),
                 }
             }
-            FallbackFormat::LocalizedGmt => time_zone::TimeZoneFormatOptions {
+            FallbackFormat::LocalizedGmt => time_zone::TimeZoneFormatterOptions {
                 fallback_format: time_zone::FallbackFormat::LocalizedGmt,
             },
         }
@@ -122,7 +122,7 @@ impl From<IsoFormat> for time_zone::IsoFormat {
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
-pub enum TimeZoneFormatConfig {
+pub enum TimeZoneFormatterConfig {
     GenericNonLocationLong,
     GenericNonLocationShort,
     GenericLocation,
@@ -132,27 +132,29 @@ pub enum TimeZoneFormatConfig {
     Iso8601(IsoFormat, IsoMinutes, IsoSeconds),
 }
 
-impl From<TimeZoneFormatConfig> for time_zone::TimeZoneFormatConfig {
-    fn from(other: TimeZoneFormatConfig) -> time_zone::TimeZoneFormatConfig {
+impl From<TimeZoneFormatterConfig> for time_zone::TimeZoneFormatterConfig {
+    fn from(other: TimeZoneFormatterConfig) -> time_zone::TimeZoneFormatterConfig {
         match other {
-            TimeZoneFormatConfig::GenericNonLocationLong => {
-                time_zone::TimeZoneFormatConfig::GenericNonLocationLong
+            TimeZoneFormatterConfig::GenericNonLocationLong => {
+                time_zone::TimeZoneFormatterConfig::GenericNonLocationLong
             }
-            TimeZoneFormatConfig::GenericNonLocationShort => {
-                time_zone::TimeZoneFormatConfig::GenericNonLocationShort
+            TimeZoneFormatterConfig::GenericNonLocationShort => {
+                time_zone::TimeZoneFormatterConfig::GenericNonLocationShort
             }
-            TimeZoneFormatConfig::GenericLocation => {
-                time_zone::TimeZoneFormatConfig::GenericLocation
+            TimeZoneFormatterConfig::GenericLocation => {
+                time_zone::TimeZoneFormatterConfig::GenericLocation
             }
-            TimeZoneFormatConfig::SpecificNonLocationLong => {
-                time_zone::TimeZoneFormatConfig::SpecificNonLocationLong
+            TimeZoneFormatterConfig::SpecificNonLocationLong => {
+                time_zone::TimeZoneFormatterConfig::SpecificNonLocationLong
             }
-            TimeZoneFormatConfig::SpecificNonLocationShort => {
-                time_zone::TimeZoneFormatConfig::SpecificNonLocationShort
+            TimeZoneFormatterConfig::SpecificNonLocationShort => {
+                time_zone::TimeZoneFormatterConfig::SpecificNonLocationShort
             }
-            TimeZoneFormatConfig::LocalizedGMT => time_zone::TimeZoneFormatConfig::LocalizedGMT,
-            TimeZoneFormatConfig::Iso8601(iso_format, iso_minutes, iso_seconds) => {
-                time_zone::TimeZoneFormatConfig::Iso8601(
+            TimeZoneFormatterConfig::LocalizedGMT => {
+                time_zone::TimeZoneFormatterConfig::LocalizedGMT
+            }
+            TimeZoneFormatterConfig::Iso8601(iso_format, iso_minutes, iso_seconds) => {
+                time_zone::TimeZoneFormatterConfig::Iso8601(
                     iso_format.into(),
                     iso_minutes.into(),
                     iso_seconds.into(),

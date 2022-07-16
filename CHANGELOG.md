@@ -16,7 +16,7 @@
     - `datetime`:
       - Formatting for fractional seconds (#1813, #1801)
       - Support for day of week in month ('F') (#1770)
-      - Custom fallbacking for TimeZoneFormat (#1591)
+      - Custom fallbacking for TimeZoneFormatter (#1591)
       - Support for week-of-month (#1468)
       - Bug fix to get_best_available_format_pattern skeleton matching logic (#1549)
     - `decimal`: No updates
@@ -89,7 +89,7 @@
       - Week-of-year support (#1206)
       - `DateTimeFormat::resolve_components()` (#1362)
       - Era formatting (#1346)
-      - `TimeZoneFormatConfig` (#1256)
+      - `TimeZoneFormatterConfig` (#1256)
       - New data model for organizing calendar data (#1300)
       - Bugfix around missing localized strings in time zone data (#1405)
     - `decimal`: No updates

@@ -5,7 +5,9 @@
 use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
-use icu_decimal::FixedDecimalFormatError;
+use icu_calendar::DateTimeError;
+use icu_datetime::DateTimeFormatterError;
+use icu_decimal::FixedDecimalFormatterError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
@@ -68,6 +70,26 @@ pub mod ffi {
 
         // plural errors
         PluralParserError = 0x6_00,
+
+        // datetime errors
+        DateTimeParseError = 0x7_00,
+        DateTimeOverflowError = 0x7_01,
+        DateTimeUnderflowError = 0x7_02,
+        DateTimeInvalidTimeZoneOffsetError = 0x7_03,
+        DateTimeOutOfRangeError = 0x7_04,
+        DateTimeMissingInputError = 0x7_05,
+
+        // datetime format errors
+        DateTimeFormatPatternError = 0x8_00,
+        DateTimeFormatMissingInputFieldError = 0x8_01,
+        DateTimeFormatSkeletonError = 0x8_02,
+        DateTimeFormatUnsupportedFieldError = 0x8_03,
+        DateTimeFormatUnsupportedOptionsError = 0x8_04,
+        DateTimeFormatMissingWeekdaySymbolError = 0x8_05,
+        DateTimeFormatMissingMonthSymbolError = 0x8_06,
+        DateTimeFormatMissingEraSymbolError = 0x8_07,
+        DateTimeFormatFixedDecimalError = 0x8_08,
+        DateTimeFormatMismatchedAnyCalendarError = 0x8_09,
     }
 }
 
@@ -122,6 +144,57 @@ impl From<PropertiesError> for ICU4XError {
     }
 }
 
+impl From<DateTimeError> for ICU4XError {
+    fn from(e: DateTimeError) -> Self {
+        match e {
+            DateTimeError::Parse => ICU4XError::DateTimeParseError,
+            DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
+            DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
+            DateTimeError::InvalidTimeZoneOffset => ICU4XError::DateTimeInvalidTimeZoneOffsetError,
+            DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
+            DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
+            _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
+impl From<DateTimeFormatterError> for ICU4XError {
+    fn from(e: DateTimeFormatterError) -> Self {
+        match e {
+            DateTimeFormatterError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
+            DateTimeFormatterError::Format(err) => err.into(),
+            DateTimeFormatterError::DataProvider(err) => err.into(),
+            DateTimeFormatterError::MissingInputField => {
+                ICU4XError::DateTimeFormatMissingInputFieldError
+            }
+            DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
+            DateTimeFormatterError::UnsupportedField(_) => {
+                ICU4XError::DateTimeFormatUnsupportedFieldError
+            }
+            DateTimeFormatterError::UnsupportedOptions => {
+                ICU4XError::DateTimeFormatUnsupportedOptionsError
+            }
+            DateTimeFormatterError::PluralRules(err) => err.into(),
+            DateTimeFormatterError::DateTimeInput(err) => err.into(),
+            DateTimeFormatterError::MissingWeekdaySymbol(_) => {
+                ICU4XError::DateTimeFormatMissingWeekdaySymbolError
+            }
+            DateTimeFormatterError::MissingMonthSymbol(_) => {
+                ICU4XError::DateTimeFormatMissingMonthSymbolError
+            }
+            DateTimeFormatterError::MissingEraSymbol(_) => {
+                ICU4XError::DateTimeFormatMissingEraSymbolError
+            }
+            DateTimeFormatterError::FixedDecimal => ICU4XError::DateTimeFormatFixedDecimalError,
+            DateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
+            DateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
+                ICU4XError::DateTimeFormatMismatchedAnyCalendarError
+            }
+            _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
 impl From<DecimalError> for ICU4XError {
     fn from(e: DecimalError) -> Self {
         match e {
@@ -141,10 +214,10 @@ impl From<PluralRulesError> for ICU4XError {
     }
 }
 
-impl From<FixedDecimalFormatError> for ICU4XError {
-    fn from(e: FixedDecimalFormatError) -> Self {
+impl From<FixedDecimalFormatterError> for ICU4XError {
+    fn from(e: FixedDecimalFormatterError) -> Self {
         match e {
-            FixedDecimalFormatError::Data(e) => e.into(),
+            FixedDecimalFormatterError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
         }
     }

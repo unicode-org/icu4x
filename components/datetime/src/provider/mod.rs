@@ -18,5 +18,5 @@ pub mod time_zones;
 /// Provider for week data.
 pub mod week_data;
 
-/// Traits for managing data needed by [`DateTimeFormat`](crate::DateTimeFormat).
+/// Traits for managing data needed by [`DateTimeFormatter`](crate::DateTimeFormatter).
 pub(crate) mod date_time;

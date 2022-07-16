@@ -49,7 +49,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [x] Add Coptic, Indian, and Ethiopic calendars
 			* [x] Fully zero-copy data
 			* [x] Bi-di support in Rust
-			* [x] TimeZoneFormat
+			* [x] TimeZoneFormatter
 	* [ ] April-June
 		* [ ] 1.0 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/16))
 			* [ ] Data + API stability

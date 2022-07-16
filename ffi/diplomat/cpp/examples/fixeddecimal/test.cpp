@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#include "../../include/ICU4XFixedDecimalFormat.hpp"
+#include "../../include/ICU4XFixedDecimalFormatter.hpp"
 #include "../../include/ICU4XDataStruct.hpp"
 
 #include <iostream>
@@ -12,7 +12,7 @@ int main() {
     ICU4XLocale locale = ICU4XLocale::create("bn").value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
-    ICU4XFixedDecimalFormat fdf = ICU4XFixedDecimalFormat::try_new(
+    ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::try_new(
         locale, dp, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
     ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create(1000007);
@@ -92,7 +92,7 @@ int main() {
 
     auto data = ICU4XDataStruct::create_decimal_symbols_v1("+", "", "-", "", "/", "_", 4, 2, 4, digits).ok().value();
 
-    fdf = ICU4XFixedDecimalFormat::try_new_from_decimal_symbols_v1(data, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
+    fdf = ICU4XFixedDecimalFormatter::try_new_from_decimal_symbols_v1(data, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
     decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).ok().value();
     out = fdf.format(decimal).ok().value();

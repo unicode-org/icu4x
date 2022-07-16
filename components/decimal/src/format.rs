@@ -11,12 +11,12 @@ use fixed_decimal::FixedDecimal;
 use fixed_decimal::Sign;
 use writeable::Writeable;
 
-/// An intermediate structure returned by [`FixedDecimalFormat`](crate::FixedDecimalFormat).
+/// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
-    pub(crate) options: &'l FixedDecimalFormatOptions,
+    pub(crate) options: &'l FixedDecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
 }
 
