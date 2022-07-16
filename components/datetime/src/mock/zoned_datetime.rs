@@ -20,7 +20,7 @@ use icu_calendar::{Date, DateTime, Gregorian, Iso};
 /// The composition of `DateTime<Gregorian>` and [`MockTimeZone`].
 ///
 /// *Notice:* Rust at the moment does not have a canonical way to represent date and time. We are introducing
-/// `MockZonedDateTime` as an example of the data necessary for ICU [`ZonedDateTimeFormat`] to work, and
+/// `MockZonedDateTime` as an example of the data necessary for ICU [`ZonedDateTimeFormatter`] to work, and
 /// [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md)
 /// to develop core date and time APIs that will work as an input for this component.
 ///
@@ -42,7 +42,7 @@ use icu_calendar::{Date, DateTime, Gregorian, Iso};
 ///     .parse()
 ///     .expect("Failed to parse a zoned datetime.");
 /// ```
-/// [`ZonedDateTimeFormat`]: crate::zoned_datetime::ZonedDateTimeFormat
+/// [`ZonedDateTimeFormatter`]: crate::zoned_datetime::ZonedDateTimeFormatter
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct MockZonedDateTime {

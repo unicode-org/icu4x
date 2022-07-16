@@ -19,25 +19,25 @@
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::DateTimeFormatOptions;
+//! use icu::datetime::DateTimeFormatterOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
 //!     length::Date::Medium, // "medium" date connector will be used
 //!     length::Time::Short,
 //! );
 //!
-//! let options = DateTimeFormatOptions::Length(bag);
+//! let options = DateTimeFormatterOptions::Length(bag);
 //! ```
 //!
 //! Or the options can be inferred through the [`Into`] trait.
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::DateTimeFormatOptions;
-//! let options: DateTimeFormatOptions = length::Bag::default().into();
+//! use icu::datetime::DateTimeFormatterOptions;
+//! let options: DateTimeFormatterOptions = length::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
+//! *Note*: The exact result returned from [`DateTimeFormatter`](crate::DateTimeFormatter) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
@@ -55,19 +55,19 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::DateTimeFormatOptions;
+/// use icu::datetime::DateTimeFormatterOptions;
 ///
 /// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let options = DateTimeFormatOptions::Length(bag);
+/// let options = DateTimeFormatterOptions::Length(bag);
 /// ```
 ///
 /// Or the options can be inferred through the [`Into`] trait.
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::DateTimeFormatOptions;
-/// let options: DateTimeFormatOptions = length::Bag::default().into();
+/// use icu::datetime::DateTimeFormatterOptions;
+/// let options: DateTimeFormatterOptions = length::Bag::default().into();
 /// ```
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
@@ -149,13 +149,13 @@ impl Bag {
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
-/// *Note*: The exact result returned from [`DateTimeFormat`] is a subject to change over
+/// *Note*: The exact result returned from [`DateTimeFormatter`] is a subject to change over
 /// time. Formatted result should be treated as opaque and displayed to the user as-is,
 /// and it is strongly recommended to never write tests that expect a particular formatted output.
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
-/// [`DateTimeFormat`]: super::super::DateTimeFormat
+/// [`DateTimeFormatter`]: super::super::DateTimeFormatter
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
@@ -221,13 +221,13 @@ pub enum Date {
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
 ///
-/// *Note*: The exact result returned from [`DateTimeFormat`] is a subject to change over
+/// *Note*: The exact result returned from [`DateTimeFormatter`] is a subject to change over
 /// time. Formatted result should be treated as opaque and displayed to the user as-is,
 /// and it is strongly recommended to never write tests that expect a particular formatted output.
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#timeFormats
-/// [`DateTimeFormat`]: super::super::DateTimeFormat
+/// [`DateTimeFormatter`]: super::super::DateTimeFormatter
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]

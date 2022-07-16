@@ -780,11 +780,11 @@ export class ICU4XFixedDecimal {
   }
 }
 
-const ICU4XFixedDecimalFormat_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XFixedDecimalFormat_destroy(underlying);
+const ICU4XFixedDecimalFormatter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XFixedDecimalFormatter_destroy(underlying);
 });
 
-export class ICU4XFixedDecimalFormat {
+export class ICU4XFixedDecimalFormatter {
   constructor(underlying) {
     this.underlying = underlying;
   }
@@ -798,11 +798,11 @@ export class ICU4XFixedDecimalFormat {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XFixedDecimalFormat_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[grouping_strategy]);
+      wasm.ICU4XFixedDecimalFormatter_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[grouping_strategy]);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
-          const out = new ICU4XFixedDecimalFormat((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          const out = new ICU4XFixedDecimalFormatter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
           out.owner = result_tag;
           return out;
         })();
@@ -824,11 +824,11 @@ export class ICU4XFixedDecimalFormat {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XFixedDecimalFormat_try_new_from_decimal_symbols_v1(diplomat_receive_buffer, data_struct.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[grouping_strategy]);
+      wasm.ICU4XFixedDecimalFormatter_try_new_from_decimal_symbols_v1(diplomat_receive_buffer, data_struct.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[grouping_strategy]);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
-          const out = new ICU4XFixedDecimalFormat((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          const out = new ICU4XFixedDecimalFormatter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
           out.owner = result_tag;
           return out;
         })();
@@ -851,7 +851,7 @@ export class ICU4XFixedDecimalFormat {
           size: 5,
           align: 4,
         });
-        wasm.ICU4XFixedDecimalFormat_format(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
+        wasm.ICU4XFixedDecimalFormatter_format(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
         if (is_ok) {
           const ok_value = {};
@@ -1025,11 +1025,11 @@ export class ICU4XGraphemeClusterBreakSegmenter {
   }
 }
 
-const ICU4XGregorianDateFormat_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XGregorianDateFormat_destroy(underlying);
+const ICU4XGregorianDateFormatter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XGregorianDateFormatter_destroy(underlying);
 });
 
-export class ICU4XGregorianDateFormat {
+export class ICU4XGregorianDateFormatter {
   constructor(underlying) {
     this.underlying = underlying;
   }
@@ -1043,11 +1043,11 @@ export class ICU4XGregorianDateFormat {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XGregorianDateFormat_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XDateLength_js_to_rust[length]);
+      wasm.ICU4XGregorianDateFormatter_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XDateLength_js_to_rust[length]);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
-          const out = new ICU4XGregorianDateFormat((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          const out = new ICU4XGregorianDateFormatter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
           out.owner = result_tag;
           return out;
         })();
@@ -1070,7 +1070,7 @@ export class ICU4XGregorianDateFormat {
           size: 5,
           align: 4,
         });
-        wasm.ICU4XGregorianDateFormat_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
+        wasm.ICU4XGregorianDateFormatter_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
         if (is_ok) {
           const ok_value = {};
@@ -1121,11 +1121,11 @@ export class ICU4XGregorianDateTime {
   }
 }
 
-const ICU4XGregorianDateTimeFormat_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XGregorianDateTimeFormat_destroy(underlying);
+const ICU4XGregorianDateTimeFormatter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XGregorianDateTimeFormatter_destroy(underlying);
 });
 
-export class ICU4XGregorianDateTimeFormat {
+export class ICU4XGregorianDateTimeFormatter {
   constructor(underlying) {
     this.underlying = underlying;
   }
@@ -1139,11 +1139,11 @@ export class ICU4XGregorianDateTimeFormat {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XGregorianDateTimeFormat_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XDateLength_js_to_rust[date_length], ICU4XTimeLength_js_to_rust[time_length], ICU4XHourCyclePreference_js_to_rust[time_preferences]);
+      wasm.ICU4XGregorianDateTimeFormatter_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XDateLength_js_to_rust[date_length], ICU4XTimeLength_js_to_rust[time_length], ICU4XHourCyclePreference_js_to_rust[time_preferences]);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
-          const out = new ICU4XGregorianDateTimeFormat((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          const out = new ICU4XGregorianDateTimeFormatter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
           out.owner = result_tag;
           return out;
         })();
@@ -1166,7 +1166,7 @@ export class ICU4XGregorianDateTimeFormat {
           size: 5,
           align: 4,
         });
-        wasm.ICU4XGregorianDateTimeFormat_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
+        wasm.ICU4XGregorianDateTimeFormatter_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
         if (is_ok) {
           const ok_value = {};
@@ -1181,11 +1181,11 @@ export class ICU4XGregorianDateTimeFormat {
   }
 }
 
-const ICU4XGregorianTimeFormat_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XGregorianTimeFormat_destroy(underlying);
+const ICU4XGregorianTimeFormatter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XGregorianTimeFormatter_destroy(underlying);
 });
 
-export class ICU4XGregorianTimeFormat {
+export class ICU4XGregorianTimeFormatter {
   constructor(underlying) {
     this.underlying = underlying;
   }
@@ -1199,11 +1199,11 @@ export class ICU4XGregorianTimeFormat {
         size: 5,
         align: 4,
       });
-      wasm.ICU4XGregorianTimeFormat_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XTimeLength_js_to_rust[length], ICU4XHourCyclePreference_js_to_rust[preferences]);
+      wasm.ICU4XGregorianTimeFormatter_try_new(diplomat_receive_buffer, locale.underlying, provider.underlying, ICU4XTimeLength_js_to_rust[length], ICU4XHourCyclePreference_js_to_rust[preferences]);
       const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
       if (is_ok) {
         const ok_value = (() => {
-          const out = new ICU4XGregorianTimeFormat((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
+          const out = new ICU4XGregorianTimeFormatter((new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 1))[0]);
           out.owner = result_tag;
           return out;
         })();
@@ -1226,7 +1226,7 @@ export class ICU4XGregorianTimeFormat {
           size: 5,
           align: 4,
         });
-        wasm.ICU4XGregorianTimeFormat_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
+        wasm.ICU4XGregorianTimeFormatter_format_datetime(diplomat_receive_buffer, this.underlying, value.underlying, writeable);
         const is_ok = (new Uint8Array(wasm.memory.buffer, diplomat_receive_buffer + 4, 1))[0] == 1;
         if (is_ok) {
           const ok_value = {};

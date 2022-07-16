@@ -4,9 +4,9 @@
 
 use alloc::string::String;
 use icu_decimal::{
-    options::{FixedDecimalFormatOptions, GroupingStrategy},
+    options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
-    FixedDecimalFormat,
+    FixedDecimalFormatter,
 };
 use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
@@ -19,7 +19,7 @@ use crate::{
         datetime,
         zoned_datetime::{self, FormattedZonedDateTime},
     },
-    options::DateTimeFormatOptions,
+    options::DateTimeFormatterOptions,
     pattern::runtime::PatternPlurals,
     provider::{
         self,
@@ -30,20 +30,20 @@ use crate::{
         week_data::WeekDataV1Marker,
     },
     raw,
-    time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
-    DateTimeFormatError,
+    time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
+    DateTimeFormatterError,
 };
 
-/// This is the internal "raw" version of [crate::ZonedDateTimeFormat], i.e. a version of ZonedDateTimeFormat
-/// without the generic parameter. The actual implementation of [crate::ZonedDateTimeFormat] should live here.
-pub(crate) struct ZonedDateTimeFormat {
-    pub datetime_format: raw::DateTimeFormat,
-    pub time_zone_format: TimeZoneFormat,
+/// This is the internal "raw" version of [crate::ZonedDateTimeFormatter], i.e. a version of ZonedDateTimeFormatter
+/// without the generic parameter. The actual implementation of [crate::ZonedDateTimeFormatter] should live here.
+pub(crate) struct ZonedDateTimeFormatter {
+    pub datetime_format: raw::DateTimeFormatter,
+    pub time_zone_format: TimeZoneFormatter,
 }
 
-impl ZonedDateTimeFormat {
+impl ZonedDateTimeFormatter {
     /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
-    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
+    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
@@ -54,9 +54,9 @@ impl ZonedDateTimeFormat {
         zone_provider: &ZP,
         plural_provider: &PP,
         decimal_provider: &DEP,
-        date_time_format_options: &DateTimeFormatOptions,
-        time_zone_format_options: &TimeZoneFormatOptions,
-    ) -> Result<Self, DateTimeFormatError>
+        date_time_format_options: &DateTimeFormatterOptions,
+        time_zone_format_options: &TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
     where
         DP: ResourceProvider<DateSymbolsV1Marker>
             + ResourceProvider<TimeSymbolsV1Marker>
@@ -81,7 +81,7 @@ impl ZonedDateTimeFormat {
             date_time_format_options,
         )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
-            .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let week_data = if required.week_data {
             Some(
@@ -135,17 +135,17 @@ impl ZonedDateTimeFormat {
             None
         };
 
-        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format = FixedDecimalFormat::try_new(
+        let fixed_decimal_format = FixedDecimalFormatter::try_new(
             locale_no_extensions.clone(),
             decimal_provider,
             fixed_decimal_format_options,
         )
-        .map_err(DateTimeFormatError::FixedDecimalFormat)?;
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
-        let datetime_format = raw::DateTimeFormat::new(
+        let datetime_format = raw::DateTimeFormatter::new(
             locale,
             patterns,
             date_symbols_data,
@@ -155,7 +155,7 @@ impl ZonedDateTimeFormat {
             fixed_decimal_format,
         );
 
-        let time_zone_format = TimeZoneFormat::try_new(
+        let time_zone_format = TimeZoneFormatter::try_new(
             locale_no_extensions,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
