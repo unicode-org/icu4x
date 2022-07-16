@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657935247812,
+  "lastUpdate": 1657955593081,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37229,6 +37229,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 94,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "58269dedcec1d5e43128210b09161d8343c9f49c",
+          "message": "Simplify Hangul handling when trying to compose a starter with a starter (#2189)",
+          "timestamp": "2022-07-16T10:02:14+03:00",
+          "tree_id": "f1b6c8e16e9953fbbe60ff05564036259e29e2b7",
+          "url": "https://github.com/unicode-org/icu4x/commit/58269dedcec1d5e43128210b09161d8343c9f49c"
+        },
+        "date": 1657955562266,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123798,
+            "range": "± 569",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25494,
+            "range": "± 173",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71652,
+            "range": "± 404",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
