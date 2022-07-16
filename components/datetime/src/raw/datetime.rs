@@ -90,7 +90,7 @@ impl TimeFormatter {
             data_provider,
             fixed_decimal_format_options,
         )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        .map_err(DateTimeFormatterError::FixedDecimalFormat)?;
 
         Ok(Self::new(
             locale,
@@ -258,7 +258,7 @@ impl DateFormatter {
             data_provider,
             fixed_decimal_format_options,
         )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        .map_err(DateTimeFormatterError::FixedDecimalFormat)?;
 
         Ok(Self::new(
             locale,
@@ -492,7 +492,7 @@ impl DateTimeFormatter {
             data_provider,
             fixed_decimal_format_options,
         )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        .map_err(DateTimeFormatterError::FixedDecimalFormat)?;
 
         Ok(Self::new(
             locale,

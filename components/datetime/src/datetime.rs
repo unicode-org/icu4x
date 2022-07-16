@@ -21,7 +21,9 @@ use icu_locid::Locale;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
-use crate::{calendar, date::DateTimeInput, CldrCalendar, DateTimeFormatterError, FormattedDateTime};
+use crate::{
+    calendar, date::DateTimeInput, CldrCalendar, DateTimeFormatterError, FormattedDateTime,
+};
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected [`Locale`] and provided preferences to

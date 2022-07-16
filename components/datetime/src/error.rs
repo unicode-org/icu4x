@@ -57,7 +57,7 @@ pub enum DateTimeFormatterError {
     FixedDecimal,
     /// An error originating from FixedDecimalFormatter
     #[displaydoc("{0}")]
-    FixedDecimalFormat(FixedDecimalFormatError),
+    FixedDecimalFormat(FixedDecimalFormatterError),
     /// An error from mixing calendar types in AnyDateTimeFormat
     #[displaydoc("AnyDateTimeFormatter for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),

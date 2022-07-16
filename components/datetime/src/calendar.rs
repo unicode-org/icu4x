@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DateTimeFormatError;
+use crate::error::DateTimeFormatterError;
 use alloc::string::ToString;
 use core::any;
 use icu_calendar::{
@@ -64,7 +64,7 @@ impl CldrCalendar for Ethiopic {
 
 pub(crate) fn potentially_fixup_calendar<C: CldrCalendar>(
     locale: &mut Locale,
-) -> Result<(), DateTimeFormatError> {
+) -> Result<(), DateTimeFormatterError> {
     let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
 
     if let Some(cal) = cal {
@@ -72,7 +72,7 @@ pub(crate) fn potentially_fixup_calendar<C: CldrCalendar>(
             let mut string = cal.to_string();
             string.truncate(16);
             let tiny = TinyStr16::from_str(&string).unwrap_or(tinystr!(16, "unknown"));
-            return Err(DateTimeFormatError::MismatchedCalendarLocale(
+            return Err(DateTimeFormatterError::MismatchedCalendarLocale(
                 any::type_name::<C>(),
                 tiny,
             ));

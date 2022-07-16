@@ -151,7 +151,7 @@ impl ZonedDateTimeFormatter {
             decimal_provider,
             fixed_decimal_format_options,
         )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        .map_err(DateTimeFormatterError::FixedDecimalFormat)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
             locale,
