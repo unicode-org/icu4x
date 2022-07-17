@@ -92,8 +92,8 @@
 
     .. cpp:enumerator:: DateTimeFormatMissingMonthSymbolError
 
-    .. cpp:enumerator:: DateTimeFormatMissingEraSymbolError
-
     .. cpp:enumerator:: DateTimeFormatFixedDecimalError
 
     .. cpp:enumerator:: DateTimeFormatMismatchedAnyCalendarError
+
+    .. cpp:enumerator:: DateTimeFormatMismatchedCalendarLocaleError

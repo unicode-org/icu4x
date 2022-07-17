@@ -82,9 +82,9 @@ enum struct ICU4XError {
   DateTimeFormatUnsupportedOptionsError = 2052,
   DateTimeFormatMissingWeekdaySymbolError = 2053,
   DateTimeFormatMissingMonthSymbolError = 2054,
-  DateTimeFormatMissingEraSymbolError = 2055,
-  DateTimeFormatFixedDecimalError = 2056,
-  DateTimeFormatMismatchedAnyCalendarError = 2057,
+  DateTimeFormatFixedDecimalError = 2055,
+  DateTimeFormatMismatchedAnyCalendarError = 2056,
+  DateTimeFormatMismatchedCalendarLocaleError = 2057,
 };
 
 #endif
