@@ -27,7 +27,7 @@ use zerofrom::ZeroFrom;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum UnicodePropertyV1<'data> {
+pub enum PropertyUnicodeSetV1<'data> {
     /// The set of characters, represented as an inversion list
     InversionList(#[cfg_attr(feature = "serde", serde(borrow))] UnicodeSet<'data>),
     // new variants should go BELOW existing ones
@@ -47,7 +47,7 @@ pub enum UnicodePropertyV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum UnicodePropertyMapV1<'data, T: TrieValue> {
+pub enum PropertyUnicodeMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
     CodePointTrie(#[cfg_attr(feature = "serde", serde(borrow))] CodePointTrie<'data, T>),
     // new variants should go BELOW existing ones
@@ -71,7 +71,7 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
 }
 
 // See CodePointSetData for documentation of these functions
-impl<'data> UnicodePropertyV1<'data> {
+impl<'data> PropertyUnicodeSetV1<'data> {
     #[inline]
     pub(crate) fn contains(&self, ch: char) -> bool {
         match *self {
@@ -99,7 +99,7 @@ impl<'data> UnicodePropertyV1<'data> {
 }
 
 // See CodePointMapData for documentation of these functions
-impl<'data, T: TrieValue> UnicodePropertyMapV1<'data, T> {
+impl<'data, T: TrieValue> PropertyUnicodeMapV1<'data, T> {
     #[inline]
     pub(crate) fn get_u32(&self, ch: u32) -> T {
         match *self {
@@ -138,7 +138,7 @@ macro_rules! expand {
                 pub struct $bin_marker;
 
                 impl DataMarker for $bin_marker {
-                    type Yokeable = UnicodePropertyV1<'static>;
+                    type Yokeable = PropertyUnicodeSetV1<'static>;
                 }
                 impl ResourceMarker for $bin_marker {
                     const KEY: ResourceKey = resource_key!(concat!("props/", $bin_s, "@1"));
@@ -165,7 +165,7 @@ macro_rules! expand {
                 pub struct $enum_marker;
 
                 impl DataMarker for $enum_marker {
-                    type Yokeable = UnicodePropertyMapV1<'static, crate::$value_ty>;
+                    type Yokeable = PropertyUnicodeMapV1<'static, crate::$value_ty>;
                 }
 
                 impl ResourceMarker for $enum_marker {

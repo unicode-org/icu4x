@@ -33,7 +33,7 @@ The data struct definitions should live in the crate that uses them. By conventi
 
 - `icu::decimal::provider::DecimalSymbolsV1`
 - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
-- `icu::uniset::provider::UnicodePropertyV1`
+- `icu::uniset::provider::PropertyUnicodeSetV1`
 
 In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
 

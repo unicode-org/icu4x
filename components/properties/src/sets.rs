@@ -32,7 +32,7 @@ pub struct CodePointSetData {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedSetlikeMarker;
 impl DataMarker for ErasedSetlikeMarker {
-    type Yokeable = UnicodePropertyV1<'static>;
+    type Yokeable = PropertyUnicodeSetV1<'static>;
 }
 
 impl CodePointSetData {
@@ -109,7 +109,7 @@ impl CodePointSetData {
     /// Typically it is preferable to use getters like [`get_ascii_hex_digit()`] instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = UnicodePropertyV1<'static>>,
+        M: DataMarker<Yokeable = PropertyUnicodeSetV1<'static>>,
     {
         Self {
             data: data.map_project(|m, _| m),
@@ -118,7 +118,7 @@ impl CodePointSetData {
 
     /// Construct a new one an owned [`UnicodeSet`]
     pub fn from_unicode_set(set: UnicodeSet<'static>) -> Self {
-        let set = UnicodePropertyV1::from_unicode_set(set);
+        let set = PropertyUnicodeSetV1::from_unicode_set(set);
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
     }
 
@@ -141,7 +141,7 @@ impl CodePointSetData {
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy)]
 pub struct CodePointSetDataBorrowed<'a> {
-    set: &'a UnicodePropertyV1<'a>,
+    set: &'a PropertyUnicodeSetV1<'a>,
 }
 
 impl<'a> CodePointSetDataBorrowed<'a> {

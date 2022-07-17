@@ -1,7 +1,7 @@
 // @generated
 type DataStruct = & 'static < :: icu_properties :: provider :: GraphemeClusterBreakV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1::CodePointTrie(
+static UND: DataStruct = &::icu_properties::provider::PropertyUnicodeMapV1::CodePointTrie(
     ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 921600u32,
