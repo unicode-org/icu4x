@@ -506,13 +506,13 @@ mod tests {
         use icu::calendar::japanese::{Japanese, JapaneseEraStyle};
         use icu::calendar::DateTime;
         use icu::datetime::options::length;
-        use icu::datetime::DateTimeFormat;
+        use icu::datetime::DateTimeFormatter;
 
         let provider = icu_testdata::get_provider();
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
         let options =
             length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
-        let dtf = DateTimeFormat::<Japanese>::try_new(locale, &provider, &options)
+        let dtf = DateTimeFormatter::<Japanese>::try_new(locale, &provider, &options)
             .expect("DateTimeFormat construction succeeds");
 
         let japanext =
