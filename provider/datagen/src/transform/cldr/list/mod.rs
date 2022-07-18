@@ -124,7 +124,6 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
         }
 
         let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned(patterns)),

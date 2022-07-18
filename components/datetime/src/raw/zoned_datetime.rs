@@ -104,13 +104,10 @@ impl ZonedDateTimeFormatter {
             None
         };
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions.clone(),
+                // TODO(#2136): Don't clone here
+                locale.clone(),
                 plural_provider,
             )?)
         } else {
@@ -147,14 +144,16 @@ impl ZonedDateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions.clone(),
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             decimal_provider,
             fixed_decimal_format_options,
         )
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
-            locale,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             patterns,
             date_symbols_data,
             time_symbols_data,
@@ -164,7 +163,7 @@ impl ZonedDateTimeFormatter {
         );
 
         let time_zone_format = TimeZoneFormatter::try_new(
-            locale_no_extensions,
+            locale,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns
