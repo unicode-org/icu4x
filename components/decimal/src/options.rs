@@ -2,13 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Options for [`FixedDecimalFormat`](crate::FixedDecimalFormat).
+//! Options for [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 
 /// A bag of options defining how numbers will be formatted by
-/// [`FixedDecimalFormat`](crate::FixedDecimalFormat).
+/// [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 #[derive(Debug, Eq, PartialEq, Clone, Default)]
 #[non_exhaustive]
-pub struct FixedDecimalFormatOptions {
+pub struct FixedDecimalFormatterOptions {
     /// When to render grouping separators.
     pub grouping_strategy: GroupingStrategy,
 }
@@ -19,16 +19,16 @@ pub struct FixedDecimalFormatOptions {
 ///
 /// ```
 /// use icu_decimal::options;
-/// use icu_decimal::FixedDecimalFormat;
+/// use icu_decimal::FixedDecimalFormatter;
 /// use icu_decimal::FormattedFixedDecimal;
 /// use icu_locid::Locale;
 /// use writeable::Writeable;
 ///
 /// let locale = Locale::UND;
 /// let provider = icu_testdata::get_provider();
-/// let mut options: options::FixedDecimalFormatOptions = Default::default();
+/// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormat::try_new(locale, &provider, options)
+/// let fdf = FixedDecimalFormatter::try_new(locale, &provider, options)
 ///     .expect("Data should load successfully");
 ///
 /// let one_thousand = 1000.into();
@@ -48,7 +48,7 @@ pub enum GroupingStrategy {
 
     /// Always render grouping separators.
     ///
-    /// For [`FixedDecimalFormat`](crate::FixedDecimalFormat), [`GroupingStrategy::Always`]
+    /// For [`FixedDecimalFormatter`](crate::FixedDecimalFormatter), [`GroupingStrategy::Always`]
     /// has the same behavior as [`GroupingStrategy::Auto`].
     Always,
 

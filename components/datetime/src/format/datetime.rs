@@ -5,7 +5,7 @@
 use crate::date::{
     DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, LocalizedDateTimeInput,
 };
-use crate::error::DateTimeFormatError as Error;
+use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -18,14 +18,14 @@ use crate::provider::week_data::WeekDataV1;
 
 use core::fmt;
 use fixed_decimal::FixedDecimal;
-use icu_decimal::FixedDecimalFormat;
+use icu_decimal::FixedDecimalFormatter;
 use icu_locid::Locale;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 use writeable::Writeable;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
-/// an output from [`DateTimeFormat`](crate::DateTimeFormat).
+/// an output from [`DateTimeFormatter`](crate::DateTimeFormatter).
 ///
 /// The structure contains all the information needed to display formatted value,
 /// and it will also contain additional methods allowing the user to introspect
@@ -35,12 +35,12 @@ use writeable::Writeable;
 ///
 /// ```no_run
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::DateTimeFormat;
+/// use icu::datetime::DateTimeFormatter;
 /// use icu::locid::locale;
 /// # let provider = icu_testdata::get_provider();
-/// # let options = icu::datetime::DateTimeFormatOptions::default();
-/// let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, &options)
-///     .expect("Failed to create DateTimeFormat instance.");
+/// # let options = icu::datetime::DateTimeFormatterOptions::default();
+/// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options)
+///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -57,7 +57,7 @@ pub struct FormattedDateTime<'l> {
     pub(crate) week_data: Option<&'l WeekDataV1>,
     pub(crate) locale: &'l Locale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
-    pub(crate) fixed_decimal_format: &'l FixedDecimalFormat,
+    pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
 }
 
 impl<'l> Writeable for FormattedDateTime<'l> {
@@ -88,7 +88,7 @@ impl<'l> fmt::Display for FormattedDateTime<'l> {
 // Apply length to input number and write to result using fixed_decimal_format.
 fn format_number<W>(
     result: &mut W,
-    fixed_decimal_format: &FixedDecimalFormat,
+    fixed_decimal_format: &FixedDecimalFormatter,
     mut num: FixedDecimal,
     length: FieldLength,
 ) -> fmt::Result
@@ -128,7 +128,7 @@ fn write_pattern<T, W>(
     date_symbols: Option<&provider::calendar::DateSymbolsV1>,
     time_symbols: Option<&provider::calendar::TimeSymbolsV1>,
     loc_datetime: &impl LocalizedDateTimeInput<T>,
-    fixed_decimal_format: &FixedDecimalFormat,
+    fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
 ) -> Result<(), Error>
 where
@@ -163,7 +163,7 @@ pub fn write_pattern_plurals<T, W>(
     datetime: &T,
     week_data: Option<&WeekDataV1>,
     ordinal_rules: Option<&PluralRules>,
-    fixed_decimal_format: &FixedDecimalFormat,
+    fixed_decimal_format: &FixedDecimalFormatter,
     locale: &Locale,
     w: &mut W,
 ) -> Result<(), Error>
@@ -196,7 +196,7 @@ pub(super) fn write_field<T, W>(
     date_symbols: Option<&crate::provider::calendar::DateSymbolsV1>,
     time_symbols: Option<&crate::provider::calendar::TimeSymbolsV1>,
     datetime: &impl LocalizedDateTimeInput<T>,
-    fixed_decimal_format: &FixedDecimalFormat,
+    fixed_decimal_format: &FixedDecimalFormatter,
     w: &mut W,
 ) -> Result<(), Error>
 where
@@ -205,17 +205,15 @@ where
 {
     match field.symbol {
         FieldSymbol::Era => {
+            let era = datetime
+                .datetime()
+                .year()
+                .ok_or(Error::MissingInputField)?
+                .era;
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = date_symbols
                 .expect("Expect date symbols to be present")
-                .get_symbol_for_era(
-                    field.length,
-                    datetime
-                        .datetime()
-                        .year()
-                        .ok_or(Error::MissingInputField)?
-                        .era,
-                )?;
+                .get_symbol_for_era(field.length, &era);
             w.write_str(symbol)?
         }
         FieldSymbol::Year(year) => match year {
@@ -500,8 +498,33 @@ pub fn analyze_patterns(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_decimal::options::{FixedDecimalFormatOptions, GroupingStrategy};
+    use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
 
+    #[test]
+    #[cfg(feature = "serde")]
+    fn test_mixed_calendar_eras() {
+        use icu::calendar::japanese::{Japanese, JapaneseEraStyle};
+        use icu::calendar::DateTime;
+        use icu::datetime::options::length;
+        use icu::datetime::DateTimeFormatter;
+
+        let provider = icu_testdata::get_provider();
+        let locale: Locale = "en-u-ca-japanese".parse().unwrap();
+        let options =
+            length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
+        let dtf = DateTimeFormatter::<Japanese>::try_new(locale, &provider, &options)
+            .expect("DateTimeFormat construction succeeds");
+
+        let japanext =
+            Japanese::try_new(&provider, JapaneseEraStyle::All).expect("Cannot load japanese data");
+        let datetime = DateTime::new_gregorian_datetime(1800, 9, 1, 12, 34, 28)
+            .expect("Failed to construct DateTime.");
+        let datetime = datetime.to_calendar(japanext);
+
+        let result = dtf.format_to_string(&datetime);
+
+        assert_eq!(result, "Sep 1, 12 kansei-1789, 12:34 PM")
+    }
     #[test]
     #[cfg(feature = "serde")]
     fn test_basic() {
@@ -530,7 +553,8 @@ mod tests {
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format =
-            FixedDecimalFormat::try_new(locale.id.language, &provider, Default::default()).unwrap();
+            FixedDecimalFormatter::try_new(locale.id.language, &provider, Default::default())
+                .unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &"und".parse().unwrap());
@@ -561,9 +585,9 @@ mod tests {
         ];
 
         let provider = icu_testdata::get_provider();
-        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_format = FixedDecimalFormat::try_new(
+        let fixed_decimal_format = FixedDecimalFormatter::try_new(
             icu_locid::locale!("en"),
             &provider,
             fixed_decimal_format_options,

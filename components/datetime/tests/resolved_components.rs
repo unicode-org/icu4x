@@ -5,14 +5,14 @@
 use icu_calendar::Gregorian;
 use icu_datetime::{
     options::{components, length, preferences},
-    DateTimeFormat, DateTimeFormatOptions,
+    DateTimeFormatter, DateTimeFormatterOptions,
 };
 use icu_locid::locale;
 
-fn assert_resolved_components(options: &DateTimeFormatOptions, bag: &components::Bag) {
+fn assert_resolved_components(options: &DateTimeFormatterOptions, bag: &components::Bag) {
     let provider = icu_testdata::get_provider();
-    let dtf = DateTimeFormat::<Gregorian>::try_new(locale!("en"), &provider, options)
-        .expect("Failed to create a DateTimeFormat.");
+    let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, options)
+        .expect("Failed to create a DateTimeFormatter.");
 
     assert_eq!(dtf.resolve_components(), *bag);
 }
@@ -25,7 +25,10 @@ fn test_length_date() {
     components_bag.year = Some(components::Year::Numeric);
     components_bag.month = Some(components::Month::Short);
     components_bag.day = Some(components::Day::NumericDayOfMonth);
-    assert_resolved_components(&DateTimeFormatOptions::Length(length_bag), &components_bag);
+    assert_resolved_components(
+        &DateTimeFormatterOptions::Length(length_bag),
+        &components_bag,
+    );
 }
 
 #[test]
@@ -38,7 +41,10 @@ fn test_length_time() {
     components_bag.preferences = Some(preferences::Bag::from_hour_cycle(
         preferences::HourCycle::H12,
     ));
-    assert_resolved_components(&DateTimeFormatOptions::Length(length_bag), &components_bag);
+    assert_resolved_components(
+        &DateTimeFormatterOptions::Length(length_bag),
+        &components_bag,
+    );
 }
 
 #[test]
@@ -56,7 +62,10 @@ fn test_length_time_preferences() {
         preferences::HourCycle::H24,
     ));
 
-    assert_resolved_components(&DateTimeFormatOptions::Length(length_bag), &components_bag);
+    assert_resolved_components(
+        &DateTimeFormatterOptions::Length(length_bag),
+        &components_bag,
+    );
 }
 
 #[test]
@@ -78,5 +87,8 @@ fn test_components_bag() {
         preferences::HourCycle::H23,
     ));
 
-    assert_resolved_components(&DateTimeFormatOptions::Components(input_bag), &output_bag);
+    assert_resolved_components(
+        &DateTimeFormatterOptions::Components(input_bag),
+        &output_bag,
+    );
 }

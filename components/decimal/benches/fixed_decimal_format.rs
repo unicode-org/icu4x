@@ -10,7 +10,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use fixed_decimal::FixedDecimal;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_decimal::FixedDecimalFormat;
+use icu_decimal::FixedDecimalFormatter;
 use icu_locid::Locale;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use writeable::Writeable;
@@ -34,7 +34,7 @@ fn overview_bench(c: &mut Criterion) {
             // This benchmark demonstrates the performance of the format function on 1000 numbers
             // ranging from -1e9 to 1e9.
             let fdf =
-                FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default()).unwrap();
+                FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default()).unwrap();
             for &num in &nums {
                 let fd = FixedDecimal::from(black_box(num));
                 fdf.format(&fd).write_to_string().into_owned();

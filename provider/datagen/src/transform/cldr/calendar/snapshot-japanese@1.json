@@ -1,5 +1,5 @@
 {
-  "dates_to_historical_eras": [
+  "dates_to_eras": [
     [
       {
         "year": 645,
@@ -1855,9 +1855,7 @@
         "day": 7
       },
       "keio-1865"
-    ]
-  ],
-  "dates_to_eras": [
+    ],
     [
       {
         "year": 1868,

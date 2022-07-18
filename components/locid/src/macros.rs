@@ -138,16 +138,16 @@ macro_rules! subtags_variant {
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: The macro cannot produce language identifiers with variants due to const
+/// *Note*: The macro cannot produce language identifiers with more than one variants due to const
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail
-/// icu::locid::langid("de_at-foobar");
+/// icu::locid::langid!("und-variant1-variant2");
 /// ```
 ///
 /// Use runtime parsing instead:
 /// ```
-/// "de_at-foobar"
+/// "und-variant1-variant2"
 ///     .parse::<icu::locid::LanguageIdentifier>()
 ///     .unwrap();
 /// ```
@@ -158,16 +158,18 @@ macro_rules! subtags_variant {
 macro_rules! langid {
     ($langid:literal) => {{
         const R: $crate::LanguageIdentifier =
-            match $crate::LanguageIdentifier::from_bytes_without_variants($langid.as_bytes()) {
-                Ok((language, script, region)) => $crate::LanguageIdentifier {
+            match $crate::LanguageIdentifier::from_bytes_with_single_variant($langid.as_bytes()) {
+                Ok((language, script, region, variant)) => $crate::LanguageIdentifier {
                     language,
                     script,
                     region,
-                    variants: $crate::subtags::Variants::new(),
+                    variants: match variant {
+                        Some(v) => $crate::subtags::Variants::from_variant(v),
+                        None => $crate::subtags::Variants::new(),
+                    }
                 },
                 #[allow(clippy::panic)] // const context
-                _ => panic!(concat!("Invalid language code: ", $langid, " . Note that variant tags are not \
-                                        supported by the langid! macro, use runtime parsing instead.")),
+                _ => panic!(concat!("Invalid language code: ", $langid, " . Note langid! macro can only support up to a single variant tag. Use runtime parsing instead.")),
             };
         R
     }};
@@ -189,8 +191,8 @@ macro_rules! langid {
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: The macro cannot produce locales with variants or extensions due to
-/// const limitations (see [`Heap Allocations in Constants`]):
+/// *Note*: The macro cannot produce locales with more than one variant or extensions due to const
+/// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail
 /// icu::locid::locale!("en-US-u-ca-ja");
@@ -206,20 +208,27 @@ macro_rules! langid {
 macro_rules! locale {
     ($locale:literal) => {{
         const R: $crate::Locale =
-            match $crate::LanguageIdentifier::from_bytes_without_variants($locale.as_bytes()) {
-                Ok((language, script, region)) => $crate::Locale {
+            match $crate::LanguageIdentifier::from_bytes_with_single_variant($locale.as_bytes()) {
+                Ok((language, script, region, variant)) => $crate::Locale {
                     id: $crate::LanguageIdentifier {
                         language,
                         script,
                         region,
-                        variants: $crate::subtags::Variants::new(),
+                        variants: match variant {
+                            Some(v) => $crate::subtags::Variants::from_variant(v),
+                            None => $crate::subtags::Variants::new(),
+                        },
                     },
                     extensions: $crate::extensions::Extensions::new(),
                 },
                 #[allow(clippy::panic)] // const context
-                _ => panic!(concat!("Invalid language code: ", $locale, " . Note that variant tags and \
-                                        Unicode extensions are not supported by the locale! macro, use \
-                                        runtime parsing instead.")),
+                _ => panic!(concat!(
+                    "Invalid language code: ",
+                    $locale,
+                    " . Note the locale! macro only supports up to one variant tag; \
+                                        unicode extensions are not supported. Use \
+                                        runtime parsing instead."
+                )),
             };
         R
     }};
@@ -339,4 +348,24 @@ macro_rules! extensions_transform_key {
             };
         R
     }};
+}
+
+#[cfg(test)]
+mod test {
+    use crate::LanguageIdentifier;
+    use crate::Locale;
+
+    #[test]
+    fn test_langid_macro_can_parse_langid_with_single_variant() {
+        const DE_AT_FOOBAR: LanguageIdentifier = langid!("de_at-foobar");
+        let de_at_foobar: LanguageIdentifier = "de_at-foobar".parse().unwrap();
+        assert_eq!(DE_AT_FOOBAR, de_at_foobar);
+    }
+
+    #[test]
+    fn test_locale_macro_can_parse_locale_with_single_variant() {
+        const DE_AT_FOOBAR: Locale = locale!("de_at-foobar");
+        let de_at_foobar: Locale = "de_at-foobar".parse().unwrap();
+        assert_eq!(DE_AT_FOOBAR, de_at_foobar);
+    }
 }

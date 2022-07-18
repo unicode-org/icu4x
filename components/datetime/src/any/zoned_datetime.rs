@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{options::DateTimeFormatOptions, raw};
+use crate::{options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
@@ -18,29 +18,29 @@ use crate::provider::{
     },
     week_data::WeekDataV1Marker,
 };
-use crate::time_zone::TimeZoneFormatOptions;
-use crate::{DateTimeFormatError, FormattedZonedDateTime};
+use crate::time_zone::TimeZoneFormatterOptions;
+use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::JapaneseErasV1Marker;
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 
-/// [`ZonedAnyDateTimeFormat`] is a [`ZonedDateTimeFormat`](crate::ZonedDateTimeFormat) capable of formatting
+/// [`ZonedAnyDateTimeFormatter`] is a [`ZonedDateTimeFormatter`](crate::ZonedDateTimeFormatter) capable of formatting
 /// dates from any calendar, selected at runtime.
 ///
 /// This is equivalently the composition of
-/// [`AnyDateTimeFormat`](crate::any::AnyDateTimeFormat) and [`TimeZoneFormat`](crate::TimeZoneFormat).
+/// [`AnyDateTimeFormatter`](crate::any::AnyDateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
 ///
-/// [`ZonedAnyDateTimeFormat`] uses data from the [data provider]s, the selected [`Locale`], and the
+/// [`ZonedAnyDateTimeFormatter`] uses data from the [data provider]s, the selected [`Locale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
-/// As such, `TimeZoneFormat` will pull in only the resources it needs to format that pattern
-/// that is derived from the provided [`DateTimeFormatOptions`].
+/// As such, `TimeZoneFormatter` will pull in only the resources it needs to format that pattern
+/// that is derived from the provided [`DateTimeFormatterOptions`].
 ///
 /// For that reason, one should think of the process of formatting a zoned datetime in two steps:
-/// first, a computationally heavy construction of [`ZonedAnyDateTimeFormat`], and then fast formatting
+/// first, a computationally heavy construction of [`ZonedAnyDateTimeFormatter`], and then fast formatting
 /// of the data using the instance.
 ///
 /// # Examples
@@ -48,23 +48,23 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// ```
 /// use icu::calendar::Gregorian;
 /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
-/// use icu::datetime::{options::length, ZonedDateTimeFormat};
+/// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
-/// use icu_datetime::TimeZoneFormatOptions;
+/// use icu_datetime::TimeZoneFormatterOptions;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
-/// let zdtf = ZonedDateTimeFormat::<Gregorian>::try_new(
+/// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
 ///     locale!("en"),
 ///     &provider,
 ///     &provider,
 ///     &provider,
 ///     &provider,
 ///     &options.into(),
-///     &TimeZoneFormatOptions::default(),
+///     &TimeZoneFormatterOptions::default(),
 /// )
-/// .expect("Failed to create DateTimeFormat instance.");
+/// .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
 ///     .parse()
@@ -72,11 +72,11 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// let value = zdtf.format_to_string(&zoned_datetime);
 /// ```
-pub struct ZonedAnyDateTimeFormat(raw::ZonedDateTimeFormat, AnyCalendar);
+pub struct ZonedAnyDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
-impl ZonedAnyDateTimeFormat {
+impl ZonedAnyDateTimeFormatter {
     /// Constructor that takes a selected [`Locale`], a reference to a [data provider] for
-    /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`DateTimeFormatOptions`].
+    /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
@@ -89,17 +89,17 @@ impl ZonedAnyDateTimeFormat {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
-    /// use icu::datetime::{DateTimeFormatOptions, any::ZonedAnyDateTimeFormat};
+    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
     /// use icu::locid::Locale;
-    /// use icu::datetime::TimeZoneFormatOptions;
+    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let options = DateTimeFormatOptions::default();
+    /// let options = DateTimeFormatterOptions::default();
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let zdtf = ZonedAnyDateTimeFormat::try_new_unstable(
+    /// let zdtf = ZonedAnyDateTimeFormatter::try_new_unstable(
     ///     locale,
     ///     &provider,
     ///     &provider,
@@ -107,7 +107,7 @@ impl ZonedAnyDateTimeFormat {
     ///     &provider,
     ///     &provider,
     ///     &options,
-    ///     &TimeZoneFormatOptions::default(),
+    ///     &TimeZoneFormatterOptions::default(),
     /// );
     ///
     /// assert_eq!(zdtf.is_ok(), true);
@@ -123,9 +123,9 @@ impl ZonedAnyDateTimeFormat {
         plural_provider: &PP,
         decimal_provider: &DEP,
         calendar_provider: &CEP,
-        date_time_format_options: &DateTimeFormatOptions,
-        time_zone_format_options: &TimeZoneFormatOptions,
-    ) -> Result<Self, DateTimeFormatError>
+        date_time_format_options: &DateTimeFormatterOptions,
+        time_zone_format_options: &TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
     where
         L: Into<Locale>,
         DP: ResourceProvider<DateSymbolsV1Marker>
@@ -171,7 +171,7 @@ impl ZonedAnyDateTimeFormat {
         let calendar = AnyCalendar::try_new_unstable(kind, calendar_provider)?;
 
         Ok(Self(
-            raw::ZonedDateTimeFormat::try_new(
+            raw::ZonedDateTimeFormatter::try_new(
                 locale,
                 date_provider,
                 zone_provider,
@@ -184,7 +184,7 @@ impl ZonedAnyDateTimeFormat {
         ))
     }
 
-    /// Construct a new [`ZonedAnyDateTimeFormat`] from a data provider that implements
+    /// Construct a new [`ZonedAnyDateTimeFormatter`] from a data provider that implements
     /// [`AnyProvider`].
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
@@ -199,9 +199,9 @@ impl ZonedAnyDateTimeFormat {
     pub fn try_new_with_any_provider<T: Into<Locale>, P>(
         locale: T,
         data_provider: &P,
-        options: &DateTimeFormatOptions,
-        time_zone_format_options: &TimeZoneFormatOptions,
-    ) -> Result<Self, DateTimeFormatError>
+        options: &DateTimeFormatterOptions,
+        time_zone_format_options: &TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
     where
         P: AnyProvider,
     {
@@ -218,7 +218,7 @@ impl ZonedAnyDateTimeFormat {
         )
     }
 
-    /// Construct a new [`ZonedAnyDateTimeFormat`] from a data provider that implements
+    /// Construct a new [`ZonedAnyDateTimeFormatter`] from a data provider that implements
     /// [`BufferProvider`].
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
@@ -236,9 +236,9 @@ impl ZonedAnyDateTimeFormat {
     pub fn try_new_with_buffer_provider<T: Into<Locale>, P>(
         locale: T,
         data_provider: &P,
-        options: &DateTimeFormatOptions,
-        time_zone_format_options: &TimeZoneFormatOptions,
-    ) -> Result<Self, DateTimeFormatError>
+        options: &DateTimeFormatterOptions,
+        time_zone_format_options: &TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
     where
         P: BufferProvider,
     {
@@ -265,7 +265,7 @@ impl ZonedAnyDateTimeFormat {
     pub fn format<'l, T>(
         &'l self,
         value: &T,
-    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatError>
+    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatterError>
     where
         T: ZonedDateTimeInput<Calendar = AnyCalendar>,
     {
@@ -287,7 +287,7 @@ impl ZonedAnyDateTimeFormat {
         &self,
         w: &mut impl core::fmt::Write,
         value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<(), DateTimeFormatError> {
+    ) -> Result<(), DateTimeFormatterError> {
         if let Some(converted) = self.convert_if_necessary(value)? {
             self.0.format_to_write(w, &converted)?;
         } else {
@@ -305,7 +305,7 @@ impl ZonedAnyDateTimeFormat {
     pub fn format_to_string(
         &self,
         value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<String, DateTimeFormatError> {
+    ) -> Result<String, DateTimeFormatterError> {
         if let Some(converted) = self.convert_if_necessary(value)? {
             Ok(self.0.format_to_string(&converted))
         } else {
@@ -320,12 +320,12 @@ impl ZonedAnyDateTimeFormat {
     fn convert_if_necessary(
         &self,
         value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<ExtractedZonedDateTimeInput>, DateTimeFormatError> {
+    ) -> Result<Option<ExtractedZonedDateTimeInput>, DateTimeFormatterError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
         if Some(this_calendar) != date_calendar {
             if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(DateTimeFormatError::MismatchedAnyCalendar(
+                return Err(DateTimeFormatterError::MismatchedAnyCalendar(
                     this_calendar,
                     date_calendar,
                 ));

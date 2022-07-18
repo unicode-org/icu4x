@@ -6,7 +6,9 @@ Documentation
    :caption: Modules:
 
    bidi_ffi
+   calendar_ffi
    data_struct_ffi
+   datetime_ffi
    decimal_ffi
    errors_ffi
    fixed_decimal_ffi

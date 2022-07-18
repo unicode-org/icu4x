@@ -2,7 +2,7 @@
 
 [`icu_decimal`](crate) offers localized decimal number formatting.
 
-Currently, [`icu_decimal`](crate) provides [`FixedDecimalFormat`], which renders basic decimal numbers
+Currently, [`icu_decimal`](crate) provides [`FixedDecimalFormatter`], which renders basic decimal numbers
 in a locale-sensitive way.
 
 Support for currencies, measurement units, and compact notation is planned. To track progress,
@@ -13,12 +13,12 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 ### Format a number with Bengali digits
 
 ```rust
-use icu::decimal::FixedDecimalFormat;
+use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
 use writeable::Writeable;
 
 let provider = icu_testdata::get_provider();
-let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, Default::default())
+let fdf = FixedDecimalFormatter::try_new(locale!("bn"), &provider, Default::default())
     .expect("Data should load successfully");
 
 let fixed_decimal = 1000007.into();
@@ -32,12 +32,12 @@ assert_eq!("১০,০০,০০৭", formatted_str);
 
 ```rust
 use fixed_decimal::FixedDecimal;
-use icu::decimal::FixedDecimalFormat;
+use icu::decimal::FixedDecimalFormatter;
 use icu::locid::Locale;
 use writeable::Writeable;
 
 let provider = icu_testdata::get_provider();
-let fdf = FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default())
+let fdf = FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default())
     .expect("Data should load successfully");
 
 let fixed_decimal = FixedDecimal::from(200050)
@@ -47,7 +47,7 @@ let fixed_decimal = FixedDecimal::from(200050)
 assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
 ```
 
-[`FixedDecimalFormat`]: FixedDecimalFormat
+[`FixedDecimalFormatter`]: FixedDecimalFormatter
 
 ## More Information
 
