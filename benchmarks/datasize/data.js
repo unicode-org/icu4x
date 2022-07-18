@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658170867824,
+  "lastUpdate": 1658180128017,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20513,6 +20513,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fc165360d6630509b8806a05dc58b412b4d39757"
         },
         "date": 1658170829014,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3963063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0c5290edcf3c0c8df775f698c65759d60ff7e713",
+          "message": "Use vertical fallback in icu_testdata::get_provider() (#2187)\n\n- Adds u-ca annotations to relevant keys",
+          "timestamp": "2022-07-18T14:33:48-07:00",
+          "tree_id": "d6bf5ba57be3dfe11317b9cf3d038619ac2f6098",
+          "url": "https://github.com/unicode-org/icu4x/commit/0c5290edcf3c0c8df775f698c65759d60ff7e713"
+        },
+        "date": 1658180095900,
         "tool": "ndjson",
         "benches": [
           {
