@@ -5,19 +5,19 @@
 use crate::buf::BufferMarker;
 use crate::error::{DataError, DataErrorKind};
 use crate::marker::DataMarker;
+use crate::request::ResourceOptions;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
-use icu_locid::LanguageIdentifier;
 
 /// A response object containing metadata about the returned data.
 #[derive(Debug, Clone, PartialEq, Default)]
 #[non_exhaustive]
 pub struct DataResponseMetadata {
-    /// The language of the returned data, or None if the resource key isn't localized.
-    pub data_langid: Option<LanguageIdentifier>,
+    /// The resolved locale of the returned data, if locale fallbacking was performed.
+    pub data_locale: Option<ResourceOptions>,
     /// The format of the buffer for buffer-backed data, if known (for example, JSON).
     pub buffer_format: Option<crate::buf::BufferFormat>,
 }
@@ -700,5 +700,5 @@ fn test_debug() {
             message: Cow::Borrowed("foo"),
         })),
     };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_langid: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }

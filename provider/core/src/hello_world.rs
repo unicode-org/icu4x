@@ -114,12 +114,8 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
                 message: Cow::Borrowed(s),
             })
             .map_err(|_| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::KEY, req))?;
-        let metadata = DataResponseMetadata {
-            data_langid: Some(req.options.get_langid()),
-            ..Default::default()
-        };
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(data)),
         })
     }

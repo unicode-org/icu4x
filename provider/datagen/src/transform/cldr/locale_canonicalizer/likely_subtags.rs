@@ -40,10 +40,8 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
             .core()
             .read_and_parse("supplemental/likelySubtags.json")?;
 
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(data))),
         })
     }

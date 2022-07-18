@@ -50,10 +50,8 @@ impl PluralsProvider {
 
 impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> for PluralsProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(PluralRulesV1::from(
                 #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.get_rules_for(M::KEY)?

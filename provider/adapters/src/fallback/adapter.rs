@@ -33,13 +33,16 @@ use crate::helpers::result_is_err_missing_resource_options;
 ///     .expect("Fallback data present");
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
-/// let result: Result<DataResponse<HelloWorldV1Marker>, DataError> =
-///     provider.load_resource(&req);
-/// assert!(matches!(result, Ok(_)));
+/// let response: DataResponse<HelloWorldV1Marker> =
+///     provider.load_resource(&req).expect("successful with vertical fallback");
 ///
 /// assert_eq!(
+///     "ja",
+///     response.metadata.data_locale.unwrap().to_string()
+/// );
+/// assert_eq!(
 ///     "こんにちは世界",
-///     result.unwrap().take_payload().unwrap().get().message
+///     response.payload.unwrap().get().message
 /// );
 /// ```
 pub struct LocaleFallbackProvider<P> {
@@ -113,22 +116,36 @@ impl<P> LocaleFallbackProvider<P> {
         }
     }
 
-    fn run_fallback<F, R>(
+    /// Run the fallback algorithm with the data request using the inner data provider.
+    /// Internal function; external clients should use one of the trait impls below.
+    ///
+    /// Function arguments:
+    ///
+    /// - F1 should perform a data load for a single DataRequest and return the result of it
+    /// - F2 should map from the provider-specific response type to DataResponseMetadata
+    fn run_fallback<F1, F2, R>(
         &self,
         key: ResourceKey,
         base_req: &DataRequest,
-        mut f: F,
+        mut f1: F1,
+        mut f2: F2,
     ) -> Result<R, DataError>
     where
-        F: FnMut(&DataRequest) -> Result<R, DataError>,
+        F1: FnMut(&DataRequest) -> Result<R, DataError>,
+        F2: FnMut(&mut R) -> &mut DataResponseMetadata,
     {
         let key_fallbacker = self.fallbacker.for_key(key);
         let mut fallback_iterator = key_fallbacker.fallback_for(base_req.clone());
         while !fallback_iterator.get().options.is_empty() {
-            let result = f(fallback_iterator.get());
+            let result = f1(fallback_iterator.get());
             if !result_is_err_missing_resource_options(&result) {
-                // Log the original request rather than the fallback request
-                return result.map_err(|e| e.with_req(key, base_req));
+                return result
+                    .map(|mut res| {
+                        f2(&mut res).data_locale = Some(fallback_iterator.take().options);
+                        res
+                    })
+                    // Log the original request rather than the fallback request
+                    .map_err(|e| e.with_req(key, base_req));
             }
             fallback_iterator.step();
         }
@@ -141,7 +158,12 @@ where
     P: AnyProvider,
 {
     fn load_any(&self, key: ResourceKey, base_req: &DataRequest) -> Result<AnyResponse, DataError> {
-        self.run_fallback(key, base_req, |req| self.inner.load_any(key, req))
+        self.run_fallback(
+            key,
+            base_req,
+            |req| self.inner.load_any(key, req),
+            |res| &mut res.metadata,
+        )
     }
 }
 
@@ -154,7 +176,12 @@ where
         key: ResourceKey,
         base_req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        self.run_fallback(key, base_req, |req| self.inner.load_buffer(key, req))
+        self.run_fallback(
+            key,
+            base_req,
+            |req| self.inner.load_buffer(key, req),
+            |res| &mut res.metadata,
+        )
     }
 }
 
@@ -168,7 +195,12 @@ where
         key: ResourceKey,
         base_req: &DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
-        self.run_fallback(key, base_req, |req| self.inner.load_payload(key, req))
+        self.run_fallback(
+            key,
+            base_req,
+            |req| self.inner.load_payload(key, req),
+            |res| &mut res.metadata,
+        )
     }
 }
 
@@ -178,6 +210,11 @@ where
     M: ResourceMarker,
 {
     fn load_resource(&self, base_req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.run_fallback(M::KEY, base_req, |req| self.inner.load_resource(req))
+        self.run_fallback(
+            M::KEY,
+            base_req,
+            |req| self.inner.load_resource(req),
+            |res| &mut res.metadata,
+        )
     }
 }
