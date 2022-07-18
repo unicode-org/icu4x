@@ -99,19 +99,19 @@
   },
   "eras": {
     "names": {
-      "before-incar": "après l’Incarnation",
-      "incarnation": "avant l’Incarnation",
-      "mundi": "ERA0"
+      "incar": "avant l’Incarnation",
+      "mundi": "ERA0",
+      "pre-incar": "après l’Incarnation"
     },
     "abbr": {
-      "before-incar": "ap. Inc.",
-      "incarnation": "av. Inc.",
-      "mundi": "ERA0"
+      "incar": "av. Inc.",
+      "mundi": "ERA0",
+      "pre-incar": "ap. Inc."
     },
     "narrow": {
-      "before-incar": "ap. Inc.",
-      "incarnation": "av. Inc.",
-      "mundi": "ERA0"
+      "incar": "av. Inc.",
+      "mundi": "ERA0",
+      "pre-incar": "ap. Inc."
     }
   }
 }

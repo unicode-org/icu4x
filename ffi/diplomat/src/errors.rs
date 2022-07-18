@@ -87,9 +87,9 @@ pub mod ffi {
         DateTimeFormatUnsupportedOptionsError = 0x8_04,
         DateTimeFormatMissingWeekdaySymbolError = 0x8_05,
         DateTimeFormatMissingMonthSymbolError = 0x8_06,
-        DateTimeFormatMissingEraSymbolError = 0x8_07,
-        DateTimeFormatFixedDecimalError = 0x8_08,
-        DateTimeFormatMismatchedAnyCalendarError = 0x8_09,
+        DateTimeFormatFixedDecimalError = 0x8_07,
+        DateTimeFormatMismatchedAnyCalendarError = 0x8_08,
+        DateTimeFormatMismatchedCalendarLocaleError = 0x8_09,
     }
 }
 
@@ -182,13 +182,13 @@ impl From<DateTimeFormatterError> for ICU4XError {
             DateTimeFormatterError::MissingMonthSymbol(_) => {
                 ICU4XError::DateTimeFormatMissingMonthSymbolError
             }
-            DateTimeFormatterError::MissingEraSymbol(_) => {
-                ICU4XError::DateTimeFormatMissingEraSymbolError
-            }
             DateTimeFormatterError::FixedDecimal => ICU4XError::DateTimeFormatFixedDecimalError,
             DateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
             DateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
                 ICU4XError::DateTimeFormatMismatchedAnyCalendarError
+            }
+            DateTimeFormatterError::MismatchedCalendarLocale(_, _) => {
+                ICU4XError::DateTimeFormatMismatchedCalendarLocaleError
             }
             _ => ICU4XError::UnknownError,
         }

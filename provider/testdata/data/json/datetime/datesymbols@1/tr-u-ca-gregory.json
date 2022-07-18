@@ -96,16 +96,16 @@
   },
   "eras": {
     "names": {
-      "ad": "Milattan Sonra",
-      "bc": "Milattan Önce"
+      "bce": "Milattan Önce",
+      "ce": "Milattan Sonra"
     },
     "abbr": {
-      "ad": "MS",
-      "bc": "MÖ"
+      "bce": "MÖ",
+      "ce": "MS"
     },
     "narrow": {
-      "ad": "MS",
-      "bc": "MÖ"
+      "bce": "MÖ",
+      "ce": "MS"
     }
   }
 }

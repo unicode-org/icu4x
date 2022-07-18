@@ -572,9 +572,9 @@ const ICU4XError_js_to_rust = {
   "DateTimeFormatUnsupportedOptionsError": 2052,
   "DateTimeFormatMissingWeekdaySymbolError": 2053,
   "DateTimeFormatMissingMonthSymbolError": 2054,
-  "DateTimeFormatMissingEraSymbolError": 2055,
-  "DateTimeFormatFixedDecimalError": 2056,
-  "DateTimeFormatMismatchedAnyCalendarError": 2057,
+  "DateTimeFormatFixedDecimalError": 2055,
+  "DateTimeFormatMismatchedAnyCalendarError": 2056,
+  "DateTimeFormatMismatchedCalendarLocaleError": 2057,
 };
 const ICU4XError_rust_to_js = {
   0: "UnknownError",
@@ -615,9 +615,9 @@ const ICU4XError_rust_to_js = {
   2052: "DateTimeFormatUnsupportedOptionsError",
   2053: "DateTimeFormatMissingWeekdaySymbolError",
   2054: "DateTimeFormatMissingMonthSymbolError",
-  2055: "DateTimeFormatMissingEraSymbolError",
-  2056: "DateTimeFormatFixedDecimalError",
-  2057: "DateTimeFormatMismatchedAnyCalendarError",
+  2055: "DateTimeFormatFixedDecimalError",
+  2056: "DateTimeFormatMismatchedAnyCalendarError",
+  2057: "DateTimeFormatMismatchedCalendarLocaleError",
 };
 
 const ICU4XFixedDecimal_box_destroy_registry = new FinalizationRegistry(underlying => {

@@ -40,6 +40,7 @@ use crate::{
 };
 use core::convert::TryInto;
 use core::marker::PhantomData;
+use tinystr::tinystr;
 
 /// The Coptic calendar
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
@@ -118,7 +119,7 @@ impl Calendar for Coptic {
     }
 
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
-        crate::gregorian::year_as_gregorian(date.0.year)
+        year_as_coptic(date.0.year)
     }
 
     fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
@@ -135,9 +136,9 @@ impl Calendar for Coptic {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: crate::gregorian::year_as_gregorian(prev_year),
+            prev_year: year_as_coptic(prev_year),
             days_in_prev_year: Coptic::days_in_year_direct(prev_year),
-            next_year: crate::gregorian::year_as_gregorian(next_year),
+            next_year: year_as_coptic(next_year),
         }
     }
 
@@ -255,5 +256,21 @@ impl DateTime<Coptic> {
             date: Date::new_coptic_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
+    }
+}
+
+fn year_as_coptic(year: i32) -> types::FormattableYear {
+    if year > 0 {
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "ad")),
+            number: year,
+            related_iso: None,
+        }
+    } else {
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "bd")),
+            number: 1 - year,
+            related_iso: None,
+        }
     }
 }

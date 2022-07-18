@@ -13,7 +13,7 @@ use icu_calendar::{
     coptic::Coptic,
     ethiopic::Ethiopic,
     indian::Indian,
-    japanese::Japanese,
+    japanese::{Japanese, JapaneseEraStyle},
     provider::JapaneseErasV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
 };
@@ -59,12 +59,16 @@ fn test_fixture(fixture_name: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let japanese = Japanese::try_new(&provider).expect("Cannot load japanese data");
+        let japanese = Japanese::try_new(&provider, JapaneseEraStyle::Modern)
+            .expect("Cannot load japanese data");
+        let japanext =
+            Japanese::try_new(&provider, JapaneseEraStyle::All).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_japanese = input_value.to_calendar(japanese);
+        let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
         let input_ethiopic = input_value.to_calendar(Ethiopic::new());
@@ -95,6 +99,15 @@ fn test_fixture(fixture_name: &str) {
                     AnyCalendarKind::Japanese => assert_fixture_element(
                         locale,
                         &input_japanese,
+                        &input_iso,
+                        &output_value,
+                        &provider,
+                        &options,
+                        &description,
+                    ),
+                    AnyCalendarKind::Japanext => assert_fixture_element(
+                        locale,
+                        &input_japanext,
                         &input_iso,
                         &output_value,
                         &provider,
