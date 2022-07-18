@@ -23,17 +23,16 @@ where
     ///
     /// ```
     /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::hello_world::CowStrMarker;
+    /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// let data = "foo".to_string();
-    /// let original = DataPayload::<CowStrMarker>::from_owned(Cow::Owned(data));
+    /// let original = DataPayload::<HelloWorldV1Marker>::from_static_str("foo");
     /// let upcasted = AnyMarker::upcast(original);
     /// let downcasted = upcasted
-    ///     .downcast::<CowStrMarker>()
+    ///     .downcast::<HelloWorldV1Marker>()
     ///     .expect("Type conversion");
-    /// assert_eq!(downcasted.get(), "foo");
+    /// assert_eq!(downcasted.get().message, "foo");
     /// ```
     fn upcast(other: crate::DataPayload<M>) -> crate::DataPayload<Self>;
 }

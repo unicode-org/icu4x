@@ -125,6 +125,13 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
     }
 }
 
+impl DataPayload<HelloWorldV1Marker> {
+    /// Make a [`DataPayload`]`<`[`HelloWorldV1Marker`]`>` from a static string slice.
+    pub fn from_static_str(s: &'static str) -> DataPayload<HelloWorldV1Marker> {
+        DataPayload::from_owned(HelloWorldV1 { message: Cow::Borrowed(s)})
+    }
+}
+
 impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "datagen")]
@@ -192,19 +199,4 @@ fn test_iter() {
             locale!("zh").into()
         ]
     );
-}
-
-/// Marker type for [`Cow`]`<str>` where the backing cart is `str`.
-#[allow(clippy::exhaustive_structs)] // marker type
-pub struct CowStrMarker;
-
-impl DataMarker for CowStrMarker {
-    type Yokeable = Cow<'static, str>;
-}
-
-impl DataPayload<CowStrMarker> {
-    /// Make a [`DataPayload`]`<`[`CowStrMarker`]`>` from a static string slice.
-    pub fn from_static_str(s: &'static str) -> DataPayload<CowStrMarker> {
-        DataPayload::from_owned(Cow::Borrowed(s))
-    }
 }

@@ -56,16 +56,16 @@ pub struct DataResponseMetadata {
 ///
 /// # Examples
 ///
-/// Basic usage, using the `CowStrMarker` marker:
+/// Basic usage, using the `HelloWorldV1Marker` marker:
 ///
 /// ```
-/// use icu_provider::hello_world::CowStrMarker;
+/// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 /// use std::borrow::Cow;
 ///
-/// let payload = DataPayload::<CowStrMarker>::from_owned(Cow::Borrowed("Demo"));
+/// let payload = DataPayload::<HelloWorldV1Marker>::from_owned(HelloWorldV1 { message: Cow::Borrowed("Demo") });
 ///
-/// assert_eq!("Demo", payload.get());
+/// assert_eq!("Demo", payload.get().message);
 /// ```
 pub struct DataPayload<M>
 where
@@ -163,8 +163,8 @@ impl From<&[u8]> for RcWrap {
 
 #[test]
 fn test_clone_eq() {
-    use crate::hello_world::CowStrMarker;
-    let p1 = DataPayload::<CowStrMarker>::from_static_str("Demo");
+    use crate::hello_world::*;
+    let p1 = DataPayload::<HelloWorldV1Marker>::from_static_str("Demo");
     let p2 = p1.clone();
     assert_eq!(p1, p2);
 }
@@ -310,28 +310,28 @@ where
     /// Basic usage:
     ///
     /// ```
-    /// use icu_provider::hello_world::CowStrMarker;
+    /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
-    /// let mut payload = DataPayload::<CowStrMarker>::from_static_str("Hello");
+    /// let mut payload = DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
     ///
-    /// payload.with_mut(|s| s.to_mut().push_str(" World"));
+    /// payload.with_mut(|s| s.message.to_mut().push_str(" World"));
     ///
-    /// assert_eq!("Hello World", payload.get());
+    /// assert_eq!("Hello World", payload.get().message);
     /// ```
     ///
     /// To transfer data from the context into the data struct, use the `move` keyword:
     ///
     /// ```
-    /// use icu_provider::hello_world::CowStrMarker;
+    /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
-    /// let mut payload = DataPayload::<CowStrMarker>::from_static_str("Hello");
+    /// let mut payload = DataPayload::<HelloWorldV1Marker>::from_static_str("Hello");
     ///
     /// let suffix = " World".to_string();
-    /// payload.with_mut(move |s| s.to_mut().push_str(&suffix));
+    /// payload.with_mut(move |s| s.message.to_mut().push_str(&suffix));
     ///
-    /// assert_eq!("Hello World", payload.get());
+    /// assert_eq!("Hello World", payload.get().message);
     /// ```
     pub fn with_mut<'a, F>(&'a mut self, f: F)
     where
@@ -348,12 +348,12 @@ where
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::hello_world::CowStrMarker;
+    /// use icu_provider::hello_world::HelloWorldV1Marker;
     /// use icu_provider::prelude::*;
     ///
-    /// let payload = DataPayload::<CowStrMarker>::from_static_str("Demo");
+    /// let payload = DataPayload::<HelloWorldV1Marker>::from_static_str("Demo");
     ///
-    /// assert_eq!("Demo", payload.get());
+    /// assert_eq!("Demo", payload.get().message);
     /// ```
     #[inline]
     #[allow(clippy::needless_lifetimes)]
