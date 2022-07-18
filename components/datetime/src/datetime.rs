@@ -39,19 +39,24 @@ use crate::{
 ///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::{TimeFormatter, options::length::Time};
+/// use icu::datetime::{options::length::Time, TimeFormatter};
 /// use icu::locid::locale;
-/// use icu_provider::inv::InvariantDataProvider;
+/// use writeable::assert_writeable_eq;
 ///
-/// let provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
-/// let tf = TimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, Time::Full, None)
-///     .expect("Failed to create DateTimeFormatter instance.");
+/// let tf = TimeFormatter::<Gregorian>::try_new(
+///     locale!("en"),
+///     &provider,
+///     Time::Short,
+///     None,
+/// )
+/// .expect("Failed to create TimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// let value = tf.format_to_string(&datetime);
+/// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -68,15 +73,18 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{TimeFormatter, options::length::Time};
+    /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
-    /// let tf = TimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, Time::Short, None);
-    ///
-    /// assert_eq!(tf.is_ok(), true);
+    /// TimeFormatter::<Gregorian>::try_new(
+    ///     locale!("en"),
+    ///     &provider,
+    ///     Time::Short,
+    ///     None,
+    /// )
+    /// .unwrap();
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -109,19 +117,18 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{TimeFormatter, options::length::Time};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::{options::length::Time, TimeFormatter};
+    /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
-    /// let tf = TimeFormatter::<Gregorian>::try_new(locale, &provider, Time::Full, None)
-    ///     .expect("Failed to create TimeFormatter instance.");
+    /// # let provider = icu_testdata::get_provider();
+    /// let tf =
+    ///     TimeFormatter::<Gregorian>::try_new(locale, &provider, Time::Short, None)
+    ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let formatted = tf.format(&datetime);
-    ///
-    /// let _ = format!("Time: {}", formatted);
+    /// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
@@ -142,12 +149,12 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{TimeFormatter, options::length::Time};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
-    /// let tf = TimeFormatter::<Gregorian>::try_new(locale, &provider, Time::Short, None)
-    ///     .expect("Failed to create TimeFormatter instance.");
+    /// # let provider = icu_testdata::get_provider();
+    /// let tf =
+    ///     TimeFormatter::<Gregorian>::try_new(locale, &provider, Time::Short, None)
+    ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -156,7 +163,7 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     /// tf.format_to_write(&mut buffer, &datetime)
     ///     .expect("Failed to write to a buffer.");
     ///
-    /// let _ = format!("Time: {}", buffer);
+    /// assert_eq!(buffer, "12:34 PM");
     /// ```
     #[inline]
     pub fn format_to_write(
@@ -173,17 +180,17 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{TimeFormatter, options::length::Time};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
-    /// let tf = TimeFormatter::<Gregorian>::try_new(locale, &provider, Time::Long, None)
-    ///     .expect("Failed to create TimeFormatter instance.");
+    /// # let provider = icu_testdata::get_provider();
+    /// let tf =
+    ///     TimeFormatter::<Gregorian>::try_new(locale, &provider, Time::Short, None)
+    ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let _ = tf.format_to_string(&datetime);
+    /// assert_eq!(tf.format_to_string(&datetime), "12:34 PM");
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
@@ -205,11 +212,10 @@ impl<C: CldrCalendar> TimeFormatter<C> {
 ///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::{DateFormatter, options::length::Date};
+/// use icu::datetime::{options::length::Date, DateFormatter};
 /// use icu::locid::locale;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
 /// let df = DateFormatter::<Gregorian>::try_new(locale!("en"), &provider, Date::Full)
 ///     .expect("Failed to create DateFormatter instance.");
@@ -217,7 +223,7 @@ impl<C: CldrCalendar> TimeFormatter<C> {
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// let value = df.format_to_string(&datetime);
+/// assert_eq!(df.format_to_string(&datetime), "Tuesday, September 1, 2020");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -233,15 +239,13 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{DateFormatter, options::length::Date};
+    /// use icu::datetime::{options::length::Date, DateFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
-    /// let df = DateFormatter::<Gregorian>::try_new(locale!("en"), &provider, Date::Full);
-    ///
-    /// assert_eq!(df.is_ok(), true);
+    /// DateFormatter::<Gregorian>::try_new(locale!("en"), &provider, Date::Full)
+    ///     .unwrap();
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -274,19 +278,17 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{DateFormatter, options::length::Date};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::{options::length::Date, DateFormatter};
+    /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let df = DateFormatter::<Gregorian>::try_new(locale, &provider, Date::Full)
     ///     .expect("Failed to create DateFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let formatted = df.format(&datetime);
-    ///
-    /// let _ = format!("Time: {}", formatted);
+    /// assert_writeable_eq!(df.format(&datetime), "Tuesday, September 1, 2020");
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
@@ -307,10 +309,9 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{DateFormatter, options::length::Date};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::{options::length::Date, DateFormatter};
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let df = DateFormatter::<Gregorian>::try_new(locale, &provider, Date::Short)
     ///     .expect("Failed to create DateFormatter instance.");
     ///
@@ -321,7 +322,7 @@ impl<C: CldrCalendar> DateFormatter<C> {
     /// df.format_to_write(&mut buffer, &datetime)
     ///     .expect("Failed to write to a buffer.");
     ///
-    /// let _ = format!("Time: {}", buffer);
+    /// assert_eq!(buffer, "9/1/20");
     /// ```
     #[inline]
     pub fn format_to_write(
@@ -338,17 +339,16 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{DateFormatter, options::length::Date};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::{options::length::Date, DateFormatter};
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// let df = DateFormatter::<Gregorian>::try_new(locale, &provider, Date::Short)
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let _ = df.format_to_string(&datetime);
+    /// assert_eq!(df.format_to_string(&datetime), "9/1/20");
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
@@ -372,20 +372,25 @@ impl<C: CldrCalendar> DateFormatter<C> {
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
-/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+/// let mut options = length::Bag::from_date_time_style(
+///     length::Date::Medium,
+///     length::Time::Short,
+/// );
 ///
-/// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options.into())
-///     .expect("Failed to create DateTimeFormatter instance.");
-///
+/// let dtf = DateTimeFormatter::<Gregorian>::try_new(
+///     locale!("en"),
+///     &provider,
+///     &options.into(),
+/// )
+/// .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// let value = dtf.format_to_string(&datetime);
+/// assert_eq!(dtf.format_to_string(&datetime), "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -400,19 +405,28 @@ impl<C: CldrCalendar> DateTimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{options::length, DateFormatter, DateTimeFormatter, TimeFormatter};
+    /// use icu::datetime::{
+    ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
+    /// };
     /// use icu::locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
-    /// let tf = TimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, length::Time::Short, None)
-    ///     .expect("Failed to create TimeFormatter instance.");
-    /// let df = DateFormatter::<Gregorian>::try_new(locale!("en"), &provider, length::Date::Short)
-    ///     .expect("Failed to create DateFormatter instance.");
-    /// let dtf = DateTimeFormatter::<Gregorian>::try_from_date_and_time(df, tf);
+    /// let tf = TimeFormatter::<Gregorian>::try_new(
+    ///     locale!("en"),
+    ///     &provider,
+    ///     length::Time::Short,
+    ///     None,
+    /// )
+    /// .expect("Failed to create TimeFormatter instance.");
+    /// let df = DateFormatter::<Gregorian>::try_new(
+    ///     locale!("en"),
+    ///     &provider,
+    ///     length::Date::Short,
+    /// )
+    /// .expect("Failed to create DateFormatter instance.");
     ///
-    /// assert_eq!(dtf.is_ok(), true);
+    /// DateTimeFormatter::<Gregorian>::try_from_date_and_time(df, tf).unwrap();
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -435,17 +449,19 @@ where {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{DateTimeFormatter, DateTimeFormatterOptions};
+    /// use icu::datetime::{options::length, DateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
-    /// let options = DateTimeFormatterOptions::default();
+    /// let options = length::Bag::from_time_style(length::Time::Medium);
     ///
-    /// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options);
-    ///
-    /// assert_eq!(dtf.is_ok(), true);
+    /// DateTimeFormatter::<Gregorian>::try_new(
+    ///     locale!("en"),
+    ///     &provider,
+    ///     &options.into(),
+    /// )
+    /// .unwrap();
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -482,20 +498,18 @@ where {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{DateTimeFormatter, DateTimeFormatterOptions};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::DateTimeFormatter;
+    /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
-    /// # let options = DateTimeFormatterOptions::default();
-    /// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options)
+    /// # let provider = icu_testdata::get_provider();
+    /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
+    /// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let formatted_date = dtf.format(&datetime);
-    ///
-    /// let _ = format!("Date: {}", formatted_date);
+    /// assert_writeable_eq!(dtf.format(&datetime), "12:34:28 PM");
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
@@ -516,11 +530,10 @@ where {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{DateTimeFormatter, DateTimeFormatterOptions};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::DateTimeFormatter;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
-    /// # let options = DateTimeFormatterOptions::default();
+    /// # let provider = icu_testdata::get_provider();
+    /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
     /// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///
@@ -531,7 +544,7 @@ where {
     /// dtf.format_to_write(&mut buffer, &datetime)
     ///     .expect("Failed to write to a buffer.");
     ///
-    /// let _ = format!("Date: {}", buffer);
+    /// assert_eq!(buffer, "12:34:28 PM");
     /// ```
     #[inline]
     pub fn format_to_write(
@@ -548,18 +561,17 @@ where {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{DateTimeFormatter, DateTimeFormatterOptions};
-    /// use icu_provider::inv::InvariantDataProvider;
+    /// use icu::datetime::DateTimeFormatter;
     /// # let locale = icu::locid::locale!("en");
-    /// # let provider = InvariantDataProvider;
-    /// # let options = DateTimeFormatterOptions::default();
+    /// # let provider = icu_testdata::get_provider();
+    /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
     /// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
-    /// let _ = dtf.format_to_string(&datetime);
+    /// assert_eq!(dtf.format_to_string(&datetime), "12:34:28 PM");
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
@@ -584,8 +596,12 @@ where {
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options)
-    ///     .expect("Failed to create DateTimeFormatter instance.");
+    /// let dtf = DateTimeFormatter::<Gregorian>::try_new(
+    ///     locale!("en"),
+    ///     &provider,
+    ///     &options,
+    /// )
+    /// .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let mut expected_components_bag = components::Bag::default();
     /// expected_components_bag.year = Some(components::Year::Numeric);
