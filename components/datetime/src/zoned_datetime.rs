@@ -67,7 +67,7 @@ use crate::{
 ///     .parse()
 ///     .expect("Failed to parse zoned datetime");
 ///
-/// let value = zdtf.format_to_string(&zoned_datetime);
+/// let value = zdtf.format_to_string(&zoned_datetime.datetime, &zoned_datetime.time_zone);
 /// ```
 pub struct ZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>);
 
@@ -177,7 +177,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let formatted_date = zdtf.format(&zoned_datetime);
+    /// let formatted_date = zdtf.format(&zoned_datetime.datetime, &zoned_datetime.time_zone);
     ///
     /// let _ = format!("Date: {}", formatted_date);
     /// ```
@@ -223,7 +223,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .expect("Failed to parse zoned datetime");
     ///
     /// let mut buffer = String::new();
-    /// zdtf.format_to_write(&mut buffer, &zoned_datetime)
+    /// zdtf.format_to_write(&mut buffer, &zoned_datetime.datetime, &zoned_datetime.time_zone)
     ///     .expect("Failed to write to a buffer.");
     ///
     /// let _ = format!("Date: {}", buffer);
@@ -265,7 +265,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let _ = zdtf.format_to_string(&zoned_datetime);
+    /// let _ = zdtf.format_to_string(&zoned_datetime.datetime, &zoned_datetime.time_zone);
     /// ```
     #[inline]
     pub fn format_to_string(
