@@ -9,7 +9,7 @@ mod locale;
 pub use errors::ParserError;
 pub use langid::{
     parse_language_identifier, parse_language_identifier_from_iter,
-    parse_language_identifier_without_variants, ParserMode,
+    parse_language_identifier_with_single_variant, ParserMode,
 };
 pub use locale::parse_locale;
 

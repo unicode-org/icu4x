@@ -36,6 +36,22 @@ typedef enum ICU4XError {
   ICU4XError_DecimalLimitError = 1280,
   ICU4XError_DecimalSyntaxError = 1281,
   ICU4XError_PluralParserError = 1536,
+  ICU4XError_DateTimeParseError = 1792,
+  ICU4XError_DateTimeOverflowError = 1793,
+  ICU4XError_DateTimeUnderflowError = 1794,
+  ICU4XError_DateTimeInvalidTimeZoneOffsetError = 1795,
+  ICU4XError_DateTimeOutOfRangeError = 1796,
+  ICU4XError_DateTimeMissingInputError = 1797,
+  ICU4XError_DateTimeFormatPatternError = 2048,
+  ICU4XError_DateTimeFormatMissingInputFieldError = 2049,
+  ICU4XError_DateTimeFormatSkeletonError = 2050,
+  ICU4XError_DateTimeFormatUnsupportedFieldError = 2051,
+  ICU4XError_DateTimeFormatUnsupportedOptionsError = 2052,
+  ICU4XError_DateTimeFormatMissingWeekdaySymbolError = 2053,
+  ICU4XError_DateTimeFormatMissingMonthSymbolError = 2054,
+  ICU4XError_DateTimeFormatFixedDecimalError = 2055,
+  ICU4XError_DateTimeFormatMismatchedAnyCalendarError = 2056,
+  ICU4XError_DateTimeFormatMismatchedCalendarLocaleError = 2057,
 } ICU4XError;
 
 void ICU4XError_destroy(ICU4XError* self);

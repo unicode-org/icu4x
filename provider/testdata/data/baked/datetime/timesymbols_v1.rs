@@ -7,12 +7,14 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ("ar-EG-u-ca-gregory", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     ("ar-EG-u-ca-indian", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     ("ar-EG-u-ca-japanese", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-EG-u-ca-japanext", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     ("ar-u-ca-buddhist", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     ("ar-u-ca-coptic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     ("ar-u-ca-ethiopic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     ("ar-u-ca-gregory", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     ("ar-u-ca-indian", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     ("ar-u-ca-japanese", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
+    ("ar-u-ca-japanext", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
     (
         "bn-u-ca-buddhist",
         BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
@@ -35,6 +37,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "bn-u-ca-japanese",
+        BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
+    ),
+    (
+        "bn-u-ca-japanext",
         BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
     ),
     (
@@ -62,6 +68,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
         BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
     ),
     (
+        "ccp-u-ca-japanext",
+        BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
+    ),
+    (
         "en-001-u-ca-buddhist",
         EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC,
     ),
@@ -86,6 +96,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
         EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC,
     ),
     (
+        "en-001-u-ca-japanext",
+        EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC,
+    ),
+    (
         "en-ZA-u-ca-buddhist",
         EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC,
     ),
@@ -101,6 +115,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ("en-ZA-u-ca-indian", EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC),
     (
         "en-ZA-u-ca-japanese",
+        EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC,
+    ),
+    (
+        "en-ZA-u-ca-japanext",
         EN_001_U_CA_BUDDHIST_EN_001_U_CA_COPTIC,
     ),
     (
@@ -127,12 +145,17 @@ pub static DATA: &[(&str, DataStruct)] = &[
         "en-u-ca-japanese",
         EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
     ),
+    (
+        "en-u-ca-japanext",
+        EN_U_CA_BUDDHIST_EN_U_CA_COPTIC_EN_U_CA_ETHIOPIC,
+    ),
     ("es-AR-u-ca-buddhist", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
     ("es-AR-u-ca-coptic", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
     ("es-AR-u-ca-ethiopic", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
     ("es-AR-u-ca-gregory", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
     ("es-AR-u-ca-indian", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
     ("es-AR-u-ca-japanese", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
+    ("es-AR-u-ca-japanext", ES_AR_U_CA_BUDDHIST_ES_AR_U_CA_COPTIC),
     (
         "es-u-ca-buddhist",
         ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC,
@@ -155,6 +178,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "es-u-ca-japanese",
+        ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC,
+    ),
+    (
+        "es-u-ca-japanext",
         ES_U_CA_BUDDHIST_ES_U_CA_COPTIC_ES_U_CA_ETHIOPIC,
     ),
     (
@@ -182,6 +209,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
         FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC,
     ),
     (
+        "fil-u-ca-japanext",
+        FIL_U_CA_BUDDHIST_FIL_U_CA_COPTIC_FIL_U_CA_ETHIOPIC,
+    ),
+    (
         "fr-u-ca-buddhist",
         FR_U_CA_BUDDHIST_FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC,
     ),
@@ -203,6 +234,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "fr-u-ca-japanese",
+        FR_U_CA_BUDDHIST_FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC,
+    ),
+    (
+        "fr-u-ca-japanext",
         FR_U_CA_BUDDHIST_FR_U_CA_COPTIC_FR_U_CA_ETHIOPIC,
     ),
     (
@@ -230,6 +265,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
         JA_U_CA_BUDDHIST_JA_U_CA_COPTIC_JA_U_CA_ETHIOPIC,
     ),
     (
+        "ja-u-ca-japanext",
+        JA_U_CA_BUDDHIST_JA_U_CA_COPTIC_JA_U_CA_ETHIOPIC,
+    ),
+    (
         "ru-u-ca-buddhist",
         RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC,
     ),
@@ -251,6 +290,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "ru-u-ca-japanese",
+        RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC,
+    ),
+    (
+        "ru-u-ca-japanext",
         RU_U_CA_BUDDHIST_RU_U_CA_COPTIC_RU_U_CA_ETHIOPIC,
     ),
     (
@@ -278,6 +321,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
         SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
+        "sr-Cyrl-u-ca-japanext",
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
+    ),
+    (
         "sr-Latn-u-ca-buddhist",
         SR_LATN_U_CA_BUDDHIST_SR_LATN_U_CA_COPTIC,
     ),
@@ -302,6 +349,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
         SR_LATN_U_CA_BUDDHIST_SR_LATN_U_CA_COPTIC,
     ),
     (
+        "sr-Latn-u-ca-japanext",
+        SR_LATN_U_CA_BUDDHIST_SR_LATN_U_CA_COPTIC,
+    ),
+    (
         "sr-u-ca-buddhist",
         SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
@@ -314,6 +365,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ("sr-u-ca-indian", SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC),
     (
         "sr-u-ca-japanese",
+        SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
+    ),
+    (
+        "sr-u-ca-japanext",
         SR_CYRL_U_CA_BUDDHIST_SR_CYRL_U_CA_COPTIC,
     ),
     (
@@ -341,6 +396,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
         TH_U_CA_BUDDHIST_TH_U_CA_COPTIC_TH_U_CA_ETHIOPIC,
     ),
     (
+        "th-u-ca-japanext",
+        TH_U_CA_BUDDHIST_TH_U_CA_COPTIC_TH_U_CA_ETHIOPIC,
+    ),
+    (
         "tr-u-ca-buddhist",
         TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC,
     ),
@@ -365,6 +424,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
         TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC,
     ),
     (
+        "tr-u-ca-japanext",
+        TR_U_CA_BUDDHIST_TR_U_CA_COPTIC_TR_U_CA_ETHIOPIC,
+    ),
+    (
         "und-u-ca-buddhist",
         BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
     ),
@@ -386,6 +449,10 @@ pub static DATA: &[(&str, DataStruct)] = &[
     ),
     (
         "und-u-ca-japanese",
+        BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
+    ),
+    (
+        "und-u-ca-japanext",
         BN_U_CA_BUDDHIST_BN_U_CA_COPTIC_BN_U_CA_ETHIOPIC,
     ),
 ];

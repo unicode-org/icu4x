@@ -100,15 +100,15 @@
   "eras": {
     "names": {
       "ad": "ERA1",
-      "bc": "ERA0"
+      "bd": "ERA0"
     },
     "abbr": {
       "ad": "ERA1",
-      "bc": "ERA0"
+      "bd": "ERA0"
     },
     "narrow": {
       "ad": "ERA1",
-      "bc": "ERA0"
+      "bd": "ERA0"
     }
   }
 }

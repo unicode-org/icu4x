@@ -215,13 +215,13 @@ impl Ethiopic {
             }
         } else if year > 0 {
             types::FormattableYear {
-                era: types::Era(tinystr!(16, "incarnation")),
+                era: types::Era(tinystr!(16, "incar")),
                 number: year,
                 related_iso: None,
             }
         } else {
             types::FormattableYear {
-                era: types::Era(tinystr!(16, "before-incar")),
+                era: types::Era(tinystr!(16, "pre-incar")),
                 number: 1 - year,
                 related_iso: None,
             }

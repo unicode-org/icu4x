@@ -9,7 +9,7 @@ use rand_pcg::Lcg64Xsh32;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use fixed_decimal::FixedDecimal;
-use icu_decimal::FixedDecimalFormat;
+use icu_decimal::FixedDecimalFormatter;
 use icu_locid::Locale;
 use writeable::Writeable;
 
@@ -33,7 +33,7 @@ fn overview_bench(c: &mut Criterion) {
             // ranging from -1e9 to 1e9.
             let provider = icu_provider::inv::InvariantDataProvider;
             let fdf =
-                FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default()).unwrap();
+                FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default()).unwrap();
             nums.iter()
                 .map(|v| black_box(*v))
                 .map(FixedDecimal::from)
