@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658168179393,
+  "lastUpdate": 1658171447430,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49223,6 +49223,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4577,
             "range": "± 157",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc165360d6630509b8806a05dc58b412b4d39757",
+          "message": "Change DataResponseMetadata locale to be set only in fallback provider (#2186)",
+          "timestamp": "2022-07-18T11:59:06-07:00",
+          "tree_id": "9c2dfda76ccbca32a4626ec56b8ef779646c3b81",
+          "url": "https://github.com/unicode-org/icu4x/commit/fc165360d6630509b8806a05dc58b412b4d39757"
+        },
+        "date": 1658171416198,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 91076,
+            "range": "± 723",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 890142,
+            "range": "± 3429",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 189502,
+            "range": "± 1195",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 81672,
+            "range": "± 485",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 89875,
+            "range": "± 206",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 92881,
+            "range": "± 371",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 100490,
+            "range": "± 320",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 176181,
+            "range": "± 414",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 190492,
+            "range": "± 728",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 188560,
+            "range": "± 356",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 201861,
+            "range": "± 258",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5166,
+            "range": "± 55",
             "unit": "ns/iter"
           }
         ]
