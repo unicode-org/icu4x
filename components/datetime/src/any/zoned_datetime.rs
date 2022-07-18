@@ -9,7 +9,7 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 
 use icu_provider::prelude::*;
 
-use crate::date::{ExtractedDateTimeInput, ExtractedZonedDateTimeInput, ZonedDateTimeInput};
+use crate::date::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{
     self,
     calendar::{
@@ -264,15 +264,13 @@ impl ZonedAnyDateTimeFormatter {
     #[inline]
     pub fn format<'l, T>(
         &'l self,
-        value: &T,
-    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatterError>
-    where
-        T: ZonedDateTimeInput<Calendar = AnyCalendar>,
-    {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            Ok(self.0.format(&converted))
+        date: &impl DateTimeInput<Calendar = AnyCalendar>,
+        time_zone: &impl TimeZoneInput,
+    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatterError> {
+        if let Some(converted) = self.convert_if_necessary(date)? {
+            Ok(self.0.format(&converted, time_zone))
         } else {
-            Ok(self.0.format(value))
+            Ok(self.0.format(date, time_zone))
         }
     }
 
@@ -286,12 +284,13 @@ impl ZonedAnyDateTimeFormatter {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
+        date: &impl DateTimeInput<Calendar = AnyCalendar>,
+        time_zone: &impl TimeZoneInput,
     ) -> Result<(), DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            self.0.format_to_write(w, &converted)?;
+        if let Some(converted) = self.convert_if_necessary(date)? {
+            self.0.format_to_write(w, &converted, time_zone)?;
         } else {
-            self.0.format_to_write(w, value)?;
+            self.0.format_to_write(w, date, time_zone)?;
         }
         Ok(())
     }
@@ -304,12 +303,13 @@ impl ZonedAnyDateTimeFormatter {
     #[inline]
     pub fn format_to_string(
         &self,
-        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
+        date: &impl DateTimeInput<Calendar = AnyCalendar>,
+        time_zone: &impl TimeZoneInput,
     ) -> Result<String, DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            Ok(self.0.format_to_string(&converted))
+        if let Some(converted) = self.convert_if_necessary(date)? {
+            Ok(self.0.format_to_string(&converted, time_zone))
         } else {
-            Ok(self.0.format_to_string(value))
+            Ok(self.0.format_to_string(date, time_zone))
         }
     }
 
@@ -319,8 +319,8 @@ impl ZonedAnyDateTimeFormatter {
     /// if the date is compatible with the current calendar and doesn't need conversion
     fn convert_if_necessary(
         &self,
-        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<ExtractedZonedDateTimeInput>, DateTimeFormatterError> {
+        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+    ) -> Result<Option<ExtractedDateTimeInput>, DateTimeFormatterError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
         if Some(this_calendar) != date_calendar {
@@ -341,9 +341,7 @@ impl ZonedAnyDateTimeFormatter {
             let converted = self.1.convert_any_datetime(&datetime);
             // FIXME(#2145) this is very hacky, can be improved after we improve ZonedDateTimeInput
             let converted = ExtractedDateTimeInput::extract_from(&converted);
-            let mut extracted = ExtractedZonedDateTimeInput::extract_from(value);
-            extracted.date_time_input = converted;
-            Ok(Some(extracted))
+            Ok(Some(converted))
         } else {
             Ok(None)
         }
