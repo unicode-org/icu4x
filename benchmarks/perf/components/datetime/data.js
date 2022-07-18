@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658160057025,
+  "lastUpdate": 1658163395056,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48935,6 +48935,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6375,
             "range": "± 240",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f187f24aff979b7875e5fe1c35faa4b6ff42f404",
+          "message": "Removing `InvariantDataProvider` and touching up docs (#2159)",
+          "timestamp": "2022-07-18T18:43:40+02:00",
+          "tree_id": "bf9cdc9e280d1f647f14bc99f51f20dd8f4bac81",
+          "url": "https://github.com/unicode-org/icu4x/commit/f187f24aff979b7875e5fe1c35faa4b6ff42f404"
+        },
+        "date": 1658163363693,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 84430,
+            "range": "± 4367",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 830607,
+            "range": "± 2964",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 193560,
+            "range": "± 1008",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 76287,
+            "range": "± 554",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 83699,
+            "range": "± 416",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 85338,
+            "range": "± 419",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 104148,
+            "range": "± 500",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 182036,
+            "range": "± 552",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 172521,
+            "range": "± 803",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 189808,
+            "range": "± 828",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 202452,
+            "range": "± 1111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5144,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
