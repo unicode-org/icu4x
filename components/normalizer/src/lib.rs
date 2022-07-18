@@ -251,7 +251,7 @@ fn in_inclusive_range(c: char, start: char, end: char) -> bool {
 /// characters or returns `None` if these characters don't compose.
 /// Composition exclusions are taken into account.
 #[inline]
-pub fn compose(iter: Char16TrieIterator, starter: char, second: char) -> Option<char> {
+fn compose(iter: Char16TrieIterator, starter: char, second: char) -> Option<char> {
     let v = u32::from(second).wrapping_sub(HANGUL_V_BASE);
     if v >= HANGUL_JAMO_LIMIT - HANGUL_V_BASE {
         return compose_non_hangul(iter, starter, second);
