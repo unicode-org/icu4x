@@ -52,7 +52,7 @@ icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 atoi = "1.0.0"
 arraystring = "0.3.0"
 arrayvec = "0.7.2"
-write16 = { versean = "1.0", features = ["arrayvec"] }
+write16 = { version = "1.0", features = ["arrayvec"] }
 
 [lib]
 path = "src/lib.rs"
