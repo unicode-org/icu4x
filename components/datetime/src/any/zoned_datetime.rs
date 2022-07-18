@@ -46,31 +46,32 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Gregorian;
-/// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
-/// use icu::datetime::{options::length, ZonedDateTimeFormatter};
+/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::mock::time_zone::MockTimeZone;
+/// use icu::datetime::{options::length, any::ZonedAnyDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatterOptions;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
-/// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
+/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+/// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_buffer_provider(
 ///     locale!("en"),
-///     &provider,
-///     &provider,
-///     &provider,
 ///     &provider,
 ///     &options.into(),
 ///     &TimeZoneFormatterOptions::default(),
 /// )
 /// .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-///     .parse()
-///     .expect("Failed to parse zoned datetime");
+/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct DateTime.");
+/// let any_datetime = datetime.to_any();
 ///
-/// let value = zdtf.format_to_string(&zoned_datetime);
+/// let time_zone: MockTimeZone = "+05:00".parse().expect("Timezone should parse");
+///
+/// let value = zdtf.format_to_string(&any_datetime, &time_zone).expect("calendars should match");
+///
+/// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
 pub struct ZonedAnyDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
