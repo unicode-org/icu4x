@@ -256,7 +256,7 @@ impl ZonedAnyDateTimeFormatter {
         )
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
@@ -276,7 +276,7 @@ impl ZonedAnyDateTimeFormatter {
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`ZonedDateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`DateTimeInput`] and a [`TimeZoneInput`] and populates the buffer with a formatted value.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
@@ -296,7 +296,7 @@ impl ZonedAnyDateTimeFormatter {
         Ok(())
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns it formatted as a string.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function

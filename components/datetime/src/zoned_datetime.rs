@@ -149,7 +149,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         ))
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     ///
     /// # Examples
@@ -195,7 +195,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     }
 
     /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
-    /// and a [`ZonedDateTimeInput`] implementer, then populates the buffer with a formatted value.
+    /// and a [`DateTimeInput`] and a [`TimeZoneInput`], then populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
@@ -238,7 +238,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         self.0.format_to_write(w, date, time_zone)
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns it formatted as a string.
     ///
     /// # Examples
     ///

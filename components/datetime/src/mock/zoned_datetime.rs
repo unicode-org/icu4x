@@ -14,7 +14,7 @@ use super::time_zone::MockTimeZone;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::{Date, DateTime, Gregorian, Iso};
 
-/// A temporary struct that implements [`ZonedDateTimeInput`]
+/// A temporary struct that implements [`DateTimeInput`] and [`TimeZoneInput`]
 /// and is used in tests, benchmarks and examples of this component.
 ///
 /// The composition of `DateTime<Gregorian>` and [`MockTimeZone`].
