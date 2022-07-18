@@ -26,7 +26,7 @@ impl ResourceProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedD
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 litemap_slice_get(
-                    calendar::japanese_v1::DATA,
+                    calendar::japanese_v1_u_ca::DATA,
                     <::icu_calendar::provider::JapaneseErasV1Marker as ResourceMarker>::KEY,
                     req,
                 )?,
@@ -157,7 +157,7 @@ impl ResourceProvider<::icu_datetime::provider::calendar::DatePatternsV1Marker>
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::calendar::DatePatternsV1Marker>, DataError>
     {
-        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: datelengths_v1 :: DATA , < :: icu_datetime :: provider :: calendar :: DatePatternsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: datelengths_v1_u_ca :: DATA , < :: icu_datetime :: provider :: calendar :: DatePatternsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
     }
 }
 impl ResourceProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>
@@ -170,7 +170,7 @@ impl ResourceProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1
         DataResponse<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>,
         DataError,
     > {
-        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: skeletons_v1 :: DATA , < :: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: skeletons_v1_u_ca :: DATA , < :: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
     }
 }
 impl ResourceProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker>
@@ -181,7 +181,7 @@ impl ResourceProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker>
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::calendar::DateSymbolsV1Marker>, DataError>
     {
-        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: datesymbols_v1 :: DATA , < :: icu_datetime :: provider :: calendar :: DateSymbolsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: datesymbols_v1_u_ca :: DATA , < :: icu_datetime :: provider :: calendar :: DateSymbolsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
     }
 }
 impl ResourceProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker>
@@ -192,7 +192,7 @@ impl ResourceProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker>
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::calendar::TimePatternsV1Marker>, DataError>
     {
-        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: timelengths_v1 :: DATA , < :: icu_datetime :: provider :: calendar :: TimePatternsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: timelengths_v1_u_ca :: DATA , < :: icu_datetime :: provider :: calendar :: TimePatternsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
     }
 }
 impl ResourceProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker>
@@ -203,7 +203,7 @@ impl ResourceProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker>
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::calendar::TimeSymbolsV1Marker>, DataError>
     {
-        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: timesymbols_v1 :: DATA , < :: icu_datetime :: provider :: calendar :: TimeSymbolsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: timesymbols_v1_u_ca :: DATA , < :: icu_datetime :: provider :: calendar :: TimeSymbolsV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
     }
 }
 impl ResourceProvider<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker>
@@ -303,7 +303,7 @@ impl ResourceProvider<::icu_datetime::provider::week_data::WeekDataV1Marker> for
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 litemap_slice_get(
-                    datetime::week_data_v1::DATA,
+                    datetime::week_data_v1_r::DATA,
                     <::icu_datetime::provider::week_data::WeekDataV1Marker as ResourceMarker>::KEY,
                     req,
                 )?,

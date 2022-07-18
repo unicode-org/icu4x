@@ -174,14 +174,6 @@ impl ResourceOptions {
 }
 
 impl ResourceOptions {
-    /// TODO(#1109): Delete this function and use vertical fallback instead
-    pub fn temp_for_region(region: Option<Region>) -> Self {
-        Self {
-            langid: LanguageIdentifier::from(region),
-            keywords: unicode_ext::Keywords::new(),
-        }
-    }
-
     /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()

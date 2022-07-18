@@ -78,6 +78,14 @@ pub mod metadata;
 #[cfg(feature = "std")]
 pub mod paths;
 
+#[cfg(feature = "static")]
+use {
+    icu_provider_adapters::fallback::LocaleFallbackProvider, icu_provider_blob::StaticDataProvider,
+};
+
+#[cfg(feature = "fs")]
+use icu_provider_fs::FsDataProvider;
+
 /// Get a data, loading from the test data JSON directory.
 ///
 /// You can optionally specify your own test data with the
@@ -89,12 +97,12 @@ pub mod paths;
 // The function is documented to allow panics.
 #[allow(clippy::panic)]
 #[cfg(feature = "fs")]
-pub fn get_json_provider() -> icu_provider_fs::FsDataProvider {
+pub fn get_json_provider() -> FsDataProvider {
     let path = match std::env::var_os("ICU4X_TESTDATA_DIR") {
         Some(val) => val.into(),
         None => paths::data_root().join("json"),
     };
-    icu_provider_fs::FsDataProvider::try_new(&path).unwrap_or_else(|err| {
+    FsDataProvider::try_new(&path).unwrap_or_else(|err| {
         panic!(
             "The test data directory was unable to be opened: {}: {:?}",
             err, path
@@ -104,10 +112,10 @@ pub fn get_json_provider() -> icu_provider_fs::FsDataProvider {
 
 /// Get a data provider, loading from the statically initialized postcard blob.
 #[cfg(feature = "static")]
-pub fn get_postcard_provider() -> icu_provider_blob::StaticDataProvider {
+pub fn get_postcard_provider() -> StaticDataProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    icu_provider_blob::StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
+    StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/data/testdata.postcard"
     )))
@@ -116,10 +124,10 @@ pub fn get_postcard_provider() -> icu_provider_blob::StaticDataProvider {
 
 /// Get a small data provider that only contains the `decimal/symbols@1` key for `en` and `bn`.
 #[cfg(feature = "static")]
-pub fn get_smaller_postcard_provider() -> icu_provider_blob::StaticDataProvider {
-    // THe statically compiled data file is valid.
+pub fn get_smaller_postcard_provider() -> StaticDataProvider {
+    // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    icu_provider_blob::StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
+    StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/data/decimal-bn-en.postcard"
     )))
@@ -138,5 +146,11 @@ pub fn get_baked_provider() -> BakedDataProvider {
     BakedDataProvider
 }
 
+/// Get a data provider loading from a statically initialized postcard blob
+/// with locale fallbacking enabled.
 #[cfg(feature = "static")]
-pub use get_postcard_provider as get_provider;
+pub fn get_provider() -> LocaleFallbackProvider<StaticDataProvider> {
+    // The statically compiled data file is valid.
+    #[allow(clippy::unwrap_used)]
+    LocaleFallbackProvider::try_new(get_postcard_provider()).unwrap()
+}

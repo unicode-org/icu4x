@@ -414,7 +414,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         let week_data: DataPayload<WeekDataV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_for_region(locale.id.region),
+                options: ResourceOptions::from(&locale),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -599,7 +599,7 @@ fn test_time_zone_patterns() {
             .unwrap();
         let week_data: DataPayload<WeekDataV1Marker> = date_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::temp_for_region(locale.id.region),
+                options: ResourceOptions::from(&locale),
                 metadata: Default::default(),
             })
             .unwrap()

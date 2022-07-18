@@ -215,7 +215,7 @@ impl DateFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_for_region(locale.id.region),
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -436,7 +436,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_for_region(locale.id.region),
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
