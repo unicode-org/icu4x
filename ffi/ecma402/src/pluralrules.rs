@@ -236,7 +236,7 @@ pub struct PluralRules {
 impl ecma402_traits::pluralrules::PluralRules for PluralRules {
     type Error = PluralRulesError;
 
-    fn try_new<L>(l: L, opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
+    fn try_new<L>(_l: L, _opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
     where
         L: ecma402_traits::Locale,
         Self: Sized,

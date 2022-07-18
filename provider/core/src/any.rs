@@ -249,36 +249,30 @@ impl AnyResponse {
 ///
 /// # Examples
 ///
-/// [`AnyPayloadProvider`] implements `AnyProvider`.
-///
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
-/// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
-///     message: Cow::Borrowed("Custom Hello World"),
-/// };
-///
-/// let provider = AnyPayloadProvider {
-///     key: HelloWorldV1Marker::KEY,
-///     data: AnyPayload::from_static_ref(&CONST_DATA),
-/// };
-///
-/// let any_response = provider
-///     .load_any(HelloWorldV1Marker::KEY, &DataRequest::default())
+/// let any_response = HelloWorldProvider
+///     .as_any_provider()
+///     .load_any(
+///         HelloWorldV1Marker::KEY,
+///         &DataRequest {
+///             options: icu_locid::locale!("de").into(),
+///             metadata: Default::default(),
+///         },
+///     )
 ///     .expect("Load should succeed");
 ///
 /// // Downcast to something useful
-/// let response: DataResponse<HelloWorldV1Marker> = any_response.downcast().expect("Types match");
+/// let response: DataResponse<HelloWorldV1Marker> =
+///     any_response.downcast().expect("Types match");
 ///
 /// let payload = response.take_payload().expect("Data should be present");
 ///
-/// assert_eq!(payload.get().message, "Custom Hello World");
+/// assert_eq!(payload.get().message, "Hallo Welt");
 /// ```
-///
-/// [`AnyPayloadProvider`]: ../icu_provider_adapters/struct_provider/struct.AnyPayloadProvider.html
 pub trait AnyProvider {
     fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }
