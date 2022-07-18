@@ -1643,6 +1643,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_message"
+version = "0.1.0"
+dependencies = [
+ "criterion",
+ "iai",
+ "smallvec",
+]
+
+[[package]]
 name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [

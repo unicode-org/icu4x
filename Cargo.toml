@@ -23,6 +23,7 @@ members = [
     "utils/databake",
     "utils/databake/derive",
     "experimental/segmenter",
+    "experimental/message",
     "ffi/capi_cdylib",
     "ffi/diplomat",
     "ffi/capi_staticlib",
