@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658167575472,
+  "lastUpdate": 1658170867824,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20483,6 +20483,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d176e6d207fa62b78d98904f6dabe0ac6d43a74d"
         },
         "date": 1658167540809,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3963063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc165360d6630509b8806a05dc58b412b4d39757",
+          "message": "Change DataResponseMetadata locale to be set only in fallback provider (#2186)",
+          "timestamp": "2022-07-18T11:59:06-07:00",
+          "tree_id": "9c2dfda76ccbca32a4626ec56b8ef779646c3b81",
+          "url": "https://github.com/unicode-org/icu4x/commit/fc165360d6630509b8806a05dc58b412b4d39757"
+        },
+        "date": 1658170829014,
         "tool": "ndjson",
         "benches": [
           {
