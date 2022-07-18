@@ -60,7 +60,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             .parse()
             .expect("Failed to parse date");
 
-        let formatted_dt = dtf.format(&today);
+        let formatted_dt = dtf.format(&today.datetime, &today.time_zone);
 
         print(format!("Today is: {}", formatted_dt));
     }

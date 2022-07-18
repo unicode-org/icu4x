@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 
 use crate::{
     calendar,
-    date::ZonedDateTimeInput,
+    date::{DateTimeInput, TimeZoneInput},
     format::zoned_datetime::FormattedZonedDateTime,
     options::DateTimeFormatterOptions,
     provider::{
@@ -67,7 +67,7 @@ use crate::{
 ///     .parse()
 ///     .expect("Failed to parse zoned datetime");
 ///
-/// let value = zdtf.format_to_string(&zoned_datetime);
+/// let value = zdtf.format_to_string(&zoned_datetime.datetime, &zoned_datetime.time_zone);
 /// ```
 pub struct ZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>);
 
@@ -149,7 +149,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         ))
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     ///
     /// # Examples
@@ -177,7 +177,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let formatted_date = zdtf.format(&zoned_datetime);
+    /// let formatted_date = zdtf.format(&zoned_datetime.datetime, &zoned_datetime.time_zone);
     ///
     /// let _ = format!("Date: {}", formatted_date);
     /// ```
@@ -186,15 +186,16 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// but [`FormattedZonedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &T) -> FormattedZonedDateTime<'l>
-    where
-        T: ZonedDateTimeInput,
-    {
-        self.0.format(value)
+    pub fn format<'l>(
+        &'l self,
+        date: &impl DateTimeInput<Calendar = C>,
+        time_zone: &impl TimeZoneInput,
+    ) -> FormattedZonedDateTime<'l> {
+        self.0.format(date, time_zone)
     }
 
     /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
-    /// and a [`ZonedDateTimeInput`] implementer, then populates the buffer with a formatted value.
+    /// and a [`DateTimeInput`] and a [`TimeZoneInput`], then populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
@@ -222,7 +223,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .expect("Failed to parse zoned datetime");
     ///
     /// let mut buffer = String::new();
-    /// zdtf.format_to_write(&mut buffer, &zoned_datetime)
+    /// zdtf.format_to_write(&mut buffer, &zoned_datetime.datetime, &zoned_datetime.time_zone)
     ///     .expect("Failed to write to a buffer.");
     ///
     /// let _ = format!("Date: {}", buffer);
@@ -231,12 +232,13 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl ZonedDateTimeInput,
+        date: &impl DateTimeInput<Calendar = C>,
+        time_zone: &impl TimeZoneInput,
     ) -> core::fmt::Result {
-        self.0.format_to_write(w, value)
+        self.0.format_to_write(w, date, time_zone)
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns it formatted as a string.
     ///
     /// # Examples
     ///
@@ -263,10 +265,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let _ = zdtf.format_to_string(&zoned_datetime);
+    /// let _ = zdtf.format_to_string(&zoned_datetime.datetime, &zoned_datetime.time_zone);
     /// ```
     #[inline]
-    pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
-        self.0.format_to_string(value)
+    pub fn format_to_string(
+        &self,
+        date: &impl DateTimeInput<Calendar = C>,
+        time_zone: &impl TimeZoneInput,
+    ) -> String {
+        self.0.format_to_string(date, time_zone)
     }
 }

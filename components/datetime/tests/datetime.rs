@@ -310,10 +310,12 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
     {
         let options = fixtures::get_options(&fx.input.options);
 
-        let mut input_value: MockZonedDateTime = fx.input.value.parse().unwrap();
-        input_value.time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
-        input_value.time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
-        input_value.time_zone.time_variant = config.time_variant;
+        let input_value: MockZonedDateTime = fx.input.value.parse().unwrap();
+        let input_date = input_value.datetime;
+        let mut time_zone = input_value.time_zone;
+        time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
+        time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
+        time_zone.time_variant = config.time_variant;
 
         let description = match fx.description {
             Some(description) => {
@@ -336,15 +338,16 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
                 &TimeZoneFormatterOptions::default(),
             )
             .unwrap();
-            let result = dtf.format_to_string(&input_value);
+            let result = dtf.format_to_string(&input_date, &time_zone);
 
             assert_eq!(result, output_value, "{}", description);
 
             let mut s = String::new();
-            dtf.format_to_write(&mut s, &input_value).unwrap();
+            dtf.format_to_write(&mut s, &input_date, &time_zone)
+                .unwrap();
             assert_eq!(s, output_value, "{}", description);
 
-            let fdt = dtf.format(&input_value);
+            let fdt = dtf.format(&input_date, &time_zone);
             let s = fdt.to_string();
             assert_eq!(s, output_value, "{}", description);
 
@@ -560,10 +563,12 @@ fn test_time_zone_patterns() {
             .keywords
             .set(key!("ca"), value!("gregory"));
         let mut config = test.config;
-        let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
-        datetime.time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        datetime.time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        datetime.time_zone.time_variant = config.time_variant.take();
+        let zoned: MockZonedDateTime = test.datetime.parse().unwrap();
+        let datetime = zoned.datetime;
+        let mut time_zone = zoned.time_zone;
+        time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
+        time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
+        time_zone.time_variant = config.time_variant.take();
 
         let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
             .load_resource(&DataRequest {
@@ -662,7 +667,7 @@ fn test_time_zone_patterns() {
                     .unwrap();
 
                     assert_eq!(
-                        dtf.format(&datetime).to_string(),
+                        dtf.format(&datetime, &time_zone).to_string(),
                         *expect,
                         "\n\
                     locale:   `{}`,\n\
