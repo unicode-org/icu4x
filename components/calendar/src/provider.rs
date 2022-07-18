@@ -35,9 +35,11 @@ pub struct EraStartDate {
     pub day: u8,
 }
 
-#[icu_provider::data_struct(
-    marker(JapaneseErasV1Marker, "calendar/japanese@1", extension_key = "ca")
-)]
+#[icu_provider::data_struct(marker(
+    JapaneseErasV1Marker,
+    "calendar/japanese@1",
+    extension_key = "ca"
+))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
