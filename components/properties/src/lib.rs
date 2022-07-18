@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_properties` is one of the [`ICU4X`] components.
-//!
-//! This component provides definitions of [Unicode Properties] and APIs for
+//! Definitions of [Unicode Properties] and APIs for
 //! retrieving property data in an appropriate data structure.
 //!
 //! APIs that return a [`UnicodeSet`] exist for binary properties and certain enumerated

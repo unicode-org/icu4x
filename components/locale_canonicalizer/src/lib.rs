@@ -2,10 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! [`icu_locale_canonicalizer`](crate) is one of the [`ICU4X`] components.
-//!
-//! This API provides functionality to canonicalize locale identifiers based
-//! upon [`CLDR`] data.
+//! Canonicalization of locale identifiers based on [`CLDR`] data.
 //!
 //! It currently supports locale canonicalization based upon the canonicalization
 //! algorithm from [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`],

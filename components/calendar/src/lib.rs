@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The `icu_calendar` crate contains the core types used by ICU4X for dealing
-//! with dates, times, and custom calendars.
+//! Types for dealing with dates, times, and custom calendars.
 //!
 //! The [`types`] module has a lot of common types for dealing with dates and times.
 //!

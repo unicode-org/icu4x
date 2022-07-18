@@ -1,8 +1,6 @@
 # icu_datetime [![crates.io](https://img.shields.io/crates/v/icu_datetime)](https://crates.io/crates/icu_datetime)
 
-`icu_datetime` is one of the [`ICU4X`] components.
-
-This API provides necessary functionality for formatting date and time to user readable textual representation.
+Functionality for formatting date and time.
 
 [`DateTimeFormatter`] is the main structure of the component. It accepts a set of arguments which
 allow it to collect necessary data from the [data provider], and once instantiated, can be

@@ -1,9 +1,6 @@
 # icu_locale_canonicalizer [![crates.io](https://img.shields.io/crates/v/icu_locale_canonicalizer)](https://crates.io/crates/icu_locale_canonicalizer)
 
-[`icu_locale_canonicalizer`](crate) is one of the [`ICU4X`] components.
-
-This API provides functionality to canonicalize locale identifiers based
-upon [`CLDR`] data.
+Canonicalization of locale identifiers based on [`CLDR`] data.
 
 It currently supports locale canonicalization based upon the canonicalization
 algorithm from [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`],

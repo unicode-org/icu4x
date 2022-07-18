@@ -1,7 +1,6 @@
 # icu_calendar [![crates.io](https://img.shields.io/crates/v/icu_calendar)](https://crates.io/crates/icu_calendar)
 
-The `icu_calendar` crate contains the core types used by ICU4X for dealing
-with dates, times, and custom calendars.
+Types for dealing with dates, times, and custom calendars.
 
 The [`types`] module has a lot of common types for dealing with dates and times.
 

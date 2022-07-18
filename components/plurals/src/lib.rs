@@ -2,10 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! [`icu_plurals`](crate) is one of the [`ICU4X`] components.
-//!
-//! This API provides functionality to determine the plural category
-//! appropriate for a given number in a given language.
+//! Determine the plural category appropriate for a given number in a given language.
 //!
 //! For example in English language, when constructing a message
 //! such as `{ num } items`, the user has to prepare

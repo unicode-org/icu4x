@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_datetime` is one of the [`ICU4X`] components.
-//!
-//! This API provides necessary functionality for formatting date and time to user readable textual representation.
+//! Functionality for formatting date and time.
 //!
 //! [`DateTimeFormatter`] is the main structure of the component. It accepts a set of arguments which
 //! allow it to collect necessary data from the [data provider], and once instantiated, can be
