@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658163411689,
+  "lastUpdate": 1658165146096,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37469,6 +37469,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 91,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "321350bce1ca2d8ab80f8f8092b037dc8789fc74",
+          "message": "Provide raw canonical composition and decomposition (#2099)\n\nCloses #2073.",
+          "timestamp": "2022-07-18T20:10:50+03:00",
+          "tree_id": "04c13d75ba3554981053a312f23484ba6ed55062",
+          "url": "https://github.com/unicode-org/icu4x/commit/321350bce1ca2d8ab80f8f8092b037dc8789fc74"
+        },
+        "date": 1658165105912,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 127242,
+            "range": "± 6645",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26040,
+            "range": "± 1012",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70659,
+            "range": "± 2129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 211,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 76,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 92,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
