@@ -2,7 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::CanonicalComposition;
+use crate::CanonicalDecomposition;
 use crate::ComposingNormalizer;
+use crate::Decomposed;
 use crate::DecomposingNormalizer;
 
 #[test]
@@ -339,4 +342,68 @@ fn test_hangul() {
             .potential_passthrough_and_not_backward_combining = Some(ZeroFrom::zero_from(&set));
         assert!(norm_iter.eq("A\u{AC1B}".chars()));
     }
+}
+
+#[test]
+fn test_canonical_composition() {
+    let data_provider = icu_testdata::get_provider();
+    let comp = CanonicalComposition::try_new(&data_provider).unwrap();
+
+    assert_eq!(comp.compose('a', 'b'), None); // Just two starters
+
+    assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
+    assert_eq!(comp.compose('A', '\u{0308}'), Some('Ä'));
+    assert_eq!(comp.compose('ẹ', '\u{0302}'), Some('ệ'));
+    assert_eq!(comp.compose('Ẹ', '\u{0302}'), Some('Ệ'));
+    assert_eq!(comp.compose('\u{1D157}', '\u{1D165}'), None); // Composition exclusion
+
+    assert_eq!(comp.compose('ে', 'া'), Some('ো')); // Second is starter; BMP
+    assert_eq!(comp.compose('𑄱', '𑄧'), Some('𑄮')); // Second is starter; non-BMP
+
+    assert_eq!(comp.compose('ᄀ', 'ᅡ'), Some('가')); // Hangul LV
+    assert_eq!(comp.compose('가', 'ᆨ'), Some('각')); // Hangul LVT
+}
+
+#[test]
+fn test_canonical_decomposition() {
+    let data_provider = icu_testdata::get_provider();
+    let decomp = CanonicalDecomposition::try_new(&data_provider).unwrap();
+
+    assert_eq!(
+        decomp.decompose('ä'),
+        Decomposed::Expansion('a', '\u{0308}')
+    );
+    assert_eq!(
+        decomp.decompose('Ä'),
+        Decomposed::Expansion('A', '\u{0308}')
+    );
+    assert_eq!(
+        decomp.decompose('ệ'),
+        Decomposed::Expansion('ẹ', '\u{0302}')
+    );
+    assert_eq!(
+        decomp.decompose('Ệ'),
+        Decomposed::Expansion('Ẹ', '\u{0302}')
+    );
+    assert_eq!(
+        decomp.decompose('\u{1D15E}'),
+        Decomposed::Expansion('\u{1D157}', '\u{1D165}')
+    );
+    assert_eq!(decomp.decompose('ো'), Decomposed::Expansion('ে', 'া'));
+    assert_eq!(decomp.decompose('𑄮'), Decomposed::Expansion('𑄱', '𑄧'));
+    assert_eq!(decomp.decompose('가'), Decomposed::Expansion('ᄀ', 'ᅡ'));
+    assert_eq!(decomp.decompose('각'), Decomposed::Expansion('가', 'ᆨ'));
+
+    assert_eq!(decomp.decompose('\u{212B}'), Decomposed::Singleton('Å')); // ANGSTROM SIGN
+    assert_eq!(decomp.decompose('\u{2126}'), Decomposed::Singleton('Ω')); // OHM SIGN
+
+    assert_eq!(decomp.decompose('\u{1F71}'), Decomposed::Singleton('ά')); // oxia
+    assert_eq!(
+        decomp.decompose('\u{1F72}'),
+        Decomposed::Expansion('ε', '\u{0300}')
+    ); // not oxia but in the oxia range
+    assert_eq!(
+        decomp.decompose('ά'),
+        Decomposed::Expansion('α', '\u{0301}')
+    ); // tonos
 }

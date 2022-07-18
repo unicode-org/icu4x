@@ -92,11 +92,7 @@ pub trait TimeZoneInput {
 /// A combination of a formattable calendar date and ISO time.
 pub trait DateTimeInput: DateInput + IsoTimeInput {}
 
-/// A combination of a formattable calendar date, ISO time, and time zone.
-pub trait ZonedDateTimeInput: TimeZoneInput + DateTimeInput {}
-
 impl<T> DateTimeInput for T where T: DateInput + IsoTimeInput {}
-impl<T> ZonedDateTimeInput for T where T: TimeZoneInput + DateTimeInput {}
 
 /// A formattable calendar date and ISO time that takes the locale into account.
 pub trait LocalizedDateTimeInput<T: DateTimeInput> {
@@ -148,11 +144,10 @@ pub(crate) struct ExtractedDateTimeInput {
     nanosecond: Option<NanoSecond>,
 }
 
-/// A [`ZonedDateTimeInput`] type with all of the fields pre-extracted
+/// A [`TimeZoneInput`] type with all of the fields pre-extracted
 ///
-/// See [`ZonedDateTimeInput`] for documentation on individual fields
-pub(crate) struct ExtractedZonedDateTimeInput {
-    pub(crate) date_time_input: ExtractedDateTimeInput,
+/// See [`TimeZoneInput`] for documentation on individual fields
+pub(crate) struct ExtractedTimeZoneInput {
     gmt_offset: GmtOffset,
     time_zone_id: Option<TimeZoneBcp47Id>,
     metazone_id: Option<MetaZoneId>,
@@ -177,11 +172,10 @@ impl ExtractedDateTimeInput {
     }
 }
 
-impl ExtractedZonedDateTimeInput {
+impl ExtractedTimeZoneInput {
     /// Construct given an instance of a [`ZonedDateTimeInput`].
-    pub(crate) fn extract_from<T: ZonedDateTimeInput>(input: &T) -> Self {
+    pub(crate) fn extract_from<T: TimeZoneInput>(input: &T) -> Self {
         Self {
-            date_time_input: ExtractedDateTimeInput::extract_from(input),
             gmt_offset: input.gmt_offset(),
             time_zone_id: input.time_zone_id(),
             metazone_id: input.metazone_id(),
@@ -234,51 +228,7 @@ impl IsoTimeInput for ExtractedDateTimeInput {
     }
 }
 
-impl DateInput for ExtractedZonedDateTimeInput {
-    /// This actually doesn't matter, by the time we use this
-    /// it's purely internal raw code where calendars are irrelevant
-    type Calendar = icu_calendar::any_calendar::AnyCalendar;
-    fn year(&self) -> Option<FormattableYear> {
-        self.date_time_input.year
-    }
-    fn month(&self) -> Option<FormattableMonth> {
-        self.date_time_input.month
-    }
-    fn day_of_month(&self) -> Option<DayOfMonth> {
-        self.date_time_input.day_of_month
-    }
-    fn iso_weekday(&self) -> Option<IsoWeekday> {
-        self.date_time_input.iso_weekday
-    }
-    fn day_of_year_info(&self) -> Option<DayOfYearInfo> {
-        self.date_time_input.day_of_year_info
-    }
-    fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        self.date_time_input.any_calendar_kind
-    }
-    fn to_iso(&self) -> Date<Iso> {
-        unreachable!(
-            "ExtractedZonedDateTimeInput should never be directly passed to AnyDateTimeFormatter"
-        )
-    }
-}
-
-impl IsoTimeInput for ExtractedZonedDateTimeInput {
-    fn hour(&self) -> Option<IsoHour> {
-        self.date_time_input.hour
-    }
-    fn minute(&self) -> Option<IsoMinute> {
-        self.date_time_input.minute
-    }
-    fn second(&self) -> Option<IsoSecond> {
-        self.date_time_input.second
-    }
-    fn nanosecond(&self) -> Option<NanoSecond> {
-        self.date_time_input.nanosecond
-    }
-}
-
-impl TimeZoneInput for ExtractedZonedDateTimeInput {
+impl TimeZoneInput for ExtractedTimeZoneInput {
     fn gmt_offset(&self) -> GmtOffset {
         self.gmt_offset
     }
@@ -379,21 +329,6 @@ impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
     }
 }
 
-pub(crate) struct ZonedDateTimeInputWithLocale<'data, T: ZonedDateTimeInput> {
-    data: &'data T,
-    calendar: Option<&'data week_of::CalendarInfo>,
-}
-
-impl<'data, T: ZonedDateTimeInput> ZonedDateTimeInputWithLocale<'data, T> {
-    pub fn new(
-        data: &'data T,
-        calendar: Option<&'data week_of::CalendarInfo>,
-        _locale: &Locale,
-    ) -> Self {
-        Self { data, calendar }
-    }
-}
-
 impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'data, T> {
     fn datetime(&self) -> &T {
         self.data
@@ -424,50 +359,6 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLoc
             self.data,
             #[allow(clippy::expect_used)]
             // TODO(#1668) Clippy exceptions need docs or fixing.
-            self.calendar
-                .expect("calendar must be provided when using week of methods"),
-        )
-    }
-
-    fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, DateTimeError> {
-        day_of_week_in_month(self.data)
-    }
-
-    fn flexible_day_period(&self) {
-        todo!("#487")
-    }
-}
-
-impl<'data, T: ZonedDateTimeInput> LocalizedDateTimeInput<T>
-    for ZonedDateTimeInputWithLocale<'data, T>
-{
-    fn datetime(&self) -> &T {
-        self.data
-    }
-
-    fn year_week(&self) -> Result<FormattableYear, DateTimeError> {
-        year_week(
-            self.data,
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            self.calendar
-                .expect("calendar must be provided when using week of methods"),
-        )
-    }
-
-    fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        week_of_month(
-            self.data,
-            self.calendar
-                .expect("calendar must be provided when using week of methods")
-                .first_weekday,
-        )
-    }
-
-    fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
-        week_of_year(
-            self.data,
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             self.calendar
                 .expect("calendar must be provided when using week of methods"),
         )

@@ -13,8 +13,8 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
-    date::ExtractedZonedDateTimeInput,
-    date::ZonedDateTimeInput,
+    date::{DateTimeInput, TimeZoneInput},
+    date::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
     format::{
         datetime,
         zoned_datetime::{self, FormattedZonedDateTime},
@@ -95,7 +95,7 @@ impl ZonedDateTimeFormatter {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_for_region(locale.id.region),
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -182,14 +182,16 @@ impl ZonedDateTimeFormatter {
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &T) -> FormattedZonedDateTime<'l>
-    where
-        T: ZonedDateTimeInput,
-    {
+    pub fn format<'l>(
+        &'l self,
+        date: &impl DateTimeInput,
+        time_zone: &impl TimeZoneInput,
+    ) -> FormattedZonedDateTime<'l> {
         // Todo: optimize extraction #2143
         FormattedZonedDateTime {
             zoned_datetime_format: self,
-            zoned_datetime: ExtractedZonedDateTimeInput::extract_from(value),
+            datetime: ExtractedDateTimeInput::extract_from(date),
+            time_zone: ExtractedTimeZoneInput::extract_from(time_zone),
         }
     }
 
@@ -199,17 +201,22 @@ impl ZonedDateTimeFormatter {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl ZonedDateTimeInput,
+        date: &impl DateTimeInput,
+        time_zone: &impl TimeZoneInput,
     ) -> core::fmt::Result {
-        zoned_datetime::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
+        zoned_datetime::write_pattern(self, date, time_zone, w).map_err(|_| core::fmt::Error)
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
     #[inline]
-    pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
+    pub fn format_to_string(
+        &self,
+        date: &impl DateTimeInput,
+        time_zone: &impl TimeZoneInput,
+    ) -> String {
         let mut s = String::new();
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, value)
+        self.format_to_write(&mut s, date, time_zone)
             .expect("Failed to write to a String.");
         s
     }

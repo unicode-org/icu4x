@@ -11,7 +11,7 @@ use icu_provider::prelude::*;
 
 use crate::{
     calendar,
-    date::ZonedDateTimeInput,
+    date::{DateTimeInput, TimeZoneInput},
     format::zoned_datetime::FormattedZonedDateTime,
     options::DateTimeFormatterOptions,
     provider::{
@@ -48,20 +48,16 @@ use crate::{
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatterOptions;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let date_provider = InvariantDataProvider;
-/// let zone_provider = InvariantDataProvider;
-/// let plural_provider = InvariantDataProvider;
-/// let decimal_provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
 ///     locale!("en"),
-///     &date_provider,
-///     &zone_provider,
-///     &plural_provider,
-///     &decimal_provider,
+///     &provider,
+///     &provider,
+///     &provider,
+///     &provider,
 ///     &options.into(),
 ///     &TimeZoneFormatterOptions::default(),
 /// )
@@ -71,7 +67,7 @@ use crate::{
 ///     .parse()
 ///     .expect("Failed to parse zoned datetime");
 ///
-/// let value = zdtf.format_to_string(&zoned_datetime);
+/// let value = zdtf.format_to_string(&zoned_datetime.datetime, &zoned_datetime.time_zone);
 /// ```
 pub struct ZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>);
 
@@ -88,21 +84,17 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_datetime::TimeZoneFormatterOptions;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let date_provider = InvariantDataProvider;
-    /// let zone_provider = InvariantDataProvider;
-    /// let plural_provider = InvariantDataProvider;
-    /// let decimal_provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let options = DateTimeFormatterOptions::default();
     ///
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     locale!("en"),
-    ///     &date_provider,
-    ///     &zone_provider,
-    ///     &plural_provider,
-    ///     &decimal_provider,
+    ///     &provider,
+    ///     &provider,
+    ///     &provider,
+    ///     &provider,
     ///     &options,
     ///     &TimeZoneFormatterOptions::default(),
     /// );
@@ -157,7 +149,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         ))
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     ///
     /// # Examples
@@ -167,19 +159,15 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu_datetime::TimeZoneFormatterOptions;
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let date_provider = InvariantDataProvider;
-    /// # let zone_provider = InvariantDataProvider;
-    /// # let plural_provider = InvariantDataProvider;
-    /// # let decimal_provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     locale,
-    ///     &date_provider,
-    ///     &zone_provider,
-    ///     &plural_provider,
-    ///     &decimal_provider,
+    ///     &provider,
+    ///     &provider,
+    ///     &provider,
+    ///     &provider,
     ///     &options,
     ///     &TimeZoneFormatterOptions::default(),
     /// )
@@ -189,7 +177,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let formatted_date = zdtf.format(&zoned_datetime);
+    /// let formatted_date = zdtf.format(&zoned_datetime.datetime, &zoned_datetime.time_zone);
     ///
     /// let _ = format!("Date: {}", formatted_date);
     /// ```
@@ -198,15 +186,16 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// but [`FormattedZonedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &T) -> FormattedZonedDateTime<'l>
-    where
-        T: ZonedDateTimeInput,
-    {
-        self.0.format(value)
+    pub fn format<'l>(
+        &'l self,
+        date: &impl DateTimeInput<Calendar = C>,
+        time_zone: &impl TimeZoneInput,
+    ) -> FormattedZonedDateTime<'l> {
+        self.0.format(date, time_zone)
     }
 
     /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
-    /// and a [`ZonedDateTimeInput`] implementer, then populates the buffer with a formatted value.
+    /// and a [`DateTimeInput`] and a [`TimeZoneInput`], then populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
@@ -215,19 +204,15 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu_datetime::TimeZoneFormatterOptions;
-    /// # use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let date_provider = InvariantDataProvider;
-    /// # let zone_provider = InvariantDataProvider;
-    /// # let plural_provider = InvariantDataProvider;
-    /// # let decimal_provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     locale,
-    ///     &date_provider,
-    ///     &zone_provider,
-    ///     &plural_provider,
-    ///     &decimal_provider,
+    ///     &provider,
+    ///     &provider,
+    ///     &provider,
+    ///     &provider,
     ///     &options.into(),
     ///     &TimeZoneFormatterOptions::default(),
     /// )
@@ -238,7 +223,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .expect("Failed to parse zoned datetime");
     ///
     /// let mut buffer = String::new();
-    /// zdtf.format_to_write(&mut buffer, &zoned_datetime)
+    /// zdtf.format_to_write(&mut buffer, &zoned_datetime.datetime, &zoned_datetime.time_zone)
     ///     .expect("Failed to write to a buffer.");
     ///
     /// let _ = format!("Date: {}", buffer);
@@ -247,12 +232,13 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl ZonedDateTimeInput,
+        date: &impl DateTimeInput<Calendar = C>,
+        time_zone: &impl TimeZoneInput,
     ) -> core::fmt::Result {
-        self.0.format_to_write(w, value)
+        self.0.format_to_write(w, date, time_zone)
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns it formatted as a string.
     ///
     /// # Examples
     ///
@@ -261,19 +247,15 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu_datetime::TimeZoneFormatterOptions;
-    /// use icu_provider::inv::InvariantDataProvider;
     /// # let locale = icu::locid::locale!("en");
-    /// # let date_provider = InvariantDataProvider;
-    /// # let zone_provider = InvariantDataProvider;
-    /// # let plural_provider = InvariantDataProvider;
-    /// # let decimal_provider = InvariantDataProvider;
+    /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     locale,
-    ///     &date_provider,
-    ///     &zone_provider,
-    ///     &plural_provider,
-    ///     &decimal_provider,
+    ///     &provider,
+    ///     &provider,
+    ///     &provider,
+    ///     &provider,
     ///     &options.into(),
     ///     &TimeZoneFormatterOptions::default(),
     /// )
@@ -283,10 +265,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///     .parse()
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let _ = zdtf.format_to_string(&zoned_datetime);
+    /// let _ = zdtf.format_to_string(&zoned_datetime.datetime, &zoned_datetime.time_zone);
     /// ```
     #[inline]
-    pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
-        self.0.format_to_string(value)
+    pub fn format_to_string(
+        &self,
+        date: &impl DateTimeInput<Calendar = C>,
+        time_zone: &impl TimeZoneInput,
+    ) -> String {
+        self.0.format_to_string(date, time_zone)
     }
 }

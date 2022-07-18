@@ -38,10 +38,8 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
             .cldr()?
             .core()
             .read_and_parse("supplemental/aliases.json")?;
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(AliasesV1::from(data))),
         })
     }

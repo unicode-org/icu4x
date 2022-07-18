@@ -76,10 +76,8 @@ macro_rules! impl_resource_provider {
                     }
                     let meta_zone_periods = resource.supplemental.meta_zones.meta_zone_info.time_zone.0.clone();
 
-                    let metadata = DataResponseMetadata::default();
-                    // TODO(#1109): Set metadata.data_langid correctly.
                     Ok(DataResponse {
-                        metadata,
+                        metadata: Default::default(),
                         payload: Some(DataPayload::from_owned(
                             <$marker as DataMarker>::Yokeable::from(&CldrTimeZonesData {
                                 time_zone_names,

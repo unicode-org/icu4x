@@ -33,11 +33,11 @@ use writeable::Writeable;
 ///
 /// # Examples
 ///
-/// ```
+/// ```no_run
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::DateTimeFormatter;
 /// use icu::locid::locale;
-/// # let provider = icu_provider::inv::InvariantDataProvider;
+/// # let provider = icu_testdata::get_provider();
 /// # let options = icu::datetime::DateTimeFormatterOptions::default();
 /// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options)
 ///     .expect("Failed to create DateTimeFormatter instance.");

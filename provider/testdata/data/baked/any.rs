@@ -49,6 +49,8 @@ impl AnyProvider for BakedDataProvider {
             ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY.get_hash();
         const COMPATIBILITYDECOMPOSITIONTABLESV1MARKER: ::icu_provider::ResourceKeyHash =
             ::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.get_hash();
+        const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::ResourceKeyHash =
+            ::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.get_hash();
         const UTS46COMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::ResourceKeyHash =
             ::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY.get_hash();
         const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::ResourceKeyHash =
@@ -141,7 +143,7 @@ impl AnyProvider for BakedDataProvider {
         Ok(AnyResponse {
             payload: Some(match key.get_hash() {
                 JAPANESEERASV1MARKER => AnyPayload::from_static_ref::<<::icu_calendar::provider::JapaneseErasV1Marker as DataMarker>::Yokeable>(
-                    litemap_slice_get(calendar::japanese_v1::DATA, key, req)?,
+                    litemap_slice_get(calendar::japanese_v1_u_ca::DATA, key, req)?,
                 ),
                 CASEMAPPINGV1MARKER => AnyPayload::from_static_ref::<<::icu_casemapping::provider::CaseMappingV1Marker as DataMarker>::Yokeable>(
                     litemap_slice_get(props::casemap_v1::DATA, key, req)?,
@@ -166,23 +168,25 @@ impl AnyProvider for BakedDataProvider {
                 >(litemap_slice_get(collator::prim_v1::DATA, key, req)?),
                 DATEPATTERNSV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_datetime::provider::calendar::DatePatternsV1Marker as DataMarker>::Yokeable,
-                >(litemap_slice_get(datetime::datelengths_v1::DATA, key, req)?),
-                DATESKELETONPATTERNSV1MARKER => {
-                    AnyPayload::from_rc_payload::<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>(alloc::rc::Rc::new(
-                        DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(litemap_slice_get(datetime::skeletons_v1::DATA, key, req)?)),
-                    ))
-                }
+                >(litemap_slice_get(datetime::datelengths_v1_u_ca::DATA, key, req)?),
+                DATESKELETONPATTERNSV1MARKER => AnyPayload::from_rc_payload::<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>(
+                    alloc::rc::Rc::new(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(litemap_slice_get(
+                        datetime::skeletons_v1_u_ca::DATA,
+                        key,
+                        req,
+                    )?))),
+                ),
                 DATESYMBOLSV1MARKER => {
                     AnyPayload::from_static_ref::<<::icu_datetime::provider::calendar::DateSymbolsV1Marker as DataMarker>::Yokeable>(
-                        litemap_slice_get(datetime::datesymbols_v1::DATA, key, req)?,
+                        litemap_slice_get(datetime::datesymbols_v1_u_ca::DATA, key, req)?,
                     )
                 }
                 TIMEPATTERNSV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_datetime::provider::calendar::TimePatternsV1Marker as DataMarker>::Yokeable,
-                >(litemap_slice_get(datetime::timelengths_v1::DATA, key, req)?),
+                >(litemap_slice_get(datetime::timelengths_v1_u_ca::DATA, key, req)?),
                 TIMESYMBOLSV1MARKER => {
                     AnyPayload::from_static_ref::<<::icu_datetime::provider::calendar::TimeSymbolsV1Marker as DataMarker>::Yokeable>(
-                        litemap_slice_get(datetime::timesymbols_v1::DATA, key, req)?,
+                        litemap_slice_get(datetime::timesymbols_v1_u_ca::DATA, key, req)?,
                     )
                 }
                 EXEMPLARCITIESV1MARKER => AnyPayload::from_static_ref::<
@@ -207,7 +211,7 @@ impl AnyProvider for BakedDataProvider {
                     <::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker as DataMarker>::Yokeable,
                 >(litemap_slice_get(time_zone::formats_v1::DATA, key, req)?),
                 WEEKDATAV1MARKER => AnyPayload::from_static_ref::<<::icu_datetime::provider::week_data::WeekDataV1Marker as DataMarker>::Yokeable>(
-                    litemap_slice_get(datetime::week_data_v1::DATA, key, req)?,
+                    litemap_slice_get(datetime::week_data_v1_r::DATA, key, req)?,
                 ),
                 DECIMALSYMBOLSV1MARKER => AnyPayload::from_static_ref::<<::icu_decimal::provider::DecimalSymbolsV1Marker as DataMarker>::Yokeable>(
                     litemap_slice_get(decimal::symbols_v1::DATA, key, req)?,
@@ -252,6 +256,9 @@ impl AnyProvider for BakedDataProvider {
                 COMPATIBILITYDECOMPOSITIONTABLESV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker as DataMarker>::Yokeable,
                 >(litemap_slice_get(normalizer::nfkdex_v1::DATA, key, req)?),
+                NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER => AnyPayload::from_static_ref::<
+                    <::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker as DataMarker>::Yokeable,
+                >(litemap_slice_get(normalizer::decomp_v1::DATA, key, req)?),
                 UTS46COMPOSITIONPASSTHROUGHV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker as DataMarker>::Yokeable,
                 >(litemap_slice_get(normalizer::uts46_v1::DATA, key, req)?),

@@ -82,7 +82,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let mut result = String::new();
 
                     for dt in &datetimes {
-                        let fdt = dtf.format(dt);
+                        let fdt = dtf.format(&dt.datetime, &dt.time_zone);
                         write!(result, "{}", fdt).unwrap();
                         result.clear();
                     }
@@ -229,7 +229,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let mut result = String::new();
 
                         for dt in &datetimes {
-                            let _ = dtf.format_to_write(&mut result, dt);
+                            let _ = dtf.format_to_write(&mut result, &dt.datetime, &dt.time_zone);
                             result.clear();
                         }
                     }
@@ -261,7 +261,7 @@ fn datetime_benches(c: &mut Criterion) {
                         .unwrap();
 
                         for dt in &datetimes {
-                            let _ = dtf.format_to_string(dt);
+                            let _ = dtf.format_to_string(&dt.datetime, &dt.time_zone);
                         }
                     }
                 }
@@ -294,7 +294,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let mut result = String::new();
 
                         for dt in &datetimes {
-                            let fdt = dtf.format(dt);
+                            let fdt = dtf.format(&dt.datetime, &dt.time_zone);
                             write!(result, "{}", fdt).unwrap();
                             result.clear();
                         }
@@ -327,7 +327,7 @@ fn datetime_benches(c: &mut Criterion) {
                         .unwrap();
 
                         for dt in &datetimes {
-                            let fdt = dtf.format(dt);
+                            let fdt = dtf.format(&dt.datetime, &dt.time_zone);
                             let _ = fdt.to_string();
                         }
                     }

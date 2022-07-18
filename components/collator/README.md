@@ -20,7 +20,7 @@ Create a directory `$PROJECTS/localicu`
 
 Create a directory `$PROJECTS/icu-build` and `cd` into it.
 
-Run `../icu/icu4c/source/runConfigureICU --enable-debug Linux --prefix /opt/Projects/localicu --enable-static`
+Run `../icu/icu4c/source/runConfigureICU --enable-debug Linux --prefix $PROJECTS/localicu --enable-static`
 
 Run `make`
 

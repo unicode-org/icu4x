@@ -168,10 +168,8 @@ macro_rules! impl_resource_provider {
                         data.eras.narrow.insert("ce".into(), greg.eras.narrow.get("1").expect("Gregorian calendar must have data for AD").into());
                     }
 
-                    let metadata = DataResponseMetadata::default();
-                    // TODO(#1109): Set metadata.data_langid correctly.
                     Ok(DataResponse {
-                        metadata,
+                        metadata: Default::default(),
                         #[allow(clippy::redundant_closure_call)]
                         payload: Some(DataPayload::from_owned(($expr)(&data, &calendar.to_string()))),
                     })

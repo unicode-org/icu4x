@@ -135,9 +135,8 @@ pub enum PluralRuleType {
 /// ```
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let dp = InvariantDataProvider;
+/// let dp = icu_testdata::get_provider();
 ///
 /// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
@@ -262,9 +261,8 @@ impl PluralCategory {
 /// ```
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let dp = InvariantDataProvider;
+/// let dp = icu_testdata::get_provider();
 ///
 /// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
@@ -290,11 +288,10 @@ impl PluralRules {
     /// ```
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralRuleType, PluralRules};
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = locale!("en");
     ///
-    /// let dp = InvariantDataProvider;
+    /// let dp = icu_testdata::get_provider();
     ///
     /// let _ = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal);
     /// ```
@@ -411,9 +408,8 @@ impl PluralRules {
     /// ```
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let dp = InvariantDataProvider;
+    /// let dp = icu_testdata::get_provider();
     ///
     /// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
@@ -439,10 +435,9 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu::plurals::{PluralRuleType, PluralRules};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// use std::convert::TryFrom;
     /// #
-    /// # let dp = InvariantDataProvider;
+    /// # let dp = icu_testdata::get_provider();
     /// #
     /// # let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
     /// #     .expect("Failed to construct a PluralRules struct.");
@@ -489,7 +484,6 @@ impl PluralRules {
     /// ```
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let dp = icu_testdata::get_provider();
     ///

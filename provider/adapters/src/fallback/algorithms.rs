@@ -15,8 +15,8 @@ const SUBDIVISION_KEY: Key = key!("sd");
 impl<'a> LocaleFallbackerWithConfig<'a> {
     pub(crate) fn normalize(&self, ro: &mut ResourceOptions) {
         let language = ro.language();
-        // 1. Populate the region
-        if ro.region().is_none() {
+        // 1. Populate the region (required for region fallback only)
+        if self.config.priority == FallbackPriority::Region && ro.region().is_none() {
             // 1a. First look for region based on language+script
             if let Some(script) = ro.script() {
                 ro.set_region(
@@ -240,14 +240,14 @@ mod tests {
             input: "en-u-hc-h12-sd-usca",
             requires_data: true,
             extension_key: None,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
             input: "en-Latn-u-sd-usca",
             requires_data: true,
             extension_key: None,
-            expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
+            expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
@@ -325,7 +325,7 @@ mod tests {
     #[test]
     fn test_fallback() {
         let fallbacker_no_data = LocaleFallbacker::new_without_data();
-        let provider = icu_testdata::get_provider();
+        let provider = icu_testdata::get_postcard_provider();
         let fallbacker_with_data = LocaleFallbacker::try_new(&provider).unwrap();
         for cas in TEST_CASES {
             for (priority, expected_chain) in [
