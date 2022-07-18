@@ -62,10 +62,6 @@ impl TimeFormatter {
             preferences,
         )?;
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
@@ -86,7 +82,8 @@ impl TimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )
@@ -224,13 +221,10 @@ impl DateFormatter {
             None
         };
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions.clone(),
+                // TODO(#2136): Don't clone here
+                locale.clone(),
                 data_provider,
             )?)
         } else {
@@ -254,7 +248,8 @@ impl DateFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )
@@ -445,13 +440,10 @@ impl DateTimeFormatter {
             None
         };
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions.clone(),
+                // TODO(#2136): Don't clone here
+                locale.clone(),
                 data_provider,
             )?)
         } else {
@@ -488,7 +480,8 @@ impl DateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )
