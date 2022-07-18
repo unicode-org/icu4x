@@ -7,11 +7,18 @@
 #include "diplomat_runtime.h"
 
 #ifdef __cplusplus
-extern "C" {
+namespace capi {
 #endif
 
 typedef struct ICU4XDataProvider ICU4XDataProvider;
+#ifdef __cplusplus
+} // namespace capi
+#endif
 #include "diplomat_result_box_ICU4XDataProvider_ICU4XError.h"
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 
 diplomat_result_box_ICU4XDataProvider_ICU4XError ICU4XDataProvider_create_fs(const char* path_data, size_t path_len);
 
@@ -23,6 +30,7 @@ ICU4XDataProvider* ICU4XDataProvider_create_empty();
 void ICU4XDataProvider_destroy(ICU4XDataProvider* self);
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

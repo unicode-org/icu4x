@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XWordBreakIteratorUtf16.h"
-}
 
 
 /**
