@@ -87,8 +87,8 @@ data generation implementation.
 
 [`ICU4X`]: ../icu/index.html
 [`DataProvider`]: data_provider::DataProvider
-[`ResourceKey`]: resource::ResourceKey
-[`ResourceOptions`]: resource::ResourceOptions
+[`ResourceKey`]: key::ResourceKey
+[`ResourceOptions`]: request::ResourceOptions
 [`IterableDynProvider`]: datagen::IterableDynProvider
 [`IterableResourceProvider`]: datagen::IterableResourceProvider
 [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
