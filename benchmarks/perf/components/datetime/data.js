@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657955720851,
+  "lastUpdate": 1658127745068,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48743,6 +48743,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5943,
             "range": "± 253",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cadb64258a5831017173af4dabe201dfa869c0b6",
+          "message": "Add japanext calendar (#2181)\n\n* Move calendar type into japanese key\r\n\r\n* Generate separate data for japanese/japanext\r\n\r\n* Allow constructing japanext calendars\r\n\r\n* Generate japanese and japanext dtf data\r\n* Return gregorian eras from japanese calendar for older dates\r\n\r\n* move gregorian over to ce/bce era codes",
+          "timestamp": "2022-07-18T06:49:49Z",
+          "tree_id": "9df3c41028460b6a7922bb76efa724a64af40509",
+          "url": "https://github.com/unicode-org/icu4x/commit/cadb64258a5831017173af4dabe201dfa869c0b6"
+        },
+        "date": 1658127708482,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 112119,
+            "range": "± 470",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1101326,
+            "range": "± 9395",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 228021,
+            "range": "± 2729",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 107986,
+            "range": "± 3775",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 118534,
+            "range": "± 4413",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 112052,
+            "range": "± 467",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 120963,
+            "range": "± 217",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 215292,
+            "range": "± 645",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 229105,
+            "range": "± 810",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 228590,
+            "range": "± 1251",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 244546,
+            "range": "± 834",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6261,
+            "range": "± 201",
             "unit": "ns/iter"
           }
         ]
