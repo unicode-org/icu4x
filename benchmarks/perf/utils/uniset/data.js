@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658180614567,
+  "lastUpdate": 1658182399849,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37259,6 +37259,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39669398,
             "range": "± 1449280",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f4d841ef0b168031d837433d075308bbebf34b7",
+          "message": "Move ZDTF to TimeZoneInput (#2205)\n\n* Split ZonedDTI trait\r\n\r\n* Fix tests\r\n\r\n* Better doctest\r\n\r\n* fix bench\r\n\r\n* fix\r\n\r\n* doc links",
+          "timestamp": "2022-07-18T22:03:15Z",
+          "tree_id": "aa55f68b10aca507b22ef166360b02e624069e59",
+          "url": "https://github.com/unicode-org/icu4x/commit/3f4d841ef0b168031d837433d075308bbebf34b7"
+        },
+        "date": 1658182367344,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44825485,
+            "range": "± 72055",
             "unit": "ns/iter"
           },
           {
