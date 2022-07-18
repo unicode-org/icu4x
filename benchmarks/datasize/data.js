@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658180128017,
+  "lastUpdate": 1658181894772,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20543,6 +20543,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0c5290edcf3c0c8df775f698c65759d60ff7e713"
         },
         "date": 1658180095900,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3963063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f4d841ef0b168031d837433d075308bbebf34b7",
+          "message": "Move ZDTF to TimeZoneInput (#2205)\n\n* Split ZonedDTI trait\r\n\r\n* Fix tests\r\n\r\n* Better doctest\r\n\r\n* fix bench\r\n\r\n* fix\r\n\r\n* doc links",
+          "timestamp": "2022-07-18T22:03:15Z",
+          "tree_id": "aa55f68b10aca507b22ef166360b02e624069e59",
+          "url": "https://github.com/unicode-org/icu4x/commit/3f4d841ef0b168031d837433d075308bbebf34b7"
+        },
+        "date": 1658181863873,
         "tool": "ndjson",
         "benches": [
           {
