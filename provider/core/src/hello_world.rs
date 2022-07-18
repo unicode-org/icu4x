@@ -128,7 +128,9 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
 impl DataPayload<HelloWorldV1Marker> {
     /// Make a [`DataPayload`]`<`[`HelloWorldV1Marker`]`>` from a static string slice.
     pub fn from_static_str(s: &'static str) -> DataPayload<HelloWorldV1Marker> {
-        DataPayload::from_owned(HelloWorldV1 { message: Cow::Borrowed(s)})
+        DataPayload::from_owned(HelloWorldV1 {
+            message: Cow::Borrowed(s),
+        })
     }
 }
 
