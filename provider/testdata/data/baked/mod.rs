@@ -26,7 +26,7 @@ impl ResourceProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedD
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 litemap_slice_get(
-                    calendar::japanese_v1::DATA,
+                    calendar::japanese_v1_u_ca::DATA,
                     <::icu_calendar::provider::JapaneseErasV1Marker as ResourceMarker>::KEY,
                     req,
                 )?,

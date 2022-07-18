@@ -143,7 +143,7 @@ impl AnyProvider for BakedDataProvider {
         Ok(AnyResponse {
             payload: Some(match key.get_hash() {
                 JAPANESEERASV1MARKER => AnyPayload::from_static_ref::<<::icu_calendar::provider::JapaneseErasV1Marker as DataMarker>::Yokeable>(
-                    litemap_slice_get(calendar::japanese_v1::DATA, key, req)?,
+                    litemap_slice_get(calendar::japanese_v1_u_ca::DATA, key, req)?,
                 ),
                 CASEMAPPINGV1MARKER => AnyPayload::from_static_ref::<<::icu_casemapping::provider::CaseMappingV1Marker as DataMarker>::Yokeable>(
                     litemap_slice_get(props::casemap_v1::DATA, key, req)?,
