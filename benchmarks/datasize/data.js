@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1657955041151,
+  "lastUpdate": 1658127101602,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20338,6 +20338,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 3938360,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cadb64258a5831017173af4dabe201dfa869c0b6",
+          "message": "Add japanext calendar (#2181)\n\n* Move calendar type into japanese key\r\n\r\n* Generate separate data for japanese/japanext\r\n\r\n* Allow constructing japanext calendars\r\n\r\n* Generate japanese and japanext dtf data\r\n* Return gregorian eras from japanese calendar for older dates\r\n\r\n* move gregorian over to ce/bce era codes",
+          "timestamp": "2022-07-18T06:49:49Z",
+          "tree_id": "9df3c41028460b6a7922bb76efa724a64af40509",
+          "url": "https://github.com/unicode-org/icu4x/commit/cadb64258a5831017173af4dabe201dfa869c0b6"
+        },
+        "date": 1658127056210,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3958887,
             "unit": "bytes",
             "biggerIsBetter": false
           }
