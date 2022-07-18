@@ -1591,6 +1591,11 @@ impl ComposingNormalizer {
 }
 
 /// A struct for providing the raw canonical composition operation.
+///
+/// Callers should generally use `ComposingNormalizer` instead of this API.
+/// However, this API is provided for callers such as HarfBuzz that specifically
+/// want access to the raw canonical composition operation e.g. for use in a
+/// glyph-availability-guided custom normalizer.
 pub struct CanonicalComposition {
     canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
 }
@@ -1599,6 +1604,19 @@ impl CanonicalComposition {
     /// Performs canonical composition (including Hangul) on a pair of
     /// characters or returns `None` if these characters don't compose.
     /// Composition exclusions are taken into account.
+    ///
+    /// ```
+    /// let data_provider = icu_testdata::get_provider();
+    /// let comp = icu_normalizer::CanonicalComposition::try_new(&data_provider).unwrap();
+    ///
+    /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
+    /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
+    /// assert_eq!(comp.compose('ẹ', '\u{0302}'), Some('ệ'));
+    /// assert_eq!(comp.compose('𝅗', '𝅥'), None); // Composition exclusion
+    /// assert_eq!(comp.compose('ে', 'া'), Some('ো')); // Second is starter
+    /// assert_eq!(comp.compose('ᄀ', 'ᅡ'), Some('가')); // Hangul LV
+    /// assert_eq!(comp.compose('가', 'ᆨ'), Some('각')); // Hangul LVT
+    /// ```
     #[inline(always)]
     pub fn compose(&self, starter: char, second: char) -> Option<char> {
         compose(
@@ -1626,6 +1644,7 @@ impl CanonicalComposition {
 }
 
 /// The outcome of non-recursive canonical decomposition of a character.
+#[allow(clippy::exhaustive_enums)]
 #[derive(Debug, PartialEq, Eq)]
 pub enum Decomposed {
     /// The character is its own canonical decomposition.
@@ -1637,6 +1656,11 @@ pub enum Decomposed {
 }
 
 /// A struct for providing the raw (non-recursive) canonical decomposition operation.
+///
+/// Callers should generally use `DecomposingNormalizer` instead of this API.
+/// However, this API is provided for callers such as HarfBuzz that specifically
+/// want access to non-recursive canonical decomposition e.g. for use in a
+/// glyph-availability-guided custom normalizer.
 pub struct CanonicalDecomposition {
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
@@ -1644,7 +1668,23 @@ pub struct CanonicalDecomposition {
 }
 
 impl CanonicalDecomposition {
-    /// Performs non-recursive canonical decomposition.
+    /// Performs non-recursive canonical decomposition (including for Hangul).
+    ///
+    /// ```
+    ///     use icu_normalizer::Decomposed;
+    ///     let data_provider = icu_testdata::get_provider();
+    ///     let decomp = icu_normalizer::CanonicalDecomposition::try_new(&data_provider).unwrap();
+    ///
+    ///     assert_eq!(decomp.decompose('e'), Decomposed::Default);
+    ///     assert_eq!(
+    ///         decomp.decompose('ệ'),
+    ///         Decomposed::Expansion('ẹ', '\u{0302}')
+    ///     );
+    ///     assert_eq!(decomp.decompose('각'), Decomposed::Expansion('가', 'ᆨ'));
+    ///     assert_eq!(decomp.decompose('\u{212B}'), Decomposed::Singleton('Å')); // ANGSTROM SIGN
+    ///     assert_eq!(decomp.decompose('\u{2126}'), Decomposed::Singleton('Ω')); // OHM SIGN
+    ///     assert_eq!(decomp.decompose('\u{1F71}'), Decomposed::Singleton('ά')); // oxia
+    /// ```
     #[inline]
     pub fn decompose(&self, c: char) -> Decomposed {
         let lvt = u32::from(c).wrapping_sub(HANGUL_S_BASE);
