@@ -28,7 +28,7 @@ impl From<&SourceData> for CaseMappingDataProvider {
     }
 }
 
-impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
+impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     fn load_resource(
         &self,
         _req: &DataRequest,
@@ -76,10 +76,8 @@ impl ResourceProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     }
 }
 
-impl icu_provider::datagen::IterableResourceProvider<CaseMappingV1Marker>
-    for CaseMappingDataProvider
-{
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl icu_provider::datagen::IterableDataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }

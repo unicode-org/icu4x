@@ -16,19 +16,19 @@
 
     .. cpp:enumerator:: OutOfBoundsError
 
-    .. cpp:enumerator:: DataMissingResourceKeyError
+    .. cpp:enumerator:: DataMissingDataKeyError
 
     .. cpp:enumerator:: DataMissingVariantError
 
     .. cpp:enumerator:: DataMissingLocaleError
 
-    .. cpp:enumerator:: DataMissingResourceOptionsError
+    .. cpp:enumerator:: DataMissingDataOptionsError
 
     .. cpp:enumerator:: DataNeedsVariantError
 
     .. cpp:enumerator:: DataNeedsLocaleError
 
-    .. cpp:enumerator:: DataExtraneousResourceOptionsError
+    .. cpp:enumerator:: DataExtraneousDataOptionsError
 
     .. cpp:enumerator:: DataFilteredResourceError
 

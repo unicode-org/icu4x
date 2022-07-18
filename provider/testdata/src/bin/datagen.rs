@@ -4,7 +4,7 @@
 
 use icu_datagen::*;
 use icu_locid::langid;
-use icu_provider::ResourceMarker;
+use icu_provider::KeyedDataMarker;
 use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
 use std::fs::File;

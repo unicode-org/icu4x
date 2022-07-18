@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
-use crate::helpers::result_is_err_missing_resource_options;
+use crate::helpers::result_is_err_missing_data_options;
 
 /// A data provider wrapper that performs locale fallback. This enables arbitrary locales to be
 /// handled at runtime.
@@ -54,8 +54,8 @@ pub struct LocaleFallbackProvider<P> {
 
 impl<P> LocaleFallbackProvider<P>
 where
-    P: ResourceProvider<LocaleFallbackLikelySubtagsV1Marker>
-        + ResourceProvider<LocaleFallbackParentsV1Marker>,
+    P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
+        + DataProvider<LocaleFallbackParentsV1Marker>,
 {
     /// Create a [`LocaleFallbackProvider`] by wrapping another data provider and then loading
     /// fallback data from it.
@@ -92,7 +92,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// };
     ///
     /// // There is no "de-CH" data in the `HelloWorldProvider`
-    /// ResourceProvider::<HelloWorldV1Marker>::load_resource(&provider, &req)
+    /// DataProvider::<HelloWorldV1Marker>::load_resource(&provider, &req)
     ///     .expect_err("No data for de-CH");
     ///
     /// // `HelloWorldProvider` does not contain fallback data,
@@ -127,7 +127,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// - F2 should map from the provider-specific response type to DataResponseMetadata
     fn run_fallback<F1, F2, R>(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         base_req: &DataRequest,
         mut f1: F1,
         mut f2: F2,
@@ -140,7 +140,7 @@ impl<P> LocaleFallbackProvider<P> {
         let mut fallback_iterator = key_fallbacker.fallback_for(base_req.clone());
         loop {
             let result = f1(fallback_iterator.get());
-            if !result_is_err_missing_resource_options(&result) {
+            if !result_is_err_missing_data_options(&result) {
                 return result
                     .map(|mut res| {
                         f2(&mut res).data_locale = Some(fallback_iterator.take().options);
@@ -155,7 +155,7 @@ impl<P> LocaleFallbackProvider<P> {
             }
             fallback_iterator.step();
         }
-        Err(DataErrorKind::MissingResourceOptions.with_req(key, base_req))
+        Err(DataErrorKind::MissingDataOptions.with_req(key, base_req))
     }
 }
 
@@ -163,7 +163,7 @@ impl<P> AnyProvider for LocaleFallbackProvider<P>
 where
     P: AnyProvider,
 {
-    fn load_any(&self, key: ResourceKey, base_req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, base_req: &DataRequest) -> Result<AnyResponse, DataError> {
         self.run_fallback(
             key,
             base_req,
@@ -179,7 +179,7 @@ where
 {
     fn load_buffer(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         base_req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         self.run_fallback(
@@ -191,14 +191,14 @@ where
     }
 }
 
-impl<P, M> DynProvider<M> for LocaleFallbackProvider<P>
+impl<P, M> DynamicDataProvider<M> for LocaleFallbackProvider<P>
 where
-    P: DynProvider<M>,
-    M: ResourceMarker,
+    P: DynamicDataProvider<M>,
+    M: KeyedDataMarker,
 {
     fn load_payload(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         base_req: &DataRequest,
     ) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(
@@ -210,10 +210,10 @@ where
     }
 }
 
-impl<P, M> ResourceProvider<M> for LocaleFallbackProvider<P>
+impl<P, M> DataProvider<M> for LocaleFallbackProvider<P>
 where
-    P: ResourceProvider<M>,
-    M: ResourceMarker,
+    P: DataProvider<M>,
+    M: KeyedDataMarker,
 {
     fn load_resource(&self, base_req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(

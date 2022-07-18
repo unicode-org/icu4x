@@ -81,7 +81,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
     pub trie_data: ZeroVec<'data, u16>,
 }
 
-pub const ALL_KEYS: [ResourceKey; 5] = [
+pub const ALL_KEYS: [DataKey; 5] = [
     LineBreakDataV1Marker::KEY,
     GraphemeClusterBreakDataV1Marker::KEY,
     WordBreakDataV1Marker::KEY,

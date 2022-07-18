@@ -1,145 +1,145 @@
 // @generated
 impl AnyProvider for BakedDataProvider {
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
-        const JAPANESEERASV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_calendar::provider::JapaneseErasV1Marker::KEY.get_hash();
-        const CASEMAPPINGV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
-        const COLLATIONDATAV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_collator::provider::CollationDataV1Marker::KEY.get_hash();
-        const COLLATIONDIACRITICSV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_collator::provider::CollationDiacriticsV1Marker::KEY.get_hash();
-        const COLLATIONJAMOV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_collator::provider::CollationJamoV1Marker::KEY.get_hash();
-        const COLLATIONMETADATAV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_collator::provider::CollationMetadataV1Marker::KEY.get_hash();
-        const COLLATIONREORDERINGV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_collator::provider::CollationReorderingV1Marker::KEY.get_hash();
-        const COLLATIONSPECIALPRIMARIESV1MARKER: ::icu_provider::ResourceKeyHash =
+    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+        const JAPANESEERASV1MARKER: ::icu_provider::DataKeyHash = ::icu_calendar::provider::JapaneseErasV1Marker::KEY.get_hash();
+        const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash = ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
+        const COLLATIONDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationDataV1Marker::KEY.get_hash();
+        const COLLATIONDIACRITICSV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationDiacriticsV1Marker::KEY.get_hash();
+        const COLLATIONJAMOV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationJamoV1Marker::KEY.get_hash();
+        const COLLATIONMETADATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationMetadataV1Marker::KEY.get_hash();
+        const COLLATIONREORDERINGV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationReorderingV1Marker::KEY.get_hash();
+        const COLLATIONSPECIALPRIMARIESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.get_hash();
-        const DATEPATTERNSV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_datetime::provider::calendar::DatePatternsV1Marker::KEY.get_hash();
-        const DATESKELETONPATTERNSV1MARKER: ::icu_provider::ResourceKeyHash =
+        const DATEPATTERNSV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::calendar::DatePatternsV1Marker::KEY.get_hash();
+        const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
-        const DATESYMBOLSV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY.get_hash();
-        const TIMEPATTERNSV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_datetime::provider::calendar::TimePatternsV1Marker::KEY.get_hash();
-        const TIMESYMBOLSV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY.get_hash();
-        const EXEMPLARCITIESV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY.get_hash();
-        const METAZONEGENERICNAMESLONGV1MARKER: ::icu_provider::ResourceKeyHash =
+        const DATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY.get_hash();
+        const TIMEPATTERNSV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::calendar::TimePatternsV1Marker::KEY.get_hash();
+        const TIMESYMBOLSV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY.get_hash();
+        const EXEMPLARCITIESV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY.get_hash();
+        const METAZONEGENERICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY.get_hash();
-        const METAZONEGENERICNAMESSHORTV1MARKER: ::icu_provider::ResourceKeyHash =
+        const METAZONEGENERICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY.get_hash();
-        const METAZONEPERIODV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker::KEY.get_hash();
-        const METAZONESPECIFICNAMESLONGV1MARKER: ::icu_provider::ResourceKeyHash =
+        const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker::KEY.get_hash();
+        const METAZONESPECIFICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY.get_hash();
-        const METAZONESPECIFICNAMESSHORTV1MARKER: ::icu_provider::ResourceKeyHash =
+        const METAZONESPECIFICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY.get_hash();
-        const TIMEZONEFORMATSV1MARKER: ::icu_provider::ResourceKeyHash =
+        const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.get_hash();
-        const WEEKDATAV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_datetime::provider::week_data::WeekDataV1Marker::KEY.get_hash();
-        const DECIMALSYMBOLSV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.get_hash();
-        const ANDLISTV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_list::provider::AndListV1Marker::KEY.get_hash();
-        const ORLISTV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_list::provider::OrListV1Marker::KEY.get_hash();
-        const UNITLISTV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_list::provider::UnitListV1Marker::KEY.get_hash();
-        const ALIASESV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_locale_canonicalizer::provider::AliasesV1Marker::KEY.get_hash();
-        const LIKELYSUBTAGSV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY.get_hash();
-        const CANONICALCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::ResourceKeyHash =
+        const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::week_data::WeekDataV1Marker::KEY.get_hash();
+        const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash = ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.get_hash();
+        const ANDLISTV1MARKER: ::icu_provider::DataKeyHash = ::icu_list::provider::AndListV1Marker::KEY.get_hash();
+        const ORLISTV1MARKER: ::icu_provider::DataKeyHash = ::icu_list::provider::OrListV1Marker::KEY.get_hash();
+        const UNITLISTV1MARKER: ::icu_provider::DataKeyHash = ::icu_list::provider::UnitListV1Marker::KEY.get_hash();
+        const ALIASESV1MARKER: ::icu_provider::DataKeyHash = ::icu_locale_canonicalizer::provider::AliasesV1Marker::KEY.get_hash();
+        const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash = ::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY.get_hash();
+        const CANONICALCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY.get_hash();
-        const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.get_hash();
-        const CANONICALDECOMPOSITIONDATAV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CANONICALDECOMPOSITIONDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY.get_hash();
-        const CANONICALDECOMPOSITIONTABLESV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CANONICALDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY.get_hash();
-        const COMPATIBILITYCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::ResourceKeyHash =
+        const COMPATIBILITYCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY.get_hash();
-        const COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::ResourceKeyHash =
+        const COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY.get_hash();
-        const COMPATIBILITYDECOMPOSITIONTABLESV1MARKER: ::icu_provider::ResourceKeyHash =
+        const COMPATIBILITYDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.get_hash();
-        const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::ResourceKeyHash =
+        const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.get_hash();
-        const UTS46COMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::ResourceKeyHash =
+        const UTS46COMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY.get_hash();
-        const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::ResourceKeyHash =
+        const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY.get_hash();
-        const CARDINALV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_plurals::provider::CardinalV1Marker::KEY.get_hash();
-        const ORDINALV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_plurals::provider::OrdinalV1Marker::KEY.get_hash();
-        const ALPHABETICV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::AlphabeticV1Marker::KEY.get_hash();
-        const ASCIIHEXDIGITV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::AsciiHexDigitV1Marker::KEY.get_hash();
-        const BIDICLASSV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::BidiClassV1Marker::KEY.get_hash();
-        const BIDICONTROLV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::BidiControlV1Marker::KEY.get_hash();
-        const BIDIMIRROREDV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::BidiMirroredV1Marker::KEY.get_hash();
-        const CANONICALCOMBININGCLASSV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CARDINALV1MARKER: ::icu_provider::DataKeyHash = ::icu_plurals::provider::CardinalV1Marker::KEY.get_hash();
+        const ORDINALV1MARKER: ::icu_provider::DataKeyHash = ::icu_plurals::provider::OrdinalV1Marker::KEY.get_hash();
+        const ALPHABETICV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::AlphabeticV1Marker::KEY.get_hash();
+        const ASCIIHEXDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::AsciiHexDigitV1Marker::KEY.get_hash();
+        const BIDICLASSV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiClassV1Marker::KEY.get_hash();
+        const BIDICONTROLV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiControlV1Marker::KEY.get_hash();
+        const BIDIMIRROREDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::BidiMirroredV1Marker::KEY.get_hash();
+        const CANONICALCOMBININGCLASSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY.get_hash();
-        const CASEIGNORABLEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::CaseIgnorableV1Marker::KEY.get_hash();
-        const CASEDV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::CasedV1Marker::KEY.get_hash();
-        const CHANGESWHENCASEFOLDEDV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CASEIGNORABLEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CaseIgnorableV1Marker::KEY.get_hash();
+        const CASEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CasedV1Marker::KEY.get_hash();
+        const CHANGESWHENCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY.get_hash();
-        const CHANGESWHENLOWERCASEDV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CHANGESWHENLOWERCASEDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY.get_hash();
-        const CHANGESWHENNFKCCASEFOLDEDV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CHANGESWHENNFKCCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker::KEY.get_hash();
-        const CHANGESWHENTITLECASEDV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CHANGESWHENTITLECASEDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY.get_hash();
-        const CHANGESWHENUPPERCASEDV1MARKER: ::icu_provider::ResourceKeyHash =
+        const CHANGESWHENUPPERCASEDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY.get_hash();
-        const DASHV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::DashV1Marker::KEY.get_hash();
-        const DEFAULTIGNORABLECODEPOINTV1MARKER: ::icu_provider::ResourceKeyHash =
+        const DASHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::DashV1Marker::KEY.get_hash();
+        const DEFAULTIGNORABLECODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::DefaultIgnorableCodePointV1Marker::KEY.get_hash();
-        const DEPRECATEDV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::DeprecatedV1Marker::KEY.get_hash();
-        const DIACRITICV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::DiacriticV1Marker::KEY.get_hash();
-        const EASTASIANWIDTHV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::EastAsianWidthV1Marker::KEY.get_hash();
-        const EMOJICOMPONENTV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::EmojiComponentV1Marker::KEY.get_hash();
-        const EMOJIMODIFIERBASEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::EmojiModifierBaseV1Marker::KEY.get_hash();
-        const EMOJIMODIFIERV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::EmojiModifierV1Marker::KEY.get_hash();
-        const EMOJIPRESENTATIONV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::EmojiPresentationV1Marker::KEY.get_hash();
-        const EMOJIV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::EmojiV1Marker::KEY.get_hash();
-        const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::ResourceKeyHash =
+        const DEPRECATEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::DeprecatedV1Marker::KEY.get_hash();
+        const DIACRITICV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::DiacriticV1Marker::KEY.get_hash();
+        const EASTASIANWIDTHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EastAsianWidthV1Marker::KEY.get_hash();
+        const EMOJICOMPONENTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiComponentV1Marker::KEY.get_hash();
+        const EMOJIMODIFIERBASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiModifierBaseV1Marker::KEY.get_hash();
+        const EMOJIMODIFIERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiModifierV1Marker::KEY.get_hash();
+        const EMOJIPRESENTATIONV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiPresentationV1Marker::KEY.get_hash();
+        const EMOJIV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiV1Marker::KEY.get_hash();
+        const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.get_hash();
-        const EXTENDERV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::ExtenderV1Marker::KEY.get_hash();
-        const GENERALCATEGORYV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::GeneralCategoryV1Marker::KEY.get_hash();
-        const GRAPHEMEBASEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::GraphemeBaseV1Marker::KEY.get_hash();
-        const GRAPHEMECLUSTERBREAKV1MARKER: ::icu_provider::ResourceKeyHash =
+        const EXTENDERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ExtenderV1Marker::KEY.get_hash();
+        const GENERALCATEGORYV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GeneralCategoryV1Marker::KEY.get_hash();
+        const GRAPHEMEBASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeBaseV1Marker::KEY.get_hash();
+        const GRAPHEMECLUSTERBREAKV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY.get_hash();
-        const GRAPHEMEEXTENDV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::GraphemeExtendV1Marker::KEY.get_hash();
-        const HEXDIGITV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::HexDigitV1Marker::KEY.get_hash();
-        const IDCONTINUEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::IdContinueV1Marker::KEY.get_hash();
-        const IDSTARTV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::IdStartV1Marker::KEY.get_hash();
-        const IDEOGRAPHICV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::IdeographicV1Marker::KEY.get_hash();
-        const IDSBINARYOPERATORV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::IdsBinaryOperatorV1Marker::KEY.get_hash();
-        const IDSTRINARYOPERATORV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY.get_hash();
-        const JOINCONTROLV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::JoinControlV1Marker::KEY.get_hash();
-        const LINEBREAKV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::LineBreakV1Marker::KEY.get_hash();
-        const LOGICALORDEREXCEPTIONV1MARKER: ::icu_provider::ResourceKeyHash =
+        const GRAPHEMEEXTENDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeExtendV1Marker::KEY.get_hash();
+        const HEXDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::HexDigitV1Marker::KEY.get_hash();
+        const IDCONTINUEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdContinueV1Marker::KEY.get_hash();
+        const IDSTARTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdStartV1Marker::KEY.get_hash();
+        const IDEOGRAPHICV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdeographicV1Marker::KEY.get_hash();
+        const IDSBINARYOPERATORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdsBinaryOperatorV1Marker::KEY.get_hash();
+        const IDSTRINARYOPERATORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY.get_hash();
+        const JOINCONTROLV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::JoinControlV1Marker::KEY.get_hash();
+        const LINEBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::LineBreakV1Marker::KEY.get_hash();
+        const LOGICALORDEREXCEPTIONV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::LogicalOrderExceptionV1Marker::KEY.get_hash();
-        const LOWERCASEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::LowercaseV1Marker::KEY.get_hash();
-        const MATHV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::MathV1Marker::KEY.get_hash();
-        const NONCHARACTERCODEPOINTV1MARKER: ::icu_provider::ResourceKeyHash =
+        const LOWERCASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::LowercaseV1Marker::KEY.get_hash();
+        const MATHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::MathV1Marker::KEY.get_hash();
+        const NONCHARACTERCODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::NoncharacterCodePointV1Marker::KEY.get_hash();
-        const PATTERNSYNTAXV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::PatternSyntaxV1Marker::KEY.get_hash();
-        const PATTERNWHITESPACEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY.get_hash();
-        const QUOTATIONMARKV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::QuotationMarkV1Marker::KEY.get_hash();
-        const RADICALV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::RadicalV1Marker::KEY.get_hash();
-        const REGIONALINDICATORV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::RegionalIndicatorV1Marker::KEY.get_hash();
-        const SCRIPTV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::ScriptV1Marker::KEY.get_hash();
-        const SCRIPTWITHEXTENSIONSPROPERTYV1MARKER: ::icu_provider::ResourceKeyHash =
+        const PATTERNSYNTAXV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PatternSyntaxV1Marker::KEY.get_hash();
+        const PATTERNWHITESPACEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY.get_hash();
+        const QUOTATIONMARKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::QuotationMarkV1Marker::KEY.get_hash();
+        const RADICALV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::RadicalV1Marker::KEY.get_hash();
+        const REGIONALINDICATORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::RegionalIndicatorV1Marker::KEY.get_hash();
+        const SCRIPTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ScriptV1Marker::KEY.get_hash();
+        const SCRIPTWITHEXTENSIONSPROPERTYV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY.get_hash();
-        const SENTENCEBREAKV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::SentenceBreakV1Marker::KEY.get_hash();
-        const SENTENCETERMINALV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::SentenceTerminalV1Marker::KEY.get_hash();
-        const SOFTDOTTEDV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::SoftDottedV1Marker::KEY.get_hash();
-        const TERMINALPUNCTUATIONV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::TerminalPunctuationV1Marker::KEY.get_hash();
-        const UNIFIEDIDEOGRAPHV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::UnifiedIdeographV1Marker::KEY.get_hash();
-        const UPPERCASEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::UppercaseV1Marker::KEY.get_hash();
-        const VARIATIONSELECTORV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::VariationSelectorV1Marker::KEY.get_hash();
-        const WHITESPACEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::WhiteSpaceV1Marker::KEY.get_hash();
-        const WORDBREAKV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::WordBreakV1Marker::KEY.get_hash();
-        const XIDCONTINUEV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::XidContinueV1Marker::KEY.get_hash();
-        const XIDSTARTV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_properties::provider::XidStartV1Marker::KEY.get_hash();
-        const HELLOWORLDV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_provider::hello_world::HelloWorldV1Marker::KEY.get_hash();
-        const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: ::icu_provider::ResourceKeyHash =
+        const SENTENCEBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SentenceBreakV1Marker::KEY.get_hash();
+        const SENTENCETERMINALV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SentenceTerminalV1Marker::KEY.get_hash();
+        const SOFTDOTTEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::SoftDottedV1Marker::KEY.get_hash();
+        const TERMINALPUNCTUATIONV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::TerminalPunctuationV1Marker::KEY.get_hash();
+        const UNIFIEDIDEOGRAPHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::UnifiedIdeographV1Marker::KEY.get_hash();
+        const UPPERCASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::UppercaseV1Marker::KEY.get_hash();
+        const VARIATIONSELECTORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::VariationSelectorV1Marker::KEY.get_hash();
+        const WHITESPACEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::WhiteSpaceV1Marker::KEY.get_hash();
+        const WORDBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::WordBreakV1Marker::KEY.get_hash();
+        const XIDCONTINUEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::XidContinueV1Marker::KEY.get_hash();
+        const XIDSTARTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::XidStartV1Marker::KEY.get_hash();
+        const HELLOWORLDV1MARKER: ::icu_provider::DataKeyHash = ::icu_provider::hello_world::HelloWorldV1Marker::KEY.get_hash();
+        const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY.get_hash();
-        const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::ResourceKeyHash =
+        const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY.get_hash();
-        const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::ResourceKeyHash =
+        const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.get_hash();
-        const LINEBREAKDATAV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_segmenter::provider::LineBreakDataV1Marker::KEY.get_hash();
-        const SENTENCEBREAKDATAV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY.get_hash();
-        const UCHARDICTIONARYBREAKDATAV1MARKER: ::icu_provider::ResourceKeyHash =
+        const LINEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::LineBreakDataV1Marker::KEY.get_hash();
+        const SENTENCEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY.get_hash();
+        const UCHARDICTIONARYBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY.get_hash();
-        const WORDBREAKDATAV1MARKER: ::icu_provider::ResourceKeyHash = ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.get_hash();
+        const WORDBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.get_hash();
         Ok(AnyResponse {
             payload: Some(match key.get_hash() {
                 JAPANESEERASV1MARKER => AnyPayload::from_static_ref::<<::icu_calendar::provider::JapaneseErasV1Marker as DataMarker>::Yokeable>(
@@ -492,7 +492,7 @@ impl AnyProvider for BakedDataProvider {
                 WORDBREAKDATAV1MARKER => AnyPayload::from_static_ref::<<::icu_segmenter::provider::WordBreakDataV1Marker as DataMarker>::Yokeable>(
                     litemap_slice_get(segmenter::word_v1::DATA, key, req)?,
                 ),
-                _ => return Err(DataErrorKind::MissingResourceKey.with_req(key, req)),
+                _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),
             }),
             metadata: Default::default(),
         })

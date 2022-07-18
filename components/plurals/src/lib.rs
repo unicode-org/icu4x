@@ -307,7 +307,7 @@ impl PluralRules {
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker> + ?Sized,
+        D: DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized,
     {
         match rule_type {
             PluralRuleType::Cardinal => Self::try_new_cardinal(locale, data_provider),
@@ -345,7 +345,7 @@ impl PluralRules {
         data_provider: &D,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<CardinalV1Marker> + ?Sized,
+        D: DataProvider<CardinalV1Marker> + ?Sized,
     {
         let locale = locale.into();
         let rules = data_provider
@@ -391,7 +391,7 @@ impl PluralRules {
         data_provider: &D,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<OrdinalV1Marker> + ?Sized,
+        D: DataProvider<OrdinalV1Marker> + ?Sized,
     {
         let locale = locale.into();
         let rules = data_provider

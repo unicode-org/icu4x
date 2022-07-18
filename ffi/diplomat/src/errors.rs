@@ -35,13 +35,13 @@ pub mod ffi {
 
         // general data errors
         // See DataError
-        DataMissingResourceKeyError = 0x1_00,
+        DataMissingDataKeyError = 0x1_00,
         DataMissingVariantError = 0x1_01,
         DataMissingLocaleError = 0x1_02,
-        DataMissingResourceOptionsError = 0x1_03,
+        DataMissingDataOptionsError = 0x1_03,
         DataNeedsVariantError = 0x1_04,
         DataNeedsLocaleError = 0x1_05,
-        DataExtraneousResourceOptionsError = 0x1_06,
+        DataExtraneousDataOptionsError = 0x1_06,
         DataFilteredResourceError = 0x1_07,
         DataMismatchedTypeError = 0x1_08,
         DataMissingPayloadError = 0x1_09,
@@ -102,15 +102,13 @@ impl From<fmt::Error> for ICU4XError {
 impl From<DataError> for ICU4XError {
     fn from(e: DataError) -> Self {
         match e.kind {
-            DataErrorKind::MissingResourceKey => ICU4XError::DataMissingResourceKeyError,
+            DataErrorKind::MissingDataKey => ICU4XError::DataMissingDataKeyError,
             DataErrorKind::MissingVariant => ICU4XError::DataMissingVariantError,
             DataErrorKind::MissingLocale => ICU4XError::DataMissingLocaleError,
-            DataErrorKind::MissingResourceOptions => ICU4XError::DataMissingResourceOptionsError,
+            DataErrorKind::MissingDataOptions => ICU4XError::DataMissingDataOptionsError,
             DataErrorKind::NeedsVariant => ICU4XError::DataNeedsVariantError,
             DataErrorKind::NeedsLocale => ICU4XError::DataNeedsLocaleError,
-            DataErrorKind::ExtraneousResourceOptions => {
-                ICU4XError::DataExtraneousResourceOptionsError
-            }
+            DataErrorKind::ExtraneousDataOptions => ICU4XError::DataExtraneousDataOptionsError,
             DataErrorKind::FilteredResource => ICU4XError::DataFilteredResourceError,
             DataErrorKind::MismatchedType(..) => ICU4XError::DataMismatchedTypeError,
             DataErrorKind::MissingPayload => ICU4XError::DataMissingPayloadError,

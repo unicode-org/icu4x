@@ -7,7 +7,7 @@ use crate::SourceData;
 use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -47,10 +47,10 @@ impl From<&SourceData> for CommonDateProvider {
     }
 }
 
-macro_rules! impl_resource_provider {
+macro_rules! impl_data_provider {
     ($(($marker:ident, $expr:expr)),+) => {
         $(
-            impl ResourceProvider<$marker> for CommonDateProvider {
+            impl DataProvider<$marker> for CommonDateProvider {
                 fn load_resource(
                     &self,
                     req: &DataRequest,
@@ -176,8 +176,8 @@ macro_rules! impl_resource_provider {
                 }
             }
 
-            impl IterableResourceProvider<$marker> for CommonDateProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+            impl IterableDataProvider<$marker> for CommonDateProvider {
+                fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(self
@@ -191,7 +191,7 @@ macro_rules! impl_resource_provider {
                                     .unicode
                                     .keywords
                                     .set(key!("ca"), cal_value.clone());
-                                ResourceOptions::from(locale)
+                                DataOptions::from(locale)
                             }));
                     }
                     Ok(r)
@@ -203,7 +203,7 @@ macro_rules! impl_resource_provider {
     };
 }
 
-impl_resource_provider!(
+impl_data_provider!(
     (DateSymbolsV1Marker, symbols::convert_dates),
     (TimeSymbolsV1Marker, |dates, _| {
         symbols::convert_times(dates)

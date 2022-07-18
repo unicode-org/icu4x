@@ -84,8 +84,8 @@ use icu_codepointtrie::CodePointTrie;
 use icu_properties::maps::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::DataPayload;
+use icu_provider::DataProvider;
 use icu_provider::DataRequest;
-use icu_provider::ResourceProvider;
 use icu_uniset::UnicodeSet;
 use provider::CanonicalCompositionPassthroughV1Marker;
 use provider::CanonicalCompositionsV1Marker;
@@ -1248,9 +1248,9 @@ impl DecomposingNormalizer {
     /// NFD constructor.
     pub fn try_new_nfd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
@@ -1284,11 +1284,11 @@ impl DecomposingNormalizer {
     /// NFKD constructor.
     pub fn try_new_nfkd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CompatibilityDecompositionSupplementV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
@@ -1359,12 +1359,12 @@ impl DecomposingNormalizer {
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<Uts46DecompositionSupplementV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<Uts46DecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
             // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
@@ -1438,11 +1438,11 @@ impl ComposingNormalizer {
     /// NFC constructor.
     pub fn try_new_nfc<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CanonicalCompositionsV1Marker>
-            + ResourceProvider<CanonicalCompositionPassthroughV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<CanonicalCompositionPassthroughV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfd(data_provider)?;
@@ -1468,13 +1468,13 @@ impl ComposingNormalizer {
     /// NFKC constructor.
     pub fn try_new_nfkc<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CompatibilityDecompositionSupplementV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
-            + ResourceProvider<CanonicalCompositionsV1Marker>
-            + ResourceProvider<CompatibilityCompositionPassthroughV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<CompatibilityCompositionPassthroughV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd(data_provider)?;
@@ -1526,14 +1526,14 @@ impl ComposingNormalizer {
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<Uts46DecompositionSupplementV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<Uts46DecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
             // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + ResourceProvider<CanonicalCompositionsV1Marker>
-            + ResourceProvider<Uts46CompositionPassthroughV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<Uts46CompositionPassthroughV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer =
@@ -1632,7 +1632,7 @@ impl CanonicalComposition {
     /// Construct from data provider.
     pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalCompositionsV1Marker> + ?Sized,
+        D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
             .load_resource(&DataRequest::default())?
@@ -1823,9 +1823,9 @@ impl CanonicalDecomposition {
     /// Construct from data provider.
     pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<NonRecursiveDecompositionSupplementV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider

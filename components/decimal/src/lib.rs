@@ -101,10 +101,7 @@ pub struct FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    pub fn try_new<
-        T: Into<Locale>,
-        D: ResourceProvider<provider::DecimalSymbolsV1Marker> + ?Sized,
-    >(
+    pub fn try_new<T: Into<Locale>, D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         locale: T,
         data_provider: &D,
         options: options::FixedDecimalFormatterOptions,

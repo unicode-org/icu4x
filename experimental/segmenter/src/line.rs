@@ -105,8 +105,8 @@ pub struct LineBreakSegmenter {
 impl LineBreakSegmenter {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<LineBreakDataV1Marker>
-            + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+        D: DataProvider<LineBreakDataV1Marker>
+            + DataProvider<UCharDictionaryBreakDataV1Marker>
             + ?Sized,
     {
         Self::try_new_with_options(provider, Default::default())
@@ -117,8 +117,8 @@ impl LineBreakSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: ResourceProvider<LineBreakDataV1Marker>
-            + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+        D: DataProvider<LineBreakDataV1Marker>
+            + DataProvider<UCharDictionaryBreakDataV1Marker>
             + ?Sized,
     {
         let payload = provider
@@ -128,7 +128,7 @@ impl LineBreakSegmenter {
         let locale = locale!("th");
         let dictionary_payload = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::from(locale),
+                options: DataOptions::from(locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;

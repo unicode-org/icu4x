@@ -50,9 +50,9 @@ impl TimeFormatter {
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
+        D: DataProvider<TimePatternsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
         let patterns = provider::date_time::pattern_for_time_length(
@@ -73,7 +73,7 @@ impl TimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -187,11 +187,11 @@ impl DateFormatter {
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
@@ -215,7 +215,7 @@ impl DateFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -241,7 +241,7 @@ impl DateFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -408,14 +408,14 @@ impl DateTimeFormatter {
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
@@ -436,7 +436,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -462,7 +462,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -475,7 +475,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,

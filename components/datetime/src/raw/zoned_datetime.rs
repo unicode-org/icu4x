@@ -58,22 +58,22 @@ impl ZonedDateTimeFormatter {
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        DP: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        DP: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
-        DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
+        PP: DataProvider<OrdinalV1Marker> + ?Sized,
+        DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
         if cal == Some(&value!("ethioaa")) {
@@ -95,7 +95,7 @@ impl ZonedDateTimeFormatter {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -121,7 +121,7 @@ impl ZonedDateTimeFormatter {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -134,7 +134,7 @@ impl ZonedDateTimeFormatter {
             Some(
                 date_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
