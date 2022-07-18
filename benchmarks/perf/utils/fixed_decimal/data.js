@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658180723624,
+  "lastUpdate": 1658182571007,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37709,6 +37709,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 87,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3f4d841ef0b168031d837433d075308bbebf34b7",
+          "message": "Move ZDTF to TimeZoneInput (#2205)\n\n* Split ZonedDTI trait\r\n\r\n* Fix tests\r\n\r\n* Better doctest\r\n\r\n* fix bench\r\n\r\n* fix\r\n\r\n* doc links",
+          "timestamp": "2022-07-18T22:03:15Z",
+          "tree_id": "aa55f68b10aca507b22ef166360b02e624069e59",
+          "url": "https://github.com/unicode-org/icu4x/commit/3f4d841ef0b168031d837433d075308bbebf34b7"
+        },
+        "date": 1658182532098,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 119563,
+            "range": "± 6894",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25800,
+            "range": "± 1955",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71051,
+            "range": "± 4051",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 209,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 90,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
