@@ -525,6 +525,8 @@ pub mod list {
     //!     "1ft, 2in",
     //! );
     //! ```
+    //! Note: this last example is not fully internationalized. See [icu4x/2192](https://github.com/unicode-org/icu4x/issues/2192)
+    //! for full unit handling.
 
     pub use icu_list::*;
 }

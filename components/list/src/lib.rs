@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! [`icu_list`](crate) provides the [`ListFormatter`] which renders sequences of [`Writeable`](
+//! Provides the [`ListFormatter`] which renders sequences of [`Writeable`](
 //! writeable::Writeable)s as lists in a locale-sensitive way.
 //!
 //! # Examples
@@ -73,6 +73,8 @@
 //!     "1ft, 2in",
 //! );
 //! ```
+//! Note: this last example is not fully internationalized. See [icu4x/2192](https://github.com/unicode-org/icu4x/issues/2192)
+//! for full unit handling.
 
 #![cfg_attr(not(feature = "std"), no_std)]
 #![cfg_attr(

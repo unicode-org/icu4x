@@ -1,6 +1,6 @@
 # icu_list [![crates.io](https://img.shields.io/crates/v/icu_list)](https://crates.io/crates/icu_list)
 
-[`icu_list`](crate) provides the [`ListFormatter`] which renders sequences of [`Writeable`](
+Provides the [`ListFormatter`] which renders sequences of [`Writeable`](
 writeable::Writeable)s as lists in a locale-sensitive way.
 
 ## Examples
@@ -62,6 +62,8 @@ assert_writeable_eq!(
     "1ft, 2in",
 );
 ```
+Note: this last example is not fully internationalized. See [icu4x/2192](https://github.com/unicode-org/icu4x/issues/2192)
+for full unit handling.
 
 ## More Information
 
