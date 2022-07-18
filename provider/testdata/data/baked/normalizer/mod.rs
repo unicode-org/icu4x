@@ -1,5 +1,6 @@
 // @generated
 pub mod comp_v1;
+pub mod decomp_v1;
 pub mod nfc_v1;
 pub mod nfd_v1;
 pub mod nfdex_v1;

@@ -49,6 +49,8 @@ impl AnyProvider for BakedDataProvider {
             ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY.get_hash();
         const COMPATIBILITYDECOMPOSITIONTABLESV1MARKER: ::icu_provider::ResourceKeyHash =
             ::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.get_hash();
+        const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::ResourceKeyHash =
+            ::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.get_hash();
         const UTS46COMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::ResourceKeyHash =
             ::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY.get_hash();
         const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::ResourceKeyHash =
@@ -252,6 +254,9 @@ impl AnyProvider for BakedDataProvider {
                 COMPATIBILITYDECOMPOSITIONTABLESV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker as DataMarker>::Yokeable,
                 >(litemap_slice_get(normalizer::nfkdex_v1::DATA, key, req)?),
+                NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER => AnyPayload::from_static_ref::<
+                    <::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker as DataMarker>::Yokeable,
+                >(litemap_slice_get(normalizer::decomp_v1::DATA, key, req)?),
                 UTS46COMPOSITIONPASSTHROUGHV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker as DataMarker>::Yokeable,
                 >(litemap_slice_get(normalizer::uts46_v1::DATA, key, req)?),

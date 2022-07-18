@@ -497,6 +497,19 @@ impl ResourceProvider<::icu_normalizer::provider::CompatibilityDecompositionTabl
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (normalizer :: nfkdex_v1 :: DATA , < :: icu_normalizer :: provider :: CompatibilityDecompositionTablesV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
     }
 }
+impl ResourceProvider<::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker>
+    for BakedDataProvider
+{
+    fn load_resource(
+        &self,
+        req: &DataRequest,
+    ) -> Result<
+        DataResponse<::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker>,
+        DataError,
+    > {
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (normalizer :: decomp_v1 :: DATA , < :: icu_normalizer :: provider :: NonRecursiveDecompositionSupplementV1Marker as ResourceMarker > :: KEY , req) ? ,))) , })
+    }
+}
 impl ResourceProvider<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker>
     for BakedDataProvider
 {

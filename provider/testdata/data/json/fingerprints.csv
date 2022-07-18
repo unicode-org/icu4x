@@ -923,6 +923,7 @@ list/unit@1, und, 267B, ab8cc47b97781d052232b4c5ea96b5fa6a0370262ae18cba539dd349
 locale_canonicalizer/aliases@1, und, 18500B, 231601ea4c6b6ce73165ffbc5c0d9d448625d677cee0733cb00af2ec32a5d2ef
 locale_canonicalizer/likelysubtags@1, und, 87515B, 6f6ee5eacd835e2eeb53e32e42a85fb9f6ef3957cd38436e635c8b9c0f3d373d
 normalizer/comp@1, und, 29836B, 634be78f876811cd829efa0d9e2ff29d28b8f13696b527df30c7ef6f36820a47
+normalizer/decomp@1, und, 14378B, 25065fed55263cf13bcf9bd11384512ab4a6b041b58a14cdd6a80ddbd722c26c
 normalizer/nfc@1, und, 5802B, f2be11a3cb8b2cbafd8b813a84fcbe37c415ab707ac287e1c5c5f1d99222e821
 normalizer/nfd@1, und, 62051B, c07e1669fed58be2bcc596baa7a2b7ec27fcaf3f2a80f9f2eb987a455fd2288d
 normalizer/nfdex@1, und, 13980B, e112222c10c299a907eba832c013258902c59f175d2d8cc8cad4975509100235
