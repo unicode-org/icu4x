@@ -99,19 +99,19 @@
   },
   "eras": {
     "names": {
-      "before-incar": "যুগ ১",
-      "incarnation": "যুগ ০",
-      "mundi": "ERA0"
+      "incar": "যুগ ০",
+      "mundi": "ERA0",
+      "pre-incar": "যুগ ১"
     },
     "abbr": {
-      "before-incar": "যুগ ১",
-      "incarnation": "যুগ ০",
-      "mundi": "ERA0"
+      "incar": "যুগ ০",
+      "mundi": "ERA0",
+      "pre-incar": "যুগ ১"
     },
     "narrow": {
-      "before-incar": "যুগ ১",
-      "incarnation": "যুগ ০",
-      "mundi": "ERA0"
+      "incar": "যুগ ০",
+      "mundi": "ERA0",
+      "pre-incar": "যুগ ১"
     }
   }
 }

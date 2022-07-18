@@ -116,16 +116,16 @@
   },
   "eras": {
     "names": {
-      "ad": "Anno Domini",
-      "bc": "Before Christ"
+      "bce": "Before Christ",
+      "ce": "Anno Domini"
     },
     "abbr": {
-      "ad": "AD",
-      "bc": "BC"
+      "bce": "BC",
+      "ce": "AD"
     },
     "narrow": {
-      "ad": "AD",
-      "bc": "BC"
+      "bce": "BC",
+      "ce": "AD"
     }
   }
 }

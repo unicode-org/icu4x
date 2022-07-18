@@ -100,15 +100,15 @@
   "eras": {
     "names": {
       "ad": "après Dioclétien",
-      "bc": "avant Dioclétien"
+      "bd": "avant Dioclétien"
     },
     "abbr": {
       "ad": "ap. D.",
-      "bc": "av. D."
+      "bd": "av. D."
     },
     "narrow": {
       "ad": "ap. D.",
-      "bc": "av. D."
+      "bd": "av. D."
     }
   }
 }

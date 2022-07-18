@@ -16,7 +16,6 @@ pub mod borrow_de_utils;
 use crate::buf::BufferFormat;
 use crate::buf::BufferProvider;
 use crate::prelude::*;
-use core::marker::PhantomData;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
@@ -43,7 +42,6 @@ fn deserialize_impl<'data, M>(
     // Allow `bytes` to be unused in case all buffer formats are disabled
     #[allow(unused_variables)] bytes: &'data [u8],
     buffer_format: BufferFormat,
-    _: PhantomData<&'data ()>,
 ) -> Result<<M::Yokeable as Yokeable<'data>>::Output, DataError>
 where
     M: DataMarker,
@@ -96,7 +94,7 @@ impl DataPayload<BufferMarker> {
         // Necessary workaround bound (see `yoke::trait_hack` docs):
         for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
     {
-        self.try_map_project_with_capture(buffer_format, deserialize_impl::<M>)
+        self.try_map_project(|bytes, _| deserialize_impl::<M>(bytes, buffer_format))
     }
 }
 

@@ -50,7 +50,7 @@
 //! # Example
 //!
 //! ```
-//! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormat};
+//! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormatter};
 //! use icu::locid::locale;
 //!
 //! let provider = icu_testdata::get_provider();
@@ -58,8 +58,8 @@
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 //!
-//! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
-//!     .expect("Failed to create DateTimeFormat instance.");
+//! let dtf = DateTimeFormatter::try_new(locale!("en"), &provider, &options)
+//!     .expect("Failed to create DateTimeFormatter instance.");
 //!
 //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 //!
@@ -108,22 +108,22 @@ pub mod datetime {
     //!
     //! This API provides necessary functionality for formatting date and time to user readable textual representation.
     //!
-    //! [`DateTimeFormat`] is the main structure of the component. It accepts a set of arguments which
+    //! [`DateTimeFormatter`] is the main structure of the component. It accepts a set of arguments which
     //! allow it to collect necessary data from the [`DataProvider`], and once instantiated, can be
     //! used to quickly format any date and time provided.
     //!
     //! # Examples
     //!
     //! ```
-    //! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormat};
+    //! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormatter};
     //! use icu::locid::locale;
     //!
     //! let provider = icu_testdata::get_provider();
     //!
     //! let options =
     //!     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
-    //! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
-    //!     .expect("Failed to create DateTimeFormat instance.");
+    //! let dtf = DateTimeFormatter::try_new(locale!("en"), &provider, &options)
+    //!     .expect("Failed to create DateTimeFormatter instance.");
     //!
     //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
     //!
@@ -139,7 +139,7 @@ pub mod decimal {
     //!
     //! This API provides necessary functionality for formatting of numbers with decimal digits.
     //!
-    //! [`FixedDecimalFormat`] is the main structure of the component. It formats a
+    //! [`FixedDecimalFormatter`] is the main structure of the component. It formats a
     //! [`FixedDecimal`] to a [`FormattedFixedDecimal`].
     //!
     //! # Examples
@@ -147,12 +147,12 @@ pub mod decimal {
     //! ## Format a number with Bengali digits
     //!
     //! ```
-    //! use icu::decimal::FixedDecimalFormat;
+    //! use icu::decimal::FixedDecimalFormatter;
     //! use icu::locid::locale;
     //! use writeable::Writeable;
     //!
     //! let provider = icu_testdata::get_provider();
-    //! let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, Default::default())
+    //! let fdf = FixedDecimalFormatter::try_new(locale!("bn"), &provider, Default::default())
     //!     .expect("Data should load successfully");
     //!
     //! let fixed_decimal = 1000007.into();
@@ -166,12 +166,12 @@ pub mod decimal {
     //!
     //! ```
     //! use fixed_decimal::FixedDecimal;
-    //! use icu::decimal::FixedDecimalFormat;
+    //! use icu::decimal::FixedDecimalFormatter;
     //! use icu::locid::Locale;
     //! use writeable::Writeable;
     //!
     //! let provider = icu_provider::inv::InvariantDataProvider;
-    //! let fdf = FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default())
+    //! let fdf = FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default())
     //!     .expect("Data should load successfully");
     //!
     //! let fixed_decimal = FixedDecimal::from(200050)

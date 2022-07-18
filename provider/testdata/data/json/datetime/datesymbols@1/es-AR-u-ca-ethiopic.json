@@ -99,19 +99,19 @@
   },
   "eras": {
     "names": {
-      "before-incar": "ERA1",
-      "incarnation": "ERA0",
-      "mundi": "ERA0"
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
     },
     "abbr": {
-      "before-incar": "ERA1",
-      "incarnation": "ERA0",
-      "mundi": "ERA0"
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
     },
     "narrow": {
-      "before-incar": "ERA1",
-      "incarnation": "ERA0",
-      "mundi": "ERA0"
+      "incar": "ERA0",
+      "mundi": "ERA0",
+      "pre-incar": "ERA1"
     }
   }
 }

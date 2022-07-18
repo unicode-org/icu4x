@@ -99,19 +99,19 @@
   },
   "eras": {
     "names": {
-      "before-incar": "от воплощения Христа",
-      "incarnation": "до воплощения Христа",
-      "mundi": "ERA0"
+      "incar": "до воплощения Христа",
+      "mundi": "ERA0",
+      "pre-incar": "от воплощения Христа"
     },
     "abbr": {
-      "before-incar": "от Христа",
-      "incarnation": "до Христа",
-      "mundi": "ERA0"
+      "incar": "до Христа",
+      "mundi": "ERA0",
+      "pre-incar": "от Христа"
     },
     "narrow": {
-      "before-incar": "от Христа",
-      "incarnation": "до Христа",
-      "mundi": "ERA0"
+      "incar": "до Христа",
+      "mundi": "ERA0",
+      "pre-incar": "от Христа"
     }
   }
 }

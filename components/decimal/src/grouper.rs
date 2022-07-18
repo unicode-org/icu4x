@@ -30,7 +30,7 @@ pub fn check(
         use GroupingStrategy::*;
         match strategy {
             Never => return false,
-            // Note: Auto and Always are the same for FixedDecimalFormat.
+            // Note: Auto and Always are the same for FixedDecimalFormatter.
             // When currencies are implemented, this will change.
             Auto | Always => cmp::max(1, sizes.min_grouping) as i16,
             Min2 => cmp::max(2, sizes.min_grouping) as i16,
@@ -55,7 +55,7 @@ pub fn check(
 fn test_grouper() {
     use crate::options;
     use crate::provider::*;
-    use crate::FixedDecimalFormat;
+    use crate::FixedDecimalFormatter;
     use fixed_decimal::FixedDecimal;
     use icu_locid::LanguageIdentifier;
     use icu_provider::prelude::*;
@@ -166,11 +166,11 @@ fn test_grouper() {
                 data: DataPayload::<DecimalSymbolsV1Marker>::from_owned(data_struct)
                     .wrap_into_any_payload(),
             };
-            let options = options::FixedDecimalFormatOptions {
+            let options = options::FixedDecimalFormatterOptions {
                 grouping_strategy: cas.strategy,
                 ..Default::default()
             };
-            let fdf = FixedDecimalFormat::try_new(
+            let fdf = FixedDecimalFormatter::try_new(
                 LanguageIdentifier::UND,
                 &provider.as_downcasting(),
                 options,

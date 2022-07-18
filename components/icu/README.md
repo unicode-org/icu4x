@@ -48,7 +48,7 @@ functionality are compiled. These features are:
 ## Example
 
 ```rust
-use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormat};
+use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormatter};
 use icu::locid::locale;
 
 let provider = icu_testdata::get_provider();
@@ -56,8 +56,8 @@ let provider = icu_testdata::get_provider();
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
-    .expect("Failed to create DateTimeFormat instance.");
+let dtf = DateTimeFormatter::try_new(locale!("en"), &provider, &options)
+    .expect("Failed to create DateTimeFormatter instance.");
 
 let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 
