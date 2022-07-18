@@ -96,16 +96,16 @@
   },
   "eras": {
     "names": {
-      "ad": "después de Cristo",
-      "bc": "antes de Cristo"
+      "bce": "antes de Cristo",
+      "ce": "después de Cristo"
     },
     "abbr": {
-      "ad": "d. C.",
-      "bc": "a. C."
+      "bce": "a. C.",
+      "ce": "d. C."
     },
     "narrow": {
-      "ad": "d. C.",
-      "bc": "a. C."
+      "bce": "a. C.",
+      "ce": "d. C."
     }
   }
 }

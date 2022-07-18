@@ -4,11 +4,11 @@
 
 import test from 'ava';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormat, ICU4XFixedDecimalFormatOptions } from "../lib/api.mjs"
+import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../lib/api.mjs"
 
 const locale = ICU4XLocale.create("bn");
 const dataProvider = ICU4XDataProvider.create_test();
-const format = ICU4XFixedDecimalFormat.try_new(locale, dataProvider, ICU4XFixedDecimalFormatOptions.default());
+const format = ICU4XFixedDecimalFormatter.try_new(locale, dataProvider, "Auto");
 
 test("format a simple decimal", t => {
   const decimal = ICU4XFixedDecimal.create(1234);

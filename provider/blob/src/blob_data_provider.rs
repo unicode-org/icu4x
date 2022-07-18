@@ -88,24 +88,21 @@ impl BufferProvider for BlobDataProvider {
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
-                self.data.try_map_project_cloned_with_capture(
-                    (key, req),
-                    |blob, (key, req), _| {
-                        let idx = blob
-                            .keys
-                            .get0(&key.get_hash())
-                            .ok_or(DataErrorKind::MissingResourceKey)
-                            .and_then(|cursor| {
-                                cursor
-                                    .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
-                                    .ok_or(DataErrorKind::MissingResourceOptions)
-                            })
-                            .map_err(|kind| kind.with_req(key, req))?;
-                        blob.buffers.get(idx).ok_or_else(|| {
-                            DataError::custom("Invalid blob bytes").with_req(key, req)
+                self.data.try_map_project_cloned(|blob, _| {
+                    let idx = blob
+                        .keys
+                        .get0(&key.get_hash())
+                        .ok_or(DataErrorKind::MissingResourceKey)
+                        .and_then(|cursor| {
+                            cursor
+                                .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
+                                .ok_or(DataErrorKind::MissingResourceOptions)
                         })
-                    },
-                )?,
+                        .map_err(|kind| kind.with_req(key, req))?;
+                    blob.buffers
+                        .get(idx)
+                        .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))
+                })?,
             )),
         })
     }

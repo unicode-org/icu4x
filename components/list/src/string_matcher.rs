@@ -142,8 +142,11 @@ impl<'data> StringMatcher<'data> {
         cfg!(target_endian = "little")
             && matches!(
                 // Safe due to struct invariant.
-                unsafe { DFA::from_bytes_unchecked(&self.dfa_bytes).unwrap().0 }
-                    .find_earliest_fwd(string.as_bytes()),
+                unsafe {
+                    #![allow(clippy::unwrap_used)] // by invariant
+                    DFA::from_bytes_unchecked(&self.dfa_bytes).unwrap().0
+                }
+                .find_earliest_fwd(string.as_bytes()),
                 Ok(Some(_))
             )
     }

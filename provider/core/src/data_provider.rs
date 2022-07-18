@@ -259,6 +259,11 @@ where
     /// This function is similar to [`DataPayload::try_from_rc_buffer`], but it accepts a buffer
     /// that is already yoked.
     ///
+    /// The callback takes an additional `PhantomData<&()>` parameter to anchor lifetimes
+    /// (see [#86702](https://github.com/rust-lang/rust/issues/86702)) This parameter
+    /// should just be ignored in the callback.
+    ///
+    ///
     /// # Examples
     ///
     /// ```
@@ -269,8 +274,7 @@ where
     ///
     /// let payload = DataPayload::<HelloWorldV1Marker>::try_from_yoked_buffer(
     ///     Yoke::attach_to_cart("{\"message\":\"Hello World\"}".as_bytes().into(), |b| b),
-    ///     (),
-    ///     |bytes, _, _| serde_json::from_slice(bytes),
+    ///     |bytes, _| serde_json::from_slice(bytes),
     /// )
     /// .expect("JSON is valid");
     ///
@@ -278,18 +282,17 @@ where
     /// # } // feature = "serde_json"
     /// ```
     #[allow(clippy::type_complexity)]
-    pub fn try_from_yoked_buffer<T, E>(
+    pub fn try_from_yoked_buffer<F, E>(
         yoked_buffer: Yoke<&'static [u8], RcWrap>,
-        capture: T,
-        f: for<'de> fn(
+        f: F,
+    ) -> Result<Self, E>
+    where
+        F: for<'de> FnOnce(
             <&'static [u8] as yoke::Yokeable<'de>>::Output,
-            T,
             PhantomData<&'de ()>,
         ) -> Result<<M::Yokeable as Yokeable<'de>>::Output, E>,
-    ) -> Result<Self, E> {
-        let yoke = yoked_buffer
-            .wrap_cart_in_option()
-            .try_map_project_with_capture(capture, f)?;
+    {
+        let yoke = yoked_buffer.wrap_cart_in_option().try_map_project(f)?;
         Ok(Self { yoke })
     }
 
@@ -398,8 +401,8 @@ where
     /// data from its context. Use one of the sister methods if you need these capabilities:
     ///
     /// - [`DataPayload::map_project_cloned()`] if you don't have ownership of `self`
-    /// - [`DataPayload::map_project_with_capture()`] to pass context to the mapping function
-    /// - [`DataPayload::map_project_cloned_with_capture()`] to do both of these things
+    /// - [`DataPayload::try_map_project()`] to bubble up an error
+    /// - [`DataPayload::try_map_project_cloned()`] to do both of the above
     ///
     /// # Examples
     ///
@@ -430,15 +433,13 @@ where
     /// assert_eq!("Hello World", p2.get());
     /// ```
     #[allow(clippy::type_complexity)]
-    pub fn map_project<M2>(
-        self,
-        f: for<'a> fn(
+    pub fn map_project<M2, F>(self, f: F) -> DataPayload<M2>
+    where
+        M2: DataMarker,
+        F: for<'a> FnOnce(
             <M::Yokeable as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<M2>
-    where
-        M2: DataMarker,
     {
         DataPayload {
             yoke: self.yoke.map_project(f),
@@ -474,124 +475,20 @@ where
     /// assert_eq!(p1.get().message, *p2.get());
     /// ```
     #[allow(clippy::type_complexity)]
-    pub fn map_project_cloned<'this, M2>(
-        &'this self,
-        f: for<'a> fn(
+    pub fn map_project_cloned<'this, M2, F>(&'this self, f: F) -> DataPayload<M2>
+    where
+        M2: DataMarker,
+        F: for<'a> FnOnce(
             &'this <M::Yokeable as Yokeable<'a>>::Output,
             PhantomData<&'a ()>,
         ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<M2>
-    where
-        M2: DataMarker,
     {
         DataPayload {
             yoke: self.yoke.map_project_cloned(f),
         }
     }
 
-    /// Version of [`DataPayload::map_project()`] that moves `self` and takes a `capture`
-    /// parameter to pass additional data to `f`.
-    ///
-    /// # Examples
-    ///
-    /// Capture a string from the context and append it to the message:
-    ///
-    /// ```
-    /// // Same imports and definitions as above
-    /// # use icu_provider::hello_world::*;
-    /// # use icu_provider::prelude::*;
-    /// # use std::borrow::Cow;
-    /// # struct HelloWorldV1MessageMarker;
-    /// # impl DataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
-    /// # }
-    ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World"),
-    /// });
-    ///
-    /// assert_eq!("Hello World", p1.get().message);
-    ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
-    ///     p1.map_project_with_capture("Extra", |mut obj, capture, _| {
-    ///         obj.message.to_mut().push_str(capture);
-    ///         obj.message
-    ///     });
-    ///
-    /// assert_eq!("Hello WorldExtra", p2.get());
-    /// ```
-    #[allow(clippy::type_complexity)]
-    pub fn map_project_with_capture<M2, T>(
-        self,
-        capture: T,
-        f: for<'a> fn(
-            <M::Yokeable as Yokeable<'a>>::Output,
-            capture: T,
-            PhantomData<&'a ()>,
-        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<M2>
-    where
-        M2: DataMarker,
-    {
-        DataPayload {
-            yoke: self.yoke.map_project_with_capture(capture, f),
-        }
-    }
-
-    /// Version of [`DataPayload::map_project()`] that borrows `self` and takes a `capture`
-    /// parameter to pass additional data to `f`.
-    ///
-    /// # Examples
-    ///
-    /// Same example as above, but this time, do not move out of `p1`:
-    ///
-    /// ```
-    /// // Same imports and definitions as above
-    /// # use icu_provider::hello_world::*;
-    /// # use icu_provider::prelude::*;
-    /// # use std::borrow::Cow;
-    /// # struct HelloWorldV1MessageMarker;
-    /// # impl DataMarker for HelloWorldV1MessageMarker {
-    /// #     type Yokeable = Cow<'static, str>;
-    /// # }
-    ///
-    /// let p1: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
-    ///     message: Cow::Borrowed("Hello World"),
-    /// });
-    ///
-    /// assert_eq!("Hello World", p1.get().message);
-    ///
-    /// let p2: DataPayload<HelloWorldV1MessageMarker> =
-    ///     p1.map_project_cloned_with_capture("Extra", |obj, capture, _| {
-    ///         let mut message = obj.message.clone();
-    ///         message.to_mut().push_str(capture);
-    ///         message
-    ///     });
-    ///
-    /// // Note: p1 is still valid, but the values no longer equal.
-    /// assert_ne!(p1.get().message, *p2.get());
-    /// assert_eq!("Hello WorldExtra", p2.get());
-    /// ```
-    #[allow(clippy::type_complexity)]
-    pub fn map_project_cloned_with_capture<'this, M2, T>(
-        &'this self,
-        capture: T,
-        f: for<'a> fn(
-            &'this <M::Yokeable as Yokeable<'a>>::Output,
-            capture: T,
-            PhantomData<&'a ()>,
-        ) -> <M2::Yokeable as Yokeable<'a>>::Output,
-    ) -> DataPayload<M2>
-    where
-        M2: DataMarker,
-    {
-        DataPayload {
-            yoke: self.yoke.map_project_cloned_with_capture(capture, f),
-        }
-    }
-
-    /// Version of [`DataPayload::map_project()`] that moves `self`, takes a `capture`
-    /// parameter to pass additional data to `f`, and bubbles up an error from `f`.
+    /// Version of [`DataPayload::map_project()`] that bubbles up an error from `f`.
     ///
     /// # Examples
     ///
@@ -613,12 +510,13 @@ where
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
+    /// let string_to_append = "Extra";
     /// let p2: DataPayload<HelloWorldV1MessageMarker> =
-    ///     p1.try_map_project_with_capture("Extra", |mut obj, capture, _| {
+    ///     p1.try_map_project(|mut obj, _| {
     ///         if obj.message.is_empty() {
     ///             return Err("Example error");
     ///         }
-    ///         obj.message.to_mut().push_str(&capture);
+    ///         obj.message.to_mut().push_str(string_to_append);
     ///         Ok(obj.message)
     ///     })?;
     ///
@@ -626,25 +524,20 @@ where
     /// # Ok::<(), &'static str>(())
     /// ```
     #[allow(clippy::type_complexity)]
-    pub fn try_map_project_with_capture<M2, T, E>(
-        self,
-        capture: T,
-        f: for<'a> fn(
-            <M::Yokeable as Yokeable<'a>>::Output,
-            capture: T,
-            PhantomData<&'a ()>,
-        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
-    ) -> Result<DataPayload<M2>, E>
+    pub fn try_map_project<M2, F, E>(self, f: F) -> Result<DataPayload<M2>, E>
     where
         M2: DataMarker,
+        F: for<'a> FnOnce(
+            <M::Yokeable as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
     {
         Ok(DataPayload {
-            yoke: self.yoke.try_map_project_with_capture(capture, f)?,
+            yoke: self.yoke.try_map_project(f)?,
         })
     }
 
-    /// Version of [`DataPayload::map_project()`] that borrows `self`, takes a `capture`
-    /// parameter to pass additional data to `f`, and bubbles up an error from `f`.
+    /// Version of [`DataPayload::map_project_cloned()`] that  bubbles up an error from `f`.
     ///
     /// # Examples
     ///
@@ -666,13 +559,14 @@ where
     ///
     /// assert_eq!("Hello World", p1.get().message);
     ///
+    /// let string_to_append = "Extra";
     /// let p2: DataPayload<HelloWorldV1MessageMarker> =
-    ///     p1.try_map_project_cloned_with_capture("Extra", |obj, capture, _| {
+    ///     p1.try_map_project_cloned(|obj, _| {
     ///         if obj.message.is_empty() {
     ///             return Err("Example error");
     ///         }
     ///         let mut message = obj.message.clone();
-    ///         message.to_mut().push_str(capture);
+    ///         message.to_mut().push_str(string_to_append);
     ///         Ok(message)
     ///     })?;
     ///
@@ -682,20 +576,16 @@ where
     /// # Ok::<(), &'static str>(())
     /// ```
     #[allow(clippy::type_complexity)]
-    pub fn try_map_project_cloned_with_capture<'this, M2, T, E>(
-        &'this self,
-        capture: T,
-        f: for<'a> fn(
-            &'this <M::Yokeable as Yokeable<'a>>::Output,
-            capture: T,
-            PhantomData<&'a ()>,
-        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
-    ) -> Result<DataPayload<M2>, E>
+    pub fn try_map_project_cloned<'this, M2, F, E>(&'this self, f: F) -> Result<DataPayload<M2>, E>
     where
         M2: DataMarker,
+        F: for<'a> FnOnce(
+            &'this <M::Yokeable as Yokeable<'a>>::Output,
+            PhantomData<&'a ()>,
+        ) -> Result<<M2::Yokeable as Yokeable<'a>>::Output, E>,
     {
         Ok(DataPayload {
-            yoke: self.yoke.try_map_project_cloned_with_capture(capture, f)?,
+            yoke: self.yoke.try_map_project_cloned(f)?,
         })
     }
 

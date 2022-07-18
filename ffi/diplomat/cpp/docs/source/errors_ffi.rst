@@ -65,3 +65,35 @@
     .. cpp:enumerator:: DecimalSyntaxError
 
     .. cpp:enumerator:: PluralParserError
+
+    .. cpp:enumerator:: DateTimeParseError
+
+    .. cpp:enumerator:: DateTimeOverflowError
+
+    .. cpp:enumerator:: DateTimeUnderflowError
+
+    .. cpp:enumerator:: DateTimeInvalidTimeZoneOffsetError
+
+    .. cpp:enumerator:: DateTimeOutOfRangeError
+
+    .. cpp:enumerator:: DateTimeMissingInputError
+
+    .. cpp:enumerator:: DateTimeFormatPatternError
+
+    .. cpp:enumerator:: DateTimeFormatMissingInputFieldError
+
+    .. cpp:enumerator:: DateTimeFormatSkeletonError
+
+    .. cpp:enumerator:: DateTimeFormatUnsupportedFieldError
+
+    .. cpp:enumerator:: DateTimeFormatUnsupportedOptionsError
+
+    .. cpp:enumerator:: DateTimeFormatMissingWeekdaySymbolError
+
+    .. cpp:enumerator:: DateTimeFormatMissingMonthSymbolError
+
+    .. cpp:enumerator:: DateTimeFormatFixedDecimalError
+
+    .. cpp:enumerator:: DateTimeFormatMismatchedAnyCalendarError
+
+    .. cpp:enumerator:: DateTimeFormatMismatchedCalendarLocaleError

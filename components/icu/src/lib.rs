@@ -50,7 +50,7 @@
 //! # Example
 //!
 //! ```
-//! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormat};
+//! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormatter};
 //! use icu::locid::locale;
 //!
 //! let provider = icu_testdata::get_provider();
@@ -58,8 +58,8 @@
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 //!
-//! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
-//!     .expect("Failed to create DateTimeFormat instance.");
+//! let dtf = DateTimeFormatter::try_new(locale!("en"), &provider, &options)
+//!     .expect("Failed to create DateTimeFormatter instance.");
 //!
 //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 //!
@@ -108,22 +108,22 @@ pub mod datetime {
     //!
     //! This API provides necessary functionality for formatting date and time to user readable textual representation.
     //!
-    //! [`DateTimeFormat`] is the main structure of the component. It accepts a set of arguments which
+    //! [`DateTimeFormatter`] is the main structure of the component. It accepts a set of arguments which
     //! allow it to collect necessary data from the [`DataProvider`], and once instantiated, can be
     //! used to quickly format any date and time provided.
     //!
     //! # Examples
     //!
     //! ```
-    //! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormat};
+    //! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormatter};
     //! use icu::locid::locale;
     //!
     //! let provider = icu_testdata::get_provider();
     //!
     //! let options =
     //!     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
-    //! let dtf = DateTimeFormat::try_new(locale!("en"), &provider, &options)
-    //!     .expect("Failed to create DateTimeFormat instance.");
+    //! let dtf = DateTimeFormatter::try_new(locale!("en"), &provider, &options)
+    //!     .expect("Failed to create DateTimeFormatter instance.");
     //!
     //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
     //!
@@ -139,7 +139,7 @@ pub mod decimal {
     //!
     //! This API provides necessary functionality for formatting of numbers with decimal digits.
     //!
-    //! [`FixedDecimalFormat`] is the main structure of the component. It formats a
+    //! [`FixedDecimalFormatter`] is the main structure of the component. It formats a
     //! [`FixedDecimal`] to a [`FormattedFixedDecimal`].
     //!
     //! # Examples
@@ -147,12 +147,12 @@ pub mod decimal {
     //! ## Format a number with Bengali digits
     //!
     //! ```
-    //! use icu::decimal::FixedDecimalFormat;
+    //! use icu::decimal::FixedDecimalFormatter;
     //! use icu::locid::locale;
     //! use writeable::Writeable;
     //!
     //! let provider = icu_testdata::get_provider();
-    //! let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, Default::default())
+    //! let fdf = FixedDecimalFormatter::try_new(locale!("bn"), &provider, Default::default())
     //!     .expect("Data should load successfully");
     //!
     //! let fixed_decimal = 1000007.into();
@@ -166,12 +166,12 @@ pub mod decimal {
     //!
     //! ```
     //! use fixed_decimal::FixedDecimal;
-    //! use icu::decimal::FixedDecimalFormat;
+    //! use icu::decimal::FixedDecimalFormatter;
     //! use icu::locid::Locale;
     //! use writeable::Writeable;
     //!
     //! let provider = icu_provider::inv::InvariantDataProvider;
-    //! let fdf = FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default())
+    //! let fdf = FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default())
     //!     .expect("Data should load successfully");
     //!
     //! let fixed_decimal = FixedDecimal::from(200050)
@@ -459,40 +459,74 @@ pub mod list {
     //!
     //! # Examples
     //!
-    //! ## Format a list of strings in Spanish
+    //! ## Formatting *and* lists in Spanish
     //!
     //! ```
-    //! use icu::list::{ListFormatter, ListStyle};
-    //! use icu::locid::locale;
-    //! use writeable::Writeable;
+    //! # use icu_list::{ListFormatter, ListStyle};
+    //! # use icu_locid::locale;
+    //! # use writeable::*;
+    //! #
+    //! let list_formatter = ListFormatter::try_new_and(
+    //!     locale!("es"),
+    //!     &icu_testdata::get_provider(),
+    //!     ListStyle::Wide,
+    //! )
+    //! .expect("Data should load successfully");
     //!
-    //! let provider = icu_testdata::get_provider();
-    //! let list_formatter = ListFormatter::try_new_and(locale!("es"), &provider, ListStyle::Wide)
-    //!     .expect("Data should load successfully");
-    //!
-    //! assert_eq!(
-    //!     list_formatter
-    //!         .format(["España", "Suiza"].iter())
-    //!         .write_to_string(),
-    //!     "España y Suiza"
+    //! assert_writeable_eq!(
+    //!     list_formatter.format(["España", "Suiza"].iter()),
+    //!     "España y Suiza",
     //! );
     //!
     //! // The Spanish 'y' sometimes becomes an 'e':
-    //! assert_eq!(
-    //!     list_formatter
-    //!         .format(["España", "Suiza", "Italia"].iter())
-    //!         .write_to_string(),
-    //!     "España, Suiza e Italia"
-    //! );
-    //!
-    //! // We can use any Writeables as inputs:
-    //! assert_eq!(
-    //!     list_formatter.format(1..=10).write_to_string(),
-    //!     "1, 2, 3, 4, 5, 6, 7, 8, 9 y 10"
+    //! assert_writeable_eq!(
+    //!     list_formatter.format(["España", "Suiza", "Italia"].iter()),
+    //!     "España, Suiza e Italia",
     //! );
     //! ```
     //!
-    //! [`ListFormatter`]: ListFormatter
+    //! ## Formatting *or* lists in Thai
+    //!
+    //! ```
+    //! # use icu_list::{ListFormatter, ListStyle};
+    //! # use icu_locid::locale;
+    //! # use writeable::*;
+    //! #
+    //! let list_formatter = ListFormatter::try_new_or(
+    //!     locale!("th"),
+    //!     &icu_testdata::get_provider(),
+    //!     ListStyle::Short,
+    //! )
+    //! .expect("Data should load successfully");
+    //!
+    //! // We can use any Writeables as inputs
+    //! assert_writeable_eq!(
+    //!     list_formatter.format(1..=3),
+    //!     "1, 2 หรือ 3",
+    //! );
+    //! ```
+    //!
+    //! ## Formatting unit lists in English
+    //!
+    //! ```
+    //! # use icu_list::{ListFormatter, ListStyle};
+    //! # use icu_locid::locale;
+    //! # use writeable::*;
+    //! #
+    //! let list_formatter = ListFormatter::try_new_unit(
+    //!     locale!("en"),
+    //!     &icu_testdata::get_provider(),
+    //!     ListStyle::Wide,
+    //! )
+    //! .expect("Data should load successfully");
+    //!
+    //! assert_writeable_eq!(
+    //!     list_formatter.format(["1ft", "2in"].iter()),
+    //!     "1ft, 2in",
+    //! );
+    //! ```
+    //! Note: this last example is not fully internationalized. See [icu4x/2192](https://github.com/unicode-org/icu4x/issues/2192)
+    //! for full unit handling.
 
     pub use icu_list::*;
 }
