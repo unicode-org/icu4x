@@ -96,7 +96,6 @@ impl From<LanguageIdentifier> for ResourceOptions {
 
 impl From<Locale> for ResourceOptions {
     fn from(locale: Locale) -> Self {
-        // TODO(#1109): Implement proper vertical fallback
         Self {
             langid: locale.id,
             keywords: locale.extensions.unicode.keywords,
@@ -106,7 +105,6 @@ impl From<Locale> for ResourceOptions {
 
 impl From<&Locale> for ResourceOptions {
     fn from(locale: &Locale) -> Self {
-        // TODO(#1109): Implement proper vertical fallback
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
