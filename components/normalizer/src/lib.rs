@@ -1130,7 +1130,6 @@ macro_rules! normalizer_methods {
         }
 
         /// Normalize a string slice into a `Write` sink.
-        #[cfg(feature = "experimental")]
         pub fn normalize_to<W: core::fmt::Write + ?Sized>(
             &self,
             text: &str,
@@ -1165,8 +1164,7 @@ macro_rules! normalizer_methods {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
-        #[cfg(feature = "experimental")]
-        pub fn normalize_utf16_to<W: core::fmt::Write + ?Sized>(
+        pub fn normalize_utf16_to<W: write16::Write16 + ?Sized>(
             &self,
             text: &[u16],
             sink: &mut W,
@@ -1196,7 +1194,6 @@ macro_rules! normalizer_methods {
         ///
         /// Errors are mapped to the REPLACEMENT CHARACTER according
         /// to the WHATWG Encoding Standard.
-        #[cfg(feature = "experimental")]
         pub fn normalize_utf8_to<W: core::fmt::Write + ?Sized>(
             &self,
             text: &[u8],
