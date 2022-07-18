@@ -4,12 +4,8 @@
 
 //! Marker types and traits for DataProvider.
 
-mod impls;
-
-pub use impls::*;
-
+use crate::key::ResourceKey;
 use crate::yoke::Yokeable;
-use crate::ResourceKey;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.

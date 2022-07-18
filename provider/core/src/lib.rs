@@ -58,12 +58,14 @@
 //! - [`FsDataProvider`] reads individual buffers from the filesystem.
 //! - [`BlobDataProvider`] reads buffers from a large in-memory blob.
 //!
-//! ### Special-Purpose Providers
+//! ### Testing Provider
 //!
-//! This crate also contains some concrete implementations for testing purposes:
+//! This crate also contains a concrete provider for testing purposes:
 //!
-//! - [`InvariantDataProvider`] returns fixed data that does not vary by locale.
 //! - [`HelloWorldProvider`] returns "hello world" strings in several languages.
+//!
+//! If you need a testing provider that contains the actual resource keys used by ICU4X features,
+//! see the [`icu_testdata`] crate.
 //!
 //! ## Provider Adapters
 //!
@@ -78,34 +80,20 @@
 //! Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 //! structs to borrow zero-copy data.
 //!
-//! ## Additional Traits
+//! ## Data generation API
 //!
-//! ### `DataProvider<SerializeMarker>`
+//! *This functionality is enabled with the "datagen" feature*
 //!
-//! *Enabled with the "datagen" feature*
-//!
-//! Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be use
-//! as input to a data exporter, such as when writing data to the filesystem.
-//!
-//! This trait is normally implemented using the [`impl_dyn_provider!`] macro.
-//!
-//! ### `IterableDataProvider`
-//!
-//! *Enabled with the "datagen" feature*
-//!
-//! Data providers can implement [`IterableDynProvider`]/[`IterableResourceProvider`], allowing
-//! iteration over all [`ResourceOptions`] instances supported for a certain key in the data provider.
-//!
-//! This trait is normally implemented using the [`impl_dyn_provider!`] macro using the `ITERABLE_SERDE_SE` option.
+//! The [`datagen`] module contains several APIs for data generation. See [`icu_datagen`] for the reference
+//! data generation implementation.
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
-//! [`ResourceKey`]: resource::ResourceKey
-//! [`ResourceOptions`]: resource::ResourceOptions
+//! [`ResourceKey`]: key::ResourceKey
+//! [`ResourceOptions`]: request::ResourceOptions
 //! [`IterableDynProvider`]: datagen::IterableDynProvider
 //! [`IterableResourceProvider`]: datagen::IterableResourceProvider
-//! [`InvariantDataProvider`]: inv::InvariantDataProvider
-//! [`AnyPayloadProvider`]: ../icu_provider_adapters/struct_provider/struct.AnyPayloadProvider.html
+//! [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
@@ -116,6 +104,8 @@
 //! [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
+//! [`icu_testdata`]: ../icu_testdata/index.html
+//! [`icu_datagen`]: ../icu_datagen/index.html
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -144,11 +134,11 @@ pub mod dynutil;
 mod error;
 pub mod hello_world;
 mod helpers;
-pub mod inv;
 #[macro_use]
+mod key;
 pub mod marker;
-#[macro_use]
-mod resource;
+mod request;
+mod response;
 #[cfg(feature = "serde")]
 pub mod serde;
 
@@ -163,20 +153,20 @@ pub mod prelude {
     pub use crate::any::AnyResponse;
     pub use crate::buf::BufferMarker;
     pub use crate::buf::BufferProvider;
-    pub use crate::data_provider::DataPayload;
-    pub use crate::data_provider::DataRequest;
-    pub use crate::data_provider::DataResponse;
-    pub use crate::data_provider::DataResponseMetadata;
     pub use crate::data_provider::DynProvider;
     pub use crate::data_provider::ResourceProvider;
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
+    pub use crate::key::ResourceKey;
+    pub use crate::key::ResourceKeyHash;
     pub use crate::marker::DataMarker;
     pub use crate::marker::ResourceMarker;
-    pub use crate::resource::ResourceKey;
-    pub use crate::resource::ResourceKeyHash;
-    pub use crate::resource::ResourceOptions;
+    pub use crate::request::DataRequest;
+    pub use crate::request::ResourceOptions;
     pub use crate::resource_key;
+    pub use crate::response::DataPayload;
+    pub use crate::response::DataResponse;
+    pub use crate::response::DataResponseMetadata;
 
     pub use crate::any::AsDowncastingAnyProvider;
     pub use crate::any::AsDynProviderAnyMarkerWrap;
@@ -192,9 +182,9 @@ pub mod prelude {
 pub use prelude::*;
 
 // Less important non-prelude items
-pub use crate::data_provider::RcWrap;
-pub use crate::resource::FallbackPriority;
-pub use crate::resource::ResourceKeyMetadata;
+pub use crate::key::FallbackPriority;
+pub use crate::key::ResourceKeyMetadata;
+pub use crate::response::RcWrap;
 
 // For macros
 #[doc(hidden)]

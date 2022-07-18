@@ -36,7 +36,7 @@ use icu::decimal::FixedDecimalFormatter;
 use icu::locid::Locale;
 use writeable::Writeable;
 
-let provider = icu_provider::inv::InvariantDataProvider;
+let provider = icu_testdata::get_provider();
 let fdf = FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default())
     .expect("Data should load successfully");
 

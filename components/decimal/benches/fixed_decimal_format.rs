@@ -9,8 +9,10 @@ use rand_pcg::Lcg64Xsh32;
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use fixed_decimal::FixedDecimal;
+use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
 use icu_locid::Locale;
+use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use writeable::Writeable;
 
 fn triangular_nums(range: f64) -> Vec<isize> {
@@ -26,19 +28,17 @@ fn triangular_nums(range: f64) -> Vec<isize> {
 
 fn overview_bench(c: &mut Criterion) {
     let nums = triangular_nums(1e9);
+    let provider = AnyPayloadProvider::new_default::<DecimalSymbolsV1Marker>();
     c.bench_function("icu_decimal/overview", |b| {
-        #[allow(clippy::suspicious_map)]
         b.iter(|| {
             // This benchmark demonstrates the performance of the format function on 1000 numbers
             // ranging from -1e9 to 1e9.
-            let provider = icu_provider::inv::InvariantDataProvider;
             let fdf =
                 FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default()).unwrap();
-            nums.iter()
-                .map(|v| black_box(*v))
-                .map(FixedDecimal::from)
-                .map(|n| fdf.format(&n).write_to_string().into_owned())
-                .count();
+            for &num in &nums {
+                let fd = FixedDecimal::from(black_box(num));
+                fdf.format(&fd).write_to_string().into_owned();
+            }
         });
     });
 }
