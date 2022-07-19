@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658188789666,
+  "lastUpdate": 1658211769341,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20603,6 +20603,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/72740735c95bc52ad876ffbb214a60acc11f3e84"
         },
         "date": 1658188755277,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3963063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6035f58a6a25173747a7a671793252c975fc9e78",
+          "message": "Update diplomat (#2208)\n\n* Update diplomat\n\n* Regen diplomat\n\n* Update wasm tests",
+          "timestamp": "2022-07-18T23:21:09-07:00",
+          "tree_id": "7d5de267cc7e76caee9cd5b1ddb969d69491c903",
+          "url": "https://github.com/unicode-org/icu4x/commit/6035f58a6a25173747a7a671793252c975fc9e78"
+        },
+        "date": 1658211739110,
         "tool": "ndjson",
         "benches": [
           {
