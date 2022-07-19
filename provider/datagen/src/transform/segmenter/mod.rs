@@ -354,52 +354,12 @@ impl SegmenterRuleProvider {
                                 }
                             }
 
-                            // Hiragana
-                            for c in 0x3041..0x309F {
-                                properties_map[c as usize] = property_index
-                            }
-
-                            // CJK Unified Ideographs Extension A
-                            for c in 0x3400..0x4DBF {
-                                properties_map[c as usize] = property_index
-                            }
-                            // CJK Unified Ideographs
-                            for c in 0x4E00..0x9FFF {
-                                properties_map[c as usize] = property_index
-                            }
-                            // CJK Unified Ideographs Extension B
-                            for c in 0x20000..0x215FF {
-                                properties_map[c as usize] = property_index
-                            }
-                            // CJK Unified Ideographs Extension C
-                            for c in 0x2A700..0x2B73F {
-                                properties_map[c as usize] = property_index
-                            }
-                            // CJK Unified Ideographs Extension D
-                            for c in 0x2B740..0x2B81F {
-                                properties_map[c as usize] = property_index
-                            }
-                            // CJK Unified Ideographs Extension E
-                            for c in 0x2B820..0x2CEAF {
-                                properties_map[c as usize] = property_index
-                            }
-                            // CJK Unified Ideographs Extension F
-                            for c in 0x2CEB0..0x2EBEF {
-                                properties_map[c as usize] = property_index
-                            }
-                            // CJK Unified Ideographs Extension G
-                            for c in 0x30000..0x3134F {
-                                properties_map[c as usize] = property_index
-                            }
-                            // CJK Compatibility Ideographs
-                            for c in 0xF900..0xFAFF {
-                                properties_map[c as usize] = property_index
-                            }
-
-                            // TODO:
-                            // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
                             continue;
                         }
+
+                        // TODO:
+                        // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
+                        // Katakana will use UAX#29 rules instead of dictionary.
 
                         let prop = get_word_segmenter_value_from_name(&*p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
