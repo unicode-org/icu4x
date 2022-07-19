@@ -162,8 +162,8 @@ jobs:
       uses: robinraju/release-downloader@v1.3
       with: 
         repository: "unicode-org/icu"
-        tag: "icu4x/2022-06-30/71.x"
-        fileName: "icuexportdata_icu4x-2022-06-30-71.x.zip"
+        tag: "icu4x/2022-07-18/71.x"
+        fileName: "icuexportdata_icu4x-2022-07-18-71.x.zip"
         out-file-path: "data/source/"
     - name: Run datagen
       uses: actions-rs/cargo@v1.0.1
@@ -171,7 +171,7 @@ jobs:
         command: run
         args: > 
           -p icu_datagen --features bin --release --
-          --icuexport-root data/source/icuexportdata_icu4x-2022-06-30-71.x.zip
+          --icuexport-root data/source/icuexportdata_icu4x-2022-07-18-71.x.zip
           --cldr-root data/source/cldr-41.0.0-json-full.zip 
           --all-locales
           --all-keys
