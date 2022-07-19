@@ -30,7 +30,7 @@ pub struct GraphemeClusterBreakSegmenter {
 impl GraphemeClusterBreakSegmenter {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
+        D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
         let payload = provider
             .load_resource(&DataRequest::default())?

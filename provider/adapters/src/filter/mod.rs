@@ -5,7 +5,7 @@
 //! Providers that filter resource requests.
 //!
 //! Requests that fail a filter test will return [`DataError`] of kind [`FilteredResource`](
-//! DataErrorKind::FilteredResource) and will not appear in [`IterableDynProvider`] iterators.
+//! DataErrorKind::FilteredResource) and will not appear in [`IterableDynamicDataProvider`] iterators.
 //!
 //! The main struct is [`RequestFilterDataProvider`]. Although that struct can be created
 //! directly, the traits in this module provide helper functions for common filtering patterns.
@@ -32,7 +32,7 @@
 //!     .filter_by_langid(|langid| langid.language == language!("de"));
 //! ```
 //!
-//! [`IterableDynProvider`]: icu_provider::datagen::IterableDynProvider
+//! [`IterableDynamicDataProvider`]: icu_provider::datagen::IterableDynamicDataProvider
 
 mod impls;
 
@@ -46,7 +46,7 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynProvider::supported_options_for_key`].
+/// by [`datagen::IterableDynamicDataProvider::supported_options_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -66,17 +66,13 @@ where
     pub filter_name: &'static str,
 }
 
-impl<D, F, M> DynProvider<M> for RequestFilterDataProvider<D, F>
+impl<D, F, M> DynamicDataProvider<M> for RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,
     M: DataMarker,
-    D: DynProvider<M>,
+    D: DynamicDataProvider<M>,
 {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
+    fn load_payload(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         if (self.predicate)(req) {
             self.inner.load_payload(key, req)
         } else {
@@ -87,11 +83,11 @@ where
     }
 }
 
-impl<D, F, M> ResourceProvider<M> for RequestFilterDataProvider<D, F>
+impl<D, F, M> DataProvider<M> for RequestFilterDataProvider<D, F>
 where
     F: Fn(&DataRequest) -> bool,
-    M: ResourceMarker,
-    D: ResourceProvider<M>,
+    M: KeyedDataMarker,
+    D: DataProvider<M>,
 {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         if (self.predicate)(req) {
@@ -111,7 +107,7 @@ where
 {
     fn load_buffer(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         if (self.predicate)(req) {
@@ -129,7 +125,7 @@ where
     F: Fn(&DataRequest) -> bool,
     D: AnyProvider,
 {
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         if (self.predicate)(req) {
             self.inner.load_any(key, req)
         } else {
@@ -141,16 +137,16 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<M, D, F> datagen::IterableDynProvider<M> for RequestFilterDataProvider<D, F>
+impl<M, D, F> datagen::IterableDynamicDataProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: DataMarker,
     F: Fn(&DataRequest) -> bool,
-    D: datagen::IterableDynProvider<M>,
+    D: datagen::IterableDynamicDataProvider<M>,
 {
     fn supported_options_for_key(
         &self,
-        key: ResourceKey,
-    ) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
+        key: DataKey,
+    ) -> Result<alloc::vec::Vec<DataOptions>, DataError> {
         self.inner.supported_options_for_key(key).map(|vec| {
             // Use filter_map instead of filter to avoid cloning the options
             vec.into_iter()
@@ -171,13 +167,13 @@ where
 }
 
 #[cfg(feature = "datagen")]
-impl<M, D, F> datagen::IterableResourceProvider<M> for RequestFilterDataProvider<D, F>
+impl<M, D, F> datagen::IterableDataProvider<M> for RequestFilterDataProvider<D, F>
 where
-    M: ResourceMarker,
+    M: KeyedDataMarker,
     F: Fn(&DataRequest) -> bool,
-    D: datagen::IterableResourceProvider<M>,
+    D: datagen::IterableDataProvider<M>,
 {
-    fn supported_options(&self) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
+    fn supported_options(&self) -> Result<alloc::vec::Vec<DataOptions>, DataError> {
         self.inner.supported_options().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the options
             vec.into_iter()
@@ -207,7 +203,7 @@ where
 {
     fn convert(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
         // Conversions are type-agnostic

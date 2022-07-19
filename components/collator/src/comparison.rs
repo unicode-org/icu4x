@@ -31,10 +31,10 @@ use icu_normalizer::Decomposition;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::CanonicalCombiningClassV1Marker;
 use icu_properties::CanonicalCombiningClass;
+use icu_provider::DataOptions;
 use icu_provider::DataPayload;
+use icu_provider::DataProvider;
 use icu_provider::DataRequest;
-use icu_provider::ResourceOptions;
-use icu_provider::ResourceProvider;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
@@ -82,15 +82,15 @@ impl Collator {
         options: CollatorOptions,
     ) -> Result<Self, CollatorError>
     where
-        D: ResourceProvider<CollationSpecialPrimariesV1Marker>
-            + ResourceProvider<CollationDataV1Marker>
-            + ResourceProvider<CollationDiacriticsV1Marker>
-            + ResourceProvider<CollationJamoV1Marker>
-            + ResourceProvider<CollationMetadataV1Marker>
-            + ResourceProvider<CollationReorderingV1Marker>
-            + ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CanonicalCombiningClassV1Marker>
+        D: DataProvider<CollationSpecialPrimariesV1Marker>
+            + DataProvider<CollationDataV1Marker>
+            + DataProvider<CollationDiacriticsV1Marker>
+            + DataProvider<CollationJamoV1Marker>
+            + DataProvider<CollationMetadataV1Marker>
+            + DataProvider<CollationReorderingV1Marker>
+            + DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         // let locale: Locale = locale.into();
@@ -126,12 +126,12 @@ impl Collator {
             }
             filtered_locale
         };
-        let resource_options: ResourceOptions = locale.into();
+        let data_options: DataOptions = locale.into();
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
             data_provider
                 .load_resource(&DataRequest {
-                    options: resource_options.clone(),
+                    options: data_options.clone(),
                     metadata: Default::default(),
                 })?
                 .take_payload()?;
@@ -143,7 +143,7 @@ impl Collator {
                 Some(
                     data_provider
                         .load_resource(&DataRequest {
-                            options: resource_options.clone(),
+                            options: data_options.clone(),
                             metadata: Default::default(),
                         })?
                         .take_payload()?,
@@ -157,7 +157,7 @@ impl Collator {
                 Some(
                     data_provider
                         .load_resource(&DataRequest {
-                            options: resource_options.clone(),
+                            options: data_options.clone(),
                             metadata: Default::default(),
                         })?
                         .take_payload()?,
@@ -180,9 +180,9 @@ impl Collator {
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = data_provider
             .load_resource(&DataRequest {
                 options: if tailored_diacritics {
-                    resource_options
+                    data_options
                 } else {
-                    ResourceOptions::default()
+                    DataOptions::default()
                 },
                 metadata: Default::default(),
             })?

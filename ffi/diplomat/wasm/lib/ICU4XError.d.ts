@@ -21,7 +21,7 @@ export enum ICU4XError {
   OutOfBoundsError = 'OutOfBoundsError',
   /**
    */
-  DataMissingResourceKeyError = 'DataMissingResourceKeyError',
+  DataMissingDataKeyError = 'DataMissingDataKeyError',
   /**
    */
   DataMissingVariantError = 'DataMissingVariantError',
@@ -30,7 +30,7 @@ export enum ICU4XError {
   DataMissingLocaleError = 'DataMissingLocaleError',
   /**
    */
-  DataMissingResourceOptionsError = 'DataMissingResourceOptionsError',
+  DataMissingDataOptionsError = 'DataMissingDataOptionsError',
   /**
    */
   DataNeedsVariantError = 'DataNeedsVariantError',
@@ -39,7 +39,7 @@ export enum ICU4XError {
   DataNeedsLocaleError = 'DataNeedsLocaleError',
   /**
    */
-  DataExtraneousResourceOptionsError = 'DataExtraneousResourceOptionsError',
+  DataExtraneousDataOptionsError = 'DataExtraneousDataOptionsError',
   /**
    */
   DataFilteredResourceError = 'DataFilteredResourceError',

@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_decimal::provider::*;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -62,7 +62,7 @@ impl NumbersProvider {
     }
 }
 
-impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -98,14 +98,14 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 
 icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
 
-impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(self
             .source
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(Into::<ResourceOptions>::into)
+            .map(Into::<DataOptions>::into)
             .collect())
     }
 }

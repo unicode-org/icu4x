@@ -90,7 +90,7 @@ impl Japanese {
     ///
     /// Setting `historical_eras` will load historical (pre-meiji) era data
     #[allow(clippy::expect_used)] // can be removed after #1800
-    pub fn try_new<D: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized>(
+    pub fn try_new<D: DataProvider<provider::JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
         era_style: JapaneseEraStyle,
     ) -> Result<Self, DataError> {

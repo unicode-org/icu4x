@@ -39,13 +39,13 @@ macro_rules! tagged {
     };
 }
 
-/// A compact hash of a [`ResourceKey`]. Useful for keys in maps.
+/// A compact hash of a [`DataKey`]. Useful for keys in maps.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash, ULE)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
-pub struct ResourceKeyHash([u8; 4]);
+pub struct DataKeyHash([u8; 4]);
 
-impl ResourceKeyHash {
+impl DataKeyHash {
     const fn compute_from_str(path: &str) -> Self {
         Self(
             helpers::fxhash_32(path.as_bytes(), leading_tag!().len(), trailing_tag!().len())
@@ -54,14 +54,14 @@ impl ResourceKeyHash {
     }
 }
 
-impl<'a> zerovec::maps::ZeroMapKV<'a> for ResourceKeyHash {
-    type Container = zerovec::ZeroVec<'a, ResourceKeyHash>;
-    type Slice = zerovec::ZeroSlice<ResourceKeyHash>;
-    type GetType = <ResourceKeyHash as AsULE>::ULE;
-    type OwnedType = ResourceKeyHash;
+impl<'a> zerovec::maps::ZeroMapKV<'a> for DataKeyHash {
+    type Container = zerovec::ZeroVec<'a, DataKeyHash>;
+    type Slice = zerovec::ZeroSlice<DataKeyHash>;
+    type GetType = <DataKeyHash as AsULE>::ULE;
+    type OwnedType = DataKeyHash;
 }
 
-impl AsULE for ResourceKeyHash {
+impl AsULE for DataKeyHash {
     type ULE = Self;
     #[inline]
     fn to_unaligned(self) -> Self::ULE {
@@ -74,7 +74,7 @@ impl AsULE for ResourceKeyHash {
 }
 
 // Safe since the ULE type is `self`.
-unsafe impl EqULE for ResourceKeyHash {}
+unsafe impl EqULE for DataKeyHash {}
 
 /// Hint for what to prioritize during fallback when data is unavailable.
 ///
@@ -106,17 +106,17 @@ impl Default for FallbackPriority {
     }
 }
 
-/// Metadata statically associated with a particular [`ResourceKey`].
+/// Metadata statically associated with a particular [`DataKey`].
 #[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
 #[non_exhaustive]
-pub struct ResourceKeyMetadata {
-    /// What to prioritize when fallbacking on this [`ResourceKey`].
+pub struct DataKeyMetadata {
+    /// What to prioritize when fallbacking on this [`DataKey`].
     pub fallback_priority: FallbackPriority,
-    /// A Unicode extension keyword to consider when loading data for this [`ResourceKey`].
+    /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
     pub extension_key: Option<icu_locid::extensions::unicode::Key>,
 }
 
-impl ResourceKeyMetadata {
+impl DataKeyMetadata {
     /// Const-friendly version of [`Default::default`].
     pub const fn const_default() -> Self {
         Self {
@@ -125,7 +125,7 @@ impl ResourceKeyMetadata {
         }
     }
 
-    /// Create a new [`ResourceKeyMetadata`] with the specified options.
+    /// Create a new [`DataKeyMetadata`] with the specified options.
     pub const fn from_fallback_priority_and_extension_key(
         fallback_priority: FallbackPriority,
         extension_key: Option<icu_locid::extensions::unicode::Key>,
@@ -138,7 +138,7 @@ impl ResourceKeyMetadata {
     }
 }
 
-impl Default for ResourceKeyMetadata {
+impl Default for DataKeyMetadata {
     fn default() -> Self {
         Self::const_default()
     }
@@ -147,53 +147,53 @@ impl Default for ResourceKeyMetadata {
 /// Used for loading data from an ICU4X data provider.
 ///
 /// A resource key is tightly coupled with the code that uses it to load data at runtime.
-/// Executables can be searched for `ResourceKey` instances to produce optimized data files.
-/// Therefore, users should not generally create ResourceKey instances; they should instead use
+/// Executables can be searched for `DataKey` instances to produce optimized data files.
+/// Therefore, users should not generally create DataKey instances; they should instead use
 /// the ones exported by a component.
 ///
-/// `ResourceKey`s are created with the [`resource_key!`] macro:
+/// `DataKey`s are created with the [`data_key!`] macro:
 ///
 /// ```
-/// # use icu_provider::prelude::ResourceKey;
-/// const K: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+/// # use icu_provider::prelude::DataKey;
+/// const K: DataKey = icu_provider::data_key!("foo/bar@1");
 /// ```
 ///
 /// The human-readable path string ends with `@` followed by one or more digits (the version
 /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
 ///
-/// Invalid paths are compile-time errors (as [`resource_key!`] uses `const`).
+/// Invalid paths are compile-time errors (as [`data_key!`] uses `const`).
 ///
 /// ```compile_fail,E0080
-/// # use icu_provider::prelude::ResourceKey;
-/// const K: ResourceKey = icu_provider::resource_key!("foo/../bar@1");
+/// # use icu_provider::prelude::DataKey;
+/// const K: DataKey = icu_provider::data_key!("foo/../bar@1");
 /// ```
 #[derive(Copy, Clone)]
-pub struct ResourceKey {
+pub struct DataKey {
     // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
     // in a compiled binary.
     path: &'static str,
-    hash: ResourceKeyHash,
-    metadata: ResourceKeyMetadata,
+    hash: DataKeyHash,
+    metadata: DataKeyMetadata,
 }
 
-impl PartialEq for ResourceKey {
+impl PartialEq for DataKey {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
         self.hash == other.hash && self.get_path() == other.get_path()
     }
 }
 
-impl Eq for ResourceKey {}
+impl Eq for DataKey {}
 
-impl core::hash::Hash for ResourceKey {
+impl core::hash::Hash for DataKey {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {
         self.hash.hash(state)
     }
 }
 
-impl ResourceKey {
-    /// Gets a human-readable representation of a [`ResourceKey`].
+impl DataKey {
+    /// Gets a human-readable representation of a [`DataKey`].
     ///
     /// The human-readable path string ends with `@` followed by one or more digits (the version
     /// number). Paths do not contain characters other than ASCII letters and digits, `_`, `/`.
@@ -211,17 +211,17 @@ impl ResourceKey {
         }
     }
 
-    /// Gets a platform-independent hash of a [`ResourceKey`].
+    /// Gets a platform-independent hash of a [`DataKey`].
     ///
     /// The hash is 4 bytes and allows for fast key comparison.
     #[inline]
-    pub const fn get_hash(&self) -> ResourceKeyHash {
+    pub const fn get_hash(&self) -> DataKeyHash {
         self.hash
     }
 
-    /// Gets the metadata associated with this [`ResourceKey`].
+    /// Gets the metadata associated with this [`DataKey`].
     #[inline]
-    pub const fn get_metadata(&self) -> ResourceKeyMetadata {
+    pub const fn get_metadata(&self) -> DataKeyMetadata {
         self.metadata
     }
 
@@ -287,8 +287,8 @@ impl ResourceKey {
                 (Version | MetaAfter, None) => {
                     return Ok(Self {
                         path,
-                        hash: ResourceKeyHash::compute_from_str(path),
-                        metadata: ResourceKeyMetadata {
+                        hash: DataKeyHash::compute_from_str(path),
+                        metadata: DataKeyMetadata {
                             fallback_priority,
                             extension_key,
                         },
@@ -335,29 +335,29 @@ impl ResourceKey {
 
     /// Returns [`Ok`] if this data key matches the argument, or the appropriate error.
     ///
-    /// Convenience method for data providers that support a single [`ResourceKey`].
+    /// Convenience method for data providers that support a single [`DataKey`].
     ///
     /// # Examples
     ///
     /// ```
     /// use icu_provider::prelude::*;
     ///
-    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
-    /// const FOO_BAZ: ResourceKey = icu_provider::resource_key!("foo/baz@1");
-    /// const BAR_BAZ: ResourceKey = icu_provider::resource_key!("bar/baz@1");
+    /// const FOO_BAR: DataKey = icu_provider::data_key!("foo/bar@1");
+    /// const FOO_BAZ: DataKey = icu_provider::data_key!("foo/baz@1");
+    /// const BAR_BAZ: DataKey = icu_provider::data_key!("bar/baz@1");
     ///
     /// assert!(matches!(FOO_BAR.match_key(FOO_BAR), Ok(())));
     /// assert!(matches!(
     ///     FOO_BAR.match_key(FOO_BAZ),
     ///     Err(DataError {
-    ///         kind: DataErrorKind::MissingResourceKey,
+    ///         kind: DataErrorKind::MissingDataKey,
     ///         ..
     ///     })
     /// ));
     /// assert!(matches!(
     ///     FOO_BAR.match_key(BAR_BAZ),
     ///     Err(DataError {
-    ///         kind: DataErrorKind::MissingResourceKey,
+    ///         kind: DataErrorKind::MissingDataKey,
     ///         ..
     ///     })
     /// ));
@@ -369,18 +369,18 @@ impl ResourceKey {
         if *self == key {
             Ok(())
         } else {
-            Err(DataErrorKind::MissingResourceKey.with_key(key))
+            Err(DataErrorKind::MissingDataKey.with_key(key))
         }
     }
 }
 
-/// See [`ResourceKey`].
+/// See [`DataKey`].
 #[macro_export]
-macro_rules! resource_key {
+macro_rules! data_key {
     ($path:expr) => {{
-        // Force the ResourceKey into a const context
-        const RESOURCE_KEY_MACRO_CONST: $crate::ResourceKey = {
-            match $crate::ResourceKey::construct_internal($crate::tagged!($path)) {
+        // Force the DataKey into a const context
+        const RESOURCE_KEY_MACRO_CONST: $crate::DataKey = {
+            match $crate::DataKey::construct_internal($crate::tagged!($path)) {
                 Ok(v) => v,
                 #[allow(clippy::panic)] // Const context
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
@@ -397,22 +397,22 @@ macro_rules! resource_key {
     }};
 }
 
-impl fmt::Debug for ResourceKey {
+impl fmt::Debug for DataKey {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        f.write_str("ResourceKey{")?;
+        f.write_str("DataKey{")?;
         fmt::Display::fmt(self, f)?;
         f.write_char('}')?;
         Ok(())
     }
 }
 
-impl fmt::Display for ResourceKey {
+impl fmt::Display for DataKey {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         Writeable::write_to(self, f)
     }
 }
 
-impl Writeable for ResourceKey {
+impl Writeable for DataKey {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.get_path().write_to(sink)
     }
@@ -429,19 +429,19 @@ impl Writeable for ResourceKey {
 #[test]
 fn test_path_syntax() {
     // Valid keys:
-    ResourceKey::construct_internal(tagged!("hello/world@1")).unwrap();
-    ResourceKey::construct_internal(tagged!("hello/world/foo@1")).unwrap();
-    ResourceKey::construct_internal(tagged!("hello/world@999")).unwrap();
-    ResourceKey::construct_internal(tagged!("hello_world/foo@1")).unwrap();
-    ResourceKey::construct_internal(tagged!("hello_458/world@1")).unwrap();
-    ResourceKey::construct_internal(tagged!("hello_world@1")).unwrap();
-    ResourceKey::construct_internal(tagged!("foo@1[R]")).unwrap();
-    ResourceKey::construct_internal(tagged!("foo@1[u-ca]")).unwrap();
-    ResourceKey::construct_internal(tagged!("foo@1[R][u-ca]")).unwrap();
+    DataKey::construct_internal(tagged!("hello/world@1")).unwrap();
+    DataKey::construct_internal(tagged!("hello/world/foo@1")).unwrap();
+    DataKey::construct_internal(tagged!("hello/world@999")).unwrap();
+    DataKey::construct_internal(tagged!("hello_world/foo@1")).unwrap();
+    DataKey::construct_internal(tagged!("hello_458/world@1")).unwrap();
+    DataKey::construct_internal(tagged!("hello_world@1")).unwrap();
+    DataKey::construct_internal(tagged!("foo@1[R]")).unwrap();
+    DataKey::construct_internal(tagged!("foo@1[u-ca]")).unwrap();
+    DataKey::construct_internal(tagged!("foo@1[R][u-ca]")).unwrap();
 
     // No version:
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world")),
+        DataKey::construct_internal(tagged!("hello/world")),
         Err((
             "[a-zA-z0-9_/@]",
             concat!(leading_tag!(), "hello/world").len()
@@ -449,57 +449,57 @@ fn test_path_syntax() {
     );
 
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@")),
+        DataKey::construct_internal(tagged!("hello/world@")),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@foo")),
+        DataKey::construct_internal(tagged!("hello/world@foo")),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@1foo")),
+        DataKey::construct_internal(tagged!("hello/world@1foo")),
         Err(("[0-9\\[]", concat!(leading_tag!(), "hello/world@1").len()))
     );
 
     // Invalid meta:
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("foo@1[U]")),
+        DataKey::construct_internal(tagged!("foo@1[U]")),
         Err(("[uR]", concat!(leading_tag!(), "foo@1[").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("foo@1[uca]")),
+        DataKey::construct_internal(tagged!("foo@1[uca]")),
         Err(("[-]", concat!(leading_tag!(), "foo@1[u").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("foo@1[u-")),
+        DataKey::construct_internal(tagged!("foo@1[u-")),
         Err(("[a-z]", concat!(leading_tag!(), "foo@1[u-").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("foo@1[u-caa]")),
+        DataKey::construct_internal(tagged!("foo@1[u-caa]")),
         Err(("[\\]]", concat!(leading_tag!(), "foo@1[u-ca").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("foo@1[R")),
+        DataKey::construct_internal(tagged!("foo@1[R")),
         Err(("[\\]]", concat!(leading_tag!(), "foo@1[u").len()))
     );
 
     // Invalid characters:
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("你好/世界@1")),
+        DataKey::construct_internal(tagged!("你好/世界@1")),
         Err(("[a-zA-Z0-9_]", leading_tag!().len()))
     );
 
     // Invalid tag:
     assert_eq!(
-        ResourceKey::construct_internal(concat!("hello/world@1", trailing_tag!()),),
+        DataKey::construct_internal(concat!("hello/world@1", trailing_tag!()),),
         Err(("tag", 0))
     );
     assert_eq!(
-        ResourceKey::construct_internal(concat!(leading_tag!(), "hello/world@1"),),
+        DataKey::construct_internal(concat!(leading_tag!(), "hello/world@1"),),
         Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
     );
     assert_eq!(
-        ResourceKey::construct_internal("hello/world@1"),
+        DataKey::construct_internal("hello/world@1"),
         Err(("tag", 0))
     );
 }
@@ -508,30 +508,29 @@ fn test_path_syntax() {
 fn test_metadata_parsing() {
     use icu_locid::extensions_unicode_key as key;
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@1")).map(|k| k.get_metadata()),
-        Ok(ResourceKeyMetadata {
+        DataKey::construct_internal(tagged!("hello/world@1")).map(|k| k.get_metadata()),
+        Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Language,
             extension_key: None
         })
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.get_metadata()),
-        Ok(ResourceKeyMetadata {
+        DataKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.get_metadata()),
+        Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Region,
             extension_key: None
         })
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.get_metadata()),
-        Ok(ResourceKeyMetadata {
+        DataKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.get_metadata()),
+        Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Language,
             extension_key: Some(key!("ca"))
         })
     );
     assert_eq!(
-        ResourceKey::construct_internal(tagged!("hello/world@1[R][u-ca]"))
-            .map(|k| k.get_metadata()),
-        Ok(ResourceKeyMetadata {
+        DataKey::construct_internal(tagged!("hello/world@1[R][u-ca]")).map(|k| k.get_metadata()),
+        Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Region,
             extension_key: Some(key!("ca"))
         })
@@ -541,21 +540,21 @@ fn test_metadata_parsing() {
 #[test]
 fn test_key_to_string() {
     struct KeyTestCase {
-        pub key: ResourceKey,
+        pub key: DataKey,
         pub expected: &'static str,
     }
 
     for cas in [
         KeyTestCase {
-            key: resource_key!("core/cardinal@1"),
+            key: data_key!("core/cardinal@1"),
             expected: "core/cardinal@1",
         },
         KeyTestCase {
-            key: resource_key!("core/maxlengthsubcatg@1"),
+            key: data_key!("core/maxlengthsubcatg@1"),
             expected: "core/maxlengthsubcatg@1",
         },
         KeyTestCase {
-            key: resource_key!("core/cardinal@65535"),
+            key: data_key!("core/cardinal@65535"),
             expected: "core/cardinal@65535",
         },
     ] {

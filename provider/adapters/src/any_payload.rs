@@ -36,13 +36,13 @@ use zerofrom::ZeroFrom;
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AnyPayloadProvider {
-    pub key: ResourceKey,
+    pub key: DataKey,
     pub data: AnyPayload,
 }
 
 impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
-    pub fn new_owned<M: ResourceMarker + 'static>(data: M::Yokeable) -> Self {
+    pub fn new_owned<M: KeyedDataMarker + 'static>(data: M::Yokeable) -> Self {
         AnyPayloadProvider {
             key: M::KEY,
             data: AnyPayload::from_rc_payload::<M>(alloc::rc::Rc::from(DataPayload::from_owned(
@@ -52,7 +52,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` with a statically borrowed payload of the given data.
-    pub fn new_static<M: ResourceMarker>(data: &'static M::Yokeable) -> Self {
+    pub fn new_static<M: KeyedDataMarker>(data: &'static M::Yokeable) -> Self {
         AnyPayloadProvider {
             key: M::KEY,
             data: AnyPayload::from_static_ref(data),
@@ -60,7 +60,7 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` with the default (allocated) version of the data struct.
-    pub fn new_default<M: ResourceMarker + 'static>() -> Self
+    pub fn new_default<M: KeyedDataMarker + 'static>() -> Self
     where
         M::Yokeable: Default,
     {
@@ -69,7 +69,7 @@ impl AnyPayloadProvider {
 }
 
 impl AnyProvider for AnyPayloadProvider {
-    fn load_any(&self, key: ResourceKey, _: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, _: &DataRequest) -> Result<AnyResponse, DataError> {
         key.match_key(self.key)?;
         Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
@@ -78,9 +78,9 @@ impl AnyProvider for AnyPayloadProvider {
     }
 }
 
-impl<M> ResourceProvider<M> for AnyPayloadProvider
+impl<M> DataProvider<M> for AnyPayloadProvider
 where
-    M: ResourceMarker + 'static,
+    M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
 {

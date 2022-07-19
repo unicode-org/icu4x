@@ -33,8 +33,8 @@ pub struct WordBreakSegmenter {
 impl WordBreakSegmenter {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<WordBreakDataV1Marker>
-            + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+        D: DataProvider<WordBreakDataV1Marker>
+            + DataProvider<UCharDictionaryBreakDataV1Marker>
             + ?Sized,
     {
         let payload = provider
@@ -44,7 +44,7 @@ impl WordBreakSegmenter {
         let locale = locale!("th");
         let dictionary_payload = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::from(locale),
+                options: DataOptions::from(locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;

@@ -7,7 +7,7 @@ use crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider
 use crate::SourceData;
 use icu_list::provider::*;
 use icu_locid::subtags_language as language;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
 
@@ -25,7 +25,7 @@ impl From<&SourceData> for ListProvider {
     }
 }
 
-impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourceProvider<M>
+impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> DataProvider<M>
     for ListProvider
 {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
@@ -136,16 +136,16 @@ icu_provider::make_exportable_provider!(
     [AndListV1Marker, OrListV1Marker, UnitListV1Marker,]
 );
 
-impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>
+impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableDataProvider<M>
     for ListProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(self
             .source
             .cldr()?
             .misc()
             .list_langs()?
-            .map(Into::<ResourceOptions>::into)
+            .map(Into::<DataOptions>::into)
             .collect())
     }
 }

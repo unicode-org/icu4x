@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use crate::ResourceKey;
+use crate::DataKey;
 use alloc::boxed::Box;
 use core::fmt;
 
@@ -17,11 +17,11 @@ use core::fmt;
 ///
 /// It will typically be implemented on data providers used in datagen.
 ///
-/// The `impl_dyn_provider` is able to automatically implement this trait.
+/// The `impl_dynamic_data_provider` is able to automatically implement this trait.
 pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
     fn convert(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, ReturnedPayloadError<MFrom>>;
 }
@@ -34,7 +34,7 @@ where
 {
     fn convert(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, ReturnedPayloadError<MFrom>> {
         (**self).convert(key, from)

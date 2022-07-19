@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
 /// A data provider reading from CLDR JSON plural rule files.
@@ -24,7 +24,7 @@ impl From<&SourceData> for PluralsProvider {
 }
 
 impl PluralsProvider {
-    fn get_rules_for(&self, key: ResourceKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
+    fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
         if key == CardinalV1Marker::KEY {
             self.source
                 .cldr()?
@@ -48,7 +48,7 @@ impl PluralsProvider {
     }
 }
 
-impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> for PluralsProvider {
+impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> DataProvider<M> for PluralsProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
@@ -65,17 +65,17 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
 
 icu_provider::make_exportable_provider!(PluralsProvider, [OrdinalV1Marker, CardinalV1Marker,]);
 
-impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>
+impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> IterableDataProvider<M>
     for PluralsProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(self
             .get_rules_for(M::KEY)?
             .0
             .keys()
             // TODO(#568): Avoid the clone
             .cloned()
-            .map(ResourceOptions::from)
+            .map(DataOptions::from)
             .collect())
     }
 }

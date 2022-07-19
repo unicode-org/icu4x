@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::{ResourceKey, ResourceMarker};
+use icu_provider::{DataKey, KeyedDataMarker};
 
 /// List of all supported keys
-pub fn all_keys() -> Vec<ResourceKey> {
+pub fn all_keys() -> Vec<DataKey> {
     let mut v = vec![
         icu_calendar::provider::JapaneseErasV1Marker::KEY,
         icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,

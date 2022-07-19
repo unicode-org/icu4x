@@ -81,7 +81,7 @@ impl ZonedAnyDateTimeFormatter {
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
-    /// preferable to use a provider that implements `ResourceProvider<D>` for all `D`, and ensure data is loaded as
+    /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
     ///
@@ -129,23 +129,23 @@ impl ZonedAnyDateTimeFormatter {
     ) -> Result<Self, DateTimeFormatterError>
     where
         L: Into<Locale>,
-        DP: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        DP: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
-        DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
-        CEP: ResourceProvider<JapaneseErasV1Marker> + ?Sized,
+        PP: DataProvider<OrdinalV1Marker> + ?Sized,
+        DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
+        CEP: DataProvider<JapaneseErasV1Marker> + ?Sized,
     {
         let mut locale = locale.into();
 

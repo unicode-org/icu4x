@@ -13,9 +13,9 @@ use icu_locid::extensions_unicode_key as key;
 use icu_locid::subtags_language as language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_provider::ResourceKey;
+use icu_provider::DataKey;
 use std::convert::TryFrom;
 use std::str::FromStr;
 use writeable::Writeable;
@@ -24,7 +24,7 @@ use zerovec::ZeroVec;
 mod collator_serde;
 
 /// Collection of all the key for easy reference from the datagen registry.
-pub const ALL_KEYS: [ResourceKey; 6] = [
+pub const ALL_KEYS: [DataKey; 6] = [
     CollationDataV1Marker::KEY,
     CollationDiacriticsV1Marker::KEY,
     CollationJamoV1Marker::KEY,
@@ -33,7 +33,7 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
     CollationSpecialPrimariesV1Marker::KEY,
 ];
 
-fn locale_to_file_name(opts: &ResourceOptions) -> String {
+fn locale_to_file_name(opts: &DataOptions) -> String {
     let mut s = if opts.get_langid() == LanguageIdentifier::UND {
         String::from("root")
     } else {
@@ -113,7 +113,7 @@ impl From<&SourceData> for CollationProvider {
 macro_rules! collation_provider {
     ($(($marker:ident, $serde_struct:ident, $suffix:literal, $conversion:expr)),+, $toml_data:ident) => {
         $(
-            impl ResourceProvider<$marker> for CollationProvider {
+            impl DataProvider<$marker> for CollationProvider {
                 fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let $toml_data: &collator_serde::$serde_struct = self
                         .source
@@ -136,8 +136,8 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableResourceProvider<$marker> for CollationProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+            impl IterableDataProvider<$marker> for CollationProvider {
+                fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
                     Ok(self
                         .source
                         .icuexport()?
@@ -152,7 +152,7 @@ macro_rules! collation_provider {
                                 .map(ToString::to_string)
                         )
                         .filter_map(|s|file_name_to_locale(&s))
-                        .map(ResourceOptions::from)
+                        .map(DataOptions::from)
                         .collect()
                     )
                 }

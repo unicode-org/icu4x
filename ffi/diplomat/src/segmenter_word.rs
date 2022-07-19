@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
-    use icu_provider::ResourceProvider;
+    use icu_provider::DataProvider;
     use icu_segmenter::{
         UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker, WordBreakIterator,
         WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakSegmenter,
@@ -42,8 +42,8 @@ pub mod ffi {
 
         fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XWordBreakSegmenter>, ICU4XError>
         where
-            D: ResourceProvider<WordBreakDataV1Marker>
-                + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+            D: DataProvider<WordBreakDataV1Marker>
+                + DataProvider<UCharDictionaryBreakDataV1Marker>
                 + ?Sized,
         {
             WordBreakSegmenter::try_new(provider)

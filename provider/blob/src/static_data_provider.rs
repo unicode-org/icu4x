@@ -79,7 +79,7 @@ impl StaticDataProvider {
     ///
     /// let stub_provider = StaticDataProvider::new_empty();
     ///
-    /// ResourceProvider::<HelloWorldV1Marker>::load_resource(
+    /// DataProvider::<HelloWorldV1Marker>::load_resource(
     ///     &stub_provider,
     ///     &DataRequest {
     ///         options: locale!("la").into(),
@@ -98,7 +98,7 @@ impl StaticDataProvider {
 impl BufferProvider for StaticDataProvider {
     fn load_buffer(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
@@ -107,11 +107,11 @@ impl BufferProvider for StaticDataProvider {
             .data
             .keys
             .get0(&key.get_hash())
-            .ok_or(DataErrorKind::MissingResourceKey)
+            .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
                 cursor
                     .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
-                    .ok_or(DataErrorKind::MissingResourceOptions)
+                    .ok_or(DataErrorKind::MissingDataOptions)
             })
             .map_err(|kind| kind.with_req(key, req))?;
         let bytes = self

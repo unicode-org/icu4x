@@ -31,11 +31,11 @@ pub(crate) struct BakedDataExporter {
     pretty: bool,
     insert_feature_gates: bool,
     // Temporary storage for put_payload: key -> (marker path, bake -> [options])
-    data: Mutex<HashMap<ResourceKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
+    data: Mutex<HashMap<DataKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
     mod_files: Mutex<HashMap<PathBuf, Vec<String>>>,
-    /// Triples of the ResourceMarker, the path to the DATA slice, and the feature that includes it.
+    /// Triples of the KeyedDataMarker, the path to the DATA slice, and the feature that includes it.
     /// This is populated by `put_payload` and consumed by `flush` which writes the implementations.
     marker_data_feature: Mutex<Vec<(SyncTokenStream, SyncTokenStream, SyncTokenStream)>>,
     // List of dependencies used by baking.
@@ -111,8 +111,8 @@ impl BakedDataExporter {
 impl DataExporter for BakedDataExporter {
     fn put_payload(
         &self,
-        key: ResourceKey,
-        options: &ResourceOptions,
+        key: DataKey,
+        options: &DataOptions,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
@@ -128,7 +128,7 @@ impl DataExporter for BakedDataExporter {
         Ok(())
     }
 
-    fn flush(&self, key: ResourceKey) -> Result<(), DataError> {
+    fn flush(&self, key: DataKey) -> Result<(), DataError> {
         let (marker, raw) = self
             .data
             .lock()
@@ -300,7 +300,7 @@ impl DataExporter for BakedDataExporter {
         let resource_impls = marker_data_feature_ident.iter().map(|(marker, data, feature, _)| {
             quote! {
                 #feature
-                impl ResourceProvider<#marker> for BakedDataProvider {
+                impl DataProvider<#marker> for BakedDataProvider {
                     fn load_resource(
                         &self,
                         req: &DataRequest,
@@ -308,7 +308,7 @@ impl DataExporter for BakedDataExporter {
                         Ok(DataResponse {
                             metadata: Default::default(),
                             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                                litemap_slice_get(#data::DATA, <#marker as ResourceMarker>::KEY, req)?,
+                                litemap_slice_get(#data::DATA, <#marker as KeyedDataMarker>::KEY, req)?,
                             ))),
                         })
                     }
@@ -333,14 +333,14 @@ impl DataExporter for BakedDataExporter {
 
                 fn litemap_slice_get<T: ?Sized>(
                     values: &'static [(&'static str, &'static T)],
-                    key: ResourceKey,
+                    key: DataKey,
                     req: &DataRequest,
                 ) -> Result<&'static T, DataError> {
                     #[allow(clippy::unwrap_used)]
                     values
                         .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
                         .map(|i| values.get(i).unwrap().1)
-                        .map_err(|_| DataErrorKind::MissingResourceOptions.with_req(key, req))
+                        .map_err(|_| DataErrorKind::MissingDataOptions.with_req(key, req))
                 }
             },
         )
@@ -351,7 +351,7 @@ impl DataExporter for BakedDataExporter {
             .map(|(marker, _, feature, ident)| {
                 quote! {
                     #feature
-                    const #ident: ::icu_provider::ResourceKeyHash = #marker::KEY.get_hash();
+                    const #ident: ::icu_provider::DataKeyHash = #marker::KEY.get_hash();
                 }
             });
 
@@ -383,12 +383,12 @@ impl DataExporter for BakedDataExporter {
             PathBuf::from("any"),
             quote! {
                 impl AnyProvider for BakedDataProvider {
-                    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+                    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
                         #(#any_consts)*
                         Ok(AnyResponse {
                             payload: Some(match key.get_hash() {
                                 #(#any_cases)*
-                                _ => return Err(DataErrorKind::MissingResourceKey.with_req(key, req)),
+                                _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),
                             }),
                             metadata: Default::default(),
                         })
