@@ -130,8 +130,6 @@ impl DataPayload<HelloWorldV1Marker> {
     }
 }
 
-impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
-
 #[cfg(feature = "datagen")]
 make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 

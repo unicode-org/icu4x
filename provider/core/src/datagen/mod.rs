@@ -74,6 +74,11 @@ macro_rules! make_exportable_provider {
             [ $($struct_m),+, ],
             $crate::datagen::ExportMarker
         );
+        $crate::impl_dyn_provider!(
+            $provider,
+            [ $($struct_m),+, ],
+            $crate::any::AnyMarker
+        );
 
         impl $crate::datagen::IterableDynProvider<$crate::datagen::ExportMarker> for $provider {
             fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Vec<$crate::ResourceOptions>, $crate::DataError> {
