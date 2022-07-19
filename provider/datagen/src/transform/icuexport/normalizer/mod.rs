@@ -18,24 +18,24 @@ use zerovec::ZeroVec;
 
 mod normalizer_serde;
 
+/// A provider for normalization data reading from icuexportdata TOML files.
+pub struct NormalizationProvider {
+    source: SourceData,
+}
+
+impl From<&SourceData> for NormalizationProvider {
+    fn from(source: &SourceData) -> Self {
+        Self {
+            source: source.clone(),
+        }
+    }
+}
+
 macro_rules! normalization_provider {
-    ($marker:ident, $provider:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
+    ($marker:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
         use icu_normalizer::provider::$marker;
 
-        /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
-        pub struct $provider {
-            source: SourceData,
-        }
-
-        impl From<&SourceData> for $provider {
-            fn from(source: &SourceData) -> Self {
-                Self {
-                    source: source.clone(),
-                }
-            }
-        }
-
-        impl ResourceProvider<$marker> for $provider {
+        impl ResourceProvider<$marker> for NormalizationProvider {
             fn load_resource(
                 &self,
                 _req: &DataRequest,
@@ -51,9 +51,7 @@ macro_rules! normalization_provider {
             }
         }
 
-        icu_provider::make_exportable_provider!($provider, [$marker,]);
-
-        impl IterableResourceProvider<$marker> for $provider {
+        impl IterableResourceProvider<$marker> for NormalizationProvider {
             fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
                 Ok(vec![ResourceOptions::default()])
             }
@@ -62,10 +60,9 @@ macro_rules! normalization_provider {
 }
 
 macro_rules! normalization_data_provider {
-    ($marker:ident, $provider:ident, $file_name:literal) => {
+    ($marker:ident, $file_name:literal) => {
         normalization_provider!(
             $marker,
-            $provider,
             DecompositionData,
             $file_name,
             {
@@ -92,10 +89,9 @@ macro_rules! normalization_data_provider {
 }
 
 macro_rules! normalization_supplement_provider {
-    ($marker:ident, $provider:ident, $file_name:literal) => {
+    ($marker:ident, $file_name:literal) => {
         normalization_provider!(
             $marker,
-            $provider,
             DecompositionSupplement,
             $file_name,
             {
@@ -116,10 +112,9 @@ macro_rules! normalization_supplement_provider {
 }
 
 macro_rules! normalization_tables_provider {
-    ($marker:ident, $provider:ident, $file_name:literal) => {
+    ($marker:ident, $file_name:literal) => {
         normalization_provider!(
             $marker,
-            $provider,
             DecompositionTables,
             $file_name,
             {
@@ -144,10 +139,9 @@ macro_rules! normalization_tables_provider {
 }
 
 macro_rules! normalization_passthrough_provider {
-    ($marker:ident, $provider:ident, $file_name:literal) => {
+    ($marker:ident, $file_name:literal) => {
         normalization_provider!(
             $marker,
-            $provider,
             CompositionPassthrough,
             $file_name,
             {
@@ -170,10 +164,9 @@ macro_rules! normalization_passthrough_provider {
 }
 
 macro_rules! normalization_canonical_compositions_provider {
-    ($marker:ident, $provider:ident, $file_name:literal) => {
+    ($marker:ident, $file_name:literal) => {
         normalization_provider!(
             $marker,
-            $provider,
             CanonicalCompositions,
             $file_name,
             {
@@ -192,10 +185,9 @@ macro_rules! normalization_canonical_compositions_provider {
 }
 
 macro_rules! normalization_non_recursive_decomposition_supplement_provider {
-    ($marker:ident, $provider:ident, $file_name:literal) => {
+    ($marker:ident, $file_name:literal) => {
         normalization_provider!(
             $marker,
-            $provider,
             NonRecursiveDecompositionSupplement,
             $file_name,
             {
@@ -224,41 +216,20 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
     };
 }
 
-normalization_data_provider!(
-    CanonicalDecompositionDataV1Marker,
-    CanonicalDecompositionDataProvider,
-    "nfd"
-);
+normalization_data_provider!(CanonicalDecompositionDataV1Marker, "nfd");
 
-normalization_supplement_provider!(
-    CompatibilityDecompositionSupplementV1Marker,
-    CompatibilityDecompositionSupplementProvider,
-    "nfkd"
-);
+normalization_supplement_provider!(CompatibilityDecompositionSupplementV1Marker, "nfkd");
 
-normalization_supplement_provider!(
-    Uts46DecompositionSupplementV1Marker,
-    Uts46DecompositionSupplementProvider,
-    "uts46d"
-);
+normalization_supplement_provider!(Uts46DecompositionSupplementV1Marker, "uts46d");
 
-normalization_tables_provider!(
-    CanonicalDecompositionTablesV1Marker,
-    CanonicalDecompositionTablesProvider,
-    "nfdex"
-);
+normalization_tables_provider!(CanonicalDecompositionTablesV1Marker, "nfdex");
 
-normalization_tables_provider!(
-    CompatibilityDecompositionTablesV1Marker,
-    CompatibilityDecompositionTablesProvider,
-    "nfkdex"
-);
+normalization_tables_provider!(CompatibilityDecompositionTablesV1Marker, "nfkdex");
 
 // No uts46dex, because that data is also in nfkdex.
 
 normalization_passthrough_provider!(
     CanonicalCompositionPassthroughV1Marker,
-    CanonicalCompositionPassthroughProvider,
     // nfkc.toml is close enough that we could provide an option
     // to use nfkc.toml here so that it would get deduplicated
     // with the meant-for-NFKC case below for data size at the
@@ -273,26 +244,29 @@ normalization_passthrough_provider!(
     "nfc"
 );
 
-normalization_passthrough_provider!(
-    CompatibilityCompositionPassthroughV1Marker,
-    CompatibilityCompositionPassthroughProvider,
-    "nfkc"
-);
+normalization_passthrough_provider!(CompatibilityCompositionPassthroughV1Marker, "nfkc");
 
-normalization_passthrough_provider!(
-    Uts46CompositionPassthroughV1Marker,
-    Uts46CompositionPassthroughProvider,
-    "uts46"
-);
+normalization_passthrough_provider!(Uts46CompositionPassthroughV1Marker, "uts46");
 
-normalization_canonical_compositions_provider!(
-    CanonicalCompositionsV1Marker,
-    CanonicalCompositionsProvider,
-    "compositions"
-);
+normalization_canonical_compositions_provider!(CanonicalCompositionsV1Marker, "compositions");
 
 normalization_non_recursive_decomposition_supplement_provider!(
     NonRecursiveDecompositionSupplementV1Marker,
-    NonRecursiveDecompositionSupplementProvider,
     "decompositionex"
+);
+
+icu_provider::make_exportable_provider!(
+    NormalizationProvider,
+    [
+        CanonicalDecompositionDataV1Marker,
+        CompatibilityDecompositionSupplementV1Marker,
+        Uts46DecompositionSupplementV1Marker,
+        CanonicalDecompositionTablesV1Marker,
+        CompatibilityDecompositionTablesV1Marker,
+        CanonicalCompositionPassthroughV1Marker,
+        CompatibilityCompositionPassthroughV1Marker,
+        Uts46CompositionPassthroughV1Marker,
+        CanonicalCompositionsV1Marker,
+        NonRecursiveDecompositionSupplementV1Marker,
+    ]
 );
