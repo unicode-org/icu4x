@@ -2,50 +2,37 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu` is the main meta-package of the `ICU4X` project.
+//! `icu` is the main meta-crate of the `ICU4X` project.
 //!
 //! It provides a comprehensive selection of
 //! [Unicode Internationalization Components](http://site.icu-project.org/)
 //! in their canonical configurations intended to enable software
 //! internationalization capabilities.
 //!
-//! The package is provided for convenience and users are encouraged
-//! to fine-tune components with the features they need.
-//!
-//! The package does not bring any unique functionality. Users
-//! can achieve the exact same by manually including the dependent
-//! components with pre-selected features.
+//! This crate does not bring any unique functionality. Each module is also
+//! available as a stand-alone crate, i.e. `icu::list` as `icu_list`.
 //!
 //! # Data Management
 //!
-//! Most of Unicode functionality relies on data which has to be provided
-//! to the APIs.
+//! Most functionality relies on data which clients have to provide to the APIs.
 //!
-//! `ICU4X` project uses a concept of [`DataProvider`] - a service used to
-//! handle data management.
+//! `ICU4X` uses the concept of a [`DataProvider`] to separate data from logic.
+//! Data providers come in many different forms; the following providers are provided
+//! by `ICU4X` in separate crates:
+//! * [`BlobDataProvider`]: uses an in-memory serde-serialized blob. This is the most flexible provider, and
+//!   data can be updated at runtime.
+//! * `BakedDataProvider`: a code-generated provider that contains the data directly in Rust code. This is
+//!   the most efficient provider as it's serialization-free, and allows for compile-time optimizations.
+//! * [`FsDataProvider`]: uses a file system tree of Serde files. This is mostly useful for development and
+//!   not recommended in production for performance reasons.
+//! * [`icu_provider_adapters`]: this crate contains APIs to combine providers or
+//!   provide additional functionality such as locale fallback.
 //!
-//! There can be many different heuristics for handling data management and
-//! this meta-package does not supply any default [`DataProvider`].
+//! The data that is required by these providers (in `BakedDataProvider`'s case, the provider itself) can be
+//! generated and customized using the [`icu_datagen`] crate.
 //!
-//! When using `ICU4X` users are expected to decide which provider they want to use
-//! and instrument it to point at the correct location where the data files are stored.
-//!
-//! In the following examples an [`icu_testdata`] package is used which wraps
-//! an [`FsDataProvider`] with locally available subset of data.
-//!
-//! # Features
-//!
-//! ICU4X components share a set of common features that control whether core pieces of
-//! functionality are compiled. These features are:
-//!
-//! - `serialize`: Whether to include Serde Deserialize implementations for
-//!   ICU4X locale data structs, such as [`SymbolsV1`], and Serialize/Deserialize implementations
-//!   for core libary types, such as [`Locale`] (On by default)
-//! - `datagen`: Whether to include Serde Serialize and other data generation traits for ICU4X locale data structs.
-//! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
-//!   when running `cargo bench`.
-//! - `experimental`: Whether to enable experimental preview features. Modules enabled with
-//!   this feature may not be production-ready and could change at any time.
+//! The following example uses the [`icu_testdata`] crate, which contains prepackaged data providers
+//! for a small set of locales.
 //!
 //! # Example
 //!
@@ -70,9 +57,33 @@
 //! );
 //! ```
 //!
+//! # Features
+//!
+//! ICU4X components share a set of common features that control whether core pieces of
+//! functionality are compiled. These features are:
+//!
+//! - `std`: Whether to include `std` support. Without this feature, `icu` is `#[no_std]`-compatible
+//! - `serde`: Whether to include `serde::Deserialize` implementations for data structs, such as [`SymbolsV1`],
+//!   and `serde::{Serialize, Deserialize}` implementations for core libary types, such as [`Locale`]. These are
+//!   required with `serde`-backed providers like [`BlobDataProvider`][^1].
+//! - `experimental`: Whether to enable experimental preview features. Modules enabled with
+//!   this feature may not be production-ready and could change at any time.
+//!
+//! The following features are only available on the individual crates, but not on this meta-crate:
+//! - `datagen`: Whether to implement `serde::Serialize` and functionality that is only required during data generation.
+//! - `bench`: Whether to enable exhaustive benchmarks. This can be enabled on individual crates
+//!   when running `cargo bench`.
+//!
+//! [^1]: [`FsDataProvider`] also requires the `serde_human` feature if JSON is used, as that data is less
+//!       preprocessed.
+//!
+//! 
 //! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
+//! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
 //! [`icu_testdata`]: ../icu_testdata/index.html
+//! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
+//! [`icu_datagen`]: ../icu_datagen/index.html
 //! [`Locale`]: crate::locid::Locale
 //! [`SymbolsV1`]: crate::decimal::provider::DecimalSymbolsV1
 
@@ -118,3 +129,7 @@ pub use icu_plurals as plurals;
 
 #[doc(inline)]
 pub use icu_properties as properties;
+
+#[cfg(feature = "experimental")]
+#[doc(inline)]
+pub use icu_segmenter as segmenter;
