@@ -117,8 +117,8 @@ impl CodePointSetData {
     }
 
     /// Construct a new one an owned [`CodePointSet`]
-    pub fn from_codepoint_set(set: CodePointSet<'static>) -> Self {
-        let set = PropertyCodePointSetV1::from_codepoint_set(set);
+    pub fn from_code_point_set(set: CodePointSet<'static>) -> Self {
+        let set = PropertyCodePointSetV1::from_code_point_set(set);
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
     }
 
@@ -132,8 +132,8 @@ impl CodePointSetData {
     /// If using this function it is preferable to stick to [`CodePointSet`] representations
     /// in the data, however exceptions can be made if the performance hit is considered to
     /// be okay.
-    pub fn to_codepoint_set(&self) -> CodePointSet<'_> {
-        self.data.get().to_codepoint_set()
+    pub fn to_code_point_set(&self) -> CodePointSet<'_> {
+        self.data.get().to_code_point_set()
     }
 }
 
@@ -1706,7 +1706,7 @@ pub fn get_for_general_category_group(
         .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
         .map(|cpm_range| cpm_range.range);
     let set = CodePointSet::from_iter(matching_gc_ranges);
-    Ok(CodePointSetData::from_codepoint_set(set))
+    Ok(CodePointSetData::from_code_point_set(set))
 }
 
 #[cfg(test)]
@@ -1755,14 +1755,14 @@ mod tests {
         let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
-            let category_set = category_set.to_codepoint_set();
+            let category_set = category_set.to_code_point_set();
 
             let data = maps::get_general_category(&provider).expect("The data should be valid");
             let gc = data.as_borrowed();
 
             let mut builder = CodePointSetBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(&gc.get_set_for_value(*subcategory).to_codepoint_set());
+                builder.add_set(&gc.get_set_for_value(*subcategory).to_code_point_set());
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);

@@ -126,7 +126,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.data.get().get_set_for_value(value);
-        CodePointSetData::from_codepoint_set(set)
+        CodePointSetData::from_code_point_set(set)
     }
 
     /// Construct a new one from loaded data
@@ -233,7 +233,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.map.get_set_for_value(value);
-        CodePointSetData::from_codepoint_set(set)
+        CodePointSetData::from_code_point_set(set)
     }
 }
 

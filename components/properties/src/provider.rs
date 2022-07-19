@@ -86,12 +86,12 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn from_codepoint_set(l: CodePointSet<'static>) -> Self {
+    pub(crate) fn from_code_point_set(l: CodePointSet<'static>) -> Self {
         Self::InversionList(l)
     }
 
     #[inline]
-    pub(crate) fn to_codepoint_set(&'_ self) -> CodePointSet<'_> {
+    pub(crate) fn to_code_point_set(&'_ self) -> CodePointSet<'_> {
         match *self {
             Self::InversionList(ref l) => ZeroFrom::zero_from(l),
         }
