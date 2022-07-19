@@ -90,7 +90,7 @@ impl SegmenterLstmProvider {
 
         Ok(LstmDataV1 {
             model: Cow::from(lstm_data.model.clone()),
-            dic: dic.clone(),
+            dic,
             mat1,
             mat2,
             mat3,
