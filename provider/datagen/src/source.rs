@@ -92,7 +92,7 @@ impl SourceData {
     /// using the given tag. (see [GitHub releases](https://github.com/unicode-org/icu/releases)).
     pub fn with_icuexport_for_tag(self, mut tag: &str) -> Result<Self, DataError> {
         if tag == "release-71-1" {
-            tag = "icu4x/2022-06-30/71.x";
+            tag = "icu4x/2022-07-18/71.x";
         }
         self.with_icuexport(
             cached_path::CacheBuilder::new().freshness_lifetime(u64::MAX).build().and_then(|cache| cache
