@@ -149,9 +149,7 @@ impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker>
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (collator :: prim_v1 :: DATA , < :: icu_collator :: provider :: CollationSpecialPrimariesV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::DatePatternsV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_datetime::provider::calendar::DatePatternsV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -173,9 +171,7 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Mark
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: skeletons_v1_u_ca :: DATA , < :: icu_datetime :: provider :: calendar :: DateSkeletonPatternsV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -184,9 +180,7 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker>
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: datesymbols_v1_u_ca :: DATA , < :: icu_datetime :: provider :: calendar :: DateSymbolsV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -195,9 +189,7 @@ impl DataProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker>
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (datetime :: timelengths_v1_u_ca :: DATA , < :: icu_datetime :: provider :: calendar :: TimePatternsV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -421,9 +413,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalCompositionPassthroughV1M
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (normalizer :: nfc_v1 :: DATA , < :: icu_normalizer :: provider :: CanonicalCompositionPassthroughV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
-impl DataProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -700,9 +690,7 @@ impl DataProvider<::icu_properties::provider::CasedV1Marker> for BakedDataProvid
         })
     }
 }
-impl DataProvider<::icu_properties::provider::ChangesWhenCasefoldedV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::ChangesWhenCasefoldedV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -711,9 +699,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenCasefoldedV1Marker>
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (props :: cwcf_v1 :: DATA , < :: icu_properties :: provider :: ChangesWhenCasefoldedV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
-impl DataProvider<::icu_properties::provider::ChangesWhenLowercasedV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::ChangesWhenLowercasedV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -735,9 +721,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker>
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (props :: cwkcf_v1 :: DATA , < :: icu_properties :: provider :: ChangesWhenNfkcCasefoldedV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
-impl DataProvider<::icu_properties::provider::ChangesWhenTitlecasedV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::ChangesWhenTitlecasedV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -746,9 +730,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenTitlecasedV1Marker>
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (props :: cwt_v1 :: DATA , < :: icu_properties :: provider :: ChangesWhenTitlecasedV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
-impl DataProvider<::icu_properties::provider::ChangesWhenUppercasedV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::ChangesWhenUppercasedV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -925,9 +907,7 @@ impl DataProvider<::icu_properties::provider::EmojiV1Marker> for BakedDataProvid
         })
     }
 }
-impl DataProvider<::icu_properties::provider::ExtendedPictographicV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::ExtendedPictographicV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -987,9 +967,7 @@ impl DataProvider<::icu_properties::provider::GraphemeBaseV1Marker> for BakedDat
         })
     }
 }
-impl DataProvider<::icu_properties::provider::GraphemeClusterBreakV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::GraphemeClusterBreakV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -1101,24 +1079,13 @@ impl DataProvider<::icu_properties::provider::IdsBinaryOperatorV1Marker> for Bak
         })
     }
 }
-impl DataProvider<::icu_properties::provider::IdsTrinaryOperatorV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::IdsTrinaryOperatorV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::IdsTrinaryOperatorV1Marker>, DataError>
     {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                litemap_slice_get(
-                    props::idst_v1::DATA,
-                    <::icu_properties::provider::IdsTrinaryOperatorV1Marker as KeyedDataMarker>::KEY,
-                    req,
-                )?,
-            ))),
-        })
+        Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (props :: idst_v1 :: DATA , < :: icu_properties :: provider :: IdsTrinaryOperatorV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
 impl DataProvider<::icu_properties::provider::JoinControlV1Marker> for BakedDataProvider {
@@ -1155,9 +1122,7 @@ impl DataProvider<::icu_properties::provider::LineBreakV1Marker> for BakedDataPr
         })
     }
 }
-impl DataProvider<::icu_properties::provider::LogicalOrderExceptionV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::LogicalOrderExceptionV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -1200,9 +1165,7 @@ impl DataProvider<::icu_properties::provider::MathV1Marker> for BakedDataProvide
         })
     }
 }
-impl DataProvider<::icu_properties::provider::NoncharacterCodePointV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::NoncharacterCodePointV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -1379,9 +1342,7 @@ impl DataProvider<::icu_properties::provider::SoftDottedV1Marker> for BakedDataP
         })
     }
 }
-impl DataProvider<::icu_properties::provider::TerminalPunctuationV1Marker>
-    for BakedDataProvider
-{
+impl DataProvider<::icu_properties::provider::TerminalPunctuationV1Marker> for BakedDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -1527,10 +1488,8 @@ impl DataProvider<::icu_provider::hello_world::HelloWorldV1Marker> for BakedData
         })
     }
 }
-impl
-    DataProvider<
-        ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker,
-    > for BakedDataProvider
+impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker>
+    for BakedDataProvider
 {
     fn load_resource(
         &self,

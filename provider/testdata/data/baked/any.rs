@@ -26,8 +26,7 @@ impl AnyProvider for BakedDataProvider {
             ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY.get_hash();
         const METAZONESPECIFICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY.get_hash();
-        const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.get_hash();
+        const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.get_hash();
         const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_datetime::provider::week_data::WeekDataV1Marker::KEY.get_hash();
         const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash = ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.get_hash();
         const ANDLISTV1MARKER: ::icu_provider::DataKeyHash = ::icu_list::provider::AndListV1Marker::KEY.get_hash();
@@ -37,8 +36,7 @@ impl AnyProvider for BakedDataProvider {
         const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash = ::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY.get_hash();
         const CANONICALCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY.get_hash();
-        const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.get_hash();
+        const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash = ::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.get_hash();
         const CANONICALDECOMPOSITIONDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY.get_hash();
         const CANONICALDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
@@ -66,16 +64,12 @@ impl AnyProvider for BakedDataProvider {
             ::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY.get_hash();
         const CASEIGNORABLEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CaseIgnorableV1Marker::KEY.get_hash();
         const CASEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::CasedV1Marker::KEY.get_hash();
-        const CHANGESWHENCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY.get_hash();
-        const CHANGESWHENLOWERCASEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY.get_hash();
+        const CHANGESWHENCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY.get_hash();
+        const CHANGESWHENLOWERCASEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY.get_hash();
         const CHANGESWHENNFKCCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker::KEY.get_hash();
-        const CHANGESWHENTITLECASEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY.get_hash();
-        const CHANGESWHENUPPERCASEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY.get_hash();
+        const CHANGESWHENTITLECASEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY.get_hash();
+        const CHANGESWHENUPPERCASEDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY.get_hash();
         const DASHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::DashV1Marker::KEY.get_hash();
         const DEFAULTIGNORABLECODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::DefaultIgnorableCodePointV1Marker::KEY.get_hash();
@@ -87,13 +81,11 @@ impl AnyProvider for BakedDataProvider {
         const EMOJIMODIFIERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiModifierV1Marker::KEY.get_hash();
         const EMOJIPRESENTATIONV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiPresentationV1Marker::KEY.get_hash();
         const EMOJIV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::EmojiV1Marker::KEY.get_hash();
-        const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.get_hash();
+        const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.get_hash();
         const EXTENDERV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::ExtenderV1Marker::KEY.get_hash();
         const GENERALCATEGORYV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GeneralCategoryV1Marker::KEY.get_hash();
         const GRAPHEMEBASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeBaseV1Marker::KEY.get_hash();
-        const GRAPHEMECLUSTERBREAKV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY.get_hash();
+        const GRAPHEMECLUSTERBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY.get_hash();
         const GRAPHEMEEXTENDV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::GraphemeExtendV1Marker::KEY.get_hash();
         const HEXDIGITV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::HexDigitV1Marker::KEY.get_hash();
         const IDCONTINUEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdContinueV1Marker::KEY.get_hash();
@@ -103,12 +95,10 @@ impl AnyProvider for BakedDataProvider {
         const IDSTRINARYOPERATORV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY.get_hash();
         const JOINCONTROLV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::JoinControlV1Marker::KEY.get_hash();
         const LINEBREAKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::LineBreakV1Marker::KEY.get_hash();
-        const LOGICALORDEREXCEPTIONV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::LogicalOrderExceptionV1Marker::KEY.get_hash();
+        const LOGICALORDEREXCEPTIONV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::LogicalOrderExceptionV1Marker::KEY.get_hash();
         const LOWERCASEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::LowercaseV1Marker::KEY.get_hash();
         const MATHV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::MathV1Marker::KEY.get_hash();
-        const NONCHARACTERCODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::NoncharacterCodePointV1Marker::KEY.get_hash();
+        const NONCHARACTERCODEPOINTV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::NoncharacterCodePointV1Marker::KEY.get_hash();
         const PATTERNSYNTAXV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PatternSyntaxV1Marker::KEY.get_hash();
         const PATTERNWHITESPACEV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY.get_hash();
         const QUOTATIONMARKV1MARKER: ::icu_provider::DataKeyHash = ::icu_properties::provider::QuotationMarkV1Marker::KEY.get_hash();
