@@ -148,7 +148,7 @@ jobs:
       id: source-data-cache
       with:
         path: data/source
-        key: source-data-41-71b
+        key: source-data-41-71c
     - name: Download CLDR source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
       uses: robinraju/release-downloader@v1.3
@@ -172,12 +172,12 @@ jobs:
         args: > 
           -p icu_datagen --features bin --release --
           --icuexport-root data/source/icuexportdata_icu4x-2022-07-18-71.x.zip
-          --cldr-root data/source/cldr-41.0.0-json-full.zip 
+          --cldr-root data/source/cldr-41.0.0-json-full.zip
           --all-locales
           --all-keys
           --format blob
           --syntax postcard
-          --out data/full.postcard 
+          --out data/full.postcard
 
   # FFI job - runs all "cargo make" FFI tests
   ffi:
