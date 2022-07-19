@@ -93,10 +93,16 @@
 pub use icu_calendar as calendar;
 
 #[doc(inline)]
+pub use icu_collator as collator;
+
+#[doc(inline)]
 pub use icu_datetime as datetime;
 
 #[doc(inline)]
 pub use icu_decimal as decimal;
+
+#[doc(inline)]
+pub use icu_list as list;
 
 #[doc(inline)]
 pub use icu_locale_canonicalizer as locale_canonicalizer;
@@ -105,10 +111,10 @@ pub use icu_locale_canonicalizer as locale_canonicalizer;
 pub use icu_locid as locid;
 
 #[doc(inline)]
+pub use icu_normalizer as normalizer;
+
+#[doc(inline)]
 pub use icu_plurals as plurals;
 
 #[doc(inline)]
 pub use icu_properties as properties;
-
-#[doc(inline)]
-pub use icu_list as list;

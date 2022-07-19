@@ -4,6 +4,9 @@
 
 //! Determine the plural category appropriate for a given number in a given language.
 //!
+//! This module is published as its own crate ([`icu_plural`](https://docs.rs/icu_plural/latest/icu_plural/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+//!
 //! For example in English language, when constructing a message
 //! such as `{ num } items`, the user has to prepare
 //! two variants of the message:

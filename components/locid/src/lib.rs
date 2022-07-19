@@ -4,6 +4,9 @@
 
 //! Parsing, manipulating, and serializing Unicode Language and Locale Identifiers.
 //!
+//! This module is published as its own crate ([`icu_locid`](https://docs.rs/icu_locid/latest/icu_locid/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+//!
 //! The module provides algorithms for parsing a string into a well-formed language or locale identifier
 //! as defined by [`UTS #35: Unicode LDML 3. Unicode Language and Locale Identifiers`].
 //!

@@ -4,6 +4,9 @@
 
 //! Types for dealing with dates, times, and custom calendars.
 //!
+//! This module is published as its own crate ([`icu_calendar`](https://docs.rs/icu_calendar/latest/icu_calendar/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+//!
 //! The [`types`] module has a lot of common types for dealing with dates and times.
 //!
 //! [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]

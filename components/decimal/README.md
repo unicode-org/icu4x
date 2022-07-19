@@ -2,6 +2,9 @@
 
 Formatting basic decimal numbers.
 
+This module is published as its own crate ([`icu_decimal`](https://docs.rs/icu_decimal/latest/icu_decimal/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+
 Support for currencies, measurement units, and compact notation is planned. To track progress,
 follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 
