@@ -27,7 +27,7 @@ use zerofrom::ZeroFrom;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum PropertyUnicodeSetV1<'data> {
+pub enum PropertyCodePointSetV1<'data> {
     /// The set of characters, represented as an inversion list
     InversionList(#[cfg_attr(feature = "serde", serde(borrow))] UnicodeSet<'data>),
     // new variants should go BELOW existing ones
@@ -71,7 +71,7 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
 }
 
 // See CodePointSetData for documentation of these functions
-impl<'data> PropertyUnicodeSetV1<'data> {
+impl<'data> PropertyCodePointSetV1<'data> {
     #[inline]
     pub(crate) fn contains(&self, ch: char) -> bool {
         match *self {
@@ -138,7 +138,7 @@ macro_rules! expand {
                 pub struct $bin_marker;
 
                 impl DataMarker for $bin_marker {
-                    type Yokeable = PropertyUnicodeSetV1<'static>;
+                    type Yokeable = PropertyCodePointSetV1<'static>;
                 }
                 impl ResourceMarker for $bin_marker {
                     const KEY: ResourceKey = resource_key!(concat!("props/", $bin_s, "@1"));

@@ -56,7 +56,7 @@ macro_rules! expand {
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(
-                            PropertyUnicodeSetV1::InversionList(inv_list),
+                            PropertyCodePointSetV1::InversionList(inv_list),
                         )),
                     })
                 }
@@ -147,7 +147,7 @@ expand!(
 
 #[test]
 fn test_basic() {
-    use icu_properties::provider::PropertyUnicodeSetV1;
+    use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
     use icu_uniset::UnicodeSet;
 
@@ -159,7 +159,7 @@ fn test_basic() {
         .expect("Loading was successful");
 
     let whitespace: &UnicodeSet = match payload.get() {
-        PropertyUnicodeSetV1::InversionList(ref l) => l,
+        PropertyCodePointSetV1::InversionList(ref l) => l,
         _ => unreachable!("Should have serialized to an inversion list"),
     };
 
