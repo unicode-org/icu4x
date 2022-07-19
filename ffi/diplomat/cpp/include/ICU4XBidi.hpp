@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XBidi.h"
-}
 
 class ICU4XDataProvider;
 class ICU4XBidi;
@@ -99,9 +97,9 @@ inline diplomat::result<ICU4XBidi, ICU4XError> ICU4XBidi::try_new(const ICU4XDat
   auto diplomat_result_raw_out_value = capi::ICU4XBidi_try_new(provider.AsFFI());
   diplomat::result<ICU4XBidi, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XBidi(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XBidi>(std::move(ICU4XBidi(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

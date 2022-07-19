@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XCodePointSetData.h"
-}
 
 class ICU4XDataProvider;
 class ICU4XCodePointSetData;
@@ -63,9 +61,9 @@ inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_try_get_ascii_hex_digit(provider.AsFFI());
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

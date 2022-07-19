@@ -31,3 +31,9 @@ pub struct CompositionPassthrough {
 pub struct CanonicalCompositions {
     pub compositions: Vec<u16>,
 }
+
+#[derive(serde::Deserialize)]
+pub struct NonRecursiveDecompositionSupplement {
+    pub trie: CodePointTrieToml,
+    pub scalars32: Vec<u32>,
+}

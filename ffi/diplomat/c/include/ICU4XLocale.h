@@ -7,11 +7,18 @@
 #include "diplomat_runtime.h"
 
 #ifdef __cplusplus
-extern "C" {
+namespace capi {
 #endif
 
 typedef struct ICU4XLocale ICU4XLocale;
+#ifdef __cplusplus
+} // namespace capi
+#endif
 #include "diplomat_result_void_ICU4XError.h"
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 
 ICU4XLocale* ICU4XLocale_create(const char* name_data, size_t name_len);
 
@@ -43,6 +50,7 @@ diplomat_result_void_ICU4XError ICU4XLocale_tostring(const ICU4XLocale* self, Di
 void ICU4XLocale_destroy(ICU4XLocale* self);
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

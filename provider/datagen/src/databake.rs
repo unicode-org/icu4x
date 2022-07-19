@@ -182,7 +182,10 @@ impl DataExporter for BakedDataExporter {
             &key.get_path()
                 .to_ascii_lowercase()
                 .replace('@', "_v")
-                .replace('/', "::"),
+                .replace('/', "::")
+                .replace('[', "_")
+                .replace('-', "_")
+                .replace(']', ""),
         )
         .map_err(|_| {
             DataError::custom("Key component is not a valid Rust identifier").with_key(key)

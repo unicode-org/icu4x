@@ -1,0 +1,114 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "tout",
+          "M02": "baba",
+          "M03": "hator",
+          "M04": "kiahk",
+          "M05": "toba",
+          "M06": "amshir",
+          "M07": "baramhat",
+          "M08": "baramouda",
+          "M09": "bashans",
+          "M10": "paona",
+          "M11": "epep",
+          "M12": "mesra",
+          "M13": "nasie"
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12",
+          "M13": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "tout",
+          "M02": "baba",
+          "M03": "hator",
+          "M04": "kiahk",
+          "M05": "toba",
+          "M06": "amshir",
+          "M07": "baramhat",
+          "M08": "baramouda",
+          "M09": "bashans",
+          "M10": "paona",
+          "M11": "epep",
+          "M12": "mesra",
+          "M13": "nasie"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dom",
+        "lun",
+        "mar",
+        "mié",
+        "jue",
+        "vie",
+        "sáb"
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "X",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "DO",
+        "LU",
+        "MA",
+        "MI",
+        "JU",
+        "VI",
+        "SA"
+      ],
+      "wide": [
+        "domingo",
+        "lunes",
+        "martes",
+        "miércoles",
+        "jueves",
+        "viernes",
+        "sábado"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    },
+    "abbr": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    },
+    "narrow": {
+      "ad": "ERA1",
+      "bd": "ERA0"
+    }
+  }
+}

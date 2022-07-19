@@ -7,7 +7,7 @@
 #include "diplomat_runtime.h"
 
 #ifdef __cplusplus
-extern "C" {
+namespace capi {
 #endif
 
 typedef enum ICU4XError {
@@ -49,14 +49,22 @@ typedef enum ICU4XError {
   ICU4XError_DateTimeFormatUnsupportedOptionsError = 2052,
   ICU4XError_DateTimeFormatMissingWeekdaySymbolError = 2053,
   ICU4XError_DateTimeFormatMissingMonthSymbolError = 2054,
-  ICU4XError_DateTimeFormatMissingEraSymbolError = 2055,
-  ICU4XError_DateTimeFormatFixedDecimalError = 2056,
-  ICU4XError_DateTimeFormatMismatchedAnyCalendarError = 2057,
+  ICU4XError_DateTimeFormatFixedDecimalError = 2055,
+  ICU4XError_DateTimeFormatMismatchedAnyCalendarError = 2056,
+  ICU4XError_DateTimeFormatMismatchedCalendarLocaleError = 2057,
 } ICU4XError;
+#ifdef __cplusplus
+} // namespace capi
+#endif
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 
 void ICU4XError_destroy(ICU4XError* self);
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

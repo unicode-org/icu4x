@@ -27,7 +27,7 @@ use icu_decimal::{
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormatter,
 };
-use icu_locid::Locale;
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -62,10 +62,6 @@ impl TimeFormatter {
             preferences,
         )?;
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
@@ -86,7 +82,8 @@ impl TimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )
@@ -182,7 +179,7 @@ impl DateFormatter {
     /// a list of options, then collects all data necessary to format date values into the given locale.
     #[inline(never)]
     pub fn try_new<D>(
-        locale: Locale,
+        mut locale: Locale,
         data_provider: &D,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
@@ -194,6 +191,14 @@ impl DateFormatter {
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,
     {
+        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
+        if cal == Some(&value!("ethioaa")) {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("ethiopic"));
+        }
         let patterns =
             provider::date_time::pattern_for_date_length(data_provider, &locale, length)?;
 
@@ -207,7 +212,7 @@ impl DateFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_for_region(locale.id.region),
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -216,13 +221,10 @@ impl DateFormatter {
             None
         };
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions.clone(),
+                // TODO(#2136): Don't clone here
+                locale.clone(),
                 data_provider,
             )?)
         } else {
@@ -246,7 +248,8 @@ impl DateFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )
@@ -395,7 +398,7 @@ impl DateTimeFormatter {
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     #[inline(never)]
     pub fn try_new<D>(
-        locale: Locale,
+        mut locale: Locale,
         data_provider: &D,
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
@@ -410,6 +413,14 @@ impl DateTimeFormatter {
             + ResourceProvider<WeekDataV1Marker>
             + ?Sized,
     {
+        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
+        if cal == Some(&value!("ethioaa")) {
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(key!("ca"), value!("ethiopic"));
+        }
         let patterns =
             provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
 
@@ -420,7 +431,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_for_region(locale.id.region),
+                        options: ResourceOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -429,13 +440,10 @@ impl DateTimeFormatter {
             None
         };
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions.clone(),
+                // TODO(#2136): Don't clone here
+                locale.clone(),
                 data_provider,
             )?)
         } else {
@@ -472,7 +480,8 @@ impl DateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )

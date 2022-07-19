@@ -35,7 +35,11 @@ pub struct EraStartDate {
     pub day: u8,
 }
 
-#[icu_provider::data_struct(JapaneseErasV1Marker = "calendar/japanese@1")]
+#[icu_provider::data_struct(marker(
+    JapaneseErasV1Marker,
+    "calendar/japanese@1",
+    extension_key = "ca"
+))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -44,8 +48,6 @@ pub struct EraStartDate {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub dates_to_historical_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }

@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XLineBreakSegmenter.h"
-}
 
 class ICU4XDataProvider;
 class ICU4XLineBreakSegmenter;
@@ -92,9 +90,9 @@ inline diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> ICU4XLineBreakSegme
   auto diplomat_result_raw_out_value = capi::ICU4XLineBreakSegmenter_try_new(provider.AsFFI());
   diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineBreakSegmenter>(std::move(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -103,9 +101,9 @@ inline diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> ICU4XLineBreakSegme
   auto diplomat_result_raw_out_value = capi::ICU4XLineBreakSegmenter_try_new_with_options(provider.AsFFI(), capi::ICU4XLineBreakOptions{ .line_break_rule = static_cast<capi::ICU4XLineBreakRule>(diplomat_wrapped_struct_options.line_break_rule), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineBreakSegmenter>(std::move(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

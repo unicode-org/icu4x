@@ -114,13 +114,18 @@ impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
                 message: Cow::Borrowed(s),
             })
             .map_err(|_| DataErrorKind::MissingLocale.with_req(HelloWorldV1Marker::KEY, req))?;
-        let metadata = DataResponseMetadata {
-            data_langid: Some(req.options.get_langid()),
-            ..Default::default()
-        };
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+}
+
+impl DataPayload<HelloWorldV1Marker> {
+    /// Make a [`DataPayload`]`<`[`HelloWorldV1Marker`]`>` from a static string slice.
+    pub fn from_static_str(s: &'static str) -> DataPayload<HelloWorldV1Marker> {
+        DataPayload::from_owned(HelloWorldV1 {
+            message: Cow::Borrowed(s),
         })
     }
 }

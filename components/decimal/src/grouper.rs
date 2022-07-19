@@ -59,7 +59,7 @@ fn test_grouper() {
     use fixed_decimal::FixedDecimal;
     use icu_locid::LanguageIdentifier;
     use icu_provider::prelude::*;
-    use icu_provider_adapters::struct_provider::AnyPayloadProvider;
+    use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use writeable::Writeable;
 
     let western_sizes = GroupingSizesV1 {
@@ -157,15 +157,12 @@ fn test_grouper() {
             let dec = FixedDecimal::from(1)
                 .multiplied_pow10((i as i16) + 3)
                 .unwrap();
-            let data_struct = crate::provider::DecimalSymbolsV1 {
-                grouping_sizes: cas.sizes,
-                ..Default::default()
-            };
-            let provider = AnyPayloadProvider {
-                key: DecimalSymbolsV1Marker::KEY,
-                data: DataPayload::<DecimalSymbolsV1Marker>::from_owned(data_struct)
-                    .wrap_into_any_payload(),
-            };
+            let provider = AnyPayloadProvider::new_owned::<DecimalSymbolsV1Marker>(
+                crate::provider::DecimalSymbolsV1 {
+                    grouping_sizes: cas.sizes,
+                    ..Default::default()
+                },
+            );
             let options = options::FixedDecimalFormatterOptions {
                 grouping_strategy: cas.strategy,
                 ..Default::default()

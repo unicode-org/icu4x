@@ -9,6 +9,7 @@ use crate::transform::cldr::cldr_serde::{
 use crate::SourceData;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
+use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -45,7 +46,8 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                 Territory::Region(r) => Some(Some(*r)),
                 _ => None,
             })
-            .map(ResourceOptions::temp_for_region)
+            .map(LanguageIdentifier::from)
+            .map(ResourceOptions::from)
             .collect();
         Ok(regions.into_iter().collect())
     }
@@ -56,8 +58,6 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         let territory = req
             .options
             .region()
@@ -73,7 +73,7 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
         let week_data = &week_data.supplemental.week_data;
 
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(WeekDataV1(CalendarInfo {
                 first_weekday: week_data
                     .first_day
@@ -101,7 +101,7 @@ icu_provider::make_exportable_provider!(WeekDataProvider, [WeekDataV1Marker,]);
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid::subtags_region as region;
+    use icu_locid::langid;
 
     let provider = WeekDataProvider::from(&SourceData::for_test());
 
@@ -118,7 +118,7 @@ fn basic_cldr_week_data() {
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::temp_for_region(Some(region!("FR"))),
+            options: ResourceOptions::from(langid!("und-FR")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -129,7 +129,7 @@ fn basic_cldr_week_data() {
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::temp_for_region(Some(region!("IQ"))),
+            options: ResourceOptions::from(langid!("und-IQ")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -144,7 +144,7 @@ fn basic_cldr_week_data() {
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::temp_for_region(Some(region!("GG"))),
+            options: ResourceOptions::from(langid!("und-GG")),
             metadata: Default::default(),
         })
         .unwrap()

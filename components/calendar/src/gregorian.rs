@@ -183,13 +183,13 @@ impl DateTime<Gregorian> {
 pub fn year_as_gregorian(year: i32) -> types::FormattableYear {
     if year > 0 {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "ad")),
+            era: types::Era(tinystr!(16, "ce")),
             number: year,
             related_iso: None,
         }
     } else {
         types::FormattableYear {
-            era: types::Era(tinystr!(16, "bc")),
+            era: types::Era(tinystr!(16, "bce")),
             number: 1 - year,
             related_iso: None,
         }

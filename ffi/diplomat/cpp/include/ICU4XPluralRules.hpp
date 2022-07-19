@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XPluralRules.h"
-}
 
 class ICU4XLocale;
 class ICU4XDataProvider;
@@ -84,9 +82,9 @@ inline diplomat::result<ICU4XPluralRules, ICU4XError> ICU4XPluralRules::try_new_
   auto diplomat_result_raw_out_value = capi::ICU4XPluralRules_try_new_cardinal(locale.AsFFI(), provider.AsFFI());
   diplomat::result<ICU4XPluralRules, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XPluralRules(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPluralRules>(std::move(ICU4XPluralRules(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -94,9 +92,9 @@ inline diplomat::result<ICU4XPluralRules, ICU4XError> ICU4XPluralRules::try_new_
   auto diplomat_result_raw_out_value = capi::ICU4XPluralRules_try_new_ordinal(locale.AsFFI(), provider.AsFFI());
   diplomat::result<ICU4XPluralRules, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XPluralRules(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XPluralRules>(std::move(ICU4XPluralRules(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

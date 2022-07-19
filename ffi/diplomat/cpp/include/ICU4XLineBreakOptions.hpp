@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XLineBreakOptions.h"
-}
 
 #include "ICU4XLineBreakRule.hpp"
 #include "ICU4XWordBreakRule.hpp"

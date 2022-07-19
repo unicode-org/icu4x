@@ -6,10 +6,11 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
+#include "ICU4XError.h"
 #ifdef __cplusplus
+namespace capi {
 extern "C" {
 #endif
-#include "ICU4XError.h"
 typedef struct diplomat_result_void_ICU4XError {
     union {
         ICU4XError err;
@@ -17,6 +18,7 @@ typedef struct diplomat_result_void_ICU4XError {
     bool is_ok;
 } diplomat_result_void_ICU4XError;
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

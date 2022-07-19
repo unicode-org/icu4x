@@ -1,0 +1,126 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "SolarTwelve": [
+          "janv.",
+          "févr.",
+          "mars",
+          "avr.",
+          "mai",
+          "juin",
+          "juil.",
+          "août",
+          "sept.",
+          "oct.",
+          "nov.",
+          "déc."
+        ]
+      },
+      "narrow": {
+        "SolarTwelve": [
+          "J",
+          "F",
+          "M",
+          "A",
+          "M",
+          "J",
+          "J",
+          "A",
+          "S",
+          "O",
+          "N",
+          "D"
+        ]
+      },
+      "short": null,
+      "wide": {
+        "SolarTwelve": [
+          "janvier",
+          "février",
+          "mars",
+          "avril",
+          "mai",
+          "juin",
+          "juillet",
+          "août",
+          "septembre",
+          "octobre",
+          "novembre",
+          "décembre"
+        ]
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "bce": "avant Jésus-Christ",
+      "ce": "après Jésus-Christ",
+      "heisei": "Heisei",
+      "meiji": "Meiji",
+      "reiwa": "Reiwa",
+      "showa": "Shōwa",
+      "taisho": "Taishō"
+    },
+    "abbr": {
+      "bce": "av. J.-C.",
+      "ce": "ap. J.-C.",
+      "heisei": "Heisei",
+      "meiji": "Meiji",
+      "reiwa": "Reiwa",
+      "showa": "Shōwa",
+      "taisho": "Taishō"
+    },
+    "narrow": {
+      "bce": "av. J.-C.",
+      "ce": "ap. J.-C.",
+      "heisei": "H",
+      "meiji": "M",
+      "reiwa": "R",
+      "showa": "S",
+      "taisho": "T"
+    }
+  }
+}

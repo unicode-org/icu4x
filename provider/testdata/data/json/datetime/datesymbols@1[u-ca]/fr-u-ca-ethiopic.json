@@ -1,0 +1,117 @@
+{
+  "months": {
+    "format": {
+      "abbreviated": {
+        "Other": {
+          "M01": "mäs.",
+          "M02": "teq.",
+          "M03": "hed.",
+          "M04": "tah.",
+          "M05": "ter",
+          "M06": "yäk.",
+          "M07": "mäg.",
+          "M08": "miy.",
+          "M09": "gue.",
+          "M10": "sän.",
+          "M11": "ham.",
+          "M12": "näh.",
+          "M13": "pag."
+        }
+      },
+      "narrow": {
+        "Other": {
+          "M01": "1",
+          "M02": "2",
+          "M03": "3",
+          "M04": "4",
+          "M05": "5",
+          "M06": "6",
+          "M07": "7",
+          "M08": "8",
+          "M09": "9",
+          "M10": "10",
+          "M11": "11",
+          "M12": "12",
+          "M13": "13"
+        }
+      },
+      "short": null,
+      "wide": {
+        "Other": {
+          "M01": "mäskäräm",
+          "M02": "teqemt",
+          "M03": "hedar",
+          "M04": "tahesas",
+          "M05": "ter",
+          "M06": "yäkatit",
+          "M07": "mägabit",
+          "M08": "miyazya",
+          "M09": "guenbot",
+          "M10": "säné",
+          "M11": "hamlé",
+          "M12": "nähasé",
+          "M13": "pagumén"
+        }
+      }
+    },
+    "stand_alone": null
+  },
+  "weekdays": {
+    "format": {
+      "abbreviated": [
+        "dim.",
+        "lun.",
+        "mar.",
+        "mer.",
+        "jeu.",
+        "ven.",
+        "sam."
+      ],
+      "narrow": [
+        "D",
+        "L",
+        "M",
+        "M",
+        "J",
+        "V",
+        "S"
+      ],
+      "short": [
+        "di",
+        "lu",
+        "ma",
+        "me",
+        "je",
+        "ve",
+        "sa"
+      ],
+      "wide": [
+        "dimanche",
+        "lundi",
+        "mardi",
+        "mercredi",
+        "jeudi",
+        "vendredi",
+        "samedi"
+      ]
+    },
+    "stand_alone": null
+  },
+  "eras": {
+    "names": {
+      "incar": "avant l’Incarnation",
+      "mundi": "ERA0",
+      "pre-incar": "après l’Incarnation"
+    },
+    "abbr": {
+      "incar": "av. Inc.",
+      "mundi": "ERA0",
+      "pre-incar": "ap. Inc."
+    },
+    "narrow": {
+      "incar": "av. Inc.",
+      "mundi": "ERA0",
+      "pre-incar": "ap. Inc."
+    }
+  }
+}

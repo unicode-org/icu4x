@@ -63,7 +63,6 @@ impl BufferProvider for FsDataProvider {
         let buffer =
             fs::read(&path_buf).map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
         let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {
             metadata,

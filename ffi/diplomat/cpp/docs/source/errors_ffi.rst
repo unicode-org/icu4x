@@ -4,15 +4,19 @@
 .. cpp:enum-struct:: ICU4XError
 
     A common enum for errors that ICU4X may return, organized by API
+
     The error names are stable and can be checked against as strings in the JS API
+
 
     .. cpp:enumerator:: UnknownError
 
         The error is not currently categorized as ICU4XError. Please file a bug
 
+
     .. cpp:enumerator:: WriteableError
 
         An error arising from writing to a string Typically found when not enough space is allocated Most APIs that return a string may return this error
+
 
     .. cpp:enumerator:: OutOfBoundsError
 
@@ -48,13 +52,16 @@
 
         The subtag being requested was not set
 
+
     .. cpp:enumerator:: LocaleParserError
 
         The locale or subtag string failed to parse
 
+
     .. cpp:enumerator:: DataStructValidityError
 
         Attempted to construct an invalid data struct
+
 
     .. cpp:enumerator:: PropertyUnknownScriptIdError
 
@@ -92,8 +99,8 @@
 
     .. cpp:enumerator:: DateTimeFormatMissingMonthSymbolError
 
-    .. cpp:enumerator:: DateTimeFormatMissingEraSymbolError
-
     .. cpp:enumerator:: DateTimeFormatFixedDecimalError
 
     .. cpp:enumerator:: DateTimeFormatMismatchedAnyCalendarError
+
+    .. cpp:enumerator:: DateTimeFormatMismatchedCalendarLocaleError

@@ -25,7 +25,7 @@ pub struct FixedDecimalFormatterOptions {
 /// use writeable::Writeable;
 ///
 /// let locale = Locale::UND;
-/// let provider = icu_provider::inv::InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
 /// let fdf = FixedDecimalFormatter::try_new(locale, &provider, options)

@@ -19,6 +19,7 @@ typedef uint32_t char32_t;
 
 
 #ifdef __cplusplus
+namespace capi {
 extern "C" {
 #endif
 
@@ -33,8 +34,13 @@ typedef struct DiplomatWriteable {
 
 DiplomatWriteable diplomat_simple_writeable(char* buf, size_t buf_size);
 
+typedef struct DiplomatStringView {
+    const char* data;
+    size_t len;
+} DiplomatStringView;
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 
 #endif

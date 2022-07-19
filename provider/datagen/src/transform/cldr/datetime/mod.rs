@@ -4,12 +4,15 @@
 
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
+use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
-
+use std::collections::HashSet;
+use std::str::FromStr;
+use std::sync::RwLock;
 mod patterns;
 mod skeletons;
 mod symbols;
@@ -21,6 +24,7 @@ pub struct CommonDateProvider {
     source: SourceData,
     // BCP-47 value -> CLDR identifier
     supported_cals: HashMap<icu_locid::extensions::unicode::Value, &'static str>,
+    modern_japanese_eras: RwLock<Option<HashSet<String>>>,
 }
 
 impl From<&SourceData> for CommonDateProvider {
@@ -31,12 +35,14 @@ impl From<&SourceData> for CommonDateProvider {
                 (value!("gregory"), "gregorian"),
                 (value!("buddhist"), "buddhist"),
                 (value!("japanese"), "japanese"),
+                (value!("japanext"), "japanese"),
                 (value!("coptic"), "coptic"),
                 (value!("indian"), "indian"),
                 (value!("ethiopic"), "ethiopic"),
             ]
             .into_iter()
             .collect(),
+            modern_japanese_eras: RwLock::new(None),
         }
     }
 }
@@ -103,10 +109,67 @@ macro_rules! impl_resource_provider {
                         data.eras.narrow.insert("2".to_string(), mundi_narrow.clone());
                     }
 
-                    let metadata = DataResponseMetadata::default();
-                    // TODO(#1109): Set metadata.data_langid correctly.
+                    if calendar == value!("japanese") {
+                        if self.modern_japanese_eras.read().expect("poison").is_none() {
+                                let era_dates: &cldr_serde::japanese::Resource = self
+                                    .source
+                                    .cldr()?
+                                    .core()
+                                    .read_and_parse("supplemental/calendarData.json")?;
+                            let mut set = HashSet::new();
+                            let era_dates_map = &era_dates.supplemental.calendar_data.japanese.eras;
+                            for (era_index, date) in era_dates_map.iter() {
+                                 let start_date = EraStartDate::from_str(&date.start).map_err(|_| {
+                                     DataError::custom("calendarData.json contains unparseable data for a japanese era")
+                                         .with_display_context(&format!("era index {}", era_index))
+                                 })?;
+
+                                if start_date.year >= 1868 {
+                                    set.insert(era_index.into());
+                                }
+                            }
+                            *self.modern_japanese_eras.write().expect("poison") = Some(set);
+                        }
+                        let set = self.modern_japanese_eras.read().expect("poison");
+                        let set = set.as_ref().unwrap();
+
+
+                        data.eras.names.retain(|e, _| set.contains(e));
+                        data.eras.abbr.retain(|e, _| set.contains(e));
+                        data.eras.narrow.retain(|e, _| set.contains(e));
+                    }
+                    if calendar == value!("japanese") || calendar == value!("japanext") {
+
+                        // Splice in gregorian data for pre-meiji
+                        let greg_resource: &cldr_serde::ca::Resource = self
+                            .source
+                            .cldr()?
+                            .dates("gregorian").read_and_parse(&langid, "ca-gregorian.json")?;
+
+                        let greg =
+                            greg_resource
+                                .main
+                                .0
+                                .get(&langid)
+                                .expect("CLDR file contains the expected language")
+                                .dates
+                                .calendars
+                                .get("gregorian")
+                                .expect("CLDR file contains a gregorian calendar")
+                                .clone();
+
+                        // The "eras" map is largely keyed by a number, but instead of trying to
+                        // come up with a number that the japanese era map would not use, we just use a regular string
+                        data.eras.names.insert("bce".into(), greg.eras.names.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.names.insert("ce".into(), greg.eras.names.get("1").expect("Gregorian calendar must have data for AD").into());
+                        data.eras.abbr.insert("bce".into(), greg.eras.abbr.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.abbr.insert("ce".into(), greg.eras.abbr.get("1").expect("Gregorian calendar must have data for AD").into());
+                        data.eras.narrow.insert("bce".into(), greg.eras.narrow.get("0").expect("Gregorian calendar must have data for BC").into());
+                        data.eras.narrow.insert("ce".into(), greg.eras.narrow.get("1").expect("Gregorian calendar must have data for AD").into());
+                    }
+
                     Ok(DataResponse {
-                        metadata,
+                        metadata: Default::default(),
                         #[allow(clippy::redundant_closure_call)]
                         payload: Some(DataPayload::from_owned(($expr)(&data, &calendar.to_string()))),
                     })
