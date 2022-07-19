@@ -7,16 +7,23 @@
 #include "diplomat_runtime.h"
 
 #ifdef __cplusplus
-extern "C" {
+namespace capi {
 #endif
 
 typedef struct ICU4XPluralRules ICU4XPluralRules;
+#ifdef __cplusplus
+} // namespace capi
+#endif
 #include "ICU4XLocale.h"
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XPluralRules_ICU4XError.h"
 #include "ICU4XPluralOperands.h"
 #include "ICU4XPluralCategory.h"
 #include "ICU4XPluralCategories.h"
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 
 diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_try_new_cardinal(const ICU4XLocale* locale, const ICU4XDataProvider* provider);
 
@@ -28,6 +35,7 @@ ICU4XPluralCategories ICU4XPluralRules_categories(const ICU4XPluralRules* self);
 void ICU4XPluralRules_destroy(ICU4XPluralRules* self);
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

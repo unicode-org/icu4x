@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XGregorianDateTime.h"
-}
 
 class ICU4XGregorianDateTime;
 #include "ICU4XError.hpp"
@@ -54,9 +52,9 @@ inline diplomat::result<ICU4XGregorianDateTime, ICU4XError> ICU4XGregorianDateTi
   auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTime_try_new(year, month, day, hour, minute, second);
   diplomat::result<ICU4XGregorianDateTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XGregorianDateTime(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XGregorianDateTime>(std::move(ICU4XGregorianDateTime(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

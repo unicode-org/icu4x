@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XCodePointMapData16Response.h"
-}
 
 class ICU4XCodePointMapData16;
 
