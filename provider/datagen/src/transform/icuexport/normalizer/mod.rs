@@ -12,7 +12,7 @@ use icu_normalizer::provider::*;
 use icu_normalizer::u24::U24;
 use icu_provider::datagen::IterableResourceProvider;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSetBuilder;
+use icu_uniset::CodePointSetBuilder;
 use std::convert::TryFrom;
 use zerovec::ZeroVec;
 
@@ -69,7 +69,7 @@ macro_rules! normalization_data_provider {
             DecompositionData,
             $file_name,
             {
-                let mut builder = UnicodeSetBuilder::new();
+                let mut builder = CodePointSetBuilder::new();
                 for range in &toml_data.ranges {
                     builder.add_range_u32(&(range.0..=range.1));
                 }
@@ -151,7 +151,7 @@ macro_rules! normalization_passthrough_provider {
             CompositionPassthrough,
             $file_name,
             {
-                let mut builder = UnicodeSetBuilder::new();
+                let mut builder = CodePointSetBuilder::new();
                 for range in &toml_data.ranges {
                     builder.add_range_u32(&(range.0..=range.1));
                 }

@@ -345,7 +345,7 @@ pub mod properties {
     //! This API provides definitions of [Unicode Properties] and functions for
     //! retrieving property data in an appropriate data structure.
     //!
-    //! APIs that return a [`UnicodeSet`] exist for binary properties and certain enumerated
+    //! APIs that return a [`CodePointSet`] exist for binary properties and certain enumerated
     //! properties. See the [`sets`] module for more details.
     //!
     //! APIs that return a [`CodePointTrie`] exist for certain enumerated properties. See the
@@ -353,14 +353,14 @@ pub mod properties {
     //!
     //! # Examples
     //!
-    //! ## Property data as `UnicodeSet`s
+    //! ## Property data as `CodePointSet`s
     //!
     //! ```
     //! use icu::properties::{maps, sets, GeneralCategory};
     //!
     //! let provider = icu_testdata::get_provider();
     //!
-    //! // A binary property as a `UnicodeSet`
+    //! // A binary property as a `CodePointSet`
     //!
     //! let data = sets::get_emoji(&provider).expect("The data should be valid");
     //! let emoji = data.as_borrowed();
@@ -368,7 +368,7 @@ pub mod properties {
     //! assert!(emoji.contains('🎃')); // U+1F383 JACK-O-LANTERN
     //! assert!(!emoji.contains('木')); // U+6728
     //!
-    //! // An individual enumerated property value as a `UnicodeSet`
+    //! // An individual enumerated property value as a `CodePointSet`
     //!
     //! let data = maps::get_general_category(&provider).expect("The data should be valid");
     //! let gc = data.as_borrowed();
@@ -436,7 +436,7 @@ pub mod properties {
     //! assert!(swe.has_script(0x0650, Script::Arabic));
     //! assert!(swe.has_script(0x0650, Script::Syriac));
     //!
-    //! // get a `UnicodeSet` for when `Script` value is contained in `Script_Extensions` value
+    //! // get a `CodePointSet` for when `Script` value is contained in `Script_Extensions` value
     //! let syriac = swe.get_script_extensions_set(Script::Syriac);
     //! assert!(syriac.contains_u32(0x0650)); // ARABIC KASRA
     //! assert!(!syriac.contains_u32(0x0660)); // ARABIC-INDIC DIGIT ZERO
@@ -444,7 +444,7 @@ pub mod properties {
     //!
     //! [`ICU4X`]: ../icu/index.html
     //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
-    //! [`UnicodeSet`]: ../../icu_uniset/struct.UnicodeSet.html
+    //! [`CodePointSet`]: ../../icu_uniset/struct.CodePointSet.html
     //! [`sets`]: sets
     //! [`CodePointTrie`]: ../../icu_codepointtrie/codepointtrie/struct.CodePointTrie.html
     //! [`maps`]: maps

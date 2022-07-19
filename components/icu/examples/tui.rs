@@ -14,7 +14,7 @@ use icu::plurals::{PluralCategory, PluralRules};
 use icu_datetime::{
     mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
 };
-use icu_uniset::UnicodeSetBuilder;
+use icu_uniset::CodePointSetBuilder;
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {
@@ -66,7 +66,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         // See http://ftp.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
         builder.add_range(&('\u{0000}'..='\u{00FF}'));
         let latin1_set = builder.build();

@@ -3,7 +3,7 @@ type DataStruct = & 'static < :: icu_properties :: provider :: SoftDottedV1Marke
 pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
 static UND: DataStruct = &::icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
     #[allow(unused_unsafe)]
-    ::icu_uniset::UnicodeSet::from_parts_unchecked(
+    ::icu_uniset::CodePointSet::from_parts_unchecked(
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 105u8, 0u8, 0u8, 0u8, 107u8, 0u8, 0u8, 0u8, 47u8, 1u8, 0u8, 0u8, 48u8, 1u8, 0u8,

@@ -12,7 +12,7 @@
 use crate::script::ScriptWithExtensions;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSet;
+use icu_uniset::CodePointSet;
 use zerofrom::ZeroFrom;
 
 /// A set of characters with a particular property.
@@ -29,7 +29,7 @@ use zerofrom::ZeroFrom;
 #[non_exhaustive]
 pub enum PropertyCodePointSetV1<'data> {
     /// The set of characters, represented as an inversion list
-    InversionList(#[cfg_attr(feature = "serde", serde(borrow))] UnicodeSet<'data>),
+    InversionList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointSet<'data>),
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
@@ -86,12 +86,12 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn from_unicode_set(l: UnicodeSet<'static>) -> Self {
+    pub(crate) fn from_codepoint_set(l: CodePointSet<'static>) -> Self {
         Self::InversionList(l)
     }
 
     #[inline]
-    pub(crate) fn to_unicode_set(&'_ self) -> UnicodeSet<'_> {
+    pub(crate) fn to_codepoint_set(&'_ self) -> CodePointSet<'_> {
         match *self {
             Self::InversionList(ref l) => ZeroFrom::zero_from(l),
         }
@@ -108,7 +108,7 @@ impl<'data, T: TrieValue> PropertyUnicodeMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn get_set_for_value(&self, value: T) -> UnicodeSet<'static> {
+    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointSet<'static> {
         match *self {
             Self::CodePointTrie(ref t) => t.get_set_for_value(value),
         }

@@ -315,10 +315,10 @@ fn test_conformance() {
 
 #[test]
 fn test_hangul() {
-    use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+    use icu_uniset::{CodePointSet, CodePointSetBuilder};
     use zerofrom::ZeroFrom;
-    let builder = UnicodeSetBuilder::new();
-    let set: UnicodeSet = builder.build();
+    let builder = CodePointSetBuilder::new();
+    let set: CodePointSet = builder.build();
 
     let data_provider = icu_testdata::get_provider();
 

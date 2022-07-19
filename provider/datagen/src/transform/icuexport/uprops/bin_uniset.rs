@@ -6,14 +6,14 @@ use crate::SourceData;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSetBuilder;
+use icu_uniset::CodePointSetBuilder;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
-pub struct BinaryPropertyUnicodeSetDataProvider {
+pub struct BinaryPropertyCodePointSetDataProvider {
     source: SourceData,
 }
 
-impl From<&SourceData> for BinaryPropertyUnicodeSetDataProvider {
+impl From<&SourceData> for BinaryPropertyCodePointSetDataProvider {
     fn from(source: &SourceData) -> Self {
         Self {
             source: source.clone(),
@@ -40,14 +40,14 @@ fn get_binary<'a>(
 macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+) => {
         $(
-            impl ResourceProvider<$marker> for BinaryPropertyUnicodeSetDataProvider {
+            impl ResourceProvider<$marker> for BinaryPropertyCodePointSetDataProvider {
                 fn load_resource(
                     &self,
                     _: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
                     let data = get_binary(&self.source, $prop_name)?;
 
-                    let mut builder = UnicodeSetBuilder::new();
+                    let mut builder = CodePointSetBuilder::new();
                     for (start, end) in &data.ranges {
                         builder.add_range_u32(&(start..=end));
                     }
@@ -62,7 +62,7 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableResourceProvider<$marker> for BinaryPropertyUnicodeSetDataProvider {
+            impl IterableResourceProvider<$marker> for BinaryPropertyCodePointSetDataProvider {
                 fn supported_options(
                     &self,
                 ) -> Result<Vec<ResourceOptions>, DataError> {
@@ -73,7 +73,7 @@ macro_rules! expand {
             }
         )+
 
-        icu_provider::make_exportable_provider!(BinaryPropertyUnicodeSetDataProvider, [$($marker),+,]);
+        icu_provider::make_exportable_provider!(BinaryPropertyCodePointSetDataProvider, [$($marker),+,]);
     };
 }
 
@@ -149,16 +149,16 @@ expand!(
 fn test_basic() {
     use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
-    use icu_uniset::UnicodeSet;
+    use icu_uniset::CodePointSet;
 
-    let provider = BinaryPropertyUnicodeSetDataProvider::from(&SourceData::for_test());
+    let provider = BinaryPropertyCodePointSetDataProvider::from(&SourceData::for_test());
 
     let payload: DataPayload<WhiteSpaceV1Marker> = provider
         .load_resource(&DataRequest::default())
         .and_then(DataResponse::take_payload)
         .expect("Loading was successful");
 
-    let whitespace: &UnicodeSet = match payload.get() {
+    let whitespace: &CodePointSet = match payload.get() {
         PropertyCodePointSetV1::InversionList(ref l) => l,
         _ => unreachable!("Should have serialized to an inversion list"),
     };

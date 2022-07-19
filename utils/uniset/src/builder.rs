@@ -6,28 +6,28 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::{char, cmp::Ordering, ops::RangeBounds};
 
-use crate::{uniset::UnicodeSet, utils::deconstruct_range};
+use crate::{uniset::CodePointSet, utils::deconstruct_range};
 use zerovec::{ule::AsULE, ZeroVec};
 
-/// A builder for [`UnicodeSet`].
+/// A builder for [`CodePointSet`].
 ///
-/// Provides exposure to builder functions and conversion to [`UnicodeSet`]
+/// Provides exposure to builder functions and conversion to [`CodePointSet`]
 #[derive(Default)]
-pub struct UnicodeSetBuilder {
+pub struct CodePointSetBuilder {
     intervals: Vec<u32>,
 }
 
-impl UnicodeSetBuilder {
-    /// Returns empty [`UnicodeSetBuilder`]
+impl CodePointSetBuilder {
+    /// Returns empty [`CodePointSetBuilder`]
     pub const fn new() -> Self {
         Self { intervals: vec![] }
     }
 
-    /// Returns a [`UnicodeSet`] and consumes the [`UnicodeSetBuilder`]
-    pub fn build(self) -> UnicodeSet<'static> {
+    /// Returns a [`CodePointSet`] and consumes the [`CodePointSetBuilder`]
+    pub fn build(self) -> CodePointSet<'static> {
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&self.intervals);
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        UnicodeSet::from_inversion_list(inv_list).unwrap()
+        CodePointSet::from_inversion_list(inv_list).unwrap()
     }
 
     /// Abstraction for adding/removing a range from start..end
@@ -69,7 +69,7 @@ impl UnicodeSetBuilder {
         }
     }
 
-    /// Add the range to the [`UnicodeSetBuilder`]
+    /// Add the range to the [`CodePointSetBuilder`]
     ///
     /// Accomplishes this through binary search for the start and end indices and merges intervals
     /// in between with inplace memory. Performs `O(1)` operation if adding to end of list, and `O(N)` otherwise,
@@ -85,13 +85,13 @@ impl UnicodeSetBuilder {
         self.add_remove_middle(start, end, true);
     }
 
-    /// Add the character to the [`UnicodeSetBuilder`]
+    /// Add the character to the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_char('a');
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('a'));
@@ -101,7 +101,7 @@ impl UnicodeSetBuilder {
         self.add(to_add, to_add + 1);
     }
 
-    /// Add the code point value to the [`UnicodeSetBuilder`]
+    /// Add the code point value to the [`CodePointSetBuilder`]
     ///
     /// Note: Even though [`u32`] and [`prim@char`] in Rust are non-negative 4-byte
     /// values, there is an important difference. A [`u32`] can take values up to
@@ -111,8 +111,8 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_u32(0x41);
     /// let check = builder.build();
     /// assert_eq!(check.contains_u32(0x41), true);
@@ -124,13 +124,13 @@ impl UnicodeSetBuilder {
         }
     }
 
-    /// Add the range of characters to the [`UnicodeSetBuilder`]
+    /// Add the range of characters to the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
@@ -140,13 +140,13 @@ impl UnicodeSetBuilder {
         self.add(start, end);
     }
 
-    /// Add the range of characters, represented as u32, to the [`UnicodeSetBuilder`]
+    /// Add the range of characters, represented as u32, to the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_range_u32(&(0xd800..=0xdfff));
     /// let check = builder.build();
     /// assert_eq!(check.contains_u32(0xd900), true);
@@ -158,20 +158,20 @@ impl UnicodeSetBuilder {
         }
     }
 
-    /// Add the [`UnicodeSet`] reference to the [`UnicodeSetBuilder`]
+    /// Add the [`CodePointSet`] reference to the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-    /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x4C]).unwrap();
+    /// use icu_uniset::{CodePointSet, CodePointSetBuilder};
+    /// let mut builder = CodePointSetBuilder::new();
+    /// let set = CodePointSet::from_inversion_list_slice(&[0x41, 0x4C]).unwrap();
     /// builder.add_set(&set);
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('A'));
     /// ```
     #[allow(unused_assignments)]
-    pub fn add_set(&mut self, set: &UnicodeSet) {
+    pub fn add_set(&mut self, set: &CodePointSet) {
         set.as_inversion_list()
             .as_ule_slice()
             .chunks(2)
@@ -187,7 +187,7 @@ impl UnicodeSetBuilder {
             });
     }
 
-    /// Removes the range from the [`UnicodeSetBuilder`]
+    /// Removes the range from the [`CodePointSetBuilder`]
     ///
     /// Performs binary search to find start and end affected intervals, then removes in an `O(N)` fashion
     /// where `N` is the number of endpoints, with in-place memory.
@@ -205,13 +205,13 @@ impl UnicodeSetBuilder {
         }
     }
 
-    /// Remove the character from the [`UnicodeSetBuilder`]
+    /// Remove the character from the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_char('A');
     /// let check = builder.build();
@@ -221,13 +221,13 @@ impl UnicodeSetBuilder {
         self.remove(to_remove, to_remove + 1);
     }
 
-    /// Remove the range of characters from the [`UnicodeSetBuilder`]
+    /// Remove the range of characters from the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_range(&('A'..='C'));
     /// let check = builder.build();
@@ -237,20 +237,20 @@ impl UnicodeSetBuilder {
         self.remove(start, end);
     }
 
-    /// Remove the [`UnicodeSet`] from the [`UnicodeSetBuilder`]
+    /// Remove the [`CodePointSet`] from the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-    /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x46]).unwrap();
+    /// use icu_uniset::{CodePointSet, CodePointSetBuilder};
+    /// let mut builder = CodePointSetBuilder::new();
+    /// let set = CodePointSet::from_inversion_list_slice(&[0x41, 0x46]).unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('F'));
     #[allow(unused_assignments)]
-    pub fn remove_set(&mut self, set: &UnicodeSet) {
+    pub fn remove_set(&mut self, set: &CodePointSet) {
         set.as_inversion_list()
             .as_ule_slice()
             .chunks(2)
@@ -266,13 +266,13 @@ impl UnicodeSetBuilder {
             });
     }
 
-    /// Retain the specified character in the [`UnicodeSetBuilder`] if it exists
+    /// Retain the specified character in the [`CodePointSetBuilder`] if it exists
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_char('A');
     /// let set = builder.build();
@@ -286,13 +286,13 @@ impl UnicodeSetBuilder {
         self.remove(code_point + 1, (char::MAX as u32) + 1);
     }
 
-    /// Retain the range of characters located within the [`UnicodeSetBuilder`]
+    /// Retain the range of characters located within the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_range(&('A'..='B'));
     /// let set = builder.build();
@@ -307,14 +307,14 @@ impl UnicodeSetBuilder {
         self.remove(end, (char::MAX as u32) + 1);
     }
 
-    /// Retain the elements in the specified set within the [`UnicodeSetBuilder`]
+    /// Retain the elements in the specified set within the [`CodePointSetBuilder`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-    /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list_slice(&[65, 70]).unwrap();
+    /// use icu_uniset::{CodePointSet, CodePointSetBuilder};
+    /// let mut builder = CodePointSetBuilder::new();
+    /// let set = CodePointSet::from_inversion_list_slice(&[65, 70]).unwrap();
     /// builder.add_range(&('A'..='Z'));
     /// builder.retain_set(&set); // retains 'A'..='E'
     /// let check = builder.build();
@@ -322,7 +322,7 @@ impl UnicodeSetBuilder {
     /// assert!(!check.contains('G'));
     /// ```
     #[allow(unused_assignments)]
-    pub fn retain_set(&mut self, set: &UnicodeSet) {
+    pub fn retain_set(&mut self, set: &CodePointSet) {
         let mut prev = 0;
         for pair in set.as_inversion_list().as_ule_slice().chunks(2) {
             #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
@@ -379,10 +379,10 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::{CodePointSet, CodePointSetBuilder};
+    /// let mut builder = CodePointSetBuilder::new();
     /// let set =
-    ///     UnicodeSet::from_inversion_list_slice(&[0x0, 0x41, 0x46, (std::char::MAX as u32) + 1])
+    ///     CodePointSet::from_inversion_list_slice(&[0x0, 0x41, 0x46, (std::char::MAX as u32) + 1])
     ///         .unwrap();
     /// builder.add_set(&set);
     /// builder.complement();
@@ -413,8 +413,8 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_range(&('A'..='D'));
     /// builder.complement_char('A');
     /// builder.complement_char('E');
@@ -434,8 +434,8 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSetBuilder;
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::CodePointSetBuilder;
+    /// let mut builder = CodePointSetBuilder::new();
     /// builder.add_range(&('A'..='D'));
     /// builder.complement_range(&('C'..='F'));
     /// let check = builder.build();
@@ -454,16 +454,16 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-    /// let mut builder = UnicodeSetBuilder::new();
-    /// let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
+    /// use icu_uniset::{CodePointSet, CodePointSetBuilder};
+    /// let mut builder = CodePointSetBuilder::new();
+    /// let set = CodePointSet::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
     /// builder.add_range(&('C'..='N')); // 67 - 78
     /// builder.complement_set(&set);
     /// let check = builder.build();
     /// assert!(check.contains('Q')); // 81
     /// assert!(!check.contains('N')); // 78
     /// ```
-    pub fn complement_set(&mut self, set: &UnicodeSet) {
+    pub fn complement_set(&mut self, set: &CodePointSet) {
         let inv_list_iter_owned = set.as_inversion_list().iter();
         self.complement_list(inv_list_iter_owned);
     }
@@ -473,8 +473,8 @@ impl UnicodeSetBuilder {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
-    /// let mut builder = UnicodeSetBuilder::new();
+    /// use icu_uniset::{CodePointSet, CodePointSetBuilder};
+    /// let mut builder = CodePointSetBuilder::new();
     /// let check = builder.build();
     /// assert!(check.is_empty());
     /// ```
@@ -485,49 +485,49 @@ impl UnicodeSetBuilder {
 
 #[cfg(test)]
 mod tests {
-    use super::{UnicodeSet, UnicodeSetBuilder};
+    use super::{CodePointSet, CodePointSetBuilder};
     use core::char;
     use zerovec::ZeroVec;
 
-    fn generate_tester(ex: Vec<u32>) -> UnicodeSetBuilder {
+    fn generate_tester(ex: Vec<u32>) -> CodePointSetBuilder {
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&ex);
-        let check = UnicodeSet::from_inversion_list(inv_list).unwrap();
-        let mut builder = UnicodeSetBuilder::new();
+        let check = CodePointSet::from_inversion_list(inv_list).unwrap();
+        let mut builder = CodePointSetBuilder::new();
         builder.add_set(&check);
         builder
     }
 
     #[test]
     fn test_new() {
-        let ex = UnicodeSetBuilder::new();
+        let ex = CodePointSetBuilder::new();
         assert!(ex.intervals.is_empty());
     }
 
     #[test]
     fn test_build() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         builder.add(0x41, 0x42);
-        let check: UnicodeSet = builder.build();
+        let check: CodePointSet = builder.build();
         assert_eq!(check.iter_chars().next(), Some('A'));
     }
 
     #[test]
     fn test_empty_build() {
-        let builder = UnicodeSetBuilder::new();
-        let check: UnicodeSet = builder.build();
+        let builder = CodePointSetBuilder::new();
+        let check: CodePointSet = builder.build();
         assert!(check.is_empty());
     }
 
     #[test]
     fn test_add_to_empty() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         builder.add(0x0, 0xA);
         assert_eq!(builder.intervals, vec![0x0, 0xA]);
     }
 
     #[test]
     fn test_add_invalid() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         builder.add(0x0, 0x0);
         builder.add(0x5, 0x0);
         assert!(builder.intervals.is_empty());
@@ -672,17 +672,17 @@ mod tests {
     }
 
     #[test]
-    fn test_add_unicodeset() {
+    fn test_add_codepointset() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32]);
         let check =
-            UnicodeSet::from_inversion_list_slice(&[0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
+            CodePointSet::from_inversion_list_slice(&[0x5, 0xA, 0x16, 0x21, 0x2C, 0x33]).unwrap();
         builder.add_set(&check);
         let expected = vec![0x5, 0x14, 0x16, 0x21, 0x28, 0x33];
         assert_eq!(builder.intervals, expected);
     }
     #[test]
     fn test_add_char() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         builder.add_char('a');
         let expected = vec![0x61, 0x62];
         assert_eq!(builder.intervals, expected);
@@ -690,7 +690,7 @@ mod tests {
 
     #[test]
     fn test_add_range() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         builder.add_range(&('A'..='Z'));
         let expected = vec![0x41, 0x5B];
         assert_eq!(builder.intervals, expected);
@@ -698,7 +698,7 @@ mod tests {
 
     #[test]
     fn test_add_range_u32() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         builder.add_range_u32(&(0xd800..=0xdfff));
         let expected = vec![0xd800, 0xe000];
         assert_eq!(builder.intervals, expected);
@@ -706,14 +706,14 @@ mod tests {
 
     #[test]
     fn test_add_invalid_range() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         builder.add_range(&('Z'..='A'));
         assert!(builder.intervals.is_empty());
     }
 
     #[test]
     fn test_remove_empty() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         builder.remove(0x0, 0xA);
         assert!(builder.intervals.is_empty());
     }
@@ -809,7 +809,7 @@ mod tests {
     #[test]
     fn test_remove_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
-        let remove = UnicodeSet::from_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B]).unwrap();
+        let remove = CodePointSet::from_inversion_list_slice(&[0xA, 0x14, 0x2D, 0x4B]).unwrap();
         builder.remove_set(&remove);
         let expected = vec![0x28, 0x2D, 0x4B, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -842,7 +842,7 @@ mod tests {
     fn test_retain_set() {
         let mut builder = generate_tester(vec![0xA, 0x14, 0x28, 0x32, 70, 80]);
         let retain =
-            UnicodeSet::from_inversion_list_slice(&[0xE, 0x14, 0x19, 0x37, 0x4D, 0x51]).unwrap();
+            CodePointSet::from_inversion_list_slice(&[0xE, 0x14, 0x19, 0x37, 0x4D, 0x51]).unwrap();
         builder.retain_set(&retain);
         let expected = vec![0xE, 0x14, 0x28, 0x32, 0x4D, 0x50];
         assert_eq!(builder.intervals, expected);
@@ -920,7 +920,7 @@ mod tests {
     #[test]
     fn test_complement_set() {
         let mut builder = generate_tester(vec![0x43, 0x4E]);
-        let set = UnicodeSet::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
+        let set = CodePointSet::from_inversion_list_slice(&[0x41, 0x46, 0x4B, 0x5A]).unwrap();
         builder.complement_set(&set);
         let expected = vec![0x41, 0x43, 0x46, 0x4B, 0x4E, 0x5A];
         assert_eq!(builder.intervals, expected);
@@ -928,7 +928,7 @@ mod tests {
 
     #[test]
     fn test_is_empty() {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointSetBuilder::new();
         assert!(builder.is_empty());
     }
 }

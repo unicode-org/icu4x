@@ -3,7 +3,7 @@ type DataStruct = & 'static < :: icu_properties :: provider :: DiacriticV1Marker
 pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
 static UND: DataStruct = &::icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
     #[allow(unused_unsafe)]
-    ::icu_uniset::UnicodeSet::from_parts_unchecked(
+    ::icu_uniset::CodePointSet::from_parts_unchecked(
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 94u8, 0u8, 0u8, 0u8, 95u8, 0u8, 0u8, 0u8, 96u8, 0u8, 0u8, 0u8, 97u8, 0u8, 0u8, 0u8,

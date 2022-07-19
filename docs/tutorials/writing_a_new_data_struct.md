@@ -54,7 +54,7 @@ Although they may share common code, source data providers are implemented speci
 Examples of source data providers include:
 
 - [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/cldr/struct.NumbersProvider.html)
-- [`BinaryPropertyUnicodeSetDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/uprops/struct.BinaryPropertyUnicodeSetDataProvider.html)
+- [`BinaryPropertyCodePointSetDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/uprops/struct.BinaryPropertyCodePointSetDataProvider.html)
 - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/index.html)
 
 Source data providers must implement the following traits:

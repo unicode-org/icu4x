@@ -27,7 +27,7 @@ use icu_normalizer::u24::EMPTY_U24;
 use icu_normalizer::u24::U24;
 use icu_properties::maps::CodePointMapDataBorrowed;
 use icu_properties::CanonicalCombiningClass;
-use icu_uniset::UnicodeSet;
+use icu_uniset::CodePointSet;
 use smallvec::SmallVec;
 use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
@@ -711,7 +711,7 @@ where
     /// NFD main trie.
     trie: &'data CodePointTrie<'data, u32>,
     /// NFD helper set
-    decomposition_starts_with_non_starter: UnicodeSet<'data>,
+    decomposition_starts_with_non_starter: CodePointSet<'data>,
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
     /// NFD complex decompositions on supplementary planes
@@ -758,7 +758,7 @@ where
             jamo,
             diacritics,
             trie: &decompositions.trie,
-            decomposition_starts_with_non_starter: UnicodeSet::zero_from(
+            decomposition_starts_with_non_starter: CodePointSet::zero_from(
                 &decompositions.decomposition_starts_with_non_starter,
             ),
             scalars16: &tables.scalars16,
@@ -1125,7 +1125,7 @@ where
         }
         debug_assert_eq!(self.pending_pos, 0);
         if let Some(mut c) = self.next_internal() {
-            let mut next_is_known_to_decompose_to_non_starter = false; // micro optimization to avoid checking `UnicodeSet` twice
+            let mut next_is_known_to_decompose_to_non_starter = false; // micro optimization to avoid checking `CodePointSet` twice
             let mut ce32;
             let mut data: &CollationDataV1 = self.tailoring;
             let mut combining_characters: SmallVec<[CharacterAndClass; 7]> = SmallVec::new(); // TODO(#2005): Figure out good length
@@ -1570,7 +1570,7 @@ where
                                 // Let's just set this flag here instead of trying to make
                                 // it more granular and, therefore, more error-prone.
                                 // After all, this flag is just about optimizing away one
-                                // `UnicodeSet` check in the common case.
+                                // `CodePointSet` check in the common case.
                                 may_have_contracted_starter = true;
                                 debug_assert!(pending_removals.is_empty());
                                 loop {
