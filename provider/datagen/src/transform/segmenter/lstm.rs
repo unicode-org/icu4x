@@ -69,6 +69,7 @@ impl SegmenterLstmProvider {
         let lstm_data: &RawLstmData = self
             .source
             .segmenter_lstm()?
+            .segmenter_lstm()
             .read_and_parse::<RawLstmData>(
                 Self::get_json_filename(options)
                     .ok_or_else(|| DataErrorKind::MissingDataOptions.into_error())?,

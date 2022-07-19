@@ -24,7 +24,7 @@ pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<TomlCache>>,
     segmenter_paths: Arc<TomlCache>,
-    segmenter_lstm_paths: Arc<JsonCache>,
+    segmenter_lstm_paths: Arc<CldrCache>,
     trie_type: IcuTrieType,
     collation_han_database: CollationHanDatabase,
 }
@@ -38,13 +38,10 @@ impl Default for SourceData {
                 AbstractFs::new(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
                     .expect("valid dir"),
             )),
-            segmenter_lstm_paths: Arc::new(JsonCache::new(
-                AbstractFs::new(
-                    PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-                        .join("data")
-                        .join("lstm"),
-                )
-                .expect("valid dir"),
+            segmenter_lstm_paths: Arc::new(CldrCache::new(
+                AbstractFs::new(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
+                    .expect("valid dir"),
+                CldrLocaleSubset::Full,
             )),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
@@ -192,7 +189,7 @@ impl SourceData {
         Ok(&self.segmenter_paths)
     }
 
-    pub(crate) fn segmenter_lstm(&self) -> Result<&JsonCache, DataError> {
+    pub(crate) fn segmenter_lstm(&self) -> Result<&CldrCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
     }
 
@@ -295,45 +292,6 @@ impl TomlCache {
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
         self.root.list(path)
-    }
-}
-
-pub(crate) struct JsonCache {
-    root: AbstractFs,
-    cache: Arc<FrozenMap<String, Box<dyn Any + Send + Sync>>>,
-}
-
-impl Debug for JsonCache {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("JsonCache")
-            .field("root", &self.root)
-            // skip formatting the cache
-            .finish()
-    }
-}
-
-impl JsonCache {
-    pub fn new(root: AbstractFs) -> Self {
-        Self {
-            root,
-            cache: Arc::new(FrozenMap::new()),
-        }
-    }
-
-    pub fn read_and_parse<S>(&self, path: &str) -> Result<&S, DataError>
-    where
-        for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
-    {
-        match self.cache.get(path) {
-            Some(x) => x,
-            None => {
-                let file = self.root.read_to_buf(path)?;
-                let file: S = serde_json::from_slice(&file)?;
-                self.cache.insert(path.to_string(), Box::new(file))
-            }
-        }
-        .downcast_ref::<S>()
-        .ok_or_else(|| DataError::custom("JSON error").with_type_context::<S>())
     }
 }
 

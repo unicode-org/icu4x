@@ -85,6 +85,10 @@ impl CldrCache {
             },
         )
     }
+
+    pub(crate) fn segmenter_lstm(&self) -> CldrDirNoLang<'_> {
+        CldrDirNoLang(self, "lstm".to_string())
+    }
 }
 
 pub(crate) struct CldrDirNoLang<'a>(&'a CldrCache, String);
