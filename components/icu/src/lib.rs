@@ -77,7 +77,7 @@
 //! [^1]: [`FsDataProvider`] also requires the `serde_human` feature if JSON is used, as that data is less
 //!       preprocessed.
 //!
-//! 
+//!
 //! [`DataProvider`]: ../icu_provider/prelude/trait.DataProvider.html
 //! [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 //! [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
