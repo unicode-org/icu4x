@@ -18,4 +18,6 @@
     .. cpp:function:: bool contains(char32_t cp) const
 
         Checks whether the code point is in the set.
+
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_uniset/struct.CodePointSet.html#method.contains>`__ for more information.
+
