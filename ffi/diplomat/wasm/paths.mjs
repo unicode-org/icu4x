@@ -5,7 +5,7 @@
 import * as path from "path";
 import * as url from "url";
 
-export const TOP_DIR = path.resolve(path.join(path.dirname(url.fileURLToPath(import.meta.url)), "../../../../"));
+export const TOP_DIR = path.resolve(path.join(path.dirname(url.fileURLToPath(import.meta.url)), "../../../"));
 
 export const WASM_PATH = path.resolve(path.join(TOP_DIR, "target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm"));
 

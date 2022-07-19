@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XHourCyclePreference.h"
-}
 
 
 enum struct ICU4XHourCyclePreference {

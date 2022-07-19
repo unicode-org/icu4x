@@ -124,7 +124,6 @@ impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> DataProvid
         }
 
         let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned(patterns)),

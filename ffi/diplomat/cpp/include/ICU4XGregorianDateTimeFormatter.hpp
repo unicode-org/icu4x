@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XGregorianDateTimeFormatter.h"
-}
 
 class ICU4XLocale;
 class ICU4XDataProvider;
@@ -78,9 +76,9 @@ inline diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> ICU4XGregor
   auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTimeFormatter_try_new(locale.AsFFI(), provider.AsFFI(), static_cast<capi::ICU4XDateLength>(date_length), static_cast<capi::ICU4XTimeLength>(time_length), static_cast<capi::ICU4XHourCyclePreference>(time_preferences));
   diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XGregorianDateTimeFormatter(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XGregorianDateTimeFormatter>(std::move(ICU4XGregorianDateTimeFormatter(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -91,7 +89,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XGr
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -103,7 +101,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XGregorianDateTimeFormatter
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }

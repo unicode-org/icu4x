@@ -7,11 +7,18 @@
 #include "diplomat_runtime.h"
 
 #ifdef __cplusplus
-extern "C" {
+namespace capi {
 #endif
 
 typedef struct ICU4XBidiInfo ICU4XBidiInfo;
+#ifdef __cplusplus
+} // namespace capi
+#endif
 #include "ICU4XBidiParagraph.h"
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 
 size_t ICU4XBidiInfo_paragraph_count(const ICU4XBidiInfo* self);
 
@@ -23,6 +30,7 @@ uint8_t ICU4XBidiInfo_level_at(const ICU4XBidiInfo* self, size_t pos);
 void ICU4XBidiInfo_destroy(ICU4XBidiInfo* self);
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif
