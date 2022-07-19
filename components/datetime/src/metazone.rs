@@ -12,12 +12,12 @@ use icu_locid::Locale;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 
+/// [`MetaZoneCalculator`] uses data from the [data provider], the selected [`Locale`] to calculate
+/// metazone id.
 pub struct MetaZoneCalculator {
     pub(super) metazone_period: DataPayload<MetaZonePeriodV1Marker>,
 }
 
-/// [`MetaZoneCalculator`] uses data from the [data provider], the selected [`Locale`] to calculate
-/// metazone id.
 impl MetaZoneCalculator {
     /// Constructor that loads data before calculating metazone id.
     ///
@@ -62,10 +62,10 @@ impl MetaZoneCalculator {
     /// use tinystr::tinystr;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::new(locale!("en"), &provider);
+    /// let mzc = MetaZoneCalculator::new(locale!("en"), &provider).expect("data exists");
     ///
     /// assert_eq!(
-    ///     mzc.as_ref().unwrap().compute_metazone_from_timezone(
+    ///     mzc.compute_metazone_from_timezone(
     ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
     ///         DateTime::new_iso_datetime(1969, 1, 1, 0, 0, 0).unwrap()
     ///     ),
@@ -73,7 +73,7 @@ impl MetaZoneCalculator {
     /// );
     ///
     /// assert_eq!(
-    ///     mzc.as_ref().unwrap().compute_metazone_from_timezone(
+    ///     mzc.compute_metazone_from_timezone(
     ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
     ///         DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap()
     ///     ),
@@ -81,7 +81,7 @@ impl MetaZoneCalculator {
     /// );
     ///
     /// assert_eq!(
-    ///     mzc.as_ref().unwrap().compute_metazone_from_timezone(
+    ///     mzc.compute_metazone_from_timezone(
     ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
     ///         DateTime::new_iso_datetime(1975, 1, 1, 0, 0, 0).unwrap()
     ///     ),
@@ -89,7 +89,7 @@ impl MetaZoneCalculator {
     /// );
     ///
     /// assert_eq!(
-    ///     mzc.as_ref().unwrap().compute_metazone_from_timezone(
+    ///     mzc.compute_metazone_from_timezone(
     ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
     ///         DateTime::new_iso_datetime(2000, 12, 22, 15, 0, 0).unwrap()
     ///     ),
@@ -99,32 +99,23 @@ impl MetaZoneCalculator {
     pub fn compute_metazone_from_timezone(
         &self,
         time_zone_id: TimeZoneBcp47Id,
-        local_datetime: DateTime<Iso>,
+        local_datetime: &DateTime<Iso>,
     ) -> Option<MetaZoneId> {
-        extern crate std;
-        std::println!("contains_key0 entry");
-        if self.metazone_period.get().0.contains_key0(&time_zone_id) {
-            std::println!("contains_key0");
-            match self.metazone_period.get().0.get0(&time_zone_id) {
-                Some(cursor) => {
-                    let mut metazone_id = None;
-                    let minutes_since_local_unix_epoch =
-                        local_datetime.minutes_since_local_unix_epoch();
-                    for (minutes, id) in cursor.iter1() {
-                        std::println!("contains_key1");
-                        if minutes_since_local_unix_epoch >= i32::from_unaligned(*minutes) {
-                            std::println!("get it");
-                            metazone_id = id.get()
-                        } else {
-                            break;
-                        }
+        match self.metazone_period.get().0.get0(&time_zone_id) {
+            Some(cursor) => {
+                let mut metazone_id = None;
+                let minutes_since_local_unix_epoch =
+                    local_datetime.minutes_since_local_unix_epoch();
+                for (minutes, id) in cursor.iter1() {
+                    if minutes_since_local_unix_epoch >= i32::from_unaligned(*minutes) {
+                        metazone_id = id.get()
+                    } else {
+                        break;
                     }
-                    metazone_id
                 }
-                None => None,
+                metazone_id
             }
-        } else {
-            None
+            None => None,
         }
     }
 }

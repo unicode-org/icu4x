@@ -77,7 +77,7 @@ pub trait IsoTimeInput {
 /// All data represented in [`TimeZoneInput`] should be locale-agnostic.
 pub trait TimeZoneInput {
     /// The GMT offset in Nanoseconds.
-    fn gmt_offset(&self) -> GmtOffset;
+    fn gmt_offset(&self) -> Option<GmtOffset>;
 
     /// The IANA time-zone identifier.
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id>;

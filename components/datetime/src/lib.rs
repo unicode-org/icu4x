@@ -88,7 +88,7 @@ pub mod datetime;
 mod error;
 pub mod fields;
 mod format;
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
+/// A module for metazone id calculation.
 pub mod metazone;
 pub mod mock;
 pub mod options;
