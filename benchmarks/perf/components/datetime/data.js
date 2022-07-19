@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658189392547,
+  "lastUpdate": 1658212379024,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49607,6 +49607,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5194,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6035f58a6a25173747a7a671793252c975fc9e78",
+          "message": "Update diplomat (#2208)\n\n* Update diplomat\n\n* Regen diplomat\n\n* Update wasm tests",
+          "timestamp": "2022-07-18T23:21:09-07:00",
+          "tree_id": "7d5de267cc7e76caee9cd5b1ddb969d69491c903",
+          "url": "https://github.com/unicode-org/icu4x/commit/6035f58a6a25173747a7a671793252c975fc9e78"
+        },
+        "date": 1658212345480,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 100473,
+            "range": "± 2080",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 918254,
+            "range": "± 1639",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 188082,
+            "range": "± 1925",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 90131,
+            "range": "± 600",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 98950,
+            "range": "± 1053",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 100056,
+            "range": "± 1347",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 107258,
+            "range": "± 1183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 176745,
+            "range": "± 1098",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 189079,
+            "range": "± 719",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 188684,
+            "range": "± 3378",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 199998,
+            "range": "± 1012",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4592,
+            "range": "± 24",
             "unit": "ns/iter"
           }
         ]
