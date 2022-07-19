@@ -63,6 +63,6 @@ fn word_break_mixed() {
     assert_eq!(
         iter.collect::<Vec<usize>>(),
         vec![0, 7, 16, 25, 32],
-        "word segmenter with Chinese"
+        "word segmenter with Chinese and letter"
     );
 }
