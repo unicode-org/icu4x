@@ -658,63 +658,6 @@ fn test_fi() {
     }
 }
 
-#[ignore]
-#[test]
-fn test_sv() {
-    // This is the same as test_fi. The purpose of this copy is to test that
-    // Swedish defaults to "reformed", which behaves like Finnish "standard",
-    // and not to "standard", which behaves like Finnish "traditional".
-
-    // Adapted from ficoll.cpp in ICU4C
-    // Testing that w and v behave as in the root collation is for checking
-    // that the sorting collation doesn't exhibit the behavior of the search
-    // collation, which (somewhat questionably) treats w and v as primary-equal.
-    let left = [
-        "wat",
-        "vat",
-        "aübeck",
-        "Låvi",
-        // ICU4C has a duplicate of the first case below.
-        // The duplicate is omitted here.
-        // Instead, the subsequent tests are added for ICU4X.
-        "ä",
-        "a\u{0308}",
-    ];
-    let right = [
-        "vat", "way", "axbeck", "Läwe",
-        // ICU4C has a duplicate of the first case below.
-        // The duplicate is omitted here.
-        // Instead, the subsequent tests are added for ICU4X.
-        "o", "ä",
-    ];
-    let expectations = [
-        Ordering::Greater,
-        Ordering::Less,
-        Ordering::Greater,
-        Ordering::Less,
-        Ordering::Greater,
-        Ordering::Equal,
-    ];
-    let locale: Locale = langid!("sv").into();
-    let data_provider = icu_testdata::get_provider();
-
-    let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
-
-    {
-        let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
-        check_expectations(&collator, &left, &right, &expectations);
-    }
-
-    options.set_strength(Some(Strength::Primary));
-
-    {
-        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
-        check_expectations(&collator, &left, &right, &expectations);
-    }
-}
-
 // TODO: This test should eventually test fallback
 // TODO: Test Swedish and Chinese also, since they have unusual
 // variant defaults. (But are currently not part of the test data.)
