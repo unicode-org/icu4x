@@ -14,31 +14,28 @@ use crate::DictionarySegmenter;
 use crate::lstm::{get_best_lstm_model, LstmSegmenter};
 
 #[derive(Default)]
-pub struct Dictionary<'l> {
-    pub burmese: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
-    pub khmer: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
-    pub lao: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
-    pub thai: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
-    pub cj: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
+pub struct Dictionary {
+    pub burmese: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub khmer: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub lao: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub thai: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub cj: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
 }
 
-impl<'l> Dictionary<'l> {
-    fn best(&self, input: u32) -> Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>> {
+impl Dictionary {
+    fn best(&self, input: u32) -> Option<&DataPayload<UCharDictionaryBreakDataV1Marker>> {
         match get_language(input) {
-            Language::Burmese => self.burmese,
-            Language::Khmer => self.khmer,
-            Language::Lao => self.lao,
-            Language::Thai => self.thai,
-            Language::ChineseOrJapanese => self.cj,
+            Language::Burmese => self.burmese.as_ref(),
+            Language::Khmer => self.khmer.as_ref(),
+            Language::Lao => self.lao.as_ref(),
+            Language::Thai => self.thai.as_ref(),
+            Language::ChineseOrJapanese => self.cj.as_ref(),
             _ => None,
         }
     }
 }
 
 /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
-///
-/// Dictionary payload has to be this order.
-///   [Khmer, Lao, Burmese, Thai]
 pub fn complex_language_segment_utf16(dictionary: &Dictionary, input: &[u16]) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIteratorUtf16::new(input);
@@ -75,9 +72,6 @@ pub fn complex_language_segment_utf16(dictionary: &Dictionary, input: &[u16]) ->
 }
 
 /// Return UTF-8 segment offset array using dictionary or lstm segmenter.
-///
-/// Dictionary payload has to be this order.
-///   [Khmer, Lao, Burmese, Thai]
 pub fn complex_language_segment_str(dictionary: &Dictionary, input: &str) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIterator::new(input);
@@ -140,7 +134,7 @@ mod tests {
             burmese: None,
             khmer: None,
             lao: None,
-            thai: Some(&payload),
+            thai: Some(payload),
             cj: None,
         };
         let breaks = complex_language_segment_str(&dictionary, TEST_STR);
