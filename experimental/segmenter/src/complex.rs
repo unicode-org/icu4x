@@ -13,17 +13,25 @@ use crate::DictionarySegmenter;
 #[cfg(feature = "lstm")]
 use crate::lstm::{get_best_lstm_model, LstmSegmenter};
 
-fn get_best_dictionary_paylod(
-    input: u32,
-    payload: [Option<&DataPayload<UCharDictionaryBreakDataV1Marker>>; 5],
-) -> Option<&DataPayload<UCharDictionaryBreakDataV1Marker>> {
-    match get_language(input) {
-        Language::Khmer => payload[0],
-        Language::Lao => payload[1],
-        Language::Burmese => payload[2],
-        Language::Thai => payload[3],
-        Language::ChineseOrJapanese => payload[4],
-        _ => None,
+#[derive(Default)]
+pub struct Dictionary<'l> {
+    pub burmese: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub khmer: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub lao: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub thai: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub cj: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
+}
+
+impl<'l> Dictionary<'l> {
+    fn best(&self, input: u32) -> Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>> {
+        match get_language(input) {
+            Language::Burmese => self.burmese,
+            Language::Khmer => self.khmer,
+            Language::Lao => self.lao,
+            Language::Thai => self.thai,
+            Language::ChineseOrJapanese => self.cj,
+            _ => None,
+        }
     }
 }
 
@@ -31,10 +39,7 @@ fn get_best_dictionary_paylod(
 ///
 /// Dictionary payload has to be this order.
 ///   [Khmer, Lao, Burmese, Thai]
-pub fn complex_language_segment_utf16(
-    dictionary_payloads: [Option<&DataPayload<UCharDictionaryBreakDataV1Marker>>; 5],
-    input: &[u16],
-) -> Vec<usize> {
+pub fn complex_language_segment_utf16(dictionary: &Dictionary, input: &[u16]) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIteratorUtf16::new(input);
     let mut offset = 0;
@@ -53,9 +58,7 @@ pub fn complex_language_segment_utf16(
             }
         }
 
-        if let Some(payload) =
-            get_best_dictionary_paylod(str_per_lang[0] as u32, dictionary_payloads)
-        {
+        if let Some(payload) = dictionary.best(str_per_lang[0] as u32) {
             if let Ok(segmenter) = DictionarySegmenter::try_new(payload) {
                 let breaks = segmenter.segment_utf16(&str_per_lang);
                 let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
@@ -75,10 +78,7 @@ pub fn complex_language_segment_utf16(
 ///
 /// Dictionary payload has to be this order.
 ///   [Khmer, Lao, Burmese, Thai]
-pub fn complex_language_segment_str(
-    dictionary_payload: [Option<&DataPayload<UCharDictionaryBreakDataV1Marker>>; 5],
-    input: &str,
-) -> Vec<usize> {
+pub fn complex_language_segment_str(dictionary: &Dictionary, input: &str) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIterator::new(input);
     let mut offset = 0;
@@ -97,10 +97,7 @@ pub fn complex_language_segment_str(
             }
         }
 
-        let segmenter = match get_best_dictionary_paylod(
-            str_per_lang.chars().next().unwrap() as u32,
-            dictionary_payload,
-        ) {
+        let segmenter = match dictionary.best(str_per_lang.chars().next().unwrap() as u32) {
             Some(v) => DictionarySegmenter::try_new(v),
             None => Err(DataError::custom("cannot find payload")),
         };
@@ -139,13 +136,18 @@ mod tests {
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");
-        let breaks =
-            complex_language_segment_str([None, None, None, Some(&payload), None], TEST_STR);
+        let dictionary = Dictionary {
+            burmese: None,
+            khmer: None,
+            lao: None,
+            thai: Some(&payload),
+            cj: None,
+        };
+        let breaks = complex_language_segment_str(&dictionary, TEST_STR);
         assert_eq!(breaks, [12, 21, 33, 42], "Thai test by UTF-8");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
-        let breaks =
-            complex_language_segment_utf16([None, None, None, Some(&payload), None], &utf16);
+        let breaks = complex_language_segment_utf16(&dictionary, &utf16);
         assert_eq!(breaks, [4, 7, 11, 14], "Thai test by UTF-16");
     }
 }

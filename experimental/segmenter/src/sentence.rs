@@ -6,6 +6,7 @@ use alloc::vec::Vec;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
 
+use crate::complex::Dictionary;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
@@ -42,7 +43,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payloads: [None, None, None, None, None],
+            dictionary: Dictionary::default(),
         }
     }
 
@@ -57,7 +58,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payloads: [None, None, None, None, None],
+            dictionary: Dictionary::default(),
         }
     }
 
@@ -69,7 +70,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payloads: [None, None, None, None, None],
+            dictionary: Dictionary::default(),
         }
     }
 }

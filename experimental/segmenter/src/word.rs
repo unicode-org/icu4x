@@ -95,13 +95,13 @@ impl WordBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payloads: [
-                self.dictionary_km_payload.as_ref(),
-                self.dictionary_lo_payload.as_ref(),
-                self.dictionary_my_payload.as_ref(),
-                self.dictionary_th_payload.as_ref(),
-                self.dictionary_cj_payload.as_ref(),
-            ],
+            dictionary: Dictionary {
+                burmese: self.dictionary_my_payload.as_ref(),
+                khmer: self.dictionary_km_payload.as_ref(),
+                lao: self.dictionary_lo_payload.as_ref(),
+                thai: self.dictionary_th_payload.as_ref(),
+                cj: self.dictionary_cj_payload.as_ref(),
+            },
         }
     }
 
@@ -113,7 +113,7 @@ impl WordBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payloads: [None, None, None, None, None],
+            dictionary: Dictionary::default(),
         }
     }
 
@@ -125,13 +125,13 @@ impl WordBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payloads: [
-                self.dictionary_km_payload.as_ref(),
-                self.dictionary_lo_payload.as_ref(),
-                self.dictionary_my_payload.as_ref(),
-                self.dictionary_th_payload.as_ref(),
-                self.dictionary_cj_payload.as_ref(),
-            ],
+            dictionary: Dictionary {
+                burmese: self.dictionary_my_payload.as_ref(),
+                khmer: self.dictionary_km_payload.as_ref(),
+                lao: self.dictionary_lo_payload.as_ref(),
+                thai: self.dictionary_th_payload.as_ref(),
+                cj: self.dictionary_cj_payload.as_ref(),
+            },
         }
     }
 }
@@ -169,7 +169,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakType {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary_payloads, &s);
+        let breaks = complex_language_segment_str(&iter.dictionary, &s);
         iter.result_cache = breaks;
         let mut i = iter.current_pos_data.unwrap().1.len_utf8();
         loop {
@@ -243,7 +243,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iter.dictionary_payloads, &s);
+        let breaks = complex_language_segment_utf16(&iter.dictionary, &s);
         let mut i = 1;
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.

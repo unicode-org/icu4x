@@ -193,13 +193,13 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary_payloads: [
-                self.dictionary_km_payload.as_ref(),
-                self.dictionary_lo_payload.as_ref(),
-                self.dictionary_my_payload.as_ref(),
-                self.dictionary_th_payload.as_ref(),
-                None,
-            ],
+            dictionary_payloads: Dictionary {
+                burmese: self.dictionary_my_payload.as_ref(),
+                khmer: self.dictionary_km_payload.as_ref(),
+                lao: self.dictionary_lo_payload.as_ref(),
+                thai: self.dictionary_th_payload.as_ref(),
+                cj: None,
+            },
         }
     }
 
@@ -215,7 +215,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary_payloads: [None, None, None, None, None],
+            dictionary_payloads: Dictionary::default(),
         }
     }
 
@@ -231,13 +231,13 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary_payloads: [
-                self.dictionary_km_payload.as_ref(),
-                self.dictionary_lo_payload.as_ref(),
-                self.dictionary_my_payload.as_ref(),
-                self.dictionary_th_payload.as_ref(),
-                None,
-            ],
+            dictionary_payloads: Dictionary {
+                burmese: self.dictionary_my_payload.as_ref(),
+                khmer: self.dictionary_km_payload.as_ref(),
+                lao: self.dictionary_lo_payload.as_ref(),
+                thai: self.dictionary_th_payload.as_ref(),
+                cj: None,
+            },
         }
     }
 }
@@ -477,7 +477,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     result_cache: Vec<usize>,
     data: &'l RuleBreakDataV1<'l>,
     options: &'l LineBreakOptions,
-    dictionary_payloads: [Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>; 5],
+    dictionary_payloads: Dictionary<'l>,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -704,7 +704,7 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary_payloads, &s);
+        let breaks = complex_language_segment_str(&iter.dictionary_payloads, &s);
         iter.result_cache = breaks;
         let mut i = iter.current_pos_data.unwrap().1.len_utf8();
         loop {
@@ -803,7 +803,7 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.dictionary_payloads, &s);
+        let breaks = complex_language_segment_utf16(&iterator.dictionary_payloads, &s);
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
