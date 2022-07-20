@@ -55,9 +55,9 @@ macro_rules! impl_data_provider {
                     &self,
                     req: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let langid = req.options.get_langid();
+                    let langid = req.locale.get_langid();
                     let calendar = req
-                        .options
+                        .locale
                         .get_unicode_ext(&key!("ca"))
                         .ok_or_else(|| DataErrorKind::NeedsVariant.into_error())?;
 
@@ -177,7 +177,7 @@ macro_rules! impl_data_provider {
             }
 
             impl IterableDataProvider<$marker> for CommonDateProvider {
-                fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(self
@@ -191,7 +191,7 @@ macro_rules! impl_data_provider {
                                     .unicode
                                     .keywords
                                     .set(key!("ca"), cal_value.clone());
-                                DataOptions::from(locale)
+                                DataLocale::from(locale)
                             }));
                     }
                     Ok(r)
@@ -228,7 +228,7 @@ mod test {
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load(&DataRequest {
-                options: locale.into(),
+                locale: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -245,7 +245,7 @@ mod test {
         let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load(&DataRequest {
-                options: locale.into(),
+                locale: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -266,7 +266,7 @@ mod test {
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load(&DataRequest {
-                options: locale.into(),
+                locale: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -310,7 +310,7 @@ mod test {
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load(&DataRequest {
-                options: locale.into(),
+                locale: locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -341,7 +341,7 @@ mod test {
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load(&DataRequest {
-                options: locale.into(),
+                locale: locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()

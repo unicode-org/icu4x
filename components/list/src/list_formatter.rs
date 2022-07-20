@@ -27,7 +27,7 @@ macro_rules! constructor {
         ) -> Result<Self, DataError> {
             let data = data_provider
                 .load(&DataRequest {
-                    options: locale.into().into(),
+                    locale: locale.into().into(),
                     metadata: Default::default(),
                 })?
                 .take_payload()?.cast();

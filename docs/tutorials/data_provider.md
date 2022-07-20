@@ -27,7 +27,7 @@ impl AdditiveIdentity {
         provider: &D,
     ) -> Result<Self, MyError> {
         let response = data_provider.load(&DataRequest {
-            options: locale.into().into(),
+            locale: locale.into().into(),
             metadata: Default::default(),
         })?.take_payload()?;
 

@@ -280,12 +280,12 @@ pub fn datagen(
 
     keys.into_par_iter().try_for_each(|&key| {
         log::info!("Writing key: {}", key);
-        let options = provider
-            .supported_options_for_key(key)
+        let locales = provider
+            .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
-        let res = options.into_par_iter().try_for_each(|options| {
+        let res = locales.into_par_iter().try_for_each(|locale| {
             let req = DataRequest {
-                options: options.clone(),
+                locale: locale.clone(),
                 metadata: Default::default(),
             };
             let payload = provider
@@ -293,7 +293,7 @@ pub fn datagen(
                 .and_then(DataResponse::take_payload)
                 .map_err(|e| e.with_req(key, &req))?;
             exporters.par_iter().try_for_each(|e| {
-                e.put_payload(key, &options, &payload)
+                e.put_payload(key, &locale, &payload)
                     .map_err(|e| e.with_req(key, &req))
             })
         });

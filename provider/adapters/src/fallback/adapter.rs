@@ -21,7 +21,7 @@ use crate::helpers::result_is_err_missing_data_options;
 /// let provider = icu_testdata::get_postcard_provider();
 ///
 /// let req = DataRequest {
-///     options: locale!("ja-JP").into(),
+///     locale: locale!("ja-JP").into(),
 ///     metadata: Default::default(),
 /// };
 ///
@@ -87,7 +87,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// let provider = HelloWorldProvider;
     ///
     /// let req = DataRequest {
-    ///     options: locale!("de-CH").into(),
+    ///     locale: locale!("de-CH").into(),
     ///     metadata: Default::default(),
     /// };
     ///
@@ -143,19 +143,19 @@ impl<P> LocaleFallbackProvider<P> {
             if !result_is_err_missing_data_options(&result) {
                 return result
                     .map(|mut res| {
-                        f2(&mut res).data_locale = Some(fallback_iterator.take().options);
+                        f2(&mut res).locale = Some(fallback_iterator.take().locale);
                         res
                     })
                     // Log the original request rather than the fallback request
                     .map_err(|e| e.with_req(key, base_req));
             }
             // If we just checked und, break out of the loop.
-            if fallback_iterator.get().options.is_empty() {
+            if fallback_iterator.get().locale.is_empty() {
                 break;
             }
             fallback_iterator.step();
         }
-        Err(DataErrorKind::MissingDataOptions.with_req(key, base_req))
+        Err(DataErrorKind::MissingDataLocale.with_req(key, base_req))
     }
 }
 

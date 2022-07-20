@@ -29,8 +29,8 @@ impl DataProvider<AliasesV1Marker> for AliasesProvider {
     fn load(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
-        if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousDataOptions.into_error());
+        if !req.locale.is_empty() {
+            return Err(DataErrorKind::ExtraneousDataLocale.into_error());
         }
 
         let data: &cldr_serde::aliases::Resource = self
@@ -48,7 +48,7 @@ impl DataProvider<AliasesV1Marker> for AliasesProvider {
 icu_provider::make_exportable_provider!(AliasesProvider, [AliasesV1Marker,]);
 
 impl IterableDataProvider<AliasesV1Marker> for AliasesProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

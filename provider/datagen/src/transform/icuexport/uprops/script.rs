@@ -82,7 +82,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensions
 impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider
 {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -121,7 +121,7 @@ mod tests {
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(&DataRequest {
-                options: DataOptions::default(),
+                locale: DataLocale::default(),
                 metadata: Default::default(),
             })
             .expect("The data should be valid")

@@ -35,7 +35,7 @@ use serde::de::Deserialize;
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
 ///     .load(&DataRequest {
-///         options: locale!("la").into(),
+///         locale: locale!("la").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
@@ -82,7 +82,7 @@ impl StaticDataProvider {
     /// DataProvider::<HelloWorldV1Marker>::load(
     ///     &stub_provider,
     ///     &DataRequest {
-    ///         options: locale!("la").into(),
+    ///         locale: locale!("la").into(),
     ///         metadata: Default::default(),
     ///     },
     /// )
@@ -110,8 +110,8 @@ impl BufferProvider for StaticDataProvider {
             .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
                 cursor
-                    .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
-                    .ok_or(DataErrorKind::MissingDataOptions)
+                    .get1_copied_by(|bytes| req.locale.strict_cmp(bytes).reverse())
+                    .ok_or(DataErrorKind::MissingDataLocale)
             })
             .map_err(|kind| kind.with_req(key, req))?;
         let bytes = self

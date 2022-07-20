@@ -46,7 +46,7 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynamicDataProvider::supported_options_for_key`].
+/// by [`datagen::IterableDynamicDataProvider::supported_locales_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
@@ -143,20 +143,20 @@ where
     F: Fn(&DataRequest) -> bool,
     D: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_options_for_key(
+    fn supported_locales_for_key(
         &self,
         key: DataKey,
-    ) -> Result<alloc::vec::Vec<DataOptions>, DataError> {
-        self.inner.supported_options_for_key(key).map(|vec| {
-            // Use filter_map instead of filter to avoid cloning the options
+    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        self.inner.supported_locales_for_key(key).map(|vec| {
+            // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
-                .filter_map(move |options| {
+                .filter_map(move |locale| {
                     let request = DataRequest {
-                        options,
+                        locale,
                         metadata: Default::default(),
                     };
                     if (self.predicate)(&request) {
-                        Some(request.options)
+                        Some(request.locale)
                     } else {
                         None
                     }
@@ -173,17 +173,17 @@ where
     F: Fn(&DataRequest) -> bool,
     D: datagen::IterableDataProvider<M>,
 {
-    fn supported_options(&self) -> Result<alloc::vec::Vec<DataOptions>, DataError> {
-        self.inner.supported_options().map(|vec| {
-            // Use filter_map instead of filter to avoid cloning the options
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        self.inner.supported_locales().map(|vec| {
+            // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
-                .filter_map(move |options| {
+                .filter_map(move |locale| {
                     let request = DataRequest {
-                        options,
+                        locale,
                         metadata: Default::default(),
                     };
                     if (self.predicate)(&request) {
-                        Some(request.options)
+                        Some(request.locale)
                     } else {
                         None
                     }

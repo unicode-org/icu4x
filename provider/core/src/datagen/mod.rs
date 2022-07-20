@@ -25,12 +25,12 @@ use crate::prelude::*;
 
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
-    /// Save a `payload` corresponding to the given key and options.
+    /// Save a `payload` corresponding to the given key and locale.
     /// Takes non-mut self as it can be called concurrently.
     fn put_payload(
         &self,
         key: DataKey,
-        options: &DataOptions,
+        locale: &DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
 
@@ -62,7 +62,7 @@ impl<T> ExportableProvider for T where T: IterableDynamicDataProvider<ExportMark
 /// for `make_exportable_provider` are:
 /// * The data struct has to implement [`serde::Serialize`](::serde::Serialize) and [`databake::Bake`]
 /// * The provider needs to implement [`IterableDataProvider`] for all specified [`KeyedDataMarker`]s.
-///   This allows the generating code to know which [`DataOptions`] to collect.
+///   This allows the generating code to know which [`DataLocale`] to collect.
 ///
 /// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
 /// [`BakedDataProvider`]: ../../icu_datagen/index.html
@@ -76,7 +76,7 @@ macro_rules! make_exportable_provider {
         );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_options_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataOptions>, $crate::DataError> {
+            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
@@ -85,7 +85,7 @@ macro_rules! make_exportable_provider {
                 match key.get_hash() {
                     $(
                         $struct_m => {
-                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_options(self)
+                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_locales(self)
                         }
                     )+,
                     _ => Err($crate::DataErrorKind::MissingDataKey.with_key(key))

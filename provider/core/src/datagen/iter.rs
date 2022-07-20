@@ -6,22 +6,22 @@
 
 use crate::prelude::*;
 
-/// A [`DynamicDataProvider`] that can iterate over all supported [`DataOptions`] for a certain key.
+/// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDynamicDataProvider<M: DataMarker>: DynamicDataProvider<M> {
-    /// Given a [`DataKey`], returns a list of [`DataOptions`].
-    fn supported_options_for_key(&self, key: DataKey) -> Result<Vec<DataOptions>, DataError>;
+    /// Given a [`DataKey`], returns a list of [`DataLocale`].
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError>;
 }
 
-/// A [`DataProvider`] that can iterate over all supported [`DataOptions`] for a certain key.
+/// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDataProvider<M: KeyedDataMarker>: DataProvider<M> {
-    /// Returns a list of [`DataOptions`].
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError>;
+    /// Returns a list of [`DataLocale`].
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError>;
 }
 
 impl<M, P> IterableDynamicDataProvider<M> for Box<P>
@@ -29,7 +29,7 @@ where
     M: DataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
 {
-    fn supported_options_for_key(&self, key: DataKey) -> Result<Vec<DataOptions>, DataError> {
-        (**self).supported_options_for_key(key)
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+        (**self).supported_locales_for_key(key)
     }
 }

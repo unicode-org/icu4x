@@ -15,11 +15,11 @@ pub(crate) fn result_is_err_missing_data_key<T>(result: &Result<T, DataError>) -
 }
 
 pub(crate) fn result_is_err_missing_data_options<T>(result: &Result<T, DataError>) -> bool {
-    // TODO(#2117): Fold MissingLocale and MissingVariant into MissingDataOptions.
+    // TODO(#2117): Fold MissingLocale and MissingVariant into MissingDataLocale.
     matches!(
         result,
         Err(DataError {
-            kind: DataErrorKind::MissingDataOptions,
+            kind: DataErrorKind::MissingDataLocale,
             ..
         })
     ) || matches!(

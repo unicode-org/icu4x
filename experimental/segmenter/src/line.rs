@@ -126,7 +126,7 @@ impl LineBreakSegmenter {
         let locale = locale!("th");
         let dictionary_payload = provider
             .load(&DataRequest {
-                options: DataOptions::from(locale),
+                locale: DataLocale::from(locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;

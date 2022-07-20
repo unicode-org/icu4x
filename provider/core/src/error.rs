@@ -27,7 +27,7 @@ pub enum DataErrorKind {
 
     /// There is data for the key, but not for this particular variant and/or locale.
     #[displaydoc("Missing data for variant or locale")]
-    MissingDataOptions,
+    MissingDataLocale,
 
     /// The request should include a variant field.
     #[displaydoc("Request needs a variant field")]
@@ -39,7 +39,7 @@ pub enum DataErrorKind {
 
     /// The request should not contain a variant and/or locale.
     #[displaydoc("Request has extraneous information")]
-    ExtraneousDataOptions,
+    ExtraneousDataLocale,
 
     /// The resource was blocked by a filter. The resource may or may not be available.
     #[displaydoc("Resource blocked by filter")]

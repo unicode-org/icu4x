@@ -63,9 +63,9 @@ macro_rules! expand {
             }
 
             impl IterableDataProvider<$marker> for BinaryPropertyUnicodeSetDataProvider {
-                fn supported_options(
+                fn supported_locales(
                     &self,
-                ) -> Result<Vec<DataOptions>, DataError> {
+                ) -> Result<Vec<DataLocale>, DataError> {
                     get_binary(&self.source, $prop_name)?;
 
                     Ok(vec![Default::default()])
