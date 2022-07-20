@@ -49,11 +49,11 @@ impl<M: DataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>> Dyna
     for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load_payload(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_payload(key, req),
-            B(p) => p.load_payload(key, req),
+            A(p) => p.load_data(key, req),
+            B(p) => p.load_data(key, req),
         }
     }
 }
@@ -62,11 +62,11 @@ impl<M: KeyedDataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<
     for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_resource(req),
-            B(p) => p.load_resource(req),
+            A(p) => p.load(req),
+            B(p) => p.load(req),
         }
     }
 }

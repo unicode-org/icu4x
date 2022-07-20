@@ -62,7 +62,7 @@ where
     D: DataProvider<TimePatternsV1Marker> + ?Sized,
 {
     let data = data_provider
-        .load_resource(&DataRequest {
+        .load(&DataRequest {
             options: DataOptions::from(locale),
             metadata: Default::default(),
         })?
@@ -107,7 +107,7 @@ where
     D: DataProvider<DatePatternsV1Marker> + ?Sized,
 {
     let data = data_provider
-        .load_resource(&DataRequest {
+        .load(&DataRequest {
             options: DataOptions::from(locale),
             metadata: Default::default(),
         })?
@@ -276,7 +276,7 @@ where
     fn skeleton_data_payload(self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
         let data = self
             .data_provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(self.locale),
                 metadata: Default::default(),
             })?

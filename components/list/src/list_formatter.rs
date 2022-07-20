@@ -26,7 +26,7 @@ macro_rules! constructor {
             style: ListStyle,
         ) -> Result<Self, DataError> {
             let data = data_provider
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: locale.into().into(),
                     metadata: Default::default(),
                 })?

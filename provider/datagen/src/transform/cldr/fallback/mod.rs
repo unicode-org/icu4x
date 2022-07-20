@@ -28,7 +28,7 @@ impl From<&SourceData> for FallbackRulesProvider {
 }
 
 impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
@@ -53,7 +53,7 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider
 }
 
 impl DataProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
@@ -193,7 +193,7 @@ fn test_basic() {
 
     let provider = FallbackRulesProvider::from(&SourceData::for_test());
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
-        .load_resource(&DataRequest::default())
+        .load(&DataRequest::default())
         .unwrap()
         .take_payload()
         .unwrap();
@@ -222,7 +222,7 @@ fn test_basic() {
     );
 
     let parents: DataPayload<LocaleFallbackParentsV1Marker> = provider
-        .load_resource(&DataRequest::default())
+        .load(&DataRequest::default())
         .unwrap()
         .take_payload()
         .unwrap();

@@ -44,7 +44,7 @@ mod test {
         let provider = icu_testdata::get_provider();
         let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let patterns = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -52,7 +52,7 @@ mod test {
             .take_payload()
             .expect("Failed to retrieve payload");
         let skeletons = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.into(),
                 metadata: Default::default(),
             })

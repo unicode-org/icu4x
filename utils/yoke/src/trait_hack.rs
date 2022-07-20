@@ -56,7 +56,7 @@
 //! where
 //!     M: MiniDataMarker
 //! {
-//!     fn mini_load_payload(&self) -> MiniDataPayload<M>;
+//!     fn mini_load_data(&self) -> MiniDataPayload<M>;
 //! }
 //!
 //! struct MiniStructProvider<M>
@@ -71,7 +71,7 @@
 //!     M: MiniDataMarker,
 //!     for<'a> <M::Yokeable as Yokeable<'a>>::Output: Clone,
 //! {
-//!     fn mini_load_payload(&self) -> MiniDataPayload<M> {
+//!     fn mini_load_data(&self) -> MiniDataPayload<M> {
 //!         self.payload.clone()
 //!     }
 //! }
@@ -115,10 +115,10 @@
 //!
 //! // Broken:
 //! // "method cannot be called on `MiniStructProvider<_>` due to unsatisfied trait bounds"
-//! let payload: MiniDataPayload<SimpleStruct> = provider.mini_load_payload();
+//! let payload: MiniDataPayload<SimpleStruct> = provider.mini_load_data();
 //!
 //! // Working:
-//! let payload = MiniDataProvider::<SimpleStruct>::mini_load_payload(&provider);
+//! let payload = MiniDataProvider::<SimpleStruct>::mini_load_data(&provider);
 //!
 //! assert_eq!(payload.yoke.get().0, 42);
 //! ```

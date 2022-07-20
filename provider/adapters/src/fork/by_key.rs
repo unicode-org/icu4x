@@ -51,7 +51,7 @@ use crate::helpers::result_is_err_missing_data_key;
 /// let data_provider = forking_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_resource(&DataRequest {
+///     .load(&DataRequest {
 ///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
@@ -89,7 +89,7 @@ use crate::helpers::result_is_err_missing_data_key;
 ///
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = data_provider
-///     .load_resource(&DataRequest {
+///     .load(&DataRequest {
 ///         options: locale!("zh").into(),
 ///         metadata: Default::default(),
 ///     })
@@ -101,7 +101,7 @@ use crate::helpers::result_is_err_missing_data_key;
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load_resource(&DataRequest {
+///     .load(&DataRequest {
 ///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
@@ -150,12 +150,12 @@ where
     P0: DynamicDataProvider<M>,
     P1: DynamicDataProvider<M>,
 {
-    fn load_payload(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let result = self.0.load_payload(key, req);
+    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        let result = self.0.load_data(key, req);
         if !result_is_err_missing_data_key(&result) {
             return result;
         }
-        self.1.load_payload(key, req)
+        self.1.load_data(key, req)
     }
 }
 
@@ -213,7 +213,7 @@ where
 ///
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = data_provider
-///     .load_resource(&DataRequest {
+///     .load(&DataRequest {
 ///         options: locale!("zh").into(),
 ///         metadata: Default::default(),
 ///     })
@@ -225,7 +225,7 @@ where
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load_resource(&DataRequest {
+///     .load(&DataRequest {
 ///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
@@ -276,9 +276,9 @@ where
     M: DataMarker,
     P: DynamicDataProvider<M>,
 {
-    fn load_payload(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.load_payload(key, req);
+            let result = provider.load_data(key, req);
             if !result_is_err_missing_data_key(&result) {
                 return result;
             }

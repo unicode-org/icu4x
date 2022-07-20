@@ -630,10 +630,7 @@ impl SegmenterRuleProvider {
 }
 
 impl DataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load_resource(
-        &self,
-        _req: &DataRequest,
-    ) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
+    fn load(&self, _req: &DataRequest) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(LineBreakDataV1Marker::KEY)?;
 
         Ok(DataResponse {
@@ -644,7 +641,7 @@ impl DataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
 }
 
 impl DataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load_resource(
+    fn load(
         &self,
         _req: &DataRequest,
     ) -> Result<DataResponse<GraphemeClusterBreakDataV1Marker>, DataError> {
@@ -658,10 +655,7 @@ impl DataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
 }
 
 impl DataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load_resource(
-        &self,
-        _req: &DataRequest,
-    ) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
+    fn load(&self, _req: &DataRequest) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(WordBreakDataV1Marker::KEY)?;
 
         Ok(DataResponse {
@@ -672,7 +666,7 @@ impl DataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
 }
 
 impl DataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load_resource(
+    fn load(
         &self,
         _req: &DataRequest,
     ) -> Result<DataResponse<SentenceBreakDataV1Marker>, DataError> {
@@ -757,7 +751,7 @@ impl From<&SourceData> for SegmenterDictionaryProvider {
 }
 
 impl DataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<UCharDictionaryBreakDataV1Marker>, DataError> {
@@ -803,7 +797,7 @@ mod tests {
     fn load_grapheme_cluster_data() {
         let provider = SegmenterRuleProvider::from(&SourceData::for_test());
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
-            .load_resource(&DataRequest::default())
+            .load(&DataRequest::default())
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");

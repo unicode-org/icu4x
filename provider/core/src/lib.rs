@@ -7,7 +7,7 @@
 //! `icu_provider` defines traits and structs for transmitting data through the ICU4X locale
 //! data pipeline. The primary trait is [`DataProvider`]. It is parameterized by a
 //! [`KeyedDataMarker`], which contains the data type and a [`DataKey`]. It has one method,
-//! [`DataProvider::load_resource`], which transforms a [`DataRequest`]
+//! [`DataProvider::load`], which transforms a [`DataRequest`]
 //! into a [`DataResponse`].
 //!
 //! - [`DataKey`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.

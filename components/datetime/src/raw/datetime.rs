@@ -68,7 +68,7 @@ impl TimeFormatter {
         let symbols_data = if required.time_symbols_data {
             Some(
                 data_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
@@ -211,7 +211,7 @@ impl DateFormatter {
         let week_data = if required.week_data {
             Some(
                 data_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
@@ -234,7 +234,7 @@ impl DateFormatter {
         let symbols_data = if required.date_symbols_data {
             Some(
                 data_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
@@ -430,7 +430,7 @@ impl DateTimeFormatter {
         let week_data = if required.week_data {
             Some(
                 data_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
@@ -453,7 +453,7 @@ impl DateTimeFormatter {
         let date_symbols_data = if required.date_symbols_data {
             Some(
                 data_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
@@ -466,7 +466,7 @@ impl DateTimeFormatter {
         let time_symbols_data = if required.time_symbols_data {
             Some(
                 data_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?

@@ -63,10 +63,7 @@ impl NumbersProvider {
 }
 
 impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         let langid = req.options.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
@@ -152,7 +149,7 @@ fn test_basic() {
     let provider = NumbersProvider::from(&SourceData::for_test());
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
-        .load_resource(&DataRequest {
+        .load(&DataRequest {
             options: locale!("ar-EG").into(),
             metadata: Default::default(),
         })

@@ -23,7 +23,7 @@ use icu_provider::prelude::*;
 use writeable::Writeable;
 
 /// Loads a resource into its destination if the destination has not already been filled.
-fn load_resource<D, L, P>(
+fn load<D, L, P>(
     locale: &L,
     destination: &mut Option<DataPayload<D>>,
     provider: &P,
@@ -37,7 +37,7 @@ where
     if destination.is_none() {
         *destination = Some(
             provider
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: langid.into(),
                     metadata: Default::default(),
                 })?
@@ -132,7 +132,7 @@ impl TimeZoneFormatter {
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: DataOptions::from(&locale),
                     metadata: Default::default(),
                 })?
@@ -383,7 +383,7 @@ impl TimeZoneFormatter {
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: DataOptions::from(&locale),
                     metadata: Default::default(),
                 })?
@@ -437,7 +437,7 @@ impl TimeZoneFormatter {
         ZP: DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_generic_long == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.mz_generic_long,
                 zone_provider,
@@ -459,7 +459,7 @@ impl TimeZoneFormatter {
         ZP: DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_generic_short == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.mz_generic_short,
                 zone_provider,
@@ -481,7 +481,7 @@ impl TimeZoneFormatter {
         ZP: DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_specific_long == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.mz_specific_long,
                 zone_provider,
@@ -503,7 +503,7 @@ impl TimeZoneFormatter {
         ZP: DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_specific_short == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.mz_specific_short,
                 zone_provider,
@@ -525,7 +525,7 @@ impl TimeZoneFormatter {
         ZP: DataProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
     {
         if self.data_payloads.exemplar_cities == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.exemplar_cities,
                 zone_provider,
@@ -547,7 +547,7 @@ impl TimeZoneFormatter {
         ZP: DataProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
     {
         if self.data_payloads.exemplar_cities == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.exemplar_cities,
                 zone_provider,
