@@ -34,11 +34,5 @@ pub(crate) fn result_is_err_missing_data_options<T>(result: &Result<T, DataError
             kind: DataErrorKind::MissingVariant,
             ..
         })
-    ) || matches!(
-        result,
-        Err(DataError {
-            kind: DataErrorKind::Io(std::io::ErrorKind::NotFound),
-            ..
-        })
     )
 }

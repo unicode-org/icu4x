@@ -4,18 +4,14 @@
 
 use std::cmp::Ordering;
 
-use icu_collator::provider::CollationDataV1Marker;
 use icu_collator::{Collator, CollatorOptions, Strength};
 use icu_datagen::CldrLocaleSubset;
 use icu_datagen::SourceData;
-use icu_locid::locale;
 use icu_locid::{langid, Locale};
 use icu_provider::AsDowncastingAnyProvider;
-use icu_provider::AsDynProviderAnyMarkerWrap;
-use icu_provider::{AnyMarker, DynProvider};
-use icu_provider_adapters::fallback::{LocaleFallbackProvider};
+use icu_provider::AsDynamicDataProviderAnyMarkerWrap;
+use icu_provider::{AnyMarker, DynamicDataProvider};
 use lazy_static::lazy_static;
-use icu_provider::*;
 
 lazy_static! {
     static ref SOURCE_DATA: SourceData = SourceData::default()
@@ -26,7 +22,7 @@ lazy_static! {
         .unwrap();
 }
 
-fn get_provider() -> impl DynProvider<AnyMarker> {
+fn get_provider() -> impl DynamicDataProvider<AnyMarker> {
     icu_datagen::create_datagen_provider!(*SOURCE_DATA)
 }
 
@@ -92,7 +88,8 @@ fn test_sv() {
     options.set_strength(Some(Strength::Tertiary));
 
     {
-        let collator: Collator = Collator::try_new(locale.clone(), &provider_no_fallback, options).unwrap();
+        let collator: Collator =
+            Collator::try_new(locale.clone(), &provider_no_fallback, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
 
@@ -102,24 +99,4 @@ fn test_sv() {
         let collator: Collator = Collator::try_new(locale, &provider_no_fallback, options).unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
-}
-
-#[test]
-fn test_nb_nn_no() {
-    let any_dyn_provider = get_provider();
-    let any_provider = any_dyn_provider.as_any_provider();
-    let provider_with_fallback = LocaleFallbackProvider::try_new(any_provider.as_downcasting()).unwrap();
-    let provider_no_fallback = any_provider.as_downcasting();
-
-    let result: Result<DataResponse<CollationDataV1Marker>, DataError> = provider_no_fallback.load_resource(&DataRequest {
-        options: locale!("nb").into(),
-        metadata: Default::default()
-    });
-    assert!(matches!(result, Err(_)));
-
-    let data_response: DataResponse<CollationDataV1Marker> = provider_with_fallback.load_resource(&DataRequest {
-        options: locale!("nb").into(),
-        metadata: Default::default()
-    }).unwrap();
-    assert_eq!(data_response.metadata.data_locale, Some(locale!("no").into()));
 }

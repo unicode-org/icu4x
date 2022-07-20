@@ -123,7 +123,15 @@ macro_rules! collation_provider {
                                 "collation/{}/{}{}.toml",
                                 self.source.collation_han_database(),
                                 locale_to_file_name(&req.options), $suffix)
-                        )?;
+                        )
+                        .map_err(|e| match e.kind {
+                            DataErrorKind::Io(
+                                std::io::ErrorKind::NotFound
+                            ) => DataErrorKind::MissingDataOptions.with_req(
+                                $marker::KEY, &req
+                            ),
+                            _ => e
+                        })?;
 
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),

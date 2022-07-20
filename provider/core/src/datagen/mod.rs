@@ -74,7 +74,7 @@ macro_rules! make_exportable_provider {
             [ $($struct_m),+, ],
             $crate::datagen::ExportMarker
         );
-        $crate::impl_dyn_provider!(
+        $crate::impl_dynamic_data_provider!(
             $provider,
             [ $($struct_m),+, ],
             $crate::any::AnyMarker

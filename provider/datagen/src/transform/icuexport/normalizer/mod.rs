@@ -52,8 +52,8 @@ macro_rules! normalization_provider {
         }
 
         impl IterableDataProvider<$marker> for NormalizationProvider {
-            fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-                Ok(vec![ResourceOptions::default()])
+            fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+                Ok(vec![DataOptions::default()])
             }
         }
     };
