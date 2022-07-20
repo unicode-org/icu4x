@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658331495374,
+  "lastUpdate": 1658332738891,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38068,6 +38068,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "219e20faaeead57f6e81ac67e0a61af828c9a0ee",
+          "message": "Improving `icu` crate docs, features, modules (#2204)",
+          "timestamp": "2022-07-20T17:46:39+02:00",
+          "tree_id": "cfb1febd7bd5ff7fa5f239b93ec2c331ad73eee5",
+          "url": "https://github.com/unicode-org/icu4x/commit/219e20faaeead57f6e81ac67e0a61af828c9a0ee"
+        },
+        "date": 1658332703912,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105143,
+            "range": "± 882",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21296,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64280,
+            "range": "± 2734",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 168,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
             "range": "± 0",
             "unit": "ns/iter"
           }
