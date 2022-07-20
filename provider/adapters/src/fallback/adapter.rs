@@ -40,7 +40,7 @@ use crate::helpers::result_is_err_missing_data_options;
 ///
 /// assert_eq!(
 ///     "ja",
-///     response.metadata.data_locale.unwrap().to_string()
+///     response.metadata.locale.unwrap().to_string()
 /// );
 /// assert_eq!(
 ///     "こんにちは世界",
