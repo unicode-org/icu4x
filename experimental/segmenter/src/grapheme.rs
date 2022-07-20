@@ -32,7 +32,7 @@ impl GraphemeClusterBreakSegmenter {
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
-        let payload = provider.load(&DataRequest::default())?.take_payload()?;
+        let payload = provider.load(Default::default())?.take_payload()?;
         Ok(Self { payload })
     }
 

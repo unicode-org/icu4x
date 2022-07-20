@@ -121,12 +121,12 @@ impl LineBreakSegmenter {
             + DataProvider<UCharDictionaryBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider.load(&DataRequest::default())?.take_payload()?;
+        let payload = provider.load(Default::default())?.take_payload()?;
 
         let locale = locale!("th");
         let dictionary_payload = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(locale),
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -777,7 +777,7 @@ mod tests {
     fn linebreak_propery() {
         let provider = icu_testdata::get_provider();
         let payload: DataPayload<LineBreakDataV1Marker> = provider
-            .load(&DataRequest::default())
+            .load(Default::default())
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");
@@ -813,7 +813,7 @@ mod tests {
     fn break_rule() {
         let provider = icu_testdata::get_provider();
         let payload: DataPayload<LineBreakDataV1Marker> = provider
-            .load(&DataRequest::default())
+            .load(Default::default())
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");

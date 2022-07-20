@@ -30,7 +30,7 @@ impl SentenceBreakSegmenter {
     where
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {
-        let payload = provider.load(&DataRequest::default())?.take_payload()?;
+        let payload = provider.load(Default::default())?.take_payload()?;
         Ok(Self { payload })
     }
 

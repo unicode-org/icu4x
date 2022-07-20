@@ -285,16 +285,16 @@ pub fn datagen(
             .map_err(|e| e.with_key(key))?;
         let res = locales.into_par_iter().try_for_each(|locale| {
             let req = DataRequest {
-                locale: locale.clone(),
+                locale: &locale,
                 metadata: Default::default(),
             };
             let payload = provider
-                .load_data(key, &req)
+                .load_data(key, req)
                 .and_then(DataResponse::take_payload)
-                .map_err(|e| e.with_req(key, &req))?;
+                .map_err(|e| e.with_req(key, req))?;
             exporters.par_iter().try_for_each(|e| {
                 e.put_payload(key, &locale, &payload)
-                    .map_err(|e| e.with_req(key, &req))
+                    .map_err(|e| e.with_req(key, req))
             })
         });
 

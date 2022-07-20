@@ -60,8 +60,8 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// use icu_provider::prelude::*;
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
-///     .load(&DataRequest {
-///         locale: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -102,7 +102,7 @@ impl HelloWorldProvider {
 }
 
 impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         #[allow(clippy::indexing_slicing)] // binary_search
         let data = Self::DATA
             .binary_search_by(|(k, _)| req.locale.strict_cmp(k.as_bytes()).reverse())
@@ -138,7 +138,7 @@ impl BufferProvider for HelloWorldJsonProvider {
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         key.match_key(HelloWorldV1Marker::KEY)?;
         let result = self.0.load(req)?;
@@ -171,10 +171,9 @@ impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
 #[test]
 fn test_iter() {
     use icu_locid::locale;
-    let supported_langids: Vec<DataLocale> = HelloWorldProvider.supported_locales().unwrap();
 
     assert_eq!(
-        supported_langids,
+        HelloWorldProvider.supported_locales().unwrap(),
         vec![
             locale!("bn").into(),
             locale!("cs").into(),

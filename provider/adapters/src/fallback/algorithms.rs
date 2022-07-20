@@ -341,8 +341,11 @@ mod tests {
                 } else {
                     fallbacker_no_data.for_config(config)
                 };
-                let mut locale = DataLocale::from(Locale::from_str(cas.input).unwrap());
-                let mut it = key_fallbacker.fallback_for(&mut locale);
+                let locale = DataLocale::from(Locale::from_str(cas.input).unwrap());
+                let mut it = key_fallbacker.fallback_for(DataRequest {
+                    locale: &locale,
+                    metadata: Default::default(),
+                });
                 for expected in expected_chain {
                     assert_eq!(
                         expected,

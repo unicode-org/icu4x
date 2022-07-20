@@ -369,63 +369,33 @@ fn test_dayperiod_patterns() {
             .unicode
             .keywords
             .set(key!("ca"), value!("gregory"));
-        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let mut data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let date_symbols_data: DataPayload<DateSymbolsV1Marker> = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let week_data: DataPayload<WeekDataV1Marker> = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let date_symbols_data: DataPayload<DateSymbolsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        data_locale.retain_unicode_ext(|_| false);
         let decimal_data: DataPayload<DecimalSymbolsV1Marker> = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(locale.id.clone()),
+            .load(DataRequest {
+                locale: &data_locale,
                 metadata: Default::default(),
             })
             .unwrap()
@@ -562,6 +532,11 @@ fn test_time_zone_patterns() {
             .unicode
             .keywords
             .set(key!("ca"), value!("gregory"));
+        let data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
         let mut config = test.config;
         let zoned: MockZonedDateTime = test.datetime.parse().unwrap();
         let datetime = zoned.datetime;
@@ -570,46 +545,16 @@ fn test_time_zone_patterns() {
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         time_zone.time_variant = config.time_variant.take();
 
-        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> = date_provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = date_provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let week_data: DataPayload<WeekDataV1Marker> = date_provider
-            .load(&DataRequest {
-                locale: DataLocale::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
+        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
+        let symbols_data: DataPayload<DateSymbolsV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
 
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();

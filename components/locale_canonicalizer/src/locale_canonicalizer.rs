@@ -309,10 +309,10 @@ impl LocaleCanonicalizer {
             Key::from_tinystr_unchecked(tinystr!(2, "sd")),
         ];
         let aliases: DataPayload<AliasesV1Marker> =
-            provider.load(&DataRequest::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         let likely_subtags: DataPayload<LikelySubtagsV1Marker> =
-            provider.load(&DataRequest::default())?.take_payload()?;
+            provider.load(Default::default())?.take_payload()?;
 
         Ok(LocaleCanonicalizer {
             aliases,

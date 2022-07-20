@@ -31,10 +31,7 @@ use icu_normalizer::Decomposition;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::CanonicalCombiningClassV1Marker;
 use icu_properties::CanonicalCombiningClass;
-use icu_provider::DataLocale;
-use icu_provider::DataPayload;
-use icu_provider::DataProvider;
-use icu_provider::DataRequest;
+use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
@@ -126,42 +123,27 @@ impl Collator {
             }
             filtered_locale
         };
-        let locale: DataLocale = locale.into();
+        let locale = locale.into();
+        let req = DataRequest {
+            locale: &locale,
+            metadata: Default::default(),
+        };
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
-            data_provider
-                .load(&DataRequest {
-                    locale: locale.clone(),
-                    metadata: Default::default(),
-                })?
-                .take_payload()?;
+            data_provider.load(req)?.take_payload()?;
 
         let metadata = metadata_payload.get();
 
         let tailoring: Option<DataPayload<crate::provider::CollationDataV1Marker>> =
             if metadata.tailored() {
-                Some(
-                    data_provider
-                        .load(&DataRequest {
-                            locale: locale.clone(),
-                            metadata: Default::default(),
-                        })?
-                        .take_payload()?,
-                )
+                Some(data_provider.load(req)?.take_payload()?)
             } else {
                 None
             };
 
         let reordering: Option<DataPayload<crate::provider::CollationReorderingV1Marker>> =
             if metadata.reordering() {
-                Some(
-                    data_provider
-                        .load(&DataRequest {
-                            locale: locale.clone(),
-                            metadata: Default::default(),
-                        })?
-                        .take_payload()?,
-                )
+                Some(data_provider.load(req)?.take_payload()?)
             } else {
                 None
             };
@@ -172,19 +154,15 @@ impl Collator {
             }
         }
 
-        let root: DataPayload<CollationDataV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let root: DataPayload<CollationDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
         let tailored_diacritics = metadata.tailored_diacritics();
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = data_provider
-            .load(&DataRequest {
-                locale: if tailored_diacritics {
-                    locale
-                } else {
-                    DataLocale::default()
-                },
-                metadata: Default::default(),
+            .load(if tailored_diacritics {
+                req
+            } else {
+                Default::default()
             })?
             .take_payload()?;
 
@@ -202,20 +180,18 @@ impl Collator {
         }
 
         let jamo: DataPayload<CollationJamoV1Marker> = data_provider
-            .load(&DataRequest::default())? // TODO: redesign Korean search collation handling
+            .load(Default::default())? // TODO: redesign Korean search collation handling
             .take_payload()?;
 
         if jamo.get().ce32s.len() != JAMO_COUNT {
             return Err(CollatorError::MalformedData);
         }
 
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
         let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
 
@@ -237,9 +213,8 @@ impl Collator {
         let special_primaries = if merged_options.alternate_handling() == AlternateHandling::Shifted
             || merged_options.numeric()
         {
-            let special_primaries: DataPayload<CollationSpecialPrimariesV1Marker> = data_provider
-                .load(&DataRequest::default())?
-                .take_payload()?;
+            let special_primaries: DataPayload<CollationSpecialPrimariesV1Marker> =
+                data_provider.load(Default::default())?.take_payload()?;
             // `variant_count` isn't stable yet:
             // https://github.com/rust-lang/rust/issues/73662
             if special_primaries.get().last_primaries.len() <= (MaxVariable::Currency as usize) {

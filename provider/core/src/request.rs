@@ -15,26 +15,20 @@ use writeable::{LengthHint, Writeable};
 #[cfg(doc)]
 use icu_locid::subtags::Variant;
 
-#[derive(Default, Debug, Clone, PartialEq, Eq)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct DataRequest {
-    pub locale: DataLocale,
+pub struct DataRequest<'a> {
+    pub locale: &'a DataLocale,
     pub metadata: DataRequestMetadata,
 }
 
-impl fmt::Display for DataRequest {
+impl fmt::Display for DataRequest<'_> {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Display::fmt(&self.locale, f)
     }
 }
 
-impl AsMut<DataLocale> for DataRequest {
-    fn as_mut(&mut self) -> &mut DataLocale {
-        &mut self.locale
-    }
-}
-
-#[derive(Default, Debug, Clone, PartialEq, Eq, PartialOrd, Ord)]
+#[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
@@ -47,6 +41,16 @@ pub struct DataLocale {
     keywords: unicode_ext::Keywords,
 }
 
+impl<'a> Default for &'a DataLocale {
+    fn default() -> Self {
+        static DEFAULT: DataLocale = DataLocale {
+            langid: LanguageIdentifier::UND,
+            keywords: unicode_ext::Keywords::new(),
+        };
+        &DEFAULT
+    }
+}
+
 impl fmt::Debug for DataLocale {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         write!(f, "DataLocale{{{}}}", self)
@@ -56,12 +60,6 @@ impl fmt::Debug for DataLocale {
 impl fmt::Display for DataLocale {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeable::Writeable::write_to(self, f)
-    }
-}
-
-impl AsMut<DataLocale> for DataLocale {
-    fn as_mut(&mut self) -> &mut DataLocale {
-        self
     }
 }
 
@@ -176,7 +174,7 @@ impl DataLocale {
 impl DataLocale {
     /// Returns whether this [`DataLocale`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
-        self == &Self::default()
+        self == <&DataLocale>::default()
     }
 
     /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
@@ -208,12 +206,12 @@ impl DataLocale {
     /// const FOO_BAR: DataKey = icu_provider::data_key!("foo/bar@1");
     ///
     /// let req_no_langid = DataRequest {
-    ///     locale: DataLocale::default(),
+    ///     locale: &Default::default(),
     ///     metadata: Default::default(),
     /// };
     ///
     /// let req_with_langid = DataRequest {
-    ///     locale: langid!("ar-EG").into(),
+    ///     locale: &langid!("ar-EG").into(),
     ///     metadata: Default::default(),
     /// };
     ///

@@ -35,7 +35,7 @@ impl From<&SourceData> for ScriptWithExtensionsPropertyProvider {
 impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsPropertyProvider {
     fn load(
         &self,
-        _: &DataRequest,
+        _: DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
         let scx_data = self
             .source
@@ -101,7 +101,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load(&Default::default())
+            .load(Default::default())
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
@@ -120,10 +120,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load(&DataRequest {
-                locale: DataLocale::default(),
-                metadata: Default::default(),
-            })
+            .load(Default::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -196,7 +193,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load(&DataRequest::default())
+            .load(Default::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -275,7 +272,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load(&DataRequest::default())
+            .load(Default::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");

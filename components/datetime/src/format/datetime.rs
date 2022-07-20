@@ -533,28 +533,23 @@ mod tests {
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
-        let locale: Locale = "en-u-ca-gregory".parse().unwrap();
-        let date_data: DataPayload<DateSymbolsV1Marker> = provider
-            .load(&DataRequest {
-                locale: locale.clone().into(),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let time_data: DataPayload<TimeSymbolsV1Marker> = provider
-            .load(&DataRequest {
-                locale: locale.clone().into(),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let req = DataRequest {
+            locale: &locale,
+            metadata: Default::default(),
+        };
+        let date_data: DataPayload<DateSymbolsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        let time_data: DataPayload<TimeSymbolsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(locale.id.language, &provider, Default::default())
-                .unwrap();
+        let fixed_decimal_format = FixedDecimalFormatter::try_new(
+            locale.get_langid().language,
+            &provider,
+            Default::default(),
+        )
+        .unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &"und".parse().unwrap());

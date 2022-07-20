@@ -303,7 +303,7 @@ impl DataExporter for BakedDataExporter {
                 impl DataProvider<#marker> for BakedDataProvider {
                     fn load(
                         &self,
-                        req: &DataRequest,
+                        req: DataRequest,
                     ) -> Result<DataResponse<#marker>, DataError> {
                         Ok(DataResponse {
                             metadata: Default::default(),
@@ -334,7 +334,7 @@ impl DataExporter for BakedDataExporter {
                 fn litemap_slice_get<T: ?Sized>(
                     values: &'static [(&'static str, &'static T)],
                     key: DataKey,
-                    req: &DataRequest,
+                    req: DataRequest,
                 ) -> Result<&'static T, DataError> {
                     #[allow(clippy::unwrap_used)]
                     values
@@ -383,7 +383,7 @@ impl DataExporter for BakedDataExporter {
             PathBuf::from("any"),
             quote! {
                 impl AnyProvider for BakedDataProvider {
-                    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+                    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
                         #(#any_consts)*
                         Ok(AnyResponse {
                             payload: Some(match key.get_hash() {

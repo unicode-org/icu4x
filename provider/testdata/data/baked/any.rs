@@ -1,6 +1,6 @@
 // @generated
 impl AnyProvider for BakedDataProvider {
-    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         const JAPANESEERASV1MARKER: ::icu_provider::DataKeyHash = ::icu_calendar::provider::JapaneseErasV1Marker::KEY.get_hash();
         const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash = ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
         const COLLATIONDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_collator::provider::CollationDataV1Marker::KEY.get_hash();
