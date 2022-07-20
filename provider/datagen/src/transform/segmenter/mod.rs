@@ -12,8 +12,8 @@ use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_locid::{langid, locale};
 use icu_properties::{
-    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
-    SentenceBreak, WordBreak,
+    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
+    WordBreak,
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -279,9 +279,6 @@ impl SegmenterRuleProvider {
         let data = maps::get_general_category(&cp_map_provider).expect("The data should be valid!");
         let gc = data.as_borrowed();
 
-        let data = maps::get_script(&cp_map_provider).expect("The data should be valid");
-        let script = data.as_borrowed();
-
         // Load binary Unicode property dependencies.
         let uniset_provider = BinaryPropertyCodePointSetDataProvider::from(&self.source);
 
@@ -344,13 +341,6 @@ impl SegmenterRuleProvider {
                             for c in 0..0x20000 {
                                 if lb.get_u32(c) == LineBreak::ComplexContext {
                                     properties_map[c as usize] = property_index
-                                } else if let Some(c) = char::from_u32(c) {
-                                    match script.get(c) {
-                                        Script::Han | Script::Katakana | Script::Hiragana => {
-                                            properties_map[c as usize] = property_index;
-                                        }
-                                        _ => {}
-                                    }
                                 }
                             }
 
