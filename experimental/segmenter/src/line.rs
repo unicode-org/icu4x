@@ -13,6 +13,7 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
+#[cfg(not(feature = "lstm"))]
 use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
@@ -106,6 +107,15 @@ pub struct LineBreakSegmenter {
 }
 
 impl LineBreakSegmenter {
+    #[cfg(feature = "lstm")]
+    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: ResourceProvider<LineBreakDataV1Marker> + ?Sized,
+    {
+        Self::try_new_with_options(provider, Default::default())
+    }
+
+    #[cfg(not(feature = "lstm"))]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV1Marker>
@@ -115,6 +125,26 @@ impl LineBreakSegmenter {
         Self::try_new_with_options(provider, Default::default())
     }
 
+    #[cfg(feature = "lstm")]
+    pub fn try_new_with_options<D>(
+        provider: &D,
+        options: LineBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: ResourceProvider<LineBreakDataV1Marker> + ?Sized,
+    {
+        let payload = provider.load(Default::default())?.take_payload()?;
+        Ok(Self {
+            options,
+            payload,
+            dictionary_km_payload: None,
+            dictionary_lo_payload: None,
+            dictionary_my_payload: None,
+            dictionary_th_payload: None,
+        })
+    }
+
+    #[cfg(not(feature = "lstm"))]
     pub fn try_new_with_options<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -141,6 +171,7 @@ impl LineBreakSegmenter {
         })
     }
 
+    #[cfg(not(feature = "lstm"))]
     fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
         provider: &D,
         locale: Locale,
