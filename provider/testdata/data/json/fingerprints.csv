@@ -1027,7 +1027,7 @@ segmenter/grapheme@1, und, 66509B, 5bd3f98dd384a91474f39d1b5a2de7b63af4d72212657
 segmenter/line@1, und, 152804B, ccd9e59ac5cdf641a23091d26784bb125c851324a0c096ee0158f26fca370176
 segmenter/lstm@1, th, 324969B, 62ce456737995e20bc03d77e805678e99c1bab9b31233b80a8f83bfe4b9cad95
 segmenter/sentence@1, und, 107174B, 3591a353610cfbe8d616923b98e2d69a65a3cd046245b6d0dceaf13dd425db61
-segmenter/word@1, und, 106361B, cd85dd0c3b2c7acbf7f1fef64dede831c4c6bc7762f45719515460e7cdf948bd
+segmenter/word@1, und, 111247B, 9b1a10b1972a0ee61475f1b5dc5bf1bcf527a5314b7ab2a2207cb798ae8dddfb
 time_zone/exemplar_cities@1, ar, 12469B, cf88a0d7302cd1d829ab9be147b0cb4f5aca70721f9ef69d53aaf1ccab5fe6e8
 time_zone/exemplar_cities@1, ar-EG, 12469B, cf88a0d7302cd1d829ab9be147b0cb4f5aca70721f9ef69d53aaf1ccab5fe6e8
 time_zone/exemplar_cities@1, bn, 17218B, 355073cb61747872f1d0e3a866f3a6cc74ae551ec00fd5714350fb2de3d6cc20
