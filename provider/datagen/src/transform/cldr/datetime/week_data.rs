@@ -54,10 +54,7 @@ impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
 }
 
 impl DataProvider<WeekDataV1Marker> for WeekDataProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         let territory = req
             .options
             .region()
@@ -106,7 +103,7 @@ fn basic_cldr_week_data() {
     let provider = WeekDataProvider::from(&SourceData::for_test());
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load_resource(&DataRequest {
+        .load(&DataRequest {
             options: DataOptions::default(),
             metadata: Default::default(),
         })
@@ -117,7 +114,7 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Monday, default_week_data.get().0.first_weekday);
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load_resource(&DataRequest {
+        .load(&DataRequest {
             options: DataOptions::from(langid!("und-FR")),
             metadata: Default::default(),
         })
@@ -128,7 +125,7 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Monday, fr_week_data.get().0.first_weekday);
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load_resource(&DataRequest {
+        .load(&DataRequest {
             options: DataOptions::from(langid!("und-IQ")),
             metadata: Default::default(),
         })
@@ -143,7 +140,7 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Saturday, iq_week_data.get().0.first_weekday);
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load_resource(&DataRequest {
+        .load(&DataRequest {
             options: DataOptions::from(langid!("und-GG")),
             metadata: Default::default(),
         })

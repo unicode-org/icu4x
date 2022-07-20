@@ -1219,10 +1219,10 @@ impl DecomposingNormalizer {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
@@ -1257,19 +1257,19 @@ impl DecomposingNormalizer {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let supplementary_decompositions: DataPayload<
             CompatibilityDecompositionSupplementV1Marker,
         > = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
             data_provider
-                .load_resource(&DataRequest::default())?
+                .load(&DataRequest::default())?
                 .take_payload()?;
 
         if tables.get().scalars16.len()
@@ -1333,18 +1333,18 @@ impl DecomposingNormalizer {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let supplementary_decompositions: DataPayload<Uts46DecompositionSupplementV1Marker> =
             data_provider
-                .load_resource(&DataRequest::default())?
+                .load(&DataRequest::default())?
                 .take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
             data_provider
-                .load_resource(&DataRequest::default())?
+                .load(&DataRequest::default())?
                 .take_payload()?;
 
         if tables.get().scalars16.len()
@@ -1413,12 +1413,12 @@ impl ComposingNormalizer {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfd(data_provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             CanonicalCompositionPassthroughV1Marker,
         > = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
 
         Ok(ComposingNormalizer {
@@ -1445,12 +1445,12 @@ impl ComposingNormalizer {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd(data_provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             CompatibilityCompositionPassthroughV1Marker,
         > = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
 
         Ok(ComposingNormalizer {
@@ -1507,12 +1507,12 @@ impl ComposingNormalizer {
             )?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             Uts46CompositionPassthroughV1Marker,
         > = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
 
         Ok(ComposingNormalizer {
@@ -1600,7 +1600,7 @@ impl CanonicalComposition {
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         Ok(CanonicalComposition {
             canonical_compositions,
@@ -1794,10 +1794,10 @@ impl CanonicalDecomposition {
             + ?Sized,
     {
         let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
@@ -1811,7 +1811,7 @@ impl CanonicalDecomposition {
         }
 
         let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
+            .load(&DataRequest::default())?
             .take_payload()?;
 
         Ok(CanonicalDecomposition {

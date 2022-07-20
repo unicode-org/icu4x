@@ -16,7 +16,7 @@ fn overview_bench(c: &mut Criterion) {
             let provider = FsDataProvider::try_new("./tests/data/json")
                 .expect("Loading file from testdata directory");
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
@@ -43,7 +43,7 @@ fn json_bench(c: &mut Criterion) {
     c.bench_function("json/generic", |b| {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
@@ -56,7 +56,7 @@ fn json_bench(c: &mut Criterion) {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
@@ -74,7 +74,7 @@ fn bincode_bench(c: &mut Criterion) {
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
@@ -87,7 +87,7 @@ fn bincode_bench(c: &mut Criterion) {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
@@ -106,7 +106,7 @@ fn postcard_bench(c: &mut Criterion) {
     c.bench_function("postcard/generic", |b| {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })
@@ -120,7 +120,7 @@ fn postcard_bench(c: &mut Criterion) {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider as &dyn BufferProvider)
                 .as_deserializing()
-                .load_resource(&DataRequest {
+                .load(&DataRequest {
                     options: langid!("ru").into(),
                     metadata: Default::default(),
                 })

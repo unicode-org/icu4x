@@ -37,7 +37,7 @@ where
     ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_de);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
@@ -45,7 +45,7 @@ where
     ///     options: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_en);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_en);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -111,7 +111,7 @@ where
     ///     options: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_de);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
@@ -119,7 +119,7 @@ where
     ///     options: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load_resource(&req_en);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_en);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -172,7 +172,7 @@ where
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_with_langid);
+    ///     provider.load(&req_with_langid);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // Requests without a langid should fail:
@@ -181,7 +181,7 @@ where
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load_resource(&req_no_langid);
+    ///     provider.load(&req_no_langid);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {

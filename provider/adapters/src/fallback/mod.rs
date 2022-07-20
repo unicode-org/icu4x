@@ -198,12 +198,8 @@ impl LocaleFallbacker {
             + DataProvider<LocaleFallbackParentsV1Marker>
             + ?Sized,
     {
-        let likely_subtags = provider
-            .load_resource(&Default::default())?
-            .take_payload()?;
-        let parents = provider
-            .load_resource(&Default::default())?
-            .take_payload()?;
+        let likely_subtags = provider.load(&Default::default())?.take_payload()?;
+        let parents = provider.load(&Default::default())?.take_payload()?;
         Ok(LocaleFallbacker {
             likely_subtags,
             parents,

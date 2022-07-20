@@ -41,7 +41,7 @@ macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+) => {
         $(
             impl DataProvider<$marker> for BinaryPropertyUnicodeSetDataProvider {
-                fn load_resource(
+                fn load(
                     &self,
                     _: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
@@ -154,7 +154,7 @@ fn test_basic() {
     let provider = BinaryPropertyUnicodeSetDataProvider::from(&SourceData::for_test());
 
     let payload: DataPayload<WhiteSpaceV1Marker> = provider
-        .load_resource(&DataRequest::default())
+        .load(&DataRequest::default())
         .and_then(DataResponse::take_payload)
         .expect("Loading was successful");
 

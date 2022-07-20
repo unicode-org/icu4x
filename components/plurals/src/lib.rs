@@ -349,7 +349,7 @@ impl PluralRules {
     {
         let locale = locale.into();
         let rules = data_provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.clone().into(),
                 metadata: Default::default(),
             })?
@@ -395,7 +395,7 @@ impl PluralRules {
     {
         let locale = locale.into();
         let rules = data_provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.clone().into(),
                 metadata: Default::default(),
             })?

@@ -106,7 +106,7 @@ impl Japanese {
         request.options = Locale::from_str(cal)
             .expect("Locale string is known valid")
             .into();
-        let eras = data_provider.load_resource(&request)?.take_payload()?;
+        let eras = data_provider.load(&request)?.take_payload()?;
         Ok(Self { eras, japanext })
     }
 }

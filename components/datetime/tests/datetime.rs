@@ -370,7 +370,7 @@ fn test_dayperiod_patterns() {
             .keywords
             .set(key!("ca"), value!("gregory"));
         let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -381,7 +381,7 @@ fn test_dayperiod_patterns() {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
         let mut time_patterns_data: DataPayload<TimePatternsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -392,7 +392,7 @@ fn test_dayperiod_patterns() {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
         let date_symbols_data: DataPayload<DateSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -400,7 +400,7 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         let time_symbols_data: DataPayload<TimeSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -408,7 +408,7 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -416,7 +416,7 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         let week_data: DataPayload<WeekDataV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -424,7 +424,7 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         let decimal_data: DataPayload<DecimalSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(locale.id.clone()),
                 metadata: Default::default(),
             })
@@ -571,7 +571,7 @@ fn test_time_zone_patterns() {
         time_zone.time_variant = config.time_variant.take();
 
         let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -579,7 +579,7 @@ fn test_time_zone_patterns() {
             .take_payload()
             .unwrap();
         let mut time_patterns_data: DataPayload<TimePatternsV1Marker> = date_provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -587,7 +587,7 @@ fn test_time_zone_patterns() {
             .take_payload()
             .unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = date_provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -595,7 +595,7 @@ fn test_time_zone_patterns() {
             .take_payload()
             .unwrap();
         let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
@@ -603,7 +603,7 @@ fn test_time_zone_patterns() {
             .take_payload()
             .unwrap();
         let week_data: DataPayload<WeekDataV1Marker> = date_provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })

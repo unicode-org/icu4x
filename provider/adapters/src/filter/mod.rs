@@ -72,9 +72,9 @@ where
     M: DataMarker,
     D: DynamicDataProvider<M>,
 {
-    fn load_payload(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         if (self.predicate)(req) {
-            self.inner.load_payload(key, req)
+            self.inner.load_data(key, req)
         } else {
             Err(DataErrorKind::FilteredResource
                 .with_str_context(self.filter_name)
@@ -89,9 +89,9 @@ where
     M: KeyedDataMarker,
     D: DataProvider<M>,
 {
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         if (self.predicate)(req) {
-            self.inner.load_resource(req)
+            self.inner.load(req)
         } else {
             Err(DataErrorKind::FilteredResource
                 .with_str_context(self.filter_name)
