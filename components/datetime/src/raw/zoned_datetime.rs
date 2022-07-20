@@ -94,7 +94,7 @@ impl ZonedDateTimeFormatter {
         let week_data = if required.week_data {
             Some(
                 date_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
@@ -117,7 +117,7 @@ impl ZonedDateTimeFormatter {
         let date_symbols_data = if required.date_symbols_data {
             Some(
                 date_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
@@ -130,7 +130,7 @@ impl ZonedDateTimeFormatter {
         let time_symbols_data = if required.time_symbols_data {
             Some(
                 date_provider
-                    .load_resource(&DataRequest {
+                    .load(&DataRequest {
                         options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?

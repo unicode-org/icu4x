@@ -37,13 +37,11 @@ impl WordBreakSegmenter {
             + DataProvider<UCharDictionaryBreakDataV1Marker>
             + ?Sized,
     {
-        let payload = provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let payload = provider.load(&DataRequest::default())?.take_payload()?;
 
         let locale = locale!("th");
         let dictionary_payload = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(locale),
                 metadata: Default::default(),
             })?

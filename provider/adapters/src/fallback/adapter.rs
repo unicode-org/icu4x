@@ -27,7 +27,7 @@ use crate::helpers::result_is_err_missing_data_options;
 ///
 /// // The provider does not have data for "ja-JP":
 /// let result: Result<DataResponse<HelloWorldV1Marker>, DataError> =
-///     provider.load_resource(&req);
+///     provider.load(&req);
 /// assert!(matches!(result, Err(_)));
 ///
 /// // But if we wrap the provider in a fallback provider...
@@ -36,7 +36,7 @@ use crate::helpers::result_is_err_missing_data_options;
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
 /// let response: DataResponse<HelloWorldV1Marker> =
-///     provider.load_resource(&req).expect("successful with vertical fallback");
+///     provider.load(&req).expect("successful with vertical fallback");
 ///
 /// assert_eq!(
 ///     "ja",
@@ -92,7 +92,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// };
     ///
     /// // There is no "de-CH" data in the `HelloWorldProvider`
-    /// DataProvider::<HelloWorldV1Marker>::load_resource(&provider, &req)
+    /// DataProvider::<HelloWorldV1Marker>::load(&provider, &req)
     ///     .expect_err("No data for de-CH");
     ///
     /// // `HelloWorldProvider` does not contain fallback data,
@@ -104,7 +104,7 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// // Now we can load the "de-CH" data via fallback to "de".
     /// let german_hello_world: DataPayload<HelloWorldV1Marker> = provider
-    ///     .load_resource(&req)
+    ///     .load(&req)
     ///     .expect("Loading should succeed")
     ///     .take_payload()
     ///     .expect("Data should be present");
@@ -196,7 +196,7 @@ where
     P: DynamicDataProvider<M>,
     M: KeyedDataMarker,
 {
-    fn load_payload(
+    fn load_data(
         &self,
         key: DataKey,
         base_req: &DataRequest,
@@ -204,7 +204,7 @@ where
         self.run_fallback(
             key,
             base_req,
-            |req| self.inner.load_payload(key, req),
+            |req| self.inner.load_data(key, req),
             |res| &mut res.metadata,
         )
     }
@@ -215,11 +215,11 @@ where
     P: DataProvider<M>,
     M: KeyedDataMarker,
 {
-    fn load_resource(&self, base_req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, base_req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(
             M::KEY,
             base_req,
-            |req| self.inner.load_resource(req),
+            |req| self.inner.load(req),
             |res| &mut res.metadata,
         )
     }

@@ -643,6 +643,6 @@ pub fn get_script_with_extensions(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
 ) -> ScriptWithExtensionsResult {
     Ok(provider
-        .load_resource(&Default::default())
+        .load(&Default::default())
         .and_then(DataResponse::take_payload)?)
 }

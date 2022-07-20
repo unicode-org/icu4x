@@ -301,7 +301,7 @@ impl DataExporter for BakedDataExporter {
             quote! {
                 #feature
                 impl DataProvider<#marker> for BakedDataProvider {
-                    fn load_resource(
+                    fn load(
                         &self,
                         req: &DataRequest,
                     ) -> Result<DataResponse<#marker>, DataError> {

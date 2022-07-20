@@ -58,11 +58,11 @@ where
 /// # // Duplicating HelloWorldProvider because the real one already implements DynamicDataProvider<AnyMarker>
 /// # struct HelloWorldProvider;
 /// # impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-/// #     fn load_resource(
+/// #     fn load(
 /// #         &self,
 /// #         req: &DataRequest,
 /// #     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-/// #         icu_provider::hello_world::HelloWorldProvider.load_resource(req)
+/// #         icu_provider::hello_world::HelloWorldProvider.load(req)
 /// #     }
 /// # }
 ///
@@ -75,11 +75,11 @@ where
 /// };
 ///
 /// // Successful because the key matches:
-/// HelloWorldProvider.load_payload(HelloWorldV1Marker::KEY, &req).unwrap();
+/// HelloWorldProvider.load_data(HelloWorldV1Marker::KEY, &req).unwrap();
 ///
 /// // MissingDataKey error as the key does not match:
 /// assert_eq!(
-///     HelloWorldProvider.load_payload(icu_provider::data_key!("dummy@1"), &req).unwrap_err().kind,
+///     HelloWorldProvider.load_data(icu_provider::data_key!("dummy@1"), &req).unwrap_err().kind,
 ///     DataErrorKind::MissingDataKey,
 /// );
 /// ```
@@ -95,9 +95,9 @@ where
 /// #
 /// # struct HelloWorldProvider;
 /// # impl DynamicDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-/// #     fn load_payload(&self, key: DataKey, req: &DataRequest)
+/// #     fn load_data(&self, key: DataKey, req: &DataRequest)
 /// #             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-/// #         icu_provider::hello_world::HelloWorldProvider.load_resource(req)
+/// #         icu_provider::hello_world::HelloWorldProvider.load(req)
 /// #     }
 /// # }
 ///
@@ -146,7 +146,7 @@ macro_rules! impl_dynamic_data_provider {
     ($provider:ty, { $($ident:ident = $key:path => $struct_m:ty),+, $(_ => $struct_d:ty,)?}, $dyn_m:ty) => {
         impl $crate::DynamicDataProvider<$dyn_m> for $provider
         {
-            fn load_payload(
+            fn load_data(
                 &self,
                 key: $crate::DataKey,
                 req: &$crate::DataRequest,
@@ -161,7 +161,7 @@ macro_rules! impl_dynamic_data_provider {
                     $(
                         $ident => {
                             let result: $crate::DataResponse<$struct_m> =
-                                $crate::DynamicDataProvider::<$struct_m>::load_payload(self, key, req)?;
+                                $crate::DynamicDataProvider::<$struct_m>::load_data(self, key, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -173,7 +173,7 @@ macro_rules! impl_dynamic_data_provider {
                     $(
                         _ => {
                             let result: $crate::DataResponse<$struct_d> =
-                                $crate::DynamicDataProvider::<$struct_d>::load_payload(self, key, req)?;
+                                $crate::DynamicDataProvider::<$struct_d>::load_data(self, key, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -191,7 +191,7 @@ macro_rules! impl_dynamic_data_provider {
     ($provider:ty, [ $($struct_m:ident),+, ], $dyn_m:path) => {
         impl $crate::DynamicDataProvider<$dyn_m> for $provider
         {
-            fn load_payload(
+            fn load_data(
                 &self,
                 key: $crate::DataKey,
                 req: &$crate::DataRequest,
@@ -208,7 +208,7 @@ macro_rules! impl_dynamic_data_provider {
                     $(
                         $struct_m => {
                             let result: $crate::DataResponse<$struct_m> =
-                                $crate::DataProvider::load_resource(self, req)?;
+                                $crate::DataProvider::load(self, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {

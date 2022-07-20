@@ -39,15 +39,25 @@ impl From<serde_json::Error> for Error {
 pub struct PackageMetadata {
     pub locales: Vec<LanguageIdentifier>,
     pub cldr_json_glob: Vec<String>,
-    pub gitref: String,
+    pub cldr_json_gitref: String,
+    pub icuexportdata_glob: Vec<String>,
+    pub icuexportdata_gitref: String,
 }
 
 impl PackageMetadata {
     /// Expands `cldr_json_glob` to the list of all included CLDR JSON paths.
     // TODO: Consider making this a Generator.
     pub fn get_all_cldr_paths(&self) -> Vec<String> {
+        self.expand_paths(&self.cldr_json_glob)
+    }
+
+    pub fn get_all_icuexportdata_paths(&self) -> Vec<String> {
+        self.expand_paths(&self.icuexportdata_glob)
+    }
+
+    fn expand_paths(&self, in_paths: &[String]) -> Vec<String> {
         let mut paths = vec![];
-        for pattern in self.cldr_json_glob.iter() {
+        for pattern in in_paths.iter() {
             if pattern.contains("$LOCALES") {
                 for locale in self.locales.iter() {
                     let locale_str = writeable::Writeable::write_to_string(locale);

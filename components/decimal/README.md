@@ -1,9 +1,9 @@
 # icu_decimal [![crates.io](https://img.shields.io/crates/v/icu_decimal)](https://crates.io/crates/icu_decimal)
 
-[`icu_decimal`](crate) offers localized decimal number formatting.
+Formatting basic decimal numbers.
 
-Currently, [`icu_decimal`](crate) provides [`FixedDecimalFormatter`], which renders basic decimal numbers
-in a locale-sensitive way.
+This module is published as its own crate ([`icu_decimal`](https://docs.rs/icu_decimal/latest/icu_decimal/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 Support for currencies, measurement units, and compact notation is planned. To track progress,
 follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).

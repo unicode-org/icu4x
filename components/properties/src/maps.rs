@@ -253,7 +253,7 @@ macro_rules! make_map_property {
         $vis fn $name(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
-            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
+            Ok(provider.load(&Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
         }
     }
 }

@@ -51,7 +51,7 @@ macro_rules! impl_data_provider {
     ($(($marker:ident, $expr:expr)),+) => {
         $(
             impl DataProvider<$marker> for CommonDateProvider {
-                fn load_resource(
+                fn load(
                     &self,
                     req: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
@@ -227,7 +227,7 @@ mod test {
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.into(),
                 metadata: Default::default(),
             })
@@ -244,7 +244,7 @@ mod test {
 
         let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.into(),
                 metadata: Default::default(),
             })
@@ -265,7 +265,7 @@ mod test {
 
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.into(),
                 metadata: Default::default(),
             })
@@ -309,7 +309,7 @@ mod test {
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.into(),
                 metadata: Default::default(),
             })
@@ -340,7 +340,7 @@ mod test {
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.into(),
                 metadata: Default::default(),
             })

@@ -18,7 +18,7 @@ mod time_zone;
 pub struct BakedDataProvider;
 use ::icu_provider::prelude::*;
 impl DataProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_calendar::provider::JapaneseErasV1Marker>, DataError> {
@@ -35,7 +35,7 @@ impl DataProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedDataP
     }
 }
 impl DataProvider<::icu_casemapping::provider::CaseMappingV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_casemapping::provider::CaseMappingV1Marker>, DataError> {
@@ -52,7 +52,7 @@ impl DataProvider<::icu_casemapping::provider::CaseMappingV1Marker> for BakedDat
     }
 }
 impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_collator::provider::CollationDataV1Marker>, DataError> {
@@ -69,7 +69,7 @@ impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for BakedData
     }
 }
 impl DataProvider<::icu_collator::provider::CollationDiacriticsV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_collator::provider::CollationDiacriticsV1Marker>, DataError>
@@ -87,7 +87,7 @@ impl DataProvider<::icu_collator::provider::CollationDiacriticsV1Marker> for Bak
     }
 }
 impl DataProvider<::icu_collator::provider::CollationJamoV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_collator::provider::CollationJamoV1Marker>, DataError> {
@@ -104,7 +104,7 @@ impl DataProvider<::icu_collator::provider::CollationJamoV1Marker> for BakedData
     }
 }
 impl DataProvider<::icu_collator::provider::CollationMetadataV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_collator::provider::CollationMetadataV1Marker>, DataError> {
@@ -121,7 +121,7 @@ impl DataProvider<::icu_collator::provider::CollationMetadataV1Marker> for Baked
     }
 }
 impl DataProvider<::icu_collator::provider::CollationReorderingV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_collator::provider::CollationReorderingV1Marker>, DataError>
@@ -141,7 +141,7 @@ impl DataProvider<::icu_collator::provider::CollationReorderingV1Marker> for Bak
 impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_collator::provider::CollationSpecialPrimariesV1Marker>, DataError>
@@ -150,7 +150,7 @@ impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker>
     }
 }
 impl DataProvider<::icu_datetime::provider::calendar::DatePatternsV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::calendar::DatePatternsV1Marker>, DataError>
@@ -161,7 +161,7 @@ impl DataProvider<::icu_datetime::provider::calendar::DatePatternsV1Marker> for 
 impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -172,7 +172,7 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Mark
     }
 }
 impl DataProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::calendar::DateSymbolsV1Marker>, DataError>
@@ -181,7 +181,7 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker> for B
     }
 }
 impl DataProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::calendar::TimePatternsV1Marker>, DataError>
@@ -190,7 +190,7 @@ impl DataProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker> for 
     }
 }
 impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::calendar::TimeSymbolsV1Marker>, DataError>
@@ -201,7 +201,7 @@ impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker> for B
 impl DataProvider<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker>, DataError>
@@ -212,7 +212,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker>
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -225,7 +225,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesLong
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -238,7 +238,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShor
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker>, DataError>
@@ -249,7 +249,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker>
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -262,7 +262,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLon
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -275,7 +275,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesSho
 impl DataProvider<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -286,7 +286,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>
     }
 }
 impl DataProvider<::icu_datetime::provider::week_data::WeekDataV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_datetime::provider::week_data::WeekDataV1Marker>, DataError>
@@ -304,7 +304,7 @@ impl DataProvider<::icu_datetime::provider::week_data::WeekDataV1Marker> for Bak
     }
 }
 impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_decimal::provider::DecimalSymbolsV1Marker>, DataError> {
@@ -321,7 +321,7 @@ impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedData
     }
 }
 impl DataProvider<::icu_list::provider::AndListV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_list::provider::AndListV1Marker>, DataError> {
@@ -338,7 +338,7 @@ impl DataProvider<::icu_list::provider::AndListV1Marker> for BakedDataProvider {
     }
 }
 impl DataProvider<::icu_list::provider::OrListV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_list::provider::OrListV1Marker>, DataError> {
@@ -355,7 +355,7 @@ impl DataProvider<::icu_list::provider::OrListV1Marker> for BakedDataProvider {
     }
 }
 impl DataProvider<::icu_list::provider::UnitListV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_list::provider::UnitListV1Marker>, DataError> {
@@ -372,7 +372,7 @@ impl DataProvider<::icu_list::provider::UnitListV1Marker> for BakedDataProvider 
     }
 }
 impl DataProvider<::icu_locale_canonicalizer::provider::AliasesV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_locale_canonicalizer::provider::AliasesV1Marker>, DataError>
@@ -392,7 +392,7 @@ impl DataProvider<::icu_locale_canonicalizer::provider::AliasesV1Marker> for Bak
 impl DataProvider<::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker>, DataError>
@@ -403,7 +403,7 @@ impl DataProvider<::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker>
 impl DataProvider<::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -414,7 +414,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalCompositionPassthroughV1M
     }
 }
 impl DataProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_normalizer::provider::CanonicalCompositionsV1Marker>, DataError>
@@ -425,7 +425,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker> for
 impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionDataV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -438,7 +438,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionDataV1Marker
 impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -451,7 +451,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionTablesV1Mark
 impl DataProvider<::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -464,7 +464,7 @@ impl DataProvider<::icu_normalizer::provider::CompatibilityCompositionPassthroug
 impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -477,7 +477,7 @@ impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionSuppleme
 impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -490,7 +490,7 @@ impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionTablesV1
 impl DataProvider<::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -503,7 +503,7 @@ impl DataProvider<::icu_normalizer::provider::NonRecursiveDecompositionSupplemen
 impl DataProvider<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -516,7 +516,7 @@ impl DataProvider<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marke
 impl DataProvider<::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -527,7 +527,7 @@ impl DataProvider<::icu_normalizer::provider::Uts46DecompositionSupplementV1Mark
     }
 }
 impl DataProvider<::icu_plurals::provider::CardinalV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_plurals::provider::CardinalV1Marker>, DataError> {
@@ -544,7 +544,7 @@ impl DataProvider<::icu_plurals::provider::CardinalV1Marker> for BakedDataProvid
     }
 }
 impl DataProvider<::icu_plurals::provider::OrdinalV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_plurals::provider::OrdinalV1Marker>, DataError> {
@@ -561,7 +561,7 @@ impl DataProvider<::icu_plurals::provider::OrdinalV1Marker> for BakedDataProvide
     }
 }
 impl DataProvider<::icu_properties::provider::AlphabeticV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::AlphabeticV1Marker>, DataError> {
@@ -578,7 +578,7 @@ impl DataProvider<::icu_properties::provider::AlphabeticV1Marker> for BakedDataP
     }
 }
 impl DataProvider<::icu_properties::provider::AsciiHexDigitV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::AsciiHexDigitV1Marker>, DataError> {
@@ -595,7 +595,7 @@ impl DataProvider<::icu_properties::provider::AsciiHexDigitV1Marker> for BakedDa
     }
 }
 impl DataProvider<::icu_properties::provider::BidiClassV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::BidiClassV1Marker>, DataError> {
@@ -612,7 +612,7 @@ impl DataProvider<::icu_properties::provider::BidiClassV1Marker> for BakedDataPr
     }
 }
 impl DataProvider<::icu_properties::provider::BidiControlV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::BidiControlV1Marker>, DataError> {
@@ -629,7 +629,7 @@ impl DataProvider<::icu_properties::provider::BidiControlV1Marker> for BakedData
     }
 }
 impl DataProvider<::icu_properties::provider::BidiMirroredV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::BidiMirroredV1Marker>, DataError> {
@@ -648,7 +648,7 @@ impl DataProvider<::icu_properties::provider::BidiMirroredV1Marker> for BakedDat
 impl DataProvider<::icu_properties::provider::CanonicalCombiningClassV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassV1Marker>, DataError>
@@ -657,7 +657,7 @@ impl DataProvider<::icu_properties::provider::CanonicalCombiningClassV1Marker>
     }
 }
 impl DataProvider<::icu_properties::provider::CaseIgnorableV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::CaseIgnorableV1Marker>, DataError> {
@@ -674,7 +674,7 @@ impl DataProvider<::icu_properties::provider::CaseIgnorableV1Marker> for BakedDa
     }
 }
 impl DataProvider<::icu_properties::provider::CasedV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::CasedV1Marker>, DataError> {
@@ -691,7 +691,7 @@ impl DataProvider<::icu_properties::provider::CasedV1Marker> for BakedDataProvid
     }
 }
 impl DataProvider<::icu_properties::provider::ChangesWhenCasefoldedV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::ChangesWhenCasefoldedV1Marker>, DataError>
@@ -700,7 +700,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenCasefoldedV1Marker> for
     }
 }
 impl DataProvider<::icu_properties::provider::ChangesWhenLowercasedV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::ChangesWhenLowercasedV1Marker>, DataError>
@@ -711,7 +711,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenLowercasedV1Marker> for
 impl DataProvider<::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -722,7 +722,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker>
     }
 }
 impl DataProvider<::icu_properties::provider::ChangesWhenTitlecasedV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::ChangesWhenTitlecasedV1Marker>, DataError>
@@ -731,7 +731,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenTitlecasedV1Marker> for
     }
 }
 impl DataProvider<::icu_properties::provider::ChangesWhenUppercasedV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::ChangesWhenUppercasedV1Marker>, DataError>
@@ -740,7 +740,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenUppercasedV1Marker> for
     }
 }
 impl DataProvider<::icu_properties::provider::DashV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::DashV1Marker>, DataError> {
@@ -759,7 +759,7 @@ impl DataProvider<::icu_properties::provider::DashV1Marker> for BakedDataProvide
 impl DataProvider<::icu_properties::provider::DefaultIgnorableCodePointV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -770,7 +770,7 @@ impl DataProvider<::icu_properties::provider::DefaultIgnorableCodePointV1Marker>
     }
 }
 impl DataProvider<::icu_properties::provider::DeprecatedV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::DeprecatedV1Marker>, DataError> {
@@ -787,7 +787,7 @@ impl DataProvider<::icu_properties::provider::DeprecatedV1Marker> for BakedDataP
     }
 }
 impl DataProvider<::icu_properties::provider::DiacriticV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::DiacriticV1Marker>, DataError> {
@@ -804,7 +804,7 @@ impl DataProvider<::icu_properties::provider::DiacriticV1Marker> for BakedDataPr
     }
 }
 impl DataProvider<::icu_properties::provider::EastAsianWidthV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthV1Marker>, DataError> {
@@ -821,7 +821,7 @@ impl DataProvider<::icu_properties::provider::EastAsianWidthV1Marker> for BakedD
     }
 }
 impl DataProvider<::icu_properties::provider::EmojiComponentV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::EmojiComponentV1Marker>, DataError> {
@@ -838,7 +838,7 @@ impl DataProvider<::icu_properties::provider::EmojiComponentV1Marker> for BakedD
     }
 }
 impl DataProvider<::icu_properties::provider::EmojiModifierBaseV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::EmojiModifierBaseV1Marker>, DataError>
@@ -856,7 +856,7 @@ impl DataProvider<::icu_properties::provider::EmojiModifierBaseV1Marker> for Bak
     }
 }
 impl DataProvider<::icu_properties::provider::EmojiModifierV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::EmojiModifierV1Marker>, DataError> {
@@ -873,7 +873,7 @@ impl DataProvider<::icu_properties::provider::EmojiModifierV1Marker> for BakedDa
     }
 }
 impl DataProvider<::icu_properties::provider::EmojiPresentationV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::EmojiPresentationV1Marker>, DataError>
@@ -891,7 +891,7 @@ impl DataProvider<::icu_properties::provider::EmojiPresentationV1Marker> for Bak
     }
 }
 impl DataProvider<::icu_properties::provider::EmojiV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::EmojiV1Marker>, DataError> {
@@ -908,7 +908,7 @@ impl DataProvider<::icu_properties::provider::EmojiV1Marker> for BakedDataProvid
     }
 }
 impl DataProvider<::icu_properties::provider::ExtendedPictographicV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::ExtendedPictographicV1Marker>, DataError>
@@ -917,7 +917,7 @@ impl DataProvider<::icu_properties::provider::ExtendedPictographicV1Marker> for 
     }
 }
 impl DataProvider<::icu_properties::provider::ExtenderV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::ExtenderV1Marker>, DataError> {
@@ -934,7 +934,7 @@ impl DataProvider<::icu_properties::provider::ExtenderV1Marker> for BakedDataPro
     }
 }
 impl DataProvider<::icu_properties::provider::GeneralCategoryV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryV1Marker>, DataError> {
@@ -951,7 +951,7 @@ impl DataProvider<::icu_properties::provider::GeneralCategoryV1Marker> for Baked
     }
 }
 impl DataProvider<::icu_properties::provider::GraphemeBaseV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::GraphemeBaseV1Marker>, DataError> {
@@ -968,7 +968,7 @@ impl DataProvider<::icu_properties::provider::GraphemeBaseV1Marker> for BakedDat
     }
 }
 impl DataProvider<::icu_properties::provider::GraphemeClusterBreakV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakV1Marker>, DataError>
@@ -977,7 +977,7 @@ impl DataProvider<::icu_properties::provider::GraphemeClusterBreakV1Marker> for 
     }
 }
 impl DataProvider<::icu_properties::provider::GraphemeExtendV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::GraphemeExtendV1Marker>, DataError> {
@@ -994,7 +994,7 @@ impl DataProvider<::icu_properties::provider::GraphemeExtendV1Marker> for BakedD
     }
 }
 impl DataProvider<::icu_properties::provider::HexDigitV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::HexDigitV1Marker>, DataError> {
@@ -1011,7 +1011,7 @@ impl DataProvider<::icu_properties::provider::HexDigitV1Marker> for BakedDataPro
     }
 }
 impl DataProvider<::icu_properties::provider::IdContinueV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::IdContinueV1Marker>, DataError> {
@@ -1028,7 +1028,7 @@ impl DataProvider<::icu_properties::provider::IdContinueV1Marker> for BakedDataP
     }
 }
 impl DataProvider<::icu_properties::provider::IdStartV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::IdStartV1Marker>, DataError> {
@@ -1045,7 +1045,7 @@ impl DataProvider<::icu_properties::provider::IdStartV1Marker> for BakedDataProv
     }
 }
 impl DataProvider<::icu_properties::provider::IdeographicV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::IdeographicV1Marker>, DataError> {
@@ -1062,7 +1062,7 @@ impl DataProvider<::icu_properties::provider::IdeographicV1Marker> for BakedData
     }
 }
 impl DataProvider<::icu_properties::provider::IdsBinaryOperatorV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::IdsBinaryOperatorV1Marker>, DataError>
@@ -1080,7 +1080,7 @@ impl DataProvider<::icu_properties::provider::IdsBinaryOperatorV1Marker> for Bak
     }
 }
 impl DataProvider<::icu_properties::provider::IdsTrinaryOperatorV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::IdsTrinaryOperatorV1Marker>, DataError>
@@ -1089,7 +1089,7 @@ impl DataProvider<::icu_properties::provider::IdsTrinaryOperatorV1Marker> for Ba
     }
 }
 impl DataProvider<::icu_properties::provider::JoinControlV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::JoinControlV1Marker>, DataError> {
@@ -1106,7 +1106,7 @@ impl DataProvider<::icu_properties::provider::JoinControlV1Marker> for BakedData
     }
 }
 impl DataProvider<::icu_properties::provider::LineBreakV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::LineBreakV1Marker>, DataError> {
@@ -1123,7 +1123,7 @@ impl DataProvider<::icu_properties::provider::LineBreakV1Marker> for BakedDataPr
     }
 }
 impl DataProvider<::icu_properties::provider::LogicalOrderExceptionV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::LogicalOrderExceptionV1Marker>, DataError>
@@ -1132,7 +1132,7 @@ impl DataProvider<::icu_properties::provider::LogicalOrderExceptionV1Marker> for
     }
 }
 impl DataProvider<::icu_properties::provider::LowercaseV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::LowercaseV1Marker>, DataError> {
@@ -1149,7 +1149,7 @@ impl DataProvider<::icu_properties::provider::LowercaseV1Marker> for BakedDataPr
     }
 }
 impl DataProvider<::icu_properties::provider::MathV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::MathV1Marker>, DataError> {
@@ -1166,7 +1166,7 @@ impl DataProvider<::icu_properties::provider::MathV1Marker> for BakedDataProvide
     }
 }
 impl DataProvider<::icu_properties::provider::NoncharacterCodePointV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::NoncharacterCodePointV1Marker>, DataError>
@@ -1175,7 +1175,7 @@ impl DataProvider<::icu_properties::provider::NoncharacterCodePointV1Marker> for
     }
 }
 impl DataProvider<::icu_properties::provider::PatternSyntaxV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::PatternSyntaxV1Marker>, DataError> {
@@ -1192,7 +1192,7 @@ impl DataProvider<::icu_properties::provider::PatternSyntaxV1Marker> for BakedDa
     }
 }
 impl DataProvider<::icu_properties::provider::PatternWhiteSpaceV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::PatternWhiteSpaceV1Marker>, DataError>
@@ -1210,7 +1210,7 @@ impl DataProvider<::icu_properties::provider::PatternWhiteSpaceV1Marker> for Bak
     }
 }
 impl DataProvider<::icu_properties::provider::QuotationMarkV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::QuotationMarkV1Marker>, DataError> {
@@ -1227,7 +1227,7 @@ impl DataProvider<::icu_properties::provider::QuotationMarkV1Marker> for BakedDa
     }
 }
 impl DataProvider<::icu_properties::provider::RadicalV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::RadicalV1Marker>, DataError> {
@@ -1244,7 +1244,7 @@ impl DataProvider<::icu_properties::provider::RadicalV1Marker> for BakedDataProv
     }
 }
 impl DataProvider<::icu_properties::provider::RegionalIndicatorV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::RegionalIndicatorV1Marker>, DataError>
@@ -1262,7 +1262,7 @@ impl DataProvider<::icu_properties::provider::RegionalIndicatorV1Marker> for Bak
     }
 }
 impl DataProvider<::icu_properties::provider::ScriptV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::ScriptV1Marker>, DataError> {
@@ -1281,7 +1281,7 @@ impl DataProvider<::icu_properties::provider::ScriptV1Marker> for BakedDataProvi
 impl DataProvider<::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -1292,7 +1292,7 @@ impl DataProvider<::icu_properties::provider::ScriptWithExtensionsPropertyV1Mark
     }
 }
 impl DataProvider<::icu_properties::provider::SentenceBreakV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::SentenceBreakV1Marker>, DataError> {
@@ -1309,7 +1309,7 @@ impl DataProvider<::icu_properties::provider::SentenceBreakV1Marker> for BakedDa
     }
 }
 impl DataProvider<::icu_properties::provider::SentenceTerminalV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::SentenceTerminalV1Marker>, DataError> {
@@ -1326,7 +1326,7 @@ impl DataProvider<::icu_properties::provider::SentenceTerminalV1Marker> for Bake
     }
 }
 impl DataProvider<::icu_properties::provider::SoftDottedV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::SoftDottedV1Marker>, DataError> {
@@ -1343,7 +1343,7 @@ impl DataProvider<::icu_properties::provider::SoftDottedV1Marker> for BakedDataP
     }
 }
 impl DataProvider<::icu_properties::provider::TerminalPunctuationV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::TerminalPunctuationV1Marker>, DataError>
@@ -1352,7 +1352,7 @@ impl DataProvider<::icu_properties::provider::TerminalPunctuationV1Marker> for B
     }
 }
 impl DataProvider<::icu_properties::provider::UnifiedIdeographV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::UnifiedIdeographV1Marker>, DataError> {
@@ -1369,7 +1369,7 @@ impl DataProvider<::icu_properties::provider::UnifiedIdeographV1Marker> for Bake
     }
 }
 impl DataProvider<::icu_properties::provider::UppercaseV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::UppercaseV1Marker>, DataError> {
@@ -1386,7 +1386,7 @@ impl DataProvider<::icu_properties::provider::UppercaseV1Marker> for BakedDataPr
     }
 }
 impl DataProvider<::icu_properties::provider::VariationSelectorV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::VariationSelectorV1Marker>, DataError>
@@ -1404,7 +1404,7 @@ impl DataProvider<::icu_properties::provider::VariationSelectorV1Marker> for Bak
     }
 }
 impl DataProvider<::icu_properties::provider::WhiteSpaceV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::WhiteSpaceV1Marker>, DataError> {
@@ -1421,7 +1421,7 @@ impl DataProvider<::icu_properties::provider::WhiteSpaceV1Marker> for BakedDataP
     }
 }
 impl DataProvider<::icu_properties::provider::WordBreakV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::WordBreakV1Marker>, DataError> {
@@ -1438,7 +1438,7 @@ impl DataProvider<::icu_properties::provider::WordBreakV1Marker> for BakedDataPr
     }
 }
 impl DataProvider<::icu_properties::provider::XidContinueV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::XidContinueV1Marker>, DataError> {
@@ -1455,7 +1455,7 @@ impl DataProvider<::icu_properties::provider::XidContinueV1Marker> for BakedData
     }
 }
 impl DataProvider<::icu_properties::provider::XidStartV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_properties::provider::XidStartV1Marker>, DataError> {
@@ -1472,7 +1472,7 @@ impl DataProvider<::icu_properties::provider::XidStartV1Marker> for BakedDataPro
     }
 }
 impl DataProvider<::icu_provider::hello_world::HelloWorldV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_provider::hello_world::HelloWorldV1Marker>, DataError> {
@@ -1491,7 +1491,7 @@ impl DataProvider<::icu_provider::hello_world::HelloWorldV1Marker> for BakedData
 impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -1506,7 +1506,7 @@ impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackLik
 impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<
@@ -1519,7 +1519,7 @@ impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackPar
 impl DataProvider<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>, DataError>
@@ -1528,7 +1528,7 @@ impl DataProvider<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>
     }
 }
 impl DataProvider<::icu_segmenter::provider::LineBreakDataV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_segmenter::provider::LineBreakDataV1Marker>, DataError> {
@@ -1545,7 +1545,7 @@ impl DataProvider<::icu_segmenter::provider::LineBreakDataV1Marker> for BakedDat
     }
 }
 impl DataProvider<::icu_segmenter::provider::SentenceBreakDataV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_segmenter::provider::SentenceBreakDataV1Marker>, DataError> {
@@ -1564,7 +1564,7 @@ impl DataProvider<::icu_segmenter::provider::SentenceBreakDataV1Marker> for Bake
 impl DataProvider<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>
     for BakedDataProvider
 {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>, DataError>
@@ -1573,7 +1573,7 @@ impl DataProvider<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>
     }
 }
 impl DataProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_segmenter::provider::WordBreakDataV1Marker>, DataError> {

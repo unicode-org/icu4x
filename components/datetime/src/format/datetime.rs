@@ -535,7 +535,7 @@ mod tests {
         let provider = icu_testdata::get_provider();
         let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let date_data: DataPayload<DateSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.clone().into(),
                 metadata: Default::default(),
             })
@@ -543,7 +543,7 @@ mod tests {
             .take_payload()
             .unwrap();
         let time_data: DataPayload<TimeSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: locale.clone().into(),
                 metadata: Default::default(),
             })

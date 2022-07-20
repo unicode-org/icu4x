@@ -33,10 +33,7 @@ impl From<&SourceData> for JapaneseErasProvider {
 }
 
 impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
         let japanext = req.options.get_unicode_ext(&key!("ca")) == Some(value!("japanext"));
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but

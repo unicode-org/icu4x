@@ -302,7 +302,7 @@ where
 {
     #[inline]
     fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
-        self.0.load_payload(key, req)?.try_into()
+        self.0.load_data(key, req)?.try_into()
     }
 }
 
@@ -333,7 +333,7 @@ where
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
 {
     #[inline]
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
         self.0.load_any(M::KEY, req)?.downcast()
     }
 }

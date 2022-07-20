@@ -209,7 +209,7 @@ impl From<&SourceData> for FooProvider {
 }
 
 impl DataProvider<FooV1Marker> for FooProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<FooV1Marker>, DataError> {
