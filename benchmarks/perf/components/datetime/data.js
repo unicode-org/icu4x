@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658332770406,
+  "lastUpdate": 1658343206914,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -50087,6 +50087,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4543,
             "range": "± 31",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "84966f979b38370d3c6fc37c5e734e74e8a9474a",
+          "message": "Simplify Hangul composition (#2200)\n\nRemoves a premature attempt at optimization that did not really\r\nmake sense as an optimization.",
+          "timestamp": "2022-07-20T21:41:26+03:00",
+          "tree_id": "b8018568b83e373decd66c3f5283de4bc98c621b",
+          "url": "https://github.com/unicode-org/icu4x/commit/84966f979b38370d3c6fc37c5e734e74e8a9474a"
+        },
+        "date": 1658343174483,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 99309,
+            "range": "± 1558",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 936210,
+            "range": "± 1916",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 198183,
+            "range": "± 1833",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 91280,
+            "range": "± 177",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 98835,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 98826,
+            "range": "± 274",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 105863,
+            "range": "± 497",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 188526,
+            "range": "± 1137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 200795,
+            "range": "± 1523",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 198971,
+            "range": "± 340",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 212422,
+            "range": "± 2088",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5097,
+            "range": "± 76",
             "unit": "ns/iter"
           }
         ]
