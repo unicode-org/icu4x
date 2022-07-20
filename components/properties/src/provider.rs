@@ -47,7 +47,7 @@ pub enum PropertyCodePointSetV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum PropertyUnicodeMapV1<'data, T: TrieValue> {
+pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
     CodePointTrie(#[cfg_attr(feature = "serde", serde(borrow))] CodePointTrie<'data, T>),
     // new variants should go BELOW existing ones
@@ -99,7 +99,7 @@ impl<'data> PropertyCodePointSetV1<'data> {
 }
 
 // See CodePointMapData for documentation of these functions
-impl<'data, T: TrieValue> PropertyUnicodeMapV1<'data, T> {
+impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     #[inline]
     pub(crate) fn get_u32(&self, ch: u32) -> T {
         match *self {
@@ -165,7 +165,7 @@ macro_rules! expand {
                 pub struct $enum_marker;
 
                 impl DataMarker for $enum_marker {
-                    type Yokeable = PropertyUnicodeMapV1<'static, crate::$value_ty>;
+                    type Yokeable = PropertyCodePointMapV1<'static, crate::$value_ty>;
                 }
 
                 impl ResourceMarker for $enum_marker {

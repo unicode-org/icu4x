@@ -51,7 +51,7 @@ macro_rules! expand {
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
                         DataError::custom("Could not parse CodePointTrie TOML").with_display_context(&e)
                     })?;
-                    let data_struct = PropertyUnicodeMapV1::CodePointTrie(code_point_trie);
+                    let data_struct = PropertyCodePointMapV1::CodePointTrie(code_point_trie);
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
                         payload: Some(DataPayload::from_owned(data_struct)),
@@ -89,7 +89,9 @@ expand!(
 mod tests {
     use super::*;
     use icu_codepointtrie::CodePointTrie;
-    use icu_properties::provider::{GeneralCategoryV1Marker, PropertyUnicodeMapV1, ScriptV1Marker};
+    use icu_properties::provider::{
+        GeneralCategoryV1Marker, PropertyCodePointMapV1, ScriptV1Marker,
+    };
     use icu_properties::{GeneralCategory, Script};
 
     // A test of the UnicodeProperty General_Category is truly a test of the
@@ -106,7 +108,7 @@ mod tests {
             .expect("Loading was successful");
 
         let trie: &CodePointTrie<GeneralCategory> = match payload.get() {
-            PropertyUnicodeMapV1::CodePointTrie(ref t) => t,
+            PropertyCodePointMapV1::CodePointTrie(ref t) => t,
             _ => unreachable!("Should have serialized to a code point trie"),
         };
 
@@ -124,7 +126,7 @@ mod tests {
             .expect("Loading was successful");
 
         let trie: &CodePointTrie<Script> = match payload.get() {
-            PropertyUnicodeMapV1::CodePointTrie(ref t) => t,
+            PropertyCodePointMapV1::CodePointTrie(ref t) => t,
             _ => unreachable!("Should have serialized to a code point trie"),
         };
         assert_eq!(trie.get('꣓' as u32), Script::Saurashtra);
