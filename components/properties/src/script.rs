@@ -640,7 +640,7 @@ pub type ScriptWithExtensionsResult =
 /// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
 /// ```
 pub fn get_script_with_extensions(
-    provider: &(impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
+    provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
 ) -> ScriptWithExtensionsResult {
     Ok(provider
         .load_resource(&Default::default())

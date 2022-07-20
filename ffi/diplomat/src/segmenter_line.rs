@@ -13,7 +13,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
-    use icu_provider::ResourceProvider;
+    use icu_provider::DataProvider;
     use icu_segmenter::Latin1Char;
     use icu_segmenter::LineBreakDataV1Marker;
     use icu_segmenter::LineBreakIterator;
@@ -70,8 +70,8 @@ pub mod ffi {
 
         fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError>
         where
-            D: ResourceProvider<LineBreakDataV1Marker>
-                + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+            D: DataProvider<LineBreakDataV1Marker>
+                + DataProvider<UCharDictionaryBreakDataV1Marker>
                 + ?Sized,
         {
             LineBreakSegmenter::try_new(provider)
@@ -96,8 +96,8 @@ pub mod ffi {
             options: ICU4XLineBreakOptions,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError>
         where
-            D: ResourceProvider<LineBreakDataV1Marker>
-                + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+            D: DataProvider<LineBreakDataV1Marker>
+                + DataProvider<UCharDictionaryBreakDataV1Marker>
                 + ?Sized,
         {
             LineBreakSegmenter::try_new_with_options(provider, options.into())

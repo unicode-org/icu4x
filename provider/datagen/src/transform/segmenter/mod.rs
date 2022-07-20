@@ -15,7 +15,7 @@ use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
 };
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::symbols::*;
 use icu_segmenter::*;
@@ -240,7 +240,7 @@ impl From<&SourceData> for SegmenterRuleProvider {
 impl SegmenterRuleProvider {
     fn generate_rule_break_data(
         &self,
-        key: ResourceKey,
+        key: DataKey,
     ) -> Result<RuleBreakDataV1<'static>, DataError> {
         let segmenter = self
             .source
@@ -250,7 +250,7 @@ impl SegmenterRuleProvider {
                 key.get_path()
                     .split(&['/', '@'])
                     .nth(1)
-                    .expect("ResourceKey format should be valid!")
+                    .expect("DataKey format should be valid!")
             ))?;
 
         // Load enumerate Unicode property dependencies.
@@ -629,7 +629,7 @@ impl SegmenterRuleProvider {
     }
 }
 
-impl ResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
+impl DataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
     fn load_resource(
         &self,
         _req: &DataRequest,
@@ -643,7 +643,7 @@ impl ResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-impl ResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
+impl DataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
     fn load_resource(
         &self,
         _req: &DataRequest,
@@ -657,7 +657,7 @@ impl ResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvide
     }
 }
 
-impl ResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
+impl DataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
     fn load_resource(
         &self,
         _req: &DataRequest,
@@ -671,7 +671,7 @@ impl ResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-impl ResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
+impl DataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
     fn load_resource(
         &self,
         _req: &DataRequest,
@@ -695,26 +695,26 @@ icu_provider::make_exportable_provider!(
     ]
 );
 
-impl IterableResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -731,7 +731,7 @@ pub struct SegmenterDictionaryProvider {
 }
 
 impl SegmenterDictionaryProvider {
-    fn get_toml_filename(options: &ResourceOptions) -> Option<&'static str> {
+    fn get_toml_filename(options: &DataOptions) -> Option<&'static str> {
         if options.get_langid() == langid!("km") {
             Some("dictionary_km.toml")
         } else if options.get_langid() == langid!("ja") {
@@ -756,7 +756,7 @@ impl From<&SourceData> for SegmenterDictionaryProvider {
     }
 }
 
-impl ResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
+impl DataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -766,7 +766,7 @@ impl ResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryP
             .segmenter()?
             .read_and_parse_toml::<SegmenterDictionaryData>(
                 Self::get_toml_filename(&req.options)
-                    .ok_or_else(|| DataErrorKind::MissingResourceOptions.into_error())?,
+                    .ok_or_else(|| DataErrorKind::MissingDataOptions.into_error())?,
             )?;
         let data = UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
@@ -783,8 +783,8 @@ icu_provider::make_exportable_provider!(
     [UCharDictionaryBreakDataV1Marker,]
 );
 
-impl IterableResourceProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![
             locale!("th").into(),
             locale!("km").into(),

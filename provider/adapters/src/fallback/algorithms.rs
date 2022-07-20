@@ -13,7 +13,7 @@ use super::*;
 const SUBDIVISION_KEY: Key = key!("sd");
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
-    pub(crate) fn normalize(&self, ro: &mut ResourceOptions) {
+    pub(crate) fn normalize(&self, ro: &mut DataOptions) {
         let language = ro.language();
         // 1. Populate the region (required for region fallback only)
         if self.config.priority == FallbackPriority::Region && ro.region().is_none() {
@@ -70,7 +70,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
 }
 
 impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
-    pub fn step(&mut self, ro: &mut ResourceOptions) {
+    pub fn step(&mut self, ro: &mut DataOptions) {
         match self.config.priority {
             FallbackPriority::Language => self.step_language(ro),
             FallbackPriority::Region => self.step_region(ro),
@@ -80,7 +80,7 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         }
     }
 
-    fn step_language(&mut self, ro: &mut ResourceOptions) {
+    fn step_language(&mut self, ro: &mut DataOptions) {
         // 1. Remove the extension fallback keyword
         if let Some(extension_key) = self.config.extension_key {
             if let Some(value) = ro.remove_unicode_ext(&extension_key) {
@@ -137,7 +137,7 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         ro.set_language(Language::UND);
     }
 
-    fn step_region(&mut self, ro: &mut ResourceOptions) {
+    fn step_region(&mut self, ro: &mut DataOptions) {
         // 1. Remove the extension fallback keyword
         if let Some(extension_key) = self.config.extension_key {
             if let Some(value) = ro.remove_unicode_ext(&extension_key) {
@@ -169,7 +169,7 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         ro.set_region(None);
     }
 
-    fn restore_extensions_variants(&mut self, ro: &mut ResourceOptions) {
+    fn restore_extensions_variants(&mut self, ro: &mut DataOptions) {
         if let Some(value) = self.backup_extension.take() {
             #[allow(clippy::unwrap_used)] // not reachable unless extension_key is present
             ro.set_unicode_ext(self.config.extension_key.unwrap(), value);
@@ -342,7 +342,7 @@ mod tests {
                     fallbacker_no_data.for_config(config)
                 };
                 let loc = Locale::from_str(cas.input).unwrap();
-                let mut ro = ResourceOptions::from(loc);
+                let mut ro = DataOptions::from(loc);
                 let mut it = key_fallbacker.fallback_for(&mut ro);
                 for expected in expected_chain {
                     assert_eq!(

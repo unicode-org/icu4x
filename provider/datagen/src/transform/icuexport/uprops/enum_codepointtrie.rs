@@ -37,13 +37,13 @@ fn get_enumerated<'a>(
         ))?
         .enum_property
         .get(0)
-        .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
+        .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
 }
 
 macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+,) => {
         $(
-            impl ResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
+            impl DataProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
             {
                 fn load_resource(&self, _: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let source_cpt_data = &get_enumerated(&self.source, $prop_name)?.code_point_trie;
@@ -59,10 +59,10 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableResourceProvider<$marker> for EnumeratedPropertyCodePointTrieProvider {
+            impl IterableDataProvider<$marker> for EnumeratedPropertyCodePointTrieProvider {
                 fn supported_options(
                     &self,
-                ) -> Result<Vec<ResourceOptions>, DataError> {
+                ) -> Result<Vec<DataOptions>, DataError> {
                     get_enumerated(&self.source, $prop_name)?;
                     Ok(vec![Default::default()])
                 }

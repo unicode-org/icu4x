@@ -21,7 +21,7 @@ use postcard::ser_flavors::{AllocVec, Flavor};
 pub struct BlobExporter<'w> {
     /// List of (key hash, resource options byte string, blob ID)
     #[allow(clippy::type_complexity)]
-    resources: Mutex<Vec<(ResourceKeyHash, Vec<u8>, usize)>>,
+    resources: Mutex<Vec<(DataKeyHash, Vec<u8>, usize)>>,
     /// Map from blob to blob ID
     unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
@@ -41,8 +41,8 @@ impl<'w> BlobExporter<'w> {
 impl DataExporter for BlobExporter<'_> {
     fn put_payload(
         &self,
-        key: ResourceKey,
-        options: &ResourceOptions,
+        key: DataKey,
+        options: &DataOptions,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         log::trace!("Adding: {}/{}", key, options);

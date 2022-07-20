@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
 use crate::SourceData;
 use icu_datetime::provider::time_zones::*;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 
@@ -26,10 +26,10 @@ impl From<&SourceData> for TimeZonesProvider {
     }
 }
 
-macro_rules! impl_resource_provider {
+macro_rules! impl_data_provider {
     ($($marker:ident),+) => {
         $(
-            impl ResourceProvider<$marker> for TimeZonesProvider {
+            impl DataProvider<$marker> for TimeZonesProvider {
                 fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let langid = req.options.get_langid();
 
@@ -90,14 +90,14 @@ macro_rules! impl_resource_provider {
                 }
             }
 
-            impl IterableResourceProvider<$marker> for TimeZonesProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+            impl IterableDataProvider<$marker> for TimeZonesProvider {
+                fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
                     Ok(self
                         .source
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
-                        .map(Into::<ResourceOptions>::into)
+                        .map(Into::<DataOptions>::into)
                         .collect())
                 }
             }
@@ -107,7 +107,7 @@ macro_rules! impl_resource_provider {
     };
 }
 
-impl_resource_provider!(
+impl_data_provider!(
     TimeZoneFormatsV1Marker,
     ExemplarCitiesV1Marker,
     MetaZoneGenericNamesLongV1Marker,

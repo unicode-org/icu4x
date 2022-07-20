@@ -28,7 +28,7 @@ pub struct SentenceBreakSegmenter {
 impl SentenceBreakSegmenter {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<SentenceBreakDataV1Marker> + ?Sized,
+        D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {
         let payload = provider
             .load_resource(&DataRequest::default())?

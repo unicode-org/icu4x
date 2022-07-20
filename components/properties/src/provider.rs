@@ -140,8 +140,8 @@ macro_rules! expand {
                 impl DataMarker for $bin_marker {
                     type Yokeable = PropertyCodePointSetV1<'static>;
                 }
-                impl ResourceMarker for $bin_marker {
-                    const KEY: ResourceKey = resource_key!(concat!("props/", $bin_s, "@1"));
+                impl KeyedDataMarker for $bin_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
@@ -168,8 +168,8 @@ macro_rules! expand {
                     type Yokeable = PropertyCodePointMapV1<'static, crate::$value_ty>;
                 }
 
-                impl ResourceMarker for $enum_marker {
-                    const KEY: ResourceKey = resource_key!(concat!("props/", $enum_s, "@1"));
+                impl KeyedDataMarker for $enum_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
@@ -190,7 +190,7 @@ macro_rules! expand {
 
             #[cfg(feature = "datagen")]
             /// The set of all resource keys supported by [`icu_uniset`](crate).
-            pub const ALL_KEYS: [ResourceKey; 75] = [
+            pub const ALL_KEYS: [DataKey; 75] = [
                 $(
                     $bin_marker::KEY,
                 )+

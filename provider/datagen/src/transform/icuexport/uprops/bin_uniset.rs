@@ -34,13 +34,13 @@ fn get_binary<'a>(
         ))?
         .binary_property
         .get(0)
-        .ok_or_else(|| DataErrorKind::MissingResourceKey.into_error())
+        .ok_or_else(|| DataErrorKind::MissingDataKey.into_error())
 }
 
 macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+) => {
         $(
-            impl ResourceProvider<$marker> for BinaryPropertyCodePointSetDataProvider {
+            impl DataProvider<$marker> for BinaryPropertyCodePointSetDataProvider {
                 fn load_resource(
                     &self,
                     _: &DataRequest,
@@ -62,10 +62,10 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableResourceProvider<$marker> for BinaryPropertyCodePointSetDataProvider {
+            impl IterableDataProvider<$marker> for BinaryPropertyCodePointSetDataProvider {
                 fn supported_options(
                     &self,
-                ) -> Result<Vec<ResourceOptions>, DataError> {
+                ) -> Result<Vec<DataOptions>, DataError> {
                     get_binary(&self.source, $prop_name)?;
 
                     Ok(vec![Default::default()])

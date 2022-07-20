@@ -18,7 +18,7 @@ use icu_locid::subtags::Variant;
 #[derive(Default, Debug, Clone, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest {
-    pub options: ResourceOptions,
+    pub options: DataOptions,
     pub metadata: DataRequestMetadata,
 }
 
@@ -28,8 +28,8 @@ impl fmt::Display for DataRequest {
     }
 }
 
-impl AsMut<ResourceOptions> for DataRequest {
-    fn as_mut(&mut self) -> &mut ResourceOptions {
+impl AsMut<DataOptions> for DataRequest {
+    fn as_mut(&mut self) -> &mut DataOptions {
         &mut self.options
     }
 }
@@ -40,32 +40,32 @@ pub struct DataRequestMetadata;
 
 /// A variant and language identifier, used for requesting data from a data provider.
 ///
-/// The fields in a [`ResourceOptions`] are not generally known until runtime.
+/// The fields in a [`DataOptions`] are not generally known until runtime.
 #[derive(PartialEq, Clone, Default, Eq, Hash)]
-pub struct ResourceOptions {
+pub struct DataOptions {
     langid: LanguageIdentifier,
     keywords: unicode_ext::Keywords,
 }
 
-impl fmt::Debug for ResourceOptions {
+impl fmt::Debug for DataOptions {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "ResourceOptions{{{}}}", self)
+        write!(f, "DataOptions{{{}}}", self)
     }
 }
 
-impl fmt::Display for ResourceOptions {
+impl fmt::Display for DataOptions {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeable::Writeable::write_to(self, f)
     }
 }
 
-impl AsMut<ResourceOptions> for ResourceOptions {
-    fn as_mut(&mut self) -> &mut ResourceOptions {
+impl AsMut<DataOptions> for DataOptions {
+    fn as_mut(&mut self) -> &mut DataOptions {
         self
     }
 }
 
-impl Writeable for ResourceOptions {
+impl Writeable for DataOptions {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.langid.write_to(sink)?;
         if !self.keywords.is_empty() {
@@ -85,7 +85,7 @@ impl Writeable for ResourceOptions {
     }
 }
 
-impl From<LanguageIdentifier> for ResourceOptions {
+impl From<LanguageIdentifier> for DataOptions {
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
             langid,
@@ -94,7 +94,7 @@ impl From<LanguageIdentifier> for ResourceOptions {
     }
 }
 
-impl From<Locale> for ResourceOptions {
+impl From<Locale> for DataOptions {
     fn from(locale: Locale) -> Self {
         Self {
             langid: locale.id,
@@ -103,7 +103,7 @@ impl From<Locale> for ResourceOptions {
     }
 }
 
-impl From<&Locale> for ResourceOptions {
+impl From<&Locale> for DataOptions {
     fn from(locale: &Locale) -> Self {
         Self {
             langid: locale.id.clone(),
@@ -112,11 +112,11 @@ impl From<&Locale> for ResourceOptions {
     }
 }
 
-impl ResourceOptions {
-    /// Compare this [`ResourceOptions`] with BCP-47 bytes.
+impl DataOptions {
+    /// Compare this [`DataOptions`] with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
-    /// [`ResourceOptions`] to a BCP-47 string and then performed a byte comparison.
+    /// [`DataOptions`] to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
     /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
@@ -124,7 +124,7 @@ impl ResourceOptions {
     /// # Examples
     ///
     /// ```
-    /// use icu_provider::ResourceOptions;
+    /// use icu_provider::DataOptions;
     /// use icu_locid::Locale;
     /// use std::cmp::Ordering;
     ///
@@ -144,11 +144,11 @@ impl ResourceOptions {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_loc: ResourceOptions = a.parse::<Locale>().unwrap().into();
+    ///     let a_loc: DataOptions = a.parse::<Locale>().unwrap().into();
     ///     assert_eq!(a, a_loc.to_string());
     ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal, "{} == {}", a, a);
     ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less, "{} < {}", a, b);
-    ///     let b_loc: ResourceOptions = b.parse::<Locale>().unwrap().into();
+    ///     let b_loc: DataOptions = b.parse::<Locale>().unwrap().into();
     ///     assert_eq!(b, b_loc.to_string());
     ///     assert!(b_loc.strict_cmp(b.as_bytes()) == Ordering::Equal, "{} == {}", b, b);
     ///     assert!(b_loc.strict_cmp(a.as_bytes()) == Ordering::Greater, "{} > {}", b, a);
@@ -173,8 +173,8 @@ impl ResourceOptions {
     }
 }
 
-impl ResourceOptions {
-    /// Returns whether this [`ResourceOptions`] has all empty fields (no components).
+impl DataOptions {
+    /// Returns whether this [`DataOptions`] has all empty fields (no components).
     pub fn is_empty(&self) -> bool {
         self == &Self::default()
     }
@@ -182,21 +182,21 @@ impl ResourceOptions {
     /// Returns whether the [`LanguageIdentifier`] associated with this request is `und`.
     ///
     /// Note that this only checks the language identifier; extension keywords may also be set.
-    /// To check the entire `ResourceOptions`, use [`ResourceOptions::is_empty()`].
+    /// To check the entire `DataOptions`, use [`DataOptions::is_empty()`].
     pub fn is_langid_und(&self) -> bool {
         self.langid == LanguageIdentifier::UND
     }
 
-    /// Gets the [`LanguageIdentifier`] for this [`ResourceOptions`].
+    /// Gets the [`LanguageIdentifier`] for this [`DataOptions`].
     ///
     /// This may allocate memory if there are variant subtags. If you need only the language,
     /// script, and/or region subtag, use the specific getters for those subtags:
     ///
-    /// - [`ResourceOptions::language()`]
-    /// - [`ResourceOptions::script()`]
-    /// - [`ResourceOptions::region()`]
+    /// - [`DataOptions::language()`]
+    /// - [`DataOptions::script()`]
+    /// - [`DataOptions::region()`]
     ///
-    /// If you have ownership over the `ResourceOptions`, use [`ResourceOptions::into_locale()`]
+    /// If you have ownership over the `DataOptions`, use [`DataOptions::into_locale()`]
     /// and then access the `id` field.
     ///
     /// # Examples
@@ -205,10 +205,10 @@ impl ResourceOptions {
     /// use icu_locid::langid;
     /// use icu_provider::prelude::*;
     ///
-    /// const FOO_BAR: ResourceKey = icu_provider::resource_key!("foo/bar@1");
+    /// const FOO_BAR: DataKey = icu_provider::data_key!("foo/bar@1");
     ///
     /// let req_no_langid = DataRequest {
-    ///     options: ResourceOptions::default(),
+    ///     options: DataOptions::default(),
     ///     metadata: Default::default(),
     /// };
     ///
@@ -224,15 +224,15 @@ impl ResourceOptions {
         self.langid.clone()
     }
 
-    /// Overrides the entire [`LanguageIdentifier`] portion of this [`ResourceOptions`].
+    /// Overrides the entire [`LanguageIdentifier`] portion of this [`DataOptions`].
     #[inline]
     pub fn set_langid(&mut self, lid: LanguageIdentifier) {
         self.langid = lid;
     }
 
-    /// Converts this [`ResourceOptions`] into a [`Locale`].
+    /// Converts this [`DataOptions`] into a [`Locale`].
     ///
-    /// See also [`ResourceOptions::get_langid()`].
+    /// See also [`DataOptions::get_langid()`].
     ///
     /// # Examples
     ///
@@ -241,7 +241,7 @@ impl ResourceOptions {
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
-    /// let options: ResourceOptions = locale.into();
+    /// let options: DataOptions = locale.into();
     ///
     /// assert_eq!(options.to_string(), "it-IT-u-ca-coptic");
     /// assert_eq!(options.get_langid(), langid!("it-IT"));
@@ -261,43 +261,43 @@ impl ResourceOptions {
         loc
     }
 
-    /// Returns the [`Language`] for this [`ResourceOptions`].
+    /// Returns the [`Language`] for this [`DataOptions`].
     #[inline]
     pub fn language(&self) -> Language {
         self.langid.language
     }
 
-    /// Returns the [`Language`] for this [`ResourceOptions`].
+    /// Returns the [`Language`] for this [`DataOptions`].
     #[inline]
     pub fn set_language(&mut self, language: Language) {
         self.langid.language = language;
     }
 
-    /// Returns the [`Script`] for this [`ResourceOptions`].
+    /// Returns the [`Script`] for this [`DataOptions`].
     #[inline]
     pub fn script(&self) -> Option<Script> {
         self.langid.script
     }
 
-    /// Sets the [`Script`] for this [`ResourceOptions`].
+    /// Sets the [`Script`] for this [`DataOptions`].
     #[inline]
     pub fn set_script(&mut self, script: Option<Script>) {
         self.langid.script = script;
     }
 
-    /// Returns the [`Region`] for this [`ResourceOptions`].
+    /// Returns the [`Region`] for this [`DataOptions`].
     #[inline]
     pub fn region(&self) -> Option<Region> {
         self.langid.region
     }
 
-    /// Sets the [`Region`] for this [`ResourceOptions`].
+    /// Sets the [`Region`] for this [`DataOptions`].
     #[inline]
     pub fn set_region(&mut self, region: Option<Region>) {
         self.langid.region = region;
     }
 
-    /// Returns whether there are any [`Variant`] subtags in this [`ResourceOptions`].
+    /// Returns whether there are any [`Variant`] subtags in this [`DataOptions`].
     #[inline]
     pub fn has_variants(&self) -> bool {
         !self.langid.variants.is_empty()
@@ -308,31 +308,31 @@ impl ResourceOptions {
         self.langid.variants = variants;
     }
 
-    /// Removes all [`Variant`] subtags in this [`ResourceOptions`].
+    /// Removes all [`Variant`] subtags in this [`DataOptions`].
     #[inline]
     pub fn clear_variants(&mut self) -> Variants {
         self.langid.variants.clear()
     }
 
-    /// Gets the value of the specified Unicode extension keyword for this [`ResourceOptions`].
+    /// Gets the value of the specified Unicode extension keyword for this [`DataOptions`].
     #[inline]
     pub fn get_unicode_ext(&self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
         self.keywords.get(key).cloned()
     }
 
-    /// Returns whether there are any Unicode extension keywords in this [`ResourceOptions`].
+    /// Returns whether there are any Unicode extension keywords in this [`DataOptions`].
     #[inline]
     pub fn has_unicode_ext(&self) -> bool {
         !self.keywords.is_empty()
     }
 
-    /// Returns whether a specific Unicode extension keyword is present in this [`ResourceOptions`].
+    /// Returns whether a specific Unicode extension keyword is present in this [`DataOptions`].
     #[inline]
     pub fn contains_unicode_ext(&self, key: &unicode_ext::Key) -> bool {
         self.keywords.contains_key(key)
     }
 
-    /// Returns whether this [`ResourceOptions`] contains a Unicode extension keyword
+    /// Returns whether this [`DataOptions`] contains a Unicode extension keyword
     /// with the specified key and value.
     ///
     /// # Examples
@@ -342,7 +342,7 @@ impl ResourceOptions {
     /// use icu_provider::prelude::*;
     ///
     /// let locale: Locale = "it-IT-u-ca-coptic".parse().expect("Valid BCP-47");
-    /// let options: ResourceOptions = locale.into();
+    /// let options: DataOptions = locale.into();
     ///
     /// assert_eq!(options.get_unicode_ext(&key!("hc")), None);
     /// assert_eq!(
@@ -356,7 +356,7 @@ impl ResourceOptions {
         self.keywords.get(key) == Some(value)
     }
 
-    /// Sets the value for a specific Unicode extension keyword on this [`ResourceOptions`].
+    /// Sets the value for a specific Unicode extension keyword on this [`DataOptions`].
     #[inline]
     pub fn set_unicode_ext(
         &mut self,
@@ -366,7 +366,7 @@ impl ResourceOptions {
         self.keywords.set(key, value)
     }
 
-    /// Removes a specific Unicode extension keyword from this [`ResourceOptions`], returning
+    /// Removes a specific Unicode extension keyword from this [`DataOptions`], returning
     /// the value if it was present.
     #[inline]
     pub fn remove_unicode_ext(&mut self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
@@ -386,7 +386,7 @@ impl ResourceOptions {
 #[test]
 fn test_options_to_string() {
     struct OptionsTestCase {
-        pub options: ResourceOptions,
+        pub options: DataOptions,
         pub expected: &'static str,
     }
 

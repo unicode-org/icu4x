@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{subtags, subtags_language as language, LanguageIdentifier};
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use zerovec::{ZeroMap, ZeroSlice};
@@ -25,12 +25,12 @@ impl From<&SourceData> for AliasesProvider {
     }
 }
 
-impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
+impl DataProvider<AliasesV1Marker> for AliasesProvider {
     fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+            return Err(DataErrorKind::ExtraneousDataOptions.into_error());
         }
 
         let data: &cldr_serde::aliases::Resource = self
@@ -47,8 +47,8 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
 
 icu_provider::make_exportable_provider!(AliasesProvider, [AliasesV1Marker,]);
 
-impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<AliasesV1Marker> for AliasesProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }

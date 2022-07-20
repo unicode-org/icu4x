@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -23,7 +23,7 @@ impl From<&SourceData> for LikelySubtagsProvider {
     }
 }
 
-impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
+impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -31,7 +31,7 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
         if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+            return Err(DataErrorKind::ExtraneousDataOptions.into_error());
         }
 
         let data: &cldr_serde::likely_subtags::Resource = self
@@ -49,8 +49,8 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
 
 icu_provider::make_exportable_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,]);
 
-impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }

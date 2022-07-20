@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::{ResourceKey, ResourceMarker};
+use icu_provider::{DataKey, KeyedDataMarker};
 
 /// List of all supported keys
-pub fn all_keys() -> Vec<ResourceKey> {
+pub fn all_keys() -> Vec<DataKey> {
     let mut v = vec![
         icu_calendar::provider::JapaneseErasV1Marker::KEY,
         icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
@@ -44,7 +44,6 @@ pub fn all_keys() -> Vec<ResourceKey> {
         icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY,
         #[cfg(feature = "experimental")]
         icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY,
-        #[cfg(feature = "experimental")]
         icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY,
     ];
     v.extend(icu_properties::provider::ALL_KEYS);
@@ -114,6 +113,7 @@ macro_rules! create_datagen_provider {
                 $crate::transform::icuexport::normalizer::CanonicalCompositionPassthroughProvider,
                 $crate::transform::icuexport::normalizer::CompatibilityCompositionPassthroughProvider,
                 $crate::transform::icuexport::normalizer::Uts46CompositionPassthroughProvider,
+                $crate::transform::icuexport::normalizer::NonRecursiveDecompositionSupplementProvider,
                 $crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::transform::icuexport::uprops::BinaryPropertyCodePointSetDataProvider,

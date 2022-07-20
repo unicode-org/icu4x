@@ -89,8 +89,8 @@ impl FilesystemExporter {
 impl DataExporter for FilesystemExporter {
     fn put_payload(
         &self,
-        key: ResourceKey,
-        options: &ResourceOptions,
+        key: DataKey,
+        options: &DataOptions,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         log::trace!("Writing: {}/{}", key, options);

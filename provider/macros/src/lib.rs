@@ -38,7 +38,7 @@ mod tests;
 /// - `Apply #[derive(Yokeable, ZeroFrom)]`. The `ZeroFrom` derive can
 ///    be customized with `#[zerofrom(clone)]` on non-ZeroFrom fields.
 ///
-/// In addition, the attribute can be used to implement `DataMarker` and/or `ResourceMarker`
+/// In addition, the attribute can be used to implement `DataMarker` and/or `KeyedDataMarker`
 /// by adding symbols with optional key strings:
 ///
 /// ```
@@ -54,8 +54,8 @@ mod tests;
 ///     message: Cow<'data, str>,
 /// };
 ///
-/// // Note: FooV1Marker implements `DataMarker` but not `ResourceMarker`.
-/// // The other two implement `ResourceMarker`.
+/// // Note: FooV1Marker implements `DataMarker` but not `KeyedDataMarker`.
+/// // The other two implement `KeyedDataMarker`.
 ///
 /// assert_eq!(BarV1Marker::KEY.get_path(), "demo/bar@1");
 /// assert_eq!(
@@ -222,8 +222,8 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                 write!(key_str, "[u-{}]", extension_key_lit.value()).unwrap();
             }
             result.extend(quote!(
-                impl icu_provider::ResourceMarker for #marker_name {
-                    const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(#key_str);
+                impl icu_provider::KeyedDataMarker for #marker_name {
+                    const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str);
                 }
             ));
         }

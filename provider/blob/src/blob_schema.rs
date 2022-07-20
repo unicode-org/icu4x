@@ -23,7 +23,7 @@ pub struct BlobSchemaV1<'data> {
     /// Weak invariant: the `usize` values are valid indices into `self.buffers`
     /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
     #[serde(borrow)]
-    pub keys: ZeroMap2dBorrowed<'data, ResourceKeyHash, [u8], usize>,
+    pub keys: ZeroMap2dBorrowed<'data, DataKeyHash, [u8], usize>,
     /// Vector of buffers
     #[serde(borrow)]
     pub buffers: &'data VarZeroSlice<[u8]>,

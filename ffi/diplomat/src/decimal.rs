@@ -12,8 +12,8 @@ pub mod ffi {
         FixedDecimalFormatter,
     };
     use icu_locid::Locale;
-    use icu_provider::ResourceMarker;
-    use icu_provider::ResourceProvider;
+    use icu_provider::DataProvider;
+    use icu_provider::KeyedDataMarker;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use writeable::Writeable;
 
@@ -76,7 +76,7 @@ pub mod ffi {
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError>
         where
-            D: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
+            D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
         {
             let langid = locale.0.as_ref().clone();
 

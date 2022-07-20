@@ -59,11 +59,11 @@ fn time_patterns_data_payload<D>(
     locale: &Locale,
 ) -> Result<DataPayload<TimePatternsV1Marker>>
 where
-    D: ResourceProvider<TimePatternsV1Marker> + ?Sized,
+    D: DataProvider<TimePatternsV1Marker> + ?Sized,
 {
     let data = data_provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::from(locale),
+            options: DataOptions::from(locale),
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -90,7 +90,7 @@ pub(crate) fn pattern_for_time_length<'a, D>(
     preferences: Option<preferences::Bag>,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
 where
-    D: ResourceProvider<TimePatternsV1Marker> + ?Sized,
+    D: DataProvider<TimePatternsV1Marker> + ?Sized,
 {
     let patterns_data = time_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -104,11 +104,11 @@ fn date_patterns_data_payload<D>(
     locale: &Locale,
 ) -> Result<DataPayload<DatePatternsV1Marker>>
 where
-    D: ResourceProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DatePatternsV1Marker> + ?Sized,
 {
     let data = data_provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::from(locale),
+            options: DataOptions::from(locale),
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -122,7 +122,7 @@ pub(crate) fn pattern_for_date_length<D>(
     length: length::Date,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
 where
-    D: ResourceProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DatePatternsV1Marker> + ?Sized,
 {
     let patterns_data = date_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -138,7 +138,7 @@ pub(crate) fn generic_pattern_for_date_length<D>(
     length: length::Date,
 ) -> Result<DataPayload<GenericPatternV1Marker>>
 where
-    D: ResourceProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DatePatternsV1Marker> + ?Sized,
 {
     let patterns_data = date_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -169,9 +169,9 @@ impl<D: ?Sized> Clone for PatternSelector<'_, D> {
 
 impl<D> PatternSelector<'_, D>
 where
-    D: ResourceProvider<DatePatternsV1Marker>
-        + ResourceProvider<TimePatternsV1Marker>
-        + ResourceProvider<DateSkeletonPatternsV1Marker>
+    D: DataProvider<DatePatternsV1Marker>
+        + DataProvider<TimePatternsV1Marker>
+        + DataProvider<DateSkeletonPatternsV1Marker>
         + ?Sized,
 {
     pub(crate) fn for_options<'a>(
@@ -277,7 +277,7 @@ where
         let data = self
             .data_provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::from(self.locale),
+                options: DataOptions::from(self.locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_provider::datagen::IterableDynProvider;
+use icu_provider::datagen::IterableDynamicDataProvider;
 use icu_provider::datagen::{DataConverter, HeapStatsMarker};
 use icu_provider_adapters::filter::Filterable;
 
@@ -71,7 +71,7 @@ fn main() {
         let mut max_net_violation = 0;
 
         for options in
-            match IterableDynProvider::<icu_provider::datagen::ExportMarker>::supported_options_for_key(
+            match IterableDynamicDataProvider::<icu_provider::datagen::ExportMarker>::supported_options_for_key(
                 &converter, key,
             ) {
                 Err(_) if key.get_path().starts_with("props/") => {

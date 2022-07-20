@@ -10,7 +10,7 @@ use icu_char16trie::char16trie::Char16Trie;
 use icu_codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
 use icu_normalizer::u24::U24;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_uniset::CodePointSetBuilder;
 use std::convert::TryFrom;
@@ -35,7 +35,7 @@ macro_rules! normalization_provider {
             }
         }
 
-        impl ResourceProvider<$marker> for $provider {
+        impl DataProvider<$marker> for $provider {
             fn load_resource(
                 &self,
                 _req: &DataRequest,
@@ -53,9 +53,9 @@ macro_rules! normalization_provider {
 
         icu_provider::make_exportable_provider!($provider, [$marker,]);
 
-        impl IterableResourceProvider<$marker> for $provider {
-            fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-                Ok(vec![ResourceOptions::default()])
+        impl IterableDataProvider<$marker> for $provider {
+            fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+                Ok(vec![DataOptions::default()])
             }
         }
     };

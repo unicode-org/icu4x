@@ -29,9 +29,9 @@ fn load_resource<D, L, P>(
     provider: &P,
 ) -> Result<(), DateTimeFormatterError>
 where
-    D: ResourceMarker,
+    D: KeyedDataMarker,
     L: Clone + Into<LanguageIdentifier>,
-    P: ResourceProvider<D> + ?Sized,
+    P: DataProvider<D> + ?Sized,
 {
     let langid: LanguageIdentifier = locale.clone().into();
     if destination.is_none() {
@@ -120,12 +120,12 @@ impl TimeZoneFormatter {
     ) -> Result<Self, DateTimeFormatterError>
     where
         L: Into<Locale>,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
@@ -133,7 +133,7 @@ impl TimeZoneFormatter {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load_resource(&DataRequest {
-                    options: ResourceOptions::from(&locale),
+                    options: DataOptions::from(&locale),
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -371,12 +371,12 @@ impl TimeZoneFormatter {
     ) -> Result<Self, DateTimeFormatterError>
     where
         L: Into<Locale>,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let locale = locale.into();
@@ -384,7 +384,7 @@ impl TimeZoneFormatter {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load_resource(&DataRequest {
-                    options: ResourceOptions::from(&locale),
+                    options: DataOptions::from(&locale),
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -434,7 +434,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_generic_long == None {
             load_resource(
@@ -456,7 +456,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_generic_short == None {
             load_resource(
@@ -478,7 +478,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_specific_long == None {
             load_resource(
@@ -500,7 +500,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_specific_short == None {
             load_resource(
@@ -522,7 +522,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
     {
         if self.data_payloads.exemplar_cities == None {
             load_resource(
@@ -544,7 +544,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
     {
         if self.data_payloads.exemplar_cities == None {
             load_resource(

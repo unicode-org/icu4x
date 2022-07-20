@@ -8,7 +8,7 @@
 
 use crate::buf::BufferFormat;
 #[cfg(feature = "datagen")]
-use crate::datagen::IterableResourceProvider;
+use crate::datagen::IterableDataProvider;
 use crate::helpers;
 use crate::prelude::*;
 use crate::yoke::{self, *};
@@ -44,8 +44,8 @@ impl DataMarker for HelloWorldV1Marker {
     type Yokeable = HelloWorldV1<'static>;
 }
 
-impl ResourceMarker for HelloWorldV1Marker {
-    const KEY: ResourceKey = crate::resource_key!("core/helloworld@1");
+impl KeyedDataMarker for HelloWorldV1Marker {
+    const KEY: DataKey = crate::data_key!("core/helloworld@1");
 }
 
 /// A data provider returning Hello World strings in different languages.
@@ -101,7 +101,7 @@ impl HelloWorldProvider {
     }
 }
 
-impl ResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
+impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -130,7 +130,7 @@ impl DataPayload<HelloWorldV1Marker> {
     }
 }
 
-impl_dyn_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
+impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "datagen")]
 make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
@@ -140,7 +140,7 @@ pub struct HelloWorldJsonProvider(HelloWorldProvider);
 impl BufferProvider for HelloWorldJsonProvider {
     fn load_buffer(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         key.match_key(HelloWorldV1Marker::KEY)?;
@@ -160,13 +160,13 @@ impl BufferProvider for HelloWorldJsonProvider {
 }
 
 #[cfg(feature = "datagen")]
-impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         #[allow(clippy::unwrap_used)] // datagen
         Ok(Self::DATA
             .iter()
             .map(|(s, _)| s.parse::<icu_locid::LanguageIdentifier>().unwrap())
-            .map(ResourceOptions::from)
+            .map(DataOptions::from)
             .collect())
     }
 }
@@ -174,7 +174,7 @@ impl IterableResourceProvider<HelloWorldV1Marker> for HelloWorldProvider {
 #[test]
 fn test_iter() {
     use icu_locid::locale;
-    let supported_langids: Vec<ResourceOptions> = HelloWorldProvider.supported_options().unwrap();
+    let supported_langids: Vec<DataOptions> = HelloWorldProvider.supported_options().unwrap();
 
     assert_eq!(
         supported_langids,

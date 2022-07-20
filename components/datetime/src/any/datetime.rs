@@ -43,7 +43,6 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
 /// use icu::datetime::{options::length, any::AnyDateTimeFormatter};
 /// use icu::locid::Locale;
-/// use icu_provider::any::DynProviderAnyMarkerWrap;
 /// use std::str::FromStr;
 ///
 /// let provider = icu_testdata::get_provider();
@@ -106,7 +105,7 @@ impl AnyDateTimeFormatter {
     /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
     /// use icu::datetime::{options::length, any::AnyDateTimeFormatter};
     /// use icu::locid::Locale;
-    /// use icu_provider::any::DynProviderAnyMarkerWrap;
+    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
@@ -141,7 +140,7 @@ impl AnyDateTimeFormatter {
     /// Construct a new [`AnyDateTimeFormatter`] from a data provider that can provide all of the requested data.
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
-    /// preferable to use a provider that implements `ResourceProvider<D>` for all `D`, and ensure data is loaded as
+    /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
     ///
@@ -151,7 +150,7 @@ impl AnyDateTimeFormatter {
     /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
     /// use icu::datetime::{options::length, any::AnyDateTimeFormatter};
     /// use icu::locid::Locale;
-    /// use icu_provider::any::DynProviderAnyMarkerWrap;
+    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
@@ -177,15 +176,15 @@ impl AnyDateTimeFormatter {
     ) -> Result<Self, DateTimeFormatterError>
     where
         T: Into<Locale>,
-        P: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<JapaneseErasV1Marker>
+        P: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
         let mut locale = locale.into();
