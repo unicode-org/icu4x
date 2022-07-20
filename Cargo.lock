@@ -1293,20 +1293,19 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 name = "icu"
 version = "0.6.0"
 dependencies = [
- "fixed_decimal",
  "icu_calendar",
- "icu_codepointtrie",
+ "icu_collator",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_normalizer",
  "icu_plurals",
  "icu_properties",
- "icu_provider",
+ "icu_segmenter",
  "icu_testdata",
  "icu_uniset",
- "writeable",
 ]
 
 [[package]]
