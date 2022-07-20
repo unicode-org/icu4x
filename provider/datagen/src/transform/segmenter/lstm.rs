@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains provider implementations backed by built-in segmentation data.
+//! This module contains provider implementations backed by LSTM segmentation data.
 
 use crate::transform::cldr::source::read_and_parse_json;
 use crate::SourceData;
