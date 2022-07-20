@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XPluralOperands.h"
-}
 
 struct ICU4XPluralOperands;
 #include "ICU4XError.hpp"
@@ -53,9 +51,9 @@ inline diplomat::result<ICU4XPluralOperands, ICU4XError> ICU4XPluralOperands::cr
   diplomat::result<ICU4XPluralOperands, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
   capi::ICU4XPluralOperands diplomat_raw_struct_out_value = diplomat_result_raw_out_value.ok;
-    diplomat_result_out_value = diplomat::Ok(ICU4XPluralOperands{ .i = std::move(diplomat_raw_struct_out_value.i), .v = std::move(diplomat_raw_struct_out_value.v), .w = std::move(diplomat_raw_struct_out_value.w), .f = std::move(diplomat_raw_struct_out_value.f), .t = std::move(diplomat_raw_struct_out_value.t), .c = std::move(diplomat_raw_struct_out_value.c) });
+    diplomat_result_out_value = diplomat::Ok<ICU4XPluralOperands>(std::move(ICU4XPluralOperands{ .i = std::move(diplomat_raw_struct_out_value.i), .v = std::move(diplomat_raw_struct_out_value.v), .w = std::move(diplomat_raw_struct_out_value.w), .f = std::move(diplomat_raw_struct_out_value.f), .t = std::move(diplomat_raw_struct_out_value.t), .c = std::move(diplomat_raw_struct_out_value.c) }));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

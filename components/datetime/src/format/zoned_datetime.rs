@@ -4,9 +4,9 @@
 
 //! A collection of code for formatting DateTimes with time zones.
 
-use crate::date::ZonedDateTimeInput;
 use crate::date::{
-    ExtractedZonedDateTimeInput, LocalizedDateTimeInput, ZonedDateTimeInputWithLocale,
+    DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, ExtractedTimeZoneInput,
+    LocalizedDateTimeInput, TimeZoneInput,
 };
 use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, FieldSymbol};
@@ -20,13 +20,19 @@ use super::datetime;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct FormattedZonedDateTime<'l> {
     pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormatter,
-    pub(crate) zoned_datetime: ExtractedZonedDateTimeInput,
+    pub(crate) datetime: ExtractedDateTimeInput,
+    pub(crate) time_zone: ExtractedTimeZoneInput,
 }
 
 impl<'l> Writeable for FormattedZonedDateTime<'l> {
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        write_pattern(self.zoned_datetime_format, &self.zoned_datetime, sink)
-            .map_err(|_| core::fmt::Error)
+        write_pattern(
+            self.zoned_datetime_format,
+            &self.datetime,
+            &self.time_zone,
+            sink,
+        )
+        .map_err(|_| core::fmt::Error)
     }
 
     // TODO(#489): Implement write_len
@@ -34,24 +40,31 @@ impl<'l> Writeable for FormattedZonedDateTime<'l> {
 
 impl<'l> fmt::Display for FormattedZonedDateTime<'l> {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write_pattern(self.zoned_datetime_format, &self.zoned_datetime, f)
-            .map_err(|_| core::fmt::Error)
+        write_pattern(
+            self.zoned_datetime_format,
+            &self.datetime,
+            &self.time_zone,
+            f,
+        )
+        .map_err(|_| core::fmt::Error)
     }
 }
 
-pub(crate) fn write_pattern<T, W>(
+pub(crate) fn write_pattern<D, Z, W>(
     zoned_datetime_format: &raw::ZonedDateTimeFormatter,
-    zoned_datetime: &T,
+    datetime: &D,
+    time_zone: &Z,
     w: &mut W,
 ) -> Result<(), Error>
 where
-    T: ZonedDateTimeInput,
+    D: DateTimeInput,
+    Z: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
     let locale = &zoned_datetime_format.datetime_format.locale;
     let patterns = &zoned_datetime_format.datetime_format.patterns;
-    let loc_datetime = ZonedDateTimeInputWithLocale::new(
-        zoned_datetime,
+    let loc_datetime = DateTimeInputWithLocale::new(
+        datetime,
         zoned_datetime_format
             .datetime_format
             .week_data
@@ -74,6 +87,7 @@ where
                 iter.peek(),
                 zoned_datetime_format,
                 &loc_datetime,
+                time_zone,
                 w,
             )?,
             Some(PatternItem::Literal(ch)) => w.write_char(ch)?,
@@ -83,16 +97,18 @@ where
     Ok(())
 }
 
-fn write_field<T, W>(
+fn write_field<D, Z, W>(
     pattern: &runtime::Pattern,
     field: fields::Field,
     next_item: Option<&PatternItem>,
     zoned_datetime_format: &raw::ZonedDateTimeFormatter,
-    loc_datetime: &impl LocalizedDateTimeInput<T>,
+    loc_datetime: &impl LocalizedDateTimeInput<D>,
+    time_zone: &Z,
     w: &mut W,
 ) -> Result<(), Error>
 where
-    T: ZonedDateTimeInput,
+    D: DateTimeInput,
+    Z: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
     let date_symbols = zoned_datetime_format
@@ -110,7 +126,7 @@ where
     match field.symbol {
         FieldSymbol::TimeZone(_time_zone) => FormattedTimeZone {
             time_zone_format: &zoned_datetime_format.time_zone_format,
-            time_zone: loc_datetime.datetime(),
+            time_zone,
         }
         .write_to(w)?,
         _ => datetime::write_field(

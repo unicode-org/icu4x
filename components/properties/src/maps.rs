@@ -244,14 +244,14 @@ macro_rules! make_map_property {
         // currently unused
         marker: $marker_name:ident;
         value: $value_ty:path;
-        resource_marker: $resource_marker:ty;
+        keyed_data_marker: $keyed_data_marker:ty;
         func:
         $(#[$attr:meta])*
         $vis:vis fn $name:ident();
     ) => {
         $(#[$attr])*
         $vis fn $name(
-            provider: &(impl ResourceProvider<$resource_marker> + ?Sized)
+            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
             Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
         }
@@ -262,7 +262,7 @@ make_map_property! {
     property: "General_Category";
     marker: GeneralCategoryProperty;
     value: crate::GeneralCategory;
-    resource_marker: GeneralCategoryV1Marker;
+    keyed_data_marker: GeneralCategoryV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
     ///
@@ -290,7 +290,7 @@ make_map_property! {
     property: "Bidi_Class";
     marker: BidiClassProperty;
     value: crate::BidiClass;
-    resource_marker: BidiClassV1Marker;
+    keyed_data_marker: BidiClassV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
     ///
@@ -318,7 +318,7 @@ make_map_property! {
     property: "Script";
     marker: ScriptProperty;
     value: crate::Script;
-    resource_marker: ScriptV1Marker;
+    keyed_data_marker: ScriptV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].
     ///
@@ -346,7 +346,7 @@ make_map_property! {
     property: "East_Asian_Width";
     marker: EastAsianWidthProperty;
     value: crate::EastAsianWidth;
-    resource_marker: EastAsianWidthV1Marker;
+    keyed_data_marker: EastAsianWidthV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
     /// property. See [`EastAsianWidth`].
@@ -372,7 +372,7 @@ make_map_property! {
     property: "Line_Break";
     marker: LineBreakProperty;
     value: crate::LineBreak;
-    resource_marker: LineBreakV1Marker;
+    keyed_data_marker: LineBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
@@ -398,7 +398,7 @@ make_map_property! {
     property: "Grapheme_Cluster_Break";
     marker: GraphemeClusterBreakProperty;
     value: crate::GraphemeClusterBreak;
-    resource_marker: GraphemeClusterBreakV1Marker;
+    keyed_data_marker: GraphemeClusterBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
@@ -424,7 +424,7 @@ make_map_property! {
     property: "Word_Break";
     marker: WordBreakProperty;
     value: crate::WordBreak;
-    resource_marker: WordBreakV1Marker;
+    keyed_data_marker: WordBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
@@ -450,7 +450,7 @@ make_map_property! {
     property: "Sentence_Break";
     marker: SentenceBreakProperty;
     value: crate::SentenceBreak;
-    resource_marker: SentenceBreakV1Marker;
+    keyed_data_marker: SentenceBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
@@ -476,7 +476,7 @@ make_map_property! {
     property: "Canonical_Combining_Class";
     marker: CanonicalCombiningClassProperty;
     value: crate::CanonicalCombiningClass;
-    resource_marker: CanonicalCombiningClassV1Marker;
+    keyed_data_marker: CanonicalCombiningClassV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].

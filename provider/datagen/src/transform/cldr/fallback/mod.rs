@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 
 use icu_locid::LanguageIdentifier;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::provider::*;
 
@@ -27,7 +27,7 @@ impl From<&SourceData> for FallbackRulesProvider {
     }
 }
 
-impl ResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
+impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -35,7 +35,7 @@ impl ResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProv
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+            return Err(DataErrorKind::ExtraneousDataOptions.into_error());
         }
 
         let likely_subtags_data: &cldr_serde::likely_subtags::Resource = self
@@ -52,7 +52,7 @@ impl ResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProv
     }
 }
 
-impl ResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
+impl DataProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -60,7 +60,7 @@ impl ResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+            return Err(DataErrorKind::ExtraneousDataOptions.into_error());
         }
 
         let parents_data: &cldr_serde::parent_locales::Resource = self
@@ -85,14 +85,14 @@ icu_provider::make_exportable_provider!(
     ]
 );
 
-impl IterableResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }

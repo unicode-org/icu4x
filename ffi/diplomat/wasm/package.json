@@ -3,6 +3,7 @@
   "version": "0.0.1",
   "description": "ICU4X JavaScript bindings via WebAssembly",
   "main": "wasm.mjs",
+  "type": "module",
   "directories": {
     "doc": "docs",
     "example": "example",

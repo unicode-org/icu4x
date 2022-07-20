@@ -9,7 +9,7 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 
 use icu_provider::prelude::*;
 
-use crate::date::{ExtractedDateTimeInput, ExtractedZonedDateTimeInput, ZonedDateTimeInput};
+use crate::date::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{
     self,
     calendar::{
@@ -46,31 +46,32 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Gregorian;
-/// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
-/// use icu::datetime::{options::length, ZonedDateTimeFormatter};
+/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::datetime::mock::time_zone::MockTimeZone;
+/// use icu::datetime::{options::length, any::ZonedAnyDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatterOptions;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
-/// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
+/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+/// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_buffer_provider(
 ///     locale!("en"),
-///     &provider,
-///     &provider,
-///     &provider,
 ///     &provider,
 ///     &options.into(),
 ///     &TimeZoneFormatterOptions::default(),
 /// )
 /// .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-///     .parse()
-///     .expect("Failed to parse zoned datetime");
+/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct DateTime.");
+/// let any_datetime = datetime.to_any();
 ///
-/// let value = zdtf.format_to_string(&zoned_datetime);
+/// let time_zone: MockTimeZone = "+05:00".parse().expect("Timezone should parse");
+///
+/// let value = zdtf.format_to_string(&any_datetime, &time_zone).expect("calendars should match");
+///
+/// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
 pub struct ZonedAnyDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
@@ -80,7 +81,7 @@ impl ZonedAnyDateTimeFormatter {
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
-    /// preferable to use a provider that implements `ResourceProvider<D>` for all `D`, and ensure data is loaded as
+    /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
     ///
@@ -128,23 +129,23 @@ impl ZonedAnyDateTimeFormatter {
     ) -> Result<Self, DateTimeFormatterError>
     where
         L: Into<Locale>,
-        DP: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        DP: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
-        DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
-        CEP: ResourceProvider<JapaneseErasV1Marker> + ?Sized,
+        PP: DataProvider<OrdinalV1Marker> + ?Sized,
+        DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
+        CEP: DataProvider<JapaneseErasV1Marker> + ?Sized,
     {
         let mut locale = locale.into();
 
@@ -255,7 +256,7 @@ impl ZonedAnyDateTimeFormatter {
         )
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
@@ -264,20 +265,18 @@ impl ZonedAnyDateTimeFormatter {
     #[inline]
     pub fn format<'l, T>(
         &'l self,
-        value: &T,
-    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatterError>
-    where
-        T: ZonedDateTimeInput<Calendar = AnyCalendar>,
-    {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            Ok(self.0.format(&converted))
+        date: &impl DateTimeInput<Calendar = AnyCalendar>,
+        time_zone: &impl TimeZoneInput,
+    ) -> Result<FormattedZonedDateTime<'l>, DateTimeFormatterError> {
+        if let Some(converted) = self.convert_if_necessary(date)? {
+            Ok(self.0.format(&converted, time_zone))
         } else {
-            Ok(self.0.format(value))
+            Ok(self.0.format(date, time_zone))
         }
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`ZonedDateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`DateTimeInput`] and a [`TimeZoneInput`] and populates the buffer with a formatted value.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
@@ -286,17 +285,18 @@ impl ZonedAnyDateTimeFormatter {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
+        date: &impl DateTimeInput<Calendar = AnyCalendar>,
+        time_zone: &impl TimeZoneInput,
     ) -> Result<(), DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            self.0.format_to_write(w, &converted)?;
+        if let Some(converted) = self.convert_if_necessary(date)? {
+            self.0.format_to_write(w, &converted, time_zone)?;
         } else {
-            self.0.format_to_write(w, value)?;
+            self.0.format_to_write(w, date, time_zone)?;
         }
         Ok(())
     }
 
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns it formatted as a string.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
@@ -304,12 +304,13 @@ impl ZonedAnyDateTimeFormatter {
     #[inline]
     pub fn format_to_string(
         &self,
-        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
+        date: &impl DateTimeInput<Calendar = AnyCalendar>,
+        time_zone: &impl TimeZoneInput,
     ) -> Result<String, DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            Ok(self.0.format_to_string(&converted))
+        if let Some(converted) = self.convert_if_necessary(date)? {
+            Ok(self.0.format_to_string(&converted, time_zone))
         } else {
-            Ok(self.0.format_to_string(value))
+            Ok(self.0.format_to_string(date, time_zone))
         }
     }
 
@@ -319,8 +320,8 @@ impl ZonedAnyDateTimeFormatter {
     /// if the date is compatible with the current calendar and doesn't need conversion
     fn convert_if_necessary(
         &self,
-        value: &impl ZonedDateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<ExtractedZonedDateTimeInput>, DateTimeFormatterError> {
+        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+    ) -> Result<Option<ExtractedDateTimeInput>, DateTimeFormatterError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
         if Some(this_calendar) != date_calendar {
@@ -341,9 +342,7 @@ impl ZonedAnyDateTimeFormatter {
             let converted = self.1.convert_any_datetime(&datetime);
             // FIXME(#2145) this is very hacky, can be improved after we improve ZonedDateTimeInput
             let converted = ExtractedDateTimeInput::extract_from(&converted);
-            let mut extracted = ExtractedZonedDateTimeInput::extract_from(value);
-            extracted.date_time_input = converted;
-            Ok(Some(extracted))
+            Ok(Some(converted))
         } else {
             Ok(None)
         }

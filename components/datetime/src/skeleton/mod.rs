@@ -45,7 +45,7 @@ mod test {
         let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let patterns = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
+                options: DataOptions::from(&locale),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")

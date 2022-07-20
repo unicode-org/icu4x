@@ -96,9 +96,9 @@ impl<C: CldrCalendar> TimeFormatter<C> {
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
+        D: DataProvider<TimePatternsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
         let mut locale = locale.into();
@@ -256,11 +256,11 @@ impl<C: CldrCalendar> DateFormatter<C> {
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let mut locale = locale.into();
@@ -472,14 +472,14 @@ where {
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let mut locale = locale.into();

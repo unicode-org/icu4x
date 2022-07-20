@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::langid;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Marker};
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
@@ -63,7 +63,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingResourceOptions,
+                    kind: DataErrorKind::MissingDataOptions,
                     ..
                 })
             ),
@@ -75,8 +75,8 @@ fn test_errors() {
         impl DataMarker for WrongV1Marker {
             type Yokeable = HelloWorldV1<'static>;
         }
-        impl ResourceMarker for WrongV1Marker {
-            const KEY: ResourceKey = resource_key!("nope@1");
+        impl KeyedDataMarker for WrongV1Marker {
+            const KEY: DataKey = data_key!("nope@1");
         }
 
         let err: Result<DataResponse<WrongV1Marker>, DataError> =
@@ -86,7 +86,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingResourceKey,
+                    kind: DataErrorKind::MissingDataKey,
                     ..
                 })
             ),

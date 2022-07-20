@@ -4,22 +4,22 @@
 
 use icu_provider::prelude::*;
 
-pub(crate) fn result_is_err_missing_resource_key<T>(result: &Result<T, DataError>) -> bool {
+pub(crate) fn result_is_err_missing_data_key<T>(result: &Result<T, DataError>) -> bool {
     matches!(
         result,
         Err(DataError {
-            kind: DataErrorKind::MissingResourceKey,
+            kind: DataErrorKind::MissingDataKey,
             ..
         })
     )
 }
 
-pub(crate) fn result_is_err_missing_resource_options<T>(result: &Result<T, DataError>) -> bool {
-    // TODO(#2117): Fold MissingLocale and MissingVariant into MissingResourceOptions.
+pub(crate) fn result_is_err_missing_data_options<T>(result: &Result<T, DataError>) -> bool {
+    // TODO(#2117): Fold MissingLocale and MissingVariant into MissingDataOptions.
     matches!(
         result,
         Err(DataError {
-            kind: DataErrorKind::MissingResourceOptions,
+            kind: DataErrorKind::MissingDataOptions,
             ..
         })
     ) || matches!(

@@ -59,9 +59,9 @@ Examples of source data providers include:
 
 Source data providers must implement the following traits:
 
-- `ResourceProvider<M>` or `DynProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
-- `IterableDynProvider<M>`. or `IterableResourceProvider<M>`, required for the data exporter (see below)
-- `DynProvider<SerializeMarker>` and `IterableDynProvider<SerializeMarker>`, usually implemented with the macro [`impl_dyn_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dyn_provider.html) after the above traits have been implemented
+- `DataProvider<M>` or `DynamicDataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
+- `IterableDataProvider<M>`, required for the data exporter (see below)
+- `DynamicDataProvider<SerializeMarker>` and `IterableDynamicDataProvider<SerializeMarker>`, usually implemented with the macro [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dynamic_data_provider.html) after the above traits have been implemented
 
 Source data providers are often complex to write. Rules of thumb:
 
@@ -103,7 +103,7 @@ macro_rules! create_datagen_provider {
 as well as to the list of keys 
 
 ```rust
-pub fn get_all_keys() -> Vec<ResourceKey> {
+pub fn get_all_keys() -> Vec<DataKey> {
     // ...
     v.push(FooV1Marker::KEY)
 }
@@ -208,7 +208,7 @@ impl From<&SourceData> for FooProvider {
     }
 }
 
-impl ResourceProvider<FooV1Marker> for FooProvider {
+impl DataProvider<FooV1Marker> for FooProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -221,15 +221,15 @@ impl ResourceProvider<FooV1Marker> for FooProvider {
     }
 }
 
-impl IterableResourceProvider<FooV1Marker> for FooProvider {
+impl IterableDataProvider<FooV1Marker> for FooProvider {
     fn supported_options(
         &self,
-    ) -> Result<Vec<ResourceOptions>, DataError> {
+    ) -> Result<Vec<DataOptions>, DataError> {
         // This should list all supported locales, for example.
     }
 }
 
-// Once we have ResourceProvider and IterableResourceProvider, we can apply this macro:
+// Once we have DataProvider and IterableDataProvider, we can apply this macro:
 icu_provider::make_exportable_provider!(FooProvider, [FooV1Marker,]);
 ```
 

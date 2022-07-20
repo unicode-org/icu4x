@@ -54,7 +54,7 @@ fn test_data_marker() {
 }
 
 #[test]
-fn test_resource_marker() {
+fn test_keyed_data_marker() {
     // #[data_struct(BarV1Marker = "demo/bar@1")]
     check(
         vec![quote!(BarV1Marker = "demo/bar@1")],
@@ -67,8 +67,8 @@ fn test_resource_marker() {
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1;
             }
-            impl icu_provider::ResourceMarker for BarV1Marker {
-                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/bar@1");
+            impl icu_provider::KeyedDataMarker for BarV1Marker {
+                const KEY: icu_provider::DataKey = icu_provider::data_key!("demo/bar@1");
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
             pub struct FooV1;
@@ -77,7 +77,7 @@ fn test_resource_marker() {
 }
 
 #[test]
-fn test_multi_named_resource_marker() {
+fn test_multi_named_keyed_data_marker() {
     // #[data_struct(FooV1Marker, BarV1Marker = "demo/bar@1", BazV1Marker = "demo/baz@1")]
     check(
         vec![
@@ -99,16 +99,16 @@ fn test_multi_named_resource_marker() {
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1<'static>;
             }
-            impl icu_provider::ResourceMarker for BarV1Marker {
-                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/bar@1");
+            impl icu_provider::KeyedDataMarker for BarV1Marker {
+                const KEY: icu_provider::DataKey = icu_provider::data_key!("demo/bar@1");
             }
             #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
             pub struct BazV1Marker;
             impl icu_provider::DataMarker for BazV1Marker {
                 type Yokeable = FooV1<'static>;
             }
-            impl icu_provider::ResourceMarker for BazV1Marker {
-                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/baz@1");
+            impl icu_provider::KeyedDataMarker for BazV1Marker {
+                const KEY: icu_provider::DataKey = icu_provider::data_key!("demo/baz@1");
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;
@@ -132,8 +132,8 @@ fn test_databake() {
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1;
             }
-            impl icu_provider::ResourceMarker for BarV1Marker {
-                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!("demo/bar@1");
+            impl icu_provider::KeyedDataMarker for BarV1Marker {
+                const KEY: icu_provider::DataKey = icu_provider::data_key!("demo/bar@1");
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
             #[databake(path = test::path)]
@@ -169,8 +169,8 @@ fn test_attributes() {
             impl icu_provider::DataMarker for BarV1Marker {
                 type Yokeable = FooV1<'static>;
             }
-            impl icu_provider::ResourceMarker for BarV1Marker {
-                const KEY: icu_provider::ResourceKey = icu_provider::resource_key!(
+            impl icu_provider::KeyedDataMarker for BarV1Marker {
+                const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1[R][u-ca]"
                 );
             }

@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XError.h"
-}
 
 
 
@@ -35,13 +33,13 @@ enum struct ICU4XError {
    */
   WriteableError = 1,
   OutOfBoundsError = 2,
-  DataMissingResourceKeyError = 256,
+  DataMissingDataKeyError = 256,
   DataMissingVariantError = 257,
   DataMissingLocaleError = 258,
-  DataMissingResourceOptionsError = 259,
+  DataMissingDataOptionsError = 259,
   DataNeedsVariantError = 260,
   DataNeedsLocaleError = 261,
-  DataExtraneousResourceOptionsError = 262,
+  DataExtraneousDataOptionsError = 262,
   DataFilteredResourceError = 263,
   DataMismatchedTypeError = 264,
   DataMissingPayloadError = 265,

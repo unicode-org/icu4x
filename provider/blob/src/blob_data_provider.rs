@@ -80,7 +80,7 @@ impl BlobDataProvider {
 impl BufferProvider for BlobDataProvider {
     fn load_buffer(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
@@ -92,11 +92,11 @@ impl BufferProvider for BlobDataProvider {
                     let idx = blob
                         .keys
                         .get0(&key.get_hash())
-                        .ok_or(DataErrorKind::MissingResourceKey)
+                        .ok_or(DataErrorKind::MissingDataKey)
                         .and_then(|cursor| {
                             cursor
                                 .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
-                                .ok_or(DataErrorKind::MissingResourceOptions)
+                                .ok_or(DataErrorKind::MissingDataOptions)
                         })
                         .map_err(|kind| kind.with_req(key, req))?;
                     blob.buffers

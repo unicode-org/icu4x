@@ -10,7 +10,7 @@ use crate::SourceData;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
 use icu_locid::LanguageIdentifier;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
@@ -28,16 +28,16 @@ impl From<&SourceData> for WeekDataProvider {
     }
 }
 
-impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
+impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
-        let regions: HashSet<ResourceOptions> = week_data
+        let regions: HashSet<DataOptions> = week_data
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
@@ -47,13 +47,13 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                 _ => None,
             })
             .map(LanguageIdentifier::from)
-            .map(ResourceOptions::from)
+            .map(DataOptions::from)
             .collect();
         Ok(regions.into_iter().collect())
     }
 }
 
-impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
+impl DataProvider<WeekDataV1Marker> for WeekDataProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -107,7 +107,7 @@ fn basic_cldr_week_data() {
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::default(),
+            options: DataOptions::default(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -118,7 +118,7 @@ fn basic_cldr_week_data() {
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::from(langid!("und-FR")),
+            options: DataOptions::from(langid!("und-FR")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -129,7 +129,7 @@ fn basic_cldr_week_data() {
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::from(langid!("und-IQ")),
+            options: DataOptions::from(langid!("und-IQ")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -144,7 +144,7 @@ fn basic_cldr_week_data() {
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load_resource(&DataRequest {
-            options: ResourceOptions::from(langid!("und-GG")),
+            options: DataOptions::from(langid!("und-GG")),
             metadata: Default::default(),
         })
         .unwrap()

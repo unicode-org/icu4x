@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_calendar::provider::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, langid, Locale};
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::env;
@@ -32,7 +32,7 @@ impl From<&SourceData> for JapaneseErasProvider {
     }
 }
 
-impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn load_resource(
         &self,
         req: &DataRequest,
@@ -185,11 +185,11 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 
 icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,]);
 
-impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![
-            ResourceOptions::from(Locale::from_str("und-u-ca-japanese").unwrap()),
-            ResourceOptions::from(Locale::from_str("und-u-ca-japanext").unwrap()),
+            DataOptions::from(Locale::from_str("und-u-ca-japanese").unwrap()),
+            DataOptions::from(Locale::from_str("und-u-ca-japanext").unwrap()),
         ])
     }
 }

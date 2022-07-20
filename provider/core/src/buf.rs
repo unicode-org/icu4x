@@ -16,10 +16,10 @@ impl DataMarker for BufferMarker {
 /// A data provider that returns opaque bytes.
 ///
 /// Generally, these bytes are expected to be deserializable with Serde. To get an object
-/// implementing [`ResourceProvider`] via Serde, use [`as_deserializing()`], which requires
+/// implementing [`DataProvider`] via Serde, use [`as_deserializing()`], which requires
 /// enabling at least one of the Serde features.
 ///
-/// Along with [`ResourceProvider`], this is one of the two foundational traits in this crate.
+/// Along with [`DataProvider`], this is one of the two foundational traits in this crate.
 ///
 /// [`BufferProvider`] can be made into a trait object. It is used over FFI.
 ///
@@ -52,7 +52,7 @@ impl DataMarker for BufferMarker {
 pub trait BufferProvider {
     fn load_buffer(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError>;
 }

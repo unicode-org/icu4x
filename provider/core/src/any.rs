@@ -274,44 +274,44 @@ impl AnyResponse {
 /// assert_eq!(payload.get().message, "Hallo Welt");
 /// ```
 pub trait AnyProvider {
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError>;
+    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError>;
 }
 
-/// A wrapper over `DynProvider<AnyMarker>` that implements `AnyProvider`
+/// A wrapper over `DynamicDataProvider<AnyMarker>` that implements `AnyProvider`
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct DynProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
+pub struct DynamicDataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
-pub trait AsDynProviderAnyMarkerWrap {
-    /// Returns an object implementing `AnyProvider` when called on `DynProvider<AnyMarker>`
-    fn as_any_provider(&self) -> DynProviderAnyMarkerWrap<Self>;
+pub trait AsDynamicDataProviderAnyMarkerWrap {
+    /// Returns an object implementing `AnyProvider` when called on `DynamicDataProvider<AnyMarker>`
+    fn as_any_provider(&self) -> DynamicDataProviderAnyMarkerWrap<Self>;
 }
 
-impl<P> AsDynProviderAnyMarkerWrap for P
+impl<P> AsDynamicDataProviderAnyMarkerWrap for P
 where
-    P: DynProvider<AnyMarker>,
+    P: DynamicDataProvider<AnyMarker>,
 {
     #[inline]
-    fn as_any_provider(&self) -> DynProviderAnyMarkerWrap<P> {
-        DynProviderAnyMarkerWrap(self)
+    fn as_any_provider(&self) -> DynamicDataProviderAnyMarkerWrap<P> {
+        DynamicDataProviderAnyMarkerWrap(self)
     }
 }
 
-impl<P> AnyProvider for DynProviderAnyMarkerWrap<'_, P>
+impl<P> AnyProvider for DynamicDataProviderAnyMarkerWrap<'_, P>
 where
-    P: DynProvider<AnyMarker> + ?Sized,
+    P: DynamicDataProvider<AnyMarker> + ?Sized,
 {
     #[inline]
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
         self.0.load_payload(key, req)?.try_into()
     }
 }
 
-/// A wrapper over `AnyProvider` that implements `DynProvider<M>` via downcasting
+/// A wrapper over `AnyProvider` that implements `DynamicDataProvider<M>` via downcasting
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
 pub trait AsDowncastingAnyProvider {
-    /// Returns an object implementing `DynProvider<M>` when called on `AnyProvider`
+    /// Returns an object implementing `DynamicDataProvider<M>` when called on `AnyProvider`
     fn as_downcasting(&self) -> DowncastingAnyProvider<Self>;
 }
 
@@ -325,10 +325,10 @@ where
     }
 }
 
-impl<M, P> ResourceProvider<M> for DowncastingAnyProvider<'_, P>
+impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: ResourceMarker + 'static,
+    M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
 {

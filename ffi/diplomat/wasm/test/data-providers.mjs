@@ -5,9 +5,9 @@
 import test from 'ava';
 import { promises as fsPromises } from 'fs';
 
-import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../lib/api.mjs"
+import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../lib/index.js"
 
-import { TESTDATA_POSTCARD_PATH } from "../lib/paths.mjs"
+import { TESTDATA_POSTCARD_PATH } from "../paths.mjs"
 
 test("use create_from_byte_slice to format a simple decimal", async t => {
   const locale = ICU4XLocale.create("bn");

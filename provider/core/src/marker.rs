@@ -4,7 +4,7 @@
 
 //! Marker types and traits for DataProvider.
 
-use crate::key::ResourceKey;
+use crate::key::DataKey;
 use crate::yoke::Yokeable;
 
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
@@ -55,6 +55,6 @@ pub trait DataMarker {
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
-pub trait ResourceMarker: DataMarker {
-    const KEY: ResourceKey;
+pub trait KeyedDataMarker: DataMarker {
+    const KEY: DataKey;
 }

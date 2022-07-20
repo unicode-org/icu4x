@@ -32,9 +32,7 @@ impl From<&SourceData> for ScriptWithExtensionsPropertyProvider {
 }
 
 // implement data provider
-impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
-    for ScriptWithExtensionsPropertyProvider
-{
+impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsPropertyProvider {
     fn load_resource(
         &self,
         _: &DataRequest,
@@ -81,10 +79,10 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
     }
 }
 
-impl IterableResourceProvider<ScriptWithExtensionsPropertyV1Marker>
+impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -123,7 +121,7 @@ mod tests {
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load_resource(&DataRequest {
-                options: ResourceOptions::default(),
+                options: DataOptions::default(),
                 metadata: Default::default(),
             })
             .expect("The data should be valid")

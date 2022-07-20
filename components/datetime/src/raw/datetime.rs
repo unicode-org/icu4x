@@ -50,9 +50,9 @@ impl TimeFormatter {
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
+        D: DataProvider<TimePatternsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
         let patterns = provider::date_time::pattern_for_time_length(
@@ -62,10 +62,6 @@ impl TimeFormatter {
             preferences,
         )?;
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
@@ -73,7 +69,7 @@ impl TimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -86,7 +82,8 @@ impl TimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )
@@ -187,11 +184,11 @@ impl DateFormatter {
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
@@ -215,7 +212,7 @@ impl DateFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -224,13 +221,10 @@ impl DateFormatter {
             None
         };
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions.clone(),
+                // TODO(#2136): Don't clone here
+                locale.clone(),
                 data_provider,
             )?)
         } else {
@@ -241,7 +235,7 @@ impl DateFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -254,7 +248,8 @@ impl DateFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )
@@ -408,14 +403,14 @@ impl DateTimeFormatter {
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
@@ -436,7 +431,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -445,13 +440,10 @@ impl DateTimeFormatter {
             None
         };
 
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
-
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
-                locale_no_extensions.clone(),
+                // TODO(#2136): Don't clone here
+                locale.clone(),
                 data_provider,
             )?)
         } else {
@@ -462,7 +454,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -475,7 +467,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                        options: DataOptions::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -488,7 +480,8 @@ impl DateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale_no_extensions,
+            // TODO(#2136): Don't clone here
+            locale.clone(),
             data_provider,
             fixed_decimal_format_options,
         )
