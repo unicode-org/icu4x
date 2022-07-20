@@ -2,15 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use bytes::Bytes;
 use clap::{value_t, App, Arg};
 use eyre::WrapErr;
 use futures::stream::{self, StreamExt, TryStreamExt};
 use simple_logger::SimpleLogger;
-use std::{path::PathBuf, io::Read};
+use std::io::Cursor;
+use std::{io::Read, path::PathBuf};
 use tokio::{fs, io::AsyncWriteExt};
 use zip::ZipArchive;
-use std::io::Cursor;
-use bytes::Bytes;
 
 #[derive(Clone)]
 struct CldrJsonDownloader<'a> {
@@ -74,14 +74,24 @@ struct IcuExportDataDownloader<'a> {
 impl IcuExportDataDownloader<'_> {
     /// Returns the reqwest client back to the caller for use later
     async fn download(self, client: &reqwest::Client) -> eyre::Result<IcuExportDataUnzipper> {
-        let url = format!("https://github.com/{}/releases/download/{}/icuexportdata_{}.zip",
-        self.repo_owner_and_name, self.tag, self.tag.replace('/', "-"));
-        let bytes = client.get(&url).send().await?.error_for_status()?.bytes().await?;
+        let url = format!(
+            "https://github.com/{}/releases/download/{}/icuexportdata_{}.zip",
+            self.repo_owner_and_name,
+            self.tag,
+            self.tag.replace('/', "-")
+        );
+        let bytes = client
+            .get(&url)
+            .send()
+            .await?
+            .error_for_status()?
+            .bytes()
+            .await?;
         let cursor = Cursor::new(bytes);
         let zip_archive = ZipArchive::new(cursor)?;
         Ok(IcuExportDataUnzipper {
             root_dir: self.root_dir,
-            zip_archive
+            zip_archive,
         })
     }
 }
@@ -95,7 +105,9 @@ struct IcuExportDataUnzipper {
 
 impl IcuExportDataUnzipper {
     pub async fn unzip(&mut self, path: &str) -> eyre::Result<()> {
-        let mut zip_file = self.zip_archive.by_name(path)
+        let mut zip_file = self
+            .zip_archive
+            .by_name(path)
             .with_context(|| format!("Did not find file in zip: {:?}", &path))?;
         let local_path = self.root_dir.join(path);
         fs::create_dir_all(local_path.parent().unwrap())
@@ -186,12 +198,12 @@ async fn main() -> eyre::Result<()> {
     log::debug!("Package metadata: {:?}", metadata);
 
     let client = reqwest::ClientBuilder::new()
-    .user_agent(concat!(
-        env!("CARGO_PKG_NAME"),
-        "/",
-        env!("CARGO_PKG_VERSION")
-    ))
-    .build()?;
+        .user_agent(concat!(
+            env!("CARGO_PKG_NAME"),
+            "/",
+            env!("CARGO_PKG_VERSION")
+        ))
+        .build()?;
 
     let cldr_downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
