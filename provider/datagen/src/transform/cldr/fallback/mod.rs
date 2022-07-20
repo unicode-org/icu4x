@@ -35,7 +35,7 @@ impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousDataLocale.into_error());
+            return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
         let likely_subtags_data: &cldr_serde::likely_subtags::Resource = self
@@ -60,7 +60,7 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousDataLocale.into_error());
+            return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
         let parents_data: &cldr_serde::parent_locales::Resource = self

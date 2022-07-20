@@ -155,7 +155,7 @@ impl<P> LocaleFallbackProvider<P> {
             }
             fallback_iterator.step();
         }
-        Err(DataErrorKind::MissingDataLocale.with_req(key, base_req))
+        Err(DataErrorKind::MissingLocale.with_req(key, base_req))
     }
 }
 

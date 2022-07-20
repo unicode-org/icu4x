@@ -59,12 +59,12 @@ macro_rules! impl_data_provider {
                     let calendar = req
                         .locale
                         .get_unicode_ext(&key!("ca"))
-                        .ok_or_else(|| DataErrorKind::NeedsVariant.into_error())?;
+                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                     let cldr_cal = self
                         .supported_cals
                         .get(&calendar)
-                        .ok_or_else(|| DataErrorKind::MissingVariant.into_error())?;
+                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                     let resource: &cldr_serde::ca::Resource = self
                         .source

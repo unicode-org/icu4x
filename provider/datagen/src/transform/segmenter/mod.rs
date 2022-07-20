@@ -760,7 +760,7 @@ impl DataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvi
             .segmenter()?
             .read_and_parse_toml::<SegmenterDictionaryData>(
                 Self::get_toml_filename(&req.locale)
-                    .ok_or_else(|| DataErrorKind::MissingDataLocale.into_error())?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
             )?;
         let data = UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),

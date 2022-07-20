@@ -17,29 +17,17 @@ pub enum DataErrorKind {
     #[displaydoc("Missing data for key")]
     MissingDataKey,
 
-    /// There is data for the key, but not for this particular variant.
-    #[displaydoc("Missing data for variant")]
-    MissingVariant,
-
     /// There is data for the key, but not for this particular locale.
     #[displaydoc("Missing data for locale")]
     MissingLocale,
-
-    /// There is data for the key, but not for this particular variant and/or locale.
-    #[displaydoc("Missing data for variant or locale")]
-    MissingDataLocale,
-
-    /// The request should include a variant field.
-    #[displaydoc("Request needs a variant field")]
-    NeedsVariant,
 
     /// The request should include a locale.
     #[displaydoc("Request needs a locale")]
     NeedsLocale,
 
-    /// The request should not contain a variant and/or locale.
-    #[displaydoc("Request has extraneous information")]
-    ExtraneousDataLocale,
+    /// The request should not contain a locale.
+    #[displaydoc("Request has an extraneous locale")]
+    ExtraneousLocale,
 
     /// The resource was blocked by a filter. The resource may or may not be available.
     #[displaydoc("Resource blocked by filter")]

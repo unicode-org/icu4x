@@ -28,7 +28,7 @@ impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
         if !req.locale.is_empty() {
-            return Err(DataErrorKind::ExtraneousDataLocale.into_error());
+            return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
         let data: &cldr_serde::likely_subtags::Resource = self

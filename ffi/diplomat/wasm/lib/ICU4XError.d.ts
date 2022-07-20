@@ -30,16 +30,13 @@ export enum ICU4XError {
   DataMissingLocaleError = 'DataMissingLocaleError',
   /**
    */
-  DataMissingDataLocaleError = 'DataMissingDataLocaleError',
-  /**
-   */
   DataNeedsVariantError = 'DataNeedsVariantError',
   /**
    */
   DataNeedsLocaleError = 'DataNeedsLocaleError',
   /**
    */
-  DataExtraneousDataLocaleError = 'DataExtraneousDataLocaleError',
+  DataExtraneousLocaleError = 'DataExtraneousLocaleError',
   /**
    */
   DataFilteredResourceError = 'DataFilteredResourceError',

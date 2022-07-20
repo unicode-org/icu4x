@@ -1598,5 +1598,5 @@ fn litemap_slice_get<T: ?Sized>(
     values
         .binary_search_by(|(k, _)| req.locale.strict_cmp(k.as_bytes()).reverse())
         .map(|i| values.get(i).unwrap().1)
-        .map_err(|_| DataErrorKind::MissingDataLocale.with_req(key, req))
+        .map_err(|_| DataErrorKind::MissingLocale.with_req(key, req))
 }

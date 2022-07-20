@@ -111,7 +111,7 @@ impl BufferProvider for StaticDataProvider {
             .and_then(|cursor| {
                 cursor
                     .get1_copied_by(|bytes| req.locale.strict_cmp(bytes).reverse())
-                    .ok_or(DataErrorKind::MissingDataLocale)
+                    .ok_or(DataErrorKind::MissingLocale)
             })
             .map_err(|kind| kind.with_req(key, req))?;
         let bytes = self

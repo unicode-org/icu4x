@@ -60,7 +60,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingDataLocale,
+                    kind: DataErrorKind::MissingLocale,
                     ..
                 })
             ),

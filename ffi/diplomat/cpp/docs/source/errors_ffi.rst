@@ -26,13 +26,11 @@
 
     .. cpp:enumerator:: DataMissingLocaleError
 
-    .. cpp:enumerator:: DataMissingDataLocaleError
-
     .. cpp:enumerator:: DataNeedsVariantError
 
     .. cpp:enumerator:: DataNeedsLocaleError
 
-    .. cpp:enumerator:: DataExtraneousDataLocaleError
+    .. cpp:enumerator:: DataExtraneousLocaleError
 
     .. cpp:enumerator:: DataFilteredResourceError
 
