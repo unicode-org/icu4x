@@ -50,13 +50,10 @@ impl CldrJsonDownloader<'_> {
         let mut file = fs::File::create(&local_path)
             .await
             .with_context(|| format!("Failed to create file: {:?}", &local_path))?;
-        {
-            use tokio::io::AsyncWriteExt;
-            while let Some(item) = stream.next().await {
-                file.write_buf(&mut item?)
-                    .await
-                    .with_context(|| format!("Failed to write to file: {:?}", &local_path))?;
-            }
+        while let Some(item) = stream.next().await {
+            file.write_buf(&mut item?)
+                .await
+                .with_context(|| format!("Failed to write to file: {:?}", &local_path))?;
         }
         Ok(())
     }
@@ -126,7 +123,7 @@ impl IcuExportDataUnzipper {
 
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
-    let cldr_json_root = icu_testdata::paths::cldr_json_root();
+    let testdata_data_root = icu_testdata::paths::data_root();
 
     let args = App::new("ICU4X Test Data Downloader")
         .version("0.0.1")
@@ -144,10 +141,10 @@ async fn main() -> eyre::Result<()> {
                 .short("o")
                 .long("out")
                 .help(
-                    "Path to output data directory. The directory will be overwritten. Omit this option to write data into the package tree.",
+                    "Path to output data directory. The subdirectories 'cldr' and 'icuexport' will be overwritten. Omit this option to write data into the package tree.",
                 )
                 .takes_value(true)
-                .default_value_os(cldr_json_root.as_os_str()),
+                .default_value_os(testdata_data_root.as_os_str()),
         )
         .arg(
             Arg::with_name("HTTP_CONCURRENCY")
@@ -187,10 +184,6 @@ async fn main() -> eyre::Result<()> {
             .expect("Option has a default value"),
     );
 
-    fs::remove_dir_all(&output_path)
-        .await
-        .with_context(|| format!("Failed to delete directory: {:?}", &output_path))?;
-
     let http_concurrency: usize =
         value_t!(args, "HTTP_CONCURRENCY", usize).expect("Option has a default value");
 
@@ -208,9 +201,17 @@ async fn main() -> eyre::Result<()> {
     let cldr_downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
         tag: &metadata.package_metadata.cldr_json_gitref,
-        root_dir: output_path,
+        root_dir: output_path.clone().join("cldr"),
         client: client.clone(),
     };
+    fs::remove_dir_all(&cldr_downloader.root_dir)
+        .await
+        .with_context(|| {
+            format!(
+                "Failed to delete directory: {:?}",
+                &cldr_downloader.root_dir
+            )
+        })?;
 
     let all_paths = metadata.package_metadata.get_all_cldr_paths();
     stream::iter(all_paths)
@@ -224,8 +225,17 @@ async fn main() -> eyre::Result<()> {
     let icued_downloader = IcuExportDataDownloader {
         repo_owner_and_name: "unicode-org/icu",
         tag: &metadata.package_metadata.icuexportdata_gitref,
-        root_dir: icu_testdata::paths::icuexport_toml_root(),
+        root_dir: output_path.clone().join("icuexport"),
     };
+    fs::remove_dir_all(&icued_downloader.root_dir)
+        .await
+        .with_context(|| {
+            format!(
+                "Failed to delete directory: {:?}",
+                &icued_downloader.root_dir
+            )
+        })?;
+
     log::info!("Downloading icuexportdata.zip");
     let mut icued_unzipper = icued_downloader.download(&client).await?;
 
