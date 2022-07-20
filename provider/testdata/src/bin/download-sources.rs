@@ -6,8 +6,11 @@ use clap::{value_t, App, Arg};
 use eyre::WrapErr;
 use futures::stream::{self, StreamExt, TryStreamExt};
 use simple_logger::SimpleLogger;
-use std::path::PathBuf;
-use tokio::fs;
+use std::{path::PathBuf, io::Read};
+use tokio::{fs, io::AsyncWriteExt};
+use zip::ZipArchive;
+use std::io::Cursor;
+use bytes::Bytes;
 
 #[derive(Clone)]
 struct CldrJsonDownloader<'a> {
@@ -59,6 +62,56 @@ impl CldrJsonDownloader<'_> {
     }
 }
 
+struct IcuExportDataDownloader<'a> {
+    /// Repo owner and name, like "unicode-org/cldr-json"
+    pub repo_owner_and_name: &'a str,
+    /// Git tag or ref, like "39.0.0"
+    pub tag: &'a str,
+    /// Root directory to save downloaded files
+    pub root_dir: PathBuf,
+}
+
+impl IcuExportDataDownloader<'_> {
+    /// Returns the reqwest client back to the caller for use later
+    async fn download(self, client: &reqwest::Client) -> eyre::Result<IcuExportDataUnzipper> {
+        let url = format!("https://github.com/{}/releases/download/{}/icuexportdata_{}.zip",
+        self.repo_owner_and_name, self.tag, self.tag.replace('/', "-"));
+        let bytes = client.get(&url).send().await?.error_for_status()?.bytes().await?;
+        let cursor = Cursor::new(bytes);
+        let zip_archive = ZipArchive::new(cursor)?;
+        Ok(IcuExportDataUnzipper {
+            root_dir: self.root_dir,
+            zip_archive
+        })
+    }
+}
+
+struct IcuExportDataUnzipper {
+    /// Root directory to save downloaded files
+    pub root_dir: PathBuf,
+    /// The in-memory Zip archive
+    pub zip_archive: ZipArchive<Cursor<Bytes>>,
+}
+
+impl IcuExportDataUnzipper {
+    pub async fn unzip(&mut self, path: &str) -> eyre::Result<()> {
+        let mut zip_file = self.zip_archive.by_name(path)
+            .with_context(|| format!("Did not find file in zip: {:?}", &path))?;
+        let local_path = self.root_dir.join(path);
+        fs::create_dir_all(local_path.parent().unwrap())
+            .await
+            .with_context(|| format!("Failed to create dir: {:?}", &local_path))?;
+        let mut file = fs::File::create(&local_path)
+            .await
+            .with_context(|| format!("Failed to create file: {:?}", &local_path))?;
+        // the `zip` crate is not async, so unzip the file into a buffer first
+        let mut file_buf = Vec::new();
+        zip_file.read_to_end(&mut file_buf)?;
+        file.write_all(&file_buf).await?;
+        Ok(())
+    }
+}
+
 #[tokio::main]
 async fn main() -> eyre::Result<()> {
     let cldr_json_root = icu_testdata::paths::cldr_json_root();
@@ -66,7 +119,7 @@ async fn main() -> eyre::Result<()> {
     let args = App::new("ICU4X Test Data Downloader")
         .version("0.0.1")
         .author("The ICU4X Project Developers")
-        .about("Download data from CLDR for ICU4X testing")
+        .about("Download data from CLDR and ICU for ICU4X testing")
         .arg(
             Arg::with_name("VERBOSE")
                 .short("v")
@@ -132,17 +185,19 @@ async fn main() -> eyre::Result<()> {
     let metadata = icu_testdata::metadata::load()?;
     log::debug!("Package metadata: {:?}", metadata);
 
-    let downloader = &CldrJsonDownloader {
+    let client = reqwest::ClientBuilder::new()
+    .user_agent(concat!(
+        env!("CARGO_PKG_NAME"),
+        "/",
+        env!("CARGO_PKG_VERSION")
+    ))
+    .build()?;
+
+    let cldr_downloader = &CldrJsonDownloader {
         repo_owner_and_name: "unicode-org/cldr-json",
-        tag: &metadata.package_metadata.gitref,
+        tag: &metadata.package_metadata.cldr_json_gitref,
         root_dir: output_path,
-        client: reqwest::ClientBuilder::new()
-            .user_agent(concat!(
-                env!("CARGO_PKG_NAME"),
-                "/",
-                env!("CARGO_PKG_VERSION")
-            ))
-            .build()?,
+        client: client.clone(),
     };
 
     let all_paths = metadata.package_metadata.get_all_cldr_paths();
@@ -150,8 +205,23 @@ async fn main() -> eyre::Result<()> {
         .map(Ok)
         .try_for_each_concurrent(http_concurrency, |path| async move {
             log::info!("Downloading: {}", path);
-            downloader.fetch(&path).await
+            cldr_downloader.fetch(&path).await
         })
         .await?;
+
+    let icued_downloader = IcuExportDataDownloader {
+        repo_owner_and_name: "unicode-org/icu",
+        tag: &metadata.package_metadata.icuexportdata_gitref,
+        root_dir: icu_testdata::paths::icuexport_toml_root(),
+    };
+    log::info!("Downloading icuexportdata.zip");
+    let mut icued_unzipper = icued_downloader.download(&client).await?;
+
+    let all_paths = metadata.package_metadata.get_all_icuexportdata_paths();
+    for path in all_paths {
+        log::info!("Unzipping: {}", path);
+        icued_unzipper.unzip(&path).await?;
+    }
+
     Ok(())
 }
