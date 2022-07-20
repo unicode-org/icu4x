@@ -57,7 +57,7 @@ ICU4X 0.1’s selection of components aimed to:
 
 -   Validate low-level models around [data management](https://github.com/unicode-org/icu4x/blob/master/docs/design/data_pipeline.md)
 -   Establish project culture using simple building blocks such as [Locale](https://docs.rs/icu_locid/0.1.0/icu_locid/) and [Plural Rules](https://docs.rs/icu_plurals/0.1.0/icu_plurals/)
--   Introduce a low-level foundation for string operations with [CodePointSet](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)
+-   Introduce a low-level foundation for string operations with [CodePointSet](https://docs.rs/icu_uniset/0.1.0/icu_uniset/)
 -   Expose a single, high-level, highly requested API - [DateTimeFormat](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)
 -   Release a meta-package [ICU](https://docs.rs/icu/0.1.0/icu/)
 
