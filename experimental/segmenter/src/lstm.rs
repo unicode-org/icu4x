@@ -142,7 +142,7 @@ impl LstmSegmenter {
 mod tests {
     use crate::lstm::*;
     use icu_locid::locale;
-    use icu_provider::{DataRequest, DataOptions, DataProvider};
+    use icu_provider::{DataOptions, DataProvider, DataRequest};
 
     #[test]
     fn thai_word_break() {

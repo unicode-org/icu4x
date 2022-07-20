@@ -84,12 +84,7 @@ pub struct UCharDictionaryBreakDataV1<'data> {
     pub trie_data: ZeroVec<'data, u16>,
 }
 
-#[cfg(feature = "lstm")]
-const ALL_KEYS_COUNT: usize = 6;
-#[cfg(not(feature = "lstm"))]
-const ALL_KEYS_COUNT: usize = 5;
-
-pub const ALL_KEYS: [DataKey; ALL_KEYS_COUNT] = [
+pub const ALL_KEYS: [DataKey; if cfg!(feature = "lstm") { 6 } else { 5 }] = [
     LineBreakDataV1Marker::KEY,
     GraphemeClusterBreakDataV1Marker::KEY,
     WordBreakDataV1Marker::KEY,

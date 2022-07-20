@@ -4,6 +4,7 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
+use crate::transform::cldr::source::read_and_parse_json;
 use crate::SourceData;
 use icu_locid::{langid, locale};
 use icu_provider::datagen::IterableDataProvider;
@@ -66,14 +67,14 @@ impl From<&SourceData> for SegmenterLstmProvider {
 impl SegmenterLstmProvider {
     // Generate LSTM Data for DataProvider from LSTM JSON.
     fn generate_data(&self, options: &DataOptions) -> Result<LstmDataV1<'static>, DataError> {
-        let lstm_data: &RawLstmData = self
-            .source
-            .segmenter_lstm()?
-            .segmenter_lstm()
-            .read_and_parse::<RawLstmData>(
+        let lstm_data: &RawLstmData = read_and_parse_json::<RawLstmData>(
+            self.source.segmenter_lstm()?,
+            &format!(
+                "lstm/{}",
                 Self::get_json_filename(options)
                     .ok_or_else(|| DataErrorKind::MissingDataOptions.into_error())?,
-            )?;
+            ),
+        )?;
         // The map of "dic" may not be sorted, so we cannot use ZeroMap directly.
         let mut dic: ZeroMap<'static, str, i16> = ZeroMap::new();
         lstm_data.dic.iter().for_each(|(k, v)| {

@@ -24,7 +24,7 @@ use zerovec::ZeroVec;
 
 mod lstm;
 
-pub use crate::transform::segmenter::lstm::SegmenterLstmProvider;
+pub use lstm::SegmenterLstmProvider;
 
 // state machine name define by builtin name
 // [[tables]]
