@@ -44,10 +44,26 @@ impl WordBreakSegmenter {
         let payload = provider.load(Default::default())?.take_payload()?;
 
         let dictionary_cj_payload = Self::load_dictionary(provider, locale!("ja")).ok();
-        let dictionary_km_payload = Self::load_dictionary(provider, locale!("km")).ok();
-        let dictionary_lo_payload = Self::load_dictionary(provider, locale!("lo")).ok();
-        let dictionary_my_payload = Self::load_dictionary(provider, locale!("my")).ok();
-        let dictionary_th_payload = Self::load_dictionary(provider, locale!("th")).ok();
+        let dictionary_km_payload = if cfg!(feature = "lstm") {
+            None
+        } else {
+            Self::load_dictionary(provider, locale!("km")).ok()
+        };
+        let dictionary_lo_payload = if cfg!(feature = "lstm") {
+            None
+        } else {
+            Self::load_dictionary(provider, locale!("lo")).ok()
+        };
+        let dictionary_my_payload = if cfg!(feature = "lstm") {
+            None
+        } else {
+            Self::load_dictionary(provider, locale!("my")).ok()
+        };
+        let dictionary_th_payload = if cfg!(feature = "lstm") {
+            None
+        } else {
+            Self::load_dictionary(provider, locale!("th")).ok()
+        };
 
         Ok(Self {
             payload,
