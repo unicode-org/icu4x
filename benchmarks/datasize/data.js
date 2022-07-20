@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658271363959,
+  "lastUpdate": 1658330924411,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20693,6 +20693,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e876a820486714372b43cd45198671ee803fa620"
         },
         "date": 1658271323538,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3963063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "11324a670184c3fec5b712ef3c137125f1bc32f6",
+          "message": "Download icuexportdata in testdata downloader (#2216)",
+          "timestamp": "2022-07-20T08:26:36-07:00",
+          "tree_id": "67c741f20f26b6ef2b5a3a02b91732861cebd3c9",
+          "url": "https://github.com/unicode-org/icu4x/commit/11324a670184c3fec5b712ef3c137125f1bc32f6"
+        },
+        "date": 1658330882171,
         "tool": "ndjson",
         "benches": [
           {
