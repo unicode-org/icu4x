@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658330924411,
+  "lastUpdate": 1658332102292,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20723,6 +20723,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/11324a670184c3fec5b712ef3c137125f1bc32f6"
         },
         "date": 1658330882171,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3963063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "219e20faaeead57f6e81ac67e0a61af828c9a0ee",
+          "message": "Improving `icu` crate docs, features, modules (#2204)",
+          "timestamp": "2022-07-20T17:46:39+02:00",
+          "tree_id": "cfb1febd7bd5ff7fa5f239b93ec2c331ad73eee5",
+          "url": "https://github.com/unicode-org/icu4x/commit/219e20faaeead57f6e81ac67e0a61af828c9a0ee"
+        },
+        "date": 1658332068189,
         "tool": "ndjson",
         "benches": [
           {
