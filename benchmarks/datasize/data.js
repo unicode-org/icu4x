@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658342609884,
+  "lastUpdate": 1658355416351,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20783,6 +20783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/84966f979b38370d3c6fc37c5e734e74e8a9474a"
         },
         "date": 1658342570036,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3963063,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c8d77ffd6b6ec9c62112eb993185a77d61682779",
+          "message": "Renaming load_payload, load_resource (#2222)",
+          "timestamp": "2022-07-21T00:14:55+02:00",
+          "tree_id": "41d9a98223bae5f51daedf81cf9f970a91c54e78",
+          "url": "https://github.com/unicode-org/icu4x/commit/c8d77ffd6b6ec9c62112eb993185a77d61682779"
+        },
+        "date": 1658355377952,
         "tool": "ndjson",
         "benches": [
           {
