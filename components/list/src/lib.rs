@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Provides the [`ListFormatter`] which renders sequences of [`Writeable`](
-//! writeable::Writeable)s as lists in a locale-sensitive way.
+//! Formatting lists in a locale-sensitive way.
+//!
+//! This module is published as its own crate ([`icu_list`](https://docs.rs/icu_list/latest/icu_list/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! # Examples
 //!

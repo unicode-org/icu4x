@@ -22,7 +22,7 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
+    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
 /// A data provider that loads data for a specific [`DataKey`].
@@ -34,7 +34,7 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
 impl<M, P> DynamicDataProvider<M> for alloc::boxed::Box<P>
@@ -42,8 +42,8 @@ where
     M: DataMarker,
     P: DynamicDataProvider<M> + ?Sized,
 {
-    fn load_payload(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        (**self).load_payload(key, req)
+    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load_data(key, req)
     }
 }
 
@@ -102,10 +102,7 @@ mod test {
     }
 
     impl DataProvider<HelloWorldV1Marker> for DataWarehouse {
-        fn load_resource(
-            &self,
-            _: &DataRequest,
-        ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+        fn load(&self, _: &DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: Some(DataPayload::from_owned(self.hello_v1.clone())),
@@ -128,10 +125,7 @@ mod test {
     }
 
     impl DataProvider<HelloWorldV1Marker> for DataProvider2 {
-        fn load_resource(
-            &self,
-            _: &DataRequest,
-        ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+        fn load(&self, _: &DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
@@ -140,10 +134,7 @@ mod test {
     }
 
     impl DataProvider<HelloAltMarker> for DataProvider2 {
-        fn load_resource(
-            &self,
-            _: &DataRequest,
-        ) -> Result<DataResponse<HelloAltMarker>, DataError> {
+        fn load(&self, _: &DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: Some(DataPayload::from_owned(self.data.hello_alt.clone())),
@@ -177,13 +168,13 @@ mod test {
     fn get_payload_v1<P: DataProvider<HelloWorldV1Marker> + ?Sized>(
         provider: &P,
     ) -> Result<DataPayload<HelloWorldV1Marker>, DataError> {
-        provider.load_resource(&Default::default())?.take_payload()
+        provider.load(&Default::default())?.take_payload()
     }
 
     fn get_payload_alt<P: DataProvider<HelloAltMarker> + ?Sized>(
         provider: &P,
     ) -> Result<DataPayload<HelloAltMarker>, DataError> {
-        provider.load_resource(&Default::default())?.take_payload()
+        provider.load(&Default::default())?.take_payload()
     }
 
     #[test]
@@ -317,16 +308,10 @@ mod test {
     where
         P: DataProvider<HelloWorldV1Marker> + DataProvider<HelloAltMarker> + ?Sized,
     {
-        let v1: DataPayload<HelloWorldV1Marker> = d
-            .load_resource(&Default::default())
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let v2: DataPayload<HelloAltMarker> = d
-            .load_resource(&Default::default())
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let v1: DataPayload<HelloWorldV1Marker> =
+            d.load(&Default::default()).unwrap().take_payload().unwrap();
+        let v2: DataPayload<HelloAltMarker> =
+            d.load(&Default::default()).unwrap().take_payload().unwrap();
         if v1.get().message == v2.get().message {
             panic!()
         }

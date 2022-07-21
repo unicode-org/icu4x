@@ -1,9 +1,10 @@
 # icu_properties [![crates.io](https://img.shields.io/crates/v/icu_properties)](https://crates.io/crates/icu_properties)
 
-`icu_properties` is one of the [`ICU4X`] components.
-
-This component provides definitions of [Unicode Properties] and APIs for
+Definitions of [Unicode Properties] and APIs for
 retrieving property data in an appropriate data structure.
+
+This module is published as its own crate ([`icu_properties`](https://docs.rs/icu_properties/latest/icu_properties/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 APIs that return a [`UnicodeSet`] exist for binary properties and certain enumerated
 properties. See the [`sets`] module for more details.

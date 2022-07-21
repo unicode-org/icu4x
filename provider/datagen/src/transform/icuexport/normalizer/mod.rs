@@ -36,7 +36,7 @@ macro_rules! normalization_provider {
         use icu_normalizer::provider::$marker;
 
         impl DataProvider<$marker> for NormalizationProvider {
-            fn load_resource(
+            fn load(
                 &self,
                 _req: &DataRequest,
             ) -> Result<DataResponse<$marker>, DataError> {

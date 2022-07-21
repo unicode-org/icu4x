@@ -289,7 +289,7 @@ pub fn datagen(
                 metadata: Default::default(),
             };
             let payload = provider
-                .load_payload(key, &req)
+                .load_data(key, &req)
                 .and_then(DataResponse::take_payload)
                 .map_err(|e| e.with_req(key, &req))?;
             exporters.par_iter().try_for_each(|e| {

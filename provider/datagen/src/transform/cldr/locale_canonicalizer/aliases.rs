@@ -26,7 +26,7 @@ impl From<&SourceData> for AliasesProvider {
 }
 
 impl DataProvider<AliasesV1Marker> for AliasesProvider {
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
         if !req.options.is_empty() {
@@ -285,7 +285,7 @@ fn test_basic() {
 
     let provider = AliasesProvider::from(&SourceData::for_test());
     let data: DataPayload<AliasesV1Marker> = provider
-        .load_resource(&DataRequest::default())
+        .load(&DataRequest::default())
         .unwrap()
         .take_payload()
         .unwrap();

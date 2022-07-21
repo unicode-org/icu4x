@@ -123,6 +123,7 @@ impl AnyProvider for BakedDataProvider {
             ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY.get_hash();
         const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY.get_hash();
+        const LSTMDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::LstmDataV1Marker::KEY.get_hash();
         const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.get_hash();
         const LINEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash = ::icu_segmenter::provider::LineBreakDataV1Marker::KEY.get_hash();
@@ -467,6 +468,11 @@ impl AnyProvider for BakedDataProvider {
                 LOCALEFALLBACKPARENTSV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker as DataMarker>::Yokeable,
                 >(litemap_slice_get(fallback::parents_v1::DATA, key, req)?),
+                LSTMDATAV1MARKER => AnyPayload::from_static_ref::<<::icu_segmenter::LstmDataV1Marker as DataMarker>::Yokeable>(litemap_slice_get(
+                    segmenter::lstm_v1::DATA,
+                    key,
+                    req,
+                )?),
                 GRAPHEMECLUSTERBREAKDATAV1MARKER => AnyPayload::from_static_ref::<
                     <::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker as DataMarker>::Yokeable,
                 >(litemap_slice_get(segmenter::grapheme_v1::DATA, key, req)?),

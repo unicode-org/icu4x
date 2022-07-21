@@ -33,7 +33,7 @@ impl From<&SourceData> for ScriptWithExtensionsPropertyProvider {
 
 // implement data provider
 impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsPropertyProvider {
-    fn load_resource(
+    fn load(
         &self,
         _: &DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
@@ -101,7 +101,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_resource(&Default::default())
+            .load(&Default::default())
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
@@ -120,7 +120,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::default(),
                 metadata: Default::default(),
             })
@@ -196,7 +196,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_resource(&DataRequest::default())
+            .load(&DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -275,7 +275,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_resource(&DataRequest::default())
+            .load(&DataRequest::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");

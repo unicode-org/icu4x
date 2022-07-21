@@ -114,7 +114,7 @@ macro_rules! collation_provider {
     ($(($marker:ident, $serde_struct:ident, $suffix:literal, $conversion:expr)),+, $toml_data:ident) => {
         $(
             impl DataProvider<$marker> for CollationProvider {
-                fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                fn load(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let $toml_data: &collator_serde::$serde_struct = self
                         .source
                         .icuexport()?

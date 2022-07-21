@@ -60,7 +60,7 @@ impl KeyedDataMarker for HelloWorldV1Marker {
 /// use icu_provider::prelude::*;
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = HelloWorldProvider
-///     .load_resource(&DataRequest {
+///     .load(&DataRequest {
 ///         options: locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
@@ -102,10 +102,7 @@ impl HelloWorldProvider {
 }
 
 impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
         #[allow(clippy::indexing_slicing)] // binary_search
         let data = Self::DATA
             .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
@@ -142,7 +139,7 @@ impl BufferProvider for HelloWorldJsonProvider {
         req: &DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         key.match_key(HelloWorldV1Marker::KEY)?;
-        let result = self.0.load_resource(req)?;
+        let result = self.0.load(req)?;
         let (mut metadata, old_payload) =
             DataResponse::<HelloWorldV1Marker>::take_metadata_and_payload(result)?;
         metadata.buffer_format = Some(BufferFormat::Json);

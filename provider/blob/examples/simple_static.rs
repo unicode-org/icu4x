@@ -13,7 +13,7 @@ fn main() {
     .unwrap();
 
     let hello: DataPayload<HelloWorldV1Marker> = dp
-        .load_resource(&DataRequest {
+        .load(&DataRequest {
             options: locale!("zh").into(),
             metadata: Default::default(),
         })

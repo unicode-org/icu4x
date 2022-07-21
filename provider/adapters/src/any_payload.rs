@@ -84,7 +84,7 @@ where
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
 {
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.as_downcasting().load_resource(req)
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.as_downcasting().load(req)
     }
 }

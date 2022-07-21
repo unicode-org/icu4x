@@ -9,11 +9,11 @@
 
 use icu::calendar::Gregorian;
 use icu::datetime::DateTimeFormatterOptions;
-use icu::locid::{locale, Locale};
-use icu::plurals::{PluralCategory, PluralRules};
-use icu_datetime::{
+use icu::datetime::{
     mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
 };
+use icu::locid::{locale, Locale};
+use icu::plurals::{PluralCategory, PluralRules};
 use icu_uniset::UnicodeSetBuilder;
 use std::env;
 
