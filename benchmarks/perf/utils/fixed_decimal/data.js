@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658431583856,
+  "lastUpdate": 1658442079582,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38429,6 +38429,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 70,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74ab7948eb59568fdc09ebc98f7a08e2f1b8bdab",
+          "message": "#2141 Renaming UnicodePropertyV1 -> PropertyUnicodeSetV1, and UnicodeProper… (#2198)",
+          "timestamp": "2022-07-21T22:08:09Z",
+          "tree_id": "f65abd1b17da3a9b88f732d2fba07fbe5a6460fb",
+          "url": "https://github.com/unicode-org/icu4x/commit/74ab7948eb59568fdc09ebc98f7a08e2f1b8bdab"
+        },
+        "date": 1658442040194,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 140656,
+            "range": "± 4544",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28724,
+            "range": "± 889",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 83120,
+            "range": "± 2889",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 230,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 110,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 100,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
