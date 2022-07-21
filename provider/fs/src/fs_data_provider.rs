@@ -49,7 +49,7 @@ impl BufferProvider for FsDataProvider {
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut path_buf = self.root.join(&*key.write_to_string());
         if !path_buf.exists() {

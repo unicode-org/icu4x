@@ -37,7 +37,7 @@ impl CaseMapping {
     where
         P: DataProvider<CaseMappingV1Marker> + ?Sized,
     {
-        let internals = provider.load(&DataRequest::default())?.take_payload()?;
+        let internals = provider.load(Default::default())?.take_payload()?;
         debug_assert!(internals.get().casemap.validate().is_ok());
         let locale = CaseMapLocale::from(locale);
         Ok(Self { internals, locale })

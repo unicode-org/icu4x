@@ -29,7 +29,7 @@ impl From<&SourceData> for CaseMappingDataProvider {
 }
 
 impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
-    fn load(&self, _req: &DataRequest) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
         let toml = &self
             .source
             .icuexport()?

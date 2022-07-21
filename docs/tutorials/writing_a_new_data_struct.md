@@ -211,7 +211,7 @@ impl From<&SourceData> for FooProvider {
 impl DataProvider<FooV1Marker> for FooProvider {
     fn load(
         &self,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<FooV1Marker>, DataError> {
         // Load the data from CLDR JSON and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of

@@ -19,13 +19,13 @@ use zerofrom::ZeroFrom;
 /// use icu_provider_adapters::any_payload::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
-/// let provider = AnyPayloadProvider::new_static::<HelloWorldV1Marker>(
-///     &HelloWorldV1 {
+/// let provider =
+///     AnyPayloadProvider::new_static::<HelloWorldV1Marker>(&HelloWorldV1 {
 ///         message: Cow::Borrowed("hello world"),
-/// });
+///     });
 ///
 /// let payload: DataPayload<HelloWorldV1Marker> = provider
-///     .load_any(HelloWorldV1Marker::KEY, &Default::default())
+///     .load_any(HelloWorldV1Marker::KEY, Default::default())
 ///     .expect("Load should succeed")
 ///     .downcast()
 ///     .expect("Types should match")
@@ -69,7 +69,7 @@ impl AnyPayloadProvider {
 }
 
 impl AnyProvider for AnyPayloadProvider {
-    fn load_any(&self, key: DataKey, _: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, _: DataRequest) -> Result<AnyResponse, DataError> {
         key.match_key(self.key)?;
         Ok(AnyResponse {
             metadata: DataResponseMetadata::default(),
@@ -84,7 +84,7 @@ where
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
 {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.as_downcasting().load(req)
     }
 }

@@ -103,8 +103,8 @@ mod tests {
         let provider = icu_testdata::get_provider();
         let locale = locale!("th");
         let payload = provider
-            .load(&DataRequest {
-                locale: DataLocale::from(locale),
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
                 metadata: Default::default(),
             })
             .expect("Loading should succeed!")

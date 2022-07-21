@@ -10,7 +10,7 @@ use icu_locid::LanguageIdentifier;
 
 impl<D, F> RequestFilterDataProvider<D, F>
 where
-    F: Fn(&DataRequest) -> bool + Sync,
+    F: Fn(DataRequest) -> bool + Sync,
 {
     /// Filter out data requests with certain langids according to the predicate function. The
     /// predicate should return `true` to allow a langid and `false` to reject a langid.
@@ -22,7 +22,7 @@ where
     ///
     /// ```
     /// use icu_locid::LanguageIdentifier;
-    /// use icu_locid::{langid, subtags_language as language, locale};
+    /// use icu_locid::{langid, locale, subtags_language as language};
     /// use icu_provider::datagen::*;
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
@@ -34,18 +34,20 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     locale: locale!("de").into(),
+    ///     locale: &locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_de);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    ///     provider.load(req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     locale: locale!("en-US").into(),
+    ///     locale: &locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_en);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    ///     provider.load(req_en);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -67,7 +69,7 @@ where
     pub fn filter_by_langid<'a>(
         self,
         predicate: impl Fn(&LanguageIdentifier) -> bool + Sync + 'a,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {
@@ -108,18 +110,20 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     locale: locale!("de").into(),
+    ///     locale: &locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_de);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    ///     provider.load(req_de);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     locale: locale!("en-US").into(),
+    ///     locale: &locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
-    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_en);
+    /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
+    ///     provider.load(req_en);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -135,7 +139,7 @@ where
     pub fn filter_by_langid_allowlist_strict<'a>(
         self,
         allowlist: &'a [LanguageIdentifier],
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {
@@ -168,11 +172,11 @@ where
     ///
     /// // Requests with a langid should succeed:
     /// let req_with_langid = DataRequest {
-    ///     locale: locale!("de").into(),
+    ///     locale: &locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(&req_with_langid);
+    ///     provider.load(req_with_langid);
     /// assert!(matches!(response, Ok(_)));
     ///
     /// // Requests without a langid should fail:
@@ -181,7 +185,7 @@ where
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
-    ///     provider.load(&req_no_langid);
+    ///     provider.load(req_no_langid);
     /// assert!(matches!(
     ///     response,
     ///     Err(DataError {
@@ -192,7 +196,7 @@ where
     /// ```
     pub fn require_langid<'a>(
         self,
-    ) -> RequestFilterDataProvider<D, Box<dyn Fn(&DataRequest) -> bool + Sync + 'a>>
+    ) -> RequestFilterDataProvider<D, Box<dyn Fn(DataRequest) -> bool + Sync + 'a>>
     where
         F: 'a,
     {

@@ -83,9 +83,7 @@ use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::maps::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_properties::CanonicalCombiningClass;
-use icu_provider::DataPayload;
-use icu_provider::DataProvider;
-use icu_provider::DataRequest;
+use icu_provider::prelude::*;
 use icu_uniset::CodePointSet;
 use provider::CanonicalCompositionPassthroughV1Marker;
 use provider::CanonicalCompositionsV1Marker;
@@ -1218,12 +1216,10 @@ impl DecomposingNormalizer {
             + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -1256,21 +1252,15 @@ impl DecomposingNormalizer {
             + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let supplementary_decompositions: DataPayload<
             CompatibilityDecompositionSupplementV1Marker,
-        > = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        > = data_provider.load(Default::default())?.take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
-            data_provider
-                .load(&DataRequest::default())?
-                .take_payload()?;
+            data_provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len()
             + tables.get().scalars24.len()
@@ -1332,20 +1322,14 @@ impl DecomposingNormalizer {
             + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let supplementary_decompositions: DataPayload<Uts46DecompositionSupplementV1Marker> =
-            data_provider
-                .load(&DataRequest::default())?
-                .take_payload()?;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+            data_provider.load(Default::default())?.take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
-            data_provider
-                .load(&DataRequest::default())?
-                .take_payload()?;
+            data_provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len()
             + tables.get().scalars24.len()
@@ -1412,14 +1396,11 @@ impl ComposingNormalizer {
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfd(data_provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             CanonicalCompositionPassthroughV1Marker,
-        > = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -1444,14 +1425,11 @@ impl ComposingNormalizer {
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd(data_provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             CompatibilityCompositionPassthroughV1Marker,
-        > = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -1506,14 +1484,11 @@ impl ComposingNormalizer {
                 data_provider,
             )?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             Uts46CompositionPassthroughV1Marker,
-        > = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -1599,9 +1574,8 @@ impl CanonicalComposition {
     where
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         Ok(CanonicalComposition {
             canonical_compositions,
         })
@@ -1793,12 +1767,10 @@ impl CanonicalDecomposition {
             + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -1810,9 +1782,8 @@ impl CanonicalDecomposition {
             return Err(NormalizerError::FutureExtension);
         }
 
-        let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> = data_provider
-            .load(&DataRequest::default())?
-            .take_payload()?;
+        let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
         Ok(CanonicalDecomposition {
             decompositions,
