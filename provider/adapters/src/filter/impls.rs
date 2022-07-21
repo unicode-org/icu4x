@@ -34,7 +34,7 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     options: locale!("de").into(),
+    ///     locale: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_de);
@@ -42,7 +42,7 @@ where
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     options: locale!("en-US").into(),
+    ///     locale: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_en);
@@ -56,7 +56,7 @@ where
     ///
     /// // English should not appear in the iterator result:
     /// let supported_langids = provider
-    ///     .supported_options()
+    ///     .supported_locales()
     ///     .expect("Should successfully make an iterator of supported locales")
     ///     .into_iter()
     ///     .map(|options| options.get_langid())
@@ -78,7 +78,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                predicate(&request.options.get_langid())
+                predicate(&request.locale.get_langid())
             }),
             filter_name: self.filter_name,
         }
@@ -108,7 +108,7 @@ where
     ///
     /// // German requests should succeed:
     /// let req_de = DataRequest {
-    ///     options: locale!("de").into(),
+    ///     locale: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_de);
@@ -116,7 +116,7 @@ where
     ///
     /// // English requests should fail:
     /// let req_en = DataRequest {
-    ///     options: locale!("en-US").into(),
+    ///     locale: locale!("en-US").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> = provider.load(&req_en);
@@ -146,7 +146,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                request.options.is_langid_und() || allowlist.contains(&request.options.get_langid())
+                request.locale.is_langid_und() || allowlist.contains(&request.locale.get_langid())
             }),
             filter_name: self.filter_name,
         }
@@ -168,7 +168,7 @@ where
     ///
     /// // Requests with a langid should succeed:
     /// let req_with_langid = DataRequest {
-    ///     options: locale!("de").into(),
+    ///     locale: locale!("de").into(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -177,7 +177,7 @@ where
     ///
     /// // Requests without a langid should fail:
     /// let req_no_langid = DataRequest {
-    ///     options: Default::default(),
+    ///     locale: Default::default(),
     ///     metadata: Default::default(),
     /// };
     /// let response: Result<DataResponse<HelloWorldV1Marker>, _> =
@@ -203,7 +203,7 @@ where
                 if !(old_predicate)(request) {
                     return false;
                 }
-                !request.options.is_langid_und()
+                !request.locale.is_langid_und()
             }),
             filter_name: self.filter_name,
         }

@@ -142,7 +142,7 @@ impl LstmSegmenter {
 mod tests {
     use crate::lstm::*;
     use icu_locid::locale;
-    use icu_provider::{DataOptions, DataProvider, DataRequest};
+    use icu_provider::prelude::*;
 
     #[test]
     fn thai_word_break() {
@@ -151,7 +151,7 @@ mod tests {
         let provider = icu_testdata::get_provider();
         let payload = provider
             .load(&DataRequest {
-                options: DataOptions::from(locale!("th")),
+                locale: DataLocale::from(locale!("th")),
                 metadata: Default::default(),
             })
             .expect("Loading should succeed!")

@@ -31,7 +31,7 @@ use icu_normalizer::Decomposition;
 use icu_properties::maps::CodePointMapData;
 use icu_properties::provider::CanonicalCombiningClassV1Marker;
 use icu_properties::CanonicalCombiningClass;
-use icu_provider::DataOptions;
+use icu_provider::DataLocale;
 use icu_provider::DataPayload;
 use icu_provider::DataProvider;
 use icu_provider::DataRequest;
@@ -126,12 +126,12 @@ impl Collator {
             }
             filtered_locale
         };
-        let data_options: DataOptions = locale.into();
+        let locale: DataLocale = locale.into();
 
         let metadata_payload: DataPayload<crate::provider::CollationMetadataV1Marker> =
             data_provider
                 .load(&DataRequest {
-                    options: data_options.clone(),
+                    locale: locale.clone(),
                     metadata: Default::default(),
                 })?
                 .take_payload()?;
@@ -143,7 +143,7 @@ impl Collator {
                 Some(
                     data_provider
                         .load(&DataRequest {
-                            options: data_options.clone(),
+                            locale: locale.clone(),
                             metadata: Default::default(),
                         })?
                         .take_payload()?,
@@ -157,7 +157,7 @@ impl Collator {
                 Some(
                     data_provider
                         .load(&DataRequest {
-                            options: data_options.clone(),
+                            locale: locale.clone(),
                             metadata: Default::default(),
                         })?
                         .take_payload()?,
@@ -179,10 +179,10 @@ impl Collator {
         let tailored_diacritics = metadata.tailored_diacritics();
         let diacritics: DataPayload<CollationDiacriticsV1Marker> = data_provider
             .load(&DataRequest {
-                options: if tailored_diacritics {
-                    data_options
+                locale: if tailored_diacritics {
+                    locale
                 } else {
-                    DataOptions::default()
+                    DataLocale::default()
                 },
                 metadata: Default::default(),
             })?

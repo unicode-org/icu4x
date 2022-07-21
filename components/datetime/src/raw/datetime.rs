@@ -69,7 +69,7 @@ impl TimeFormatter {
             Some(
                 data_provider
                     .load(&DataRequest {
-                        options: DataOptions::from(&locale),
+                        locale: DataLocale::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -212,7 +212,7 @@ impl DateFormatter {
             Some(
                 data_provider
                     .load(&DataRequest {
-                        options: DataOptions::from(&locale),
+                        locale: DataLocale::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -235,7 +235,7 @@ impl DateFormatter {
             Some(
                 data_provider
                     .load(&DataRequest {
-                        options: DataOptions::from(&locale),
+                        locale: DataLocale::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -431,7 +431,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load(&DataRequest {
-                        options: DataOptions::from(&locale),
+                        locale: DataLocale::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -454,7 +454,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load(&DataRequest {
-                        options: DataOptions::from(&locale),
+                        locale: DataLocale::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -467,7 +467,7 @@ impl DateTimeFormatter {
             Some(
                 data_provider
                     .load(&DataRequest {
-                        options: DataOptions::from(&locale),
+                        locale: DataLocale::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,

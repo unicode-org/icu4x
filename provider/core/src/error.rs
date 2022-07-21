@@ -17,29 +17,17 @@ pub enum DataErrorKind {
     #[displaydoc("Missing data for key")]
     MissingDataKey,
 
-    /// There is data for the key, but not for this particular variant.
-    #[displaydoc("Missing data for variant")]
-    MissingVariant,
-
     /// There is data for the key, but not for this particular locale.
     #[displaydoc("Missing data for locale")]
     MissingLocale,
-
-    /// There is data for the key, but not for this particular variant and/or locale.
-    #[displaydoc("Missing data for variant or locale")]
-    MissingDataOptions,
-
-    /// The request should include a variant field.
-    #[displaydoc("Request needs a variant field")]
-    NeedsVariant,
 
     /// The request should include a locale.
     #[displaydoc("Request needs a locale")]
     NeedsLocale,
 
-    /// The request should not contain a variant and/or locale.
-    #[displaydoc("Request has extraneous information")]
-    ExtraneousDataOptions,
+    /// The request should not contain a locale.
+    #[displaydoc("Request has an extraneous locale")]
+    ExtraneousLocale,
 
     /// The resource was blocked by a filter. The resource may or may not be available.
     #[displaydoc("Resource blocked by filter")]
@@ -85,13 +73,13 @@ pub enum DataErrorKind {
 ///
 /// # Example
 ///
-/// Create a NeedsVariant error and attach a data request for context:
+/// Create a NeedsLocale error and attach a data request for context:
 ///
 /// ```no_run
 /// # use icu_provider::prelude::*;
 /// let key: DataKey = unimplemented!();
 /// let req: &DataRequest = unimplemented!();
-/// DataErrorKind::NeedsVariant.with_req(key, req);
+/// DataErrorKind::NeedsLocale.with_req(key, req);
 /// ```
 ///
 /// Create a named custom error:
