@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658431625180,
+  "lastUpdate": 1658442123974,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -50567,6 +50567,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5119,
             "range": "± 15",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74ab7948eb59568fdc09ebc98f7a08e2f1b8bdab",
+          "message": "#2141 Renaming UnicodePropertyV1 -> PropertyUnicodeSetV1, and UnicodeProper… (#2198)",
+          "timestamp": "2022-07-21T22:08:09Z",
+          "tree_id": "f65abd1b17da3a9b88f732d2fba07fbe5a6460fb",
+          "url": "https://github.com/unicode-org/icu4x/commit/74ab7948eb59568fdc09ebc98f7a08e2f1b8bdab"
+        },
+        "date": 1658442085355,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 120447,
+            "range": "± 2212",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1125867,
+            "range": "± 8097",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 241840,
+            "range": "± 6497",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 108842,
+            "range": "± 965",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 119370,
+            "range": "± 1179",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 119625,
+            "range": "± 1627",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 126974,
+            "range": "± 1282",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 228737,
+            "range": "± 3080",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 244987,
+            "range": "± 2254",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 240647,
+            "range": "± 2638",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 257404,
+            "range": "± 3648",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6124,
+            "range": "± 80",
             "unit": "ns/iter"
           }
         ]
