@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658356057791,
+  "lastUpdate": 1658379149229,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38248,6 +38248,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 104,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc35e65dbdb6df8fd685ee9960a3c2b4613bab94",
+          "message": "Add LSTM data to datagen (#2169)\n\n* Add LSTM data to datagen\r\n\r\n* Move lstm data directory and split lstm datagen from mod.rs.\r\n\r\n* Add cfg condition in fixed array instead of duplicated defines.\r\n\r\n* Remove unnecessary clone\r\n\r\n* Replace JsonCache with CldrCache for segmeneter lstm.\r\n\r\n* Update fix per comment.\r\n\r\n* Fix comment.\r\n\r\n* Fix build error after renaming load_resource.",
+          "timestamp": "2022-07-21T13:40:07+09:00",
+          "tree_id": "ae8ef2d14272219c9784a273f069c90bda9a7d8b",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc35e65dbdb6df8fd685ee9960a3c2b4613bab94"
+        },
+        "date": 1658379115148,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105429,
+            "range": "± 526",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21300,
+            "range": "± 212",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64298,
+            "range": "± 341",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 171,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
             "range": "± 0",
             "unit": "ns/iter"
           }
