@@ -50,8 +50,6 @@ fn check_expectations(collator: &Collator, cases: &[TestCase<'_>]) {
     }
 }
 
-// TODO(#2226): Re-enable this test.
-#[ignore]
 #[test]
 fn test_fi() {
     // Adapted from ficoll.cpp in ICU4C
@@ -94,21 +92,24 @@ fn test_fi() {
         },
     ];
     let locale: Locale = langid!("fi").into();
-    let data_provider = icu_testdata::get_provider();
+
+    let any_dyn_provider = get_provider();
+    let any_provider = any_dyn_provider.as_any_provider();
+    let provider = any_provider.as_downcasting();
 
     let mut options = CollatorOptions::new();
     options.set_strength(Some(Strength::Tertiary));
 
     {
         let collator: Collator =
-            Collator::try_new(locale.clone(), &data_provider, options).unwrap();
+            Collator::try_new(locale.clone(), &provider, options).unwrap();
         check_expectations(&collator, &cases);
     }
 
     options.set_strength(Some(Strength::Primary));
 
     {
-        let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &provider, options).unwrap();
         check_expectations(&collator, &cases);
     }
 }
@@ -162,21 +163,21 @@ fn test_sv() {
 
     let any_dyn_provider = get_provider();
     let any_provider = any_dyn_provider.as_any_provider();
-    let provider_no_fallback = any_provider.as_downcasting();
+    let provider = any_provider.as_downcasting();
 
     let mut options = CollatorOptions::new();
     options.set_strength(Some(Strength::Tertiary));
 
     {
         let collator: Collator =
-            Collator::try_new(locale.clone(), &provider_no_fallback, options).unwrap();
+            Collator::try_new(locale.clone(), &provider, options).unwrap();
         check_expectations(&collator, &cases);
     }
 
     options.set_strength(Some(Strength::Primary));
 
     {
-        let collator: Collator = Collator::try_new(locale, &provider_no_fallback, options).unwrap();
+        let collator: Collator = Collator::try_new(locale, &provider, options).unwrap();
         check_expectations(&collator, &cases);
     }
 }
