@@ -90,7 +90,7 @@
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
 //! [`DataKey`]: key::DataKey
-//! [`DataOptions`]: request::DataOptions
+//! [`DataLocale`]: request::DataLocale
 //! [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
 //! [`IterableDataProvider`]: datagen::IterableDataProvider
 //! [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
@@ -162,7 +162,7 @@ pub mod prelude {
     pub use crate::key::DataKeyHash;
     pub use crate::marker::DataMarker;
     pub use crate::marker::KeyedDataMarker;
-    pub use crate::request::DataOptions;
+    pub use crate::request::DataLocale;
     pub use crate::request::DataRequest;
     pub use crate::response::DataPayload;
     pub use crate::response::DataResponse;

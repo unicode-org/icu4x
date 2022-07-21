@@ -45,7 +45,7 @@ mod test {
         let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let patterns = provider
             .load(&DataRequest {
-                options: DataOptions::from(&locale),
+                locale: DataLocale::from(&locale),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -53,7 +53,7 @@ mod test {
             .expect("Failed to retrieve payload");
         let skeletons = provider
             .load(&DataRequest {
-                options: locale.into(),
+                locale: locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")

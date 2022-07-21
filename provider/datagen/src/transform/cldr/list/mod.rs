@@ -29,7 +29,7 @@ impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> DataProvid
     for ListProvider
 {
     fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let langid = req.options.get_langid();
+        let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::list_patterns::Resource = self
             .source
@@ -139,13 +139,13 @@ icu_provider::make_exportable_provider!(
 impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableDataProvider<M>
     for ListProvider
 {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
             .cldr()?
             .misc()
             .list_langs()?
-            .map(Into::<DataOptions>::into)
+            .map(DataLocale::from)
             .collect())
     }
 }

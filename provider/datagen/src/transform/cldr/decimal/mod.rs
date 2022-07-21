@@ -64,7 +64,7 @@ impl NumbersProvider {
 
 impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     fn load(&self, req: &DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
-        let langid = req.options.get_langid();
+        let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .source
@@ -96,13 +96,13 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
 
 impl IterableDataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(Into::<DataOptions>::into)
+            .map(DataLocale::from)
             .collect())
     }
 }
@@ -150,7 +150,7 @@ fn test_basic() {
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(&DataRequest {
-            options: locale!("ar-EG").into(),
+            locale: locale!("ar-EG").into(),
             metadata: Default::default(),
         })
         .unwrap()

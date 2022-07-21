@@ -536,7 +536,7 @@ mod tests {
         let locale: Locale = "en-u-ca-gregory".parse().unwrap();
         let date_data: DataPayload<DateSymbolsV1Marker> = provider
             .load(&DataRequest {
-                options: locale.clone().into(),
+                locale: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -544,7 +544,7 @@ mod tests {
             .unwrap();
         let time_data: DataPayload<TimeSymbolsV1Marker> = provider
             .load(&DataRequest {
-                options: locale.clone().into(),
+                locale: locale.clone().into(),
                 metadata: Default::default(),
             })
             .unwrap()

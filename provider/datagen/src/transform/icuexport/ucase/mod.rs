@@ -74,7 +74,7 @@ impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
 }
 
 impl icu_provider::datagen::IterableDataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

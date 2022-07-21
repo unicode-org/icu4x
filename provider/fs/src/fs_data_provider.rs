@@ -55,10 +55,10 @@ impl BufferProvider for FsDataProvider {
         if !path_buf.exists() {
             return Err(DataErrorKind::MissingDataKey.with_req(key, req));
         }
-        path_buf.push(&*req.options.write_to_string());
+        path_buf.push(&*req.locale.write_to_string());
         path_buf.set_extension(self.manifest.file_extension);
         if !path_buf.exists() {
-            return Err(DataErrorKind::MissingDataOptions.with_req(key, req));
+            return Err(DataErrorKind::MissingLocale.with_req(key, req));
         }
         let buffer =
             fs::read(&path_buf).map_err(|e| DataError::from(e).with_path_context(&path_buf))?;

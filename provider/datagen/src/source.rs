@@ -24,6 +24,7 @@ pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
     icuexport_paths: Option<Arc<TomlCache>>,
     segmenter_paths: Arc<TomlCache>,
+    segmenter_lstm_paths: Arc<CldrCache>,
     trie_type: IcuTrieType,
     collation_han_database: CollationHanDatabase,
 }
@@ -36,6 +37,11 @@ impl Default for SourceData {
             segmenter_paths: Arc::new(TomlCache::new(
                 AbstractFs::new(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
                     .expect("valid dir"),
+            )),
+            segmenter_lstm_paths: Arc::new(CldrCache::new(
+                AbstractFs::new(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
+                    .expect("valid dir"),
+                CldrLocaleSubset::Full,
             )),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
@@ -181,6 +187,10 @@ impl SourceData {
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub(crate) fn segmenter(&self) -> Result<&TomlCache, DataError> {
         Ok(&self.segmenter_paths)
+    }
+
+    pub(crate) fn segmenter_lstm(&self) -> Result<&CldrCache, DataError> {
+        Ok(&self.segmenter_lstm_paths)
     }
 
     #[cfg_attr(not(feature = "experimental"), allow(dead_code))]

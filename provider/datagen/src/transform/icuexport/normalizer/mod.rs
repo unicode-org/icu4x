@@ -51,8 +51,8 @@ macro_rules! normalization_provider {
         icu_provider::make_exportable_provider!($provider, [$marker,]);
 
         impl IterableDataProvider<$marker> for $provider {
-            fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
-                Ok(vec![DataOptions::default()])
+            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                Ok(vec![DataLocale::default()])
             }
         }
     };

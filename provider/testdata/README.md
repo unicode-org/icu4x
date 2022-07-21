@@ -40,7 +40,7 @@ let data_provider = icu_testdata::get_provider();
 
 let data: DataPayload<icu_plurals::provider::CardinalV1Marker> = data_provider
     .load(&DataRequest {
-        options: locale!("ru").into(),
+        locale: locale!("ru").into(),
         metadata: Default::default(),
     })
     .unwrap()

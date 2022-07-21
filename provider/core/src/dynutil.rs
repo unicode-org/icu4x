@@ -70,7 +70,7 @@ where
 /// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
 /// let req = DataRequest {
-///     options: icu_locid::locale!("de").into(),
+///     locale: icu_locid::locale!("de").into(),
 ///     metadata: Default::default(),
 /// };
 ///
@@ -110,7 +110,7 @@ where
 /// }, AnyMarker);
 ///
 /// let req = DataRequest {
-///     options: icu_locid::locale!("de").into(),
+///     locale: icu_locid::locale!("de").into(),
 ///     metadata: Default::default(),
 /// };
 ///

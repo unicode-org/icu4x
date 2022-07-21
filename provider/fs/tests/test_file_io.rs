@@ -18,9 +18,9 @@ const PATHS: &[&str] = &[JSON_PATH, BINCODE_PATH, POSTCARD_PATH];
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for options in HelloWorldProvider.supported_options().unwrap() {
+        for locale in HelloWorldProvider.supported_locales().unwrap() {
             let req = DataRequest {
-                options,
+                locale,
                 metadata: Default::default(),
             };
 
@@ -52,7 +52,7 @@ fn test_errors() {
 
         let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
             provider.load(&DataRequest {
-                options: langid!("zh-DE").into(),
+                locale: langid!("zh-DE").into(),
                 metadata: Default::default(),
             });
 
@@ -60,7 +60,7 @@ fn test_errors() {
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingDataOptions,
+                    kind: DataErrorKind::MissingLocale,
                     ..
                 })
             ),

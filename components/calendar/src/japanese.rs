@@ -103,7 +103,7 @@ impl Japanese {
             "und-u-ca-japanese"
         };
 
-        request.options = Locale::from_str(cal)
+        request.locale = Locale::from_str(cal)
             .expect("Locale string is known valid")
             .into();
         let eras = data_provider.load(&request)?.take_payload()?;

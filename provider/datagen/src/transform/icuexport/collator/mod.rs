@@ -33,16 +33,17 @@ pub const ALL_KEYS: [DataKey; 6] = [
     CollationSpecialPrimariesV1Marker::KEY,
 ];
 
-fn locale_to_file_name(opts: &DataOptions) -> String {
-    let mut s = if opts.get_langid() == LanguageIdentifier::UND {
+fn locale_to_file_name(locale: &DataLocale) -> String {
+    let mut s = if locale.get_langid() == LanguageIdentifier::UND {
         String::from("root")
     } else {
-        opts.get_langid()
+        locale
+            .get_langid()
             .write_to_string()
             .replace('-', "_")
             .replace("posix", "POSIX")
     };
-    if let Some(extension) = &opts.get_unicode_ext(&key!("co")) {
+    if let Some(extension) = &locale.get_unicode_ext(&key!("co")) {
         s.push('_');
         s.push_str(match extension.to_string().as_str() {
             "trad" => "traditional",
@@ -58,9 +59,9 @@ fn locale_to_file_name(opts: &DataOptions) -> String {
         // The Swedish naming seems ad hoc from
         // https://unicode-org.atlassian.net/browse/CLDR-679 .
 
-        if opts.get_langid().language == language!("zh") {
+        if locale.get_langid().language == language!("zh") {
             s.push_str("_pinyin");
-        } else if opts.get_langid().language == language!("sv") {
+        } else if locale.get_langid().language == language!("sv") {
             s.push_str("_reformed");
         } else {
             s.push_str("_standard");
@@ -122,7 +123,7 @@ macro_rules! collation_provider {
                             &format!(
                                 "collation/{}/{}{}.toml",
                                 self.source.collation_han_database(),
-                                locale_to_file_name(&req.options), $suffix)
+                                locale_to_file_name(&req.locale), $suffix)
                         )?;
 
                     Ok(DataResponse {
@@ -137,7 +138,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProvider<$marker> for CollationProvider {
-                fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
                         .source
                         .icuexport()?
@@ -152,7 +153,7 @@ macro_rules! collation_provider {
                                 .map(ToString::to_string)
                         )
                         .filter_map(|s|file_name_to_locale(&s))
-                        .map(DataOptions::from)
+                        .map(DataLocale::from)
                         .collect()
                     )
                 }
