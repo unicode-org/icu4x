@@ -36,10 +36,7 @@ macro_rules! normalization_provider {
         use icu_normalizer::provider::$marker;
 
         impl DataProvider<$marker> for NormalizationProvider {
-            fn load(
-                &self,
-                _req: &DataRequest,
-            ) -> Result<DataResponse<$marker>, DataError> {
+            fn load(&self, _req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 let $toml_data: &normalizer_serde::$serde_struct =
                     self.source.icuexport()?.read_and_parse_toml(&format!(
                         "norm/{}/{}.toml",
