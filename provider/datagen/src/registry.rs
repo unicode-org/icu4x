@@ -198,6 +198,7 @@ macro_rules! create_datagen_provider {
                 $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
                 $crate::transform::icuexport::uprops::BinaryPropertyUnicodeSetDataProvider,
                 $crate::transform::segmenter::SegmenterDictionaryProvider,
+                $crate::transform::segmenter::SegmenterLstmProvider,
                 $crate::transform::segmenter::SegmenterRuleProvider,
             ]
         )

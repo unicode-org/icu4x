@@ -1516,6 +1516,23 @@ impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackPar
         Ok (DataResponse { metadata : Default :: default () , payload : Some (DataPayload :: from_owned (zerofrom :: ZeroFrom :: zero_from (litemap_slice_get (fallback :: parents_v1 :: DATA , < :: icu_provider_adapters :: fallback :: provider :: LocaleFallbackParentsV1Marker as KeyedDataMarker > :: KEY , req) ? ,))) , })
     }
 }
+impl DataProvider<::icu_segmenter::LstmDataV1Marker> for BakedDataProvider {
+    fn load(
+        &self,
+        req: &DataRequest,
+    ) -> Result<DataResponse<::icu_segmenter::LstmDataV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                litemap_slice_get(
+                    segmenter::lstm_v1::DATA,
+                    <::icu_segmenter::LstmDataV1Marker as KeyedDataMarker>::KEY,
+                    req,
+                )?,
+            ))),
+        })
+    }
+}
 impl DataProvider<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>
     for BakedDataProvider
 {

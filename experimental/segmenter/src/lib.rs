@@ -181,7 +181,7 @@ pub use crate::line::{
     WordBreakRule,
 };
 #[cfg(feature = "lstm")]
-pub use crate::lstm_structs::LstmDataMarker;
+pub use crate::lstm_structs::{LstmDataV1, LstmDataV1Marker, LstmMatrix};
 pub use crate::provider::{
     GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, RuleBreakDataV1,
     RuleBreakPropertyTable, RuleBreakStateTable, SentenceBreakDataV1Marker,
