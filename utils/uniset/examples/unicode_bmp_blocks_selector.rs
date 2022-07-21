@@ -5,7 +5,7 @@
 // An example application which uses icu_uniset to test what blocks of
 // Basic Multilingual Plane a character belongs to.
 //
-// In this example we use `UnicodeSetBuilder` to construct just the first
+// In this example we use `CodePointSetBuilder` to construct just the first
 // two blocks of the first plane, and use an instance of a `BMPBlockSelector`
 // to retrieve which of those blocks each character of a string belongs to.
 //
@@ -16,16 +16,16 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+use icu_uniset::{CodePointSet, CodePointSetBuilder};
 
-fn get_basic_latin_block() -> UnicodeSet<'static> {
-    let mut builder = UnicodeSetBuilder::new();
+fn get_basic_latin_block() -> CodePointSet<'static> {
+    let mut builder = CodePointSetBuilder::new();
     builder.add_range(&('\u{0000}'..='\u{007F}'));
     builder.build()
 }
 
-fn get_latin1_supplement_block() -> UnicodeSet<'static> {
-    let mut builder = UnicodeSetBuilder::new();
+fn get_latin1_supplement_block() -> CodePointSet<'static> {
+    let mut builder = CodePointSetBuilder::new();
     builder.add_range(&('\u{0080}'..='\u{00FF}'));
     builder.build()
 }
@@ -38,7 +38,7 @@ enum BmpBlock {
 }
 
 struct BmpBlockSelector<'data> {
-    blocks: Vec<(BmpBlock, UnicodeSet<'data>)>,
+    blocks: Vec<(BmpBlock, CodePointSet<'data>)>,
 }
 
 impl<'data> BmpBlockSelector<'data> {

@@ -4,7 +4,7 @@ pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
 static UND: DataStruct = &::icu_normalizer::provider::CompositionPassthroughV1 {
     potential_passthrough_and_not_backward_combining: unsafe {
         #[allow(unused_unsafe)]
-        ::icu_uniset::UnicodeSet::from_parts_unchecked(
+        ::icu_uniset::CodePointSet::from_parts_unchecked(
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     0u8, 0u8, 0u8, 0u8, 160u8, 0u8, 0u8, 0u8, 161u8, 0u8, 0u8, 0u8, 168u8, 0u8,

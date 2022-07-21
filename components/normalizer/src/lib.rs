@@ -84,7 +84,7 @@ use icu_codepointtrie::CodePointTrie;
 use icu_properties::maps::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSet;
+use icu_uniset::CodePointSet;
 use provider::CanonicalCompositionPassthroughV1Marker;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
@@ -401,7 +401,7 @@ where
     pending: Option<char>, // None at end of stream
     trie: &'data CodePointTrie<'data, u32>,
     supplementary_trie: Option<&'data CodePointTrie<'data, u32>>,
-    decomposition_starts_with_non_starter: UnicodeSet<'data>,
+    decomposition_starts_with_non_starter: CodePointSet<'data>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<U24>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
@@ -432,7 +432,7 @@ where
     /// omit some characters from this set. As a consequence, multiple
     /// normalization forms whose sets are similar may use the intersection
     /// of their exact sets in order to need to store only the intersection.
-    potential_passthrough_and_not_backward_combining: Option<UnicodeSet<'data>>,
+    potential_passthrough_and_not_backward_combining: Option<CodePointSet<'data>>,
     /// The character in `pending` is a in the
     /// `potential_passthrough_and_not_backward_combining` set.
     /// This flag is meaningful only when `pending.is_some()` and
@@ -477,7 +477,7 @@ where
         tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
-        potential_passthrough_and_not_backward_combining: Option<UnicodeSet<'data>>,
+        potential_passthrough_and_not_backward_combining: Option<CodePointSet<'data>>,
     ) -> Self {
         let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
             if let Some(supplementary) = supplementary_decompositions {
@@ -497,7 +497,7 @@ where
             pending: Some('\u{FFFF}'),
             trie: &decompositions.trie,
             supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
-            decomposition_starts_with_non_starter: UnicodeSet::zero_from(
+            decomposition_starts_with_non_starter: CodePointSet::zero_from(
                 &decompositions.decomposition_starts_with_non_starter,
             ),
             scalars16: &tables.scalars16,

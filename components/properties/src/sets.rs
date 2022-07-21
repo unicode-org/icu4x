@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`UnicodeSet`] containing
+//! The functions in this module return a [`CodePointSet`] containing
 //! the set of characters with a particular Unicode property.
 //!
 //! The descriptions of most properties are taken from [`TR44`], the documentation for the
@@ -10,7 +10,7 @@
 //! documentation for Unicode regular expressions. In particular, Annex C of this document
 //! defines properties for POSIX compatibility.
 //!
-//! [`UnicodeSet`]: icu_uniset::UnicodeSet
+//! [`CodePointSet`]: icu_uniset::CodePointSet
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 //! [`TR18`]: https://www.unicode.org/reports/tr18
 
@@ -19,7 +19,7 @@ use crate::provider::*;
 use crate::*;
 use core::iter::FromIterator;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSet;
+use icu_uniset::CodePointSet;
 
 /// A wrapper around code point set data, returned by property getters for
 /// unicode sets.
@@ -32,7 +32,7 @@ pub struct CodePointSetData {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 pub(crate) struct ErasedSetlikeMarker;
 impl DataMarker for ErasedSetlikeMarker {
-    type Yokeable = UnicodePropertyV1<'static>;
+    type Yokeable = PropertyCodePointSetV1<'static>;
 }
 
 impl CodePointSetData {
@@ -109,31 +109,31 @@ impl CodePointSetData {
     /// Typically it is preferable to use getters like [`get_ascii_hex_digit()`] instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = UnicodePropertyV1<'static>>,
+        M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
     {
         Self {
             data: data.map_project(|m, _| m),
         }
     }
 
-    /// Construct a new one an owned [`UnicodeSet`]
-    pub fn from_unicode_set(set: UnicodeSet<'static>) -> Self {
-        let set = UnicodePropertyV1::from_unicode_set(set);
+    /// Construct a new one an owned [`CodePointSet`]
+    pub fn from_code_point_set(set: CodePointSet<'static>) -> Self {
+        let set = PropertyCodePointSetV1::from_code_point_set(set);
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
     }
 
-    /// Convert this type to a [`UnicodeSet`], borrowing if possible,
-    /// otherwise allocating a new [`UnicodeSet`].
+    /// Convert this type to a [`CodePointSet`], borrowing if possible,
+    /// otherwise allocating a new [`CodePointSet`].
     ///
     /// The data backing this is extensible and supports multiple implementations.
-    /// Currently it is always [`UnicodeSet`]; however in the future more backends may be
+    /// Currently it is always [`CodePointSet`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
-    /// If using this function it is preferable to stick to [`UnicodeSet`] representations
+    /// If using this function it is preferable to stick to [`CodePointSet`] representations
     /// in the data, however exceptions can be made if the performance hit is considered to
     /// be okay.
-    pub fn to_unicode_set(&self) -> UnicodeSet<'_> {
-        self.data.get().to_unicode_set()
+    pub fn to_code_point_set(&self) -> CodePointSet<'_> {
+        self.data.get().to_code_point_set()
     }
 }
 
@@ -141,7 +141,7 @@ impl CodePointSetData {
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy)]
 pub struct CodePointSetDataBorrowed<'a> {
-    set: &'a UnicodePropertyV1<'a>,
+    set: &'a PropertyCodePointSetV1<'a>,
 }
 
 impl<'a> CodePointSetDataBorrowed<'a> {
@@ -1705,8 +1705,8 @@ pub fn get_for_general_category_group(
         .iter_ranges()
         .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
         .map(|cpm_range| cpm_range.range);
-    let set = UnicodeSet::from_iter(matching_gc_ranges);
-    Ok(CodePointSetData::from_unicode_set(set))
+    let set = CodePointSet::from_iter(matching_gc_ranges);
+    Ok(CodePointSetData::from_code_point_set(set))
 }
 
 #[cfg(test)]
@@ -1748,21 +1748,21 @@ mod tests {
     fn test_gc_groupings() {
         use icu::properties::{maps, sets};
         use icu::properties::{GeneralCategory, GeneralCategoryGroup};
-        use icu_uniset::UnicodeSetBuilder;
+        use icu_uniset::CodePointSetBuilder;
 
         let provider = icu_testdata::get_provider();
 
         let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
-            let category_set = category_set.to_unicode_set();
+            let category_set = category_set.to_code_point_set();
 
             let data = maps::get_general_category(&provider).expect("The data should be valid");
             let gc = data.as_borrowed();
 
-            let mut builder = UnicodeSetBuilder::new();
+            let mut builder = CodePointSetBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(&gc.get_set_for_value(*subcategory).to_unicode_set());
+                builder.add_set(&gc.get_set_for_value(*subcategory).to_code_point_set());
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);

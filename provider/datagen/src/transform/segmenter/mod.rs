@@ -5,7 +5,7 @@
 //! This module contains provider implementations backed by built-in segmentation data.
 
 use crate::transform::icuexport::uprops::{
-    BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
+    BinaryPropertyCodePointSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
@@ -280,7 +280,7 @@ impl SegmenterRuleProvider {
         let gc = data.as_borrowed();
 
         // Load binary Unicode property dependencies.
-        let uniset_provider = BinaryPropertyUnicodeSetDataProvider::from(&self.source);
+        let uniset_provider = BinaryPropertyCodePointSetDataProvider::from(&self.source);
 
         let data =
             sets::get_extended_pictographic(&uniset_provider).expect("The data should be valid!");
