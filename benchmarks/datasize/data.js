@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658430809279,
+  "lastUpdate": 1658441410053,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20903,6 +20903,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3879446ff7354ea0e7aa83efcb484846a81214e0"
         },
         "date": 1658430776243,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035317,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74ab7948eb59568fdc09ebc98f7a08e2f1b8bdab",
+          "message": "#2141 Renaming UnicodePropertyV1 -> PropertyUnicodeSetV1, and UnicodeProper… (#2198)",
+          "timestamp": "2022-07-21T22:08:09Z",
+          "tree_id": "f65abd1b17da3a9b88f732d2fba07fbe5a6460fb",
+          "url": "https://github.com/unicode-org/icu4x/commit/74ab7948eb59568fdc09ebc98f7a08e2f1b8bdab"
+        },
+        "date": 1658441375017,
         "tool": "ndjson",
         "benches": [
           {
