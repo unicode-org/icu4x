@@ -5,8 +5,8 @@
 use std::cmp::Ordering;
 
 use icu_collator::{Collator, CollatorOptions, Strength};
-use icu_datagen::CldrLocaleSubset;
-use icu_datagen::SourceData;
+use crate::CldrLocaleSubset;
+use crate::SourceData;
 use icu_locid::{langid, Locale};
 use icu_provider::AsDowncastingAnyProvider;
 use icu_provider::AsDynamicDataProviderAnyMarkerWrap;
@@ -22,7 +22,7 @@ fn get_provider() -> impl DynamicDataProvider<AnyMarker> {
             .with_cldr(icu_testdata::paths::cldr_json_root(), CldrLocaleSubset::Full)
             .unwrap();
     }
-    icu_datagen::create_datagen_provider!(*SOURCE_DATA)
+    crate::create_datagen_provider!(*SOURCE_DATA)
 }
 
 #[derive(Debug)]
