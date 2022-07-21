@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658378520289,
+  "lastUpdate": 1658418396636,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20843,6 +20843,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bc35e65dbdb6df8fd685ee9960a3c2b4613bab94"
         },
         "date": 1658378481702,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035317,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a4f28462cbde85c58f4f12a2476cc1756394630c",
+          "message": "Renaming `DataOptions` to `DataLocale` (#2223)",
+          "timestamp": "2022-07-21T17:44:41+02:00",
+          "tree_id": "65246c51bd6a8b05e9555848c92ab810e4afda66",
+          "url": "https://github.com/unicode-org/icu4x/commit/a4f28462cbde85c58f4f12a2476cc1756394630c"
+        },
+        "date": 1658418364151,
         "tool": "ndjson",
         "benches": [
           {
