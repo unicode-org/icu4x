@@ -24,10 +24,6 @@ pub struct DecompositionDataV1<'data> {
     /// Trie for NFD decomposition.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u32>,
-    /// Set containing the characters whose NFD decomposition
-    /// starts with a non-starter
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub decomposition_starts_with_non_starter: CodePointSet<'data>,
 }
 
 /// Data that either NFKD or the decomposed form of UTS 46 needs

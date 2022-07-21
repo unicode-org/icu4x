@@ -66,12 +66,6 @@ macro_rules! normalization_data_provider {
             DecompositionData,
             $file_name,
             {
-                let mut builder = CodePointSetBuilder::new();
-                for range in &toml_data.ranges {
-                    builder.add_range_u32(&(range.0..=range.1));
-                }
-                let uniset = builder.build();
-
                 let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
                     .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
 
@@ -79,7 +73,6 @@ macro_rules! normalization_data_provider {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(DecompositionDataV1 {
                         trie,
-                        decomposition_starts_with_non_starter: uniset,
                     })),
                 })
             },
