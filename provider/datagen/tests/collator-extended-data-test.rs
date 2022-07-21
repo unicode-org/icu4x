@@ -26,19 +26,20 @@ fn get_provider() -> impl DynamicDataProvider<AnyMarker> {
     icu_datagen::create_datagen_provider!(*SOURCE_DATA)
 }
 
-fn check_expectations(
-    collator: &Collator,
-    left: &[&str],
-    right: &[&str],
-    expectations: &[Ordering],
-) {
-    let mut left_iter = left.iter();
-    let mut right_iter = right.iter();
-    let mut expect_iter = expectations.iter();
-    while let (Some(left_str), Some(right_str), Some(expectation)) =
-        (left_iter.next(), right_iter.next(), expect_iter.next())
+struct TestCase<'a> {
+    left: &'a str,
+    right: &'a str,
+    expectation: Ordering,
+}
+
+fn check_expectations(collator: &Collator, cases: &[TestCase<'_>]) {
+    for TestCase {
+        left,
+        right,
+        expectation,
+    } in cases
     {
-        assert_eq!(collator.compare(left_str, right_str), *expectation);
+        assert_eq!(collator.compare(left, right), *expectation);
     }
 }
 
@@ -52,31 +53,40 @@ fn test_sv() {
     // Testing that w and v behave as in the root collation is for checking
     // that the sorting collation doesn't exhibit the behavior of the search
     // collation, which (somewhat questionably) treats w and v as primary-equal.
-    let left = [
-        "wat",
-        "vat",
-        "aübeck",
-        "Låvi",
-        // ICU4C has a duplicate of the first case below.
+    let cases = [
+        TestCase {
+            left: "wat",
+            right: "vat",
+            expectation: Ordering::Greater,
+        },
+        TestCase {
+            left: "vat",
+            right: "way",
+            expectation: Ordering::Less,
+        },
+        TestCase {
+            left: "aübeck",
+            right: "axbeck",
+            expectation: Ordering::Greater,
+        },
+        TestCase {
+            left: "Låvi",
+            right: "Läwe",
+            expectation: Ordering::Less,
+        },
+        // ICU4C has a duplicate of the case below.
         // The duplicate is omitted here.
         // Instead, the subsequent tests are added for ICU4X.
-        "ä",
-        "a\u{0308}",
-    ];
-    let right = [
-        "vat", "way", "axbeck", "Läwe",
-        // ICU4C has a duplicate of the first case below.
-        // The duplicate is omitted here.
-        // Instead, the subsequent tests are added for ICU4X.
-        "o", "ä",
-    ];
-    let expectations = [
-        Ordering::Greater,
-        Ordering::Less,
-        Ordering::Greater,
-        Ordering::Less,
-        Ordering::Greater,
-        Ordering::Equal,
+        TestCase {
+            left: "ä",
+            right: "o",
+            expectation: Ordering::Greater,
+        },
+        TestCase {
+            left: "a\u{0308}",
+            right: "ä",
+            expectation: Ordering::Equal,
+        },
     ];
     let locale: Locale = langid!("sv").into();
 
@@ -90,13 +100,13 @@ fn test_sv() {
     {
         let collator: Collator =
             Collator::try_new(locale.clone(), &provider_no_fallback, options).unwrap();
-        check_expectations(&collator, &left, &right, &expectations);
+        check_expectations(&collator, &cases);
     }
 
     options.set_strength(Some(Strength::Primary));
 
     {
         let collator: Collator = Collator::try_new(locale, &provider_no_fallback, options).unwrap();
-        check_expectations(&collator, &left, &right, &expectations);
+        check_expectations(&collator, &cases);
     }
 }
