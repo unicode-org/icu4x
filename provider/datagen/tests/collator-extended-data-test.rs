@@ -13,16 +13,15 @@ use icu_provider::AsDynamicDataProviderAnyMarkerWrap;
 use icu_provider::{AnyMarker, DynamicDataProvider};
 use lazy_static::lazy_static;
 
-lazy_static! {
-    static ref SOURCE_DATA: SourceData = SourceData::default()
-        .with_icuexport(icu_testdata::paths::icuexport_toml_root())
-        .unwrap()
-        // CLDR data is needed for locale fallback support
-        .with_cldr(icu_testdata::paths::cldr_json_root(), CldrLocaleSubset::Full)
-        .unwrap();
-}
-
 fn get_provider() -> impl DynamicDataProvider<AnyMarker> {
+    lazy_static! {
+        static ref SOURCE_DATA: SourceData = SourceData::default()
+            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
+            .unwrap()
+            // CLDR data is needed for locale fallback support
+            .with_cldr(icu_testdata::paths::cldr_json_root(), CldrLocaleSubset::Full)
+            .unwrap();
+    }
     icu_datagen::create_datagen_provider!(*SOURCE_DATA)
 }
 
