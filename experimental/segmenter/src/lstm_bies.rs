@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::lstm_error::Error;
-use crate::lstm_structs::LstmDataMarker;
+use crate::lstm_structs::LstmDataV1Marker;
 use crate::math_helper;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
@@ -14,12 +14,21 @@ use unicode_segmentation::UnicodeSegmentation;
 use zerovec::ule::AsULE;
 
 pub struct Lstm {
-    data: DataPayload<LstmDataMarker>,
+    data: DataPayload<LstmDataV1Marker>,
+    mat1: Array2<f32>,
+    mat2: Array2<f32>,
+    mat3: Array2<f32>,
+    mat4: Array1<f32>,
+    mat5: Array2<f32>,
+    mat6: Array2<f32>,
+    mat7: Array1<f32>,
+    mat8: Array2<f32>,
+    mat9: Array1<f32>,
 }
 
 impl Lstm {
     /// `try_new` is the initiator of struct `Lstm`
-    pub fn try_new(data: DataPayload<LstmDataMarker>) -> Result<Self, Error> {
+    pub fn try_new(data: DataPayload<LstmDataV1Marker>) -> Result<Self, Error> {
         if data.get().dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
@@ -27,20 +36,40 @@ impl Lstm {
         {
             return Err(Error::Syntax);
         }
-        let embedd_dim = data.get().mat1.shape()[1];
-        let hunits = data.get().mat3.shape()[0];
-        if data.get().mat2.shape() != [embedd_dim, 4 * hunits]
-            || data.get().mat3.shape() != [hunits, 4 * hunits]
-            || data.get().mat4.shape() != [4 * hunits]
-            || data.get().mat5.shape() != [embedd_dim, 4 * hunits]
-            || data.get().mat6.shape() != [hunits, 4 * hunits]
-            || data.get().mat7.shape() != [4 * hunits]
-            || data.get().mat8.shape() != [2 * hunits, 4]
-            || data.get().mat9.shape() != [4]
+        let mat1 = data.get().mat1.as_ndarray2()?;
+        let mat2 = data.get().mat2.as_ndarray2()?;
+        let mat3 = data.get().mat3.as_ndarray2()?;
+        let mat4 = data.get().mat4.as_ndarray1()?;
+        let mat5 = data.get().mat5.as_ndarray2()?;
+        let mat6 = data.get().mat6.as_ndarray2()?;
+        let mat7 = data.get().mat7.as_ndarray1()?;
+        let mat8 = data.get().mat8.as_ndarray2()?;
+        let mat9 = data.get().mat9.as_ndarray1()?;
+        let embedd_dim = mat1.shape()[1];
+        let hunits = mat3.shape()[0];
+        if mat2.shape() != [embedd_dim, 4 * hunits]
+            || mat3.shape() != [hunits, 4 * hunits]
+            || mat4.shape() != [4 * hunits]
+            || mat5.shape() != [embedd_dim, 4 * hunits]
+            || mat6.shape() != [hunits, 4 * hunits]
+            || mat7.shape() != [4 * hunits]
+            || mat8.shape() != [2 * hunits, 4]
+            || mat9.shape() != [4]
         {
             return Err(Error::DimensionMismatch);
         }
-        Ok(Self { data })
+        Ok(Self {
+            data,
+            mat1,
+            mat2,
+            mat3,
+            mat4,
+            mat5,
+            mat6,
+            mat7,
+            mat8,
+            mat9,
+        })
     }
 
     /// `get_model_name` returns the name of the LSTM model.
@@ -116,20 +145,20 @@ impl Lstm {
         let input_seq_len = input_seq.len();
 
         // hunits is the number of hidden unints in each LSTM cell
-        let hunits = self.data.get().mat3.shape()[0];
+        let hunits = self.mat3.shape()[0];
         // Forward LSTM
         let mut c_fw = Array1::<f32>::zeros(hunits);
         let mut h_fw = Array1::<f32>::zeros(hunits);
         let mut all_h_fw = Array2::<f32>::zeros((input_seq_len, hunits));
         for (i, g_id) in input_seq.iter().enumerate() {
-            let x_t = self.data.get().mat1.slice(ndarray::s![*g_id as isize, ..]);
+            let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
             let (new_h, new_c) = self.compute_hc(
                 x_t,
                 &h_fw,
                 &c_fw,
-                self.data.get().mat2.view(),
-                self.data.get().mat3.view(),
-                self.data.get().mat4.view(),
+                self.mat2.view(),
+                self.mat3.view(),
+                self.mat4.view(),
             );
             h_fw = new_h;
             c_fw = new_c;
@@ -141,14 +170,14 @@ impl Lstm {
         let mut h_bw = Array1::<f32>::zeros(hunits);
         let mut all_h_bw = Array2::<f32>::zeros((input_seq_len, hunits));
         for (i, g_id) in input_seq.iter().rev().enumerate() {
-            let x_t = self.data.get().mat1.slice(ndarray::s![*g_id as isize, ..]);
+            let x_t = self.mat1.slice(ndarray::s![*g_id as isize, ..]);
             let (new_h, new_c) = self.compute_hc(
                 x_t,
                 &h_bw,
                 &c_bw,
-                self.data.get().mat5.view(),
-                self.data.get().mat6.view(),
-                self.data.get().mat7.view(),
+                self.mat5.view(),
+                self.mat6.view(),
+                self.mat7.view(),
             );
             h_bw = new_h;
             c_bw = new_c;
@@ -156,8 +185,8 @@ impl Lstm {
         }
 
         // Combining forward and backward LSTMs using the dense time-distributed layer
-        let timew = self.data.get().mat8.view();
-        let timeb = self.data.get().mat9.view();
+        let timew = self.mat8.view();
+        let timeb = self.mat9.view();
         let mut bies = String::from("");
         for i in 0..input_seq_len {
             let curr_fw = all_h_fw.slice(ndarray::s![i, ..]);
@@ -205,8 +234,8 @@ mod tests {
         }
     }
 
-    fn load_lstm_data(filename: &str) -> DataPayload<LstmDataMarker> {
-        DataPayload::<LstmDataMarker>::try_from_rc_buffer_badly(
+    fn load_lstm_data(filename: &str) -> DataPayload<LstmDataV1Marker> {
+        DataPayload::<LstmDataV1Marker>::try_from_rc_buffer_badly(
             std::fs::read(filename)
                 .expect("File can read to end")
                 .into(),

@@ -22,6 +22,10 @@ use icu_segmenter::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
+mod lstm;
+
+pub use lstm::SegmenterLstmProvider;
+
 // state machine name define by builtin name
 // [[tables]]
 // name = "Double_Quote"
