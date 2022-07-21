@@ -4,25 +4,32 @@
 
 use std::cmp::Ordering;
 
-use icu_collator::{Collator, CollatorOptions, Strength};
-use crate::CldrLocaleSubset;
+use super::super::normalizer::NormalizationProvider;
+use super::super::uprops::EnumeratedPropertyCodePointTrieProvider;
+use super::CollationProvider;
 use crate::SourceData;
+use icu_collator::{Collator, CollatorOptions, Strength};
 use icu_locid::{langid, Locale};
 use icu_provider::AsDowncastingAnyProvider;
 use icu_provider::AsDynamicDataProviderAnyMarkerWrap;
 use icu_provider::{AnyMarker, DynamicDataProvider};
+use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
 use lazy_static::lazy_static;
 
 fn get_provider() -> impl DynamicDataProvider<AnyMarker> {
     lazy_static! {
         static ref SOURCE_DATA: SourceData = SourceData::default()
             .with_icuexport(icu_testdata::paths::icuexport_toml_root())
-            .unwrap()
-            // CLDR data is needed for locale fallback support
-            .with_cldr(icu_testdata::paths::cldr_json_root(), CldrLocaleSubset::Full)
             .unwrap();
     }
-    crate::create_datagen_provider!(*SOURCE_DATA)
+    icu_provider_adapters::make_forking_provider!(
+        ForkByKeyProvider,
+        [
+            CollationProvider::from(&*SOURCE_DATA),
+            NormalizationProvider::from(&*SOURCE_DATA),
+            EnumeratedPropertyCodePointTrieProvider::from(&*SOURCE_DATA),
+        ]
+    )
 }
 
 #[derive(Debug)]
@@ -33,8 +40,7 @@ struct TestCase<'a> {
 }
 
 fn check_expectations(collator: &Collator, cases: &[TestCase<'_>]) {
-    for cas in cases
-    {
+    for cas in cases {
         let TestCase {
             left,
             right,
