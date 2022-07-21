@@ -140,7 +140,7 @@ impl<P> LocaleFallbackProvider<P> {
         F2: FnMut(&mut R) -> &mut DataResponseMetadata,
     {
         let key_fallbacker = self.fallbacker.for_key(key);
-        let mut fallback_iterator = key_fallbacker.fallback_for(base_req);
+        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.locale.clone());
         loop {
             let result = f1(DataRequest {
                 locale: fallback_iterator.get(),

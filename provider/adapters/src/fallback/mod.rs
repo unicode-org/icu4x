@@ -22,10 +22,7 @@
 //! let key_fallbacker = fallbacker.for_config(Default::default());
 //!
 //! // Set up the fallback iterator.
-//! let mut fallback_iterator = key_fallbacker.fallback_for(DataRequest {
-//!       locale: &icu_locid::locale!("hi-Latn-IN").into(),
-//!     metadata: Default::default(),
-//! });
+//! let mut fallback_iterator = key_fallbacker.fallback_for(icu_locid::locale!("hi-Latn-IN").into());
 //!
 //! // Run the algorithm and check the results.
 //! assert_eq!(fallback_iterator.get().to_string(), "hi-Latn-IN");
@@ -76,12 +73,11 @@ pub struct LocaleFallbackConfig {
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Language;
     /// let key_fallbacker = fallbacker.for_config(config);
-    /// let mut fallback_iterator = key_fallbacker.fallback_for(DataRequest {
-    ///     locale: &icu_locid::Locale::from_bytes(b"ca-ES-valencia")
+    /// let mut fallback_iterator = key_fallbacker.fallback_for(
+    ///     icu_locid::Locale::from_bytes(b"ca-ES-valencia")
     ///         .unwrap()
     ///         .into(),
-    ///     metadata: Default::default(),
-    /// });
+    /// );
     ///
     /// // Run the algorithm and check the results.
     /// assert_eq!(fallback_iterator.get().to_string(), "ca-ES-valencia");
@@ -107,12 +103,11 @@ pub struct LocaleFallbackConfig {
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Region;
     /// let key_fallbacker = fallbacker.for_config(config);
-    /// let mut fallback_iterator = key_fallbacker.fallback_for(DataRequest {
-    ///     locale: &icu_locid::Locale::from_bytes(b"ca-ES-valencia")
+    /// let mut fallback_iterator = key_fallbacker.fallback_for(
+    ///     icu_locid::Locale::from_bytes(b"ca-ES-valencia")
     ///         .unwrap()
     ///         .into(),
-    ///     metadata: Default::default(),
-    /// });
+    /// );
     ///
     /// // Run the algorithm and check the results.
     /// assert_eq!(fallback_iterator.get().to_string(), "ca-ES-valencia");
@@ -141,12 +136,11 @@ pub struct LocaleFallbackConfig {
     /// let mut config = LocaleFallbackConfig::default();
     /// config.extension_key = Some(icu_locid::extensions_unicode_key!("nu"));
     /// let key_fallbacker = fallbacker.for_config(config);
-    /// let mut fallback_iterator = key_fallbacker.fallback_for(DataRequest {
-    ///     locale: &icu_locid::Locale::from_bytes(b"ar-EG-u-nu-latn")
+    /// let mut fallback_iterator = key_fallbacker.fallback_for(
+    ///     icu_locid::Locale::from_bytes(b"ar-EG-u-nu-latn")
     ///         .unwrap()
     ///         .into(),
-    ///     metadata: Default::default(),
-    /// });
+    /// );
     ///
     /// // Run the algorithm and check the results.
     /// assert_eq!(fallback_iterator.get().to_string(), "ar-EG-u-nu-latn");
@@ -262,10 +256,8 @@ impl LocaleFallbacker {
     /// let provider = icu_testdata::get_provider();
     /// let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
     /// let key_fallbacker = fallbacker.for_key(FooV1Marker::KEY);
-    /// let mut fallback_iterator = key_fallbacker.fallback_for(DataRequest {
-    ///     locale: &icu_locid::Locale::from_bytes(b"en-GB").unwrap().into(),
-    ///     metadata: Default::default(),
-    /// });
+    /// let mut fallback_iterator = key_fallbacker
+    ///     .fallback_for(icu_locid::Locale::from_bytes(b"en-GB").unwrap().into());
     ///
     /// // Run the algorithm and check the results.
     /// assert_eq!(fallback_iterator.get().to_string(), "en-GB");
@@ -285,8 +277,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
     /// When first initialized, the locale is normalized according to the fallback algorithm.
     ///
     /// [`Locale`]: icu_locid::Locale
-    pub fn fallback_for<'b>(&'b self, req: DataRequest) -> LocaleFallbackIterator<'a, 'b> {
-        let mut locale = req.locale.clone();
+    pub fn fallback_for<'b>(&'b self, mut locale: DataLocale) -> LocaleFallbackIterator<'a, 'b> {
         self.normalize(&mut locale);
         LocaleFallbackIterator {
             current: locale,
