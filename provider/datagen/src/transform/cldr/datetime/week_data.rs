@@ -54,7 +54,7 @@ impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
 }
 
 impl DataProvider<WeekDataV1Marker> for WeekDataProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         let territory = req
             .locale
             .region()
@@ -103,10 +103,7 @@ fn basic_cldr_week_data() {
     let provider = WeekDataProvider::from(&SourceData::for_test());
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load(&DataRequest {
-            locale: DataLocale::default(),
-            metadata: Default::default(),
-        })
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();
@@ -114,8 +111,8 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Monday, default_week_data.get().0.first_weekday);
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load(&DataRequest {
-            locale: DataLocale::from(langid!("und-FR")),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-FR")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -125,8 +122,8 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Monday, fr_week_data.get().0.first_weekday);
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load(&DataRequest {
-            locale: DataLocale::from(langid!("und-IQ")),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-IQ")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -140,8 +137,8 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Saturday, iq_week_data.get().0.first_weekday);
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load(&DataRequest {
-            locale: DataLocale::from(langid!("und-GG")),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-GG")),
             metadata: Default::default(),
         })
         .unwrap()

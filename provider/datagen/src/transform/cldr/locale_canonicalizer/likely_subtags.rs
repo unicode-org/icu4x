@@ -24,7 +24,7 @@ impl From<&SourceData> for LikelySubtagsProvider {
 }
 
 impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
         if !req.locale.is_empty() {
@@ -146,7 +146,7 @@ fn test_basic() {
 
     let provider = LikelySubtagsProvider::from(&SourceData::for_test());
     let result: DataPayload<LikelySubtagsV1Marker> = provider
-        .load(&Default::default())
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();

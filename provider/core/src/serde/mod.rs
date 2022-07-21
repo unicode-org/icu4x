@@ -107,7 +107,7 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
-    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let buffer_response = BufferProvider::load_buffer(self.0, key, req)?;
         let buffer_format = buffer_response
             .metadata
@@ -133,7 +133,7 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.load_data(M::KEY, req)
     }
 }
@@ -152,7 +152,7 @@ macro_rules! impl_auto_deserializing {
             for<'de> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
                 serde::de::Deserialize<'de>,
         {
-            fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
                 self.as_deserializing().load(req)
             }
         }
@@ -169,7 +169,7 @@ macro_rules! impl_auto_deserializing {
             fn load_data(
                 &self,
                 key: DataKey,
-                req: &DataRequest,
+                req: DataRequest,
             ) -> Result<DataResponse<M>, DataError> {
                 self.as_deserializing().load_data(key, req)
             }

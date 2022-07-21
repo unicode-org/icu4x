@@ -28,7 +28,7 @@ impl From<&SourceData> for ListProvider {
 impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> DataProvider<M>
     for ListProvider
 {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::list_patterns::Resource = self

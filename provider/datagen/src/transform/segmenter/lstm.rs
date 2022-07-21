@@ -121,8 +121,8 @@ impl SegmenterLstmProvider {
 }
 
 impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
-        let lstm_data = self.generate_data(&req.locale)?;
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
+        let lstm_data = self.generate_data(req.locale)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(lstm_data)),

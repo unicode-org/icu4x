@@ -205,7 +205,7 @@ macro_rules! make_set_property {
         $vis fn $funcname(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointSetData, PropertiesError> {
-            Ok(provider.load(&Default::default()).and_then(DataResponse::take_payload).map(CodePointSetData::from_data)?)
+            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointSetData::from_data)?)
         }
     }
 }

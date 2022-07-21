@@ -62,8 +62,8 @@ where
     D: DataProvider<TimePatternsV1Marker> + ?Sized,
 {
     let data = data_provider
-        .load(&DataRequest {
-            locale: DataLocale::from(locale),
+        .load(DataRequest {
+            locale: &DataLocale::from(locale),
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -107,8 +107,8 @@ where
     D: DataProvider<DatePatternsV1Marker> + ?Sized,
 {
     let data = data_provider
-        .load(&DataRequest {
-            locale: DataLocale::from(locale),
+        .load(DataRequest {
+            locale: &DataLocale::from(locale),
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -276,8 +276,8 @@ where
     fn skeleton_data_payload(self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
         let data = self
             .data_provider
-            .load(&DataRequest {
-                locale: DataLocale::from(self.locale),
+            .load(DataRequest {
+                locale: &DataLocale::from(self.locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;

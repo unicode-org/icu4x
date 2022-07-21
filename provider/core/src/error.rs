@@ -78,7 +78,7 @@ pub enum DataErrorKind {
 /// ```no_run
 /// # use icu_provider::prelude::*;
 /// let key: DataKey = unimplemented!();
-/// let req: &DataRequest = unimplemented!();
+/// let req: DataRequest = unimplemented!();
 /// DataErrorKind::NeedsLocale.with_req(key, req);
 /// ```
 ///
@@ -150,7 +150,7 @@ impl DataErrorKind {
 
     /// Creates a DataError with a request context.
     #[inline]
-    pub fn with_req(self, key: DataKey, req: &DataRequest) -> DataError {
+    pub fn with_req(self, key: DataKey, req: DataRequest) -> DataError {
         self.into_error().with_req(key, req)
     }
 }
@@ -197,7 +197,7 @@ impl DataError {
     /// If the "log_error_context" feature is enabled, this logs the whole request. Either way,
     /// it returns an error with the resource key portion of the request as context.
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    pub fn with_req(self, key: DataKey, req: &DataRequest) -> Self {
+    pub fn with_req(self, key: DataKey, req: DataRequest) -> Self {
         // Don't write out a log for MissingDataKey since there is no context to add
         #[cfg(feature = "log_error_context")]
         if self.kind != DataErrorKind::MissingDataKey {

@@ -34,8 +34,8 @@ use serde::de::Deserialize;
 ///     .expect("Deserialization should succeed");
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
-///     .load(&DataRequest {
-///         locale: locale!("la").into(),
+///     .load(DataRequest {
+///         locale: &locale!("la").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
@@ -81,8 +81,8 @@ impl StaticDataProvider {
     ///
     /// DataProvider::<HelloWorldV1Marker>::load(
     ///     &stub_provider,
-    ///     &DataRequest {
-    ///         locale: locale!("la").into(),
+    ///     DataRequest {
+    ///         locale: &locale!("la").into(),
     ///         metadata: Default::default(),
     ///     },
     /// )
@@ -99,7 +99,7 @@ impl BufferProvider for StaticDataProvider {
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);

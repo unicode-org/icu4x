@@ -45,7 +45,7 @@ macro_rules! expand {
         $(
             impl DataProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
             {
-                fn load(&self, _: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                fn load(&self, _: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let source_cpt_data = &get_enumerated(&self.source, $prop_name)?.code_point_trie;
 
                     let code_point_trie = CodePointTrie::try_from(source_cpt_data).map_err(|e| {
@@ -101,7 +101,7 @@ mod tests {
         let provider = EnumeratedPropertyCodePointTrieProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<GeneralCategoryV1Marker> = provider
-            .load(&DataRequest::default())
+            .load(Default::default())
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
@@ -119,7 +119,7 @@ mod tests {
         let provider = EnumeratedPropertyCodePointTrieProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptV1Marker> = provider
-            .load(&DataRequest::default())
+            .load(Default::default())
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 

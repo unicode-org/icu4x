@@ -21,7 +21,7 @@ pub enum EitherProvider<P0, P1> {
 
 impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for EitherProvider<P0, P1> {
     #[inline]
-    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.load_any(key, req),
@@ -35,7 +35,7 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for EitherProvider<P
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         use EitherProvider::*;
         match self {
@@ -49,7 +49,7 @@ impl<M: DataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>> Dyna
     for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.load_data(key, req),
@@ -62,7 +62,7 @@ impl<M: KeyedDataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<
     for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.load(req),

@@ -49,7 +49,7 @@ impl PluralsProvider {
 }
 
 impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> DataProvider<M> for PluralsProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(PluralRulesV1::from(
@@ -107,8 +107,8 @@ fn test_basic() {
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider
-        .load(&DataRequest {
-            locale: langid!("cs").into(),
+        .load(DataRequest {
+            locale: &langid!("cs").into(),
             metadata: Default::default(),
         })
         .unwrap()
