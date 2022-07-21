@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658418396636,
+  "lastUpdate": 1658430809279,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20873,6 +20873,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a4f28462cbde85c58f4f12a2476cc1756394630c"
         },
         "date": 1658418364151,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035317,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3879446ff7354ea0e7aa83efcb484846a81214e0",
+          "message": "Passing `DataLocale` by reference (#2224)",
+          "timestamp": "2022-07-21T21:11:49+02:00",
+          "tree_id": "f147014b8c9ff16719b26dd0b974d496ac516ca1",
+          "url": "https://github.com/unicode-org/icu4x/commit/3879446ff7354ea0e7aa83efcb484846a81214e0"
+        },
+        "date": 1658430776243,
         "tool": "ndjson",
         "benches": [
           {
