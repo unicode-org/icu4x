@@ -9,7 +9,6 @@ It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-o
 ## Architecture
 ICU4X [`CodePointSet`] is split up into independent levels, with [`CodePointSet`] representing the membership/query API,
 and [`CodePointSetBuilder`] representing the builder API.
-is in future works.
 
 ## Examples:
 

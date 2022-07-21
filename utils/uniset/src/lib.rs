@@ -10,8 +10,7 @@
 //!
 //! # Architecture
 //! ICU4X [`CodePointSet`] is split up into independent levels, with [`CodePointSet`] representing the membership/query API,
-//! and [`CodePointSetBuilder`] representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
-//! is in future works.
+//! and [`CodePointSetBuilder`] representing the builder API.
 //!
 //! # Examples:
 //!
