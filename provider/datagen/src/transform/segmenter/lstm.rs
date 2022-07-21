@@ -121,10 +121,7 @@ impl SegmenterLstmProvider {
 }
 
 impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
+    fn load(&self, req: &DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
         let lstm_data = self.generate_data(&req.options)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),

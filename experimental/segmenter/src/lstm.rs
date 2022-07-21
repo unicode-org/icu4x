@@ -150,7 +150,7 @@ mod tests {
 
         let provider = icu_testdata::get_provider();
         let payload = provider
-            .load_resource(&DataRequest {
+            .load(&DataRequest {
                 options: DataOptions::from(locale!("th")),
                 metadata: Default::default(),
             })

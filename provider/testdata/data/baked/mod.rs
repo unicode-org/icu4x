@@ -1517,7 +1517,7 @@ impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackPar
     }
 }
 impl DataProvider<::icu_segmenter::LstmDataV1Marker> for BakedDataProvider {
-    fn load_resource(
+    fn load(
         &self,
         req: &DataRequest,
     ) -> Result<DataResponse<::icu_segmenter::LstmDataV1Marker>, DataError> {
