@@ -73,13 +73,13 @@ pub enum DataErrorKind {
 ///
 /// # Example
 ///
-/// Create a NeedsVariant error and attach a data request for context:
+/// Create a NeedsLocale error and attach a data request for context:
 ///
 /// ```no_run
 /// # use icu_provider::prelude::*;
 /// let key: DataKey = unimplemented!();
 /// let req: &DataRequest = unimplemented!();
-/// DataErrorKind::NeedsVariant.with_req(key, req);
+/// DataErrorKind::NeedsLocale.with_req(key, req);
 /// ```
 ///
 /// Create a named custom error:

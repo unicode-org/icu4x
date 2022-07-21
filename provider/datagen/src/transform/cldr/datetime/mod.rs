@@ -55,6 +55,10 @@ macro_rules! impl_data_provider {
                     &self,
                     req: &DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
+                    if req.locale.is_empty() {
+                        return Err(DataErrorKind::NeedsLocale.into_error());
+                    }
+
                     let langid = req.locale.get_langid();
                     let calendar = req
                         .locale
