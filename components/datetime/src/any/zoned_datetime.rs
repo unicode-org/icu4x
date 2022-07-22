@@ -89,7 +89,6 @@ impl ZonedAnyDateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
