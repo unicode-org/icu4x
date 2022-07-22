@@ -68,6 +68,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "arrayvec"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8da52d66c7071e2e3fa2a1e5c6d088fec47b593032b254f5e980de8ea54454d6"
+
+[[package]]
 name = "atoi"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1647,6 +1653,7 @@ name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
  "arraystring",
+ "arrayvec",
  "atoi",
  "databake",
  "displaydoc",
@@ -1660,6 +1667,7 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
+ "write16",
  "zerofrom",
  "zerovec",
 ]
@@ -4048,6 +4056,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0120db82e8a1e0b9fb3345a539c478767c0048d842860994d96113d5b667bd69"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "write16"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
+dependencies = [
+ "arrayvec",
 ]
 
 [[package]]
