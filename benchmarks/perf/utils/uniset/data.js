@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658441924676,
+  "lastUpdate": 1658471855827,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -37961,6 +37961,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44353825,
             "range": "± 217054",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "583de584f0ba1cfe3402915989f57aa586c0ca06",
+          "message": "Make sink-writing normalization methods non-experimental (#2201)",
+          "timestamp": "2022-07-22T09:27:46+03:00",
+          "tree_id": "01f2f1f5259eff0d51e36bb93a37a2d8547d86bb",
+          "url": "https://github.com/unicode-org/icu4x/commit/583de584f0ba1cfe3402915989f57aa586c0ca06"
+        },
+        "date": 1658471826966,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39072445,
+            "range": "± 262487",
             "unit": "ns/iter"
           },
           {
