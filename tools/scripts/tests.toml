@@ -10,7 +10,7 @@ category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-check-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.7"]
 command = "cargo"
-args = ["check-all-features", "-D", "warnings"]
+args = ["check-all-features", "--", "-D", "warnings"]
 
 [tasks.build-all-features]
 description = "Build all permutations of all features"
@@ -18,7 +18,7 @@ category = "ICU4X Development"
 install_crate = { crate_name = "cargo-all-features", binary = "cargo-build-all-features", test_arg = ["--help"] }
 install_crate_args = ["--version", "^1.7"]
 command = "cargo"
-args = ["build-all-features", "-D", "warnings"]
+args = ["build-all-features", "--", "-D", "warnings"]
 
 [tasks.test-all-features]
 description = "Run all Rust tests with all features and targets"
