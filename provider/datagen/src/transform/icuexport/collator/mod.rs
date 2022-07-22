@@ -126,13 +126,13 @@ macro_rules! collation_provider {
                             &format!(
                                 "collation/{}/{}{}.toml",
                                 self.source.collation_han_database(),
-                                locale_to_file_name(&req.options), $suffix)
+                                locale_to_file_name(&req.locale), $suffix)
                         )
                         .map_err(|e| match e.kind {
                             DataErrorKind::Io(
                                 std::io::ErrorKind::NotFound
-                            ) => DataErrorKind::MissingDataOptions.with_req(
-                                $marker::KEY, &req
+                            ) => DataErrorKind::MissingLocale.with_req(
+                                $marker::KEY, req
                             ),
                             _ => e
                         })?;
