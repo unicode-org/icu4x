@@ -224,7 +224,7 @@ impl DataProvider<FooV1Marker> for FooProvider {
 impl IterableDataProvider<FooV1Marker> for FooProvider {
     fn supported_locales(
         &self,
-    ) -> Result<Vec<DataLocale>, DataError> {
+    ) -> Result<Vec<Locale>, DataError> {
         // This should list all supported locales, for example.
     }
 }

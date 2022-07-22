@@ -22,12 +22,12 @@ Each component should use `DataProvider` only to construct the instance of each 
 pub struct AdditiveIdentity(char);
 
 impl AdditiveIdentity {
-    pub fn try_new<L: Into<Locale>, P: DataProvider<DecimalSymbolsV1Marker>>(
-        locale: L,
-        provider: &D,
+    pub fn try_new(
+        locale: impl Into<DataLocale>,
+        provider: &(impl DataProvider<DecimalSymbolsV1Marker>),
     ) -> Result<Self, MyError> {
         let response = data_provider.load(DataRequest {
-            locale: &locale.into().into(),
+            locale: locale.into(),
             metadata: Default::default(),
         })?.take_payload()?;
 

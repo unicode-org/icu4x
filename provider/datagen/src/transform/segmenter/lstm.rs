@@ -6,7 +6,7 @@
 
 use crate::transform::cldr::source::read_and_parse_json;
 use crate::SourceData;
-use icu_locid::{langid, locale};
+use icu_locid::{langid, locale, Locale};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_segmenter::*;
@@ -66,7 +66,7 @@ impl From<&SourceData> for SegmenterLstmProvider {
 
 impl SegmenterLstmProvider {
     // Generate LSTM Data for DataProvider from LSTM JSON.
-    fn generate_data(&self, locale: &DataLocale) -> Result<LstmDataV1<'static>, DataError> {
+    fn generate_data(&self, locale: DataLocale) -> Result<LstmDataV1<'static>, DataError> {
         let lstm_data: &RawLstmData = read_and_parse_json::<RawLstmData>(
             self.source.segmenter_lstm()?,
             &format!(
@@ -105,14 +105,14 @@ impl SegmenterLstmProvider {
         })
     }
 
-    fn get_json_filename(locale: &DataLocale) -> Option<&'static str> {
-        if locale.get_langid() == langid!("km") {
+    fn get_json_filename(locale: DataLocale) -> Option<&'static str> {
+        if locale.get_langid() == &langid!("km") {
             Some("lstm_km.json")
-        } else if locale.get_langid() == langid!("lo") {
+        } else if locale.get_langid() == &langid!("lo") {
             Some("lstm_lo.json")
-        } else if locale.get_langid() == langid!("my") {
+        } else if locale.get_langid() == &langid!("my") {
             Some("lstm_my.json")
-        } else if locale.get_langid() == langid!("th") {
+        } else if locale.get_langid() == &langid!("th") {
             Some("lstm_th.json")
         } else {
             None
@@ -133,12 +133,12 @@ impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
 icu_provider::make_exportable_provider!(SegmenterLstmProvider, [LstmDataV1Marker,]);
 
 impl IterableDataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![
-            locale!("km").into(),
-            locale!("lo").into(),
-            locale!("my").into(),
-            locale!("th").into(),
+            locale!("km"),
+            locale!("lo"),
+            locale!("my"),
+            locale!("th"),
         ])
     }
 }

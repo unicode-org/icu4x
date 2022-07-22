@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceData;
+use icu_locid::Locale;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -65,7 +66,7 @@ macro_rules! expand {
             impl IterableDataProvider<$marker> for BinaryPropertyUnicodeSetDataProvider {
                 fn supported_locales(
                     &self,
-                ) -> Result<Vec<DataLocale>, DataError> {
+                ) -> Result<Vec<Locale>, DataError> {
                     get_binary(&self.source, $prop_name)?;
 
                     Ok(vec![Default::default()])

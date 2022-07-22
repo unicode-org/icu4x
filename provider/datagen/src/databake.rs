@@ -112,7 +112,7 @@ impl DataExporter for BakedDataExporter {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        locale: DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let (payload, marker_type) = payload.tokenize(&self.dependencies);

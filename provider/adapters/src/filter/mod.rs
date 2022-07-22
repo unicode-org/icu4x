@@ -146,13 +146,13 @@ where
     fn supported_locales_for_key(
         &self,
         key: DataKey,
-    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+    ) -> Result<alloc::vec::Vec<icu_locid::Locale>, DataError> {
         self.inner.supported_locales_for_key(key).map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
                 .filter_map(|locale| {
                     if (self.predicate)(DataRequest {
-                        locale: &locale,
+                        locale: (&locale).into(),
                         metadata: Default::default(),
                     }) {
                         Some(locale)
@@ -172,13 +172,13 @@ where
     F: Fn(DataRequest) -> bool,
     D: datagen::IterableDataProvider<M>,
 {
-    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_locid::Locale>, DataError> {
         self.inner.supported_locales().map(|vec| {
             // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
                 .filter_map(|locale| {
                     if (self.predicate)(DataRequest {
-                        locale: &locale,
+                        locale: (&locale).into(),
                         metadata: Default::default(),
                     }) {
                         Some(locale)

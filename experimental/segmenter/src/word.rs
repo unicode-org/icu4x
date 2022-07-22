@@ -42,7 +42,7 @@ impl WordBreakSegmenter {
         let locale = locale!("th");
         let dictionary_payload = provider
             .load(DataRequest {
-                locale: &DataLocale::from(locale),
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;

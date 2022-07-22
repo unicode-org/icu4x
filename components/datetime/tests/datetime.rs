@@ -369,9 +369,8 @@ fn test_dayperiod_patterns() {
             .unicode
             .keywords
             .set(key!("ca"), value!("gregory"));
-        let mut data_locale = DataLocale::from(&locale);
         let req = DataRequest {
-            locale: &data_locale,
+            locale: (&locale).into(),
             metadata: Default::default(),
         };
         let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
@@ -392,10 +391,9 @@ fn test_dayperiod_patterns() {
             provider.load(req).unwrap().take_payload().unwrap();
         let week_data: DataPayload<WeekDataV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
-        data_locale.retain_unicode_ext(|_| false);
         let decimal_data: DataPayload<DecimalSymbolsV1Marker> = provider
             .load(DataRequest {
-                locale: &data_locale,
+                locale: (&locale.id).into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -532,9 +530,8 @@ fn test_time_zone_patterns() {
             .unicode
             .keywords
             .set(key!("ca"), value!("gregory"));
-        let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
-            locale: &data_locale,
+            locale: (&locale).into(),
             metadata: Default::default(),
         };
         let mut config = test.config;

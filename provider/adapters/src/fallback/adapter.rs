@@ -20,8 +20,9 @@ use crate::helpers::result_is_err_missing_data_options;
 /// // so we need to use icu_testdata::get_postcard_provider() instead.
 /// let provider = icu_testdata::get_postcard_provider();
 ///
+/// let locale = locale!("ja-JP");
 /// let req = DataRequest {
-///     locale: &locale!("ja-JP").into(),
+///     locale: (&locale).into(),
 ///     metadata: Default::default(),
 /// };
 ///
@@ -88,8 +89,9 @@ impl<P> LocaleFallbackProvider<P> {
     ///
     /// let provider = HelloWorldProvider;
     ///
+    /// let locale = locale!("de-CH");
     /// let req = DataRequest {
-    ///     locale: &locale!("de-CH").into(),
+    ///     locale: (&locale).into(),
     ///     metadata: Default::default(),
     /// };
     ///
@@ -140,10 +142,10 @@ impl<P> LocaleFallbackProvider<P> {
         F2: FnMut(&mut R) -> &mut DataResponseMetadata,
     {
         let key_fallbacker = self.fallbacker.for_key(key);
-        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.locale.clone());
+        let mut fallback_iterator = key_fallbacker.fallback_for(base_req.locale.into());
         loop {
             let result = f1(DataRequest {
-                locale: fallback_iterator.get(),
+                locale: fallback_iterator.get().into(),
                 metadata: Default::default(),
             });
             if !result_is_err_missing_data_options(&result) {
@@ -156,7 +158,7 @@ impl<P> LocaleFallbackProvider<P> {
                     .map_err(|e| e.with_req(key, base_req));
             }
             // If we just checked und, break out of the loop.
-            if fallback_iterator.get().is_empty() {
+            if fallback_iterator.get() == &Locale::UND {
                 break;
             }
             fallback_iterator.step();

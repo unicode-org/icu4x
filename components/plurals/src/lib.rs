@@ -344,10 +344,11 @@ impl PluralRules {
     where
         D: DataProvider<CardinalV1Marker> + ?Sized,
     {
+        let locale = locale.into();
         Ok(Self(
             data_provider
                 .load(DataRequest {
-                    locale: &locale.into().into(),
+                    locale: (&locale).into(),
                     metadata: Default::default(),
                 })?
                 .take_payload()?
@@ -390,10 +391,11 @@ impl PluralRules {
     where
         D: DataProvider<OrdinalV1Marker> + ?Sized,
     {
+        let locale = locale.into();
         Ok(Self(
             data_provider
                 .load(DataRequest {
-                    locale: &locale.into().into(),
+                    locale: (&locale).into(),
                     metadata: Default::default(),
                 })?
                 .take_payload()?

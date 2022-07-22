@@ -9,7 +9,7 @@ use crate::transform::cldr::cldr_serde::{
 use crate::SourceData;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
-use icu_locid::LanguageIdentifier;
+use icu_locid::{subtags::Region, LanguageIdentifier, Locale};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
@@ -30,14 +30,14 @@ impl From<&SourceData> for WeekDataProvider {
 
 impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
-        let regions: HashSet<DataLocale> = week_data
+        let regions: HashSet<Option<Region>> = week_data
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
@@ -46,10 +46,12 @@ impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
                 Territory::Region(r) => Some(Some(*r)),
                 _ => None,
             })
-            .map(LanguageIdentifier::from)
-            .map(DataLocale::from)
             .collect();
-        Ok(regions.into_iter().collect())
+        Ok(regions
+            .into_iter()
+            .map(LanguageIdentifier::from)
+            .map(Locale::from)
+            .collect())
     }
 }
 
@@ -57,7 +59,8 @@ impl DataProvider<WeekDataV1Marker> for WeekDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         let territory = req
             .locale
-            .region()
+            .get_langid()
+            .region
             .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
             .transpose()?
             .unwrap_or_else(|| DEFAULT_TERRITORY.clone());
@@ -112,7 +115,7 @@ fn basic_cldr_week_data() {
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-FR")),
+            locale: (&langid!("und-FR")).into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -123,7 +126,7 @@ fn basic_cldr_week_data() {
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-IQ")),
+            locale: (&langid!("und-IQ")).into(),
             metadata: Default::default(),
         })
         .unwrap()
@@ -138,7 +141,7 @@ fn basic_cldr_week_data() {
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
-            locale: &DataLocale::from(langid!("und-GG")),
+            locale: (&langid!("und-GG")).into(),
             metadata: Default::default(),
         })
         .unwrap()

@@ -95,7 +95,7 @@ pub fn complex_language_segment_str(
 mod tests {
     use super::*;
     use icu_locid::locale;
-    use icu_provider::{DataLocale, DataProvider, DataRequest};
+    use icu_provider::prelude::*;
 
     #[test]
     fn thai_word_break() {
@@ -104,7 +104,7 @@ mod tests {
         let locale = locale!("th");
         let payload = provider
             .load(DataRequest {
-                locale: &DataLocale::from(locale),
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })
             .expect("Loading should succeed!")

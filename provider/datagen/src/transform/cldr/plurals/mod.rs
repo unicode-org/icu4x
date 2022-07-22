@@ -4,6 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
+use icu_locid::Locale;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::datagen::IterableDataProvider;
@@ -56,7 +57,7 @@ impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> DataProvider<M> for 
                 #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.get_rules_for(M::KEY)?
                     .0
-                    .get(&req.locale.get_langid())
+                    .get(req.locale.get_langid())
                     .ok_or(DataErrorKind::MissingLocale.into_error())?,
             ))),
         })
@@ -68,14 +69,13 @@ icu_provider::make_exportable_provider!(PluralsProvider, [OrdinalV1Marker, Cardi
 impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> IterableDataProvider<M>
     for PluralsProvider
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(self
             .get_rules_for(M::KEY)?
             .0
             .keys()
-            // TODO(#568): Avoid the clone
             .cloned()
-            .map(DataLocale::from)
+            .map(Locale::from)
             .collect())
     }
 }
@@ -108,7 +108,7 @@ fn test_basic() {
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider
         .load(DataRequest {
-            locale: &langid!("cs").into(),
+            locale: (&langid!("cs")).into(),
             metadata: Default::default(),
         })
         .unwrap()

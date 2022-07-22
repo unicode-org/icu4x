@@ -42,7 +42,7 @@ impl DataExporter for BlobExporter<'_> {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        locale: DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         log::trace!("Adding: {}/{}", key, locale);

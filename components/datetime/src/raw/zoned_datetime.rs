@@ -91,10 +91,8 @@ impl ZonedDateTimeFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
-        // TODO(#2136): Don't use expensive from
-        let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
-            locale: &data_locale,
+            locale: (&locale).into(),
             metadata: Default::default(),
         };
 

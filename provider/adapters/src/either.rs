@@ -82,7 +82,7 @@ impl<
     fn supported_locales_for_key(
         &self,
         key: DataKey,
-    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+    ) -> Result<alloc::vec::Vec<icu_locid::Locale>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_locales_for_key(key),
@@ -99,7 +99,7 @@ impl<
     > datagen::IterableDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<icu_locid::Locale>, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.supported_locales(),

@@ -533,9 +533,9 @@ mod tests {
         use icu_provider::prelude::*;
 
         let provider = icu_testdata::get_provider();
-        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap();
         let req = DataRequest {
-            locale: &locale,
+            locale: (&locale).into(),
             metadata: Default::default(),
         };
         let date_data: DataPayload<DateSymbolsV1Marker> =
@@ -545,7 +545,7 @@ mod tests {
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale.get_langid().language,
+            req.locale.get_langid().language,
             &provider,
             Default::default(),
         )

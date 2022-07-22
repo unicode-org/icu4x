@@ -10,7 +10,7 @@ use crate::transform::icuexport::uprops::{
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
-use icu_locid::{langid, locale};
+use icu_locid::{langid, locale, Locale};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
     WordBreak,
@@ -694,25 +694,25 @@ icu_provider::make_exportable_provider!(
 );
 
 impl IterableDataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -729,16 +729,16 @@ pub struct SegmenterDictionaryProvider {
 }
 
 impl SegmenterDictionaryProvider {
-    fn get_toml_filename(locale: &DataLocale) -> Option<&'static str> {
-        if locale.get_langid() == langid!("km") {
+    fn get_toml_filename(locale: DataLocale) -> Option<&'static str> {
+        if locale.get_langid() == &langid!("km") {
             Some("dictionary_km.toml")
-        } else if locale.get_langid() == langid!("ja") {
+        } else if locale.get_langid() == &langid!("ja") {
             Some("dictionary_cj.toml")
-        } else if locale.get_langid() == langid!("lo") {
+        } else if locale.get_langid() == &langid!("lo") {
             Some("dictionary_lo.toml")
-        } else if locale.get_langid() == langid!("my") {
+        } else if locale.get_langid() == &langid!("my") {
             Some("dictionary_my.toml")
-        } else if locale.get_langid() == langid!("th") {
+        } else if locale.get_langid() == &langid!("th") {
             Some("dictionary_th.toml")
         } else {
             None
@@ -782,13 +782,13 @@ icu_provider::make_exportable_provider!(
 );
 
 impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![
-            locale!("th").into(),
-            locale!("km").into(),
-            locale!("lo").into(),
-            locale!("my").into(),
-            locale!("ja").into(),
+            locale!("th"),
+            locale!("km"),
+            locale!("lo"),
+            locale!("my"),
+            locale!("ja"),
         ])
     }
 }

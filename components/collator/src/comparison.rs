@@ -123,9 +123,8 @@ impl Collator {
             }
             filtered_locale
         };
-        let locale = locale.into();
         let req = DataRequest {
-            locale: &locale,
+            locale: (&locale).into(),
             metadata: Default::default(),
         };
 

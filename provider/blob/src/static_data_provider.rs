@@ -35,7 +35,7 @@ use serde::de::Deserialize;
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
 ///     .load(DataRequest {
-///         locale: &locale!("la").into(),
+///         locale: (&locale!("la")).into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
@@ -82,7 +82,7 @@ impl StaticDataProvider {
     /// DataProvider::<HelloWorldV1Marker>::load(
     ///     &stub_provider,
     ///     DataRequest {
-    ///         locale: &locale!("la").into(),
+    ///         locale: (&locale!("la")).into(),
     ///         metadata: Default::default(),
     ///     },
     /// )

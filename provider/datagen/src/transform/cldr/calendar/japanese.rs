@@ -34,7 +34,7 @@ impl From<&SourceData> for JapaneseErasProvider {
 
 impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        let japanext = req.locale.get_unicode_ext(&key!("ca")) == Some(value!("japanext"));
+        let japanext = req.locale.get_unicode_keyword(key!("ca")) == Some(&value!("japanext"));
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
@@ -183,10 +183,10 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,]);
 
 impl IterableDataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![
-            DataLocale::from(Locale::from_str("und-u-ca-japanese").unwrap()),
-            DataLocale::from(Locale::from_str("und-u-ca-japanext").unwrap()),
+            Locale::from_str("und-u-ca-japanese").unwrap(),
+            Locale::from_str("und-u-ca-japanext").unwrap(),
         ])
     }
 }

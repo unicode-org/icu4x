@@ -6,6 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
 use crate::SourceData;
 use icu_datetime::provider::time_zones::*;
+use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
@@ -37,7 +38,7 @@ macro_rules! impl_data_provider {
                         .source
                         .cldr()?
                         .dates("gregorian")
-                        .read_and_parse(&langid, "timeZoneNames.json")?;
+                        .read_and_parse(langid, "timeZoneNames.json")?;
                     let time_zone_names = resource
                         .main
                         .0
@@ -91,13 +92,12 @@ macro_rules! impl_data_provider {
             }
 
             impl IterableDataProvider<$marker> for TimeZonesProvider {
-                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
                     Ok(self
                         .source
                         .cldr()?
                         .dates("gregorian")
                         .list_langs()?
-                        .map(DataLocale::from)
                         .collect())
                 }
             }
@@ -131,7 +131,7 @@ mod tests {
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                locale: (&langid!("en")).into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -141,7 +141,7 @@ mod tests {
 
         let exemplar_cities: DataPayload<ExemplarCitiesV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                locale: (&langid!("en")).into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -158,7 +158,7 @@ mod tests {
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                locale: (&langid!("en")).into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -183,7 +183,7 @@ mod tests {
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                locale: (&langid!("en")).into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -211,7 +211,7 @@ mod tests {
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                locale: (&langid!("en")).into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -236,7 +236,7 @@ mod tests {
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                locale: (&langid!("en")).into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -264,7 +264,7 @@ mod tests {
 
         let metazone_period: DataPayload<MetaZonePeriodV1Marker> = provider
             .load(DataRequest {
-                locale: &langid!("en").into(),
+                locale: (&langid!("en")).into(),
                 metadata: Default::default(),
             })
             .unwrap()

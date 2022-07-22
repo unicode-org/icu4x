@@ -285,7 +285,7 @@ pub fn datagen(
             .map_err(|e| e.with_key(key))?;
         let res = locales.into_par_iter().try_for_each(|locale| {
             let req = DataRequest {
-                locale: &locale,
+                locale: (&locale).into(),
                 metadata: Default::default(),
             };
             let payload = provider
@@ -293,7 +293,7 @@ pub fn datagen(
                 .and_then(DataResponse::take_payload)
                 .map_err(|e| e.with_req(key, req))?;
             exporters.par_iter().try_for_each(|e| {
-                e.put_payload(key, &locale, &payload)
+                e.put_payload(key, (&locale).into(), &payload)
                     .map_err(|e| e.with_req(key, req))
             })
         });

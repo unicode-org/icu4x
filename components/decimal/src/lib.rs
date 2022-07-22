@@ -106,9 +106,10 @@ impl FixedDecimalFormatter {
         data_provider: &D,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, FixedDecimalFormatterError> {
+        let locale = locale.into();
         let symbols = data_provider
             .load(DataRequest {
-                locale: &locale.into().into(),
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;

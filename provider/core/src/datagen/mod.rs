@@ -30,7 +30,7 @@ pub trait DataExporter: Sync {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        locale: DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
 
@@ -76,7 +76,7 @@ macro_rules! make_exportable_provider {
         );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
+            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<icu_locid::Locale>, $crate::DataError> {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(

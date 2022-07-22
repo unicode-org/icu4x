@@ -21,7 +21,7 @@ fn test_static_load_works() {
 
     let _rules: DataPayload<CardinalV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("en").into(),
+            locale: (&locale!("en")).into(),
             metadata: Default::default(),
         })
         .expect("Failed to load payload")

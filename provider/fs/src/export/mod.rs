@@ -39,7 +39,7 @@
 //! let result = exporter
 //!     .put_payload(
 //!         HelloWorldV1Marker::KEY,
-//!         &Default::default(),
+//!         Default::default(),
 //!         &UpcastDataPayload::upcast(payload.clone()),
 //!     )
 //!     .expect("Should successfully export");

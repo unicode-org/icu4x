@@ -69,7 +69,7 @@ impl TimeFormatter {
             Some(
                 data_provider
                     .load(DataRequest {
-                        locale: &DataLocale::from(&locale),
+                        locale: (&locale).into(),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -207,9 +207,8 @@ impl DateFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
-        let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
-            locale: &data_locale,
+            locale: (&locale).into(),
             metadata: Default::default(),
         };
 
@@ -418,9 +417,8 @@ impl DateTimeFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
-        let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
-            locale: &data_locale,
+            locale: (&locale).into(),
             metadata: Default::default(),
         };
 

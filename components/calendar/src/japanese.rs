@@ -95,8 +95,8 @@ impl Japanese {
     ) -> Result<Self, DataError> {
         let japanext = era_style == JapaneseEraStyle::All;
 
-        let mut locale = DataLocale::default();
-        locale.set_unicode_ext(
+        let mut locale = icu_locid::Locale::default();
+        locale.extensions.unicode.keywords.set(
             key!("ca"),
             if japanext {
                 value!("japanext")
@@ -107,7 +107,7 @@ impl Japanese {
 
         let eras = data_provider
             .load(DataRequest {
-                locale: &locale,
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;

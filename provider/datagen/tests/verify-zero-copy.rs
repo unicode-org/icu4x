@@ -84,7 +84,7 @@ fn main() {
             let payload = provider.load_buffer(
                 key,
                 DataRequest {
-                    locale: &locale,
+                    locale: (&locale).into(),
                     metadata: Default::default(),
                 },
             ).unwrap().take_payload().unwrap();

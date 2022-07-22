@@ -5,7 +5,7 @@
 use icu_locid::extensions::unicode::Key;
 use icu_locid::extensions_unicode_key as key;
 use icu_locid::subtags::Language;
-use icu_locid::LanguageIdentifier;
+use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::FallbackPriority;
 
 use super::*;
@@ -13,33 +13,32 @@ use super::*;
 const SUBDIVISION_KEY: Key = key!("sd");
 
 impl<'a> LocaleFallbackerWithConfig<'a> {
-    pub(crate) fn normalize(&self, locale: &mut DataLocale) {
-        let language = locale.language();
+    pub(super) fn normalize(&self, locale: &mut Locale) {
+        let language = locale.id.language;
         // 1. Populate the region (required for region fallback only)
-        if self.config.priority == FallbackPriority::Region && locale.region().is_none() {
+        if self.config.priority == FallbackPriority::Region && locale.id.region.is_none() {
             // 1a. First look for region based on language+script
-            if let Some(script) = locale.script() {
-                locale.set_region(
-                    self.likely_subtags
-                        .ls2r
-                        .get(&language.into(), &script.into())
-                        .ok()
-                        .copied(),
-                );
+            if let Some(script) = locale.id.script {
+                locale.id.region = self
+                    .likely_subtags
+                    .ls2r
+                    .get(&language.into(), &script.into())
+                    .ok()
+                    .copied();
             }
             // 1b. If that fails, try language only
-            if locale.region().is_none() {
-                locale.set_region(self.likely_subtags.l2r.get(&language.into()).copied());
+            if locale.id.region.is_none() {
+                locale.id.region = self.likely_subtags.l2r.get(&language.into()).copied();
             }
         }
         // 2. Remove the script if it is implied by the other subtags
-        if let Some(script) = locale.script() {
+        if let Some(script) = locale.id.script {
             let default_script = self
                 .likely_subtags
                 .l2s
                 .get_copied(&language.into())
                 .unwrap_or(DEFAULT_SCRIPT);
-            if let Some(region) = locale.region() {
+            if let Some(region) = locale.id.region {
                 if script
                     == self
                         .likely_subtags
@@ -47,14 +46,14 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                         .get_copied(&language.into(), &region.into())
                         .unwrap_or(default_script)
                 {
-                    locale.set_script(None);
+                    locale.id.script = None;
                 }
             } else if script == default_script {
-                locale.set_script(None);
+                locale.id.script = None;
             }
         }
         // 3. Remove irrelevant extension subtags
-        locale.retain_unicode_ext(|key| {
+        locale.extensions.unicode.keywords.retain_by_key(|key| {
             match *key {
                 // Always retain -u-sd
                 SUBDIVISION_KEY => true,
@@ -70,7 +69,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
 }
 
 impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
-    pub fn step(&mut self, locale: &mut DataLocale) {
+    pub fn step(&mut self, locale: &mut Locale) {
         match self.config.priority {
             FallbackPriority::Language => self.step_language(locale),
             FallbackPriority::Region => self.step_region(locale),
@@ -80,105 +79,113 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         }
     }
 
-    fn step_language(&mut self, locale: &mut DataLocale) {
+    fn step_language(&mut self, locale: &mut Locale) {
         // 1. Remove the extension fallback keyword
         if let Some(extension_key) = self.config.extension_key {
-            if let Some(value) = locale.remove_unicode_ext(&extension_key) {
+            if let Some(value) = locale.extensions.unicode.keywords.remove(&extension_key) {
                 self.backup_extension = Some(value);
                 return;
             }
         }
         // 2. Remove the subdivision keyword
-        if let Some(value) = locale.remove_unicode_ext(&SUBDIVISION_KEY) {
+        if let Some(value) = locale.extensions.unicode.keywords.remove(&SUBDIVISION_KEY) {
             self.backup_subdivision = Some(value);
             return;
         }
         // 3. Assert that the locale is a language identifier
-        debug_assert!(!locale.has_unicode_ext());
+        debug_assert!(locale.extensions.unicode.keywords.is_empty());
         // 4. Remove variants
-        if locale.has_variants() {
-            self.backup_variants = Some(locale.clear_variants());
+        if !locale.id.variants.is_empty() {
+            self.backup_variants = Some(locale.id.variants.clear());
             return;
         }
         // 5. Check for parent override
-        if let Some(parent) = self
-            .parents
-            .parents
-            .get_copied_by(|bytes| locale.strict_cmp(bytes).reverse())
-        {
+        if let Some(parent) = self.parents.parents.get_copied_by(|bytes| {
+            Into::<DataLocale>::into(&*locale)
+                .strict_cmp(bytes)
+                .reverse()
+        }) {
             let lid = LanguageIdentifier::from(parent);
-            locale.set_langid(lid);
+            locale.id = lid;
             self.restore_extensions_variants(locale);
             return;
         }
         // 6. Add the script subtag if necessary
-        if locale.script().is_none() {
-            if let Some(region) = locale.region() {
-                let language = locale.language();
+        if locale.id.script.is_none() {
+            if let Some(region) = locale.id.region {
+                let language = locale.id.language;
                 if let Ok(script) = self
                     .likely_subtags
                     .lr2s
                     .get_copied(&language.into(), &region.into())
                 {
-                    locale.set_script(Some(script));
+                    locale.id.script = Some(script);
                     self.restore_extensions_variants(locale);
                     return;
                 }
             }
         }
         // 7. Remove region
-        if locale.region().is_some() {
-            locale.set_region(None);
+        if locale.id.region.is_some() {
+            locale.id.region = None;
             return;
         }
         // 8. Remove language+script
-        debug_assert!(!locale.language().is_empty()); // don't call .step() on und
-        locale.set_script(None);
-        locale.set_language(Language::UND);
+        debug_assert!(!locale.id.language.is_empty()); // don't call .step() on und
+        locale.id.script = None;
+        locale.id.language = Language::UND;
     }
 
-    fn step_region(&mut self, locale: &mut DataLocale) {
+    fn step_region(&mut self, locale: &mut Locale) {
         // 1. Remove the extension fallback keyword
         if let Some(extension_key) = self.config.extension_key {
-            if let Some(value) = locale.remove_unicode_ext(&extension_key) {
+            if let Some(value) = locale.extensions.unicode.keywords.remove(&extension_key) {
                 self.backup_extension = Some(value);
                 return;
             }
         }
         // 2. Remove the subdivision keyword
-        if let Some(value) = locale.remove_unicode_ext(&SUBDIVISION_KEY) {
+        if let Some(value) = locale.extensions.unicode.keywords.remove(&SUBDIVISION_KEY) {
             self.backup_subdivision = Some(value);
             return;
         }
         // 3. Assert that the locale is a language identifier
-        debug_assert!(!locale.has_unicode_ext());
+        debug_assert!(locale.extensions.unicode.keywords.is_empty());
         // 4. Remove variants
-        if locale.has_variants() {
-            self.backup_variants = Some(locale.clear_variants());
+        if !locale.id.variants.is_empty() {
+            self.backup_variants = Some(locale.id.variants.clear());
             return;
         }
         // 5. Remove language+script
-        if !locale.language().is_empty() || locale.script().is_some() {
-            locale.set_script(None);
-            locale.set_language(Language::UND);
+        if !locale.id.language.is_empty() || locale.id.script.is_some() {
+            locale.id.script = None;
+            locale.id.language = Language::UND;
             self.restore_extensions_variants(locale);
             return;
         }
         // 6. Remove region
-        debug_assert!(locale.region().is_some()); // don't call .step() on und
-        locale.set_region(None);
+        debug_assert!(locale.id.region.is_some()); // don't call .step() on und
+        locale.id.region = None;
     }
 
-    fn restore_extensions_variants(&mut self, locale: &mut DataLocale) {
+    fn restore_extensions_variants(&mut self, locale: &mut Locale) {
         if let Some(value) = self.backup_extension.take() {
             #[allow(clippy::unwrap_used)] // not reachable unless extension_key is present
-            locale.set_unicode_ext(self.config.extension_key.unwrap(), value);
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(self.config.extension_key.unwrap(), value);
         }
         if let Some(value) = self.backup_subdivision.take() {
-            locale.set_unicode_ext(SUBDIVISION_KEY, value);
+            locale
+                .extensions
+                .unicode
+                .keywords
+                .set(SUBDIVISION_KEY, value);
         }
         if let Some(variants) = self.backup_variants.take() {
-            locale.set_variants(variants);
+            locale.id.variants = variants;
         }
     }
 }
@@ -341,7 +348,7 @@ mod tests {
                 } else {
                     fallbacker_no_data.for_config(config)
                 };
-                let locale = DataLocale::from(Locale::from_str(cas.input).unwrap());
+                let locale = Locale::from_str(cas.input).unwrap();
                 let mut it = key_fallbacker.fallback_for(locale);
                 for expected in expected_chain {
                     assert_eq!(

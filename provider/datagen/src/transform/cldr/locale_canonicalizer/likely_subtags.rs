@@ -5,6 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
+use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
@@ -47,7 +48,7 @@ impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
 icu_provider::make_exportable_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,]);
 
 impl IterableDataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

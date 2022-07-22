@@ -8,6 +8,7 @@
 use crate::SourceData;
 use icu_char16trie::char16trie::Char16Trie;
 use icu_codepointtrie::CodePointTrie;
+use icu_locid::Locale;
 use icu_normalizer::provider::*;
 use icu_normalizer::u24::U24;
 use icu_provider::datagen::IterableDataProvider;
@@ -51,8 +52,8 @@ macro_rules! normalization_provider {
         icu_provider::make_exportable_provider!($provider, [$marker,]);
 
         impl IterableDataProvider<$marker> for $provider {
-            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                Ok(vec![DataLocale::default()])
+            fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
+                Ok(vec![Default::default()])
             }
         }
     };

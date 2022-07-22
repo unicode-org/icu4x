@@ -69,8 +69,9 @@ where
 /// // Implement DynamicDataProvider<AnyMarker> on HelloWorldProvider: DataProvider<HelloWorldV1Marker>
 /// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
+/// let locale = icu_locid::locale!("de");
 /// let req = DataRequest {
-///     locale: &icu_locid::locale!("de").into(),
+///     locale: (&locale).into(),
 ///     metadata: Default::default(),
 /// };
 ///
@@ -109,8 +110,9 @@ where
 ///     _ => HelloWorldV1Marker,
 /// }, AnyMarker);
 ///
+/// let locale = icu_locid::locale!("de");
 /// let req = DataRequest {
-///     locale: &icu_locid::locale!("de").into(),
+///     locale: (&locale).into(),
 ///     metadata: Default::default(),
 /// };
 ///

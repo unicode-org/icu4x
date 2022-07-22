@@ -5,6 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_decimal::provider::*;
+use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
@@ -70,13 +71,13 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .source
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(langid, "numbers.json")?;
 
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let numbers = &resource
             .main
             .0
-            .get(&langid)
+            .get(langid)
             .expect("CLDR file contains the expected language")
             .numbers;
 
@@ -96,14 +97,8 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
 
 impl IterableDataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .cldr()?
-            .numbers()
-            .list_langs()?
-            .map(DataLocale::from)
-            .collect())
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
+        Ok(self.source.cldr()?.numbers().list_langs()?.collect())
     }
 }
 
@@ -150,7 +145,7 @@ fn test_basic() {
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {
-            locale: &locale!("ar-EG").into(),
+            locale: (&locale!("ar-EG")).into(),
             metadata: Default::default(),
         })
         .unwrap()

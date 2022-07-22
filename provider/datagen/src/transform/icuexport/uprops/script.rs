@@ -4,6 +4,7 @@
 
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
+use icu_locid::Locale;
 use icu_properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
@@ -82,7 +83,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensions
 impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

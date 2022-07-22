@@ -5,23 +5,24 @@
 //! Collection of iteration APIs for data providers.
 
 use crate::prelude::*;
+use icu_locid::Locale;
 
-/// A [`DynamicDataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
+/// A [`DynamicDataProvider`] that can iterate over all supported [`Locale`] for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDynamicDataProvider<M: DataMarker>: DynamicDataProvider<M> {
-    /// Given a [`DataKey`], returns a list of [`DataLocale`].
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError>;
+    /// Given a [`DataKey`], returns a list of [`Locale`].
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<Locale>, DataError>;
 }
 
-/// A [`DataProvider`] that can iterate over all supported [`DataLocale`] for a certain key.
+/// A [`DataProvider`] that can iterate over all supported [`Locale`] for a certain key.
 ///
 /// Implementing this trait means that a data provider knows all of the data it can successfully
 /// return from a load request.
 pub trait IterableDataProvider<M: KeyedDataMarker>: DataProvider<M> {
-    /// Returns a list of [`DataLocale`].
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError>;
+    /// Returns a list of [`Locale`].
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError>;
 }
 
 impl<M, P> IterableDynamicDataProvider<M> for Box<P>
@@ -29,7 +30,7 @@ where
     M: DataMarker,
     P: IterableDynamicDataProvider<M> + ?Sized,
 {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<Locale>, DataError> {
         (**self).supported_locales_for_key(key)
     }
 }

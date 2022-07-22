@@ -90,7 +90,7 @@ impl DataExporter for FilesystemExporter {
     fn put_payload(
         &self,
         key: DataKey,
-        locale: &DataLocale,
+        locale: DataLocale,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         log::trace!("Writing: {}/{}", key, locale);

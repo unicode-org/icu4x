@@ -62,7 +62,7 @@ macro_rules! impl_data_provider {
                     let langid = req.locale.get_langid();
                     let calendar = req
                         .locale
-                        .get_unicode_ext(&key!("ca"))
+                        .get_unicode_keyword(key!("ca"))
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                     let cldr_cal = self
@@ -73,7 +73,7 @@ macro_rules! impl_data_provider {
                     let resource: &cldr_serde::ca::Resource = self
                         .source
                         .cldr()?
-                        .dates(cldr_cal).read_and_parse(&langid, &format!("ca-{}.json", cldr_cal))?;
+                        .dates(cldr_cal).read_and_parse(langid, &format!("ca-{}.json", cldr_cal))?;
 
                     let mut data =
                         resource
@@ -90,8 +90,8 @@ macro_rules! impl_data_provider {
                     // CLDR treats ethiopic and ethioaa as separate calendars; however we treat them as a single resource key that
                     // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
                     // ethiopic.
-                    if calendar == value!("ethiopic") {
-                        let ethioaa: &cldr_serde::ca::Resource = self.source.cldr()?.dates("ethiopic").read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
+                    if calendar == &value!("ethiopic") {
+                        let ethioaa: &cldr_serde::ca::Resource = self.source.cldr()?.dates("ethiopic").read_and_parse(langid, "ca-ethiopic-amete-alem.json")?;
 
                         let ethioaa_data = ethioaa
                             .main
@@ -113,7 +113,7 @@ macro_rules! impl_data_provider {
                         data.eras.narrow.insert("2".to_string(), mundi_narrow.clone());
                     }
 
-                    if calendar == value!("japanese") {
+                    if calendar == &value!("japanese") {
                         if self.modern_japanese_eras.read().expect("poison").is_none() {
                                 let era_dates: &cldr_serde::japanese::Resource = self
                                     .source
@@ -142,13 +142,13 @@ macro_rules! impl_data_provider {
                         data.eras.abbr.retain(|e, _| set.contains(e));
                         data.eras.narrow.retain(|e, _| set.contains(e));
                     }
-                    if calendar == value!("japanese") || calendar == value!("japanext") {
+                    if calendar == &value!("japanese") || calendar == &value!("japanext") {
 
                         // Splice in gregorian data for pre-meiji
                         let greg_resource: &cldr_serde::ca::Resource = self
                             .source
                             .cldr()?
-                            .dates("gregorian").read_and_parse(&langid, "ca-gregorian.json")?;
+                            .dates("gregorian").read_and_parse(langid, "ca-gregorian.json")?;
 
                         let greg =
                             greg_resource
@@ -181,7 +181,7 @@ macro_rules! impl_data_provider {
             }
 
             impl IterableDataProvider<$marker> for CommonDateProvider {
-                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(self
@@ -195,7 +195,7 @@ macro_rules! impl_data_provider {
                                     .unicode
                                     .keywords
                                     .set(key!("ca"), cal_value.clone());
-                                DataLocale::from(locale)
+                                locale
                             }));
                     }
                     Ok(r)
@@ -232,7 +232,7 @@ mod test {
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load(DataRequest {
-                locale: &locale.into(),
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -249,7 +249,7 @@ mod test {
         let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
             .load(DataRequest {
-                locale: &locale.into(),
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -270,7 +270,7 @@ mod test {
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
             .load(DataRequest {
-                locale: &locale.into(),
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -314,7 +314,7 @@ mod test {
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load(DataRequest {
-                locale: &locale.into(),
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -345,7 +345,7 @@ mod test {
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
             .load(DataRequest {
-                locale: &locale.into(),
+                locale: (&locale).into(),
                 metadata: Default::default(),
             })
             .unwrap()

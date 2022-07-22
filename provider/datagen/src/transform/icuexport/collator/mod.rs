@@ -34,7 +34,7 @@ pub const ALL_KEYS: [DataKey; 6] = [
 ];
 
 fn locale_to_file_name(locale: &DataLocale) -> String {
-    let mut s = if locale.get_langid() == LanguageIdentifier::UND {
+    let mut s = if locale.get_langid() == &LanguageIdentifier::UND {
         String::from("root")
     } else {
         locale
@@ -43,7 +43,7 @@ fn locale_to_file_name(locale: &DataLocale) -> String {
             .replace('-', "_")
             .replace("posix", "POSIX")
     };
-    if let Some(extension) = &locale.get_unicode_ext(&key!("co")) {
+    if let Some(extension) = &locale.get_unicode_keyword(key!("co")) {
         s.push('_');
         s.push_str(match extension.to_string().as_str() {
             "trad" => "traditional",
@@ -138,7 +138,7 @@ macro_rules! collation_provider {
             }
 
             impl IterableDataProvider<$marker> for CollationProvider {
-                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
                     Ok(self
                         .source
                         .icuexport()?
@@ -153,7 +153,6 @@ macro_rules! collation_provider {
                                 .map(ToString::to_string)
                         )
                         .filter_map(|s|file_name_to_locale(&s))
-                        .map(DataLocale::from)
                         .collect()
                     )
                 }

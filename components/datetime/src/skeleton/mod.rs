@@ -42,9 +42,9 @@ mod test {
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
         let provider = icu_testdata::get_provider();
-        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap();
         let req = DataRequest {
-            locale: &locale,
+            locale: (&locale).into(),
             metadata: Default::default(),
         };
         let patterns = provider

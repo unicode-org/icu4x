@@ -170,12 +170,12 @@ mod tests {
     use zerovec::ZeroSlice;
 
     fn get_payload(
-        locale: Locale,
+        locale: &Locale,
     ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
         let provider = icu_testdata::get_provider();
         provider
             .load(DataRequest {
-                locale: &DataLocale::from(locale),
+                locale: locale.into(),
                 metadata: Default::default(),
             })?
             .take_payload()
@@ -213,7 +213,7 @@ mod tests {
 
     #[test]
     fn cj_dictionary_test() {
-        let payload = get_payload(locale!("ja")).unwrap();
+        let payload = get_payload(&locale!("ja")).unwrap();
         let segmenter = DictionarySegmenter::try_new(&payload).expect("Data exists");
 
         // Match case

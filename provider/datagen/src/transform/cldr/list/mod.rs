@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider;
 use crate::SourceData;
 use icu_list::provider::*;
-use icu_locid::subtags_language as language;
+use icu_locid::{subtags_language as language, Locale};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
@@ -35,12 +35,12 @@ impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> DataProvid
             .source
             .cldr()?
             .misc()
-            .read_and_parse(&langid, "listPatterns.json")?;
+            .read_and_parse(langid, "listPatterns.json")?;
 
         let data = &resource
             .main
             .0
-            .get(&langid)
+            .get(langid)
             .expect("CLDR file contains the expected language")
             .list_patterns;
 
@@ -139,14 +139,8 @@ icu_provider::make_exportable_provider!(
 impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableDataProvider<M>
     for ListProvider
 {
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .source
-            .cldr()?
-            .misc()
-            .list_langs()?
-            .map(DataLocale::from)
-            .collect())
+    fn supported_locales(&self) -> Result<Vec<Locale>, DataError> {
+        Ok(self.source.cldr()?.misc().list_langs()?.collect())
     }
 }
 

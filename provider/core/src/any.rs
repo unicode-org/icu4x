@@ -259,7 +259,7 @@ impl AnyResponse {
 ///     .load_any(
 ///         HelloWorldV1Marker::KEY,
 ///         DataRequest {
-///             locale: &icu_locid::locale!("de").into(),
+///             locale: (&icu_locid::locale!("de")).into(),
 ///             metadata: Default::default(),
 ///         },
 ///     )

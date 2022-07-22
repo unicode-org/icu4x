@@ -166,7 +166,7 @@ where
     P0: datagen::IterableDynamicDataProvider<M>,
     P1: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<icu_locid::Locale>, DataError> {
         let result = self.0.supported_locales_for_key(key);
         if !result_is_err_missing_data_key(&result) {
             return result;
@@ -293,7 +293,7 @@ where
     M: DataMarker,
     P: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<icu_locid::Locale>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.supported_locales_for_key(key);
             if !result_is_err_missing_data_key(&result) {

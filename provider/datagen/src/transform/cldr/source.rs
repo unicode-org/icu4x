@@ -4,7 +4,7 @@
 
 use crate::source::AbstractFs;
 use elsa::sync::FrozenMap;
-use icu_locid::LanguageIdentifier;
+use icu_locid::{LanguageIdentifier, Locale};
 use icu_provider::DataError;
 use std::any::Any;
 use std::fmt::Debug;
@@ -112,10 +112,13 @@ impl<'a> CldrDirLang<'a> {
         read_and_parse_json(self.0, &format!("{}/{}/{}", self.1, lang, file_name))
     }
 
-    pub(crate) fn list_langs(&self) -> Result<impl Iterator<Item = LanguageIdentifier>, DataError> {
-        Ok(self.0.root.list(&self.1)?.into_iter().map(|path| {
-            LanguageIdentifier::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap()
-        }))
+    pub(crate) fn list_langs(&self) -> Result<impl Iterator<Item = Locale>, DataError> {
+        Ok(self
+            .0
+            .root
+            .list(&self.1)?
+            .into_iter()
+            .map(|path| Locale::from_str(&path.file_name().unwrap().to_string_lossy()).unwrap()))
     }
 }
 
