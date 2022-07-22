@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658442079582,
+  "lastUpdate": 1658471990686,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38489,6 +38489,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 100,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "583de584f0ba1cfe3402915989f57aa586c0ca06",
+          "message": "Make sink-writing normalization methods non-experimental (#2201)",
+          "timestamp": "2022-07-22T09:27:46+03:00",
+          "tree_id": "01f2f1f5259eff0d51e36bb93a37a2d8547d86bb",
+          "url": "https://github.com/unicode-org/icu4x/commit/583de584f0ba1cfe3402915989f57aa586c0ca06"
+        },
+        "date": 1658471957671,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123177,
+            "range": "± 1264",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25562,
+            "range": "± 203",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71868,
+            "range": "± 326",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
