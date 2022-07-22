@@ -29,7 +29,7 @@ impl From<&SourceData> for CaseMappingDataProvider {
 }
 
 impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
-    fn load(&self, _req: &DataRequest) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
         let toml = &self
             .source
             .icuexport()?
@@ -74,7 +74,7 @@ impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
 }
 
 impl icu_provider::datagen::IterableDataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }

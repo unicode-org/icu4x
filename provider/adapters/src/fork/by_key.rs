@@ -37,7 +37,7 @@ use crate::helpers::result_is_err_missing_data_key;
 ///     fn load_buffer(
 ///         &self,
 ///         key: DataKey,
-///         req: &DataRequest,
+///         req: DataRequest,
 ///     ) -> Result<DataResponse<BufferMarker>, DataError> {
 ///         Err(DataErrorKind::MissingDataKey.with_req(key, req))
 ///     }
@@ -51,8 +51,8 @@ use crate::helpers::result_is_err_missing_data_key;
 /// let data_provider = forking_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load(&DataRequest {
-///         options: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -89,8 +89,8 @@ use crate::helpers::result_is_err_missing_data_key;
 ///
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = data_provider
-///     .load(&DataRequest {
-///         options: locale!("zh").into(),
+///     .load(DataRequest {
+///         locale: &locale!("zh").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -101,8 +101,8 @@ use crate::helpers::result_is_err_missing_data_key;
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load(&DataRequest {
-///         options: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
@@ -120,7 +120,7 @@ where
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let result = self.0.load_buffer(key, req);
         if !result_is_err_missing_data_key(&result) {
@@ -135,7 +135,7 @@ where
     P0: AnyProvider,
     P1: AnyProvider,
 {
-    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         let result = self.0.load_any(key, req);
         if !result_is_err_missing_data_key(&result) {
             return result;
@@ -150,7 +150,7 @@ where
     P0: DynamicDataProvider<M>,
     P1: DynamicDataProvider<M>,
 {
-    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let result = self.0.load_data(key, req);
         if !result_is_err_missing_data_key(&result) {
             return result;
@@ -166,12 +166,12 @@ where
     P0: datagen::IterableDynamicDataProvider<M>,
     P1: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_options_for_key(&self, key: DataKey) -> Result<Vec<DataOptions>, DataError> {
-        let result = self.0.supported_options_for_key(key);
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+        let result = self.0.supported_locales_for_key(key);
         if !result_is_err_missing_data_key(&result) {
             return result;
         }
-        self.1.supported_options_for_key(key)
+        self.1.supported_locales_for_key(key)
     }
 }
 
@@ -213,8 +213,8 @@ where
 ///
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = data_provider
-///     .load(&DataRequest {
-///         options: locale!("zh").into(),
+///     .load(DataRequest {
+///         locale: &locale!("zh").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -225,8 +225,8 @@ where
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load(&DataRequest {
-///         options: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
@@ -244,7 +244,7 @@ where
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_buffer(key, req);
@@ -260,7 +260,7 @@ impl<P> AnyProvider for MultiForkByKeyProvider<P>
 where
     P: AnyProvider,
 {
-    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_any(key, req);
             if !result_is_err_missing_data_key(&result) {
@@ -276,7 +276,7 @@ where
     M: DataMarker,
     P: DynamicDataProvider<M>,
 {
-    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_data(key, req);
             if !result_is_err_missing_data_key(&result) {
@@ -293,9 +293,9 @@ where
     M: DataMarker,
     P: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_options_for_key(&self, key: DataKey) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.supported_options_for_key(key);
+            let result = provider.supported_locales_for_key(key);
             if !result_is_err_missing_data_key(&result) {
                 return result;
             }

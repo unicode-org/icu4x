@@ -46,14 +46,14 @@ use icu_provider::prelude::*;
 ///
 /// Data requests that are rejected by the filter will return a [`DataError`] with kind
 /// [`FilteredResource`](DataErrorKind::FilteredResource), and they will not be returned
-/// by [`datagen::IterableDynamicDataProvider::supported_options_for_key`].
+/// by [`datagen::IterableDynamicDataProvider::supported_locales_for_key`].
 ///
 /// Although this struct can be created directly, the traits in this module provide helper
 /// functions for common filtering patterns.
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct RequestFilterDataProvider<D, F>
 where
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(DataRequest) -> bool,
 {
     /// The data provider to which we delegate requests.
     pub inner: D,
@@ -68,11 +68,11 @@ where
 
 impl<D, F, M> DynamicDataProvider<M> for RequestFilterDataProvider<D, F>
 where
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(DataRequest) -> bool,
     M: DataMarker,
     D: DynamicDataProvider<M>,
 {
-    fn load_data(&self, key: DataKey, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         if (self.predicate)(req) {
             self.inner.load_data(key, req)
         } else {
@@ -85,11 +85,11 @@ where
 
 impl<D, F, M> DataProvider<M> for RequestFilterDataProvider<D, F>
 where
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(DataRequest) -> bool,
     M: KeyedDataMarker,
     D: DataProvider<M>,
 {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         if (self.predicate)(req) {
             self.inner.load(req)
         } else {
@@ -102,13 +102,13 @@ where
 
 impl<D, F> BufferProvider for RequestFilterDataProvider<D, F>
 where
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(DataRequest) -> bool,
     D: BufferProvider,
 {
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         if (self.predicate)(req) {
             self.inner.load_buffer(key, req)
@@ -122,10 +122,10 @@ where
 
 impl<D, F> AnyProvider for RequestFilterDataProvider<D, F>
 where
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(DataRequest) -> bool,
     D: AnyProvider,
 {
-    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         if (self.predicate)(req) {
             self.inner.load_any(key, req)
         } else {
@@ -140,23 +140,22 @@ where
 impl<M, D, F> datagen::IterableDynamicDataProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: DataMarker,
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(DataRequest) -> bool,
     D: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_options_for_key(
+    fn supported_locales_for_key(
         &self,
         key: DataKey,
-    ) -> Result<alloc::vec::Vec<DataOptions>, DataError> {
-        self.inner.supported_options_for_key(key).map(|vec| {
-            // Use filter_map instead of filter to avoid cloning the options
+    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        self.inner.supported_locales_for_key(key).map(|vec| {
+            // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
-                .filter_map(move |options| {
-                    let request = DataRequest {
-                        options,
+                .filter_map(|locale| {
+                    if (self.predicate)(DataRequest {
+                        locale: &locale,
                         metadata: Default::default(),
-                    };
-                    if (self.predicate)(&request) {
-                        Some(request.options)
+                    }) {
+                        Some(locale)
                     } else {
                         None
                     }
@@ -170,20 +169,19 @@ where
 impl<M, D, F> datagen::IterableDataProvider<M> for RequestFilterDataProvider<D, F>
 where
     M: KeyedDataMarker,
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(DataRequest) -> bool,
     D: datagen::IterableDataProvider<M>,
 {
-    fn supported_options(&self) -> Result<alloc::vec::Vec<DataOptions>, DataError> {
-        self.inner.supported_options().map(|vec| {
-            // Use filter_map instead of filter to avoid cloning the options
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        self.inner.supported_locales().map(|vec| {
+            // Use filter_map instead of filter to avoid cloning the locale
             vec.into_iter()
-                .filter_map(move |options| {
-                    let request = DataRequest {
-                        options,
+                .filter_map(|locale| {
+                    if (self.predicate)(DataRequest {
+                        locale: &locale,
                         metadata: Default::default(),
-                    };
-                    if (self.predicate)(&request) {
-                        Some(request.options)
+                    }) {
+                        Some(locale)
                     } else {
                         None
                     }
@@ -199,7 +197,7 @@ where
     D: datagen::DataConverter<MFrom, MTo>,
     MFrom: DataMarker,
     MTo: DataMarker,
-    F: Fn(&DataRequest) -> bool,
+    F: Fn(DataRequest) -> bool,
 {
     fn convert(
         &self,
@@ -218,7 +216,7 @@ pub trait Filterable: Sized {
     fn filterable(
         self,
         filter_name: &'static str,
-    ) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool>;
+    ) -> RequestFilterDataProvider<Self, fn(DataRequest) -> bool>;
 }
 
 impl<T> Filterable for T
@@ -228,8 +226,8 @@ where
     fn filterable(
         self,
         filter_name: &'static str,
-    ) -> RequestFilterDataProvider<Self, fn(&DataRequest) -> bool> {
-        fn noop(_: &DataRequest) -> bool {
+    ) -> RequestFilterDataProvider<Self, fn(DataRequest) -> bool> {
+        fn noop(_: DataRequest) -> bool {
             true
         }
         RequestFilterDataProvider {

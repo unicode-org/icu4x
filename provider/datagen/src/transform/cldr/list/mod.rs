@@ -28,8 +28,8 @@ impl From<&SourceData> for ListProvider {
 impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> DataProvider<M>
     for ListProvider
 {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let langid = req.options.get_langid();
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::list_patterns::Resource = self
             .source
@@ -104,7 +104,7 @@ impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> DataProvid
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                     .with_display_context(&e))?
                 .get_set_for_value(icu_properties::Script::Hebrew)
-                .to_unicode_set()
+                .to_code_point_set()
                 .iter_ranges()
                 .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
                 .fold(String::new(), |a, b| a + &b)
@@ -139,13 +139,13 @@ icu_provider::make_exportable_provider!(
 impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableDataProvider<M>
     for ListProvider
 {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
             .cldr()?
             .misc()
             .list_langs()?
-            .map(Into::<DataOptions>::into)
+            .map(DataLocale::from)
             .collect())
     }
 }

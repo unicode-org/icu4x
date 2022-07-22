@@ -1154,7 +1154,7 @@ static UND: DataStruct = &::icu_normalizer::provider::DecompositionDataV1 {
     ),
     decomposition_starts_with_non_starter: unsafe {
         #[allow(unused_unsafe)]
-        ::icu_uniset::UnicodeSet::from_parts_unchecked(
+        ::icu_uniset::CodePointSet::from_parts_unchecked(
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     0u8, 3u8, 0u8, 0u8, 79u8, 3u8, 0u8, 0u8, 80u8, 3u8, 0u8, 0u8, 112u8, 3u8, 0u8,

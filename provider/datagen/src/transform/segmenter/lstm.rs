@@ -66,13 +66,13 @@ impl From<&SourceData> for SegmenterLstmProvider {
 
 impl SegmenterLstmProvider {
     // Generate LSTM Data for DataProvider from LSTM JSON.
-    fn generate_data(&self, options: &DataOptions) -> Result<LstmDataV1<'static>, DataError> {
+    fn generate_data(&self, locale: &DataLocale) -> Result<LstmDataV1<'static>, DataError> {
         let lstm_data: &RawLstmData = read_and_parse_json::<RawLstmData>(
             self.source.segmenter_lstm()?,
             &format!(
                 "lstm/{}",
-                Self::get_json_filename(options)
-                    .ok_or_else(|| DataErrorKind::MissingDataOptions.into_error())?,
+                Self::get_json_filename(locale)
+                    .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
             ),
         )?;
         // The map of "dic" may not be sorted, so we cannot use ZeroMap directly.
@@ -105,14 +105,14 @@ impl SegmenterLstmProvider {
         })
     }
 
-    fn get_json_filename(options: &DataOptions) -> Option<&'static str> {
-        if options.get_langid() == langid!("km") {
+    fn get_json_filename(locale: &DataLocale) -> Option<&'static str> {
+        if locale.get_langid() == langid!("km") {
             Some("lstm_km.json")
-        } else if options.get_langid() == langid!("lo") {
+        } else if locale.get_langid() == langid!("lo") {
             Some("lstm_lo.json")
-        } else if options.get_langid() == langid!("my") {
+        } else if locale.get_langid() == langid!("my") {
             Some("lstm_my.json")
-        } else if options.get_langid() == langid!("th") {
+        } else if locale.get_langid() == langid!("th") {
             Some("lstm_th.json")
         } else {
             None
@@ -121,8 +121,8 @@ impl SegmenterLstmProvider {
 }
 
 impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
-        let lstm_data = self.generate_data(&req.options)?;
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
+        let lstm_data = self.generate_data(req.locale)?;
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(lstm_data)),
@@ -133,7 +133,7 @@ impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
 icu_provider::make_exportable_provider!(SegmenterLstmProvider, [LstmDataV1Marker,]);
 
 impl IterableDataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             locale!("km").into(),
             locale!("lo").into(),

@@ -30,14 +30,14 @@ impl From<&SourceData> for WeekDataProvider {
 
 impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .source
             .cldr()?
             .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
-        let regions: HashSet<DataOptions> = week_data
+        let regions: HashSet<DataLocale> = week_data
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
@@ -47,16 +47,16 @@ impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
                 _ => None,
             })
             .map(LanguageIdentifier::from)
-            .map(DataOptions::from)
+            .map(DataLocale::from)
             .collect();
         Ok(regions.into_iter().collect())
     }
 }
 
 impl DataProvider<WeekDataV1Marker> for WeekDataProvider {
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         let territory = req
-            .options
+            .locale
             .region()
             .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
             .transpose()?
@@ -103,10 +103,7 @@ fn basic_cldr_week_data() {
     let provider = WeekDataProvider::from(&SourceData::for_test());
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load(&DataRequest {
-            options: DataOptions::default(),
-            metadata: Default::default(),
-        })
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();
@@ -114,8 +111,8 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Monday, default_week_data.get().0.first_weekday);
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load(&DataRequest {
-            options: DataOptions::from(langid!("und-FR")),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-FR")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -125,8 +122,8 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Monday, fr_week_data.get().0.first_weekday);
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load(&DataRequest {
-            options: DataOptions::from(langid!("und-IQ")),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-IQ")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -140,8 +137,8 @@ fn basic_cldr_week_data() {
     assert_eq!(IsoWeekday::Saturday, iq_week_data.get().0.first_weekday);
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load(&DataRequest {
-            options: DataOptions::from(langid!("und-GG")),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-GG")),
             metadata: Default::default(),
         })
         .unwrap()

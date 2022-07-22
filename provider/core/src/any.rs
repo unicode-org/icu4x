@@ -258,8 +258,8 @@ impl AnyResponse {
 ///     .as_any_provider()
 ///     .load_any(
 ///         HelloWorldV1Marker::KEY,
-///         &DataRequest {
-///             options: icu_locid::locale!("de").into(),
+///         DataRequest {
+///             locale: &icu_locid::locale!("de").into(),
 ///             metadata: Default::default(),
 ///         },
 ///     )
@@ -274,7 +274,7 @@ impl AnyResponse {
 /// assert_eq!(payload.get().message, "Hallo Welt");
 /// ```
 pub trait AnyProvider {
-    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError>;
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
 /// A wrapper over `DynamicDataProvider<AnyMarker>` that implements `AnyProvider`
@@ -301,7 +301,7 @@ where
     P: DynamicDataProvider<AnyMarker> + ?Sized,
 {
     #[inline]
-    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         self.0.load_data(key, req)?.try_into()
     }
 }
@@ -333,7 +333,7 @@ where
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
 {
     #[inline]
-    fn load(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.0.load_any(M::KEY, req)?.downcast()
     }
 }

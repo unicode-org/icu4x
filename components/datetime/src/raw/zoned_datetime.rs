@@ -75,14 +75,14 @@ impl ZonedDateTimeFormatter {
         PP: DataProvider<OrdinalV1Marker> + ?Sized,
         DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
-        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
-        if cal == Some(&value!("ethioaa")) {
+        if locale.extensions.unicode.keywords.get(&key!("ca")) == Some(&value!("ethioaa")) {
             locale
                 .extensions
                 .unicode
                 .keywords
                 .set(key!("ca"), value!("ethiopic"));
         }
+
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,
             &locale,
@@ -91,15 +91,15 @@ impl ZonedDateTimeFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
+        // TODO(#2136): Don't use expensive from
+        let data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+
         let week_data = if required.week_data {
-            Some(
-                date_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(date_provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -115,27 +115,13 @@ impl ZonedDateTimeFormatter {
         };
 
         let date_symbols_data = if required.date_symbols_data {
-            Some(
-                date_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(date_provider.load(req)?.take_payload()?)
         } else {
             None
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(
-                date_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(date_provider.load(req)?.take_payload()?)
         } else {
             None
         };

@@ -14,7 +14,7 @@ use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSet;
+use icu_uniset::CodePointSet;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
@@ -538,7 +538,7 @@ impl<'data> ScriptWithExtensions<'data> {
             .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()))
     }
 
-    /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
+    /// Returns a [`CodePointSet`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
     ///
     /// # Examples
@@ -569,8 +569,8 @@ impl<'data> ScriptWithExtensions<'data> {
     /// assert!(syriac.contains_u32(0x1DFA)); // COMBINING DOT BELOW LEFT
     /// assert!(!syriac.contains_u32(0x1DFB)); // COMBINING DELETION MARK
     /// ```
-    pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
-        UnicodeSet::from_iter(self.get_script_extensions_ranges(script))
+    pub fn get_script_extensions_set(&self, script: Script) -> CodePointSet {
+        CodePointSet::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
@@ -631,7 +631,7 @@ pub type ScriptWithExtensionsResult =
 /// assert!(swe.has_script(0x0650, Script::Syriac));
 /// assert!(!swe.has_script(0x0650, Script::Thaana));
 ///
-/// // get a `UnicodeSet` for when `Script` value is contained in `Script_Extensions` value
+/// // get a `CodePointSet` for when `Script` value is contained in `Script_Extensions` value
 /// let syriac = swe.get_script_extensions_set(Script::Syriac);
 /// assert!(syriac.contains_u32(0x0650)); // ARABIC KASRA
 /// assert!(!syriac.contains_u32(0x0660)); // ARABIC-INDIC DIGIT ZERO
@@ -643,6 +643,6 @@ pub fn get_script_with_extensions(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
 ) -> ScriptWithExtensionsResult {
     Ok(provider
-        .load(&Default::default())
+        .load(Default::default())
         .and_then(DataResponse::take_payload)?)
 }

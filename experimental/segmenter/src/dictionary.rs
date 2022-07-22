@@ -174,8 +174,8 @@ mod tests {
     ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
         let provider = icu_testdata::get_provider();
         provider
-            .load(&DataRequest {
-                options: DataOptions::from(locale),
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
                 metadata: Default::default(),
             })?
             .take_payload()

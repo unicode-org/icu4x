@@ -68,8 +68,8 @@ impl TimeFormatter {
         let symbols_data = if required.time_symbols_data {
             Some(
                 data_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
+                    .load(DataRequest {
+                        locale: &DataLocale::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -191,8 +191,7 @@ impl DateFormatter {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
-        if cal == Some(&value!("ethioaa")) {
+        if locale.extensions.unicode.keywords.get(&key!("ca")) == Some(&value!("ethioaa")) {
             locale
                 .extensions
                 .unicode
@@ -208,15 +207,14 @@ impl DateFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
+        let data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+
         let week_data = if required.week_data {
-            Some(
-                data_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -232,14 +230,7 @@ impl DateFormatter {
         };
 
         let symbols_data = if required.date_symbols_data {
-            Some(
-                data_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -427,15 +418,14 @@ impl DateTimeFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
+        let data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+
         let week_data = if required.week_data {
-            Some(
-                data_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -451,27 +441,13 @@ impl DateTimeFormatter {
         };
 
         let date_symbols_data = if required.date_symbols_data {
-            Some(
-                data_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(
-                data_provider
-                    .load(&DataRequest {
-                        options: DataOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };

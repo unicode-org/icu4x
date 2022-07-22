@@ -36,8 +36,8 @@ impl DataMarker for BufferMarker {
 /// let data_provider = buffer_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load(&DataRequest {
-///         options: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -53,7 +53,7 @@ pub trait BufferProvider {
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError>;
 }
 

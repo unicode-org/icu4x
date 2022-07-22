@@ -5,7 +5,7 @@
 use crate::buf::BufferMarker;
 use crate::error::{DataError, DataErrorKind};
 use crate::marker::DataMarker;
-use crate::request::DataOptions;
+use crate::request::DataLocale;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
 use core::convert::TryFrom;
@@ -17,7 +17,7 @@ use core::marker::PhantomData;
 #[non_exhaustive]
 pub struct DataResponseMetadata {
     /// The resolved locale of the returned data, if locale fallbacking was performed.
-    pub data_locale: Option<DataOptions>,
+    pub locale: Option<DataLocale>,
     /// The format of the buffer for buffer-backed data, if known (for example, JSON).
     pub buffer_format: Option<crate::buf::BufferFormat>,
 }
@@ -700,5 +700,5 @@ fn test_debug() {
             message: Cow::Borrowed("foo"),
         })),
     };
-    assert_eq!("DataResponse { metadata: DataResponseMetadata { data_locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
+    assert_eq!("DataResponse { metadata: DataResponseMetadata { locale: None, buffer_format: None }, payload: Some(HelloWorldV1 { message: \"foo\" }) }", format!("{:?}", resp));
 }

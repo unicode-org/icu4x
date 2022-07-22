@@ -42,8 +42,8 @@ use yoke::*;
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider
-///     .load(&DataRequest {
-///         options: locale!("la").into(),
+///     .load(DataRequest {
+///         locale: &locale!("la").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
@@ -81,7 +81,7 @@ impl BufferProvider for BlobDataProvider {
     fn load_buffer(
         &self,
         key: DataKey,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
@@ -95,8 +95,8 @@ impl BufferProvider for BlobDataProvider {
                         .ok_or(DataErrorKind::MissingDataKey)
                         .and_then(|cursor| {
                             cursor
-                                .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
-                                .ok_or(DataErrorKind::MissingDataOptions)
+                                .get1_copied_by(|bytes| req.locale.strict_cmp(bytes).reverse())
+                                .ok_or(DataErrorKind::MissingLocale)
                         })
                         .map_err(|kind| kind.with_req(key, req))?;
                     blob.buffers

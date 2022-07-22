@@ -17,29 +17,17 @@ pub enum DataErrorKind {
     #[displaydoc("Missing data for key")]
     MissingDataKey,
 
-    /// There is data for the key, but not for this particular variant.
-    #[displaydoc("Missing data for variant")]
-    MissingVariant,
-
     /// There is data for the key, but not for this particular locale.
     #[displaydoc("Missing data for locale")]
     MissingLocale,
-
-    /// There is data for the key, but not for this particular variant and/or locale.
-    #[displaydoc("Missing data for variant or locale")]
-    MissingDataOptions,
-
-    /// The request should include a variant field.
-    #[displaydoc("Request needs a variant field")]
-    NeedsVariant,
 
     /// The request should include a locale.
     #[displaydoc("Request needs a locale")]
     NeedsLocale,
 
-    /// The request should not contain a variant and/or locale.
-    #[displaydoc("Request has extraneous information")]
-    ExtraneousDataOptions,
+    /// The request should not contain a locale.
+    #[displaydoc("Request has an extraneous locale")]
+    ExtraneousLocale,
 
     /// The resource was blocked by a filter. The resource may or may not be available.
     #[displaydoc("Resource blocked by filter")]
@@ -85,13 +73,13 @@ pub enum DataErrorKind {
 ///
 /// # Example
 ///
-/// Create a NeedsVariant error and attach a data request for context:
+/// Create a NeedsLocale error and attach a data request for context:
 ///
 /// ```no_run
 /// # use icu_provider::prelude::*;
 /// let key: DataKey = unimplemented!();
-/// let req: &DataRequest = unimplemented!();
-/// DataErrorKind::NeedsVariant.with_req(key, req);
+/// let req: DataRequest = unimplemented!();
+/// DataErrorKind::NeedsLocale.with_req(key, req);
 /// ```
 ///
 /// Create a named custom error:
@@ -162,7 +150,7 @@ impl DataErrorKind {
 
     /// Creates a DataError with a request context.
     #[inline]
-    pub fn with_req(self, key: DataKey, req: &DataRequest) -> DataError {
+    pub fn with_req(self, key: DataKey, req: DataRequest) -> DataError {
         self.into_error().with_req(key, req)
     }
 }
@@ -209,7 +197,7 @@ impl DataError {
     /// If the "log_error_context" feature is enabled, this logs the whole request. Either way,
     /// it returns an error with the resource key portion of the request as context.
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
-    pub fn with_req(self, key: DataKey, req: &DataRequest) -> Self {
+    pub fn with_req(self, key: DataKey, req: DataRequest) -> Self {
         // Don't write out a log for MissingDataKey since there is no context to add
         #[cfg(feature = "log_error_context")]
         if self.kind != DataErrorKind::MissingDataKey {

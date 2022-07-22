@@ -32,7 +32,7 @@ pub struct CodePointMapData<T: TrieValue> {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct ErasedMaplikeMarker<T>(PhantomData<T>);
 impl<T: TrieValue> DataMarker for ErasedMaplikeMarker<T> {
-    type Yokeable = UnicodePropertyMapV1<'static, T>;
+    type Yokeable = PropertyCodePointMapV1<'static, T>;
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -126,7 +126,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.data.get().get_set_for_value(value);
-        CodePointSetData::from_unicode_set(set)
+        CodePointSetData::from_code_point_set(set)
     }
 
     /// Construct a new one from loaded data
@@ -134,14 +134,14 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Typically it is preferable to use getters like [`get_general_category()`] instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = UnicodePropertyMapV1<'static, T>>,
+        M: DataMarker<Yokeable = PropertyCodePointMapV1<'static, T>>,
     {
         Self { data: data.cast() }
     }
 
     /// Construct a new one an owned [`CodePointTrie`]
     pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
-        let set = UnicodePropertyMapV1::from_code_point_trie(trie);
+        let set = PropertyCodePointMapV1::from_code_point_trie(trie);
         CodePointMapData::from_data(DataPayload::<ErasedMaplikeMarker<T>>::from_owned(set))
     }
     /// Convert this type to a [`CodePointTrie`], borrowing if possible,
@@ -163,7 +163,7 @@ impl<T: TrieValue> CodePointMapData<T> {
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy)]
 pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
-    map: &'a UnicodePropertyMapV1<'a, T>,
+    map: &'a PropertyCodePointMapV1<'a, T>,
 }
 
 impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
@@ -233,7 +233,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.map.get_set_for_value(value);
-        CodePointSetData::from_unicode_set(set)
+        CodePointSetData::from_code_point_set(set)
     }
 }
 
@@ -253,7 +253,7 @@ macro_rules! make_map_property {
         $vis fn $name(
             provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
-            Ok(provider.load(&Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
+            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
         }
     }
 }

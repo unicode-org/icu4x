@@ -18,27 +18,25 @@ use crate::{
     pattern::{PatternError, PatternItem},
     provider::{self, calendar::patterns::PatternPluralsFromPatternsV1Marker},
 };
-use icu_locid::{LanguageIdentifier, Locale};
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
 /// Loads a resource into its destination if the destination has not already been filled.
-fn load<D, L, P>(
-    locale: &L,
+fn load<D, P>(
+    locale: &DataLocale,
     destination: &mut Option<DataPayload<D>>,
     provider: &P,
 ) -> Result<(), DateTimeFormatterError>
 where
     D: KeyedDataMarker,
-    L: Clone + Into<LanguageIdentifier>,
     P: DataProvider<D> + ?Sized,
 {
-    let langid: LanguageIdentifier = locale.clone().into();
     if destination.is_none() {
         *destination = Some(
             provider
-                .load(&DataRequest {
-                    options: langid.into(),
+                .load(DataRequest {
+                    locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -83,7 +81,7 @@ where
 ///
 /// [data provider]: icu_provider
 pub struct TimeZoneFormatter {
-    pub(super) locale: Locale,
+    pub(super) locale: DataLocale,
     pub(super) data_payloads: TimeZoneDataPayloads,
     pub(super) format_units: SmallVec<[TimeZoneFormatterUnit; 3]>,
     pub(super) fallback_unit: TimeZoneFormatterUnit,
@@ -128,12 +126,12 @@ impl TimeZoneFormatter {
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
-        let locale = locale.into();
+        let locale = DataLocale::from(locale.into());
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
-                .load(&DataRequest {
-                    options: DataOptions::from(&locale),
+                .load(DataRequest {
+                    locale: &locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -379,12 +377,12 @@ impl TimeZoneFormatter {
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
-        let locale = locale.into();
+        let locale = DataLocale::from(locale.into());
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
-                .load(&DataRequest {
-                    options: DataOptions::from(&locale),
+                .load(DataRequest {
+                    locale: &locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?,

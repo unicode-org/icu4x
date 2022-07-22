@@ -18,25 +18,25 @@ const PATHS: &[&str] = &[JSON_PATH, BINCODE_PATH, POSTCARD_PATH];
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for options in HelloWorldProvider.supported_options().unwrap() {
+        for locale in HelloWorldProvider.supported_locales().unwrap() {
             let req = DataRequest {
-                options,
+                locale: &locale,
                 metadata: Default::default(),
             };
 
             let expected = HelloWorldProvider
-                .load(&req)
+                .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
 
             let actual: DataPayload<HelloWorldV1Marker> =
-                provider.load(&req).unwrap().take_payload().unwrap();
+                provider.load(req).unwrap().take_payload().unwrap();
             assert_eq!(actual.get(), expected.get());
 
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
-                .load(&req)
+                .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
@@ -50,17 +50,16 @@ fn test_errors() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
 
-        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
-            provider.load(&DataRequest {
-                options: langid!("zh-DE").into(),
-                metadata: Default::default(),
-            });
+        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> = provider.load(DataRequest {
+            locale: &langid!("zh-DE").into(),
+            metadata: Default::default(),
+        });
 
         assert!(
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingDataOptions,
+                    kind: DataErrorKind::MissingLocale,
                     ..
                 })
             ),
@@ -76,8 +75,7 @@ fn test_errors() {
             const KEY: DataKey = data_key!("nope@1");
         }
 
-        let err: Result<DataResponse<WrongV1Marker>, DataError> =
-            provider.load(&Default::default());
+        let err: Result<DataResponse<WrongV1Marker>, DataError> = provider.load(Default::default());
 
         assert!(
             matches!(

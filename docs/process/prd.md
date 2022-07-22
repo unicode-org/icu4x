@@ -57,7 +57,7 @@ ICU4X 0.1’s selection of components aimed to:
 
 -   Validate low-level models around [data management](https://github.com/unicode-org/icu4x/blob/master/docs/design/data_pipeline.md)
 -   Establish project culture using simple building blocks such as [Locale](https://docs.rs/icu_locid/0.1.0/icu_locid/) and [Plural Rules](https://docs.rs/icu_plurals/0.1.0/icu_plurals/)
--   Introduce a low-level foundation for string operations with [UnicodeSet](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)
+-   Introduce a low-level foundation for string operations with [CodePointSet](https://docs.rs/icu_uniset/0.1.0/icu_uniset/)
 -   Expose a single, high-level, highly requested API - [DateTimeFormat](https://docs.rs/icu_datetime/0.1.0/icu_datetime/)
 -   Release a meta-package [ICU](https://docs.rs/icu/0.1.0/icu/)
 
@@ -117,7 +117,7 @@ Mozilla currently maintains [its own segmentation engine](https://searchfox.org/
 
 Replacing lwbrk with ICU4C for layout needs would require a substantial effort to customize data management to handle Mozilla’s custom data.
 
-ICU4X offers an environment in which we are developing a new Unicode UAX#14/UAX#29 compatible segmentation API which will use the foundational [UnicodeSet API](https://docs.rs/icu_uniset/0.1.0/icu_uniset/), and fit the needs of both Layout and ECMA-402.
+ICU4X offers an environment in which we are developing a new Unicode UAX#14/UAX#29 compatible segmentation API which will use the foundational [CodePointSet API](https://docs.rs/icu_uniset/0.1.0/icu_uniset/), and fit the needs of both Layout and ECMA-402.
 
 Google contributed an ML based segmenter model for Thai, Burmese, Khmer and Lao, that cut down data size by ~75% and increased precision.
 
@@ -163,7 +163,7 @@ Pluralization is similar to Locale in that it is a core operation required by ma
 
 As such it carries similar value and justification for inclusion in 1.0 scope.
 
-### UnicodeSet
+### CodePointSet
 
 Unicode Properties are required for many low level components including a number of our business and strategic alignments.
 
@@ -175,7 +175,7 @@ Unicode Properties API is also critical for our ability to harness the dynamic R
 
 Segmentation aligns with business needs, allowing us to attract Mozilla investment and in return getting ability to test our model in production supplying the needs of both Gecko layout engine and ECMA-402 component.
 
-The segmentation API carries also similar strategic value for the project as the UnicodeSet as an attractor for the Rust community, but with a higher-level API allows us to validate performance claims in a performance-critical part of all layout needs which also serves our goal of attracting corporate interest in the project.
+The segmentation API carries also similar strategic value for the project as the CodePointSet as an attractor for the Rust community, but with a higher-level API allows us to validate performance claims in a performance-critical part of all layout needs which also serves our goal of attracting corporate interest in the project.
 
 ### DateTimeFormat
 
@@ -187,7 +187,7 @@ On the business side, we get a chance to supply the most common user needs, and 
 
 ### NumberFormat
 
-Number formatting represents a blend of low-level foundational APIs such as Locale, Plural Rules and UnicodeSet, with high-level APIs such as DateTimeFormat.
+Number formatting represents a blend of low-level foundational APIs such as Locale, Plural Rules and CodePointSet, with high-level APIs such as DateTimeFormat.
 
 It is required for DateTimeFormat, and will exercise our ability to maintain modularity and lean profile of our APIs, while building a large feature set that [ECMA-402 NumberFormat](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Intl/NumberFormat) carries.
 

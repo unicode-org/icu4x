@@ -60,7 +60,7 @@ where
 /// # impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
 /// #     fn load(
 /// #         &self,
-/// #         req: &DataRequest,
+/// #         req: DataRequest,
 /// #     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 /// #         icu_provider::hello_world::HelloWorldProvider.load(req)
 /// #     }
@@ -70,16 +70,16 @@ where
 /// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
 /// let req = DataRequest {
-///     options: icu_locid::locale!("de").into(),
+///     locale: &icu_locid::locale!("de").into(),
 ///     metadata: Default::default(),
 /// };
 ///
 /// // Successful because the key matches:
-/// HelloWorldProvider.load_data(HelloWorldV1Marker::KEY, &req).unwrap();
+/// HelloWorldProvider.load_data(HelloWorldV1Marker::KEY, req).unwrap();
 ///
 /// // MissingDataKey error as the key does not match:
 /// assert_eq!(
-///     HelloWorldProvider.load_data(icu_provider::data_key!("dummy@1"), &req).unwrap_err().kind,
+///     HelloWorldProvider.load_data(icu_provider::data_key!("dummy@1"), req).unwrap_err().kind,
 ///     DataErrorKind::MissingDataKey,
 /// );
 /// ```
@@ -95,7 +95,7 @@ where
 /// #
 /// # struct HelloWorldProvider;
 /// # impl DynamicDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
-/// #     fn load_data(&self, key: DataKey, req: &DataRequest)
+/// #     fn load_data(&self, key: DataKey, req: DataRequest)
 /// #             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
 /// #         icu_provider::hello_world::HelloWorldProvider.load(req)
 /// #     }
@@ -110,15 +110,15 @@ where
 /// }, AnyMarker);
 ///
 /// let req = DataRequest {
-///     options: icu_locid::locale!("de").into(),
+///     locale: &icu_locid::locale!("de").into(),
 ///     metadata: Default::default(),
 /// };
 ///
 /// // Successful because the key matches:
-/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::KEY, &req).unwrap();
+/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::KEY, req).unwrap();
 ///
 /// // Because of the wildcard, any key actually works:
-/// HelloWorldProvider.as_any_provider().load_any(icu_provider::data_key!("dummy@1"), &req).unwrap();
+/// HelloWorldProvider.as_any_provider().load_any(icu_provider::data_key!("dummy@1"), req).unwrap();
 /// ```
 ///
 /// [`DynamicDataProvider`]: crate::DynamicDataProvider
@@ -149,7 +149,7 @@ macro_rules! impl_dynamic_data_provider {
             fn load_data(
                 &self,
                 key: $crate::DataKey,
-                req: &$crate::DataRequest,
+                req: $crate::DataRequest,
             ) -> Result<
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
@@ -194,7 +194,7 @@ macro_rules! impl_dynamic_data_provider {
             fn load_data(
                 &self,
                 key: $crate::DataKey,
-                req: &$crate::DataRequest,
+                req: $crate::DataRequest,
             ) -> Result<
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,

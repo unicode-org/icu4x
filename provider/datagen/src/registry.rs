@@ -107,7 +107,7 @@ macro_rules! create_datagen_provider {
                 $crate::transform::icuexport::normalizer::NormalizationProvider,
                 $crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
-                $crate::transform::icuexport::uprops::BinaryPropertyUnicodeSetDataProvider,
+                $crate::transform::icuexport::uprops::BinaryPropertyCodePointSetDataProvider,
             ]
         )
     };
@@ -178,7 +178,7 @@ macro_rules! create_datagen_provider {
                 $crate::transform::icuexport::ucase::CaseMappingDataProvider,
                 $crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider,
                 $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
-                $crate::transform::icuexport::uprops::BinaryPropertyUnicodeSetDataProvider,
+                $crate::transform::icuexport::uprops::BinaryPropertyCodePointSetDataProvider,
                 $crate::transform::segmenter::SegmenterDictionaryProvider,
                 $crate::transform::segmenter::SegmenterLstmProvider,
                 $crate::transform::segmenter::SegmenterRuleProvider,

@@ -30,7 +30,7 @@ pub(crate) struct BakedDataExporter {
     mod_directory: PathBuf,
     pretty: bool,
     insert_feature_gates: bool,
-    // Temporary storage for put_payload: key -> (marker path, bake -> [options])
+    // Temporary storage for put_payload: key -> (marker path, bake -> [locale])
     data: Mutex<HashMap<DataKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
     // All mod.rs files in the module tree. Because generation is parallel,
     // this will be non-deterministic and have to be sorted later.
@@ -112,7 +112,7 @@ impl DataExporter for BakedDataExporter {
     fn put_payload(
         &self,
         key: DataKey,
-        options: &DataOptions,
+        locale: &DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
@@ -124,7 +124,7 @@ impl DataExporter for BakedDataExporter {
             .1
             .entry(payload.to_string())
             .or_default()
-            .push(options.to_string());
+            .push(locale.to_string());
         Ok(())
     }
 
@@ -136,14 +136,14 @@ impl DataExporter for BakedDataExporter {
             .remove(&key)
             .ok_or_else(|| DataError::custom("No data").with_key(key))?;
         let mut statics = Vec::new();
-        let mut all_options = Vec::new();
+        let mut all_locales = Vec::new();
 
-        for (payload_bake_string, mut options) in raw {
-            options.sort();
-            let ident_string = options
+        for (payload_bake_string, mut locales) in raw {
+            locales.sort();
+            let ident_string = locales
                 .iter()
-                .map(|options| {
-                    let mut string = options.replace('-', "_");
+                .map(|locales| {
+                    let mut string = locales.replace('-', "_");
                     string.make_ascii_uppercase();
                     string
                 })
@@ -156,7 +156,7 @@ impl DataExporter for BakedDataExporter {
                     a
                 })
                 .unwrap();
-            all_options.extend(options.into_iter().map(|o| (o, ident_string.clone())));
+            all_locales.extend(locales.into_iter().map(|l| (l, ident_string.clone())));
             statics.push((ident_string, payload_bake_string));
         }
 
@@ -170,10 +170,10 @@ impl DataExporter for BakedDataExporter {
                 quote! { static #ident: DataStruct = &#payload_bake; }
             });
 
-        all_options.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
-        let all_options = all_options.into_iter().map(|(options, ident_string)| {
+        all_locales.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
+        let data = all_locales.into_iter().map(|(locale, ident_string)| {
             let ident = ident_string.parse::<TokenStream>().unwrap();
-            quote! { (#options, #ident) }
+            quote! { (#locale, #ident) }
         });
 
         // Replace non-ident-allowed tokens. This can still fail if a segment starts with
@@ -234,7 +234,7 @@ impl DataExporter for BakedDataExporter {
 
                 type DataStruct = #struct_type;
 
-                pub static DATA: &[(&str, DataStruct)] = &[#(#all_options),*];
+                pub static DATA: &[(&str, DataStruct)] = &[#(#data),*];
 
                 #(#statics)*
             },
@@ -303,7 +303,7 @@ impl DataExporter for BakedDataExporter {
                 impl DataProvider<#marker> for BakedDataProvider {
                     fn load(
                         &self,
-                        req: &DataRequest,
+                        req: DataRequest,
                     ) -> Result<DataResponse<#marker>, DataError> {
                         Ok(DataResponse {
                             metadata: Default::default(),
@@ -334,13 +334,13 @@ impl DataExporter for BakedDataExporter {
                 fn litemap_slice_get<T: ?Sized>(
                     values: &'static [(&'static str, &'static T)],
                     key: DataKey,
-                    req: &DataRequest,
+                    req: DataRequest,
                 ) -> Result<&'static T, DataError> {
                     #[allow(clippy::unwrap_used)]
                     values
-                        .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
+                        .binary_search_by(|(k, _)| req.locale.strict_cmp(k.as_bytes()).reverse())
                         .map(|i| values.get(i).unwrap().1)
-                        .map_err(|_| DataErrorKind::MissingDataOptions.with_req(key, req))
+                        .map_err(|_| DataErrorKind::MissingLocale.with_req(key, req))
                 }
             },
         )
@@ -383,7 +383,7 @@ impl DataExporter for BakedDataExporter {
             PathBuf::from("any"),
             quote! {
                 impl AnyProvider for BakedDataProvider {
-                    fn load_any(&self, key: DataKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+                    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
                         #(#any_consts)*
                         Ok(AnyResponse {
                             payload: Some(match key.get_hash() {

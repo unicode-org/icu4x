@@ -33,7 +33,7 @@ The data struct definitions should live in the crate that uses them. By conventi
 
 - `icu::decimal::provider::DecimalSymbolsV1`
 - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
-- `icu::uniset::provider::UnicodePropertyV1`
+- `icu::uniset::provider::PropertyCodePointSetV1`
 
 In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
 
@@ -54,7 +54,7 @@ Although they may share common code, source data providers are implemented speci
 Examples of source data providers include:
 
 - [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/cldr/struct.NumbersProvider.html)
-- [`BinaryPropertyUnicodeSetDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/uprops/struct.BinaryPropertyUnicodeSetDataProvider.html)
+- [`BinaryPropertyCodePointSetDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/uprops/struct.BinaryPropertyCodePointSetDataProvider.html)
 - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/index.html)
 
 Source data providers must implement the following traits:
@@ -211,20 +211,20 @@ impl From<&SourceData> for FooProvider {
 impl DataProvider<FooV1Marker> for FooProvider {
     fn load(
         &self,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<FooV1Marker>, DataError> {
         // Load the data from CLDR JSON and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
-        // This method will be called once per option returned by supported_options.
+        // This method will be called once per option returned by supported_locales.
         // Use internal mutability (RwLock) to avoid duplicating work.
     }
 }
 
 impl IterableDataProvider<FooV1Marker> for FooProvider {
-    fn supported_options(
+    fn supported_locales(
         &self,
-    ) -> Result<Vec<DataOptions>, DataError> {
+    ) -> Result<Vec<DataLocale>, DataError> {
         // This should list all supported locales, for example.
     }
 }

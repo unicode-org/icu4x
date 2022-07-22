@@ -5,7 +5,7 @@
 //! This module contains provider implementations backed by built-in segmentation data.
 
 use crate::transform::icuexport::uprops::{
-    BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
+    BinaryPropertyCodePointSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
 };
 use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
@@ -280,7 +280,7 @@ impl SegmenterRuleProvider {
         let gc = data.as_borrowed();
 
         // Load binary Unicode property dependencies.
-        let uniset_provider = BinaryPropertyUnicodeSetDataProvider::from(&self.source);
+        let uniset_provider = BinaryPropertyCodePointSetDataProvider::from(&self.source);
 
         let data =
             sets::get_extended_pictographic(&uniset_provider).expect("The data should be valid!");
@@ -634,7 +634,7 @@ impl SegmenterRuleProvider {
 }
 
 impl DataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load(&self, _req: &DataRequest) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(LineBreakDataV1Marker::KEY)?;
 
         Ok(DataResponse {
@@ -647,7 +647,7 @@ impl DataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
 impl DataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
     fn load(
         &self,
-        _req: &DataRequest,
+        _req: DataRequest,
     ) -> Result<DataResponse<GraphemeClusterBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(GraphemeClusterBreakDataV1Marker::KEY)?;
 
@@ -659,7 +659,7 @@ impl DataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
 }
 
 impl DataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load(&self, _req: &DataRequest) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(WordBreakDataV1Marker::KEY)?;
 
         Ok(DataResponse {
@@ -672,7 +672,7 @@ impl DataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
 impl DataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
     fn load(
         &self,
-        _req: &DataRequest,
+        _req: DataRequest,
     ) -> Result<DataResponse<SentenceBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(SentenceBreakDataV1Marker::KEY)?;
 
@@ -694,25 +694,25 @@ icu_provider::make_exportable_provider!(
 );
 
 impl IterableDataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -729,16 +729,16 @@ pub struct SegmenterDictionaryProvider {
 }
 
 impl SegmenterDictionaryProvider {
-    fn get_toml_filename(options: &DataOptions) -> Option<&'static str> {
-        if options.get_langid() == langid!("km") {
+    fn get_toml_filename(locale: &DataLocale) -> Option<&'static str> {
+        if locale.get_langid() == langid!("km") {
             Some("dictionary_km.toml")
-        } else if options.get_langid() == langid!("ja") {
+        } else if locale.get_langid() == langid!("ja") {
             Some("dictionary_cj.toml")
-        } else if options.get_langid() == langid!("lo") {
+        } else if locale.get_langid() == langid!("lo") {
             Some("dictionary_lo.toml")
-        } else if options.get_langid() == langid!("my") {
+        } else if locale.get_langid() == langid!("my") {
             Some("dictionary_my.toml")
-        } else if options.get_langid() == langid!("th") {
+        } else if locale.get_langid() == langid!("th") {
             Some("dictionary_th.toml")
         } else {
             None
@@ -757,14 +757,14 @@ impl From<&SourceData> for SegmenterDictionaryProvider {
 impl DataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
     fn load(
         &self,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<UCharDictionaryBreakDataV1Marker>, DataError> {
         let toml_data = self
             .source
             .segmenter()?
             .read_and_parse_toml::<SegmenterDictionaryData>(
-                Self::get_toml_filename(&req.options)
-                    .ok_or_else(|| DataErrorKind::MissingDataOptions.into_error())?,
+                Self::get_toml_filename(req.locale)
+                    .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
             )?;
         let data = UCharDictionaryBreakDataV1 {
             trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
@@ -782,7 +782,7 @@ icu_provider::make_exportable_provider!(
 );
 
 impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
-    fn supported_options(&self) -> Result<Vec<DataOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             locale!("th").into(),
             locale!("km").into(),
@@ -801,7 +801,7 @@ mod tests {
     fn load_grapheme_cluster_data() {
         let provider = SegmenterRuleProvider::from(&SourceData::for_test());
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
-            .load(&DataRequest::default())
+            .load(Default::default())
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");
