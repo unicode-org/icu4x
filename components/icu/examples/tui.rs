@@ -56,9 +56,8 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             &TimeZoneFormatterOptions::default(),
         )
         .expect("Failed to create DateTimeFormatter.");
-        let (today_date, today_tz) = parse_zoned_gregorian_from_str("2020-10-10T18:56:00Z")
-
-            .expect("Failed to parse date");
+        let (today_date, today_tz) =
+            parse_zoned_gregorian_from_str("2020-10-10T18:56:00Z").expect("Failed to parse date");
 
         let formatted_dt = dtf.format(&today_date, &today_tz);
 
