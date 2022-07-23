@@ -19,7 +19,7 @@ use crate::provider::*;
 use crate::*;
 use core::iter::FromIterator;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointSet;
+use icu_uniset::CodePointInversionList;
 
 /// A wrapper around code point set data, returned by property getters for
 /// unicode sets.
@@ -116,9 +116,9 @@ impl CodePointSetData {
         }
     }
 
-    /// Construct a new one an owned [`CodePointSet`]
-    pub fn from_code_point_set(set: CodePointSet<'static>) -> Self {
-        let set = PropertyCodePointSetV1::from_code_point_set(set);
+    /// Construct a new one an owned [`CodePointInversionList`]
+    pub fn from_code_point_inversion_list(set: CodePointInversionList<'static>) -> Self {
+        let set = PropertyCodePointSetV1::from_code_point_inversion_list(set);
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
     }
 
@@ -132,8 +132,8 @@ impl CodePointSetData {
     /// If using this function it is preferable to stick to [`CodePointSet`] representations
     /// in the data, however exceptions can be made if the performance hit is considered to
     /// be okay.
-    pub fn to_code_point_set(&self) -> CodePointSet<'_> {
-        self.data.get().to_code_point_set()
+    pub fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
+        self.data.get().to_code_point_inversion_list()
     }
 }
 
@@ -1705,8 +1705,8 @@ pub fn get_for_general_category_group(
         .iter_ranges()
         .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
         .map(|cpm_range| cpm_range.range);
-    let set = CodePointSet::from_iter(matching_gc_ranges);
-    Ok(CodePointSetData::from_code_point_set(set))
+    let set = CodePointInversionList::from_iter(matching_gc_ranges);
+    Ok(CodePointSetData::from_code_point_inversion_list(set))
 }
 
 #[cfg(test)]
@@ -1748,21 +1748,24 @@ mod tests {
     fn test_gc_groupings() {
         use icu::properties::{maps, sets};
         use icu::properties::{GeneralCategory, GeneralCategoryGroup};
-        use icu_uniset::CodePointSetBuilder;
+        use icu_uniset::CodePointInversionListBuilder;
 
         let provider = icu_testdata::get_provider();
 
         let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
-            let category_set = category_set.to_code_point_set();
+            let category_set = category_set.to_code_point_inversion_list();
 
             let data = maps::get_general_category(&provider).expect("The data should be valid");
             let gc = data.as_borrowed();
 
-            let mut builder = CodePointSetBuilder::new();
+            let mut builder = CodePointInversionListBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(&gc.get_set_for_value(*subcategory).to_code_point_set());
+                builder.add_set(
+                    &gc.get_set_for_value(*subcategory)
+                        .to_code_point_inversion_list(),
+                );
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);

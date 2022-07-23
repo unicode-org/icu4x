@@ -4,7 +4,7 @@ pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
 static UND: DataStruct =
     &::icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
         #[allow(unused_unsafe)]
-        ::icu_uniset::CodePointSet::from_parts_unchecked(
+        ::icu_uniset::CodePointInversionList::from_parts_unchecked(
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     33u8, 0u8, 0u8, 0u8, 34u8, 0u8, 0u8, 0u8, 44u8, 0u8, 0u8, 0u8, 45u8, 0u8, 0u8,

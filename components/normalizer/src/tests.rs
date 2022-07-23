@@ -432,10 +432,10 @@ fn test_conformance() {
 
 #[test]
 fn test_hangul() {
-    use icu_uniset::{CodePointSet, CodePointSetBuilder};
+    use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
     use zerofrom::ZeroFrom;
-    let builder = CodePointSetBuilder::new();
-    let set: CodePointSet = builder.build();
+    let builder = CodePointInversionListBuilder::new();
+    let set: CodePointInversionList = builder.build();
 
     let data_provider = icu_testdata::get_provider();
 

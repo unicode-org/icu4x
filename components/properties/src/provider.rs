@@ -12,7 +12,7 @@
 use crate::script::ScriptWithExtensions;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use icu_uniset::CodePointSet;
+use icu_uniset::CodePointInversionList;
 use zerofrom::ZeroFrom;
 
 /// A set of characters with a particular property.
@@ -29,7 +29,7 @@ use zerofrom::ZeroFrom;
 #[non_exhaustive]
 pub enum PropertyCodePointSetV1<'data> {
     /// The set of characters, represented as an inversion list
-    InversionList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointSet<'data>),
+    InversionList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionList<'data>),
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
@@ -86,12 +86,12 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn from_code_point_set(l: CodePointSet<'static>) -> Self {
+    pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
         Self::InversionList(l)
     }
 
     #[inline]
-    pub(crate) fn to_code_point_set(&'_ self) -> CodePointSet<'_> {
+    pub(crate) fn to_code_point_inversion_list(&'_ self) -> CodePointInversionList<'_> {
         match *self {
             Self::InversionList(ref l) => ZeroFrom::zero_from(l),
         }
@@ -108,7 +108,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointSet<'static> {
+    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         match *self {
             Self::CodePointTrie(ref t) => t.get_set_for_value(value),
         }
