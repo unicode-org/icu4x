@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`CodePointSet`] containing
+//! The functions in this module return a [`CodePointSetData`] containing
 //! the set of characters with a particular Unicode property.
 //!
 //! The descriptions of most properties are taken from [`TR44`], the documentation for the
@@ -10,7 +10,7 @@
 //! documentation for Unicode regular expressions. In particular, Annex C of this document
 //! defines properties for POSIX compatibility.
 //!
-//! [`CodePointSet`]: icu_uniset::CodePointSet
+//! [`CodePointSetData`]: crate::sets::CodePointSetData
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 //! [`TR18`]: https://www.unicode.org/reports/tr18
 
@@ -122,14 +122,14 @@ impl CodePointSetData {
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
     }
 
-    /// Convert this type to a [`CodePointSet`], borrowing if possible,
-    /// otherwise allocating a new [`CodePointSet`].
+    /// Convert this type to a [`CodePointInversionList`], borrowing if possible,
+    /// otherwise allocating a new [`CodePointInversionList`].
     ///
     /// The data backing this is extensible and supports multiple implementations.
-    /// Currently it is always [`CodePointSet`]; however in the future more backends may be
+    /// Currently it is always [`CodePointInversionList`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
-    /// If using this function it is preferable to stick to [`CodePointSet`] representations
+    /// If using this function it is preferable to stick to [`CodePointInversionList`] representations
     /// in the data, however exceptions can be made if the performance hit is considered to
     /// be okay.
     pub fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {

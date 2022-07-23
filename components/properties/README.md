@@ -55,8 +55,8 @@ assert_eq!(script.get('木'), Script::Han); // U+6728
 
 [`ICU4X`]: ../icu/index.html
 [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
-[`CodePointSetData`]: icu_uniset::CodePointSetData
-[`CodePointMapData`]: icu_codepointMapData::CodePointMapData
+[`CodePointSetData`]: crate::sets::CodePointSetData
+[`CodePointMapData`]: crate::maps::CodePointMapData
 [`sets`]: crate::sets
 
 ## More Information

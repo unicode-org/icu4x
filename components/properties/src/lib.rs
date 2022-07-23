@@ -57,8 +57,8 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [Unicode Properties]: https://unicode-org.github.io/icu/userguide/strings/properties.html
-//! [`CodePointSetData`]: icu_uniset::CodePointSetData
-//! [`CodePointMapData`]: icu_codepointMapData::CodePointMapData
+//! [`CodePointSetData`]: crate::sets::CodePointSetData
+//! [`CodePointMapData`]: crate::maps::CodePointMapData
 //! [`sets`]: crate::sets
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
