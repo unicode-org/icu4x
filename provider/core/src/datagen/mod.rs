@@ -74,6 +74,11 @@ macro_rules! make_exportable_provider {
             [ $($struct_m),+, ],
             $crate::datagen::ExportMarker
         );
+        $crate::impl_dynamic_data_provider!(
+            $provider,
+            [ $($struct_m),+, ],
+            $crate::any::AnyMarker
+        );
 
         impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
             fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
