@@ -23,6 +23,9 @@ use zerovec::ZeroVec;
 
 mod collator_serde;
 
+#[cfg(test)]
+mod test;
+
 /// Collection of all the key for easy reference from the datagen registry.
 pub const ALL_KEYS: [DataKey; 6] = [
     CollationDataV1Marker::KEY,
