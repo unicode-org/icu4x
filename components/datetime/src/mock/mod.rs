@@ -12,9 +12,6 @@ use time_zone::MockTimeZone;
 /// Temporary time zone input utilities.
 pub mod time_zone;
 
-/// Temporary zoned DateTime input utilities.
-pub mod zoned_datetime;
-
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
 /// This utility is for easily creating dates, not a complete robust solution. The
