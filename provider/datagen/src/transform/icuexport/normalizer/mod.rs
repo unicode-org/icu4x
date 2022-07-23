@@ -12,7 +12,6 @@ use icu_normalizer::provider::*;
 use icu_normalizer::u24::U24;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointSetBuilder;
 use std::convert::TryFrom;
 use zerovec::ZeroVec;
 
@@ -141,16 +140,14 @@ macro_rules! normalization_passthrough_provider {
             CompositionPassthrough,
             $file_name,
             {
-                let mut builder = CodePointSetBuilder::new();
-                for range in &toml_data.ranges {
-                    builder.add_range_u32(&(range.0..=range.1));
-                }
-                let uniset = builder.build();
+                let trie = CodePointTrie::<u8>::try_from(&toml_data.trie)
+                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
 
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(CompositionPassthroughV1 {
-                        potential_passthrough_and_not_backward_combining: uniset,
+                        first: toml_data.first,
+                        trie,
                     })),
                 })
             },
@@ -266,12 +263,18 @@ normalization_passthrough_provider!(
 normalization_passthrough_provider!(
     CompatibilityCompositionPassthroughV1Marker,
     CompatibilityCompositionPassthroughProvider,
+    // To get a smaller size at the expense of performance,
+    // we could provide an option to pass "passthroughnop"
+    // here.
     "nfkc"
 );
 
 normalization_passthrough_provider!(
     Uts46CompositionPassthroughV1Marker,
     Uts46CompositionPassthroughProvider,
+    // To get a smaller size at the expense of performance,
+    // we could provide an option to pass "passthroughnop"
+    // here.
     "uts46"
 );
 

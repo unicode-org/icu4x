@@ -924,13 +924,13 @@ locale_canonicalizer/aliases@1, und, 18500B, 231601ea4c6b6ce73165ffbc5c0d9d44862
 locale_canonicalizer/likelysubtags@1, und, 87515B, 6f6ee5eacd835e2eeb53e32e42a85fb9f6ef3957cd38436e635c8b9c0f3d373d
 normalizer/comp@1, und, 29836B, 634be78f876811cd829efa0d9e2ff29d28b8f13696b527df30c7ef6f36820a47
 normalizer/decomp@1, und, 14378B, 25065fed55263cf13bcf9bd11384512ab4a6b041b58a14cdd6a80ddbd722c26c
-normalizer/nfc@1, und, 5802B, f2be11a3cb8b2cbafd8b813a84fcbe37c415ab707ac287e1c5c5f1d99222e821
+normalizer/nfc@1, und, 21287B, 085cd51dac1b7e86e46fc03d96d65c60547cf53d774c57f8b07b3d962246871f
 normalizer/nfd@1, und, 79359B, a4e6e5c3041ef68a4aaf0857f243f8e6f2df9e8a060f8d0ea7c496d8f8f97636
 normalizer/nfdex@1, und, 13920B, 0803c298b9417714f714d0b480d9800d7ca1be345d5198afe3c38ac5b8db46a0
-normalizer/nfkc@1, und, 9630B, 65cee4ff5e52a7ecaa2a3d4afd6e21005ccd8a388c54cdc3042d48828fa89842
+normalizer/nfkc@1, und, 28119B, ebf6b9050558898cdae784fe45dfd5174b9777fe97d466a032dc7d9474fa10bb
 normalizer/nfkd@1, und, 68552B, bcc467feedb56af0bd59e241be2b78302b6cd96b461570a6a60b1c10e09ca0da
 normalizer/nfkdex@1, und, 33907B, f572e5400a4b0e0fa4bb4e74a23dd4259ac129df4f7fd99286df039b0b959dd0
-normalizer/uts46@1, und, 21256B, b929d263dcd727d8da0883d57f77eae14aa35d6a081acb0990fd9389877c2ebb
+normalizer/uts46@1, und, 29492B, c70ae4ee9842927b60034c77550ac2f06fd0a79e44d1b5f348c89773ecdc676f
 normalizer/uts46d@1, und, 94712B, da765329e5b9c717db7e9b4021b3ab6e40a506bade2ce34893f7353ce8bbd8ea
 plurals/cardinal@1, ar, 116B, 70b9c317d4a0610bea253ee36b3b03558caef37fe31191594c78c740eddae8db
 plurals/cardinal@1, bn, 92B, e9b39fe9dc7f558686241506e6ec8f9b043e088af3c72a7176d8ed20c95c84f0

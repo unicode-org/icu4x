@@ -84,7 +84,6 @@ use icu_codepointtrie::CodePointTrie;
 use icu_properties::maps::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointSet;
 use provider::CanonicalCompositionPassthroughV1Marker;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
@@ -104,6 +103,32 @@ use utf8_iter::Utf8CharsEx;
 use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+
+/// Wrapper around trie to get the needed set semantics.
+struct PassthroughSet<'data> {
+    trie: &'data CodePointTrie<'data, u8>,
+}
+
+impl<'data> PassthroughSet<'data> {
+    /// Constructor
+    pub fn new(trie: &'data CodePointTrie<'data, u8>) -> Self {
+        Self {
+            trie
+        }
+    }
+    /// Lookup by scalar value
+    pub fn contains(&self, c: char) -> bool {
+        self.contains_u32(u32::from(c))
+    }
+    /// Lookup by code point
+    pub fn contains_u32(&self, u: u32) -> bool {
+        let head = u >> 3;
+        let tail = (u & 0b111) as u8;
+        let trie_val = self.trie.get(head);
+        // Bit 1 means not passthrough
+        (trie_val & (1 << tail)) == 0
+    }
+}
 
 enum SupplementPayloadHolder {
     Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
@@ -445,7 +470,7 @@ where
     /// omit some characters from this set. As a consequence, multiple
     /// normalization forms whose sets are similar may use the intersection
     /// of their exact sets in order to need to store only the intersection.
-    potential_passthrough_and_not_backward_combining: Option<CodePointSet<'data>>,
+    potential_passthrough_and_not_backward_combining: Option<PassthroughSet<'data>>,
     /// The character in `pending` is a in the
     /// `potential_passthrough_and_not_backward_combining` set.
     /// This flag is meaningful only when `pending.is_some()` and
@@ -490,7 +515,7 @@ where
         tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
-        potential_passthrough_and_not_backward_combining: Option<CodePointSet<'data>>,
+        potential_passthrough_and_not_backward_combining: Option<PassthroughSet<'data>>,
     ) -> Self {
         let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
             if let Some(supplementary) = supplementary_decompositions {
@@ -1533,12 +1558,12 @@ impl ComposingNormalizer {
                     .as_ref()
                     .map(|s| s.get()),
                 self.decomposing_normalizer.ccc.as_borrowed(),
-                Some(ZeroFrom::zero_from(
-                    &self
+                Some(
+                    PassthroughSet::new(&self
                         .potential_passthrough_and_not_backward_combining
                         .get()
-                        .potential_passthrough_and_not_backward_combining,
-                )),
+                        .trie),
+                ),
             ),
             ZeroFrom::zero_from(&self.canonical_compositions.get().canonical_compositions),
         )
