@@ -202,6 +202,37 @@ impl ZonedAnyDateTimeFormatter {
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     ///
+    /// Test will currently fail due to <https://github.com/unicode-org/icu4x/issues/2188>,
+    /// since these functions currently *must* be given a fallback-enabled provider and
+    /// we do not have one in `icu_testdata`
+    ///
+    /// ```rust,should_panic
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::options::length;
+    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
+    /// use icu::locid::Locale;
+    /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use std::str::FromStr;
+    ///
+    /// let provider = icu_testdata::get_baked_provider();
+    ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    ///
+    /// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_any_provider(
+    ///     locale,
+    ///     &provider,
+    ///     &options,
+    ///     &TimeZoneFormatterOptions::default(),
+    /// ).expect("Construction should succeed");
+    ///
+    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
+    ///     .expect("Failed to parse zoned datetime");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
+    /// ```
     #[inline]
     pub fn try_new_with_any_provider<T: Into<Locale>, P>(
         locale: T,
@@ -246,7 +277,7 @@ impl ZonedAnyDateTimeFormatter {
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_json_provider();
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
     /// let locale = Locale::from_str("en").unwrap();
