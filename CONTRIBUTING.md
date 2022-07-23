@@ -49,6 +49,13 @@ Handy commands (run from the root directory):
 
 See the [Testing](#testing) section below for more information on the various testsuites available.
 
+There are various files that auto-generated across the ICU4X repository.  Here are some of the commands that you may
+need to run in order to recreate them.  These files may be run in more comprehensive tests such as those included in `cargo make ci-job-test` or `cargo make ci-all`.
+
+- `cargo make testdata` - regenerates all test data in the `provider/testdata` directory.
+- `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
+- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/diplomat` directory.
+
 ### Testing
 
 It's recommended to run `cargo test --all-features` in crates you're modifying to ensure that nothing is breaking, and `cargo quick` to get a reasonable check that everything still builds and lint checks pass.
