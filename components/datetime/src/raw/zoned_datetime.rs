@@ -130,8 +130,7 @@ impl ZonedDateTimeFormatter {
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
-            // TODO(#2136): Don't clone here
-            locale.clone(),
+            locale,
             patterns,
             date_symbols_data,
             time_symbols_data,
@@ -141,7 +140,7 @@ impl ZonedDateTimeFormatter {
         );
 
         let time_zone_format = TimeZoneFormatter::try_new(
-            locale,
+            &datetime_format.locale,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns

@@ -110,14 +110,13 @@ pub struct TimeZoneDataPayloads {
 impl TimeZoneFormatter {
     /// Constructor that selectively loads data based on what is required to
     /// format the given pattern into the given locale.
-    pub(super) fn try_new<L, ZP>(
-        locale: L,
+    pub(super) fn try_new<ZP>(
+        locale: &DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         zone_provider: &ZP,
         options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        L: Into<Locale>,
         ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
@@ -126,7 +125,6 @@ impl TimeZoneFormatter {
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
-        let locale = DataLocale::from(locale.into());
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
@@ -158,7 +156,8 @@ impl TimeZoneFormatter {
 
         let mut tz_format: TimeZoneFormatter = Self {
             data_payloads,
-            locale,
+            // TODO(#2237): Determine whether we need to save the locale in the formatter
+            locale: locale.clone(),
             format_units,
             fallback_unit: TimeZoneFormatter::get_fallback_unit(options.fallback_format),
         };

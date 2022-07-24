@@ -5,7 +5,7 @@
 use crate::{options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 
 use icu_provider::prelude::*;
 
@@ -32,7 +32,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// This is equivalently the composition of
 /// [`AnyDateTimeFormatter`](crate::any::AnyDateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
 ///
-/// [`ZonedAnyDateTimeFormatter`] uses data from the [data provider]s, the selected [`Locale`], and the
+/// [`ZonedAnyDateTimeFormatter`] uses data from the [data provider]s, the selected [`DataLocale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
@@ -76,7 +76,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 pub struct ZonedAnyDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedAnyDateTimeFormatter {
-    /// Constructor that takes a selected [`Locale`], a reference to a [data provider] for
+    /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
     /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
@@ -117,8 +117,8 @@ impl ZonedAnyDateTimeFormatter {
     /// [data provider]: icu_provider
     #[inline]
     #[allow(clippy::too_many_arguments)]
-    pub fn try_new_unstable<L, DP, ZP, PP, DEP, CEP>(
-        locale: L,
+    pub fn try_new_unstable<DP, ZP, PP, DEP, CEP>(
+        locale: &DataLocale,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
@@ -128,7 +128,6 @@ impl ZonedAnyDateTimeFormatter {
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        L: Into<Locale>,
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<DatePatternsV1Marker>
@@ -147,28 +146,23 @@ impl ZonedAnyDateTimeFormatter {
         DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
         CEP: DataProvider<JapaneseErasV1Marker> + ?Sized,
     {
-        let mut locale = locale.into();
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale = locale.clone();
 
         // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Some(kind) = AnyCalendarKind::from_locale(&locale) {
+        let kind = if let Some(kind) = AnyCalendarKind::from_data_locale(&locale) {
             kind
         } else {
-            locale
-                .extensions
-                .unicode
-                .keywords
-                .set(key!("ca"), value!("gregory"));
+            locale.set_unicode_ext(key!("ca"), value!("gregory"));
             AnyCalendarKind::Gregorian
         };
 
         // We share data under ethiopic
         if kind == AnyCalendarKind::Ethioaa {
-            locale
-                .extensions
-                .unicode
-                .keywords
-                .set(key!("ca"), value!("ethiopic"));
+            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
+
         let calendar = AnyCalendar::try_new_unstable(kind, calendar_provider)?;
 
         Ok(Self(
@@ -197,8 +191,8 @@ impl ZonedAnyDateTimeFormatter {
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     #[inline]
-    pub fn try_new_with_any_provider<T: Into<Locale>, P>(
-        locale: T,
+    pub fn try_new_with_any_provider<P>(
+        locale: &DataLocale,
         data_provider: &P,
         options: &DateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
@@ -234,8 +228,8 @@ impl ZonedAnyDateTimeFormatter {
     /// Test TBD: <https://github.com/unicode-org/icu4x/issues/2145>
     #[inline]
     #[cfg(feature = "serde")]
-    pub fn try_new_with_buffer_provider<T: Into<Locale>, P>(
-        locale: T,
+    pub fn try_new_with_buffer_provider<P>(
+        locale: &DataLocale,
         data_provider: &P,
         options: &DateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
