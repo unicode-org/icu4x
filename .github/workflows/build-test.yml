@@ -126,6 +126,9 @@ jobs:
       with:
         crate: cargo-make
         version: latest
+    # Note: rustfmt is required for databake formatting
+    - name: Install rustfmt
+      run: rustup component add rustfmt
     - name: Build icu4x-testdata-datagen
       uses: actions-rs/cargo@v1.0.1
       with:
