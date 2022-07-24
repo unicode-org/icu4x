@@ -5,7 +5,6 @@
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::Locale;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
@@ -104,8 +103,8 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<L, DP, ZP, PP, DEP>(
-        locale: L,
+    pub fn try_new<DP, ZP, PP, DEP>(
+        locale: &DataLocale,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
@@ -114,7 +113,6 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        L: Into<Locale>,
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<DatePatternsV1Marker>
@@ -132,7 +130,9 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         PP: DataProvider<OrdinalV1Marker> + ?Sized,
         DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
-        let mut locale = locale.into();
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale = locale.clone();
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(

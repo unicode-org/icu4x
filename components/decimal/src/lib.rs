@@ -80,7 +80,6 @@ pub use error::Error as FixedDecimalFormatterError;
 pub use format::FormattedFixedDecimal;
 
 use fixed_decimal::FixedDecimal;
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
@@ -101,14 +100,14 @@ pub struct FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    pub fn try_new<T: Into<Locale>, D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
-        locale: T,
+    pub fn try_new<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
+        locale: &DataLocale,
         data_provider: &D,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, FixedDecimalFormatterError> {
         let symbols = data_provider
             .load(DataRequest {
-                locale: &locale.into().into(),
+                locale: locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;

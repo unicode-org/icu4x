@@ -12,8 +12,9 @@ use icu_calendar::{
 use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions_unicode_key as key;
 use icu_locid::extensions_unicode_value as value;
-use icu_locid::Locale;
 use tinystr::{tinystr, TinyStr16};
+use icu_provider::DataLocale;
+
 /// A calendar that can be found in CLDR
 ///
 /// New implementors of this trait will likely also wish to modify `get_era_code_map()`
@@ -63,12 +64,12 @@ impl CldrCalendar for Ethiopic {
 }
 
 pub(crate) fn potentially_fixup_calendar<C: CldrCalendar>(
-    locale: &mut Locale,
+    locale: &mut DataLocale,
 ) -> Result<(), DateTimeFormatterError> {
-    let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
+    let cal = locale.get_unicode_ext(&key!("ca"));
 
     if let Some(cal) = cal {
-        if !C::is_identifier_allowed_for_calendar(cal) {
+        if !C::is_identifier_allowed_for_calendar(&cal) {
             let mut string = cal.to_string();
             string.truncate(16);
             let tiny = TinyStr16::from_str(&string).unwrap_or(tinystr!(16, "unknown"));
@@ -78,11 +79,7 @@ pub(crate) fn potentially_fixup_calendar<C: CldrCalendar>(
             ));
         }
     } else {
-        locale
-            .extensions
-            .unicode
-            .keywords
-            .set(key!("ca"), C::DEFAULT_BCP_47_IDENTIFIER);
+        locale.set_unicode_ext(key!("ca"), C::DEFAULT_BCP_47_IDENTIFIER);
     }
 
     Ok(())

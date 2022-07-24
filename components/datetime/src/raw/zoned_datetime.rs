@@ -8,7 +8,7 @@ use icu_decimal::{
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormatter,
 };
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -42,14 +42,14 @@ pub(crate) struct ZonedDateTimeFormatter {
 }
 
 impl ZonedDateTimeFormatter {
-    /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
+    /// Constructor that takes a selected [`DataLocale`], a reference to a [`DataProvider`] for
     /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
     pub fn try_new<DP, ZP, PP, DEP>(
-        mut locale: Locale,
+        mut locale: DataLocale,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
@@ -75,12 +75,8 @@ impl ZonedDateTimeFormatter {
         PP: DataProvider<OrdinalV1Marker> + ?Sized,
         DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
-        if locale.extensions.unicode.keywords.get(&key!("ca")) == Some(&value!("ethioaa")) {
-            locale
-                .extensions
-                .unicode
-                .keywords
-                .set(key!("ca"), value!("ethiopic"));
+        if locale.get_unicode_ext(&key!("ca")) == Some(value!("ethioaa")) {
+            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
 
         let patterns = provider::date_time::PatternSelector::for_options(
@@ -91,10 +87,8 @@ impl ZonedDateTimeFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
-        // TODO(#2136): Don't use expensive from
-        let data_locale = DataLocale::from(&locale);
         let req = DataRequest {
-            locale: &data_locale,
+            locale: &locale,
             metadata: Default::default(),
         };
 
@@ -106,8 +100,7 @@ impl ZonedDateTimeFormatter {
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal(
-                // TODO(#2136): Don't clone here
-                locale.clone(),
+                &locale,
                 plural_provider,
             )?)
         } else {
@@ -130,8 +123,7 @@ impl ZonedDateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            // TODO(#2136): Don't clone here
-            locale.clone(),
+            &locale,
             decimal_provider,
             fixed_decimal_format_options,
         )

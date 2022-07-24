@@ -17,7 +17,6 @@ use crate::{
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::Locale;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
@@ -89,8 +88,8 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new<D>(
+        locale: &DataLocale,
         data_provider: &D,
         length: length::Time,
         preferences: Option<preferences::Bag>,
@@ -101,7 +100,9 @@ impl<C: CldrCalendar> TimeFormatter<C> {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
-        let mut locale = locale.into();
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale = locale.clone();
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
@@ -250,8 +251,8 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new<D>(
+        locale: &DataLocale,
         data_provider: &D,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
@@ -263,7 +264,10 @@ impl<C: CldrCalendar> DateFormatter<C> {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        let mut locale = locale.into();
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale = locale.clone();
+
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
             raw::DateFormatter::try_new(locale, data_provider, length)?,
@@ -466,8 +470,8 @@ where {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new<D>(
+        locale: &DataLocale,
         data_provider: &D,
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
@@ -482,7 +486,9 @@ where {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        let mut locale = locale.into();
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale = locale.clone();
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(

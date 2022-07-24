@@ -19,10 +19,10 @@ use crate::provider::week_data::WeekDataV1;
 use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
-use icu_locid::Locale;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 use writeable::Writeable;
+use icu_provider::DataLocale;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
 /// an output from [`DateTimeFormatter`](crate::DateTimeFormatter).
@@ -55,7 +55,7 @@ pub struct FormattedDateTime<'l> {
     pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
     pub(crate) datetime: ExtractedDateTimeInput,
     pub(crate) week_data: Option<&'l WeekDataV1>,
-    pub(crate) locale: &'l Locale,
+    pub(crate) locale: &'l DataLocale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
     pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
 }
@@ -164,7 +164,7 @@ pub fn write_pattern_plurals<T, W>(
     week_data: Option<&WeekDataV1>,
     ordinal_rules: Option<&PluralRules>,
     fixed_decimal_format: &FixedDecimalFormatter,
-    locale: &Locale,
+    locale: &DataLocale,
     w: &mut W,
 ) -> Result<(), Error>
 where
