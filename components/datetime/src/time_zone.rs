@@ -129,7 +129,7 @@ impl TimeZoneFormatter {
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load(DataRequest {
-                    locale: &locale,
+                    locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?,

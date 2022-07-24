@@ -62,7 +62,7 @@ where
 {
     let data = data_provider
         .load(DataRequest {
-            locale: locale,
+            locale,
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -107,7 +107,7 @@ where
 {
     let data = data_provider
         .load(DataRequest {
-            locale: locale,
+            locale,
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -276,7 +276,7 @@ where
         let data = self
             .data_provider
             .load(DataRequest {
-                locale: &self.locale,
+                locale: self.locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;
