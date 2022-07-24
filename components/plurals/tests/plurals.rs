@@ -10,7 +10,8 @@ use icu_provider::prelude::*;
 fn test_plural_rules() {
     let provider = icu_testdata::get_provider();
 
-    let pr = PluralRules::try_new(&locale!("en").into(), &provider, PluralRuleType::Cardinal).unwrap();
+    let pr =
+        PluralRules::try_new(&locale!("en").into(), &provider, PluralRuleType::Cardinal).unwrap();
 
     assert_eq!(pr.select(5_usize), PluralCategory::Other);
 }

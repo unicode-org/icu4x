@@ -257,7 +257,8 @@ fn assert_fixture_element<A, D>(
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap()).unwrap();
+                DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
+                    .unwrap();
             let result = df.format_to_string(input_value);
 
             assert_eq!(result, output_value, "{}", description);
@@ -718,7 +719,8 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     let options = DateTimeFormatterOptions::Length(length_bag);
 
     let provider = icu_testdata::get_provider();
-    let result = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options);
+    let result =
+        DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options);
 
     assert!(result.is_err());
 }

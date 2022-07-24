@@ -42,7 +42,8 @@ fn pluralrules(c: &mut Criterion) {
             });
         });
 
-        let pr = PluralRules::try_new(&locale!("ru").into(), &provider, PluralRuleType::Cardinal).unwrap();
+        let pr = PluralRules::try_new(&locale!("ru").into(), &provider, PluralRuleType::Cardinal)
+            .unwrap();
         c.bench_function("plurals/pluralrules/select/fs", |b| {
             b.iter(|| {
                 for s in &numbers_data.usize {

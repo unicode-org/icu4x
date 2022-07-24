@@ -20,9 +20,9 @@ use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
+use icu_provider::DataLocale;
 use icu_provider::DataPayload;
 use writeable::Writeable;
-use icu_provider::DataLocale;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
 /// an output from [`DateTimeFormatter`](crate::DateTimeFormatter).
@@ -545,12 +545,8 @@ mod tests {
             provider.load(req).unwrap().take_payload().unwrap();
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &locale,
-            &provider,
-            Default::default(),
-        )
-        .unwrap();
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&locale, &provider, Default::default()).unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &Locale::UND.into());

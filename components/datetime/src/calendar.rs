@@ -12,8 +12,8 @@ use icu_calendar::{
 use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions_unicode_key as key;
 use icu_locid::extensions_unicode_value as value;
-use tinystr::{tinystr, TinyStr16};
 use icu_provider::DataLocale;
+use tinystr::{tinystr, TinyStr16};
 
 /// A calendar that can be found in CLDR
 ///

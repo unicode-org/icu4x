@@ -81,12 +81,9 @@ impl TimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &locale,
-            data_provider,
-            fixed_decimal_format_options,
-        )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
+                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -214,10 +211,7 @@ impl DateFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(
-                &locale,
-                data_provider,
-            )?)
+            Some(PluralRules::try_new_ordinal(&locale, data_provider)?)
         } else {
             None
         };
@@ -231,12 +225,9 @@ impl DateFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &locale,
-            data_provider,
-            fixed_decimal_format_options,
-        )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
+                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -418,10 +409,7 @@ impl DateTimeFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(
-                &locale,
-                data_provider,
-            )?)
+            Some(PluralRules::try_new_ordinal(&locale, data_provider)?)
         } else {
             None
         };
@@ -441,12 +429,9 @@ impl DateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &locale,
-            data_provider,
-            fixed_decimal_format_options,
-        )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
+                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
