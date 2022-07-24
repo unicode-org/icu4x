@@ -86,8 +86,6 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-    - name: Install rustfmt
-      run: rustup component add rustfmt
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -98,6 +96,51 @@ jobs:
       with:
         command: make
         args: ci-job-test
+
+  testdata:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+    - name: Build icu4x-testdata-datagen
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --bin=icu4x-testdata-datagen --features=bin
+    - name: Build icu4x-datagen
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --bin=icu4x-datagen --features=experimental,bin
+    - name: Run `cargo make ci-job-testdata`
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-testdata
 
   # Docs test job - runs all "cargo make" testing commands for docs
   test-docs:
