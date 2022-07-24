@@ -87,7 +87,6 @@ pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
 pub use error::PluralRulesError;
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
@@ -298,8 +297,8 @@ impl PluralRules {
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider
-    pub fn try_new<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new<D>(
+        locale: &DataLocale,
         data_provider: &D,
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
@@ -337,8 +336,8 @@ impl PluralRules {
     ///
     /// [`One`]: PluralCategory::One
     /// [`Other`]: PluralCategory::Other
-    pub fn try_new_cardinal<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new_cardinal<D>(
+        locale: &DataLocale,
         data_provider: &D,
     ) -> Result<Self, PluralRulesError>
     where
@@ -347,7 +346,7 @@ impl PluralRules {
         Ok(Self(
             data_provider
                 .load(DataRequest {
-                    locale: &locale.into().into(),
+                    locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?
@@ -383,8 +382,8 @@ impl PluralRules {
     /// [`Two`]: PluralCategory::Two
     /// [`Few`]: PluralCategory::Few
     /// [`Other`]: PluralCategory::Other
-    pub fn try_new_ordinal<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new_ordinal<D>(
+        locale: &DataLocale,
         data_provider: &D,
     ) -> Result<Self, PluralRulesError>
     where
@@ -393,7 +392,7 @@ impl PluralRules {
         Ok(Self(
             data_provider
                 .load(DataRequest {
-                    locale: &locale.into().into(),
+                    locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?
