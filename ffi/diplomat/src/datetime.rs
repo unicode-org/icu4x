@@ -52,7 +52,7 @@ pub mod ffi {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
 
-            let locale = locale.0.as_ref().clone();
+            let locale = &locale.0.as_ref().into();
             let length = match length {
                 ICU4XTimeLength::Full => length::Time::Full,
                 ICU4XTimeLength::Long => length::Time::Long,
@@ -123,7 +123,7 @@ pub mod ffi {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
 
-            let locale = locale.0.as_ref().clone();
+            let locale = &locale.0.as_ref().into();
             let length = match length {
                 ICU4XDateLength::Full => length::Date::Full,
                 ICU4XDateLength::Long => length::Date::Long,
@@ -174,7 +174,7 @@ pub mod ffi {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
 
-            let locale = locale.0.as_ref().clone();
+            let locale = &locale.0.as_ref().into();
             let date_length = match date_length {
                 ICU4XDateLength::Full => length::Date::Full,
                 ICU4XDateLength::Long => length::Date::Long,
