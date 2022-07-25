@@ -215,7 +215,7 @@ impl ZonedAnyDateTimeFormatter {
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
     /// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_any_provider(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &options,
     ///     &TimeZoneFormatterOptions::default(),
@@ -277,7 +277,7 @@ impl ZonedAnyDateTimeFormatter {
     /// let locale = Locale::from_str("en").unwrap();
     ///
     /// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_buffer_provider(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &options,
     ///     &TimeZoneFormatterOptions::default(),
