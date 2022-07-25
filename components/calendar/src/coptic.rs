@@ -201,6 +201,8 @@ impl Coptic {
 impl Date<Coptic> {
     /// Construct new Coptic Date.
     ///
+    /// Negative years are in the B.D. era, starting with 0 = 1 B.D.
+    ///
     /// ```rust
     /// use icu::calendar::Date;
     ///
@@ -230,6 +232,8 @@ impl Date<Coptic> {
 
 impl DateTime<Coptic> {
     /// Construct a new Coptic datetime from integers.
+    ///
+    /// Negative years are in the B.D. era, starting with 0 = 1 B.D.
     ///
     /// ```rust
     /// use icu::calendar::DateTime;

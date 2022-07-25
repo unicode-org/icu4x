@@ -182,7 +182,7 @@ impl Indian {
 }
 
 impl Date<Indian> {
-    /// Construct new Indian Date.
+    /// Construct new Indian Date, with year provided in the Śaka era.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -212,7 +212,7 @@ impl Date<Indian> {
 }
 
 impl DateTime<Indian> {
-    /// Construct a new Indian datetime from integers.
+    /// Construct a new Indian datetime from integers, with year provided in the Śaka era.
     ///
     /// ```rust
     /// use icu::calendar::DateTime;
