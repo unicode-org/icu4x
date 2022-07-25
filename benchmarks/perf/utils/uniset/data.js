@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658471855827,
+  "lastUpdate": 1658748889849,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38015,6 +38015,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39072445,
             "range": "± 262487",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fc84c164bc06ad830455ca49a5f3ab7705d1385f",
+          "message": "Use multiple dictionaries for line/word segmenter. (#2209)\n\n* Use multiple dictionaries for line/word segmenter.\r\n\r\n* Remove unnecessary script mapping since I use data provider to get UAX#24 data.\r\n\r\n* Fix comment of test\r\n\r\n* Remove more complex defines from word segmenter data.\r\n\r\n* Don't load dictionary data on line segmenter when using lstm.\r\n\r\n* Don't load east asian language dictionaries on word segmenter when using lstm.\r\n\r\n* Replace array with struct for Dictionary payloads.\r\n\r\n* Fix build error.\r\n\r\n* Move the owner of dictionary payload from *Segmenter to Dictionary.\r\n\r\n* Add issue number of TODO comment",
+          "timestamp": "2022-07-25T20:22:44+09:00",
+          "tree_id": "ec120d68d65567853d652cf64fb8b91cf901f2b3",
+          "url": "https://github.com/unicode-org/icu4x/commit/fc84c164bc06ad830455ca49a5f3ab7705d1385f"
+        },
+        "date": 1658748837451,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39997352,
+            "range": "± 2686368",
             "unit": "ns/iter"
           },
           {
