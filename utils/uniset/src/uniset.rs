@@ -223,7 +223,7 @@ impl<'data> CodePointInversionList<'data> {
     /// use zerovec::ZeroVec;
     ///
     /// let expected = vec![0x0, (char::MAX as u32) + 1];
-    /// assert_eq!(CodePointInversionList::all().get_inversion_list(), expected);
+    /// assert_eq!(CodePointInversionList::all().get_inversion_list_vec(), expected);
     /// assert_eq!(
     ///     CodePointInversionList::all().size(),
     ///     (expected[1] - expected[0]) as usize
@@ -249,7 +249,7 @@ impl<'data> CodePointInversionList<'data> {
     /// const BMP_MAX: u32 = 0xFFFF;
     ///
     /// let expected = vec![0x0, BMP_MAX + 1];
-    /// assert_eq!(CodePointInversionList::bmp().get_inversion_list(), expected);
+    /// assert_eq!(CodePointInversionList::bmp().get_inversion_list_vec(), expected);
     /// assert_eq!(
     ///     CodePointInversionList::bmp().size(),
     ///     (expected[1] - expected[0]) as usize
