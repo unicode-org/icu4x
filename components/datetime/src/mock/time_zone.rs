@@ -38,30 +38,46 @@ use icu_calendar::{DateTime, Iso};
 #[allow(clippy::exhaustive_structs)] // this type will not add fields (it is largely an example type)
 pub struct MockTimeZone {
     /// The GMT offset in seconds.
-    pub gmt_offset: Option<GmtOffset>,
+    pub gmt_offset: GmtOffset,
     /// The IANA time-zone identifier
     pub time_zone_id: Option<TimeZoneBcp47Id>,
     /// The CLDR metazone identifier
     pub metazone_id: Option<MetaZoneId>,
     /// The time variant e.g. "daylight" or "standard"
     pub time_variant: Option<TinyStr8>,
+    /// The fallback of GMT offset if it is set to None.
+    pub gmt_offset_fallback: GmtOffset,
 }
 
 impl MockTimeZone {
     /// Creates a new [`MockTimeZone`].
     /// A GMT offset is required, as it is used as a final fallback for formatting.
     /// The other arguments optionally allow access to more robust formats.
-    pub const fn new(
+    pub fn new(
         gmt_offset: Option<GmtOffset>,
         time_zone_id: Option<TimeZoneBcp47Id>,
         metazone_id: Option<MetaZoneId>,
         time_variant: Option<TinyStr8>,
     ) -> Self {
+        let gmt_offset_fallback = match "GMT+?".parse::<GmtOffset>() {
+            Ok(fallback) => fallback,
+            Err(_) => unreachable!("GMT offset fallback should be created successfully"),
+        };
         Self {
-            gmt_offset,
+            gmt_offset: match gmt_offset {
+                Some(offset) => offset,
+                None => {
+                    debug_assert!(
+                        false,
+                        "GMT offset fallback is used while creating MockTimeZone"
+                    );
+                    gmt_offset_fallback
+                }
+            },
             time_zone_id,
             metazone_id,
             time_variant,
+            gmt_offset_fallback,
         }
     }
 
@@ -130,21 +146,32 @@ impl FromStr for MockTimeZone {
     /// let tz3: MockTimeZone = "+02:30".parse().expect("Failed to parse a time zone.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let gmt_offset = match GmtOffset::from_str(input) {
-            Ok(offset) => Some(offset),
-            _ => None
+        let gmt_offset = GmtOffset::from_str(input).ok();
+        let gmt_offset_fallback = match "GMT+?".parse::<GmtOffset>() {
+            Ok(fallback) => fallback,
+            Err(_) => unreachable!("GMT offset fallback should be created successfully"),
         };
         Ok(Self {
-            gmt_offset,
+            gmt_offset: match gmt_offset {
+                Some(offset) => offset,
+                None => {
+                    debug_assert!(
+                        false,
+                        "GMT offset fallback is used while creating MockTimeZone"
+                    );
+                    gmt_offset_fallback
+                }
+            },
             time_zone_id: None,
             metazone_id: None,
             time_variant: None,
+            gmt_offset_fallback,
         })
     }
 }
 
 impl TimeZoneInput for MockTimeZone {
-    fn gmt_offset(&self) -> Option<GmtOffset> {
+    fn gmt_offset(&self) -> GmtOffset {
         self.gmt_offset
     }
 
