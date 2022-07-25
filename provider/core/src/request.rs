@@ -101,6 +101,15 @@ impl From<Locale> for DataLocale {
     }
 }
 
+impl From<&LanguageIdentifier> for DataLocale {
+    fn from(langid: &LanguageIdentifier) -> Self {
+        Self {
+            langid: langid.clone(),
+            keywords: unicode_ext::Keywords::new(),
+        }
+    }
+}
+
 impl From<&Locale> for DataLocale {
     fn from(locale: &Locale) -> Self {
         Self {

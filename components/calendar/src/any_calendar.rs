@@ -519,6 +519,11 @@ impl AnyCalendarKind {
             .get(&key!("ca"))
             .and_then(Self::from_bcp47)
     }
+
+    pub fn from_data_locale(l: &DataLocale) -> Option<Self> {
+        l.get_unicode_ext(&key!("ca"))
+            .and_then(|v| Self::from_bcp47(&v))
+    }
 }
 
 impl fmt::Display for AnyCalendarKind {

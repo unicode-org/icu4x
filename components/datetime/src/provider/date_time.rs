@@ -16,7 +16,6 @@ use crate::provider::calendar::{
 use crate::provider::calendar::{DatePatternsV1, TimePatternsV1};
 use crate::skeleton;
 use icu_calendar::types::{Era, MonthCode};
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 type Result<T> = core::result::Result<T, DateTimeFormatterError>;
@@ -56,14 +55,14 @@ fn pattern_for_time_length_inner<'data>(
 
 fn time_patterns_data_payload<D>(
     data_provider: &D,
-    locale: &Locale,
+    locale: &DataLocale,
 ) -> Result<DataPayload<TimePatternsV1Marker>>
 where
     D: DataProvider<TimePatternsV1Marker> + ?Sized,
 {
     let data = data_provider
         .load(DataRequest {
-            locale: &DataLocale::from(locale),
+            locale,
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -85,7 +84,7 @@ fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> 
 /// time_h23_h24 provider data, and then manually modify the symbol in the pattern if needed.
 pub(crate) fn pattern_for_time_length<'a, D>(
     data_provider: &'a D,
-    locale: &'a Locale,
+    locale: &'a DataLocale,
     length: length::Time,
     preferences: Option<preferences::Bag>,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
@@ -101,14 +100,14 @@ where
 
 fn date_patterns_data_payload<D>(
     data_provider: &D,
-    locale: &Locale,
+    locale: &DataLocale,
 ) -> Result<DataPayload<DatePatternsV1Marker>>
 where
     D: DataProvider<DatePatternsV1Marker> + ?Sized,
 {
     let data = data_provider
         .load(DataRequest {
-            locale: &DataLocale::from(locale),
+            locale,
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -118,7 +117,7 @@ where
 /// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
 pub(crate) fn pattern_for_date_length<D>(
     data_provider: &D,
-    locale: &Locale,
+    locale: &DataLocale,
     length: length::Date,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
 where
@@ -134,7 +133,7 @@ where
 /// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
 pub(crate) fn generic_pattern_for_date_length<D>(
     data_provider: &D,
-    locale: &Locale,
+    locale: &DataLocale,
     length: length::Date,
 ) -> Result<DataPayload<GenericPatternV1Marker>>
 where
@@ -155,7 +154,7 @@ where
 
 pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
-    locale: &'a Locale,
+    locale: &'a DataLocale,
 }
 
 // Manual impls needed since `derive(Copy)` inserts
@@ -176,7 +175,7 @@ where
 {
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
-        locale: &'a Locale,
+        locale: &'a DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
@@ -277,7 +276,7 @@ where
         let data = self
             .data_provider
             .load(DataRequest {
-                locale: &DataLocale::from(self.locale),
+                locale: self.locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;

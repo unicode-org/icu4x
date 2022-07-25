@@ -5,7 +5,6 @@
 use alloc::string::String;
 use core::marker::PhantomData;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
-use icu_locid::Locale;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
@@ -29,7 +28,7 @@ use crate::{
 
 /// The composition of [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
 ///
-/// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected [`Locale`], and the
+/// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected locale, and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
@@ -44,7 +43,7 @@ use crate::{
 ///
 /// ```
 /// use icu::calendar::Gregorian;
-/// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
+/// use icu::datetime::mock::parse_zoned_gregorian_from_str;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatterOptions;
@@ -53,7 +52,7 @@ use crate::{
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-///     locale!("en"),
+///     &locale!("en").into(),
 ///     &provider,
 ///     &provider,
 ///     &provider,
@@ -63,16 +62,15 @@ use crate::{
 /// )
 /// .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-///     .parse()
+/// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
 ///     .expect("Failed to parse zoned datetime");
 ///
-/// let value = zdtf.format_to_string(&zoned_datetime.datetime, &zoned_datetime.time_zone);
+/// let value = zdtf.format_to_string(&datetime, &time_zone);
 /// ```
 pub struct ZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
-    /// Constructor that takes a selected [`Locale`], a reference to a [data provider] for
+    /// Constructor that takes a selected locale, a reference to a [data provider] for
     /// dates, a [data provider] for time zones, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
@@ -80,7 +78,6 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_datetime::TimeZoneFormatterOptions;
@@ -90,7 +87,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// let options = DateTimeFormatterOptions::default();
     ///
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     locale!("en"),
+    ///     &locale!("en").into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,
@@ -104,8 +101,8 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<L, DP, ZP, PP, DEP>(
-        locale: L,
+    pub fn try_new<DP, ZP, PP, DEP>(
+        locale: &DataLocale,
         date_provider: &DP,
         zone_provider: &ZP,
         plural_provider: &PP,
@@ -114,7 +111,6 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        L: Into<Locale>,
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<DatePatternsV1Marker>
@@ -132,7 +128,9 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         PP: DataProvider<OrdinalV1Marker> + ?Sized,
         DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
-        let mut locale = locale.into();
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale = locale.clone();
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
@@ -156,14 +154,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,
@@ -173,11 +171,10 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create ZonedDateTimeFormatter instance.");
     ///
-    /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-    ///     .parse()
+    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let formatted_date = zdtf.format(&zoned_datetime.datetime, &zoned_datetime.time_zone);
+    /// let formatted_date = zdtf.format(&datetime, &time_zone);
     ///
     /// let _ = format!("Date: {}", formatted_date);
     /// ```
@@ -201,14 +198,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,
@@ -218,12 +215,11 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create ZonedDateTimeFormatter instance.");
     ///
-    /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-    ///     .parse()
+    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
     ///     .expect("Failed to parse zoned datetime");
     ///
     /// let mut buffer = String::new();
-    /// zdtf.format_to_write(&mut buffer, &zoned_datetime.datetime, &zoned_datetime.time_zone)
+    /// zdtf.format_to_write(&mut buffer, &datetime, &time_zone)
     ///     .expect("Failed to write to a buffer.");
     ///
     /// let _ = format!("Date: {}", buffer);
@@ -244,14 +240,14 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::ZonedDateTimeFormatter;
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,
@@ -261,11 +257,10 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create ZonedDateTimeFormatter instance.");
     ///
-    /// let zoned_datetime: MockZonedDateTime = "2021-04-08T16:12:37.000-07:00"
-    ///     .parse()
+    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
     ///     .expect("Failed to parse zoned datetime");
     ///
-    /// let _ = zdtf.format_to_string(&zoned_datetime.datetime, &zoned_datetime.time_zone);
+    /// let _ = zdtf.format_to_string(&datetime, &time_zone);
     /// ```
     #[inline]
     pub fn format_to_string(

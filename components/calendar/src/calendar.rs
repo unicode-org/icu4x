@@ -13,6 +13,9 @@ use core::fmt;
 ///
 /// Individual [`Calendar`] implementations may have inherent utility methods
 /// allowing for direct construction, etc.
+///
+/// For ICU4X 1.0, implementing this trait or calling methods directly is considered
+/// unstable and prone to change, especially for `offset_date()` and `until()`.
 pub trait Calendar {
     /// The internal type used to represent dates
     type DateInner: PartialEq + Eq + Clone + fmt::Debug;

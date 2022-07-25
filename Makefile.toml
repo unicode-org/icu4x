@@ -46,6 +46,12 @@ description = "Run all tests for the CI 'test' job"
 category = "CI"
 dependencies = [
     "test-all-features",
+]
+
+[tasks.ci-job-testdata]
+description = "Run all tests for the CI 'testdata' job"
+category = "CI"
+dependencies = [
     "testdata-check",
 ]
 

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::vec::Vec;
-use icu_provider::DataPayload;
+use icu_provider::{DataError, DataPayload};
 
 use crate::language::*;
 use crate::provider::*;
@@ -13,11 +13,30 @@ use crate::DictionarySegmenter;
 #[cfg(feature = "lstm")]
 use crate::lstm::{get_best_lstm_model, LstmSegmenter};
 
+#[derive(Default)]
+pub struct Dictionary {
+    pub burmese: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub khmer: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub lao: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub thai: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub cj: Option<DataPayload<UCharDictionaryBreakDataV1Marker>>,
+}
+
+impl Dictionary {
+    fn best(&self, input: u32) -> Option<&DataPayload<UCharDictionaryBreakDataV1Marker>> {
+        match get_language(input) {
+            Language::Burmese => self.burmese.as_ref(),
+            Language::Khmer => self.khmer.as_ref(),
+            Language::Lao => self.lao.as_ref(),
+            Language::Thai => self.thai.as_ref(),
+            Language::ChineseOrJapanese => self.cj.as_ref(),
+            _ => None,
+        }
+    }
+}
+
 /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
-pub fn complex_language_segment_utf16(
-    payload: &DataPayload<UCharDictionaryBreakDataV1Marker>,
-    input: &[u16],
-) -> Vec<usize> {
+pub fn complex_language_segment_utf16(dictionary: &Dictionary, input: &[u16]) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIteratorUtf16::new(input);
     let mut offset = 0;
@@ -36,14 +55,14 @@ pub fn complex_language_segment_utf16(
             }
         }
 
-        // TODO:
-        // To support multiple dictionary, we have to pass multiple payloads per language.
-        if let Ok(segmenter) = DictionarySegmenter::try_new(payload) {
-            let breaks = segmenter.segment_utf16(&str_per_lang);
-            let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
-            result.append(&mut r);
-            offset += str_per_lang.len();
-            continue;
+        if let Some(payload) = dictionary.best(str_per_lang[0] as u32) {
+            if let Ok(segmenter) = DictionarySegmenter::try_new(payload) {
+                let breaks = segmenter.segment_utf16(&str_per_lang);
+                let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
+                result.append(&mut r);
+                offset += str_per_lang.len();
+                continue;
+            }
         }
 
         offset += str_per_lang.len();
@@ -53,10 +72,7 @@ pub fn complex_language_segment_utf16(
 }
 
 /// Return UTF-8 segment offset array using dictionary or lstm segmenter.
-pub fn complex_language_segment_str(
-    payload: &DataPayload<UCharDictionaryBreakDataV1Marker>,
-    input: &str,
-) -> Vec<usize> {
+pub fn complex_language_segment_str(dictionary: &Dictionary, input: &str) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIterator::new(input);
     let mut offset = 0;
@@ -75,18 +91,22 @@ pub fn complex_language_segment_str(
             }
         }
 
-        // TODO:
-        // To support multiple dictionary, we have to pass multiple payloads per language.
-        if let Ok(segmenter) = DictionarySegmenter::try_new(payload) {
-            let breaks = segmenter.segment_str(&str_per_lang);
-            let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
-            result.append(&mut r);
-            offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf8());
-            continue;
+        let segmenter = match dictionary.best(str_per_lang.chars().next().unwrap() as u32) {
+            Some(v) => DictionarySegmenter::try_new(v),
+            None => Err(DataError::custom("cannot find payload")),
+        };
+        match segmenter {
+            Ok(segmenter) => {
+                let breaks = segmenter.segment_str(&str_per_lang);
+                let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
+                result.append(&mut r);
+                offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf8());
+            }
+            Err(_) => {
+                offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf8());
+                result.push(offset);
+            }
         }
-
-        offset += str_per_lang.chars().fold(0, |n, c| n + c.len_utf8());
-        result.push(offset);
     }
     result
 }
@@ -110,11 +130,18 @@ mod tests {
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");
-        let breaks = complex_language_segment_str(&payload, TEST_STR);
+        let dictionary = Dictionary {
+            burmese: None,
+            khmer: None,
+            lao: None,
+            thai: Some(payload),
+            cj: None,
+        };
+        let breaks = complex_language_segment_str(&dictionary, TEST_STR);
         assert_eq!(breaks, [12, 21, 33, 42], "Thai test by UTF-8");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
-        let breaks = complex_language_segment_utf16(&payload, &utf16);
+        let breaks = complex_language_segment_utf16(&dictionary, &utf16);
         assert_eq!(breaks, [4, 7, 11, 14], "Thai test by UTF-16");
     }
 }
