@@ -200,6 +200,7 @@ icuexportdata_glob = [
     "norm/small/nfkc.toml",
     "norm/small/nfkd.toml",
     "norm/small/nfkdex.toml",
+    "norm/small/passthroughnop.toml",
     "norm/small/uts46.toml",
     "norm/small/uts46d.toml",
     "ucase/small/ucase.toml",
@@ -264,7 +265,7 @@ icuexportdata_glob = [
     "uprops/small/XIDS.toml",
 ]
 
-icuexportdata_gitref = "icu4x/2022-07-18/71.x"
+icuexportdata_gitref = "icu4x/2022-07-25/71.x"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
