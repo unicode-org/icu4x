@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658748270678,
+  "lastUpdate": 1658762373834,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -20993,6 +20993,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fc84c164bc06ad830455ca49a5f3ab7705d1385f"
         },
         "date": 1658748234962,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035317,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f1fdb0165f0b43a12fcaaad60dabcdea2cb558b5",
+          "message": "Always implement AnyMarker provider for datagen transformers (#2232)\n\n- Split testdata into its own test",
+          "timestamp": "2022-07-25T10:17:44-05:00",
+          "tree_id": "c3c3d3965346394b97ee169bad405784d33e856b",
+          "url": "https://github.com/unicode-org/icu4x/commit/f1fdb0165f0b43a12fcaaad60dabcdea2cb558b5"
+        },
+        "date": 1658762338374,
         "tool": "ndjson",
         "benches": [
           {
