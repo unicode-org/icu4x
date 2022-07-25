@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658765003388,
+  "lastUpdate": 1658766886682,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38789,6 +38789,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 81,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "628380d5b264db764812dab9bbeee2f482b682b7",
+          "message": "Refactor NormalizationProvider into a single type (#2233)",
+          "timestamp": "2022-07-25T11:22:22-05:00",
+          "tree_id": "076a91e8899951852f6ab1a999bec86e814a3af4",
+          "url": "https://github.com/unicode-org/icu4x/commit/628380d5b264db764812dab9bbeee2f482b682b7"
+        },
+        "date": 1658766853539,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123216,
+            "range": "± 632",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25035,
+            "range": "± 137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72131,
+            "range": "± 851",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
