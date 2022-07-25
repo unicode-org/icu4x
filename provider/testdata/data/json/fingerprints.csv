@@ -844,8 +844,12 @@ datetime/week_data@1[R], und-ZA, 54B, 8efcb77da38f23bf89820683c251a0915f5aa24af3
 datetime/week_data@1[R], und-ZW, 54B, 8efcb77da38f23bf89820683c251a0915f5aa24af30e30faf679999dd1bde4db
 decimal/symbols@1[u-nu], ar, 404B, dfbb03a3521acce996cc20d68b87d999eef8273145c80fcfbc759538abcbdfd5
 decimal/symbols@1[u-nu], ar-EG, 404B, dfbb03a3521acce996cc20d68b87d999eef8273145c80fcfbc759538abcbdfd5
+decimal/symbols@1[u-nu], ar-EG-u-nu-latn, 404B, 23872a5740ae210c13ee6a6e5d898dbc88a953153b1e6476651ba31799ef207c
+decimal/symbols@1[u-nu], ar-u-nu-latn, 404B, 23872a5740ae210c13ee6a6e5d898dbc88a953153b1e6476651ba31799ef207c
 decimal/symbols@1[u-nu], bn, 408B, e75e9542bcb363b762b37fe49340b5965b755d8eea79bfd903eaf66e5b61255f
+decimal/symbols@1[u-nu], bn-u-nu-latn, 408B, e75e9542bcb363b762b37fe49340b5965b755d8eea79bfd903eaf66e5b61255f
 decimal/symbols@1[u-nu], ccp, 418B, aaa8b08417cf1878f01886e996a0aedef0b88b68d929951ce6458cfb5dab3679
+decimal/symbols@1[u-nu], ccp-u-nu-latn, 418B, aaa8b08417cf1878f01886e996a0aedef0b88b68d929951ce6458cfb5dab3679
 decimal/symbols@1[u-nu], en, 388B, e17c4033aa1ceab3675b9f275cd74728e2131f9749769afaff1232c00c683b85
 decimal/symbols@1[u-nu], en-001, 388B, e17c4033aa1ceab3675b9f275cd74728e2131f9749769afaff1232c00c683b85
 decimal/symbols@1[u-nu], en-ZA, 389B, 349e3102f5003de076aafcbf8a1d18b7b37dcbd2df1a83b00cbc8560e8d12e58
@@ -859,6 +863,7 @@ decimal/symbols@1[u-nu], sr, 388B, ae668c62c7e9d5a2d29bd6d733be865f3d6a1e1bc5d99
 decimal/symbols@1[u-nu], sr-Cyrl, 388B, ae668c62c7e9d5a2d29bd6d733be865f3d6a1e1bc5d99779d4de641c3fde8e98
 decimal/symbols@1[u-nu], sr-Latn, 388B, ae668c62c7e9d5a2d29bd6d733be865f3d6a1e1bc5d99779d4de641c3fde8e98
 decimal/symbols@1[u-nu], th, 388B, e17c4033aa1ceab3675b9f275cd74728e2131f9749769afaff1232c00c683b85
+decimal/symbols@1[u-nu], th-u-nu-thai, 388B, e17c4033aa1ceab3675b9f275cd74728e2131f9749769afaff1232c00c683b85
 decimal/symbols@1[u-nu], tr, 388B, ae668c62c7e9d5a2d29bd6d733be865f3d6a1e1bc5d99779d4de641c3fde8e98
 decimal/symbols@1[u-nu], und, 388B, e17c4033aa1ceab3675b9f275cd74728e2131f9749769afaff1232c00c683b85
 fallback/likelysubtags@1, und, 20877B, 17b6f6e23795c243ba86591a312d2a850169171554001611d2e154496acc3d32
