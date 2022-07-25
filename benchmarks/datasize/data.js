@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658766264746,
+  "lastUpdate": 1658773580220,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21113,6 +21113,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/628380d5b264db764812dab9bbeee2f482b682b7"
         },
         "date": 1658766224828,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035317,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "b9616f780fa65d3558b8ad8d5504ddb375902cbe",
+          "message": "Collator: make data provider first argument (#2234)",
+          "timestamp": "2022-07-25T11:24:22-07:00",
+          "tree_id": "4156c9d76e17fe56c6e5f2c93b4092a0ddd337e3",
+          "url": "https://github.com/unicode-org/icu4x/commit/b9616f780fa65d3558b8ad8d5504ddb375902cbe"
+        },
+        "date": 1658773544180,
         "tool": "ndjson",
         "benches": [
           {
