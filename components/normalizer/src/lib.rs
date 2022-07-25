@@ -1134,6 +1134,7 @@ where
                 return Some(starter);
             }
             // Now we need to check if composition with an upcoming starter is possible.
+            #[allow(clippy::unwrap_used)]
             if self.decomposition.pending.is_some() {
                 // We know that `pending_starter` decomposes to start with a starter.
                 // Otherwise, it would have been moved to `self.decomposition.buffer`

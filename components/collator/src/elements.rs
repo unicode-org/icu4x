@@ -1170,7 +1170,10 @@ where
             Some(self.upcoming[pos].clone())
         } else if pos == self.upcoming.len() {
             if let Some(c) = self.iter_next() {
-                assert!(false, "How does this happen?");
+                debug_assert!(
+                    false,
+                    "The `upcoming` queue should be empty when iteration `pos` at the end"
+                );
                 self.push_decomposed_and_gather_combining(c);
                 Some(self.upcoming[pos].clone())
             } else {
