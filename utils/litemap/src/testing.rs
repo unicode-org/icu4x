@@ -4,7 +4,7 @@
 
 //! Test utilities, primarily targeted to custom LiteMap stores.
 
-use crate::store::{Store, StoreFromIterator, StoreIterable};
+use crate::store::*;
 use crate::LiteMap;
 use alloc::vec::Vec;
 use core::fmt::Debug;
@@ -15,8 +15,8 @@ fn check_equivalence<K, V, S0, S1>(mut a: S0, mut b: S1)
 where
     K: Ord + Debug + PartialEq,
     V: Debug + PartialEq,
-    S0: Store<K, V>,
-    S1: Store<K, V>,
+    S0: StoreMut<K, V>,
+    S1: StoreMut<K, V>,
 {
     let len = a.lm_len();
     assert_eq!(len, b.lm_len());
@@ -80,7 +80,7 @@ const RANDOM_DATA: &[(u32, u64)] = &[
 #[allow(clippy::panic)]
 fn populate_litemap<S>(map: &mut LiteMap<u32, u64, S>)
 where
-    S: Store<u32, u64> + Debug,
+    S: StoreMut<u32, u64> + Debug,
 {
     assert_eq!(0, map.len());
     assert!(map.is_empty());
@@ -111,15 +111,7 @@ where
 /// Call this function in a test and pass it an empty instance of a `LiteMap` with a custom store.
 // Test code
 #[allow(clippy::expect_used)]
-pub fn check_litemap<'a, S>(mut litemap_test: LiteMap<u32, u64, S>)
-where
-    S: Store<u32, u64>
-        + StoreIterable<'a, u32, u64>
-        + StoreFromIterator<u32, u64>
-        + Clone
-        + Debug
-        + PartialEq,
-{
+pub fn check_litemap<'a, S>(mut litemap_test: LiteMap<u32, u64, Vec<(u32, u64)>>) {
     assert!(litemap_test.is_empty());
     let mut litemap_std = LiteMap::<u32, u64>::new();
     populate_litemap(&mut litemap_test);
