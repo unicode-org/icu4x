@@ -128,6 +128,9 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, mutating it
+    ///
+    /// Currently unstable for ICU4X 1.0
+    #[doc(hidden)]
     #[inline]
     pub fn add(&mut self, duration: DateDuration<A::Calendar>) {
         self.calendar
@@ -136,6 +139,9 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Add a `duration` to this date, returning the new one
+    ///
+    /// Currently unstable for ICU4X 1.0
+    #[doc(hidden)]
     #[inline]
     pub fn added(mut self, duration: DateDuration<A::Calendar>) -> Self {
         self.add(duration);
@@ -143,6 +149,9 @@ impl<A: AsCalendar> Date<A> {
     }
 
     /// Calculating the duration between `other - self`
+    ///
+    /// Currently unstable for ICU4X 1.0
+    #[doc(hidden)]
     #[inline]
     pub fn until<B: AsCalendar<Calendar = A::Calendar>>(
         &self,
