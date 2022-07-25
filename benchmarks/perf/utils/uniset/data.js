@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658781908670,
+  "lastUpdate": 1658782112701,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38393,6 +38393,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44351679,
             "range": "± 89397",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e571c2580b2270bab9db699f2c5ae523949e251b",
+          "message": "Add extended collator tests in datagen (#2211)",
+          "timestamp": "2022-07-25T13:37:59-07:00",
+          "tree_id": "7a6f92f4fca36aadd1d92310518dfb9ff1c7a293",
+          "url": "https://github.com/unicode-org/icu4x/commit/e571c2580b2270bab9db699f2c5ae523949e251b"
+        },
+        "date": 1658782078808,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44400187,
+            "range": "± 2355602",
             "unit": "ns/iter"
           },
           {
