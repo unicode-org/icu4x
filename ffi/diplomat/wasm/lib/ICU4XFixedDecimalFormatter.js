@@ -1,4 +1,4 @@
-import wasm from "../wasm.mjs"
+import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 import { ICU4XFixedDecimalGroupingStrategy_js_to_rust, ICU4XFixedDecimalGroupingStrategy_rust_to_js } from "./ICU4XFixedDecimalGroupingStrategy.js"
