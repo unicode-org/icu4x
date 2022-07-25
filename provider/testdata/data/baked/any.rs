@@ -205,7 +205,7 @@ impl AnyProvider for BakedDataProvider {
                     litemap_slice_get(datetime::week_data_v1_r::DATA, key, req)?,
                 ),
                 DECIMALSYMBOLSV1MARKER => AnyPayload::from_static_ref::<<::icu_decimal::provider::DecimalSymbolsV1Marker as DataMarker>::Yokeable>(
-                    litemap_slice_get(decimal::symbols_v1::DATA, key, req)?,
+                    litemap_slice_get(decimal::symbols_v1_u_nu::DATA, key, req)?,
                 ),
                 ANDLISTV1MARKER => AnyPayload::from_static_ref::<<::icu_list::provider::AndListV1Marker as DataMarker>::Yokeable>(litemap_slice_get(
                     list::and_v1::DATA,
