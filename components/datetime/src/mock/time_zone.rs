@@ -97,7 +97,7 @@ impl MockTimeZone {
     /// let provider = icu_testdata::get_provider();
     /// let mzc = MetaZoneCalculator::new(locale!("en"), &provider).expect("data exists");
     /// let mut tz = MockTimeZone::new(
-    ///     Some(GmtOffset::default()),
+    ///     /* gmt_offset */ Some("+11".parse().expect("Failed to parse a GMT offset.")),
     ///     /* time_zone_id */ Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
     ///     /* metazone_id */ None,
     ///     /* time_variaint */ None,
@@ -146,7 +146,7 @@ impl FromStr for MockTimeZone {
     /// let tz3: MockTimeZone = "+02:30".parse().expect("Failed to parse a time zone.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let gmt_offset = GmtOffset::from_str(input).ok();
+        let gmt_offset = input.parse::<GmtOffset>().ok();
         let gmt_offset_fallback = match "GMT+?".parse::<GmtOffset>() {
             Ok(fallback) => fallback,
             Err(_) => unreachable!("GMT offset fallback should be created successfully"),
