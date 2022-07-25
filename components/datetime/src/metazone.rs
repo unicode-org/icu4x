@@ -4,7 +4,7 @@
 
 use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 
-use crate::error::DateTimeFormatError;
+use crate::error::DateTimeFormatterError;
 use crate::provider::time_zones::MetaZonePeriodV1Marker;
 use icu_calendar::DateTime;
 use icu_calendar::Iso;
@@ -35,15 +35,15 @@ impl MetaZoneCalculator {
     ///
     /// assert!(mzc.is_ok());
     /// ```
-    pub fn new<L, ZP>(locale: L, zone_provider: &ZP) -> Result<Self, DateTimeFormatError>
+    pub fn new<L, ZP>(locale: L, zone_provider: &ZP) -> Result<Self, DateTimeFormatterError>
     where
         L: Into<Locale>,
-        ZP: ResourceProvider<MetaZonePeriodV1Marker> + ?Sized,
+        ZP: DataProvider<MetaZonePeriodV1Marker> + ?Sized,
     {
         let locale = locale.into();
         let metazone_period = zone_provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
                 metadata: Default::default(),
             })?
             .take_payload()?;
