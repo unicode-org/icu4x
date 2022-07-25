@@ -19,8 +19,8 @@ use crate::provider::week_data::WeekDataV1;
 use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
-use icu_locid::Locale;
 use icu_plurals::PluralRules;
+use icu_provider::DataLocale;
 use icu_provider::DataPayload;
 use writeable::Writeable;
 
@@ -39,7 +39,7 @@ use writeable::Writeable;
 /// use icu::locid::locale;
 /// # let provider = icu_testdata::get_provider();
 /// # let options = icu::datetime::DateTimeFormatterOptions::default();
-/// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options)
+/// let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options)
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -55,7 +55,7 @@ pub struct FormattedDateTime<'l> {
     pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
     pub(crate) datetime: ExtractedDateTimeInput,
     pub(crate) week_data: Option<&'l WeekDataV1>,
-    pub(crate) locale: &'l Locale,
+    pub(crate) locale: &'l DataLocale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
     pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
 }
@@ -164,7 +164,7 @@ pub fn write_pattern_plurals<T, W>(
     week_data: Option<&WeekDataV1>,
     ordinal_rules: Option<&PluralRules>,
     fixed_decimal_format: &FixedDecimalFormatter,
-    locale: &Locale,
+    locale: &DataLocale,
     w: &mut W,
 ) -> Result<(), Error>
 where
@@ -499,6 +499,7 @@ pub fn analyze_patterns(
 mod tests {
     use super::*;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};
+    use icu_locid::Locale;
 
     #[test]
     #[cfg(feature = "serde")]
@@ -512,7 +513,7 @@ mod tests {
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
         let options =
             length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
-        let dtf = DateTimeFormatter::<Japanese>::try_new(locale, &provider, &options)
+        let dtf = DateTimeFormatter::<Japanese>::try_new(&locale.into(), &provider, &options)
             .expect("DateTimeFormat construction succeeds");
 
         let japanext =
@@ -544,15 +545,11 @@ mod tests {
             provider.load(req).unwrap().take_payload().unwrap();
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            locale.get_langid().language,
-            &provider,
-            Default::default(),
-        )
-        .unwrap();
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new(&locale, &provider, Default::default()).unwrap();
 
         let mut sink = String::new();
-        let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &"und".parse().unwrap());
+        let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &Locale::UND.into());
         write_pattern(
             &pattern,
             Some(date_data.get()),
@@ -583,7 +580,7 @@ mod tests {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            icu_locid::locale!("en"),
+            &icu_locid::locale!("en").into(),
             &provider,
             fixed_decimal_format_options,
         )

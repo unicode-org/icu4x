@@ -9,7 +9,7 @@ use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
 use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
-use icu_locid::Locale;
+use icu_provider::DataLocale;
 use tinystr::TinyStr8;
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
@@ -323,7 +323,7 @@ impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
     pub fn new(
         data: &'data T,
         calendar: Option<&'data week_of::CalendarInfo>,
-        _locale: &Locale,
+        _locale: &DataLocale,
     ) -> Self {
         Self { data, calendar }
     }

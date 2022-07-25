@@ -28,7 +28,7 @@
 //!     length::Time::Short,
 //! ));
 //!
-//! let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options)
+//! let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options)
 //!     .expect("Failed to create DateTimeFormatter instance.");
 //!
 //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
@@ -48,7 +48,7 @@
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
 //!
-//! let dtf = DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options);
+//! let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale.into(), &provider, &options);
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Length`] bag, but in the future,

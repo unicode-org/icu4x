@@ -88,7 +88,7 @@ fn test_fixture(fixture_name: &str) {
             if let Some(kind) = AnyCalendarKind::from_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_buddhist,
                         &input_iso,
                         &output_value,
@@ -97,7 +97,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Japanese => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_japanese,
                         &input_iso,
                         &output_value,
@@ -106,7 +106,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Japanext => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_japanext,
                         &input_iso,
                         &output_value,
@@ -115,7 +115,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Coptic => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_coptic,
                         &input_iso,
                         &output_value,
@@ -124,7 +124,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Indian => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_indian,
                         &input_iso,
                         &output_value,
@@ -133,7 +133,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Ethiopic => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_ethiopic,
                         &input_iso,
                         &output_value,
@@ -142,7 +142,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Ethioaa => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_ethioaa,
                         &input_iso,
                         &output_value,
@@ -154,7 +154,7 @@ fn test_fixture(fixture_name: &str) {
                 }
             } else {
                 assert_fixture_element(
-                    locale,
+                    &locale,
                     &input_value,
                     &input_iso,
                     &output_value,
@@ -168,7 +168,7 @@ fn test_fixture(fixture_name: &str) {
 }
 
 fn assert_fixture_element<A, D>(
-    locale: Locale,
+    locale: &Locale,
     input_value: &DateTime<A>,
     input_iso: &DateTime<Iso>,
     output_value: &str,
@@ -191,13 +191,13 @@ fn assert_fixture_element<A, D>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = DateTimeFormatter::<A::Calendar>::try_new(locale.clone(), provider, options).unwrap();
+    let dtf = DateTimeFormatter::<A::Calendar>::try_new(&locale.into(), provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
 
     let any_dtf =
-        AnyDateTimeFormatter::try_new_unstable(locale.clone(), provider, options).unwrap();
+        AnyDateTimeFormatter::try_new_unstable(&locale.into(), provider, options).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(
@@ -229,10 +229,10 @@ fn assert_fixture_element<A, D>(
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(locale.clone(), provider, bag.date.unwrap())
+                DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
                     .unwrap();
             let tf = TimeFormatter::<A::Calendar>::try_new(
-                locale,
+                &locale.into(),
                 provider,
                 bag.time.unwrap(),
                 bag.preferences,
@@ -257,7 +257,8 @@ fn assert_fixture_element<A, D>(
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(locale, provider, bag.date.unwrap()).unwrap();
+                DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
+                    .unwrap();
             let result = df.format_to_string(input_value);
 
             assert_eq!(result, output_value, "{}", description);
@@ -275,7 +276,7 @@ fn assert_fixture_element<A, D>(
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
             let tf = TimeFormatter::<A::Calendar>::try_new(
-                locale,
+                &locale.into(),
                 provider,
                 bag.time.unwrap(),
                 bag.preferences,
@@ -327,7 +328,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
             let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                locale,
+                &locale.into(),
                 &provider,
                 &provider,
                 &provider,
@@ -443,7 +444,7 @@ fn test_dayperiod_patterns() {
                             ],
                         };
                         let dtf = DateTimeFormatter::<Gregorian>::try_new(
-                            locale.clone(),
+                            &data_locale,
                             &local_provider.as_downcasting(),
                             &format_options,
                         )
@@ -597,7 +598,7 @@ fn test_time_zone_patterns() {
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                        locale.clone(),
+                        &data_locale,
                         &local_provider.as_downcasting(),
                         &zone_provider,
                         &plural_provider,
@@ -714,7 +715,8 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     let options = DateTimeFormatterOptions::Length(length_bag);
 
     let provider = icu_testdata::get_provider();
-    let result = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options);
+    let result =
+        DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options);
 
     assert!(result.is_err());
 }

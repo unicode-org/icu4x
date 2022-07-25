@@ -47,7 +47,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-            locale,
+            &locale.into(),
             &provider,
             &provider,
             &provider,
@@ -80,7 +80,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(locale!("en"), &provider)
+        let pr = PluralRules::try_new_cardinal(&locale!("en").into(), &provider)
             .expect("Failed to create PluralRules.");
 
         match pr.select(email_count) {
