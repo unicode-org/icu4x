@@ -30,7 +30,7 @@ use icu_provider::DataLocale;
 /// [`AnyDateTimeFormatter`] is a [`DateTimeFormatter`](crate::DateTimeFormatter) capable of formatting
 /// dates from any calendar, selected at runtime.
 ///
-/// When constructed, it uses data from the [data provider], selected [`Locale`] and provided options to
+/// When constructed, it uses data from the [data provider], selected locale and provided options to
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational

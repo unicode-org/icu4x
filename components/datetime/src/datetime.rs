@@ -25,7 +25,7 @@ use crate::{
 };
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
-/// When constructed, it uses data from the [data provider], selected [`Locale`] and provided preferences to
+/// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any time into that locale.
 ///
 /// For that reason, one should think of the process of formatting a time in two steps - first, a computational
@@ -64,7 +64,7 @@ use crate::{
 pub struct TimeFormatter<C>(pub(super) raw::TimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TimeFormatter<C> {
-    /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
+    /// Constructor that takes a selected locale, reference to a [data provider] and
     /// a list of preferences, then collects all data necessary to format date and time values into the given locale,
     /// using the short style.
     ///
@@ -200,7 +200,7 @@ impl<C: CldrCalendar> TimeFormatter<C> {
 }
 
 /// [`DateFormatter`] is a structure of the [`icu_datetime`] component that provides date formatting only.
-/// When constructed, it uses data from the [data provider], selected [`Locale`] and provided preferences to
+/// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any date into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
@@ -233,7 +233,7 @@ impl<C: CldrCalendar> TimeFormatter<C> {
 pub struct DateFormatter<C>(pub(super) raw::DateFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> DateFormatter<C> {
-    /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
+    /// Constructor that takes a selected locale, reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
     /// # Examples
@@ -361,7 +361,7 @@ impl<C: CldrCalendar> DateFormatter<C> {
 }
 
 /// [`DateTimeFormatter`] is the main structure of the [`icu_datetime`] component.
-/// When constructed, it uses data from the [data provider], selected [`Locale`] and provided options to
+/// When constructed, it uses data from the [data provider], selected locale and provided options to
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
@@ -446,7 +446,7 @@ where {
         ))
     }
 
-    /// Constructor that takes a selected [`Locale`], reference to a [data provider] and
+    /// Constructor that takes a selected locale, reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
     /// # Examples
