@@ -3,5 +3,5 @@ datetime/skeletons@1[u-ca]
 datetime/datesymbols@1[u-ca]
 datetime/timesymbols@1[u-ca]
 datetime/week_data@1[R]
-decimal/symbols@1
+decimal/symbols@1[u-nu]
 plurals/ordinal@1
