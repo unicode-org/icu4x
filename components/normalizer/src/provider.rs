@@ -7,7 +7,6 @@
 use icu_char16trie::char16trie::Char16Trie;
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
-use icu_uniset::CodePointSet;
 use zerovec::ZeroVec;
 
 #[cfg(feature = "serde")]
@@ -24,10 +23,6 @@ pub struct DecompositionDataV1<'data> {
     /// Trie for NFD decomposition.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie: CodePointTrie<'data, u32>,
-    /// Set containing the characters whose NFD decomposition
-    /// starts with a non-starter
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub decomposition_starts_with_non_starter: CodePointSet<'data>,
 }
 
 /// Data that either NFKD or the decomposed form of UTS 46 needs
@@ -118,11 +113,13 @@ pub struct CanonicalCompositionsV1<'data> {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct CompositionPassthroughV1<'data> {
+    /// The first non-passthrough code point
+    pub first: u32,
     /// The set of characters that are starters that normalize to themselves
     /// if the next character doesn't combine backwards and that themselves
     /// never combine backwards.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub potential_passthrough_and_not_backward_combining: CodePointSet<'data>,
+    pub trie: CodePointTrie<'data, u8>,
 }
 
 /// Non-recursive canonical decompositions that differ from
