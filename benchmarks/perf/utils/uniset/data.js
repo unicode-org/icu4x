@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658774131933,
+  "lastUpdate": 1658781908670,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38339,6 +38339,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44428036,
             "range": "± 161616",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4bcaaee1a725f859984773f7b8f700d6d452381f",
+          "message": "Migrate icu_datetime, icu_decimal, and icu_plurals to DataLocale (#2238)",
+          "timestamp": "2022-07-25T13:35:41-07:00",
+          "tree_id": "1ce6506dd1fe3f255be882c8c6e959468a317df0",
+          "url": "https://github.com/unicode-org/icu4x/commit/4bcaaee1a725f859984773f7b8f700d6d452381f"
+        },
+        "date": 1658781876048,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44351679,
+            "range": "± 89397",
             "unit": "ns/iter"
           },
           {
