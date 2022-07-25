@@ -66,7 +66,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `cargo make tidy`: A quick test that ensures that `cargo fmt` has been run, that code has the appropriate license headers and files and that READMEs are in sync. This is run as two separate tasks on CI (`ci-job-fmt` and `ci-job-tidy`) to ensure early results.
  - `cargo make ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
  - `cargo make ci-job-clippy`: Runs `cargo clippy` on all the crates.
- - `cargo doc --no-deps --all-features`: Recreates API docs oocally; any warning should be fixed since it will be treated as an error in CI.
+ - `cargo doc --no-deps --all-features`: Recreates API docs locally; any warning should be fixed since it will be treated as an error in CI.
  - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
      + Rust toolchain `nightly-2022-04-05`: `rustup install nightly-2022-04-05`
          * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-04-05 rust-src`
