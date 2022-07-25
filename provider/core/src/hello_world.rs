@@ -127,6 +127,7 @@ impl DataPayload<HelloWorldV1Marker> {
     }
 }
 
+#[cfg(not(feature = "datagen"))]
 impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 
 #[cfg(feature = "datagen")]

@@ -84,7 +84,6 @@ use icu_codepointtrie::CodePointTrie;
 use icu_properties::maps::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointInversionList;
 use provider::CanonicalCompositionPassthroughV1Marker;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
@@ -104,6 +103,30 @@ use utf8_iter::Utf8CharsEx;
 use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
+
+/// Wrapper around trie to get the needed set semantics.
+struct PassthroughSet<'data> {
+    trie: &'data CodePointTrie<'data, u8>,
+}
+
+impl<'data> PassthroughSet<'data> {
+    /// Constructor
+    pub fn new(trie: &'data CodePointTrie<'data, u8>) -> Self {
+        Self { trie }
+    }
+    /// Lookup by scalar value
+    pub fn contains(&self, c: char) -> bool {
+        self.contains_u32(u32::from(c))
+    }
+    /// Lookup by code point
+    pub fn contains_u32(&self, u: u32) -> bool {
+        let head = u >> 3;
+        let tail = (u & 0b111) as u8;
+        let trie_val = self.trie.get(head);
+        // Bit 1 means not passthrough
+        (trie_val & (1 << tail)) == 0
+    }
+}
 
 enum SupplementPayloadHolder {
     Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
@@ -138,6 +161,11 @@ impl PassthroughPayloadHolder {
         }
     }
 }
+
+// Magic marker trie value for characters whose decomposition
+// starts with a non-starter. The actual decompostion is
+// hard-coded.
+const DECOMPOSITION_STARTS_WITH_NON_STARTER: u32 = 2 << 16;
 
 /// The tail (everything after the first character) of the NFKD form U+FDFA
 /// as 16-bit units.
@@ -309,6 +337,15 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
     }
 }
 
+/// Struct for holding together a character and the value
+/// looked up for it from the NFD trie in a more explicit
+/// way than an anonymous pair.
+#[derive(Debug, PartialEq, Eq)]
+struct CharacterAndTrieValue {
+    character: char,
+    trie_val: u32,
+}
+
 /// Pack a `char` and a `CanonicalCombiningClass` in
 /// 32 bits (the former in the lower 24 bits and the
 /// latter in the high 8 bits). The latter is
@@ -398,10 +435,9 @@ where
     // starter. When `Decomposition` appears alone, this is never a non-starter.
     // However, when `Decomposition` appears inside a `Composition`, this
     // may become a non-starter before `decomposing_next()` is called.
-    pending: Option<char>, // None at end of stream
+    pending: Option<CharacterAndTrieValue>, // None at end of stream
     trie: &'data CodePointTrie<'data, u32>,
     supplementary_trie: Option<&'data CodePointTrie<'data, u32>>,
-    decomposition_starts_with_non_starter: CodePointInversionList<'data>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<U24>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
@@ -432,7 +468,7 @@ where
     /// omit some characters from this set. As a consequence, multiple
     /// normalization forms whose sets are similar may use the intersection
     /// of their exact sets in order to need to store only the intersection.
-    potential_passthrough_and_not_backward_combining: Option<CodePointInversionList<'data>>,
+    potential_passthrough_and_not_backward_combining: Option<PassthroughSet<'data>>,
     /// The character in `pending` is a in the
     /// `potential_passthrough_and_not_backward_combining` set.
     /// This flag is meaningful only when `pending.is_some()` and
@@ -477,7 +513,7 @@ where
         tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
-        potential_passthrough_and_not_backward_combining: Option<CodePointInversionList<'data>>,
+        potential_passthrough_and_not_backward_combining: Option<PassthroughSet<'data>>,
     ) -> Self {
         let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
             if let Some(supplementary) = supplementary_decompositions {
@@ -494,12 +530,12 @@ where
             buffer_pos: 0,
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
-            pending: Some('\u{FFFF}'),
+            pending: Some(CharacterAndTrieValue {
+                character: '\u{FFFF}',
+                trie_val: 0,
+            }),
             trie: &decompositions.trie,
             supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
-            decomposition_starts_with_non_starter: CodePointInversionList::zero_from(
-                &decompositions.decomposition_starts_with_non_starter,
-            ),
             scalars16: &tables.scalars16,
             scalars24: &tables.scalars24,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
@@ -524,19 +560,6 @@ where
         ret
     }
 
-    #[inline(always)]
-    fn decomposition_starts_with_non_starter(&self, c: char) -> bool {
-        if self.has_starter_exceptions {
-            if u32::from(c) & !1 == 0xFF9E {
-                return self.half_width_voicing_marks_become_non_starters;
-            }
-            if c == '\u{0345}' {
-                return !self.iota_subscript_becomes_starter;
-            }
-        }
-        self.decomposition_starts_with_non_starter.contains(c)
-    }
-
     fn push_decomposition16(
         &mut self,
         low: u16,
@@ -558,7 +581,9 @@ where
                 let ch = char_from_u16(u);
                 self.buffer.push(CharacterAndClass::new(ch));
                 i += 1;
-                if !self.decomposition_starts_with_non_starter(ch) {
+                // Half-width kana and iota subscript don't occur in the tails
+                // of these multicharacter decompositions.
+                if self.trie.get(u32::from(ch)) != DECOMPOSITION_STARTS_WITH_NON_STARTER {
                     combining_start = i;
                 }
             }
@@ -587,7 +612,9 @@ where
                 let ch = char_from_u24(u);
                 self.buffer.push(CharacterAndClass::new(ch));
                 i += 1;
-                if !self.decomposition_starts_with_non_starter(ch) {
+                // Half-width kana and iota subscript don't occur in the tails
+                // of these multicharacter decompositions.
+                if self.trie.get(u32::from(ch)) != DECOMPOSITION_STARTS_WITH_NON_STARTER {
                     combining_start = i;
                 }
             }
@@ -595,19 +622,45 @@ where
         }
     }
 
-    fn delegate_next(&mut self) -> Option<char> {
+    fn delegate_next_no_pending(&mut self) -> Option<CharacterAndTrieValue> {
+        debug_assert!(self.pending.is_none());
+        let c = self.delegate.next()?;
+
+        if self.has_starter_exceptions {
+            if u32::from(c) & !1 == 0xFF9E && self.half_width_voicing_marks_become_non_starters {
+                return Some(CharacterAndTrieValue {
+                    character: c,
+                    trie_val: DECOMPOSITION_STARTS_WITH_NON_STARTER,
+                });
+            }
+            if c == '\u{0345}' && self.iota_subscript_becomes_starter {
+                return Some(CharacterAndTrieValue {
+                    character: c,
+                    trie_val: u32::from('ι') << 16,
+                });
+            }
+        }
+
+        Some(CharacterAndTrieValue {
+            character: c,
+            trie_val: self.trie.get(u32::from(c)),
+        })
+    }
+
+    fn delegate_next(&mut self) -> Option<CharacterAndTrieValue> {
         if let Some(pending) = self.pending.take() {
             debug_assert!(self
                 .potential_passthrough_and_not_backward_combining
                 .is_some());
             Some(pending)
         } else {
-            self.delegate.next()
+            self.delegate_next_no_pending()
         }
     }
 
-    fn decomposing_next(&mut self, c: char) -> char {
+    fn decomposing_next(&mut self, c_and_trie_val: CharacterAndTrieValue) -> char {
         let (starter, combining_start) = {
+            let c = c_and_trie_val.character;
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
                 let mut decomposition;
@@ -620,7 +673,7 @@ where
                             break;
                         }
                     }
-                    decomposition = self.trie.get(u32::from(c));
+                    decomposition = c_and_trie_val.trie_val;
                     break;
                 }
                 if decomposition == 0 {
@@ -637,6 +690,10 @@ where
                         (starter, 0)
                     } else if high != 0 {
                         if high != 1 {
+                            debug_assert_ne!(
+                                high, 2,
+                                "Should not reach this point with non-starter marker"
+                            );
                             // Decomposition into one BMP character
                             let starter = char_from_u16(high);
                             (starter, 0)
@@ -726,12 +783,13 @@ where
         debug_assert!(
             self.potential_passthrough_and_not_backward_combining
                 .is_some()
-                || self.pending == None
+                || self.pending.is_none()
         );
         // Not a `for` loop to avoid holding a mutable reference to `self` across
         // the loop body.
-        while let Some(ch) = self.delegate_next() {
-            if self.decomposition_starts_with_non_starter(ch) {
+        while let Some(ch_and_trie_val) = self.delegate_next() {
+            if ch_and_trie_val.trie_val == DECOMPOSITION_STARTS_WITH_NON_STARTER {
+                let ch = ch_and_trie_val.character;
                 let mapped = if !(in_inclusive_range(ch, '\u{0340}', '\u{0F81}')
                     || (u32::from(ch) & !1 == 0xFF9E))
                 {
@@ -794,14 +852,14 @@ where
                 };
                 self.buffer.push(CharacterAndClass::new(mapped));
             } else {
-                self.pending = Some(ch);
                 if let Some(set) = self
                     .potential_passthrough_and_not_backward_combining
                     .as_ref()
                 {
                     self.pending_is_potential_passthrough_and_not_backward_combining =
-                        set.contains(ch)
+                        set.contains(ch_and_trie_val.character)
                 }
+                self.pending = Some(ch_and_trie_val);
                 break;
             }
         }
@@ -838,8 +896,8 @@ where
             return Some(ret);
         }
         debug_assert_eq!(self.buffer_pos, 0);
-        let c = self.pending.take()?;
-        Some(self.decomposing_next(c))
+        let c_and_trie_val = self.pending.take()?;
+        Some(self.decomposing_next(c_and_trie_val))
     }
 }
 
@@ -905,7 +963,10 @@ where
 
     #[inline]
     fn next(&mut self) -> Option<char> {
-        let mut undecomposed_starter = '\u{0}'; // The compiler can't figure out that this gets overwritten before use.
+        let mut undecomposed_starter = CharacterAndTrieValue {
+            character: '\u{0}',
+            trie_val: 0,
+        }; // The compiler can't figure out that this gets overwritten before use.
         if self.unprocessed_starter.is_none() {
             // The loop is only broken out of as goto forward
             #[allow(clippy::never_loop)]
@@ -943,8 +1004,7 @@ where
                     // Attribute belongs on inner expression, but
                     // https://github.com/rust-lang/rust/issues/15701
                     #[allow(clippy::unwrap_used)]
-                    if let Some(upcoming) = self.decomposition.delegate.next() {
-                        self.decomposition.pending = Some(upcoming);
+                    if let Some(upcoming) = self.decomposition.delegate_next_no_pending() {
                         // Note: If `upcoming` is not in the set due to its decomposition
                         // starting with a non-starter, we end up checking set membership
                         // again. Bookkeeping to avoid the second check would be possible
@@ -959,17 +1019,18 @@ where
                             .potential_passthrough_and_not_backward_combining
                             .as_ref()
                             .unwrap()
-                            .contains(upcoming);
+                            .contains(upcoming.character);
+                        self.decomposition.pending = Some(upcoming);
                         if self
                             .decomposition
                             .pending_is_potential_passthrough_and_not_backward_combining
                         {
                             // Fast-track succeeded!
-                            return Some(undecomposed_starter);
+                            return Some(undecomposed_starter.character);
                         }
                     } else {
                         // End of stream
-                        return Some(undecomposed_starter);
+                        return Some(undecomposed_starter.character);
                     }
                 }
                 break; // Not actually looping
@@ -983,7 +1044,13 @@ where
         let mut attempt_composition = false;
         loop {
             if let Some(unprocessed) = self.unprocessed_starter.take() {
-                debug_assert_eq!(undecomposed_starter, '\u{0}');
+                debug_assert_eq!(
+                    undecomposed_starter,
+                    CharacterAndTrieValue {
+                        character: '\u{0}',
+                        trie_val: 0
+                    }
+                );
                 debug_assert_eq!(starter, '\u{0}');
                 starter = unprocessed;
             } else {
@@ -1067,7 +1134,8 @@ where
                 return Some(starter);
             }
             // Now we need to check if composition with an upcoming starter is possible.
-            if let Some(pending_starter) = self.decomposition.pending {
+            #[allow(clippy::unwrap_used)]
+            if self.decomposition.pending.is_some() {
                 // We know that `pending_starter` decomposes to start with a starter.
                 // Otherwise, it would have been moved to `self.decomposition.buffer`
                 // by `self.decomposing_next()`. We do this set lookup here in order
@@ -1082,12 +1150,13 @@ where
                     // Won't combine backwards anyway.
                     return Some(starter);
                 }
-                undecomposed_starter = pending_starter;
+                // Consume what we peeked. `unwrap` OK, because we checked `is_some()`
+                // above.
+                undecomposed_starter = self.decomposition.pending.take().unwrap();
                 // The following line is OK, because we're about to loop back
                 // to `self.decomposition.decomposing_next(c);`, which will
                 // restore the between-`next()`-calls invariant of `pending`
                 // before this function returns.
-                self.decomposition.pending = None; // Consume what we peeked
                 attempt_composition = true;
                 continue;
             }
@@ -1513,11 +1582,11 @@ impl ComposingNormalizer {
                     .as_ref()
                     .map(|s| s.get()),
                 self.decomposing_normalizer.ccc.as_borrowed(),
-                Some(ZeroFrom::zero_from(
+                Some(PassthroughSet::new(
                     &self
                         .potential_passthrough_and_not_backward_combining
                         .get()
-                        .potential_passthrough_and_not_backward_combining,
+                        .trie,
                 )),
             ),
             ZeroFrom::zero_from(&self.canonical_compositions.get().canonical_compositions),
@@ -1671,7 +1740,45 @@ impl CanonicalDecomposition {
                 return Decomposed::Expansion(char_from_u16(high), char_from_u16(low));
             }
             if high != 0 {
-                // Decomposition into one BMP character
+                // Decomposition into one BMP character or non-starter
+                debug_assert_ne!(high, 1, "How come we got the U+FDFA NFKD marker here?");
+                if high == 2 {
+                    // Non-starter
+                    if !in_inclusive_range(c, '\u{0340}', '\u{0F81}') {
+                        return Decomposed::Default;
+                    }
+                    return match c {
+                        '\u{0340}' => {
+                            // COMBINING GRAVE TONE MARK
+                            Decomposed::Singleton('\u{0300}')
+                        }
+                        '\u{0341}' => {
+                            // COMBINING ACUTE TONE MARK
+                            Decomposed::Singleton('\u{0301}')
+                        }
+                        '\u{0343}' => {
+                            // COMBINING GREEK KORONIS
+                            Decomposed::Singleton('\u{0313}')
+                        }
+                        '\u{0344}' => {
+                            // COMBINING GREEK DIALYTIKA TONOS
+                            Decomposed::Expansion('\u{0308}', '\u{0301}')
+                        }
+                        '\u{0F73}' => {
+                            // TIBETAN VOWEL SIGN II
+                            Decomposed::Expansion('\u{0F71}', '\u{0F72}')
+                        }
+                        '\u{0F75}' => {
+                            // TIBETAN VOWEL SIGN UU
+                            Decomposed::Expansion('\u{0F71}', '\u{0F74}')
+                        }
+                        '\u{0F81}' => {
+                            // TIBETAN VOWEL SIGN REVERSED II
+                            Decomposed::Expansion('\u{0F71}', '\u{0F80}')
+                        }
+                        _ => Decomposed::Default,
+                    };
+                }
                 return Decomposed::Singleton(char_from_u16(high));
             }
             // Complex decomposition

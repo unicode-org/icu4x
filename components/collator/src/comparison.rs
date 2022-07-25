@@ -74,8 +74,8 @@ pub struct Collator {
 impl Collator {
     /// Instantiates a collator for a given locale with the given options
     pub fn try_new<T: Into<Locale>, D>(
-        locale: T,
         data_provider: &D,
+        locale: T,
         options: CollatorOptions,
     ) -> Result<Self, CollatorError>
     where

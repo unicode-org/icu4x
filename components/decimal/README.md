@@ -18,7 +18,7 @@ use icu::locid::locale;
 use writeable::Writeable;
 
 let provider = icu_testdata::get_provider();
-let fdf = FixedDecimalFormatter::try_new(locale!("bn"), &provider, Default::default())
+let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), &provider, Default::default())
     .expect("Data should load successfully");
 
 let fixed_decimal = 1000007.into();
@@ -37,7 +37,7 @@ use icu::locid::Locale;
 use writeable::Writeable;
 
 let provider = icu_testdata::get_provider();
-let fdf = FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default())
+let fdf = FixedDecimalFormatter::try_new(&Locale::UND.into(), &provider, Default::default())
     .expect("Data should load successfully");
 
 let fixed_decimal = FixedDecimal::from(200050)

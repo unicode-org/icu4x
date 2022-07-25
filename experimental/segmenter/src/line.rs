@@ -13,7 +13,8 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
-use icu_locid::locale;
+#[cfg(not(feature = "lstm"))]
+use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
@@ -99,10 +100,19 @@ impl Default for LineBreakOptions {
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
-    dictionary_payload: DataPayload<UCharDictionaryBreakDataV1Marker>,
+    dictionary: Dictionary,
 }
 
 impl LineBreakSegmenter {
+    #[cfg(feature = "lstm")]
+    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+    {
+        Self::try_new_with_options(provider, Default::default())
+    }
+
+    #[cfg(not(feature = "lstm"))]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<LineBreakDataV1Marker>
@@ -112,6 +122,23 @@ impl LineBreakSegmenter {
         Self::try_new_with_options(provider, Default::default())
     }
 
+    #[cfg(feature = "lstm")]
+    pub fn try_new_with_options<D>(
+        provider: &D,
+        options: LineBreakOptions,
+    ) -> Result<Self, DataError>
+    where
+        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+    {
+        let payload = provider.load(Default::default())?.take_payload()?;
+        Ok(Self {
+            options,
+            payload,
+            dictionary: Dictionary::default(),
+        })
+    }
+
+    #[cfg(not(feature = "lstm"))]
     pub fn try_new_with_options<D>(
         provider: &D,
         options: LineBreakOptions,
@@ -123,18 +150,35 @@ impl LineBreakSegmenter {
     {
         let payload = provider.load(Default::default())?.take_payload()?;
 
-        let locale = locale!("th");
-        let dictionary_payload = provider
+        let khmer = Self::load_dictionary(provider, locale!("km")).ok();
+        let lao = Self::load_dictionary(provider, locale!("lo")).ok();
+        let burmese = Self::load_dictionary(provider, locale!("my")).ok();
+        let thai = Self::load_dictionary(provider, locale!("th")).ok();
+
+        Ok(Self {
+            options,
+            payload,
+            dictionary: Dictionary {
+                burmese,
+                khmer,
+                lao,
+                thai,
+                cj: None,
+            },
+        })
+    }
+
+    #[cfg(not(feature = "lstm"))]
+    fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        provider
             .load(DataRequest {
                 locale: &DataLocale::from(locale),
                 metadata: Default::default(),
             })?
-            .take_payload()?;
-        Ok(Self {
-            options,
-            payload,
-            dictionary_payload,
-        })
+            .take_payload()
     }
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
@@ -146,7 +190,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary_payload: &self.dictionary_payload,
+            dictionary: &self.dictionary,
         }
     }
 
@@ -162,7 +206,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary_payload: &self.dictionary_payload,
+            dictionary: &self.dictionary,
         }
     }
 
@@ -178,7 +222,7 @@ impl LineBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             options: &self.options,
-            dictionary_payload: &self.dictionary_payload,
+            dictionary: &self.dictionary,
         }
     }
 }
@@ -418,7 +462,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     result_cache: Vec<usize>,
     data: &'l RuleBreakDataV1<'l>,
     options: &'l LineBreakOptions,
-    dictionary_payload: &'l DataPayload<UCharDictionaryBreakDataV1Marker>,
+    dictionary: &'l Dictionary,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -645,7 +689,7 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary_payload, &s);
+        let breaks = complex_language_segment_str(iter.dictionary, &s);
         iter.result_cache = breaks;
         let mut i = iter.current_pos_data.unwrap().1.len_utf8();
         loop {
@@ -744,7 +788,7 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.dictionary_payload, &s);
+        let breaks = complex_language_segment_utf16(iterator.dictionary, &s);
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.
