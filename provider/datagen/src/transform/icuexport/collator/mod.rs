@@ -23,6 +23,9 @@ use zerovec::ZeroVec;
 
 mod collator_serde;
 
+#[cfg(test)]
+mod test;
+
 /// Collection of all the key for easy reference from the datagen registry.
 pub const ALL_KEYS: [DataKey; 6] = [
     CollationDataV1Marker::KEY,
@@ -124,7 +127,15 @@ macro_rules! collation_provider {
                                 "collation/{}/{}{}.toml",
                                 self.source.collation_han_database(),
                                 locale_to_file_name(&req.locale), $suffix)
-                        )?;
+                        )
+                        .map_err(|e| match e.kind {
+                            DataErrorKind::Io(
+                                std::io::ErrorKind::NotFound
+                            ) => DataErrorKind::MissingLocale.with_req(
+                                $marker::KEY, req
+                            ),
+                            _ => e
+                        })?;
 
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
