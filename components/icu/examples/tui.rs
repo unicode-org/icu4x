@@ -10,7 +10,7 @@
 use icu::calendar::Gregorian;
 use icu::datetime::DateTimeFormatterOptions;
 use icu::datetime::{
-    mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
+    mock::parse_zoned_gregorian_from_str, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
 };
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
@@ -56,11 +56,10 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             &TimeZoneFormatterOptions::default(),
         )
         .expect("Failed to create DateTimeFormatter.");
-        let today: MockZonedDateTime = "2020-10-10T18:56:00Z"
-            .parse()
-            .expect("Failed to parse date");
+        let (today_date, today_tz) =
+            parse_zoned_gregorian_from_str("2020-10-10T18:56:00Z").expect("Failed to parse date");
 
-        let formatted_dt = dtf.format(&today.datetime, &today.time_zone);
+        let formatted_dt = dtf.format(&today_date, &today_tz);
 
         print(format!("Today is: {}", formatted_dt));
     }

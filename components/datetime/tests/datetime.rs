@@ -20,7 +20,7 @@ use icu_calendar::{
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
     any::AnyDateTimeFormatter,
-    mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
+    mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
     provider::{
         calendar::{
@@ -310,9 +310,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
     {
         let options = fixtures::get_options(&fx.input.options);
 
-        let input_value: MockZonedDateTime = fx.input.value.parse().unwrap();
-        let input_date = input_value.datetime;
-        let mut time_zone = input_value.time_zone;
+        let (input_date, mut time_zone) = parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
         time_zone.time_variant = config.time_variant;
@@ -475,10 +473,10 @@ fn test_time_zone_format_configs() {
     for test in get_time_zone_tests("time_zones").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut config = test.config;
-        let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
-        datetime.time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        datetime.time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        datetime.time_zone.time_variant = config.time_variant.take();
+        let (_, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
+        time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
+        time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
+        time_zone.time_variant = config.time_variant.take();
         for TimeZoneExpectation {
             patterns: _,
             configs,
@@ -496,7 +494,7 @@ fn test_time_zone_format_configs() {
                     )
                     .unwrap();
                     let mut buffer = String::new();
-                    tzf.format_to_write(&mut buffer, &datetime).unwrap();
+                    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
                     assert_eq!(
                         buffer.to_string(),
                         *expect,
@@ -538,9 +536,7 @@ fn test_time_zone_patterns() {
             metadata: Default::default(),
         };
         let mut config = test.config;
-        let zoned: MockZonedDateTime = test.datetime.parse().unwrap();
-        let datetime = zoned.datetime;
-        let mut time_zone = zoned.time_zone;
+        let (datetime, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         time_zone.time_variant = config.time_variant.take();

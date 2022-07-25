@@ -5,13 +5,12 @@
 //! A collection of temporary structs and utilities to input data for tests, benchmarks,
 //! and examples.
 
+use core::str::FromStr;
 use icu_calendar::{DateTime, DateTimeError, Gregorian};
+use time_zone::MockTimeZone;
 
 /// Temporary time zone input utilities.
 pub mod time_zone;
-
-/// Temporary zoned DateTime input utilities.
-pub mod zoned_datetime;
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -67,6 +66,38 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     datetime.time = icu_calendar::types::Time::try_new(hour, minute, second, fraction)?;
 
     Ok(datetime)
+}
+
+/// Parse a [`DateTime`] and [`MockTimeZone`] from a string.
+///
+/// This utility is for easily creating dates, not a complete robust solution. The
+/// string must take a specific form of the ISO 8601 format:
+/// `YYYY-MM-DDThh:mm:ssZ`,
+/// `YYYY-MM-DDThh:mm:ss±hh`,
+/// `YYYY-MM-DDThh:mm:ss±hhmm`,
+/// `YYYY-MM-DDThh:mm:ss±hh:mm`,
+///
+/// # Examples
+///
+/// ```
+/// use icu::datetime::mock;
+///
+/// let (date, zone) = mock::parse_zoned_gregorian_from_str("2020-10-14T13:21:00+05:30")
+///     .expect("Failed to parse a zoned datetime.");
+/// ```
+pub fn parse_zoned_gregorian_from_str(
+    input: &str,
+) -> Result<(DateTime<Gregorian>, MockTimeZone), DateTimeError> {
+    let datetime = parse_gregorian_from_str(input)?;
+    let time_zone = match input
+        .rfind(|c| c == '+' || /* ASCII */ c == '-' || /* U+2212 */ c == '−' || c == 'Z')
+    {
+        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        Some(index) => FromStr::from_str(&input[index..])?,
+        None => return Err(DateTimeError::InvalidTimeZoneOffset),
+    };
+
+    Ok((datetime, time_zone))
 }
 
 #[test]
