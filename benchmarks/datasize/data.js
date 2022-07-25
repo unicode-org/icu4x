@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658763771838,
+  "lastUpdate": 1658764405332,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21053,6 +21053,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/811b7ab052da6943f09a5f84833e2030df5e463b"
         },
         "date": 1658763730634,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035317,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc5c1ff1a5be991caf64849314ade59965f33cc3",
+          "message": "Hide unstable calendar apis (#2229)",
+          "timestamp": "2022-07-25T15:51:42Z",
+          "tree_id": "0c5a00a3744cfdb7f6b2880ea6b0e9ddf3124a67",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc5c1ff1a5be991caf64849314ade59965f33cc3"
+        },
+        "date": 1658764373671,
         "tool": "ndjson",
         "benches": [
           {
