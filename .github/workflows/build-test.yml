@@ -194,7 +194,7 @@ jobs:
       id: source-data-cache
       with:
         path: data/source
-        key: source-data-41-71c
+        key: source-data/41/icu4x-2022-07-25-71.x
     - name: Download CLDR source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
       uses: robinraju/release-downloader@v1.3
