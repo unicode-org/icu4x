@@ -129,7 +129,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
                     .with_display_context(&nsname)
             })?;
 
-        result.digits = self.get_digits_for_numbering_system(numbers.default_numbering_system)?;
+        result.digits = self.get_digits_for_numbering_system(nsname)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
