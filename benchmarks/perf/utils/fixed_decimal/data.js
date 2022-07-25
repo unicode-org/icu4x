@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658763120238,
+  "lastUpdate": 1658764349023,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38669,6 +38669,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 101,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "811b7ab052da6943f09a5f84833e2030df5e463b",
+          "message": "Remove MockZonedDateTime (#2231)\n\n* add parse_zoned_gregorian_from_str\r\n\r\n* rm ZonedDateTime",
+          "timestamp": "2022-07-25T15:40:45Z",
+          "tree_id": "4e94cf3177c660ebe2b1e51f537476f48c4d9677",
+          "url": "https://github.com/unicode-org/icu4x/commit/811b7ab052da6943f09a5f84833e2030df5e463b"
+        },
+        "date": 1658764312189,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105466,
+            "range": "± 2314",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21306,
+            "range": "± 112",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64491,
+            "range": "± 541",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 70,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
