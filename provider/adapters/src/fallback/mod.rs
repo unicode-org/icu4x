@@ -4,6 +4,11 @@
 
 //! Tools for locale fallback, enabling arbitrary input locales to be mapped into the nearest
 //! locale with data.
+//! 
+//! The algorithm implemented in this module is called [Flexible Vertical Fallback](
+//! https://docs.google.com/document/d/1Mp7EUyl-sFh_HZYgyeVwj88vJGpCBIWxzlCwGgLCDwM/edit).
+//! Watch [#2243](https://github.com/unicode-org/icu4x/issues/2243) to track improvements to
+//! this algorithm and steps to enshrine the algorithm in CLDR.
 //!
 //! # Examples
 //!
