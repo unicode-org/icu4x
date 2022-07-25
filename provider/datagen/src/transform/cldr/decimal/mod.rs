@@ -78,12 +78,12 @@ impl NumbersProvider {
             .source
             .cldr()?
             .numbers()
-            .read_and_parse(&langid, "numbers.json")?;
+            .read_and_parse(langid, "numbers.json")?;
 
         let numbers = &resource
             .main
             .0
-            .get(&langid)
+            .get(langid)
             .expect("CLDR file contains the expected language")
             .numbers;
 
