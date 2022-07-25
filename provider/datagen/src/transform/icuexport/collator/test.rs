@@ -101,14 +101,14 @@ fn test_fi() {
     options.set_strength(Some(Strength::Tertiary));
 
     {
-        let collator: Collator = Collator::try_new(locale.clone(), &provider, options).unwrap();
+        let collator: Collator = Collator::try_new(&provider, locale.clone(), options).unwrap();
         check_expectations(&collator, &cases);
     }
 
     options.set_strength(Some(Strength::Primary));
 
     {
-        let collator: Collator = Collator::try_new(locale, &provider, options).unwrap();
+        let collator: Collator = Collator::try_new(&provider, locale, options).unwrap();
         check_expectations(&collator, &cases);
     }
 }
@@ -168,14 +168,14 @@ fn test_sv() {
     options.set_strength(Some(Strength::Tertiary));
 
     {
-        let collator: Collator = Collator::try_new(locale.clone(), &provider, options).unwrap();
+        let collator: Collator = Collator::try_new(&provider, locale.clone(), options).unwrap();
         check_expectations(&collator, &cases);
     }
 
     options.set_strength(Some(Strength::Primary));
 
     {
-        let collator: Collator = Collator::try_new(locale, &provider, options).unwrap();
+        let collator: Collator = Collator::try_new(&provider, locale, options).unwrap();
         check_expectations(&collator, &cases);
     }
 }
