@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658782238380,
+  "lastUpdate": 1658786916830,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39028,6 +39028,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e716c0c6dbcb3b9949a1e68c1ac1193050c4475",
+          "message": "Uses tries instead of inversion lists for normalization data (#2235)\n\n* Remove inversion list usage from decomposing normalization\r\n\r\nThe \"decomposition starts with a non-starter\" property is stored as\r\na special marker value in the NFD trie.\r\n\r\n* Remove inversion list usage from the composing normalizer\r\n\r\nA trie performs better than a fragmented inversion list.\r\n\r\nIf an app wants to optimize data size at the expense of performance,\r\nit's valid to use a passthrough set that passes more through. For\r\nexample, it's valid to use nfkc.toml for both NFC and NFKC.\r\nIt's also valid to use passthroughnop.toml (provided but not used\r\nby this changeset) in place of any of nfc.toml, nfkc.toml, or\r\nuts46.toml.\r\n\r\nFurthermore, the sets are provided separately instead of being combined\r\ninto one trie, because a future change might be able to do away with\r\nnfkc.toml and uts46.toml by using the information available in nfc.toml\r\nand nfkd.toml/uts46d.toml.\r\n\r\nThe field `first` in the data is expected to be used by a future\r\nchange.",
+          "timestamp": "2022-07-25T21:57:02Z",
+          "tree_id": "1dc8153ced5e53741e0d0f03c86fa7832b162197",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e716c0c6dbcb3b9949a1e68c1ac1193050c4475"
+        },
+        "date": 1658786872154,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123220,
+            "range": "± 917",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25518,
+            "range": "± 204",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71757,
+            "range": "± 201",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
             "range": "± 0",
             "unit": "ns/iter"
           }
