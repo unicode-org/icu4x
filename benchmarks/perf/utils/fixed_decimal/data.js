@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658764349023,
+  "lastUpdate": 1658765003388,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38729,6 +38729,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 70,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bc5c1ff1a5be991caf64849314ade59965f33cc3",
+          "message": "Hide unstable calendar apis (#2229)",
+          "timestamp": "2022-07-25T15:51:42Z",
+          "tree_id": "0c5a00a3744cfdb7f6b2880ea6b0e9ddf3124a67",
+          "url": "https://github.com/unicode-org/icu4x/commit/bc5c1ff1a5be991caf64849314ade59965f33cc3"
+        },
+        "date": 1658764967730,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105344,
+            "range": "± 7700",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21811,
+            "range": "± 1463",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65122,
+            "range": "± 5128",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 208,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 71,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 81,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
