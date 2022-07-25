@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658786972340,
+  "lastUpdate": 1658787947189,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -51623,6 +51623,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5065,
             "range": "± 21",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c99b3122a7e7702ed87214faa166c92f134a0ac9",
+          "message": "Add link to vertical fallback algorithm (#2244)",
+          "timestamp": "2022-07-25T15:12:48-07:00",
+          "tree_id": "9f38ed45dd0b744c58c7b163243001fc11251ec7",
+          "url": "https://github.com/unicode-org/icu4x/commit/c99b3122a7e7702ed87214faa166c92f134a0ac9"
+        },
+        "date": 1658787912245,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 98530,
+            "range": "± 331",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 943918,
+            "range": "± 4619",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 198136,
+            "range": "± 4676",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 89072,
+            "range": "± 1391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 98695,
+            "range": "± 646",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 99193,
+            "range": "± 295",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 110078,
+            "range": "± 2261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 164669,
+            "range": "± 709",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 199528,
+            "range": "± 359",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 197893,
+            "range": "± 2207",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 216103,
+            "range": "± 739",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5008,
+            "range": "± 79",
             "unit": "ns/iter"
           }
         ]
