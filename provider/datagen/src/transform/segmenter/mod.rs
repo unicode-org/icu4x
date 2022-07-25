@@ -343,8 +343,13 @@ impl SegmenterRuleProvider {
                                     properties_map[c as usize] = property_index
                                 }
                             }
+
                             continue;
                         }
+
+                        // TODO(#2239):
+                        // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
+                        // Katakana will use UAX#29 rules instead of dictionary.
 
                         let prop = get_word_segmenter_value_from_name(&*p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {

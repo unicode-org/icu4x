@@ -89,7 +89,8 @@ impl ZonedAnyDateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::zoned_datetime::MockZonedDateTime;
+    /// use icu::datetime::options::length;
+    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
@@ -97,7 +98,7 @@ impl ZonedAnyDateTimeFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let options = DateTimeFormatterOptions::default();
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
     /// let zdtf = ZonedAnyDateTimeFormatter::try_new_unstable(
@@ -109,9 +110,13 @@ impl ZonedAnyDateTimeFormatter {
     ///     &provider,
     ///     &options,
     ///     &TimeZoneFormatterOptions::default(),
-    /// );
+    /// ).expect("Construction should succeed");
     ///
-    /// assert_eq!(zdtf.is_ok(), true);
+    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
+    ///     .expect("Failed to parse zoned datetime");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -190,6 +195,38 @@ impl ZonedAnyDateTimeFormatter {
     /// Furthermore, based on the type of calendar used, one of the following data keys may be necessary:
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
+    ///
+    /// Test will currently fail due to <https://github.com/unicode-org/icu4x/issues/2188>,
+    /// since these functions currently *must* be given a fallback-enabled provider and
+    /// we do not have one in `icu_testdata`
+    ///
+    /// ```rust,should_panic
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::options::length;
+    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
+    /// use icu::locid::Locale;
+    /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use std::str::FromStr;
+    ///
+    /// let provider = icu_testdata::get_baked_provider();
+    ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    ///
+    /// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_any_provider(
+    ///     locale,
+    ///     &provider,
+    ///     &options,
+    ///     &TimeZoneFormatterOptions::default(),
+    /// ).expect("Construction should succeed");
+    ///
+    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
+    ///     .expect("Failed to parse zoned datetime");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
+    /// ```
     #[inline]
     pub fn try_new_with_any_provider<P>(
         locale: &DataLocale,
@@ -225,7 +262,33 @@ impl ZonedAnyDateTimeFormatter {
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     ///
-    /// Test TBD: <https://github.com/unicode-org/icu4x/issues/2145>
+    /// ```rust
+    /// use icu::calendar::Gregorian;
+    /// use icu::datetime::options::length;
+    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
+    /// use icu::locid::Locale;
+    /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use std::str::FromStr;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let locale = Locale::from_str("en").unwrap();
+    ///
+    /// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_buffer_provider(
+    ///     locale,
+    ///     &provider,
+    ///     &options,
+    ///     &TimeZoneFormatterOptions::default(),
+    /// ).expect("Construction should succeed");
+    ///
+    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
+    ///     .expect("Failed to parse zoned datetime");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
+    /// ```
     #[inline]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider<P>(
