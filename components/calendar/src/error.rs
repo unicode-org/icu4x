@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
+use tinystr::TinyStr16;
 
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
@@ -37,7 +38,10 @@ pub enum DateTimeError {
     /// Out of range
     // TODO(Manishearth) turn this into a proper variant
     OutOfRange,
+    /// Unknown era
+    #[displaydoc("No era named {0} for calendar {1}")]
     /// An input was missing.
+    UnknownEra(TinyStr16, &'static str),
     #[displaydoc("No value for {0}")]
     MissingInput(&'static str),
 }
