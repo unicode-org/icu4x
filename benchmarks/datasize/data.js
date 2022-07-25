@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658764405332,
+  "lastUpdate": 1658766264746,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21083,6 +21083,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bc5c1ff1a5be991caf64849314ade59965f33cc3"
         },
         "date": 1658764373671,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035317,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "628380d5b264db764812dab9bbeee2f482b682b7",
+          "message": "Refactor NormalizationProvider into a single type (#2233)",
+          "timestamp": "2022-07-25T11:22:22-05:00",
+          "tree_id": "076a91e8899951852f6ab1a999bec86e814a3af4",
+          "url": "https://github.com/unicode-org/icu4x/commit/628380d5b264db764812dab9bbeee2f482b682b7"
+        },
+        "date": 1658766224828,
         "tool": "ndjson",
         "benches": [
           {
