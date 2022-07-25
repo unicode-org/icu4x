@@ -5,12 +5,12 @@
 //! `icu_provider` is one of the [`ICU4X`] components.
 //!
 //! `icu_provider` defines traits and structs for transmitting data through the ICU4X locale
-//! data pipeline. The primary trait is [`ResourceProvider`]. It is parameterized by a
-//! [`ResourceMarker`], which contains the data type and a [`ResourceKey`]. It has one method,
-//! [`ResourceProvider::load_resource`], which transforms a [`DataRequest`]
+//! data pipeline. The primary trait is [`DataProvider`]. It is parameterized by a
+//! [`KeyedDataMarker`], which contains the data type and a [`DataKey`]. It has one method,
+//! [`DataProvider::load`], which transforms a [`DataRequest`]
 //! into a [`DataResponse`].
 //!
-//! - [`ResourceKey`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.
+//! - [`DataKey`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.
 //! - [`DataRequest`] contains additional annotations to choose a specific variant of the key,
 //!   such as a locale.
 //! - [`DataResponse`] contains the data if the request was successful.
@@ -19,7 +19,7 @@
 //!
 //! - [`AnyProvider`] returns data as `dyn Any` trait objects.
 //! - [`BufferProvider`] returns data as `[u8]` buffers.
-//! - [`DynProvider`] returns structured data but is not specific to a key.
+//! - [`DynamicDataProvider`] returns structured data but is not specific to a key.
 //!
 //! The most common types required for this crate are included via the prelude:
 //!
@@ -38,7 +38,7 @@
 //!
 //! Type 1 providers generally implement [`AnyProvider`], which returns structured data cast into
 //! `dyn Any` trait objects. Users can call [`as_downcasting()`] to get an object implementing
-//! [`ResourceProvider`] by downcasting the trait objects.
+//! [`DataProvider`] by downcasting the trait objects.
 //!
 //! Examples of Type 1 providers:
 //!
@@ -51,7 +51,7 @@
 //!
 //! Type 2 providers generally implement [`BufferProvider`], which returns unstructured data
 //! typically represented as [`serde`]-serialized buffers. Users can call [`as_deserializing()`]
-//! to get an object implementing [`ResourceProvider`] by invoking Serde Deserialize.
+//! to get an object implementing [`DataProvider`] by invoking Serde Deserialize.
 //!
 //! Examples of Type 2 providers:
 //!
@@ -89,15 +89,15 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 //! [`DataProvider`]: data_provider::DataProvider
-//! [`ResourceKey`]: key::ResourceKey
-//! [`ResourceOptions`]: request::ResourceOptions
-//! [`IterableDynProvider`]: datagen::IterableDynProvider
-//! [`IterableResourceProvider`]: datagen::IterableResourceProvider
+//! [`DataKey`]: key::DataKey
+//! [`DataLocale`]: request::DataLocale
+//! [`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
+//! [`IterableDataProvider`]: datagen::IterableDataProvider
 //! [`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 //! [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 //! [`AnyProvider`]: any::AnyProvider
 //! [`Yokeable`]: yoke::Yokeable
-//! [`impl_dyn_provider!`]: impl_dyn_provider
+//! [`impl_dynamic_data_provider!`]: impl_dynamic_data_provider
 //! [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 //! [`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
 //! [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
@@ -153,23 +153,23 @@ pub mod prelude {
     pub use crate::any::AnyResponse;
     pub use crate::buf::BufferMarker;
     pub use crate::buf::BufferProvider;
-    pub use crate::data_provider::DynProvider;
-    pub use crate::data_provider::ResourceProvider;
+    pub use crate::data_key;
+    pub use crate::data_provider::DataProvider;
+    pub use crate::data_provider::DynamicDataProvider;
     pub use crate::error::DataError;
     pub use crate::error::DataErrorKind;
-    pub use crate::key::ResourceKey;
-    pub use crate::key::ResourceKeyHash;
+    pub use crate::key::DataKey;
+    pub use crate::key::DataKeyHash;
     pub use crate::marker::DataMarker;
-    pub use crate::marker::ResourceMarker;
+    pub use crate::marker::KeyedDataMarker;
+    pub use crate::request::DataLocale;
     pub use crate::request::DataRequest;
-    pub use crate::request::ResourceOptions;
-    pub use crate::resource_key;
     pub use crate::response::DataPayload;
     pub use crate::response::DataResponse;
     pub use crate::response::DataResponseMetadata;
 
     pub use crate::any::AsDowncastingAnyProvider;
-    pub use crate::any::AsDynProviderAnyMarkerWrap;
+    pub use crate::any::AsDynamicDataProviderAnyMarkerWrap;
     #[cfg(feature = "serde")]
     pub use crate::serde::AsDeserializingBufferProvider;
 
@@ -182,8 +182,8 @@ pub mod prelude {
 pub use prelude::*;
 
 // Less important non-prelude items
+pub use crate::key::DataKeyMetadata;
 pub use crate::key::FallbackPriority;
-pub use crate::key::ResourceKeyMetadata;
 pub use crate::response::RcWrap;
 
 // For macros

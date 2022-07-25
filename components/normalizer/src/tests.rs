@@ -137,8 +137,122 @@ fn test_uts46_basic() {
     assert_eq!(normalizer.normalize("ς"), "ς");
 }
 
-use atoi::FromRadix16;
 type StackString = arraystring::ArrayString<arraystring::typenum::U48>;
+
+#[test]
+fn test_nfd_str_to() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd(&data_provider).unwrap();
+
+    let mut buf = StackString::new();
+    assert!(normalizer.normalize_to("ä", &mut buf).is_ok());
+    assert_eq!(&buf, "a\u{0308}");
+
+    buf.clear();
+    assert!(normalizer.normalize_to("ệ", &mut buf).is_ok());
+    assert_eq!(&buf, "e\u{0323}\u{0302}");
+}
+
+#[test]
+fn test_nfd_utf8_to() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd(&data_provider).unwrap();
+
+    let mut buf = StackString::new();
+    assert!(normalizer
+        .normalize_utf8_to("ä".as_bytes(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "a\u{0308}");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to("ệ".as_bytes(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "e\u{0323}\u{0302}");
+}
+
+type StackVec = arrayvec::ArrayVec<u16, 32>;
+
+#[test]
+fn test_nfd_utf16_to() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd(&data_provider).unwrap();
+
+    let mut buf = StackVec::new();
+    assert!(normalizer
+        .normalize_utf16_to([0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0x0061u16, 0x0308u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0x1EC7u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0x0065u16, 0x0323u16, 0x0302u16].as_slice());
+}
+
+#[test]
+fn test_nfc_str_to() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: ComposingNormalizer = ComposingNormalizer::try_new_nfc(&data_provider).unwrap();
+
+    let mut buf = StackString::new();
+    assert!(normalizer.normalize_to("a\u{0308}", &mut buf).is_ok());
+    assert_eq!(&buf, "ä");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_to("e\u{0323}\u{0302}", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "ệ");
+}
+
+#[test]
+fn test_nfc_utf8_to() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: ComposingNormalizer = ComposingNormalizer::try_new_nfc(&data_provider).unwrap();
+
+    let mut buf = StackString::new();
+    assert!(normalizer
+        .normalize_utf8_to("a\u{0308}".as_bytes(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "ä");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to("e\u{0323}\u{0302}".as_bytes(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "ệ");
+}
+
+#[test]
+fn test_nfc_utf16_to() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: ComposingNormalizer = ComposingNormalizer::try_new_nfc(&data_provider).unwrap();
+
+    let mut buf = StackVec::new();
+    assert!(normalizer
+        .normalize_utf16_to([0x0061u16, 0x0308u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0x00E4u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0x0065u16, 0x0323u16, 0x0302u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0x1EC7u16].as_slice());
+}
+
+use atoi::FromRadix16;
 
 /// Parse five semicolon-terminated strings consisting of space-separated hexadecimal scalar values
 fn parse_hex(mut hexes: &[u8]) -> [StackString; 5] {
@@ -318,10 +432,10 @@ fn test_conformance() {
 
 #[test]
 fn test_hangul() {
-    use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+    use icu_uniset::{CodePointSet, CodePointSetBuilder};
     use zerofrom::ZeroFrom;
-    let builder = UnicodeSetBuilder::new();
-    let set: UnicodeSet = builder.build();
+    let builder = CodePointSetBuilder::new();
+    let set: CodePointSet = builder.build();
 
     let data_provider = icu_testdata::get_provider();
 

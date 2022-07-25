@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! [`icu_plurals`](crate) is one of the [`ICU4X`] components.
+//! Determine the plural category appropriate for a given number in a given language.
 //!
-//! This API provides functionality to determine the plural category
-//! appropriate for a given number in a given language.
+//! This module is published as its own crate ([`icu_plural`](https://docs.rs/icu_plural/latest/icu_plural/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! For example in English language, when constructing a message
 //! such as `{ num } items`, the user has to prepare
@@ -276,10 +276,7 @@ impl PluralCategory {
 /// [`ICU4X`]: ../icu/index.html
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
-pub struct PluralRules {
-    _locale: Locale,
-    rules: DataPayload<ErasedPluralRulesV1Marker>,
-}
+pub struct PluralRules(DataPayload<ErasedPluralRulesV1Marker>);
 
 impl PluralRules {
     /// Constructs a new `PluralRules` for a given locale, [`type`] and [`data provider`].
@@ -307,7 +304,7 @@ impl PluralRules {
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker> + ?Sized,
+        D: DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized,
     {
         match rule_type {
             PluralRuleType::Cardinal => Self::try_new_cardinal(locale, data_provider),
@@ -345,17 +342,17 @@ impl PluralRules {
         data_provider: &D,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<CardinalV1Marker> + ?Sized,
+        D: DataProvider<CardinalV1Marker> + ?Sized,
     {
-        let locale = locale.into();
-        let rules = data_provider
-            .load_resource(&DataRequest {
-                options: locale.clone().into(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?
-            .cast();
-        Self::new(locale, rules)
+        Ok(Self(
+            data_provider
+                .load(DataRequest {
+                    locale: &locale.into().into(),
+                    metadata: Default::default(),
+                })?
+                .take_payload()?
+                .cast(),
+        ))
     }
 
     /// Constructs a new `PluralRules` for a given locale for ordinal numbers.
@@ -391,17 +388,17 @@ impl PluralRules {
         data_provider: &D,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<OrdinalV1Marker> + ?Sized,
+        D: DataProvider<OrdinalV1Marker> + ?Sized,
     {
-        let locale = locale.into();
-        let rules = data_provider
-            .load_resource(&DataRequest {
-                options: locale.clone().into(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?
-            .cast();
-        Self::new(locale, rules)
+        Ok(Self(
+            data_provider
+                .load(DataRequest {
+                    locale: &locale.into().into(),
+                    metadata: Default::default(),
+                })?
+                .take_payload()?
+                .cast(),
+        ))
     }
 
     /// Returns the [`Plural Category`] appropriate for the given number.
@@ -455,7 +452,7 @@ impl PluralRules {
     /// [`Plural Category`]: PluralCategory
     /// [`Plural Operands`]: operands::PluralOperands
     pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
-        let rules = self.rules.get();
+        let rules = self.0.get();
         let input = input.into();
 
         macro_rules! test_rule {
@@ -502,7 +499,7 @@ impl PluralRules {
     ///
     /// [`Plural Categories`]: PluralCategory
     pub fn categories(&self) -> impl Iterator<Item = PluralCategory> + '_ {
-        let rules = self.rules.get();
+        let rules = self.0.get();
 
         macro_rules! test_rule {
             ($rule:ident, $cat:ident) => {
@@ -520,18 +517,5 @@ impl PluralRules {
             .chain(test_rule!(few, Few))
             .chain(test_rule!(many, Many))
             .chain(Some(PluralCategory::Other).into_iter())
-    }
-
-    /// Lower-level constructor that allows constructing a [`PluralRules`] directly from
-    /// data obtained from a provider.
-    fn new<T: Into<Locale>>(
-        locale: T,
-        rules: DataPayload<ErasedPluralRulesV1Marker>,
-    ) -> Result<Self, PluralRulesError> {
-        let locale = locale.into();
-        Ok(Self {
-            _locale: locale,
-            rules,
-        })
     }
 }

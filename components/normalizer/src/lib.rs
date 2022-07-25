@@ -15,10 +15,10 @@
 )]
 #![warn(missing_docs)]
 
-//! `icu_normalizer` is one of the ICU4X components.
+//! Normalizing text into Unicode Normalization Forms.
 //!
-//! This API provides necessary functionality for normalizing text into Unicode
-//! Normalization Forms.
+//! This module is published as its own crate ([`icu_normalizer`](https://docs.rs/icu_normalizer/latest/icu_normalizer/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! # Implementation notes
 //!
@@ -83,10 +83,8 @@ use icu_char16trie::char16trie::TrieResult;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::maps::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_properties::CanonicalCombiningClass;
-use icu_provider::DataPayload;
-use icu_provider::DataRequest;
-use icu_provider::ResourceProvider;
-use icu_uniset::UnicodeSet;
+use icu_provider::prelude::*;
+use icu_uniset::CodePointSet;
 use provider::CanonicalCompositionPassthroughV1Marker;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
@@ -403,7 +401,7 @@ where
     pending: Option<char>, // None at end of stream
     trie: &'data CodePointTrie<'data, u32>,
     supplementary_trie: Option<&'data CodePointTrie<'data, u32>>,
-    decomposition_starts_with_non_starter: UnicodeSet<'data>,
+    decomposition_starts_with_non_starter: CodePointSet<'data>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<U24>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
@@ -434,7 +432,7 @@ where
     /// omit some characters from this set. As a consequence, multiple
     /// normalization forms whose sets are similar may use the intersection
     /// of their exact sets in order to need to store only the intersection.
-    potential_passthrough_and_not_backward_combining: Option<UnicodeSet<'data>>,
+    potential_passthrough_and_not_backward_combining: Option<CodePointSet<'data>>,
     /// The character in `pending` is a in the
     /// `potential_passthrough_and_not_backward_combining` set.
     /// This flag is meaningful only when `pending.is_some()` and
@@ -479,7 +477,7 @@ where
         tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         ccc: CodePointMapDataBorrowed<'data, CanonicalCombiningClass>,
-        potential_passthrough_and_not_backward_combining: Option<UnicodeSet<'data>>,
+        potential_passthrough_and_not_backward_combining: Option<CodePointSet<'data>>,
     ) -> Self {
         let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
             if let Some(supplementary) = supplementary_decompositions {
@@ -499,7 +497,7 @@ where
             pending: Some('\u{FFFF}'),
             trie: &decompositions.trie,
             supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
-            decomposition_starts_with_non_starter: UnicodeSet::zero_from(
+            decomposition_starts_with_non_starter: CodePointSet::zero_from(
                 &decompositions.decomposition_starts_with_non_starter,
             ),
             scalars16: &tables.scalars16,
@@ -1002,44 +1000,6 @@ where
                     return Some(starter);
                 }
             }
-            // Even a Hangul LVT syllable may have decomposed if followed by something that
-            // could combine backwards with some other base.
-            // `buffer_pos` may be non-zero for NFKC and parenthesized Hangul.
-            if let Some(potential) = self.decomposition.buffer.get(self.decomposition.buffer_pos) {
-                let potential_c = potential.character();
-                let v = u32::from(potential_c).wrapping_sub(HANGUL_V_BASE);
-                if v < HANGUL_V_COUNT {
-                    // Hangul vowel
-                    let l = u32::from(starter).wrapping_sub(HANGUL_L_BASE);
-                    if l < HANGUL_L_COUNT {
-                        let lv = l * HANGUL_N_COUNT + v * HANGUL_T_COUNT;
-                        // Safe, because the inputs are known to be in range.
-                        starter = unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lv) };
-
-                        self.decomposition.buffer_pos += 1;
-                    }
-                }
-            }
-
-            if let Some(potential) = self.decomposition.buffer.get(self.decomposition.buffer_pos) {
-                let potential_c = potential.character();
-                if in_inclusive_range(potential_c, '\u{11A8}', '\u{11C2}') {
-                    // Hangul trail
-                    let lv = u32::from(starter).wrapping_sub(HANGUL_S_BASE);
-                    if lv < HANGUL_S_COUNT && lv % HANGUL_T_COUNT == 0 {
-                        let lvt = lv + u32::from(potential_c) - HANGUL_T_BASE;
-                        // Safe, because the inputs are known to be in range.
-                        starter = unsafe { char::from_u32_unchecked(HANGUL_S_BASE + lvt) };
-
-                        self.decomposition.buffer_pos += 1;
-                    }
-                }
-            }
-
-            // We could skip the loop based on the knowledge that we saw Hangul, but it
-            // would only be an optimization in a non-realistic case, so we'll let the loop
-            // below try composing stuff with Hangul without success.
-
             // We first loop by index to avoid moving the contents of `buffer`, but
             // if there's a discontiguous match, we'll start modifying `buffer` instead.
             loop {
@@ -1055,7 +1015,7 @@ where
                     self.decomposition.buffer_pos = 0;
                     break;
                 };
-                if let Some(composed) = self.compose_non_hangul(starter, character) {
+                if let Some(composed) = self.compose(starter, character) {
                     starter = composed;
                     self.decomposition.buffer_pos += 1;
                     continue;
@@ -1086,6 +1046,9 @@ where
                     }
                     debug_assert!(ccc >= most_recent_skipped_ccc);
                     if ccc != most_recent_skipped_ccc {
+                        // Using the non-Hangul version as a micro-optimization, since
+                        // we already rejected the case where `second` is a starter
+                        // above, and conjoining jamo are starters.
                         if let Some(composed) = self.compose_non_hangul(starter, character) {
                             self.decomposition.buffer.remove(i);
                             starter = composed;
@@ -1147,7 +1110,6 @@ macro_rules! normalizer_methods {
         }
 
         /// Normalize a string slice into a `Write` sink.
-        #[cfg(feature = "experimental")]
         pub fn normalize_to<W: core::fmt::Write + ?Sized>(
             &self,
             text: &str,
@@ -1182,8 +1144,7 @@ macro_rules! normalizer_methods {
         ///
         /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
         /// before normalizing.
-        #[cfg(feature = "experimental")]
-        pub fn normalize_utf16_to<W: core::fmt::Write + ?Sized>(
+        pub fn normalize_utf16_to<W: write16::Write16 + ?Sized>(
             &self,
             text: &[u16],
             sink: &mut W,
@@ -1213,7 +1174,6 @@ macro_rules! normalizer_methods {
         ///
         /// Errors are mapped to the REPLACEMENT CHARACTER according
         /// to the WHATWG Encoding Standard.
-        #[cfg(feature = "experimental")]
         pub fn normalize_utf8_to<W: core::fmt::Write + ?Sized>(
             &self,
             text: &[u8],
@@ -1248,17 +1208,15 @@ impl DecomposingNormalizer {
     /// NFD constructor.
     pub fn try_new_nfd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -1284,28 +1242,22 @@ impl DecomposingNormalizer {
     /// NFKD constructor.
     pub fn try_new_nfkd<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CompatibilityDecompositionSupplementV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let supplementary_decompositions: DataPayload<
             CompatibilityDecompositionSupplementV1Marker,
-        > = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        > = data_provider.load(Default::default())?.take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
-            data_provider
-                .load_resource(&DataRequest::default())?
-                .take_payload()?;
+            data_provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len()
             + tables.get().scalars24.len()
@@ -1359,28 +1311,22 @@ impl DecomposingNormalizer {
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<Uts46DecompositionSupplementV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<Uts46DecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
             // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let supplementary_decompositions: DataPayload<Uts46DecompositionSupplementV1Marker> =
-            data_provider
-                .load_resource(&DataRequest::default())?
-                .take_payload()?;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+            data_provider.load(Default::default())?.take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let supplementary_tables: DataPayload<CompatibilityDecompositionTablesV1Marker> =
-            data_provider
-                .load_resource(&DataRequest::default())?
-                .take_payload()?;
+            data_provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len()
             + tables.get().scalars24.len()
@@ -1438,23 +1384,20 @@ impl ComposingNormalizer {
     /// NFC constructor.
     pub fn try_new_nfc<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CanonicalCompositionsV1Marker>
-            + ResourceProvider<CanonicalCompositionPassthroughV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<CanonicalCompositionPassthroughV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfd(data_provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             CanonicalCompositionPassthroughV1Marker,
-        > = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -1468,25 +1411,22 @@ impl ComposingNormalizer {
     /// NFKC constructor.
     pub fn try_new_nfkc<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CompatibilityDecompositionSupplementV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
-            + ResourceProvider<CanonicalCompositionsV1Marker>
-            + ResourceProvider<CompatibilityCompositionPassthroughV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CompatibilityDecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<CompatibilityCompositionPassthroughV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd(data_provider)?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             CompatibilityCompositionPassthroughV1Marker,
-        > = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -1526,14 +1466,14 @@ impl ComposingNormalizer {
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<Uts46DecompositionSupplementV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<CompatibilityDecompositionTablesV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<Uts46DecompositionSupplementV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<CompatibilityDecompositionTablesV1Marker>
             // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
-            + ResourceProvider<CanonicalCompositionsV1Marker>
-            + ResourceProvider<Uts46CompositionPassthroughV1Marker>
-            + ResourceProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
+            + DataProvider<CanonicalCompositionsV1Marker>
+            + DataProvider<Uts46CompositionPassthroughV1Marker>
+            + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer =
@@ -1541,14 +1481,11 @@ impl ComposingNormalizer {
                 data_provider,
             )?;
 
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         let potential_passthrough_and_not_backward_combining: DataPayload<
             Uts46CompositionPassthroughV1Marker,
-        > = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
@@ -1632,11 +1569,10 @@ impl CanonicalComposition {
     /// Construct from data provider.
     pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalCompositionsV1Marker> + ?Sized,
+        D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
-        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
         Ok(CanonicalComposition {
             canonical_compositions,
         })
@@ -1823,17 +1759,15 @@ impl CanonicalDecomposition {
     /// Construct from data provider.
     pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
-        D: ResourceProvider<CanonicalDecompositionDataV1Marker>
-            + ResourceProvider<CanonicalDecompositionTablesV1Marker>
-            + ResourceProvider<NonRecursiveDecompositionSupplementV1Marker>
+        D: DataProvider<CanonicalDecompositionDataV1Marker>
+            + DataProvider<CanonicalDecompositionTablesV1Marker>
+            + DataProvider<NonRecursiveDecompositionSupplementV1Marker>
             + ?Sized,
     {
-        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
-        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
+        let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
         if tables.get().scalars16.len() + tables.get().scalars24.len() > 0xFFF {
             // The data is from a future where there exists a normalization flavor whose
@@ -1845,9 +1779,8 @@ impl CanonicalDecomposition {
             return Err(NormalizerError::FutureExtension);
         }
 
-        let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> = data_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let non_recursive: DataPayload<NonRecursiveDecompositionSupplementV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
 
         Ok(CanonicalDecomposition {
             decompositions,

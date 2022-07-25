@@ -6,6 +6,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+#[cfg(feature = "lstm")]
+use crate::lstm_structs::LstmDataV1Marker;
+
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use zerovec::ZeroVec;
@@ -81,10 +84,12 @@ pub struct UCharDictionaryBreakDataV1<'data> {
     pub trie_data: ZeroVec<'data, u16>,
 }
 
-pub const ALL_KEYS: [ResourceKey; 5] = [
+pub const ALL_KEYS: [DataKey; if cfg!(feature = "lstm") { 6 } else { 5 }] = [
     LineBreakDataV1Marker::KEY,
     GraphemeClusterBreakDataV1Marker::KEY,
     WordBreakDataV1Marker::KEY,
     SentenceBreakDataV1Marker::KEY,
     UCharDictionaryBreakDataV1Marker::KEY,
+    #[cfg(feature = "lstm")]
+    LstmDataV1Marker::KEY,
 ];

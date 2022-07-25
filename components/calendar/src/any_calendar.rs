@@ -348,7 +348,7 @@ impl AnyCalendar {
     /// For calendars that need data, will attempt to load the appropriate data from the source
     pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
     where
-        P: ResourceProvider<crate::provider::JapaneseErasV1Marker> + ?Sized,
+        P: DataProvider<crate::provider::JapaneseErasV1Marker> + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),

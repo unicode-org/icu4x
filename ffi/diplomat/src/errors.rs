@@ -35,20 +35,19 @@ pub mod ffi {
 
         // general data errors
         // See DataError
-        DataMissingResourceKeyError = 0x1_00,
+        DataMissingDataKeyError = 0x1_00,
         DataMissingVariantError = 0x1_01,
         DataMissingLocaleError = 0x1_02,
-        DataMissingResourceOptionsError = 0x1_03,
-        DataNeedsVariantError = 0x1_04,
-        DataNeedsLocaleError = 0x1_05,
-        DataExtraneousResourceOptionsError = 0x1_06,
-        DataFilteredResourceError = 0x1_07,
-        DataMismatchedTypeError = 0x1_08,
-        DataMissingPayloadError = 0x1_09,
-        DataInvalidStateError = 0x1_0A,
-        DataCustomError = 0x1_0B,
-        DataIoError = 0x1_0C,
-        DataUnavailableBufferFormatError = 0x1_0D,
+        DataNeedsVariantError = 0x1_03,
+        DataNeedsLocaleError = 0x1_04,
+        DataExtraneousLocaleError = 0x1_05,
+        DataFilteredResourceError = 0x1_06,
+        DataMismatchedTypeError = 0x1_07,
+        DataMissingPayloadError = 0x1_08,
+        DataInvalidStateError = 0x1_09,
+        DataCustomError = 0x1_0A,
+        DataIoError = 0x1_0B,
+        DataUnavailableBufferFormatError = 0x1_0C,
 
         // locale errors
         /// The subtag being requested was not set
@@ -102,15 +101,10 @@ impl From<fmt::Error> for ICU4XError {
 impl From<DataError> for ICU4XError {
     fn from(e: DataError) -> Self {
         match e.kind {
-            DataErrorKind::MissingResourceKey => ICU4XError::DataMissingResourceKeyError,
-            DataErrorKind::MissingVariant => ICU4XError::DataMissingVariantError,
+            DataErrorKind::MissingDataKey => ICU4XError::DataMissingDataKeyError,
             DataErrorKind::MissingLocale => ICU4XError::DataMissingLocaleError,
-            DataErrorKind::MissingResourceOptions => ICU4XError::DataMissingResourceOptionsError,
-            DataErrorKind::NeedsVariant => ICU4XError::DataNeedsVariantError,
             DataErrorKind::NeedsLocale => ICU4XError::DataNeedsLocaleError,
-            DataErrorKind::ExtraneousResourceOptions => {
-                ICU4XError::DataExtraneousResourceOptionsError
-            }
+            DataErrorKind::ExtraneousLocale => ICU4XError::DataExtraneousLocaleError,
             DataErrorKind::FilteredResource => ICU4XError::DataFilteredResourceError,
             DataErrorKind::MismatchedType(..) => ICU4XError::DataMismatchedTypeError,
             DataErrorKind::MissingPayload => ICU4XError::DataMissingPayloadError,

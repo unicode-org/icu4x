@@ -68,6 +68,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "arrayvec"
+version = "0.7.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "8da52d66c7071e2e3fa2a1e5c6d088fec47b593032b254f5e980de8ea54454d6"
+
+[[package]]
 name = "atoi"
 version = "1.0.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -729,7 +735,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=c51237218404421da2cf1ac0be922ff4218d6a81#c51237218404421da2cf1ac0be922ff4218d6a81"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9bae290384548bd2a81babcced6608064079c3d9#9bae290384548bd2a81babcced6608064079c3d9"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -740,17 +746,18 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=c51237218404421da2cf1ac0be922ff4218d6a81#c51237218404421da2cf1ac0be922ff4218d6a81"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9bae290384548bd2a81babcced6608064079c3d9#9bae290384548bd2a81babcced6608064079c3d9"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=c51237218404421da2cf1ac0be922ff4218d6a81#c51237218404421da2cf1ac0be922ff4218d6a81"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=9bae290384548bd2a81babcced6608064079c3d9#9bae290384548bd2a81babcced6608064079c3d9"
 dependencies = [
  "impls",
  "lazy_static",
  "proc-macro2",
  "quote",
+ "rustdoc-types",
  "serde",
  "syn",
 ]
@@ -1292,20 +1299,19 @@ checksum = "71a816c97c42258aa5834d07590b718b4c9a598944cd39a52dc25b351185d678"
 name = "icu"
 version = "0.6.0"
 dependencies = [
- "fixed_decimal",
  "icu_calendar",
- "icu_codepointtrie",
+ "icu_collator",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_normalizer",
  "icu_plurals",
  "icu_properties",
- "icu_provider",
+ "icu_segmenter",
  "icu_testdata",
  "icu_uniset",
- "writeable",
 ]
 
 [[package]]
@@ -1647,6 +1653,7 @@ name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
  "arraystring",
+ "arrayvec",
  "atoi",
  "databake",
  "displaydoc",
@@ -1660,6 +1667,7 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
+ "write16",
  "zerofrom",
  "zerovec",
 ]
@@ -1815,6 +1823,7 @@ dependencies = [
 name = "icu_testdata"
 version = "0.6.0"
 dependencies = [
+ "bytes",
  "cargo_metadata",
  "clap",
  "displaydoc",
@@ -1849,6 +1858,7 @@ dependencies = [
  "tokio",
  "writeable",
  "zerovec",
+ "zip 0.6.2",
 ]
 
 [[package]]
@@ -2800,6 +2810,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "bfa0f585226d2e68097d4f95d113b15b83a82e819ab25717ec0590d9584ef366"
 dependencies = [
  "semver 1.0.4",
+]
+
+[[package]]
+name = "rustdoc-types"
+version = "0.11.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fa792ee5551052d6e577cedadec6f7eae744b26db967e8e9fb4c1b604a608c7f"
+dependencies = [
+ "serde",
 ]
 
 [[package]]
@@ -4037,6 +4056,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "0120db82e8a1e0b9fb3345a539c478767c0048d842860994d96113d5b667bd69"
 dependencies = [
  "winapi",
+]
+
+[[package]]
+name = "write16"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
+dependencies = [
+ "arrayvec",
 ]
 
 [[package]]

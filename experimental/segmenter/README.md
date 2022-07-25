@@ -1,6 +1,11 @@
 # icu_segmenter [![crates.io](https://img.shields.io/crates/v/icu_segmenter)](https://crates.io/crates/icu_segmenter)
 
-A segmenter implementation for the following rules.
+\[Experimental\] Segment strings by lines, graphemes, word, and sentences.
+
+This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+
+This module contains segmenter implementation for the following rules.
 
 - Line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
 - Grapheme cluster breaker, word breaker, and sentence breaker that are compatible with

@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_decimal::provider::*;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
@@ -62,12 +62,9 @@ impl NumbersProvider {
     }
 }
 
-impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
-        let langid = req.options.get_langid();
+impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
+        let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::numbers::Resource = self
             .source
@@ -98,14 +95,14 @@ impl ResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
 
 icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
 
-impl IterableResourceProvider<DecimalSymbolsV1Marker> for NumbersProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(Into::<ResourceOptions>::into)
+            .map(DataLocale::from)
             .collect())
     }
 }
@@ -152,8 +149,8 @@ fn test_basic() {
     let provider = NumbersProvider::from(&SourceData::for_test());
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: locale!("ar-EG").into(),
+        .load(DataRequest {
+            locale: &locale!("ar-EG").into(),
             metadata: Default::default(),
         })
         .unwrap()

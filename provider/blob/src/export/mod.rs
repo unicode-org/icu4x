@@ -49,11 +49,11 @@
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
-//!     options: Default::default(),
+//!     locale: Default::default(),
 //!     metadata: Default::default(),
 //! };
 //! let response: DataPayload<HelloWorldV1Marker> = provider
-//!     .load_resource(&req)
+//!     .load(req)
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();

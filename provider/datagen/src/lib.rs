@@ -77,13 +77,13 @@ use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
 /// Parses a list of human-readable key identifiers and returns a
-/// list of [`ResourceKey`]s.
+/// list of [`DataKey`]s.
 ///
 /// Unknown key names are ignored.
 ///
 /// # Example
 /// ```
-/// # use icu_provider::ResourceMarker;
+/// # use icu_provider::KeyedDataMarker;
 /// assert_eq!(
 ///     icu_datagen::keys(&["list/and@1", "list/or@1"]),
 ///     vec![
@@ -92,7 +92,7 @@ use std::path::{Path, PathBuf};
 ///     ],
 /// );
 /// ```
-pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
+pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
     let keys = strings.iter().map(AsRef::as_ref).collect::<HashSet<&str>>();
     all_keys()
         .into_iter()
@@ -101,7 +101,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 }
 
 /// Parses a file of human-readable key identifiers and returns a
-/// list of [`ResourceKey`]s.
+/// list of [`DataKey`]s.
 ///
 /// Unknown key names are ignored.
 ///
@@ -114,7 +114,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// ```
 /// #### build.rs
 /// ```no_run
-/// # use icu_provider::ResourceMarker;
+/// # use icu_provider::KeyedDataMarker;
 /// # use std::fs::File;
 /// # fn main() -> std::io::Result<()> {
 /// assert_eq!(
@@ -127,7 +127,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # Ok(())
 /// # }
 /// ```
-pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
+pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let keys = BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
         .collect::<std::io::Result<HashSet<String>>>()?;
@@ -137,7 +137,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKe
         .collect())
 }
 
-/// Parses a compiled binary and returns a list of used [`ResourceKey`]s used by it.
+/// Parses a compiled binary and returns a list of used [`DataKey`]s used by it.
 ///
 /// Unknown key names are ignored.
 ///
@@ -145,7 +145,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKe
 ///
 /// #### build.rs
 /// ```no_run
-/// # use icu_provider::ResourceMarker;
+/// # use icu_provider::KeyedDataMarker;
 /// # use std::fs::File;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
@@ -158,7 +158,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKe
 /// # Ok(())
 /// # }
 /// ```
-pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
+pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
     let mut candidates = HashSet::new();
     let mut i = 0;
@@ -225,7 +225,7 @@ pub enum Out {
 /// * `out`: The output format and location. See the documentation on [`Out`]
 pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
-    keys: &[ResourceKey],
+    keys: &[DataKey],
     sources: &SourceData,
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
@@ -280,21 +280,21 @@ pub fn datagen(
 
     keys.into_par_iter().try_for_each(|&key| {
         log::info!("Writing key: {}", key);
-        let options = provider
-            .supported_options_for_key(key)
+        let locales = provider
+            .supported_locales_for_key(key)
             .map_err(|e| e.with_key(key))?;
-        let res = options.into_par_iter().try_for_each(|options| {
+        let res = locales.into_par_iter().try_for_each(|locale| {
             let req = DataRequest {
-                options: options.clone(),
+                locale: &locale,
                 metadata: Default::default(),
             };
             let payload = provider
-                .load_payload(key, &req)
+                .load_data(key, req)
                 .and_then(DataResponse::take_payload)
-                .map_err(|e| e.with_req(key, &req))?;
+                .map_err(|e| e.with_req(key, req))?;
             exporters.par_iter().try_for_each(|e| {
-                e.put_payload(key, &options, &payload)
-                    .map_err(|e| e.with_req(key, &req))
+                e.put_payload(key, &locale, &payload)
+                    .map_err(|e| e.with_req(key, req))
             })
         });
 

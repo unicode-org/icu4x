@@ -7,7 +7,7 @@
 use icu_char16trie::char16trie::Char16Trie;
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
-use icu_uniset::UnicodeSet;
+use icu_uniset::CodePointSet;
 use zerovec::ZeroVec;
 
 #[cfg(feature = "serde")]
@@ -27,7 +27,7 @@ pub struct DecompositionDataV1<'data> {
     /// Set containing the characters whose NFD decomposition
     /// starts with a non-starter
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub decomposition_starts_with_non_starter: UnicodeSet<'data>,
+    pub decomposition_starts_with_non_starter: CodePointSet<'data>,
 }
 
 /// Data that either NFKD or the decomposed form of UTS 46 needs
@@ -122,7 +122,7 @@ pub struct CompositionPassthroughV1<'data> {
     /// if the next character doesn't combine backwards and that themselves
     /// never combine backwards.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub potential_passthrough_and_not_backward_combining: UnicodeSet<'data>,
+    pub potential_passthrough_and_not_backward_combining: CodePointSet<'data>,
 }
 
 /// Non-recursive canonical decompositions that differ from

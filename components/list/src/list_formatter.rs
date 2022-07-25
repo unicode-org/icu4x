@@ -20,14 +20,14 @@ macro_rules! constructor {
     ($name: ident, $marker: ty, $doc: literal) => {
         #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list. See the [CLDR spec]",
             "(https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for an explanation of the different types.")]
-        pub fn $name<T: Into<Locale>, D: ResourceProvider<$marker> + ?Sized>(
+        pub fn $name<T: Into<Locale>, D: DataProvider<$marker> + ?Sized>(
             locale: T,
             data_provider: &D,
             style: ListStyle,
         ) -> Result<Self, DataError> {
             let data = data_provider
-                .load_resource(&DataRequest {
-                    options: locale.into().into(),
+                .load(DataRequest {
+                    locale: &locale.into().into(),
                     metadata: Default::default(),
                 })?
                 .take_payload()?.cast();

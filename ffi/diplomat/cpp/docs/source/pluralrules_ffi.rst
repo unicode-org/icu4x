@@ -5,6 +5,7 @@
 
     FFI version of ``PluralRules::categories()`` data.
 
+
     .. cpp:member:: bool zero
 
     .. cpp:member:: bool one
@@ -20,7 +21,9 @@
 .. cpp:enum-struct:: ICU4XPluralCategory
 
     FFI version of ``PluralCategory``.
+
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralCategory.html>`__ for more information.
+
 
     .. cpp:enumerator:: Zero
 
@@ -37,7 +40,9 @@
 .. cpp:struct:: ICU4XPluralOperands
 
     FFI version of ``PluralOperands``.
+
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html>`__ for more information.
+
 
     .. cpp:member:: uint64_t i
 
@@ -54,29 +59,41 @@
     .. cpp:function:: static diplomat::result<ICU4XPluralOperands, ICU4XError> create(const std::string_view s)
 
         FFI version of ``PluralOperands::from_str()``.
+
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralOperands.html#method.from_str>`__ for more information.
+
 
 .. cpp:class:: ICU4XPluralRules
 
     FFI version of ``PluralRules``.
+
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html>`__ for more information.
+
 
     .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
 
         FFI version of ``PluralRules::try_new_cardinal()``.
+
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more information.
+
 
     .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
 
         FFI version of ``PluralRules::try_new_ordinal()``.
+
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more information.
+
 
     .. cpp:function:: ICU4XPluralCategory select(ICU4XPluralOperands op) const
 
         FFI version of ``PluralRules::select()``.
+
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select>`__ for more information.
+
 
     .. cpp:function:: ICU4XPluralCategories categories() const
 
         FFI version of ``PluralRules::categories()``.
+
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.categories>`__ for more information.
+

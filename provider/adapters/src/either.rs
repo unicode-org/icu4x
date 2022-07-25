@@ -21,7 +21,7 @@ pub enum EitherProvider<P0, P1> {
 
 impl<P0: AnyProvider, P1: AnyProvider> AnyProvider for EitherProvider<P0, P1> {
     #[inline]
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         use EitherProvider::*;
         match self {
             A(p) => p.load_any(key, req),
@@ -34,8 +34,8 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for EitherProvider<P
     #[inline]
     fn load_buffer(
         &self,
-        key: ResourceKey,
-        req: &DataRequest,
+        key: DataKey,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         use EitherProvider::*;
         match self {
@@ -45,66 +45,65 @@ impl<P0: BufferProvider, P1: BufferProvider> BufferProvider for EitherProvider<P
     }
 }
 
-impl<M: DataMarker, P0: DynProvider<M>, P1: DynProvider<M>> DynProvider<M>
+impl<M: DataMarker, P0: DynamicDataProvider<M>, P1: DynamicDataProvider<M>> DynamicDataProvider<M>
     for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_payload(key, req),
-            B(p) => p.load_payload(key, req),
+            A(p) => p.load_data(key, req),
+            B(p) => p.load_data(key, req),
         }
     }
 }
 
-impl<M: ResourceMarker, P0: ResourceProvider<M>, P1: ResourceProvider<M>> ResourceProvider<M>
+impl<M: KeyedDataMarker, P0: DataProvider<M>, P1: DataProvider<M>> DataProvider<M>
     for EitherProvider<P0, P1>
 {
     #[inline]
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.load_resource(req),
-            B(p) => p.load_resource(req),
-        }
-    }
-}
-
-#[cfg(feature = "datagen")]
-impl<M: DataMarker, P0: datagen::IterableDynProvider<M>, P1: datagen::IterableDynProvider<M>>
-    datagen::IterableDynProvider<M> for EitherProvider<P0, P1>
-{
-    #[inline]
-    fn supported_options_for_key(
-        &self,
-        key: ResourceKey,
-    ) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
-        use EitherProvider::*;
-        match self {
-            A(p) => p.supported_options_for_key(key),
-            B(p) => p.supported_options_for_key(key),
+            A(p) => p.load(req),
+            B(p) => p.load(req),
         }
     }
 }
 
 #[cfg(feature = "datagen")]
 impl<
-        M: ResourceMarker,
-        P0: datagen::IterableResourceProvider<M>,
-        P1: datagen::IterableResourceProvider<M>,
-    > datagen::IterableResourceProvider<M> for EitherProvider<P0, P1>
+        M: DataMarker,
+        P0: datagen::IterableDynamicDataProvider<M>,
+        P1: datagen::IterableDynamicDataProvider<M>,
+    > datagen::IterableDynamicDataProvider<M> for EitherProvider<P0, P1>
 {
     #[inline]
-    fn supported_options(&self) -> Result<alloc::vec::Vec<ResourceOptions>, DataError> {
+    fn supported_locales_for_key(
+        &self,
+        key: DataKey,
+    ) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
         use EitherProvider::*;
         match self {
-            A(p) => p.supported_options(),
-            B(p) => p.supported_options(),
+            A(p) => p.supported_locales_for_key(key),
+            B(p) => p.supported_locales_for_key(key),
+        }
+    }
+}
+
+#[cfg(feature = "datagen")]
+impl<
+        M: KeyedDataMarker,
+        P0: datagen::IterableDataProvider<M>,
+        P1: datagen::IterableDataProvider<M>,
+    > datagen::IterableDataProvider<M> for EitherProvider<P0, P1>
+{
+    #[inline]
+    fn supported_locales(&self) -> Result<alloc::vec::Vec<DataLocale>, DataError> {
+        use EitherProvider::*;
+        match self {
+            A(p) => p.supported_locales(),
+            B(p) => p.supported_locales(),
         }
     }
 }

@@ -4,10 +4,10 @@
 
 #![warn(missing_docs)]
 
-//! [`icu_decimal`](crate) offers localized decimal number formatting.
+//! Formatting basic decimal numbers.
 //!
-//! Currently, [`icu_decimal`](crate) provides [`FixedDecimalFormatter`], which renders basic decimal numbers
-//! in a locale-sensitive way.
+//! This module is published as its own crate ([`icu_decimal`](https://docs.rs/icu_decimal/latest/icu_decimal/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! Support for currencies, measurement units, and compact notation is planned. To track progress,
 //! follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
@@ -101,17 +101,14 @@ pub struct FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    pub fn try_new<
-        T: Into<Locale>,
-        D: ResourceProvider<provider::DecimalSymbolsV1Marker> + ?Sized,
-    >(
+    pub fn try_new<T: Into<Locale>, D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         locale: T,
         data_provider: &D,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, FixedDecimalFormatterError> {
         let symbols = data_provider
-            .load_resource(&DataRequest {
-                options: locale.into().into(),
+            .load(DataRequest {
+                locale: &locale.into().into(),
                 metadata: Default::default(),
             })?
             .take_payload()?;

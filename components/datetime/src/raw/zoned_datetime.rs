@@ -58,31 +58,31 @@ impl ZonedDateTimeFormatter {
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        DP: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        DP: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
-        PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
-        DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
+        PP: DataProvider<OrdinalV1Marker> + ?Sized,
+        DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
-        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
-        if cal == Some(&value!("ethioaa")) {
+        if locale.extensions.unicode.keywords.get(&key!("ca")) == Some(&value!("ethioaa")) {
             locale
                 .extensions
                 .unicode
                 .keywords
                 .set(key!("ca"), value!("ethiopic"));
         }
+
         let patterns = provider::date_time::PatternSelector::for_options(
             date_provider,
             &locale,
@@ -91,15 +91,15 @@ impl ZonedDateTimeFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
+        // TODO(#2136): Don't use expensive from
+        let data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+
         let week_data = if required.week_data {
-            Some(
-                date_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(date_provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -115,27 +115,13 @@ impl ZonedDateTimeFormatter {
         };
 
         let date_symbols_data = if required.date_symbols_data {
-            Some(
-                date_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(date_provider.load(req)?.take_payload()?)
         } else {
             None
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(
-                date_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(date_provider.load(req)?.take_payload()?)
         } else {
             None
         };

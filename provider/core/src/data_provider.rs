@@ -3,18 +3,18 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::error::DataError;
-use crate::key::ResourceKey;
-use crate::marker::{DataMarker, ResourceMarker};
+use crate::key::DataKey;
+use crate::marker::{DataMarker, KeyedDataMarker};
 use crate::request::DataRequest;
 use crate::response::DataResponse;
 
 /// A data provider that loads data for a specific data type.
 ///
-/// Unlike [`ResourceProvider`], there may be multiple keys corresponding to the same data type.
+/// Unlike [`DataProvider`], there may be multiple keys corresponding to the same data type.
 /// This is often the case when returning `dyn` trait objects such as [`AnyMarker`].
 ///
 /// [`AnyMarker`]: crate::any::AnyMarker
-pub trait DynProvider<M>
+pub trait DynamicDataProvider<M>
 where
     M: DataMarker,
 {
@@ -22,36 +22,28 @@ where
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError>;
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
-/// A data provider that loads data for a specific [`ResourceKey`].
-pub trait ResourceProvider<M>
+/// A data provider that loads data for a specific [`DataKey`].
+pub trait DataProvider<M>
 where
-    M: ResourceMarker,
+    M: KeyedDataMarker,
 {
     /// Query the provider for data, returning the result.
     ///
     /// Returns [`Ok`] if the request successfully loaded data. If data failed to load, returns an
     /// Error with more information.
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError>;
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError>;
 }
 
-impl<M, P> DynProvider<M> for alloc::boxed::Box<P>
+impl<M, P> DynamicDataProvider<M> for alloc::boxed::Box<P>
 where
     M: DataMarker,
-    P: DynProvider<M> + ?Sized,
+    P: DynamicDataProvider<M> + ?Sized,
 {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
-        (**self).load_payload(key, req)
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        (**self).load_data(key, req)
     }
 }
 
@@ -72,7 +64,7 @@ mod test {
     // JSON string. It also exercises most of the data provider code paths.
 
     /// Key for HelloAlt, used for testing mismatched types
-    const HELLO_ALT_KEY: ResourceKey = crate::resource_key!("core/helloalt@1");
+    const HELLO_ALT_KEY: DataKey = crate::data_key!("core/helloalt@1");
 
     /// A data struct serialization-compatible with HelloWorldV1 used for testing mismatched types
     #[derive(
@@ -90,8 +82,8 @@ mod test {
         type Yokeable = HelloAlt;
     }
 
-    impl ResourceMarker for HelloAltMarker {
-        const KEY: ResourceKey = HELLO_ALT_KEY;
+    impl KeyedDataMarker for HelloAltMarker {
+        const KEY: DataKey = HELLO_ALT_KEY;
     }
 
     #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
@@ -102,18 +94,15 @@ mod test {
     }
 
     /// A DataProvider that owns its data, returning an Rc-variant DataPayload.
-    /// Supports only key::HELLO_WORLD_V1. Uses `impl_dyn_provider!()`.
+    /// Supports only key::HELLO_WORLD_V1. Uses `impl_dynamic_data_provider!()`.
     #[derive(Debug)]
     struct DataWarehouse {
         hello_v1: HelloWorldV1<'static>,
         hello_alt: HelloAlt,
     }
 
-    impl ResourceProvider<HelloWorldV1Marker> for DataWarehouse {
-        fn load_resource(
-            &self,
-            _: &DataRequest,
-        ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    impl DataProvider<HelloWorldV1Marker> for DataWarehouse {
+        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: Some(DataPayload::from_owned(self.hello_v1.clone())),
@@ -121,7 +110,7 @@ mod test {
         }
     }
 
-    crate::impl_dyn_provider!(DataWarehouse, [HelloWorldV1Marker,], AnyMarker);
+    crate::impl_dynamic_data_provider!(DataWarehouse, [HelloWorldV1Marker,], AnyMarker);
 
     /// A DataProvider that supports both key::HELLO_WORLD_V1 and HELLO_ALT.
     #[derive(Debug)]
@@ -135,11 +124,8 @@ mod test {
         }
     }
 
-    impl ResourceProvider<HelloWorldV1Marker> for DataProvider2 {
-        fn load_resource(
-            &self,
-            _: &DataRequest,
-        ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+    impl DataProvider<HelloWorldV1Marker> for DataProvider2 {
+        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: Some(DataPayload::from_owned(self.data.hello_v1.clone())),
@@ -147,11 +133,8 @@ mod test {
         }
     }
 
-    impl ResourceProvider<HelloAltMarker> for DataProvider2 {
-        fn load_resource(
-            &self,
-            _: &DataRequest,
-        ) -> Result<DataResponse<HelloAltMarker>, DataError> {
+    impl DataProvider<HelloAltMarker> for DataProvider2 {
+        fn load(&self, _: DataRequest) -> Result<DataResponse<HelloAltMarker>, DataError> {
             Ok(DataResponse {
                 metadata: DataResponseMetadata::default(),
                 payload: Some(DataPayload::from_owned(self.data.hello_alt.clone())),
@@ -159,7 +142,7 @@ mod test {
         }
     }
 
-    crate::impl_dyn_provider!(
+    crate::impl_dynamic_data_provider!(
         DataProvider2,
         [HelloWorldV1Marker, HelloAltMarker,],
         AnyMarker
@@ -182,16 +165,16 @@ mod test {
         }
     }
 
-    fn get_payload_v1<P: ResourceProvider<HelloWorldV1Marker> + ?Sized>(
+    fn get_payload_v1<P: DataProvider<HelloWorldV1Marker> + ?Sized>(
         provider: &P,
     ) -> Result<DataPayload<HelloWorldV1Marker>, DataError> {
-        provider.load_resource(&Default::default())?.take_payload()
+        provider.load(Default::default())?.take_payload()
     }
 
-    fn get_payload_alt<P: ResourceProvider<HelloAltMarker> + ?Sized>(
+    fn get_payload_alt<P: DataProvider<HelloAltMarker> + ?Sized>(
         provider: &P,
     ) -> Result<DataPayload<HelloAltMarker>, DataError> {
-        provider.load_resource(&Default::default())?.take_payload()
+        provider.load(Default::default())?.take_payload()
     }
 
     #[test]
@@ -222,7 +205,7 @@ mod test {
     fn test_warehouse_owned_dyn_generic() {
         let warehouse = get_warehouse(DATA);
         let hello_data =
-            get_payload_v1(&warehouse as &dyn ResourceProvider<HelloWorldV1Marker>).unwrap();
+            get_payload_v1(&warehouse as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
         assert!(matches!(
             hello_data.get(),
             HelloWorldV1 {
@@ -238,7 +221,7 @@ mod test {
         assert!(matches!(
             response,
             Err(DataError {
-                kind: DataErrorKind::MissingResourceKey,
+                kind: DataErrorKind::MissingDataKey,
                 ..
             })
         ));
@@ -283,7 +266,7 @@ mod test {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
         let hello_data =
-            get_payload_v1(&provider as &dyn ResourceProvider<HelloWorldV1Marker>).unwrap();
+            get_payload_v1(&provider as &dyn DataProvider<HelloWorldV1Marker>).unwrap();
         assert!(matches!(
             hello_data.get(),
             HelloWorldV1 {
@@ -296,8 +279,7 @@ mod test {
     fn test_provider2_dyn_generic_alt() {
         let warehouse = get_warehouse(DATA);
         let provider = DataProvider2::from(warehouse);
-        let hello_data =
-            get_payload_alt(&provider as &dyn ResourceProvider<HelloAltMarker>).unwrap();
+        let hello_data = get_payload_alt(&provider as &dyn DataProvider<HelloAltMarker>).unwrap();
         assert!(matches!(hello_data.get(), HelloAlt { .. }));
     }
 
@@ -309,7 +291,7 @@ mod test {
         let response: Result<DataResponse<HelloWorldV1Marker>, DataError> = AnyProvider::load_any(
             &provider.as_any_provider(),
             HELLO_ALT_KEY,
-            &Default::default(),
+            Default::default(),
         )
         .unwrap()
         .downcast();
@@ -324,18 +306,12 @@ mod test {
 
     fn check_v1_v2<P>(d: &P)
     where
-        P: ResourceProvider<HelloWorldV1Marker> + ResourceProvider<HelloAltMarker> + ?Sized,
+        P: DataProvider<HelloWorldV1Marker> + DataProvider<HelloAltMarker> + ?Sized,
     {
-        let v1: DataPayload<HelloWorldV1Marker> = d
-            .load_resource(&Default::default())
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let v2: DataPayload<HelloAltMarker> = d
-            .load_resource(&Default::default())
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let v1: DataPayload<HelloWorldV1Marker> =
+            d.load(Default::default()).unwrap().take_payload().unwrap();
+        let v2: DataPayload<HelloAltMarker> =
+            d.load(Default::default()).unwrap().take_payload().unwrap();
         if v1.get().message == v2.get().message {
             panic!()
         }

@@ -6,6 +6,7 @@ use alloc::vec::Vec;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
 
+use crate::complex::Dictionary;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
@@ -23,17 +24,20 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 /// encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct SentenceBreakSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,
+    dictionary: Dictionary,
 }
 
 impl SentenceBreakSegmenter {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<SentenceBreakDataV1Marker> + ?Sized,
+        D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
     {
-        let payload = provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
-        Ok(Self { payload })
+        let payload = provider.load(Default::default())?.take_payload()?;
+        let dictionary = Dictionary::default();
+        Ok(Self {
+            payload,
+            dictionary,
+        })
     }
 
     /// Create a sentence break iterator for an `str` (a UTF-8 string).
@@ -44,7 +48,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
         }
     }
 
@@ -59,7 +63,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
         }
     }
 
@@ -71,7 +75,7 @@ impl SentenceBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
         }
     }
 }

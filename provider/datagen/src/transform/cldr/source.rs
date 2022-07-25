@@ -119,7 +119,10 @@ impl<'a> CldrDirLang<'a> {
     }
 }
 
-fn read_and_parse_json<'a, S>(paths: &'a CldrCache, path: &str) -> Result<&'a S, DataError>
+pub(crate) fn read_and_parse_json<'a, S>(
+    paths: &'a CldrCache,
+    path: &str,
+) -> Result<&'a S, DataError>
 where
     for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
 {

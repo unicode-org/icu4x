@@ -32,12 +32,10 @@ impl From<&SourceData> for ScriptWithExtensionsPropertyProvider {
 }
 
 // implement data provider
-impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
-    for ScriptWithExtensionsPropertyProvider
-{
-    fn load_resource(
+impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsPropertyProvider {
+    fn load(
         &self,
-        _: &DataRequest,
+        _: DataRequest,
     ) -> Result<DataResponse<ScriptWithExtensionsPropertyV1Marker>, DataError> {
         let scx_data = self
             .source
@@ -81,10 +79,10 @@ impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker>
     }
 }
 
-impl IterableResourceProvider<ScriptWithExtensionsPropertyV1Marker>
+impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker>
     for ScriptWithExtensionsPropertyProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -103,7 +101,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_resource(&Default::default())
+            .load(Default::default())
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
@@ -122,10 +120,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::default(),
-                metadata: Default::default(),
-            })
+            .load(Default::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -198,7 +193,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_resource(&DataRequest::default())
+            .load(Default::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");
@@ -277,7 +272,7 @@ mod tests {
         let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
-            .load_resource(&DataRequest::default())
+            .load(Default::default())
             .expect("The data should be valid")
             .take_payload()
             .expect("Loading was successful");

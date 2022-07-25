@@ -51,8 +51,8 @@ impl ListFormat {
         provider: &P,
     ) -> Result<Self, icu_provider::DataError>
     where
-        P: icu_provider::ResourceProvider<icu::list::provider::AndListV1Marker>
-            + icu_provider::ResourceProvider<icu::list::provider::OrListV1Marker>,
+        P: icu_provider::DataProvider<icu::list::provider::AndListV1Marker>
+            + icu_provider::DataProvider<icu::list::provider::OrListV1Marker>,
     {
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let locale: icu::locid::Locale = locale

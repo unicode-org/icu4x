@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_calendar::provider::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, langid, Locale};
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::env;
@@ -32,12 +32,9 @@ impl From<&SourceData> for JapaneseErasProvider {
     }
 }
 
-impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        let japanext = req.options.get_unicode_ext(&key!("ca")) == Some(value!("japanext"));
+impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+        let japanext = req.locale.get_unicode_ext(&key!("ca")) == Some(value!("japanext"));
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
@@ -185,11 +182,11 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 
 icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,]);
 
-impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
-            ResourceOptions::from(Locale::from_str("und-u-ca-japanese").unwrap()),
-            ResourceOptions::from(Locale::from_str("und-u-ca-japanext").unwrap()),
+            DataLocale::from(Locale::from_str("und-u-ca-japanese").unwrap()),
+            DataLocale::from(Locale::from_str("und-u-ca-japanext").unwrap()),
         ])
     }
 }

@@ -9,17 +9,17 @@ use alloc::vec::Vec;
 use icu_provider::datagen;
 use icu_provider::prelude::*;
 
-use crate::helpers::result_is_err_missing_resource_key;
+use crate::helpers::result_is_err_missing_data_key;
 
 /// A provider that returns data from one of two child providers based on the key.
 ///
-/// The result of the first provider that supports a particular [`ResourceKey`] will be returned,
+/// The result of the first provider that supports a particular [`DataKey`] will be returned,
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// Note: A forking [`ResourceProvider`] does not make sense, since there is only one key that
+/// Note: A forking [`DataProvider`] does not make sense, since there is only one key that
 /// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
-/// or [`DynProvider`].
+/// or [`DynamicDataProvider`].
 ///
 /// # Examples
 ///
@@ -36,10 +36,10 @@ use crate::helpers::result_is_err_missing_resource_key;
 /// impl BufferProvider for DummyBufferProvider {
 ///     fn load_buffer(
 ///         &self,
-///         key: ResourceKey,
-///         req: &DataRequest,
+///         key: DataKey,
+///         req: DataRequest,
 ///     ) -> Result<DataResponse<BufferMarker>, DataError> {
-///         Err(DataErrorKind::MissingResourceKey.with_req(key, req))
+///         Err(DataErrorKind::MissingDataKey.with_req(key, req))
 ///     }
 /// }
 ///
@@ -51,8 +51,8 @@ use crate::helpers::result_is_err_missing_resource_key;
 /// let data_provider = forking_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_resource(&DataRequest {
-///         options: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -84,13 +84,13 @@ use crate::helpers::result_is_err_missing_resource_key;
 ///         .filter_by_langid(|langid| langid.language == language!("de")),
 /// );
 ///
-/// let data_provider: &dyn ResourceProvider<HelloWorldV1Marker> =
+/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> =
 ///     &forking_provider.as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = data_provider
-///     .load_resource(&DataRequest {
-///         options: locale!("zh").into(),
+///     .load(DataRequest {
+///         locale: &locale!("zh").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -101,8 +101,8 @@ use crate::helpers::result_is_err_missing_resource_key;
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load_resource(&DataRequest {
-///         options: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
@@ -119,11 +119,11 @@ where
 {
     fn load_buffer(
         &self,
-        key: ResourceKey,
-        req: &DataRequest,
+        key: DataKey,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let result = self.0.load_buffer(key, req);
-        if !result_is_err_missing_resource_key(&result) {
+        if !result_is_err_missing_data_key(&result) {
             return result;
         }
         self.1.load_buffer(key, req)
@@ -135,62 +135,55 @@ where
     P0: AnyProvider,
     P1: AnyProvider,
 {
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         let result = self.0.load_any(key, req);
-        if !result_is_err_missing_resource_key(&result) {
+        if !result_is_err_missing_data_key(&result) {
             return result;
         }
         self.1.load_any(key, req)
     }
 }
 
-impl<M, P0, P1> DynProvider<M> for ForkByKeyProvider<P0, P1>
+impl<M, P0, P1> DynamicDataProvider<M> for ForkByKeyProvider<P0, P1>
 where
     M: DataMarker,
-    P0: DynProvider<M>,
-    P1: DynProvider<M>,
+    P0: DynamicDataProvider<M>,
+    P1: DynamicDataProvider<M>,
 {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
-        let result = self.0.load_payload(key, req);
-        if !result_is_err_missing_resource_key(&result) {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let result = self.0.load_data(key, req);
+        if !result_is_err_missing_data_key(&result) {
             return result;
         }
-        self.1.load_payload(key, req)
+        self.1.load_data(key, req)
     }
 }
 
 #[cfg(feature = "datagen")]
-impl<M, P0, P1> datagen::IterableDynProvider<M> for ForkByKeyProvider<P0, P1>
+impl<M, P0, P1> datagen::IterableDynamicDataProvider<M> for ForkByKeyProvider<P0, P1>
 where
     M: DataMarker,
-    P0: datagen::IterableDynProvider<M>,
-    P1: datagen::IterableDynProvider<M>,
+    P0: datagen::IterableDynamicDataProvider<M>,
+    P1: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_options_for_key(
-        &self,
-        key: ResourceKey,
-    ) -> Result<Vec<ResourceOptions>, DataError> {
-        let result = self.0.supported_options_for_key(key);
-        if !result_is_err_missing_resource_key(&result) {
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
+        let result = self.0.supported_locales_for_key(key);
+        if !result_is_err_missing_data_key(&result) {
             return result;
         }
-        self.1.supported_options_for_key(key)
+        self.1.supported_locales_for_key(key)
     }
 }
 
 /// A provider that returns data from the first child provider supporting the key.
 ///
-/// The result of the first provider that supports a particular [`ResourceKey`] will be returned,
+/// The result of the first provider that supports a particular [`DataKey`] will be returned,
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// Note: A forking [`ResourceProvider`] does not make sense, since there is only one key that
+/// Note: A forking [`DataProvider`] does not make sense, since there is only one key that
 /// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
-/// or [`DynProvider`].
+/// or [`DynamicDataProvider`].
 ///
 /// # Examples
 ///
@@ -215,13 +208,13 @@ where
 ///     ],
 /// };
 ///
-/// let data_provider: &dyn ResourceProvider<HelloWorldV1Marker> =
+/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> =
 ///     &forking_provider.as_deserializing();
 ///
 /// // Chinese is the first provider, so this succeeds
 /// let chinese_hello_world = data_provider
-///     .load_resource(&DataRequest {
-///         options: locale!("zh").into(),
+///     .load(DataRequest {
+///         locale: &locale!("zh").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -232,8 +225,8 @@ where
 ///
 /// // German is shadowed by Chinese, so this fails
 /// data_provider
-///     .load_resource(&DataRequest {
-///         options: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect_err("Should stop at the first provider, even though the second has data");
@@ -250,16 +243,16 @@ where
 {
     fn load_buffer(
         &self,
-        key: ResourceKey,
-        req: &DataRequest,
+        key: DataKey,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_buffer(key, req);
-            if !result_is_err_missing_resource_key(&result) {
+            if !result_is_err_missing_data_key(&result) {
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_key(key))
+        Err(DataErrorKind::MissingDataKey.with_key(key))
     }
 }
 
@@ -267,54 +260,47 @@ impl<P> AnyProvider for MultiForkByKeyProvider<P>
 where
     P: AnyProvider,
 {
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         for provider in self.providers.iter() {
             let result = provider.load_any(key, req);
-            if !result_is_err_missing_resource_key(&result) {
+            if !result_is_err_missing_data_key(&result) {
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_key(key))
+        Err(DataErrorKind::MissingDataKey.with_key(key))
     }
 }
 
-impl<M, P> DynProvider<M> for MultiForkByKeyProvider<P>
+impl<M, P> DynamicDataProvider<M> for MultiForkByKeyProvider<P>
 where
     M: DataMarker,
-    P: DynProvider<M>,
+    P: DynamicDataProvider<M>,
 {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.load_payload(key, req);
-            if !result_is_err_missing_resource_key(&result) {
+            let result = provider.load_data(key, req);
+            if !result_is_err_missing_data_key(&result) {
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_key(key))
+        Err(DataErrorKind::MissingDataKey.with_key(key))
     }
 }
 
 #[cfg(feature = "datagen")]
-impl<M, P> datagen::IterableDynProvider<M> for MultiForkByKeyProvider<P>
+impl<M, P> datagen::IterableDynamicDataProvider<M> for MultiForkByKeyProvider<P>
 where
     M: DataMarker,
-    P: datagen::IterableDynProvider<M>,
+    P: datagen::IterableDynamicDataProvider<M>,
 {
-    fn supported_options_for_key(
-        &self,
-        key: ResourceKey,
-    ) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales_for_key(&self, key: DataKey) -> Result<Vec<DataLocale>, DataError> {
         for provider in self.providers.iter() {
-            let result = provider.supported_options_for_key(key);
-            if !result_is_err_missing_resource_key(&result) {
+            let result = provider.supported_locales_for_key(key);
+            if !result_is_err_missing_data_key(&result) {
                 return result;
             }
         }
-        Err(DataErrorKind::MissingResourceKey.with_key(key))
+        Err(DataErrorKind::MissingDataKey.with_key(key))
     }
 }
 
@@ -327,7 +313,7 @@ where
 {
     fn convert(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         mut from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
         use datagen::ReturnedPayloadError;
@@ -338,7 +324,7 @@ where
                 Ok(_) => return result,
                 Err(e) => {
                     let ReturnedPayloadError(returned, error) = e;
-                    if error.kind != DataErrorKind::MissingResourceKey {
+                    if error.kind != DataErrorKind::MissingDataKey {
                         return Err(ReturnedPayloadError(returned, error));
                     }
                     from = returned;
@@ -347,7 +333,7 @@ where
         }
         Err(ReturnedPayloadError(
             from,
-            DataErrorKind::MissingResourceKey.with_key(key),
+            DataErrorKind::MissingDataKey.with_key(key),
         ))
     }
 }
@@ -362,7 +348,7 @@ where
 {
     fn convert(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         mut from: DataPayload<MFrom>,
     ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
         use datagen::ReturnedPayloadError;
@@ -371,7 +357,7 @@ where
             Ok(_) => return result,
             Err(e) => {
                 let ReturnedPayloadError(returned, error) = e;
-                if error.kind != DataErrorKind::MissingResourceKey {
+                if error.kind != DataErrorKind::MissingDataKey {
                     return Err(ReturnedPayloadError(returned, error));
                 }
                 from = returned;

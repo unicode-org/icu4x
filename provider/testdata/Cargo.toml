@@ -137,7 +137,134 @@ cldr_json_glob = [
 ]
 
 # Git tag or sha1 for the CLDR data used to generate the testdata.
-gitref = "41.0.0"
+cldr_json_gitref = "41.0.0"
+
+icuexportdata_glob = [
+    "collation/implicithan/bn_standard_data.toml",
+    "collation/implicithan/bn_standard_meta.toml",
+    "collation/implicithan/bn_standard_reord.toml",
+    "collation/implicithan/ee_standard_dia.toml",
+    "collation/implicithan/es_standard_data.toml",
+    "collation/implicithan/es_standard_meta.toml",
+    "collation/implicithan/fi_standard_data.toml",
+    "collation/implicithan/fi_standard_meta.toml",
+    "collation/implicithan/ja_standard_data.toml",
+    "collation/implicithan/ja_standard_meta.toml",
+    "collation/implicithan/ja_standard_reord.toml",
+    "collation/implicithan/ko_standard_data.toml",
+    "collation/implicithan/ko_standard_meta.toml",
+    "collation/implicithan/ko_standard_reord.toml",
+    "collation/implicithan/lt_standard_data.toml",
+    "collation/implicithan/lt_standard_meta.toml",
+    "collation/implicithan/root_standard_data.toml",
+    "collation/implicithan/root_standard_dia.toml",
+    "collation/implicithan/root_standard_jamo.toml",
+    "collation/implicithan/root_standard_meta.toml",
+    "collation/implicithan/root_standard_prim.toml",
+    "collation/implicithan/sv_reformed_data.toml",
+    "collation/implicithan/sv_reformed_meta.toml",
+    "collation/implicithan/sv_search_data.toml",
+    "collation/implicithan/sv_search_meta.toml",
+    "collation/implicithan/sv_standard_data.toml",
+    "collation/implicithan/sv_standard_meta.toml",
+    "collation/implicithan/th_standard_data.toml",
+    "collation/implicithan/th_standard_meta.toml",
+    "collation/implicithan/th_standard_reord.toml",
+    "collation/implicithan/tr_standard_data.toml",
+    "collation/implicithan/tr_standard_meta.toml",
+    "collation/implicithan/vi_standard_dia.toml",
+    "collation/implicithan/vi_traditional_dia.toml",
+    "collation/implicithan/zh_big5han_data.toml",
+    "collation/implicithan/zh_big5han_meta.toml",
+    "collation/implicithan/zh_big5han_reord.toml",
+    "collation/implicithan/zh_gb2312han_data.toml",
+    "collation/implicithan/zh_gb2312han_meta.toml",
+    "collation/implicithan/zh_gb2312han_reord.toml",
+    "collation/implicithan/zh_pinyin_data.toml",
+    "collation/implicithan/zh_pinyin_meta.toml",
+    "collation/implicithan/zh_pinyin_reord.toml",
+    "collation/implicithan/zh_stroke_data.toml",
+    "collation/implicithan/zh_stroke_meta.toml",
+    "collation/implicithan/zh_stroke_reord.toml",
+    "collation/implicithan/zh_unihan_data.toml",
+    "collation/implicithan/zh_unihan_meta.toml",
+    "collation/implicithan/zh_unihan_reord.toml",
+    "collation/implicithan/zh_zhuyin_data.toml",
+    "collation/implicithan/zh_zhuyin_meta.toml",
+    "collation/implicithan/zh_zhuyin_reord.toml",
+    "norm/small/compositions.toml",
+    "norm/small/decompositionex.toml",
+    "norm/small/nfc.toml",
+    "norm/small/nfd.toml",
+    "norm/small/nfdex.toml",
+    "norm/small/nfkc.toml",
+    "norm/small/nfkd.toml",
+    "norm/small/nfkdex.toml",
+    "norm/small/uts46.toml",
+    "norm/small/uts46d.toml",
+    "ucase/small/ucase.toml",
+    "uprops/small/AHex.toml",
+    "uprops/small/Alpha.toml",
+    "uprops/small/bc.toml",
+    "uprops/small/Bidi_C.toml",
+    "uprops/small/Bidi_M.toml",
+    "uprops/small/Cased.toml",
+    "uprops/small/ccc.toml",
+    "uprops/small/CI.toml",
+    "uprops/small/CWCF.toml",
+    "uprops/small/CWKCF.toml",
+    "uprops/small/CWL.toml",
+    "uprops/small/CWT.toml",
+    "uprops/small/CWU.toml",
+    "uprops/small/Dash.toml",
+    "uprops/small/Dep.toml",
+    "uprops/small/DI.toml",
+    "uprops/small/Dia.toml",
+    "uprops/small/ea.toml",
+    "uprops/small/EBase.toml",
+    "uprops/small/EComp.toml",
+    "uprops/small/EMod.toml",
+    "uprops/small/Emoji.toml",
+    "uprops/small/EPres.toml",
+    "uprops/small/Ext.toml",
+    "uprops/small/ExtPict.toml",
+    "uprops/small/gc.toml",
+    "uprops/small/GCB.toml",
+    "uprops/small/Gr_Base.toml",
+    "uprops/small/Gr_Ext.toml",
+    "uprops/small/Hex.toml",
+    "uprops/small/IDC.toml",
+    "uprops/small/Ideo.toml",
+    "uprops/small/IDS.toml",
+    "uprops/small/IDSB.toml",
+    "uprops/small/IDST.toml",
+    "uprops/small/Join_C.toml",
+    "uprops/small/lb.toml",
+    "uprops/small/LOE.toml",
+    "uprops/small/Lower.toml",
+    "uprops/small/Math.toml",
+    "uprops/small/NChar.toml",
+    "uprops/small/Pat_Syn.toml",
+    "uprops/small/Pat_WS.toml",
+    "uprops/small/QMark.toml",
+    "uprops/small/Radical.toml",
+    "uprops/small/RI.toml",
+    "uprops/small/SB.toml",
+    "uprops/small/sc.toml",
+    "uprops/small/scx.toml",
+    "uprops/small/SD.toml",
+    "uprops/small/STerm.toml",
+    "uprops/small/Term.toml",
+    "uprops/small/UIdeo.toml",
+    "uprops/small/Upper.toml",
+    "uprops/small/VS.toml",
+    "uprops/small/WB.toml",
+    "uprops/small/WSpace.toml",
+    "uprops/small/XIDC.toml",
+    "uprops/small/XIDS.toml",
+]
+
+icuexportdata_gitref = "icu4x/2022-07-18/71.x"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
@@ -152,6 +279,7 @@ icu_provider_blob = { version = "0.6", path = "../blob", optional = true }
 icu_provider_fs = { version = "0.6", path = "../fs", optional = true }
 
 # bin feature
+bytes = {version = "1.1.0", optional = true }
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
 futures = { version = "0.3", optional = true }
@@ -161,6 +289,7 @@ log = { version = "0.4", optional = true }
 reqwest = { version = "0.11", features = ["stream"], optional = true }
 simple_logger = { version = "1.12", optional = true }
 tokio = { version = "1.13", features = ["rt-multi-thread", "macros", "fs"], optional = true }
+zip = { version = "0.6.2", optional = true }
 
 # metadata feature
 cargo_metadata = { version = "0.13", optional = true }
@@ -180,7 +309,7 @@ icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_ca
 icu_normalizer = { version = "0.6", path = "../../components/normalizer", optional = true }
 icu_plurals = { version = "0.6", path = "../../components/plurals", optional = true }
 icu_properties = { version = "0.6", path = "../../components/properties", optional = true }
-icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true }
+icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true, features = ["lstm"] }
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", optional = true }
 icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", optional = true }
 icu_uniset = { version = "0.5", path = "../../utils/uniset", optional = true }
@@ -231,6 +360,7 @@ baked = [
 ]
 std = []
 bin = [
+    "bytes",
     "clap",
     "eyre",
     "simple_logger",
@@ -243,6 +373,7 @@ bin = [
     "icu_datagen",
     "icu_locid",
     "fs",
+    "zip",
 ]
 
 [[bin]]

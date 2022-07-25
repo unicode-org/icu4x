@@ -89,15 +89,15 @@ impl FilesystemExporter {
 impl DataExporter for FilesystemExporter {
     fn put_payload(
         &self,
-        key: ResourceKey,
-        options: &ResourceOptions,
+        key: DataKey,
+        locale: &DataLocale,
         obj: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        log::trace!("Writing: {}/{}", key, options);
+        log::trace!("Writing: {}/{}", key, locale);
 
         let mut path_buf = self.root.clone();
         path_buf.push(&*key.write_to_string());
-        path_buf.push(&*options.write_to_string());
+        path_buf.push(&*locale.write_to_string());
         path_buf.set_extension(self.manifest.file_extension);
 
         if let Some(parent_dir) = path_buf.parent() {
@@ -133,7 +133,7 @@ impl DataExporter for FilesystemExporter {
                 .expect("present iff file.1 is present")
                 .lock()
                 .expect("poison")
-                .push(format!("{key}, {options}, {size}B, {:x}", hash.finalize()));
+                .push(format!("{key}, {locale}, {size}B, {:x}", hash.finalize()));
         }
         Ok(())
     }

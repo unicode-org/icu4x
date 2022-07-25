@@ -297,10 +297,10 @@ where
 }
 
 impl LocaleCanonicalizer {
-    /// A constructor which takes a [`ResourceProvider`] and creates a [`LocaleCanonicalizer`].
+    /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
     pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer, DataError>
     where
-        P: ResourceProvider<AliasesV1Marker> + ResourceProvider<LikelySubtagsV1Marker> + ?Sized,
+        P: DataProvider<AliasesV1Marker> + DataProvider<LikelySubtagsV1Marker> + ?Sized,
     {
         // The `rg` region override and `sd` regional subdivision keys may contain
         // language codes that require canonicalization.
@@ -308,13 +308,11 @@ impl LocaleCanonicalizer {
             Key::from_tinystr_unchecked(tinystr!(2, "rg")),
             Key::from_tinystr_unchecked(tinystr!(2, "sd")),
         ];
-        let aliases: DataPayload<AliasesV1Marker> = provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let aliases: DataPayload<AliasesV1Marker> =
+            provider.load(Default::default())?.take_payload()?;
 
-        let likely_subtags: DataPayload<LikelySubtagsV1Marker> = provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let likely_subtags: DataPayload<LikelySubtagsV1Marker> =
+            provider.load(Default::default())?.take_payload()?;
 
         Ok(LocaleCanonicalizer {
             aliases,

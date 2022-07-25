@@ -75,7 +75,7 @@
 
   - General data model
     - `DataPayload` no longer needs a lifetime (#1297, #1279)
-    - Re-write ResourceKey (#1511)
+    - Re-write DataKey (#1511)
     - Rewrite ErasedDataProvider as AnyProvider (#1495)
     - Add EitherProvider and rename IterableDataProviderCore to IterableProvider (#1455)
     - Change DataRequest to be borrowed in BufferProvider (#1416)

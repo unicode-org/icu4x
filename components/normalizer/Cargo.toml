@@ -42,6 +42,7 @@ icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 icu_properties = { version = "0.6", path = "../../components/properties" }
 utf8_iter = "1.0"
 utf16_iter = "1.0"
+write16 = "1.0"
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie" }
@@ -50,6 +51,8 @@ icu_char16trie = { version = "0.1", path = "../../experimental/char16trie" }
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }
 atoi = "1.0.0"
 arraystring = "0.3.0"
+arrayvec = "0.7.2"
+write16 = { version = "1.0", features = ["arrayvec"] }
 
 [lib]
 path = "src/lib.rs"

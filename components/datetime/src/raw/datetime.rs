@@ -50,9 +50,9 @@ impl TimeFormatter {
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
+        D: DataProvider<TimePatternsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
         let patterns = provider::date_time::pattern_for_time_length(
@@ -68,8 +68,8 @@ impl TimeFormatter {
         let symbols_data = if required.time_symbols_data {
             Some(
                 data_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
+                    .load(DataRequest {
+                        locale: &DataLocale::from(&locale),
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -184,15 +184,14 @@ impl DateFormatter {
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
-        if cal == Some(&value!("ethioaa")) {
+        if locale.extensions.unicode.keywords.get(&key!("ca")) == Some(&value!("ethioaa")) {
             locale
                 .extensions
                 .unicode
@@ -208,15 +207,14 @@ impl DateFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
+        let data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+
         let week_data = if required.week_data {
-            Some(
-                data_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -232,14 +230,7 @@ impl DateFormatter {
         };
 
         let symbols_data = if required.date_symbols_data {
-            Some(
-                data_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -403,14 +394,14 @@ impl DateTimeFormatter {
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<TimeSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<TimePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<DecimalSymbolsV1Marker>
-            + ResourceProvider<OrdinalV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        D: DataProvider<DateSymbolsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
         let cal = locale.extensions.unicode.keywords.get(&key!("ca"));
@@ -427,15 +418,14 @@ impl DateTimeFormatter {
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
+        let data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+
         let week_data = if required.week_data {
-            Some(
-                data_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -451,27 +441,13 @@ impl DateTimeFormatter {
         };
 
         let date_symbols_data = if required.date_symbols_data {
-            Some(
-                data_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(
-                data_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(data_provider.load(req)?.take_payload()?)
         } else {
             None
         };

@@ -32,7 +32,7 @@ pub struct CodePointMapData<T: TrieValue> {
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 struct ErasedMaplikeMarker<T>(PhantomData<T>);
 impl<T: TrieValue> DataMarker for ErasedMaplikeMarker<T> {
-    type Yokeable = UnicodePropertyMapV1<'static, T>;
+    type Yokeable = PropertyCodePointMapV1<'static, T>;
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
@@ -126,7 +126,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.data.get().get_set_for_value(value);
-        CodePointSetData::from_unicode_set(set)
+        CodePointSetData::from_code_point_set(set)
     }
 
     /// Construct a new one from loaded data
@@ -134,14 +134,14 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Typically it is preferable to use getters like [`get_general_category()`] instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
-        M: DataMarker<Yokeable = UnicodePropertyMapV1<'static, T>>,
+        M: DataMarker<Yokeable = PropertyCodePointMapV1<'static, T>>,
     {
         Self { data: data.cast() }
     }
 
     /// Construct a new one an owned [`CodePointTrie`]
     pub fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
-        let set = UnicodePropertyMapV1::from_code_point_trie(trie);
+        let set = PropertyCodePointMapV1::from_code_point_trie(trie);
         CodePointMapData::from_data(DataPayload::<ErasedMaplikeMarker<T>>::from_owned(set))
     }
     /// Convert this type to a [`CodePointTrie`], borrowing if possible,
@@ -163,7 +163,7 @@ impl<T: TrieValue> CodePointMapData<T> {
 /// [`CodePointSetData::as_borrowed()`]. More efficient to query.
 #[derive(Clone, Copy)]
 pub struct CodePointMapDataBorrowed<'a, T: TrieValue> {
-    map: &'a UnicodePropertyMapV1<'a, T>,
+    map: &'a PropertyCodePointMapV1<'a, T>,
 }
 
 impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
@@ -233,7 +233,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.map.get_set_for_value(value);
-        CodePointSetData::from_unicode_set(set)
+        CodePointSetData::from_code_point_set(set)
     }
 }
 
@@ -244,16 +244,16 @@ macro_rules! make_map_property {
         // currently unused
         marker: $marker_name:ident;
         value: $value_ty:path;
-        resource_marker: $resource_marker:ty;
+        keyed_data_marker: $keyed_data_marker:ty;
         func:
         $(#[$attr:meta])*
         $vis:vis fn $name:ident();
     ) => {
         $(#[$attr])*
         $vis fn $name(
-            provider: &(impl ResourceProvider<$resource_marker> + ?Sized)
+            provider: &(impl DataProvider<$keyed_data_marker> + ?Sized)
         ) -> Result<CodePointMapData<$value_ty>, PropertiesError> {
-            Ok(provider.load_resource(&Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
+            Ok(provider.load(Default::default()).and_then(DataResponse::take_payload).map(CodePointMapData::from_data)?)
         }
     }
 }
@@ -262,7 +262,7 @@ make_map_property! {
     property: "General_Category";
     marker: GeneralCategoryProperty;
     value: crate::GeneralCategory;
-    resource_marker: GeneralCategoryV1Marker;
+    keyed_data_marker: GeneralCategoryV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
     ///
@@ -290,7 +290,7 @@ make_map_property! {
     property: "Bidi_Class";
     marker: BidiClassProperty;
     value: crate::BidiClass;
-    resource_marker: BidiClassV1Marker;
+    keyed_data_marker: BidiClassV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
     ///
@@ -318,7 +318,7 @@ make_map_property! {
     property: "Script";
     marker: ScriptProperty;
     value: crate::Script;
-    resource_marker: ScriptV1Marker;
+    keyed_data_marker: ScriptV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].
     ///
@@ -346,7 +346,7 @@ make_map_property! {
     property: "East_Asian_Width";
     marker: EastAsianWidthProperty;
     value: crate::EastAsianWidth;
-    resource_marker: EastAsianWidthV1Marker;
+    keyed_data_marker: EastAsianWidthV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
     /// property. See [`EastAsianWidth`].
@@ -372,7 +372,7 @@ make_map_property! {
     property: "Line_Break";
     marker: LineBreakProperty;
     value: crate::LineBreak;
-    resource_marker: LineBreakV1Marker;
+    keyed_data_marker: LineBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
@@ -398,7 +398,7 @@ make_map_property! {
     property: "Grapheme_Cluster_Break";
     marker: GraphemeClusterBreakProperty;
     value: crate::GraphemeClusterBreak;
-    resource_marker: GraphemeClusterBreakV1Marker;
+    keyed_data_marker: GraphemeClusterBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
@@ -424,7 +424,7 @@ make_map_property! {
     property: "Word_Break";
     marker: WordBreakProperty;
     value: crate::WordBreak;
-    resource_marker: WordBreakV1Marker;
+    keyed_data_marker: WordBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
@@ -450,7 +450,7 @@ make_map_property! {
     property: "Sentence_Break";
     marker: SentenceBreakProperty;
     value: crate::SentenceBreak;
-    resource_marker: SentenceBreakV1Marker;
+    keyed_data_marker: SentenceBreakV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
@@ -476,7 +476,7 @@ make_map_property! {
     property: "Canonical_Combining_Class";
     marker: CanonicalCombiningClassProperty;
     value: crate::CanonicalCombiningClass;
-    resource_marker: CanonicalCombiningClassV1Marker;
+    keyed_data_marker: CanonicalCombiningClassV1Marker;
     func:
     /// Return a [`CodePointTrie`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].

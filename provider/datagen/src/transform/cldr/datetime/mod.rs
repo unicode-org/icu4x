@@ -7,7 +7,7 @@ use crate::SourceData;
 use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::collections::HashSet;
@@ -47,24 +47,28 @@ impl From<&SourceData> for CommonDateProvider {
     }
 }
 
-macro_rules! impl_resource_provider {
+macro_rules! impl_data_provider {
     ($(($marker:ident, $expr:expr)),+) => {
         $(
-            impl ResourceProvider<$marker> for CommonDateProvider {
-                fn load_resource(
+            impl DataProvider<$marker> for CommonDateProvider {
+                fn load(
                     &self,
-                    req: &DataRequest,
+                    req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    let langid = req.options.get_langid();
+                    if req.locale.is_empty() {
+                        return Err(DataErrorKind::NeedsLocale.into_error());
+                    }
+
+                    let langid = req.locale.get_langid();
                     let calendar = req
-                        .options
+                        .locale
                         .get_unicode_ext(&key!("ca"))
-                        .ok_or_else(|| DataErrorKind::NeedsVariant.into_error())?;
+                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                     let cldr_cal = self
                         .supported_cals
                         .get(&calendar)
-                        .ok_or_else(|| DataErrorKind::MissingVariant.into_error())?;
+                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
                     let resource: &cldr_serde::ca::Resource = self
                         .source
@@ -176,8 +180,8 @@ macro_rules! impl_resource_provider {
                 }
             }
 
-            impl IterableResourceProvider<$marker> for CommonDateProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+            impl IterableDataProvider<$marker> for CommonDateProvider {
+                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     let mut r = Vec::new();
                     for (cal_value, cldr_cal) in self.supported_cals.iter() {
                         r.extend(self
@@ -191,7 +195,7 @@ macro_rules! impl_resource_provider {
                                     .unicode
                                     .keywords
                                     .set(key!("ca"), cal_value.clone());
-                                ResourceOptions::from(locale)
+                                DataLocale::from(locale)
                             }));
                     }
                     Ok(r)
@@ -203,7 +207,7 @@ macro_rules! impl_resource_provider {
     };
 }
 
-impl_resource_provider!(
+impl_data_provider!(
     (DateSymbolsV1Marker, symbols::convert_dates),
     (TimeSymbolsV1Marker, |dates, _| {
         symbols::convert_times(dates)
@@ -227,8 +231,8 @@ mod test {
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: locale.into(),
+            .load(DataRequest {
+                locale: &locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -244,8 +248,8 @@ mod test {
 
         let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: locale.into(),
+            .load(DataRequest {
+                locale: &locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -265,8 +269,8 @@ mod test {
 
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: locale.into(),
+            .load(DataRequest {
+                locale: &locale.into(),
                 metadata: Default::default(),
             })
             .expect("Failed to load payload")
@@ -309,8 +313,8 @@ mod test {
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: locale.into(),
+            .load(DataRequest {
+                locale: &locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -340,8 +344,8 @@ mod test {
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: locale.into(),
+            .load(DataRequest {
+                locale: &locale.into(),
                 metadata: Default::default(),
             })
             .unwrap()

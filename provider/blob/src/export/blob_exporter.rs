@@ -19,9 +19,9 @@ use postcard::ser_flavors::{AllocVec, Flavor};
 /// A data exporter that writes data to a single-file blob.
 /// See the module-level docs for an example.
 pub struct BlobExporter<'w> {
-    /// List of (key hash, resource options byte string, blob ID)
+    /// List of (key hash, locale byte string, blob ID)
     #[allow(clippy::type_complexity)]
-    resources: Mutex<Vec<(ResourceKeyHash, Vec<u8>, usize)>>,
+    resources: Mutex<Vec<(DataKeyHash, Vec<u8>, usize)>>,
     /// Map from blob to blob ID
     unique_resources: Mutex<HashMap<Vec<u8>, usize>>,
     sink: Box<dyn std::io::Write + Sync + 'w>,
@@ -41,11 +41,11 @@ impl<'w> BlobExporter<'w> {
 impl DataExporter for BlobExporter<'_> {
     fn put_payload(
         &self,
-        key: ResourceKey,
-        options: &ResourceOptions,
+        key: DataKey,
+        locale: &DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
-        log::trace!("Adding: {}/{}", key, options);
+        log::trace!("Adding: {}/{}", key, locale);
         let mut serializer = postcard::Serializer {
             output: AllocVec::new(),
         };
@@ -62,7 +62,7 @@ impl DataExporter for BlobExporter<'_> {
         #[allow(clippy::expect_used)]
         self.resources.lock().expect("poison").push((
             key.get_hash(),
-            options.write_to_string().into_owned().into_bytes(),
+            locale.write_to_string().into_owned().into_bytes(),
             idx,
         ));
         Ok(())
