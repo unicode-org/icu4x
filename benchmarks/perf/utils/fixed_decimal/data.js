@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658748979517,
+  "lastUpdate": 1658763120238,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38609,6 +38609,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 104,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f1fdb0165f0b43a12fcaaad60dabcdea2cb558b5",
+          "message": "Always implement AnyMarker provider for datagen transformers (#2232)\n\n- Split testdata into its own test",
+          "timestamp": "2022-07-25T10:17:44-05:00",
+          "tree_id": "c3c3d3965346394b97ee169bad405784d33e856b",
+          "url": "https://github.com/unicode-org/icu4x/commit/f1fdb0165f0b43a12fcaaad60dabcdea2cb558b5"
+        },
+        "date": 1658763078737,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 147819,
+            "range": "± 912",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 30214,
+            "range": "± 451",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 86010,
+            "range": "± 1476",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 239,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 112,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 101,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
