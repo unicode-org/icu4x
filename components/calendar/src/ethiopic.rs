@@ -42,6 +42,17 @@ use crate::{
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
+/// Which era style the ethiopic calendar uses
+#[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
+#[non_exhaustive]
+pub enum EthiopicEraStyle {
+    /// Use an era scheme of pre- and post- Incarnation eras,
+    /// anchored at the date of the Incarnation of Jesus in this calendar
+    AmeteMihret,
+    /// Use an era scheme of the Anno Mundi era, anchored at the date of Creation
+    /// in this calendar
+    AmeteAlem,
+}
 /// The Ethiopic Calendar
 // The bool specifies whether dates should be in the Amete Alem era scheme
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
@@ -161,17 +172,21 @@ impl Ethiopic {
         Self(false)
     }
     /// Construct a new Ethiopic Calendar with a value specifying whether or not it is Amete Alem
-    pub fn new_with_amete_alem(amete_alem: bool) -> Self {
-        Self(amete_alem)
+    pub fn new_with_era_style(era_style: EthiopicEraStyle) -> Self {
+        Self(era_style == EthiopicEraStyle::AmeteAlem)
     }
     /// Set whether or not this uses the Amete Alem era scheme
-    pub fn set_amete_alem(&mut self, value: bool) {
-        self.0 = value
+    pub fn set_era_style(&mut self, era_style: EthiopicEraStyle) {
+        self.0 = era_style == EthiopicEraStyle::AmeteAlem
     }
 
     /// Returns whether this has the Amete Alem era
-    pub fn is_amete_alem(&self) -> bool {
-        self.0
+    pub fn era_style(&self) -> EthiopicEraStyle {
+        if self.0 {
+            EthiopicEraStyle::AmeteAlem
+        } else {
+            EthiopicEraStyle::AmeteMihret
+        }
     }
 
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
@@ -193,9 +208,14 @@ impl Ethiopic {
         let coptic_date = Coptic::coptic_from_fixed(date + coptic_epoch - ethiopic_epoch);
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        *Date::new_ethiopic_date(coptic_date.0.year, coptic_date.0.month, coptic_date.0.day)
-            .unwrap()
-            .inner()
+        *Date::new_ethiopic_date(
+            EthiopicEraStyle::AmeteMihret,
+            coptic_date.0.year,
+            coptic_date.0.month,
+            coptic_date.0.day,
+        )
+        .unwrap()
+        .inner()
     }
 
     fn days_in_year_direct(year: i32) -> u32 {
@@ -232,21 +252,31 @@ impl Ethiopic {
 impl Date<Ethiopic> {
     /// Construct new Ethiopic Date.
     ///
+    /// For the Amete Mihret era style, negative years work with
+    /// year 0 as 1 pre-Incarnation, year -1 as 2 pre-Incarnation,
+    /// and so on.
+    ///
     /// ```rust
     /// use icu::calendar::Date;
+    /// use icu::calendar::ethiopic::EthiopicEraStyle;
     ///
     /// let date_ethiopic =
-    ///     Date::new_ethiopic_date(2014, 8, 25).expect("Failed to initialize Ethopic Date instance.");
+    ///     Date::new_ethiopic_date(EthiopicEraStyle::AmeteMihret, 2014, 8, 25)
+    ///     .expect("Failed to initialize Ethopic Date instance.");
     ///
     /// assert_eq!(date_ethiopic.year().number, 2014);
     /// assert_eq!(date_ethiopic.month().ordinal, 8);
     /// assert_eq!(date_ethiopic.day_of_month().0, 25);
     /// ```
     pub fn new_ethiopic_date(
-        year: i32,
+        era_style: EthiopicEraStyle,
+        mut year: i32,
         month: u8,
         day: u8,
     ) -> Result<Date<Ethiopic>, DateTimeError> {
+        if era_style == EthiopicEraStyle::AmeteAlem {
+            year -= 5493;
+        }
         let inner = ArithmeticDate {
             year,
             month,
@@ -259,17 +289,25 @@ impl Date<Ethiopic> {
             return Err(DateTimeError::OutOfRange);
         }
 
-        Ok(Date::from_raw(EthiopicDateInner(inner), Ethiopic::new()))
+        Ok(Date::from_raw(
+            EthiopicDateInner(inner),
+            Ethiopic::new_with_era_style(era_style),
+        ))
     }
 }
 
 impl DateTime<Ethiopic> {
     /// Construct a new Ethiopic datetime from integers.
     ///
+    /// For the Amete Mihret era style, negative years work with
+    /// year 0 as 1 pre-Incarnation, year -1 as 2 pre-Incarnation,
+    /// and so on.
+    ///
     /// ```rust
     /// use icu::calendar::DateTime;
+    /// use icu::calendar::ethiopic::EthiopicEraStyle;
     ///
-    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(2014, 8, 25, 13, 1, 0)
+    /// let datetime_ethiopic = DateTime::new_ethiopic_datetime(EthiopicEraStyle::AmeteMihret, 2014, 8, 25, 13, 1, 0)
     ///     .expect("Failed to initialize Ethiopic DateTime instance.");
     ///
     /// assert_eq!(datetime_ethiopic.date.year().number, 2014);
@@ -280,6 +318,7 @@ impl DateTime<Ethiopic> {
     /// assert_eq!(datetime_ethiopic.time.second.number(), 0);
     /// ```
     pub fn new_ethiopic_datetime(
+        era_style: EthiopicEraStyle,
         year: i32,
         month: u8,
         day: u8,
@@ -288,7 +327,7 @@ impl DateTime<Ethiopic> {
         second: u8,
     ) -> Result<DateTime<Ethiopic>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_ethiopic_date(year, month, day)?,
+            date: Date::new_ethiopic_date(era_style, year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }

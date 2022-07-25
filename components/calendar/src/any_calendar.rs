@@ -6,7 +6,7 @@
 
 use crate::buddhist::Buddhist;
 use crate::coptic::Coptic;
-use crate::ethiopic::Ethiopic;
+use crate::ethiopic::{Ethiopic, EthiopicEraStyle};
 use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
@@ -299,9 +299,11 @@ impl AnyCalendar {
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
@@ -335,9 +337,11 @@ impl AnyCalendar {
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
@@ -363,9 +367,11 @@ impl AnyCalendar {
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
