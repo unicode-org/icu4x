@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658786326684,
+  "lastUpdate": 1658787279370,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21233,6 +21233,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9e716c0c6dbcb3b9949a1e68c1ac1193050c4475"
         },
         "date": 1658786292148,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035913,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c99b3122a7e7702ed87214faa166c92f134a0ac9",
+          "message": "Add link to vertical fallback algorithm (#2244)",
+          "timestamp": "2022-07-25T15:12:48-07:00",
+          "tree_id": "9f38ed45dd0b744c58c7b163243001fc11251ec7",
+          "url": "https://github.com/unicode-org/icu4x/commit/c99b3122a7e7702ed87214faa166c92f134a0ac9"
+        },
+        "date": 1658787243047,
         "tool": "ndjson",
         "benches": [
           {
