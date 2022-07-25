@@ -207,7 +207,7 @@ impl<'data> CodePointInversionList<'data> {
     }
 
     /// Returns an owned inversion list representing the current [`CodePointInversionList`]
-    pub fn get_inversion_list(&self) -> Vec<u32> {
+    pub fn get_inversion_list_vec(&self) -> Vec<u32> {
         let result: Vec<u32> = self.as_inversion_list().to_vec(); // Only crate public, to not leak impl
         result
     }
@@ -561,7 +561,7 @@ mod tests {
     fn test_codepointinversionlist_try_from_vec() {
         let ex = vec![0x2, 0x3, 0x4, 0x5];
         let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
-        assert_eq!(ex, check.get_inversion_list());
+        assert_eq!(ex, check.get_inversion_list_vec());
         assert_eq!(2, check.size());
     }
 
@@ -786,7 +786,7 @@ mod tests {
         let inv_list_clone = (&inv_list).clone();
         let s: CodePointInversionList =
             CodePointInversionList::from_inversion_list_slice(&inv_list_clone).unwrap();
-        let round_trip_inv_list = s.get_inversion_list();
+        let round_trip_inv_list = s.get_inversion_list_vec();
         assert_eq!(round_trip_inv_list, inv_list);
     }
 

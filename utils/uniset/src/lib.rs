@@ -18,7 +18,7 @@
 //!
 //! CodePointSets are created from either serialized [`CodePointSets`](CodePointInversionList),
 //! represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
-//! the [`CodePointInversionListBuilder`], or from the TBA Properties API.
+//! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```
 //! use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
