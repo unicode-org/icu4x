@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658782368616,
+  "lastUpdate": 1658787118654,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -72226,6 +72226,150 @@ window.BENCHMARK_DATA = {
           {
             "name": "subtags/variant/parse",
             "value": 156,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e716c0c6dbcb3b9949a1e68c1ac1193050c4475",
+          "message": "Uses tries instead of inversion lists for normalization data (#2235)\n\n* Remove inversion list usage from decomposing normalization\r\n\r\nThe \"decomposition starts with a non-starter\" property is stored as\r\na special marker value in the NFD trie.\r\n\r\n* Remove inversion list usage from the composing normalizer\r\n\r\nA trie performs better than a fragmented inversion list.\r\n\r\nIf an app wants to optimize data size at the expense of performance,\r\nit's valid to use a passthrough set that passes more through. For\r\nexample, it's valid to use nfkc.toml for both NFC and NFKC.\r\nIt's also valid to use passthroughnop.toml (provided but not used\r\nby this changeset) in place of any of nfc.toml, nfkc.toml, or\r\nuts46.toml.\r\n\r\nFurthermore, the sets are provided separately instead of being combined\r\ninto one trie, because a future change might be able to do away with\r\nnfkc.toml and uts46.toml by using the information available in nfc.toml\r\nand nfkd.toml/uts46d.toml.\r\n\r\nThe field `first` in the data is expected to be used by a future\r\nchange.",
+          "timestamp": "2022-07-25T21:57:02Z",
+          "tree_id": "1dc8153ced5e53741e0d0f03c86fa7832b162197",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e716c0c6dbcb3b9949a1e68c1ac1193050c4475"
+        },
+        "date": 1658787076248,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 4069,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 985,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1232,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 644,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 85,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 888,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 451,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2799,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4733,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2046,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1547,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1073,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 272,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2102,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 665,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4112,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 196,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 133,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 202,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 187,
             "range": "± 0",
             "unit": "ns/iter"
           }
