@@ -9,7 +9,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use tinystr::TinyStr8;
+use tinystr::TinyAsciiStr;
 
 mod decimal_pattern;
 
@@ -29,7 +29,7 @@ impl From<&SourceData> for NumbersProvider {
 
 impl NumbersProvider {
     /// Returns the digits for the given numbering system name.
-    fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Result<[char; 10], DataError> {
+    fn get_digits_for_numbering_system(&self, nsname: TinyAsciiStr<8>) -> Result<[char; 10], DataError> {
         let resource: &cldr_serde::numbering_systems::Resource = self
             .source
             .cldr()?
@@ -80,8 +80,11 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .expect("CLDR file contains the expected language")
             .numbers;
 
-        let mut result = DecimalSymbolsV1::try_from(numbers).map_err(|s| {
+        let numsys = numbers.default_numbering_system;
+
+        let mut result = DecimalSymbolsV1::try_from(NumbersWithNumsys(numbers, numsys)).map_err(|s| {
             DataError::custom("Could not create decimal symbols").with_display_context(&s)
+            .with_display_context(&numsys)
         })?;
 
         result.digits = self.get_digits_for_numbering_system(numbers.default_numbering_system)?;
@@ -107,21 +110,23 @@ impl IterableDataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
+struct NumbersWithNumsys<'a>(pub &'a cldr_serde::numbers::Numbers, pub TinyAsciiStr<8>);
+
+impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
     type Error = Cow<'static, str>;
 
-    fn try_from(other: &cldr_serde::numbers::Numbers) -> Result<Self, Self::Error> {
-        // TODO(#510): Select from non-default numbering systems
-        let symbols = other
+    fn try_from(other: NumbersWithNumsys<'_>) -> Result<Self, Self::Error> {
+        let NumbersWithNumsys(numbers, numsys) = other;
+        let symbols = numbers
             .numsys_data
             .symbols
-            .get(&other.default_numbering_system)
-            .ok_or("Could not find symbols for default numbering system")?;
-        let formats = other
+            .get(&numsys)
+            .ok_or("Could not find symbols for numbering system")?;
+        let formats = numbers
             .numsys_data
             .formats
-            .get(&other.default_numbering_system)
-            .ok_or("Could not find formats for default numbering system")?;
+            .get(&numsys)
+            .ok_or("Could not find formats for numbering system")?;
         let parsed_pattern: decimal_pattern::DecimalPattern = formats
             .standard
             .parse()
@@ -135,7 +140,7 @@ impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
             grouping_sizes: GroupingSizesV1 {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
-                min_grouping: other.minimum_grouping_digits,
+                min_grouping: numbers.minimum_grouping_digits,
             },
             digits: Default::default(), // to be filled in
         })
