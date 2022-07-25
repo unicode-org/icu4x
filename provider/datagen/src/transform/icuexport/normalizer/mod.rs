@@ -70,9 +70,7 @@ macro_rules! normalization_data_provider {
 
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(DecompositionDataV1 {
-                        trie,
-                    })),
+                    payload: Some(DataPayload::from_owned(DecompositionDataV1 { trie })),
                 })
             },
             toml_data // simply matches the identifier in the above block

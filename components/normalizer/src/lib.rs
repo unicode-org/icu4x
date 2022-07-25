@@ -112,9 +112,7 @@ struct PassthroughSet<'data> {
 impl<'data> PassthroughSet<'data> {
     /// Constructor
     pub fn new(trie: &'data CodePointTrie<'data, u8>) -> Self {
-        Self {
-            trie
-        }
+        Self { trie }
     }
     /// Lookup by scalar value
     pub fn contains(&self, c: char) -> bool {
@@ -532,7 +530,10 @@ where
             buffer_pos: 0,
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
-            pending: Some(CharacterAndTrieValue {character: '\u{FFFF}', trie_val: 0}),
+            pending: Some(CharacterAndTrieValue {
+                character: '\u{FFFF}',
+                trie_val: 0,
+            }),
             trie: &decompositions.trie,
             supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
             scalars16: &tables.scalars16,
@@ -627,14 +628,23 @@ where
 
         if self.has_starter_exceptions {
             if u32::from(c) & !1 == 0xFF9E && self.half_width_voicing_marks_become_non_starters {
-                return Some(CharacterAndTrieValue {character: c, trie_val: DECOMPOSITION_STARTS_WITH_NON_STARTER});
+                return Some(CharacterAndTrieValue {
+                    character: c,
+                    trie_val: DECOMPOSITION_STARTS_WITH_NON_STARTER,
+                });
             }
             if c == '\u{0345}' && self.iota_subscript_becomes_starter {
-                return Some(CharacterAndTrieValue {character: c, trie_val: u32::from('ι') << 16});
+                return Some(CharacterAndTrieValue {
+                    character: c,
+                    trie_val: u32::from('ι') << 16,
+                });
             }
         }
 
-        Some(CharacterAndTrieValue {character: c, trie_val: self.trie.get(u32::from(c))})
+        Some(CharacterAndTrieValue {
+            character: c,
+            trie_val: self.trie.get(u32::from(c)),
+        })
     }
 
     fn delegate_next(&mut self) -> Option<CharacterAndTrieValue> {
@@ -680,7 +690,10 @@ where
                         (starter, 0)
                     } else if high != 0 {
                         if high != 1 {
-                            debug_assert_ne!(high, 2, "Should not reach this point with non-starter marker");
+                            debug_assert_ne!(
+                                high, 2,
+                                "Should not reach this point with non-starter marker"
+                            );
                             // Decomposition into one BMP character
                             let starter = char_from_u16(high);
                             (starter, 0)
@@ -770,7 +783,8 @@ where
         debug_assert!(
             self.potential_passthrough_and_not_backward_combining
                 .is_some()
-                || self.pending.is_none());
+                || self.pending.is_none()
+        );
         // Not a `for` loop to avoid holding a mutable reference to `self` across
         // the loop body.
         while let Some(ch_and_trie_val) = self.delegate_next() {
@@ -949,7 +963,10 @@ where
 
     #[inline]
     fn next(&mut self) -> Option<char> {
-        let mut undecomposed_starter = CharacterAndTrieValue { character: '\u{0}', trie_val: 0 }; // The compiler can't figure out that this gets overwritten before use.
+        let mut undecomposed_starter = CharacterAndTrieValue {
+            character: '\u{0}',
+            trie_val: 0,
+        }; // The compiler can't figure out that this gets overwritten before use.
         if self.unprocessed_starter.is_none() {
             // The loop is only broken out of as goto forward
             #[allow(clippy::never_loop)]
@@ -1027,7 +1044,13 @@ where
         let mut attempt_composition = false;
         loop {
             if let Some(unprocessed) = self.unprocessed_starter.take() {
-                debug_assert_eq!(undecomposed_starter, CharacterAndTrieValue { character: '\u{0}', trie_val: 0 });
+                debug_assert_eq!(
+                    undecomposed_starter,
+                    CharacterAndTrieValue {
+                        character: '\u{0}',
+                        trie_val: 0
+                    }
+                );
                 debug_assert_eq!(starter, '\u{0}');
                 starter = unprocessed;
             } else {
@@ -1558,12 +1581,12 @@ impl ComposingNormalizer {
                     .as_ref()
                     .map(|s| s.get()),
                 self.decomposing_normalizer.ccc.as_borrowed(),
-                Some(
-                    PassthroughSet::new(&self
+                Some(PassthroughSet::new(
+                    &self
                         .potential_passthrough_and_not_backward_combining
                         .get()
-                        .trie),
-                ),
+                        .trie,
+                )),
             ),
             ZeroFrom::zero_from(&self.canonical_compositions.get().canonical_compositions),
         )
@@ -1718,7 +1741,8 @@ impl CanonicalDecomposition {
             if high != 0 {
                 // Decomposition into one BMP character or non-starter
                 debug_assert_ne!(high, 1, "How come we got the U+FDFA NFKD marker here?");
-                if high == 2 { // Non-starter
+                if high == 2 {
+                    // Non-starter
                     if !in_inclusive_range(c, '\u{0340}', '\u{0F81}') {
                         return Decomposed::Default;
                     }
@@ -1751,9 +1775,7 @@ impl CanonicalDecomposition {
                             // TIBETAN VOWEL SIGN REVERSED II
                             Decomposed::Expansion('\u{0F71}', '\u{0F80}')
                         }
-                        _ => {
-                            Decomposed::Default
-                        }
+                        _ => Decomposed::Default,
                     };
                 }
                 return Decomposed::Singleton(char_from_u16(high));
