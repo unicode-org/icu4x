@@ -47,6 +47,28 @@ let fixed_decimal = FixedDecimal::from(200050)
 assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
 ```
 
+#### Format a number using an alternative numbering system
+
+Numbering systems specified in the `-u-nu` subtag will be followed as long as the locale has
+symbols for that numbering system.
+
+```rust
+use icu::decimal::FixedDecimalFormatter;
+use icu::locid::Locale;
+use writeable::Writeable;
+
+let provider = icu_testdata::get_provider();
+let locale = "th-u-nu-thai".parse::<Locale>().unwrap();
+let fdf = FixedDecimalFormatter::try_new(&locale.into(), &provider, Default::default())
+    .expect("Data should load successfully");
+
+let fixed_decimal = 1000007.into();
+let formatted_value = fdf.format(&fixed_decimal);
+let formatted_str = formatted_value.write_to_string();
+
+assert_eq!("๑,๐๐๐,๐๐๗", formatted_str);
+```
+
 [`FixedDecimalFormatter`]: FixedDecimalFormatter
 
 ## More Information
