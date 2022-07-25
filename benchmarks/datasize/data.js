@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658762373834,
+  "lastUpdate": 1658763771838,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21023,6 +21023,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f1fdb0165f0b43a12fcaaad60dabcdea2cb558b5"
         },
         "date": 1658762338374,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035317,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "811b7ab052da6943f09a5f84833e2030df5e463b",
+          "message": "Remove MockZonedDateTime (#2231)\n\n* add parse_zoned_gregorian_from_str\r\n\r\n* rm ZonedDateTime",
+          "timestamp": "2022-07-25T15:40:45Z",
+          "tree_id": "4e94cf3177c660ebe2b1e51f537476f48c4d9677",
+          "url": "https://github.com/unicode-org/icu4x/commit/811b7ab052da6943f09a5f84833e2030df5e463b"
+        },
+        "date": 1658763730634,
         "tool": "ndjson",
         "benches": [
           {
