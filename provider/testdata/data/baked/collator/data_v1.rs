@@ -1,14 +1,17 @@
 // @generated
-type DataStruct = & 'static < :: icu_collator :: provider :: CollationDataV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[
-    ("bn", BN),
-    ("es", ES),
-    ("ja", JA),
-    ("th", TH),
-    ("tr", TR),
-    ("und", UND),
-];
-static BN: DataStruct = &::icu_collator::provider::CollationDataV1 {
+type DataStruct =
+    <::icu_collator::provider::CollationDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
+    litemap::LiteMap::from_slice_unchecked(&[
+        ("bn", BN),
+        ("es", ES),
+        ("ja", JA),
+        ("th", TH),
+        ("tr", TR),
+        ("und", UND),
+    ])
+};
+static BN: &DataStruct = &::icu_collator::provider::CollationDataV1 {
     trie: ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
@@ -118,7 +121,7 @@ static BN: DataStruct = &::icu_collator::provider::CollationDataV1 {
     ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     contexts: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
 };
-static ES: DataStruct = &::icu_collator::provider::CollationDataV1 {
+static ES: &DataStruct = &::icu_collator::provider::CollationDataV1 {
     trie: ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
@@ -215,7 +218,7 @@ static ES: DataStruct = &::icu_collator::provider::CollationDataV1 {
         ])
     },
 };
-static JA: DataStruct = &::icu_collator::provider::CollationDataV1 {
+static JA: &DataStruct = &::icu_collator::provider::CollationDataV1 {
     trie: ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 65536u32,
@@ -6115,7 +6118,7 @@ static JA: DataStruct = &::icu_collator::provider::CollationDataV1 {
         ])
     },
 };
-static TH: DataStruct = &::icu_collator::provider::CollationDataV1 {
+static TH: &DataStruct = &::icu_collator::provider::CollationDataV1 {
     trie: ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
@@ -6241,7 +6244,7 @@ static TH: DataStruct = &::icu_collator::provider::CollationDataV1 {
         ])
     },
 };
-static TR: DataStruct = &::icu_collator::provider::CollationDataV1 {
+static TR: &DataStruct = &::icu_collator::provider::CollationDataV1 {
     trie: ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
@@ -6362,7 +6365,7 @@ static TR: DataStruct = &::icu_collator::provider::CollationDataV1 {
         ])
     },
 };
-static UND: DataStruct = &::icu_collator::provider::CollationDataV1 {
+static UND: &DataStruct = &::icu_collator::provider::CollationDataV1 {
     trie: ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 918016u32,

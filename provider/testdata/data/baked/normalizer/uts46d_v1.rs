@@ -1,7 +1,8 @@
 // @generated
-type DataStruct = & 'static < :: icu_normalizer :: provider :: Uts46DecompositionSupplementV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_normalizer::provider::DecompositionSupplementV1 {
+type DataStruct = < :: icu_normalizer :: provider :: Uts46DecompositionSupplementV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    unsafe { litemap::LiteMap::from_slice_unchecked(&[("und", UND)]) };
+static UND: &DataStruct = &::icu_normalizer::provider::DecompositionSupplementV1 {
     trie: ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 130048u32,

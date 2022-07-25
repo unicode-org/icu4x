@@ -1,28 +1,30 @@
 // @generated
 type DataStruct =
-    &'static <::icu_plurals::provider::OrdinalV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: &[(&str, DataStruct)] = &[
-    ("ar", AR_ES_JA_RU_SR_TH_TR_UND),
-    ("bn", BN),
-    ("en", EN),
-    ("es", AR_ES_JA_RU_SR_TH_TR_UND),
-    ("fil", FIL_FR),
-    ("fr", FIL_FR),
-    ("ja", AR_ES_JA_RU_SR_TH_TR_UND),
-    ("ru", AR_ES_JA_RU_SR_TH_TR_UND),
-    ("sr", AR_ES_JA_RU_SR_TH_TR_UND),
-    ("th", AR_ES_JA_RU_SR_TH_TR_UND),
-    ("tr", AR_ES_JA_RU_SR_TH_TR_UND),
-    ("und", AR_ES_JA_RU_SR_TH_TR_UND),
-];
-static AR_ES_JA_RU_SR_TH_TR_UND: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
+    <::icu_plurals::provider::OrdinalV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
+    litemap::LiteMap::from_slice_unchecked(&[
+        ("ar", AR_ES_JA_RU_SR_TH_TR_UND),
+        ("bn", BN),
+        ("en", EN),
+        ("es", AR_ES_JA_RU_SR_TH_TR_UND),
+        ("fil", FIL_FR),
+        ("fr", FIL_FR),
+        ("ja", AR_ES_JA_RU_SR_TH_TR_UND),
+        ("ru", AR_ES_JA_RU_SR_TH_TR_UND),
+        ("sr", AR_ES_JA_RU_SR_TH_TR_UND),
+        ("th", AR_ES_JA_RU_SR_TH_TR_UND),
+        ("tr", AR_ES_JA_RU_SR_TH_TR_UND),
+        ("und", AR_ES_JA_RU_SR_TH_TR_UND),
+    ])
+};
+static AR_ES_JA_RU_SR_TH_TR_UND: &DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: None,
     two: None,
     few: None,
     many: None,
 };
-static BN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
+static BN: &DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
         ::zerovec::VarZeroVec::from_bytes_unchecked(&[
@@ -51,7 +53,7 @@ static BN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
         ])
     })),
 };
-static EN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
+static EN: &DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
         ::zerovec::VarZeroVec::from_bytes_unchecked(&[
@@ -76,7 +78,7 @@ static EN: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     })),
     many: None,
 };
-static FIL_FR: DataStruct = &::icu_plurals::provider::PluralRulesV1 {
+static FIL_FR: &DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: None,
     one: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
         ::zerovec::VarZeroVec::from_bytes_unchecked(&[

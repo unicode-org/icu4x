@@ -90,8 +90,8 @@ impl BakedDataExporter {
                     "--config=normalize_doc_attributes=true",
                     // Defaults to 2015, but we're outputting 2021
                     "--edition=2021",
-                    // Rustfmt silently gives up if it cannot achieve the max width, which happens for any.rs
-                    if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("any") {
+                    // Rustfmt silently gives up if it cannot achieve the max width, which happens for the root mod.rs
+                    if path.file_stem().and_then(std::ffi::OsStr::to_str) == Some("mod") {
                         "--config=max_width=150"
                     } else {
                         "--config=max_width=100"
@@ -115,6 +115,7 @@ impl DataExporter for BakedDataExporter {
         locale: &DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError> {
+        self.dependencies.insert("litemap");
         let (payload, marker_type) = payload.tokenize(&self.dependencies);
         self.data
             .lock()
@@ -167,7 +168,7 @@ impl DataExporter for BakedDataExporter {
             .map(|(ident_string, payload_bake_string)| {
                 let ident = ident_string.parse::<TokenStream>().unwrap();
                 let payload_bake = payload_bake_string.parse::<TokenStream>().unwrap();
-                quote! { static #ident: DataStruct = &#payload_bake; }
+                quote! { static #ident: &DataStruct = &#payload_bake; }
             });
 
         all_locales.sort_unstable_by(|(a, _), (b, _)| a.cmp(b));
@@ -216,14 +217,14 @@ impl DataExporter for BakedDataExporter {
         let struct_type =
             if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
                 quote! {
-                    &'static [(
+                    [(
                         &'static [::icu_datetime::fields::Field],
                         ::icu_datetime::pattern::runtime::PatternPlurals<'static>
                     )]
                 }
             } else {
                 quote! {
-                    &'static <#marker as ::icu_provider::DataMarker>::Yokeable
+                    <#marker as ::icu_provider::DataMarker>::Yokeable
                 }
             };
 
@@ -234,7 +235,8 @@ impl DataExporter for BakedDataExporter {
 
                 type DataStruct = #struct_type;
 
-                pub static DATA: &[(&str, DataStruct)] = &[#(#data),*];
+                pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+                    unsafe { litemap::LiteMap::from_slice_unchecked(&[#(#data),*]) };
 
                 #(#statics)*
             },
@@ -308,7 +310,9 @@ impl DataExporter for BakedDataExporter {
                         Ok(DataResponse {
                             metadata: Default::default(),
                             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                                litemap_slice_get(#data::DATA, <#marker as KeyedDataMarker>::KEY, req)?,
+                                *#data::DATA
+                                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(#marker::KEY, req))?
                             ))),
                         })
                     }
@@ -330,18 +334,6 @@ impl DataExporter for BakedDataExporter {
                 use ::icu_provider::prelude::*;
 
                 #(#resource_impls)*
-
-                fn litemap_slice_get<T: ?Sized>(
-                    values: &'static [(&'static str, &'static T)],
-                    key: DataKey,
-                    req: DataRequest,
-                ) -> Result<&'static T, DataError> {
-                    #[allow(clippy::unwrap_used)]
-                    values
-                        .binary_search_by(|(k, _)| req.locale.strict_cmp(k.as_bytes()).reverse())
-                        .map(|i| values.get(i).unwrap().1)
-                        .map_err(|_| DataErrorKind::MissingLocale.with_req(key, req))
-                }
             },
         )
         .map_err(|e| e.with_path_context(&PathBuf::from("mod.rs")))?;
@@ -361,19 +353,19 @@ impl DataExporter for BakedDataExporter {
                 quote! {
                     #feature
                     #ident => {
-                        AnyPayload::from_rc_payload::<#marker>(
-                            alloc::rc::Rc::new(
-                                DataPayload::from_owned(
-                                    zerofrom::ZeroFrom::zero_from(
-                                        litemap_slice_get(#data::DATA, key, req)?
-                        ))))
+                        #data::DATA
+                            .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                            .map(|&data| AnyPayload::from_rc_payload::<#marker>(
+                                alloc::rc::Rc::new(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(data)))))
                     }
                 }
             } else {
                 quote!{
                     #feature
                     #ident => {
-                        AnyPayload::from_static_ref::<<#marker as DataMarker>::Yokeable>(litemap_slice_get(#data::DATA, key, req)?)
+                        #data::DATA
+                            .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                            .map(AnyPayload::from_static_ref)
                     }
                 }
             }
@@ -389,7 +381,7 @@ impl DataExporter for BakedDataExporter {
                             payload: Some(match key.get_hash() {
                                 #(#any_cases)*
                                 _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),
-                            }),
+                            }).ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?,
                             metadata: Default::default(),
                         })
                     }

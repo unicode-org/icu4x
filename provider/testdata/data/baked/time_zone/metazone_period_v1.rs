@@ -1,7 +1,8 @@
 // @generated
-type DataStruct = & 'static < :: icu_datetime :: provider :: time_zones :: MetaZonePeriodV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_datetime::provider::time_zones::MetaZonePeriodV1(unsafe {
+type DataStruct = < :: icu_datetime :: provider :: time_zones :: MetaZonePeriodV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    unsafe { litemap::LiteMap::from_slice_unchecked(&[("und", UND)]) };
+static UND: &DataStruct = &::icu_datetime::provider::time_zones::MetaZonePeriodV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap2d::from_parts_unchecked(
         unsafe {

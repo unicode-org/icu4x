@@ -1,8 +1,8 @@
 // @generated
-type DataStruct =
-    &'static <::icu_segmenter::LstmDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: &[(&str, DataStruct)] = &[("th", TH)];
-static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
+type DataStruct = <::icu_segmenter::LstmDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    unsafe { litemap::LiteMap::from_slice_unchecked(&[("th", TH)]) };
+static TH: &DataStruct = &::icu_segmenter::LstmDataV1 {
     model: alloc::borrow::Cow::Borrowed("Thai_codepoints_exclusive_model4_heavy"),
     dic: unsafe {
         #[allow(unused_unsafe)]

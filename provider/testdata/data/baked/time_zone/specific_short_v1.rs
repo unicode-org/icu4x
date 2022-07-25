@@ -1,67 +1,70 @@
 // @generated
-type DataStruct = & 'static < :: icu_datetime :: provider :: time_zones :: MetaZoneSpecificNamesShortV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[
-    ("ar", AR_AR_EG),
-    ("ar-EG", AR_AR_EG),
-    ("bn", BN_CCP),
-    ("ccp", BN_CCP),
-    ("en", EN),
-    ("en-001", EN_001),
-    ("en-ZA", EN_ZA),
-    ("es", ES_SR_SR_CYRL_SR_LATN),
-    ("es-AR", ES_AR),
-    ("fil", FIL_FR_RU_TH_TR_UND),
-    ("fr", FIL_FR_RU_TH_TR_UND),
-    ("ja", JA),
-    ("ru", FIL_FR_RU_TH_TR_UND),
-    ("sr", ES_SR_SR_CYRL_SR_LATN),
-    ("sr-Cyrl", ES_SR_SR_CYRL_SR_LATN),
-    ("sr-Latn", ES_SR_SR_CYRL_SR_LATN),
-    ("th", FIL_FR_RU_TH_TR_UND),
-    ("tr", FIL_FR_RU_TH_TR_UND),
-    ("und", FIL_FR_RU_TH_TR_UND),
-];
-static AR_AR_EG: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
-    defaults: unsafe {
-        #[allow(unused_unsafe)]
-        ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[103u8, 117u8, 108u8, 102u8]) },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 71u8, 83u8, 84u8,
-                ])
-            },
-        )
-    },
-    overrides: unsafe {
-        #[allow(unused_unsafe)]
-        ::zerovec::ZeroMap2d::from_parts_unchecked(
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    117u8, 116u8, 99u8, 0u8, 0u8, 0u8, 0u8, 0u8,
-                ])
-            },
-            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
-            unsafe {
-                ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
-                ])
-            },
-        )
-    },
+type DataStruct = < :: icu_datetime :: provider :: time_zones :: MetaZoneSpecificNamesShortV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
+    litemap::LiteMap::from_slice_unchecked(&[
+        ("ar", AR_AR_EG),
+        ("ar-EG", AR_AR_EG),
+        ("bn", BN_CCP),
+        ("ccp", BN_CCP),
+        ("en", EN),
+        ("en-001", EN_001),
+        ("en-ZA", EN_ZA),
+        ("es", ES_SR_SR_CYRL_SR_LATN),
+        ("es-AR", ES_AR),
+        ("fil", FIL_FR_RU_TH_TR_UND),
+        ("fr", FIL_FR_RU_TH_TR_UND),
+        ("ja", JA),
+        ("ru", FIL_FR_RU_TH_TR_UND),
+        ("sr", ES_SR_SR_CYRL_SR_LATN),
+        ("sr-Cyrl", ES_SR_SR_CYRL_SR_LATN),
+        ("sr-Latn", ES_SR_SR_CYRL_SR_LATN),
+        ("th", FIL_FR_RU_TH_TR_UND),
+        ("tr", FIL_FR_RU_TH_TR_UND),
+        ("und", FIL_FR_RU_TH_TR_UND),
+    ])
 };
-static BN_CCP: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static AR_AR_EG: &DataStruct =
+    &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+        defaults: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap2d::from_parts_unchecked(
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[103u8, 117u8, 108u8, 102u8]) },
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
+                unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 71u8, 83u8, 84u8,
+                    ])
+                },
+            )
+        },
+        overrides: unsafe {
+            #[allow(unused_unsafe)]
+            ::zerovec::ZeroMap2d::from_parts_unchecked(
+                unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        117u8, 116u8, 99u8, 0u8, 0u8, 0u8, 0u8, 0u8,
+                    ])
+                },
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
+                unsafe {
+                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
+                        115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
+                    ])
+                },
+                unsafe {
+                    ::zerovec::VarZeroVec::from_bytes_unchecked(&[
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                    ])
+                },
+            )
+        },
+    };
+static BN_CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -101,7 +104,7 @@ static BN_CCP: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
         )
     },
 };
-static EN: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -177,7 +180,7 @@ static EN: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificN
         )
     },
 };
-static EN_001: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static EN_001: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -217,7 +220,7 @@ static EN_001: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
         )
     },
 };
-static EN_ZA: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static EN_ZA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -274,7 +277,7 @@ static EN_ZA: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecif
         )
     },
 };
-static ES_AR: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -324,7 +327,7 @@ static ES_AR: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecif
         )
     },
 };
-static ES_SR_SR_CYRL_SR_LATN: DataStruct =
+static ES_SR_SR_CYRL_SR_LATN: &DataStruct =
     &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
@@ -384,7 +387,7 @@ static ES_SR_SR_CYRL_SR_LATN: DataStruct =
             )
         },
     };
-static FIL_FR_RU_TH_TR_UND: DataStruct =
+static FIL_FR_RU_TH_TR_UND: &DataStruct =
     &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
@@ -417,7 +420,7 @@ static FIL_FR_RU_TH_TR_UND: DataStruct =
             )
         },
     };
-static JA: DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
