@@ -347,7 +347,7 @@ impl SegmenterRuleProvider {
                             continue;
                         }
 
-                        // TODO:
+                        // TODO(#2239):
                         // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
                         // Katakana will use UAX#29 rules instead of dictionary.
 
