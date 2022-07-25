@@ -39,7 +39,7 @@ use writeable::Writeable;
 /// use icu::locid::locale;
 /// # let provider = icu_testdata::get_provider();
 /// # let options = icu::datetime::DateTimeFormatterOptions::default();
-/// let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options)
+/// let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options)
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)

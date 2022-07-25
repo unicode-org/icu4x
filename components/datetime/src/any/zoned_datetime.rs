@@ -56,7 +56,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
 /// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_buffer_provider(
-///     locale!("en"),
+///     &locale!("en").into(),
 ///     &provider,
 ///     &options.into(),
 ///     &TimeZoneFormatterOptions::default(),
@@ -101,7 +101,7 @@ impl ZonedAnyDateTimeFormatter {
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
     /// let zdtf = ZonedAnyDateTimeFormatter::try_new_unstable(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,

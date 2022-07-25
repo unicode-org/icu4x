@@ -50,7 +50,7 @@ use icu_provider::DataLocale;
 ///
 /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(Locale::from_str("en-u-ca-gregory").unwrap(), &provider, &options.into())
+/// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(&Locale::from_str("en-u-ca-gregory").unwrap().into(), &provider, &options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -114,7 +114,7 @@ impl AnyDateTimeFormatter {
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(locale, &provider, &options.into())
+    /// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(&locale.into(), &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -159,7 +159,7 @@ impl AnyDateTimeFormatter {
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = AnyDateTimeFormatter::try_new_unstable(locale, &provider, &options.into())
+    /// let dtf = AnyDateTimeFormatter::try_new_unstable(&locale.into(), &provider, &options.into())
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -288,7 +288,7 @@ impl AnyDateTimeFormatter {
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(Locale::from_str("en-u-ca-gregory").unwrap(),
+    /// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(&Locale::from_str("en-u-ca-gregory").unwrap().into(),
     ///                                                           &provider, &options)
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///

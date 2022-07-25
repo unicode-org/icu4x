@@ -52,7 +52,7 @@ use crate::{
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-///     locale!("en"),
+///     &locale!("en").into(),
 ///     &provider,
 ///     &provider,
 ///     &provider,
@@ -89,7 +89,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// let options = DateTimeFormatterOptions::default();
     ///
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     locale!("en"),
+    ///     &locale!("en").into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,
@@ -163,7 +163,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,
@@ -208,7 +208,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,
@@ -251,7 +251,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-    ///     locale,
+    ///     &locale.into(),
     ///     &provider,
     ///     &provider,
     ///     &provider,
