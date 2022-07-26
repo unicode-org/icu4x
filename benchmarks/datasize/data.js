@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658795139326,
+  "lastUpdate": 1658798255424,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21323,6 +21323,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/354fe3b899217384eb861be7fea7f9b1606a9032"
         },
         "date": 1658795105330,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035913,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "069f72620601268f3328bf4375c2000ef2f4a4b1",
+          "message": "Add a feature option not to use unicode-segmentation (#2212)",
+          "timestamp": "2022-07-26T10:15:46+09:00",
+          "tree_id": "5a6d6a0deaf8734d5625d88afb853bc11c0c670d",
+          "url": "https://github.com/unicode-org/icu4x/commit/069f72620601268f3328bf4375c2000ef2f4a4b1"
+        },
+        "date": 1658798219165,
         "tool": "ndjson",
         "benches": [
           {
