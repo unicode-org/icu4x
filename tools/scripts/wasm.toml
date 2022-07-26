@@ -391,8 +391,10 @@ script = '''
 exit_on_error true
 cd ffi/diplomat
 
-rm -r ./wasm/lib ./wasm/docs
-mkdir ./wasm/lib ./wasm/docs
+rm -r ./wasm/lib
+rm -r ./wasm/docs
+mkdir ./wasm/lib
+mkdir ./wasm/docs
 
 exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
 '''
