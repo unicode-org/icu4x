@@ -57,14 +57,14 @@ impl<K, V> LiteMap<K, V, Vec<(K, V)>> {
     }
 }
 
-impl<'a, K: ?Sized, V: ?Sized> LiteMap<K, V, &'a [(&'a K, &'a V)]> {
+impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     /// Convert a `&'a [(K, V)]` into a [`LiteMap`].
     ///
     /// # Safety
     ///
     /// The slice must be sorted and have no duplicate keys.
     #[inline]
-    pub const unsafe fn from_slice_unchecked(values: &'a [(&'a K, &'a V)]) -> Self {
+    pub const unsafe fn from_slice_unchecked(values: &'a [(K, V)]) -> Self {
         Self {
             values,
             _key_type: PhantomData,
