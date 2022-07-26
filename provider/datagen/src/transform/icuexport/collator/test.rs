@@ -13,7 +13,7 @@ use icu_locid::{langid, Locale};
 use icu_provider::AsDowncastingAnyProvider;
 use icu_provider::AsDynamicDataProviderAnyMarkerWrap;
 use icu_provider::{AnyMarker, DynamicDataProvider};
-use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
+use icu_provider_adapters::fork::ForkByKeyProvider;
 use lazy_static::lazy_static;
 
 fn get_provider() -> impl DynamicDataProvider<AnyMarker> {
@@ -23,7 +23,7 @@ fn get_provider() -> impl DynamicDataProvider<AnyMarker> {
             .unwrap();
     }
     icu_provider_adapters::make_forking_provider!(
-        ForkByKeyProvider,
+        ForkByKeyProvider::new,
         [
             CollationProvider::from(&*SOURCE_DATA),
             NormalizationProvider::from(&*SOURCE_DATA),

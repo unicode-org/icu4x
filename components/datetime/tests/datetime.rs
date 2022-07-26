@@ -40,7 +40,7 @@ use icu_locid::{
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
-use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
+use icu_provider_adapters::fork::MultiForkByKeyProvider;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -411,38 +411,36 @@ fn test_dayperiod_patterns() {
                             data.time_h11_h12.long = new_pattern1;
                             data.time_h23_h24.long = new_pattern2;
                         });
-                        let local_provider = MultiForkByKeyProvider {
-                            providers: vec![
-                                AnyPayloadProvider {
-                                    key: DateSymbolsV1Marker::KEY,
-                                    data: date_symbols_data.clone().wrap_into_any_payload(),
-                                },
-                                AnyPayloadProvider {
-                                    key: TimeSymbolsV1Marker::KEY,
-                                    data: time_symbols_data.clone().wrap_into_any_payload(),
-                                },
-                                AnyPayloadProvider {
-                                    key: DateSkeletonPatternsV1Marker::KEY,
-                                    data: skeleton_data.clone().wrap_into_any_payload(),
-                                },
-                                AnyPayloadProvider {
-                                    key: DatePatternsV1Marker::KEY,
-                                    data: date_patterns_data.clone().wrap_into_any_payload(),
-                                },
-                                AnyPayloadProvider {
-                                    key: TimePatternsV1Marker::KEY,
-                                    data: time_patterns_data.clone().wrap_into_any_payload(),
-                                },
-                                AnyPayloadProvider {
-                                    key: WeekDataV1Marker::KEY,
-                                    data: week_data.clone().wrap_into_any_payload(),
-                                },
-                                AnyPayloadProvider {
-                                    key: DecimalSymbolsV1Marker::KEY,
-                                    data: decimal_data.clone().wrap_into_any_payload(),
-                                },
-                            ],
-                        };
+                        let local_provider = MultiForkByKeyProvider::new(vec![
+                            AnyPayloadProvider {
+                                key: DateSymbolsV1Marker::KEY,
+                                data: date_symbols_data.clone().wrap_into_any_payload(),
+                            },
+                            AnyPayloadProvider {
+                                key: TimeSymbolsV1Marker::KEY,
+                                data: time_symbols_data.clone().wrap_into_any_payload(),
+                            },
+                            AnyPayloadProvider {
+                                key: DateSkeletonPatternsV1Marker::KEY,
+                                data: skeleton_data.clone().wrap_into_any_payload(),
+                            },
+                            AnyPayloadProvider {
+                                key: DatePatternsV1Marker::KEY,
+                                data: date_patterns_data.clone().wrap_into_any_payload(),
+                            },
+                            AnyPayloadProvider {
+                                key: TimePatternsV1Marker::KEY,
+                                data: time_patterns_data.clone().wrap_into_any_payload(),
+                            },
+                            AnyPayloadProvider {
+                                key: WeekDataV1Marker::KEY,
+                                data: week_data.clone().wrap_into_any_payload(),
+                            },
+                            AnyPayloadProvider {
+                                key: DecimalSymbolsV1Marker::KEY,
+                                data: decimal_data.clone().wrap_into_any_payload(),
+                            },
+                        ]);
                         let dtf = DateTimeFormatter::<Gregorian>::try_new(
                             &data_locale,
                             &local_provider.as_downcasting(),
@@ -571,30 +569,28 @@ fn test_time_zone_patterns() {
                     data.time_h11_h12.long = new_pattern1;
                     data.time_h23_h24.long = new_pattern2;
                 });
-                let local_provider = MultiForkByKeyProvider {
-                    providers: vec![
-                        AnyPayloadProvider {
-                            key: DateSymbolsV1Marker::KEY,
-                            data: symbols_data.clone().wrap_into_any_payload(),
-                        },
-                        AnyPayloadProvider {
-                            key: DateSkeletonPatternsV1Marker::KEY,
-                            data: skeleton_data.clone().wrap_into_any_payload(),
-                        },
-                        AnyPayloadProvider {
-                            key: DatePatternsV1Marker::KEY,
-                            data: date_patterns_data.clone().wrap_into_any_payload(),
-                        },
-                        AnyPayloadProvider {
-                            key: TimePatternsV1Marker::KEY,
-                            data: time_patterns_data.clone().wrap_into_any_payload(),
-                        },
-                        AnyPayloadProvider {
-                            key: WeekDataV1Marker::KEY,
-                            data: week_data.clone().wrap_into_any_payload(),
-                        },
-                    ],
-                };
+                let local_provider = MultiForkByKeyProvider::new(vec![
+                    AnyPayloadProvider {
+                        key: DateSymbolsV1Marker::KEY,
+                        data: symbols_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: DateSkeletonPatternsV1Marker::KEY,
+                        data: skeleton_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: DatePatternsV1Marker::KEY,
+                        data: date_patterns_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: TimePatternsV1Marker::KEY,
+                        data: time_patterns_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: WeekDataV1Marker::KEY,
+                        data: week_data.clone().wrap_into_any_payload(),
+                    },
+                ]);
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(

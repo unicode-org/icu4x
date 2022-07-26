@@ -4,7 +4,179 @@
 
 //! Providers that combine multiple other providers.
 
-pub mod by_key;
+mod by_error;
+
+pub mod predicates;
 
 #[macro_use]
 mod macros;
+
+pub use by_error::ForkByErrorProvider;
+pub use by_error::MultiForkByErrorProvider;
+
+use predicates::ForkByErrorPredicate;
+use predicates::ForkByKeyPredicate;
+
+/// A provider that returns data from one of two child providers based on the key.
+///
+/// The result of the first provider that supports a particular [`DataKey`] will be returned,
+/// even if the request failed for other reasons (such as an unsupported language). Therefore,
+/// you should add child providers that support disjoint sets of keys.
+///
+/// Note: A forking [`DataProvider`] does not make sense, since there is only one key that
+/// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
+/// or [`DynamicDataProvider`].
+///
+/// # Examples
+///
+/// Normal usage:
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+/// use icu_provider_adapters::fork::ForkByKeyProvider;
+///
+/// struct DummyBufferProvider;
+/// impl BufferProvider for DummyBufferProvider {
+///     fn load_buffer(
+///         &self,
+///         key: DataKey,
+///         req: DataRequest,
+///     ) -> Result<DataResponse<BufferMarker>, DataError> {
+///         Err(DataErrorKind::MissingDataKey.with_req(key, req))
+///     }
+/// }
+///
+/// let forking_provider = ForkByKeyProvider::new(
+///     DummyBufferProvider,
+///     HelloWorldProvider.into_json_provider(),
+/// );
+///
+/// let data_provider = forking_provider.as_deserializing();
+///
+/// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect("Loading should succeed")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!("Hallo Welt", german_hello_world.get().message);
+/// ```
+///
+/// Stops at the first provider supporting a key, even if the locale is not supported:
+///
+/// ```
+/// use icu_locid::{subtags_language as language, locale};
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+/// use icu_provider_adapters::filter::Filterable;
+/// use icu_provider_adapters::fork::ForkByKeyProvider;
+///
+/// let forking_provider = ForkByKeyProvider::new(
+///     HelloWorldProvider
+///         .into_json_provider()
+///         .filterable("Chinese")
+///         .filter_by_langid(|langid| langid.language == language!("zh")),
+///     HelloWorldProvider
+///         .into_json_provider()
+///         .filterable("German")
+///         .filter_by_langid(|langid| langid.language == language!("de")),
+/// );
+///
+/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> =
+///     &forking_provider.as_deserializing();
+///
+/// // Chinese is the first provider, so this succeeds
+/// let chinese_hello_world = data_provider
+///     .load(DataRequest {
+///         locale: &locale!("zh").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect("Loading should succeed")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!("你好世界", chinese_hello_world.get().message);
+///
+/// // German is shadowed by Chinese, so this fails
+/// data_provider
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect_err("Should stop at the first provider, even though the second has data");
+/// ```
+///
+/// [`DataKey`]: icu_provider::DataKey
+/// [`DataProvider`]: icu_provider::DataProvider
+/// [`AnyProvider`]: icu_provider::AnyProvider
+/// [`BufferProvider`]: icu_provider::BufferProvider
+/// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
+pub type ForkByKeyProvider<P0, P1> = ForkByErrorProvider<P0, P1, ForkByKeyPredicate>;
+
+/// A provider that returns data from the first child provider supporting the key.
+///
+/// The result of the first provider that supports a particular [`DataKey`] will be returned,
+/// even if the request failed for other reasons (such as an unsupported language). Therefore,
+/// you should add child providers that support disjoint sets of keys.
+///
+/// Note: A forking [`DataProvider`] does not make sense, since there is only one key that
+/// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
+/// or [`DynamicDataProvider`].
+///
+/// # Examples
+///
+/// ```
+/// use icu_locid::{subtags_language as language, locale};
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+/// use icu_provider_adapters::filter::Filterable;
+/// use icu_provider_adapters::fork::MultiForkByKeyProvider;
+///
+/// let forking_provider = MultiForkByKeyProvider::new(
+///     vec![
+///         HelloWorldProvider
+///             .into_json_provider()
+///             .filterable("Chinese")
+///             .filter_by_langid(|langid| langid.language == language!("zh")),
+///         HelloWorldProvider
+///             .into_json_provider()
+///             .filterable("German")
+///             .filter_by_langid(|langid| langid.language == language!("de")),
+///     ],
+/// );
+///
+/// let data_provider: &dyn DataProvider<HelloWorldV1Marker> =
+///     &forking_provider.as_deserializing();
+///
+/// // Chinese is the first provider, so this succeeds
+/// let chinese_hello_world = data_provider
+///     .load(DataRequest {
+///         locale: &locale!("zh").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect("Loading should succeed")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!("你好世界", chinese_hello_world.get().message);
+///
+/// // German is shadowed by Chinese, so this fails
+/// data_provider
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect_err("Should stop at the first provider, even though the second has data");
+/// ```
+///
+/// [`DataKey`]: icu_provider::DataKey
+/// [`DataProvider`]: icu_provider::DataProvider
+/// [`AnyProvider`]: icu_provider::AnyProvider
+/// [`BufferProvider`]: icu_provider::BufferProvider
+/// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
+pub type MultiForkByKeyProvider<P> = MultiForkByErrorProvider<P, ForkByKeyPredicate>;

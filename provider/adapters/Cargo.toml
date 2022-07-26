@@ -34,6 +34,7 @@ tinystr = { path = "../../utils/tinystr", features = ["zerovec"] }
 
 [dev-dependencies]
 icu_testdata = { path = "../testdata" }
+icu_provider = { version = "0.6.0", path = "../core", features = ["macros", "deserialize_json"] }
 
 [features]
 std = ["icu_locid/std"]
