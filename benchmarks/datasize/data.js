@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658798255424,
+  "lastUpdate": 1658800763869,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21358,6 +21358,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4035913,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a06a127e40a1dec00683182e8655aa68e55e7ee9",
+          "message": "Add numbering system support (#2246)",
+          "timestamp": "2022-07-25T18:57:40-07:00",
+          "tree_id": "96d94fef446db00bba5a47899ea8e8cbcfe74d65",
+          "url": "https://github.com/unicode-org/icu4x/commit/a06a127e40a1dec00683182e8655aa68e55e7ee9"
+        },
+        "date": 1658800728977,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036144,
             "unit": "bytes",
             "biggerIsBetter": false
           }
