@@ -74,7 +74,7 @@ where
 /// )
 /// .expect("Failed to create TimeZoneFormatter");
 ///
-/// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+/// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
 ///
 /// let value = tzf.format_to_string(&time_zone);
 /// ```
@@ -618,7 +618,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let _ = tzf.format(&time_zone);
     /// ```
@@ -653,7 +653,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let mut buffer = String::new();
     /// tzf.format_to_write(&mut buffer, &time_zone)
@@ -689,7 +689,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let _ = tzf.format_to_string(&time_zone);
     /// ```

@@ -67,7 +67,7 @@ impl MetaZoneCalculator {
     /// assert_eq!(
     ///     mzc.compute_metazone_from_timezone(
     ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
-    ///         DateTime::new_iso_datetime(1969, 1, 1, 0, 0, 0).unwrap()
+    ///         &DateTime::new_iso_datetime(1969, 1, 1, 0, 0, 0).unwrap()
     ///     ),
     ///     None
     /// );
@@ -75,7 +75,7 @@ impl MetaZoneCalculator {
     /// assert_eq!(
     ///     mzc.compute_metazone_from_timezone(
     ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
-    ///         DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap()
+    ///         &DateTime::new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap()
     ///     ),
     ///     Some(MetaZoneId(tinystr!(4, "guam")))
     /// );
@@ -83,7 +83,7 @@ impl MetaZoneCalculator {
     /// assert_eq!(
     ///     mzc.compute_metazone_from_timezone(
     ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
-    ///         DateTime::new_iso_datetime(1975, 1, 1, 0, 0, 0).unwrap()
+    ///         &DateTime::new_iso_datetime(1975, 1, 1, 0, 0, 0).unwrap()
     ///     ),
     ///     Some(MetaZoneId(tinystr!(4, "guam")))
     /// );
@@ -91,7 +91,7 @@ impl MetaZoneCalculator {
     /// assert_eq!(
     ///     mzc.compute_metazone_from_timezone(
     ///         TimeZoneBcp47Id(tinystr!(8, "gugum")),
-    ///         DateTime::new_iso_datetime(2000, 12, 22, 15, 0, 0).unwrap()
+    ///         &DateTime::new_iso_datetime(2000, 12, 22, 15, 0, 0).unwrap()
     ///     ),
     ///     Some(MetaZoneId(tinystr!(4, "cham")))
     /// );
