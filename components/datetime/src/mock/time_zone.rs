@@ -7,6 +7,8 @@ use tinystr::TinyStr8;
 
 use crate::date::*;
 use crate::metazone::MetaZoneCalculator;
+use alloc::string::String;
+use alloc::string::ToString;
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
 
