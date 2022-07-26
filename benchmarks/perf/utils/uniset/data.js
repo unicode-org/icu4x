@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658787740724,
+  "lastUpdate": 1658795130852,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38578,6 +38578,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cc8645eb0bf3c0c1725c193d88c7fd01a389ce5b",
+          "message": "Update ICU tag for icuexportdata (#2247)",
+          "timestamp": "2022-07-25T17:15:27-07:00",
+          "tree_id": "268ad2cdef70c181d318e8ff1e731c118e8c4aba",
+          "url": "https://github.com/unicode-org/icu4x/commit/cc8645eb0bf3c0c1725c193d88c7fd01a389ce5b"
+        },
+        "date": 1658795096327,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 39930150,
+            "range": "± 1930084",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
