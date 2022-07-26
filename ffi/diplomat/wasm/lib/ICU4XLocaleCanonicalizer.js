@@ -1,4 +1,4 @@
-import wasm from "../wasm.mjs"
+import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XCanonicalizationResult_js_to_rust, ICU4XCanonicalizationResult_rust_to_js } from "./ICU4XCanonicalizationResult.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"

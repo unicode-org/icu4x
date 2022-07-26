@@ -80,14 +80,18 @@ export class DiplomatBuf {
     this.ptr = ptr;
     this.size = size;
     this.free = () => {
-      wasm.diplomat_free(this.ptr, this.size, align);
-      DiplomatBuf_finalizer.unregister(this);
+      const successfully_unregistered = DiplomatBuf_finalizer.unregister(this);
+      if (successfully_unregistered) {
+        wasm.diplomat_free(this.ptr, this.size, align);
+      } else {
+        console.error(`Failed to unregister DiplomatBuf at ${ptr}, this is a bug. Either it was never registered (leak), it was already unregistered (failed attempt to double free), or the unregister token was unrecognized (fallback to GC).`);
+      }
     }
 
-    DiplomatBuf_finalizer.register(this, { ptr, size, align });
+    DiplomatBuf_finalizer.register(this, { wasm, ptr, size, align }, this);
   }
 }
 
-const DiplomatBuf_finalizer = new FinalizationRegistry(({ ptr, size, align }) => {
+const DiplomatBuf_finalizer = new FinalizationRegistry(({ wasm, ptr, size, align }) => {
   wasm.diplomat_free(ptr, size, align);
 });
