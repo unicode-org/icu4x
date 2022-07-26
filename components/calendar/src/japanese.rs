@@ -327,6 +327,9 @@ impl DateTime<Japanese> {
     /// assert_eq!(datetime.time.minute.number(), 1);
     /// assert_eq!(datetime.time.second.number(), 0);
     /// ```
+    #[allow(clippy::too_many_arguments)] // it's more convenient to have this many arguments
+                                         // if people wish to construct this by parts they can use
+                                         // Date::new_japanese_date() + DateTime::new(date, time)
     pub fn new_japanese_datetime<A: AsCalendar<Calendar = Japanese>>(
         japanese_calendar: A,
         era: types::Era,
@@ -455,21 +458,19 @@ impl Japanese {
         let era_data = self.eras.get();
         let data = &era_data.dates_to_eras;
         // Try to avoid linear search by binary searching for the year suffix
-        if let Some(ref year) = era.split("-").nth(1) {
+        if let Some(year) = era.split('-').nth(1) {
             if let Ok(ref int) = year.parse::<i32>() {
-                match data.binary_search_by(|(d, _)| d.year.cmp(&int)) {
-                    Ok(index) => {
-                        let (era_start, code) = data
-                            .get(index)
-                            .expect("Indexing from successful binary search must succeed");
-                        // There is a slight chance we hit the case where there are two eras in the same year
-                        // There are a couple of rare cases of this, but it's not worth writing a range-based binary search
-                        // to catch them since this is an optimization
-                        if code == era {
-                            return Ok((era_start, data.get(index + 1).map(|e| e.0)));
-                        }
+                if let Ok(index) = data.binary_search_by(|(d, _)| d.year.cmp(int)) {
+                    #[allow(clippy::expect_used)] // see expect message
+                    let (era_start, code) = data
+                        .get(index)
+                        .expect("Indexing from successful binary search must succeed");
+                    // There is a slight chance we hit the case where there are two eras in the same year
+                    // There are a couple of rare cases of this, but it's not worth writing a range-based binary search
+                    // to catch them since this is an optimization
+                    if code == era {
+                        return Ok((era_start, data.get(index + 1).map(|e| e.0)));
                     }
-                    _ => (),
                 }
             }
         }
