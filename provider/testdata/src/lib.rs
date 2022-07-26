@@ -122,7 +122,8 @@ pub fn get_postcard_provider() -> StaticDataProvider {
     .unwrap()
 }
 
-/// Get a small data provider that only contains the `decimal/symbols@1` key for `en` and `bn`.
+/// Get a small data provider that only contains the `decimal/symbols@1[u-nu]` key
+/// for `en` and `bn`.
 #[cfg(feature = "static")]
 pub fn get_smaller_postcard_provider() -> StaticDataProvider {
     // The statically compiled data file is valid.

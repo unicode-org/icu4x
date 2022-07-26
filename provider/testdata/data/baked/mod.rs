@@ -312,7 +312,7 @@ impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedData
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 litemap_slice_get(
-                    decimal::symbols_v1::DATA,
+                    decimal::symbols_v1_u_nu::DATA,
                     <::icu_decimal::provider::DecimalSymbolsV1Marker as KeyedDataMarker>::KEY,
                     req,
                 )?,

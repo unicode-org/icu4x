@@ -1,0 +1,29 @@
+{
+  "minus_sign_affixes": {
+    "prefix": "-",
+    "suffix": ""
+  },
+  "plus_sign_affixes": {
+    "prefix": "+",
+    "suffix": ""
+  },
+  "decimal_separator": ".",
+  "grouping_separator": ",",
+  "grouping_sizes": {
+    "primary": 3,
+    "secondary": 2,
+    "min_grouping": 1
+  },
+  "digits": [
+    "0",
+    "1",
+    "2",
+    "3",
+    "4",
+    "5",
+    "6",
+    "7",
+    "8",
+    "9"
+  ]
+}
