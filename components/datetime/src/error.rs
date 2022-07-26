@@ -58,7 +58,7 @@ pub enum DateTimeFormatterError {
     /// An error originating from FixedDecimalFormatter
     #[displaydoc("{0}")]
     FixedDecimalFormatter(FixedDecimalFormatterError),
-    /// An error from mixing calendar types in AnyDateTimeFormat
+    /// An error from mixing calendar types in [`AnyDateTimeFormatter`](crate::any::AnyDateTimeFormatter)
     #[displaydoc("AnyDateTimeFormatter for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
     /// An error from mixing calendar types in DateTimeFormat
