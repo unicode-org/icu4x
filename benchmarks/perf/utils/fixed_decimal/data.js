@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658795251529,
+  "lastUpdate": 1658795792459,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39209,6 +39209,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 71,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "354fe3b899217384eb861be7fea7f9b1606a9032",
+          "message": "Rename CodePointSet to CodePointInversionList (#2230)",
+          "timestamp": "2022-07-26T00:23:53Z",
+          "tree_id": "04ce151a08e694f043aa16ce1982efbdb82b248b",
+          "url": "https://github.com/unicode-org/icu4x/commit/354fe3b899217384eb861be7fea7f9b1606a9032"
+        },
+        "date": 1658795750375,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123903,
+            "range": "± 8824",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25570,
+            "range": "± 2571",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69971,
+            "range": "± 5061",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 204,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 89,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
