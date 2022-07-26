@@ -489,3 +489,147 @@ impl Japanese {
         Err(DateTimeError::UnknownEra(era, self.debug_name()))
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Ref;
+
+    fn single_test_roundtrip(calendar: Ref<Japanese>, era: &str, year: i32, month: u8, day: u8) {
+        let era = types::Era(era.parse().expect("era must parse"));
+
+        let date = Date::new_japanese_date(calendar, era, year, month, day).unwrap_or_else(|e| {
+            panic!(
+                "Failed to construct date with {:?}, {}, {}, {}: {}",
+                era, year, month, day, e
+            )
+        });
+        let iso = date.to_iso();
+        let reconstructed = Date::new_from_iso(iso, calendar);
+        assert_eq!(
+            date, reconstructed,
+            "Failed to roundtrip with {era:?}, {year}, {month}, {day}"
+        )
+    }
+
+    // test that the Gregorian eras roundtrip to Japanese ones
+    fn single_test_gregorian_roundtrip(
+        calendar: Ref<Japanese>,
+        era: &str,
+        year: i32,
+        month: u8,
+        day: u8,
+        era2: &str,
+        year2: i32,
+    ) {
+        let era = types::Era(era.parse().expect("era must parse"));
+        let era2 = types::Era(era2.parse().expect("era must parse"));
+
+        let expected =
+            Date::new_japanese_date(calendar, era2, year2, month, day).unwrap_or_else(|e| {
+                panic!(
+                    "Failed to construct expectation date with {:?}, {}, {}, {}: {}",
+                    era2, year2, month, day, e
+                )
+            });
+
+        let date = Date::new_japanese_date(calendar, era, year, month, day).unwrap_or_else(|e| {
+            panic!(
+                "Failed to construct date with {:?}, {}, {}, {}: {}",
+                era, year, month, day, e
+            )
+        });
+        let iso = date.to_iso();
+        let reconstructed = Date::new_from_iso(iso, calendar);
+        assert_eq!(
+            expected, reconstructed,
+            "Failed to roundtrip with {era:?}, {year}, {month}, {day} == {era2:?}, {year}"
+        )
+    }
+
+    fn single_test_error(
+        calendar: Ref<Japanese>,
+        era: &str,
+        year: i32,
+        month: u8,
+        day: u8,
+        error: DateTimeError,
+    ) {
+        let era = types::Era(era.parse().expect("era must parse"));
+
+        let date = Date::new_japanese_date(calendar, era, year, month, day);
+        assert_eq!(
+            date,
+            Err(error),
+            "Construction with {era:?}, {year}, {month}, {day} did not return {error:?}"
+        )
+    }
+
+    #[test]
+    fn test_japanese() {
+        let provider = icu_testdata::get_provider();
+        let calendar = Japanese::try_new(&provider, JapaneseEraStyle::Modern)
+            .expect("Cannot load japanese data");
+        let calendar_ext =
+            Japanese::try_new(&provider, JapaneseEraStyle::All).expect("Cannot load japanese data");
+        let calendar = Ref(&calendar);
+        let calendar_ext = Ref(&calendar_ext);
+
+        single_test_roundtrip(calendar, "heisei", 12, 3, 1);
+        single_test_roundtrip(calendar, "taisho", 3, 3, 1);
+        // Heisei did not start until later in the year
+        single_test_error(calendar, "heisei", 1, 1, 1, DateTimeError::OutOfRange);
+
+        single_test_roundtrip(calendar_ext, "heisei", 12, 3, 1);
+        single_test_roundtrip(calendar_ext, "taisho", 3, 3, 1);
+        single_test_error(calendar_ext, "heisei", 1, 1, 1, DateTimeError::OutOfRange);
+
+        single_test_roundtrip(calendar_ext, "hakuho-672", 4, 3, 1);
+        single_test_error(
+            calendar,
+            "hakuho-672",
+            4,
+            3,
+            1,
+            DateTimeError::UnknownEra("hakuho-672".parse().unwrap(), "Japanese (Modern eras only)"),
+        );
+
+        // handle bce/ce
+        single_test_roundtrip(calendar, "bce", 100, 3, 1);
+        single_test_roundtrip(calendar, "bce", 1, 3, 1);
+        single_test_roundtrip(calendar, "ce", 1, 3, 1);
+        single_test_roundtrip(calendar, "ce", 100, 3, 1);
+        single_test_roundtrip(calendar_ext, "ce", 100, 3, 1);
+        single_test_roundtrip(calendar, "ce", 1000, 3, 1);
+        single_test_error(calendar, "ce", 0, 3, 1, DateTimeError::OutOfRange);
+        single_test_error(calendar, "bce", -1, 3, 1, DateTimeError::OutOfRange);
+
+        // handle the cases where bce/ce get adjusted to different eras
+        single_test_gregorian_roundtrip(calendar, "ce", 2021, 3, 1, "reiwa", 3);
+        single_test_gregorian_roundtrip(calendar_ext, "ce", 1000, 3, 1, "choho-999", 2);
+        single_test_gregorian_roundtrip(calendar_ext, "ce", 749, 5, 10, "tenpyokampo-749", 1);
+        single_test_gregorian_roundtrip(calendar_ext, "bce", 10, 3, 1, "bce", 10);
+
+        // There were multiple eras in this year
+        // This one is from Apr 14 to July 2
+        single_test_roundtrip(calendar_ext, "tenpyokampo-749", 1, 4, 20);
+        single_test_roundtrip(calendar_ext, "tenpyokampo-749", 1, 4, 14);
+        single_test_roundtrip(calendar_ext, "tenpyokampo-749", 1, 7, 1);
+        single_test_error(
+            calendar_ext,
+            "tenpyokampo-749",
+            1,
+            7,
+            5,
+            DateTimeError::OutOfRange,
+        );
+        single_test_error(
+            calendar_ext,
+            "tenpyokampo-749",
+            1,
+            4,
+            13,
+            DateTimeError::OutOfRange,
+        );
+    }
+}
