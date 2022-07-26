@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
-    use icu_provider::ResourceProvider;
+    use icu_provider::DataProvider;
     use icu_segmenter::{
         SentenceBreakDataV1Marker, SentenceBreakIterator, SentenceBreakIteratorLatin1,
         SentenceBreakIteratorUtf16, SentenceBreakSegmenter,
@@ -44,7 +44,7 @@ pub mod ffi {
             provider: &D,
         ) -> DiplomatResult<Box<ICU4XSentenceBreakSegmenter>, ICU4XError>
         where
-            D: ResourceProvider<SentenceBreakDataV1Marker> + ?Sized,
+            D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,
         {
             SentenceBreakSegmenter::try_new(provider)
                 .map(|o| Box::new(ICU4XSentenceBreakSegmenter(o)))

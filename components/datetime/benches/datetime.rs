@@ -10,7 +10,7 @@ use std::fmt::Write;
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::DateTimeFormatter;
 use icu_datetime::{
-    mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
+    mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str, time_zone::MockTimeZone},
     time_zone::TimeZoneFormatterOptions,
     ZonedDateTimeFormatter,
 };
@@ -35,9 +35,12 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
                         let options = fixtures::get_options(&setup.options);
-                        let dtf =
-                            DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options)
-                                .expect("Failed to create DateTimeFormatter.");
+                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                            &locale.into(),
+                            &provider,
+                            &options,
+                        )
+                        .expect("Failed to create DateTimeFormatter.");
 
                         let mut result = String::new();
 
@@ -60,16 +63,16 @@ fn datetime_benches(c: &mut Criterion) {
     group.bench_function("zoned_datetime_overview", |b| {
         b.iter(|| {
             for fx in &fxs.0 {
-                let datetimes: Vec<MockZonedDateTime> = fx
+                let datetimes: Vec<(DateTime<Gregorian>, MockTimeZone)> = fx
                     .values
                     .iter()
-                    .map(|value| value.parse().unwrap())
+                    .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
                     .collect();
                 for setup in &fx.setups {
                     let locale: Locale = setup.locale.parse().unwrap();
                     let options = fixtures::get_options(&setup.options);
                     let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                        locale,
+                        &locale.into(),
                         &provider,
                         &provider,
                         &provider,
@@ -82,7 +85,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let mut result = String::new();
 
                     for dt in &datetimes {
-                        let fdt = dtf.format(dt);
+                        let fdt = dtf.format(&dt.0, &dt.1);
                         write!(result, "{}", fdt).unwrap();
                         result.clear();
                     }
@@ -110,9 +113,12 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf =
-                            DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options)
-                                .unwrap();
+                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                            &locale.into(),
+                            &provider,
+                            &options,
+                        )
+                        .unwrap();
 
                         let mut result = String::new();
 
@@ -137,9 +143,12 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf =
-                            DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options)
-                                .unwrap();
+                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                            &locale.into(),
+                            &provider,
+                            &options,
+                        )
+                        .unwrap();
 
                         for dt in &datetimes {
                             let _ = dtf.format_to_string(dt);
@@ -161,9 +170,12 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf =
-                            DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options)
-                                .unwrap();
+                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                            &locale.into(),
+                            &provider,
+                            &options,
+                        )
+                        .unwrap();
 
                         let mut result = String::new();
 
@@ -189,9 +201,12 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf =
-                            DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options)
-                                .unwrap();
+                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                            &locale.into(),
+                            &provider,
+                            &options,
+                        )
+                        .unwrap();
 
                         for dt in &datetimes {
                             let fdt = dtf.format(dt);
@@ -206,17 +221,17 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("ZonedDateTimeFormatter/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockZonedDateTime> = fx
+                    let datetimes: Vec<(DateTime<Gregorian>, MockTimeZone)> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().unwrap())
+                        .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                            locale,
+                            &locale.into(),
                             &provider,
                             &provider,
                             &provider,
@@ -229,7 +244,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let mut result = String::new();
 
                         for dt in &datetimes {
-                            let _ = dtf.format_to_write(&mut result, dt);
+                            let _ = dtf.format_to_write(&mut result, &dt.0, &dt.1);
                             result.clear();
                         }
                     }
@@ -240,17 +255,17 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("ZonedDateTimeFormatter/format_to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockZonedDateTime> = fx
+                    let datetimes: Vec<(DateTime<Gregorian>, MockTimeZone)> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().unwrap())
+                        .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                            locale,
+                            &locale.into(),
                             &provider,
                             &provider,
                             &provider,
@@ -261,7 +276,7 @@ fn datetime_benches(c: &mut Criterion) {
                         .unwrap();
 
                         for dt in &datetimes {
-                            let _ = dtf.format_to_string(dt);
+                            let _ = dtf.format_to_string(&dt.0, &dt.1);
                         }
                     }
                 }
@@ -271,17 +286,17 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedZonedDateTime/format", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockZonedDateTime> = fx
+                    let datetimes: Vec<(DateTime<Gregorian>, MockTimeZone)> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().unwrap())
+                        .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                            locale,
+                            &locale.into(),
                             &provider,
                             &provider,
                             &provider,
@@ -294,7 +309,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let mut result = String::new();
 
                         for dt in &datetimes {
-                            let fdt = dtf.format(dt);
+                            let fdt = dtf.format(&dt.0, &dt.1);
                             write!(result, "{}", fdt).unwrap();
                             result.clear();
                         }
@@ -306,17 +321,17 @@ fn datetime_benches(c: &mut Criterion) {
         group.bench_function("FormattedZonedDateTime/to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
-                    let datetimes: Vec<MockZonedDateTime> = fx
+                    let datetimes: Vec<(DateTime<Gregorian>, MockTimeZone)> = fx
                         .values
                         .iter()
-                        .map(|value| value.parse().unwrap())
+                        .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
                         let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                            locale,
+                            &locale.into(),
                             &provider,
                             &provider,
                             &provider,
@@ -327,7 +342,7 @@ fn datetime_benches(c: &mut Criterion) {
                         .unwrap();
 
                         for dt in &datetimes {
-                            let fdt = dtf.format(dt);
+                            let fdt = dtf.format(&dt.0, &dt.1);
                             let _ = fdt.to_string();
                         }
                     }

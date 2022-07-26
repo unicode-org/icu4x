@@ -12,9 +12,9 @@ pub mod ffi {
         FixedDecimalFormatter,
     };
     use icu_locid::Locale;
-    use icu_provider::ResourceMarker;
-    use icu_provider::ResourceProvider;
-    use icu_provider_adapters::struct_provider::AnyPayloadProvider;
+    use icu_provider::DataProvider;
+    use icu_provider::KeyedDataMarker;
+    use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use writeable::Writeable;
 
     use crate::{
@@ -76,9 +76,9 @@ pub mod ffi {
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError>
         where
-            D: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
+            D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
         {
-            let langid = locale.0.as_ref().clone();
+            let locale = &locale.0.as_ref().into();
 
             let grouping_strategy = match grouping_strategy {
                 ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
@@ -88,7 +88,7 @@ pub mod ffi {
             };
             let mut options = FixedDecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy;
-            FixedDecimalFormatter::try_new(langid, provider, options)
+            FixedDecimalFormatter::try_new(locale, provider, options)
                 .map(|fdf| Box::new(ICU4XFixedDecimalFormatter(fdf)))
                 .map_err(Into::into)
                 .into()

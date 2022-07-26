@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{subtags, subtags_language as language, LanguageIdentifier};
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use zerovec::{ZeroMap, ZeroSlice};
@@ -25,12 +25,12 @@ impl From<&SourceData> for AliasesProvider {
     }
 }
 
-impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
+impl DataProvider<AliasesV1Marker> for AliasesProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
-        if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+        if !req.locale.is_empty() {
+            return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
         let data: &cldr_serde::aliases::Resource = self
@@ -38,10 +38,8 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
             .cldr()?
             .core()
             .read_and_parse("supplemental/aliases.json")?;
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(AliasesV1::from(data))),
         })
     }
@@ -49,8 +47,8 @@ impl ResourceProvider<AliasesV1Marker> for AliasesProvider {
 
 icu_provider::make_exportable_provider!(AliasesProvider, [AliasesV1Marker,]);
 
-impl IterableResourceProvider<AliasesV1Marker> for AliasesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<AliasesV1Marker> for AliasesProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -287,7 +285,7 @@ fn test_basic() {
 
     let provider = AliasesProvider::from(&SourceData::for_test());
     let data: DataPayload<AliasesV1Marker> = provider
-        .load_resource(&DataRequest::default())
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();

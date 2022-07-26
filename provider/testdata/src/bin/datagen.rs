@@ -4,7 +4,7 @@
 
 use icu_datagen::*;
 use icu_locid::langid;
-use icu_provider::ResourceMarker;
+use icu_provider::KeyedDataMarker;
 use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
 use std::fs::File;
@@ -83,7 +83,7 @@ fn main() {
 
     icu_datagen::datagen(
         Some(&[langid!("en"), langid!("bn")]),
-        &icu_datagen::keys(&["decimal/symbols@1"]),
+        &icu_datagen::keys(&["decimal/symbols@1[u-nu]"]),
         &source_data,
         vec![Out::Blob(Box::new(
             File::create(paths::data_root().join("decimal-bn-en.postcard")).unwrap(),

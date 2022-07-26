@@ -13,9 +13,9 @@ use icu_locid::extensions_unicode_key as key;
 use icu_locid::subtags_language as language;
 use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_provider::ResourceKey;
+use icu_provider::DataKey;
 use std::convert::TryFrom;
 use std::str::FromStr;
 use writeable::Writeable;
@@ -23,8 +23,11 @@ use zerovec::ZeroVec;
 
 mod collator_serde;
 
+#[cfg(test)]
+mod test;
+
 /// Collection of all the key for easy reference from the datagen registry.
-pub const ALL_KEYS: [ResourceKey; 6] = [
+pub const ALL_KEYS: [DataKey; 6] = [
     CollationDataV1Marker::KEY,
     CollationDiacriticsV1Marker::KEY,
     CollationJamoV1Marker::KEY,
@@ -33,16 +36,17 @@ pub const ALL_KEYS: [ResourceKey; 6] = [
     CollationSpecialPrimariesV1Marker::KEY,
 ];
 
-fn locale_to_file_name(opts: &ResourceOptions) -> String {
-    let mut s = if opts.get_langid() == LanguageIdentifier::UND {
+fn locale_to_file_name(locale: &DataLocale) -> String {
+    let mut s = if locale.get_langid() == LanguageIdentifier::UND {
         String::from("root")
     } else {
-        opts.get_langid()
+        locale
+            .get_langid()
             .write_to_string()
             .replace('-', "_")
             .replace("posix", "POSIX")
     };
-    if let Some(extension) = &opts.get_unicode_ext(&key!("co")) {
+    if let Some(extension) = &locale.get_unicode_ext(&key!("co")) {
         s.push('_');
         s.push_str(match extension.to_string().as_str() {
             "trad" => "traditional",
@@ -58,9 +62,9 @@ fn locale_to_file_name(opts: &ResourceOptions) -> String {
         // The Swedish naming seems ad hoc from
         // https://unicode-org.atlassian.net/browse/CLDR-679 .
 
-        if opts.get_langid().language == language!("zh") {
+        if locale.get_langid().language == language!("zh") {
             s.push_str("_pinyin");
-        } else if opts.get_langid().language == language!("sv") {
+        } else if locale.get_langid().language == language!("sv") {
             s.push_str("_reformed");
         } else {
             s.push_str("_standard");
@@ -113,8 +117,8 @@ impl From<&SourceData> for CollationProvider {
 macro_rules! collation_provider {
     ($(($marker:ident, $serde_struct:ident, $suffix:literal, $conversion:expr)),+, $toml_data:ident) => {
         $(
-            impl ResourceProvider<$marker> for CollationProvider {
-                fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
+            impl DataProvider<$marker> for CollationProvider {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let $toml_data: &collator_serde::$serde_struct = self
                         .source
                         .icuexport()?
@@ -122,8 +126,16 @@ macro_rules! collation_provider {
                             &format!(
                                 "collation/{}/{}{}.toml",
                                 self.source.collation_han_database(),
-                                locale_to_file_name(&req.options), $suffix)
-                        )?;
+                                locale_to_file_name(&req.locale), $suffix)
+                        )
+                        .map_err(|e| match e.kind {
+                            DataErrorKind::Io(
+                                std::io::ErrorKind::NotFound
+                            ) => DataErrorKind::MissingLocale.with_req(
+                                $marker::KEY, req
+                            ),
+                            _ => e
+                        })?;
 
                     Ok(DataResponse {
                         metadata: DataResponseMetadata::default(),
@@ -136,8 +148,8 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableResourceProvider<$marker> for CollationProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+            impl IterableDataProvider<$marker> for CollationProvider {
+                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
                         .source
                         .icuexport()?
@@ -152,7 +164,7 @@ macro_rules! collation_provider {
                                 .map(ToString::to_string)
                         )
                         .filter_map(|s|file_name_to_locale(&s))
-                        .map(ResourceOptions::from)
+                        .map(DataLocale::from)
                         .collect()
                     )
                 }

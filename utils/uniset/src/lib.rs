@@ -9,38 +9,37 @@
 //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 //!
 //! # Architecture
-//! ICU4X [`UnicodeSet`] is split up into independent levels, with [`UnicodeSet`] representing the membership/query API,
-//! and [`UnicodeSetBuilder`] representing the builder API. A [Properties API](http://userguide.icu-project.org/strings/properties)
-//! is in future works.
+//! ICU4X [`CodePointInversionList`] is split up into independent levels, with [`CodePointInversionList`] representing the membership/query API,
+//! and [`CodePointInversionListBuilder`] representing the builder API.
 //!
 //! # Examples:
 //!
-//! ## Creating a `UnicodeSet`
+//! ## Creating a `CodePointInversionList`
 //!
-//! UnicodeSets are created from either serialized [`UnicodeSets`](UnicodeSet),
+//! CodePointSets are created from either serialized [`CodePointSets`](CodePointInversionList),
 //! represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
-//! the [`UnicodeSetBuilder`], or from the TBA Properties API.
+//! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```
-//! use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+//! use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
 //!
-//! let mut builder = UnicodeSetBuilder::new();
+//! let mut builder = CodePointInversionListBuilder::new();
 //! builder.add_range(&('A'..'Z'));
-//! let set: UnicodeSet = builder.build();
+//! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
 //! ```
 //!
-//! ## Querying a `UnicodeSet`
+//! ## Querying a `CodePointInversionList`
 //!
-//! Currently, you can check if a character/range of characters exists in the [`UnicodeSet`], or iterate through the characters.
+//! Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 //!
 //! ```
-//! use icu_uniset::{UnicodeSet, UnicodeSetBuilder};
+//! use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
 //!
-//! let mut builder = UnicodeSetBuilder::new();
+//! let mut builder = CodePointInversionListBuilder::new();
 //! builder.add_range(&('A'..'Z'));
-//! let set: UnicodeSet = builder.build();
+//! let set: CodePointInversionList = builder.build();
 //!
 //! assert!(set.contains('A'));
 //! assert!(set.contains_range(&('A'..='C')));
@@ -72,22 +71,22 @@ mod utils;
 
 use alloc::vec::Vec;
 
-pub use builder::UnicodeSetBuilder;
+pub use builder::CodePointInversionListBuilder;
 pub use conversions::*;
 use displaydoc::Display;
-pub use uniset::UnicodeSet;
+pub use uniset::CodePointInversionList;
 pub use utils::*;
 
-/// Custom Errors for [`UnicodeSet`].
+/// Custom Errors for [`CodePointInversionList`].
 #[derive(Display, Debug)]
-pub enum UnicodeSetError {
-    /// A UnicodeSet was constructed with an invalid inversion list
+pub enum CodePointSetError {
+    /// A CodePointInversionList was constructed with an invalid inversion list
     #[displaydoc("Invalid set: {0:?}")]
     InvalidSet(Vec<u32>),
-    /// A UnicodeSet was constructed containing an invalid range
+    /// A CodePointInversionList was constructed containing an invalid range
     #[displaydoc("Invalid range: {0}..{1}")]
     InvalidRange(u32, u32),
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for UnicodeSetError {}
+impl std::error::Error for CodePointSetError {}

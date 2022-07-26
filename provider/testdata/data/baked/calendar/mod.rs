@@ -1,2 +1,2 @@
 // @generated
-pub mod japanese_v1;
+pub mod japanese_v1_u_ca;

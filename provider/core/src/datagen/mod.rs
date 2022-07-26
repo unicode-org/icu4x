@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This module contains various utilities required to generate ICU4X data files, typically
-//! via the `icu4x-datagen` tool. End users should not need to consume anything in this module
-//! as a library unless defining new types that integrate with `icu4x-datagen`.
+//! via the `icu_datagen` reference crate. End users should not need to consume anything in
+//! this module as a library unless defining new types that integrate with `icu_datagen`.
 //!
-//! This module can be enabled with the `datagen` feature on `icu4x-provider-core`.
+//! This module can be enabled with the `datagen` feature on `icu_provider`.
 
 mod data_conversion;
 mod heap_measure;
@@ -14,25 +14,29 @@ mod iter;
 mod payload;
 pub use data_conversion::{DataConverter, ReturnedPayloadError};
 pub use heap_measure::{HeapStats, HeapStatsMarker};
-pub use iter::{IterableDynProvider, IterableResourceProvider};
+pub use iter::IterableDataProvider;
+
+#[doc(hidden)] // exposed for make_exportable_provider
+pub use iter::IterableDynamicDataProvider;
+#[doc(hidden)] // exposed for make_exportable_provider
 pub use payload::{ExportBox, ExportMarker};
 
 use crate::prelude::*;
 
 /// An object capable of exporting data payloads in some form.
 pub trait DataExporter: Sync {
-    /// Save a `payload` corresponding to the given key and options.
+    /// Save a `payload` corresponding to the given key and locale.
     /// Takes non-mut self as it can be called concurrently.
     fn put_payload(
         &self,
-        key: ResourceKey,
-        options: &ResourceOptions,
+        key: DataKey,
+        locale: &DataLocale,
         payload: &DataPayload<ExportMarker>,
     ) -> Result<(), DataError>;
 
     /// Function called after all keys have been fully dumped.
     /// Takes non-mut self as it can be called concurrently.
-    fn flush(&self, _key: ResourceKey) -> Result<(), DataError> {
+    fn flush(&self, _key: DataKey) -> Result<(), DataError> {
         Ok(())
     }
 
@@ -44,43 +48,62 @@ pub trait DataExporter: Sync {
     }
 }
 
-/// A [`DynProvider`] that can be used for exporting data.
-pub trait ExportableProvider: IterableDynProvider<ExportMarker> + Sync {}
-impl<T> ExportableProvider for T where T: IterableDynProvider<ExportMarker> + Sync {}
+/// A [`DynamicDataProvider`] that can be used for exporting data.
+///
+/// Use [`make_exportable_provider`] to implement this.
+pub trait ExportableProvider: IterableDynamicDataProvider<ExportMarker> + Sync {}
+impl<T> ExportableProvider for T where T: IterableDynamicDataProvider<ExportMarker> + Sync {}
 
+/// This macro can be used on a data provider to allow it to be used for data generation.
+///
+/// Data generation 'compiles' data by using this data provider (which usually translates data from
+/// different sources and doesn't have to be efficient) to generate data structs, and then writing
+/// them to an efficient format like [`BlobDataProvider`] or [`BakedDataProvider`]. The requirements
+/// for `make_exportable_provider` are:
+/// * The data struct has to implement [`serde::Serialize`](::serde::Serialize) and [`databake::Bake`]
+/// * The provider needs to implement [`IterableDataProvider`] for all specified [`KeyedDataMarker`]s.
+///   This allows the generating code to know which [`DataLocale`] to collect.
+///
+/// [`BlobDataProvider`]: ../../icu_provider_blob/struct.BlobDataProvider.html
+/// [`BakedDataProvider`]: ../../icu_datagen/index.html
 #[macro_export]
 macro_rules! make_exportable_provider {
     ($provider:ty, [ $($struct_m:ident),+, ]) => {
-        $crate::impl_dyn_provider!(
+        $crate::impl_dynamic_data_provider!(
             $provider,
             [ $($struct_m),+, ],
             $crate::datagen::ExportMarker
         );
+        $crate::impl_dynamic_data_provider!(
+            $provider,
+            [ $($struct_m),+, ],
+            $crate::any::AnyMarker
+        );
 
-        impl $crate::datagen::IterableDynProvider<$crate::datagen::ExportMarker> for $provider {
-            fn supported_options_for_key(&self, key: $crate::ResourceKey) -> Result<Vec<$crate::ResourceOptions>, $crate::DataError> {
+        impl $crate::datagen::IterableDynamicDataProvider<$crate::datagen::ExportMarker> for $provider {
+            fn supported_locales_for_key(&self, key: $crate::DataKey) -> Result<Vec<$crate::DataLocale>, $crate::DataError> {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
-                    const $struct_m: ResourceKeyHash = <$struct_m as $crate::ResourceMarker>::KEY.get_hash();
+                    const $struct_m: DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.get_hash();
                 )+
                 match key.get_hash() {
                     $(
                         $struct_m => {
-                            $crate::datagen::IterableResourceProvider::<$struct_m>::supported_options(self)
+                            $crate::datagen::IterableDataProvider::<$struct_m>::supported_locales(self)
                         }
                     )+,
-                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_key(key))
+                    _ => Err($crate::DataErrorKind::MissingDataKey.with_key(key))
                 }
             }
         }
 
         impl $crate::datagen::DataConverter<$crate::buf::BufferMarker, $crate::datagen::HeapStatsMarker> for $provider {
-            fn convert(&self, key: $crate::ResourceKey, from: DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, $crate::datagen::ReturnedPayloadError<$crate::buf::BufferMarker>> {
+            fn convert(&self, key: $crate::DataKey, from: DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, $crate::datagen::ReturnedPayloadError<$crate::buf::BufferMarker>> {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
-                    const $struct_m: ResourceKeyHash = <$struct_m as $crate::ResourceMarker>::KEY.get_hash();
+                    const $struct_m: DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.get_hash();
                 )+
                 match key.get_hash() {
                     $(
@@ -89,7 +112,7 @@ macro_rules! make_exportable_provider {
                             return Ok($crate::DataPayload::from_owned(heap_stats));
                         }
                     )+,
-                    _ => Err($crate::datagen::ReturnedPayloadError(from, $crate::DataErrorKind::MissingResourceKey.with_key(key)))
+                    _ => Err($crate::datagen::ReturnedPayloadError(from, $crate::DataErrorKind::MissingDataKey.with_key(key)))
                 }
             }
         }

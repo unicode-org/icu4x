@@ -3,12 +3,12 @@
 `icu_provider` is one of the [`ICU4X`] components.
 
 `icu_provider` defines traits and structs for transmitting data through the ICU4X locale
-data pipeline. The primary trait is [`ResourceProvider`]. It is parameterized by a
-[`ResourceMarker`], which contains the data type and a [`ResourceKey`]. It has one method,
-[`ResourceProvider::load_resource`], which transforms a [`DataRequest`]
+data pipeline. The primary trait is [`DataProvider`]. It is parameterized by a
+[`KeyedDataMarker`], which contains the data type and a [`DataKey`]. It has one method,
+[`DataProvider::load`], which transforms a [`DataRequest`]
 into a [`DataResponse`].
 
-- [`ResourceKey`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.
+- [`DataKey`] is a fixed identifier for the data type, such as `"plurals/cardinal@1"`.
 - [`DataRequest`] contains additional annotations to choose a specific variant of the key,
   such as a locale.
 - [`DataResponse`] contains the data if the request was successful.
@@ -17,7 +17,7 @@ In addition, there are three other traits which are widely implemented:
 
 - [`AnyProvider`] returns data as `dyn Any` trait objects.
 - [`BufferProvider`] returns data as `[u8]` buffers.
-- [`DynProvider`] returns structured data but is not specific to a key.
+- [`DynamicDataProvider`] returns structured data but is not specific to a key.
 
 The most common types required for this crate are included via the prelude:
 
@@ -36,7 +36,7 @@ All nontrivial data providers can fit into one of two classes.
 
 Type 1 providers generally implement [`AnyProvider`], which returns structured data cast into
 `dyn Any` trait objects. Users can call [`as_downcasting()`] to get an object implementing
-[`ResourceProvider`] by downcasting the trait objects.
+[`DataProvider`] by downcasting the trait objects.
 
 Examples of Type 1 providers:
 
@@ -49,19 +49,21 @@ Examples of Type 1 providers:
 
 Type 2 providers generally implement [`BufferProvider`], which returns unstructured data
 typically represented as [`serde`]-serialized buffers. Users can call [`as_deserializing()`]
-to get an object implementing [`ResourceProvider`] by invoking Serde Deserialize.
+to get an object implementing [`DataProvider`] by invoking Serde Deserialize.
 
 Examples of Type 2 providers:
 
 - [`FsDataProvider`] reads individual buffers from the filesystem.
 - [`BlobDataProvider`] reads buffers from a large in-memory blob.
 
-#### Special-Purpose Providers
+#### Testing Provider
 
-This crate also contains some concrete implementations for testing purposes:
+This crate also contains a concrete provider for testing purposes:
 
-- [`InvariantDataProvider`] returns fixed data that does not vary by locale.
 - [`HelloWorldProvider`] returns "hello world" strings in several languages.
+
+If you need a testing provider that contains the actual resource keys used by ICU4X features,
+see the [`icu_testdata`] crate.
 
 ### Provider Adapters
 
@@ -76,44 +78,32 @@ associated with a marker type implementing [`DataMarker`].
 Data structs should generally have one lifetime argument: `'data`. This lifetime allows data
 structs to borrow zero-copy data.
 
-### Additional Traits
+### Data generation API
 
-#### `DataProvider<SerializeMarker>`
+*This functionality is enabled with the "datagen" feature*
 
-*Enabled with the "datagen" feature*
-
-Data providers capable of returning opaque `erased_serde::Serialize` trait objects can be use
-as input to a data exporter, such as when writing data to the filesystem.
-
-This trait is normally implemented using the [`impl_dyn_provider!`] macro.
-
-#### `IterableDataProvider`
-
-*Enabled with the "datagen" feature*
-
-Data providers can implement [`IterableDynProvider`]/[`IterableResourceProvider`], allowing
-iteration over all [`ResourceOptions`] instances supported for a certain key in the data provider.
-
-This trait is normally implemented using the [`impl_dyn_provider!`] macro using the `ITERABLE_SERDE_SE` option.
+The [`datagen`] module contains several APIs for data generation. See [`icu_datagen`] for the reference
+data generation implementation.
 
 [`ICU4X`]: ../icu/index.html
 [`DataProvider`]: data_provider::DataProvider
-[`ResourceKey`]: resource::ResourceKey
-[`ResourceOptions`]: resource::ResourceOptions
-[`IterableDynProvider`]: datagen::IterableDynProvider
-[`IterableResourceProvider`]: datagen::IterableResourceProvider
-[`InvariantDataProvider`]: inv::InvariantDataProvider
-[`AnyPayloadProvider`]: ../icu_provider_adapters/struct_provider/struct.AnyPayloadProvider.html
+[`DataKey`]: key::DataKey
+[`DataLocale`]: request::DataLocale
+[`IterableDynamicDataProvider`]: datagen::IterableDynamicDataProvider
+[`IterableDataProvider`]: datagen::IterableDataProvider
+[`AnyPayloadProvider`]: ../icu_provider_adapters/any_payload/struct.AnyPayloadProvider.html
 [`HelloWorldProvider`]: hello_world::HelloWorldProvider
 [`AnyProvider`]: any::AnyProvider
 [`Yokeable`]: yoke::Yokeable
-[`impl_dyn_provider!`]: impl_dyn_provider
+[`impl_dynamic_data_provider!`]: impl_dynamic_data_provider
 [`icu_provider_adapters`]: ../icu_provider_adapters/index.html
 [`as_downcasting()`]: AsDowncastingAnyProvider::as_downcasting
 [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 [`CldrJsonDataProvider`]: ../icu_datagen/cldr/struct.CldrJsonDataProvider.html
 [`FsDataProvider`]: ../icu_provider_fs/struct.FsDataProvider.html
 [`BlobDataProvider`]: ../icu_provider_blob/struct.BlobDataProvider.html
+[`icu_testdata`]: ../icu_testdata/index.html
+[`icu_datagen`]: ../icu_datagen/index.html
 
 ## More Information
 

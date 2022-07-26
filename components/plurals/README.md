@@ -1,9 +1,9 @@
 # icu_plurals [![crates.io](https://img.shields.io/crates/v/icu_plurals)](https://crates.io/crates/icu_plurals)
 
-[`icu_plurals`](crate) is one of the [`ICU4X`] components.
+Determine the plural category appropriate for a given number in a given language.
 
-This API provides functionality to determine the plural category
-appropriate for a given number in a given language.
+This module is published as its own crate ([`icu_plural`](https://docs.rs/icu_plural/latest/icu_plural/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 For example in English language, when constructing a message
 such as `{ num } items`, the user has to prepare
@@ -27,7 +27,7 @@ use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 
 let provider = icu_testdata::get_provider();
 
-let pr = PluralRules::try_new(locale!("en"), &provider, PluralRuleType::Cardinal)
+let pr = PluralRules::try_new(&locale!("en").into(), &provider, PluralRuleType::Cardinal)
     .expect("Failed to construct a PluralRules struct.");
 
 assert_eq!(pr.select(5_usize), PluralCategory::Other);

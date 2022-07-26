@@ -9,12 +9,12 @@
 
 use icu::calendar::Gregorian;
 use icu::datetime::DateTimeFormatterOptions;
+use icu::datetime::{
+    mock::parse_zoned_gregorian_from_str, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
+};
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
-use icu_datetime::{
-    mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
-};
-use icu_uniset::UnicodeSetBuilder;
+use icu_uniset::CodePointInversionListBuilder;
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {
@@ -47,7 +47,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-            locale,
+            &locale.into(),
             &provider,
             &provider,
             &provider,
@@ -56,17 +56,16 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             &TimeZoneFormatterOptions::default(),
         )
         .expect("Failed to create DateTimeFormatter.");
-        let today: MockZonedDateTime = "2020-10-10T18:56:00Z"
-            .parse()
-            .expect("Failed to parse date");
+        let (today_date, today_tz) =
+            parse_zoned_gregorian_from_str("2020-10-10T18:56:00Z").expect("Failed to parse date");
 
-        let formatted_dt = dtf.format(&today);
+        let formatted_dt = dtf.format(&today_date, &today_tz);
 
         print(format!("Today is: {}", formatted_dt));
     }
 
     {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointInversionListBuilder::new();
         // See http://ftp.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
         builder.add_range(&('\u{0000}'..='\u{00FF}'));
         let latin1_set = builder.build();
@@ -81,7 +80,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(locale!("en"), &provider)
+        let pr = PluralRules::try_new_cardinal(&locale!("en").into(), &provider)
             .expect("Failed to create PluralRules.");
 
         match pr.select(email_count) {

@@ -47,8 +47,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{self, EraStartDate};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit};
-use core::str::FromStr;
-use icu_locid::Locale;
+use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
 
@@ -90,23 +89,28 @@ impl Japanese {
     ///
     /// Setting `historical_eras` will load historical (pre-meiji) era data
     #[allow(clippy::expect_used)] // can be removed after #1800
-    pub fn try_new<D: ResourceProvider<provider::JapaneseErasV1Marker> + ?Sized>(
+    pub fn try_new<D: DataProvider<provider::JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
         era_style: JapaneseEraStyle,
     ) -> Result<Self, DataError> {
-        let mut request = DataRequest::default();
         let japanext = era_style == JapaneseEraStyle::All;
-        // TODO: can use macro after #1800
-        let cal = if japanext {
-            "und-u-ca-japanext"
-        } else {
-            "und-u-ca-japanese"
-        };
 
-        request.options = Locale::from_str(cal)
-            .expect("Locale string is known valid")
-            .into();
-        let eras = data_provider.load_resource(&request)?.take_payload()?;
+        let mut locale = DataLocale::default();
+        locale.set_unicode_ext(
+            key!("ca"),
+            if japanext {
+                value!("japanext")
+            } else {
+                value!("japanese")
+            },
+        );
+
+        let eras = data_provider
+            .load(DataRequest {
+                locale: &locale,
+                metadata: Default::default(),
+            })?
+            .take_payload()?;
         Ok(Self { eras, japanext })
     }
 }

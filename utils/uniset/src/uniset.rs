@@ -10,7 +10,7 @@ use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
-use super::UnicodeSetError;
+use super::CodePointSetError;
 use crate::utils::{deconstruct_range, is_valid_zv};
 
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
@@ -27,12 +27,12 @@ const ALL_SLICE: &ZeroSlice<u32> =
         (char::MAX as u32) + 1,
     ]));
 
-/// A membership wrapper for [`UnicodeSet`].
+/// A membership wrapper for [`CodePointInversionList`].
 ///
-/// Provides exposure to membership functions and constructors from serialized [`UnicodeSets`](UnicodeSet)
+/// Provides exposure to membership functions and constructors from serialized [`CodePointSets`](CodePointInversionList)
 /// and predefined ranges.
 #[derive(Debug, Eq, PartialEq, Clone, Yokeable, ZeroFrom)]
-pub struct UnicodeSet<'data> {
+pub struct CodePointInversionList<'data> {
     // If we wanted to use an array to keep the memory on the stack, there is an unsafe nightly feature
     // https://doc.rust-lang.org/nightly/core/array/trait.FixedSizeArray.html
     // Allows for traits of fixed size arrays
@@ -43,7 +43,7 @@ pub struct UnicodeSet<'data> {
 }
 
 #[cfg(any(feature = "serde", test))]
-impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
+impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
         D: serde::Deserializer<'de>,
@@ -51,9 +51,9 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
         use serde::de::Error;
         let parsed_inv_list = ZeroVec::<u32>::deserialize(deserializer)?;
 
-        UnicodeSet::from_inversion_list(parsed_inv_list).map_err(|e| {
+        CodePointInversionList::from_inversion_list(parsed_inv_list).map_err(|e| {
             Error::custom(format!(
-                "Cannot deserialize invalid inversion list for UnicodeSet: {:?}",
+                "Cannot deserialize invalid inversion list for CodePointInversionList: {:?}",
                 e
             ))
         })
@@ -61,7 +61,7 @@ impl<'de: 'a, 'a> serde::Deserialize<'de> for UnicodeSet<'a> {
 }
 
 #[cfg(feature = "databake")]
-impl databake::Bake for UnicodeSet<'_> {
+impl databake::Bake for CodePointInversionList<'_> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         env.insert("icu_uniset");
         let inv_list = self.inv_list.bake(env);
@@ -69,7 +69,7 @@ impl databake::Bake for UnicodeSet<'_> {
         // Safe because our parts are safe.
         databake::quote! { unsafe {
             #[allow(unused_unsafe)]
-            ::icu_uniset::UnicodeSet::from_parts_unchecked(#inv_list, #size)
+            ::icu_uniset::CodePointInversionList::from_parts_unchecked(#inv_list, #size)
         }}
     }
 }
@@ -79,7 +79,7 @@ impl databake::Bake for UnicodeSet<'_> {
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
 #[cfg(any(feature = "serde", test))]
-impl<'data> serde::Serialize for UnicodeSet<'data> {
+impl<'data> serde::Serialize for CodePointInversionList<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
@@ -88,8 +88,8 @@ impl<'data> serde::Serialize for UnicodeSet<'data> {
     }
 }
 
-impl<'data> UnicodeSet<'data> {
-    /// Returns a new [`UnicodeSet`] from an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
+impl<'data> CodePointInversionList<'data> {
+    /// Returns a new [`CodePointInversionList`] from an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
     /// represented as a [`ZeroVec`]`<`[`u32`]`>` of code points.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
@@ -98,23 +98,23 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
-    /// use icu_uniset::UnicodeSetError;
+    /// use icu_uniset::CodePointInversionList;
+    /// use icu_uniset::CodePointSetError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
     /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&valid);
-    /// let result = UnicodeSet::from_inversion_list(inv_list);
-    /// assert!(matches!(result, UnicodeSet));
+    /// let result = CodePointInversionList::from_inversion_list(inv_list);
+    /// assert!(matches!(result, CodePointInversionList));
     ///
     /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
     /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&invalid);
-    /// let result = UnicodeSet::from_inversion_list(inv_list);
-    /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
-    /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
+    /// let result = CodePointInversionList::from_inversion_list(inv_list);
+    /// assert!(matches!(result, Err(CodePointSetError::InvalidSet(_))));
+    /// if let Err(CodePointSetError::InvalidSet(actual)) = result {
     ///     assert_eq!(&invalid, &actual);
     /// }
     /// ```
-    pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, UnicodeSetError> {
+    pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, CodePointSetError> {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if is_valid_zv(&inv_list) {
             let size: usize = inv_list
@@ -127,7 +127,7 @@ impl<'data> UnicodeSet<'data> {
                 .sum::<u32>() as usize;
             Ok(Self { inv_list, size })
         } else {
-            Err(UnicodeSetError::InvalidSet(inv_list.to_vec()))
+            Err(CodePointSetError::InvalidSet(inv_list.to_vec()))
         }
     }
 
@@ -136,7 +136,7 @@ impl<'data> UnicodeSet<'data> {
         Self { inv_list, size }
     }
 
-    /// Returns a new [`UnicodeSet`] by borrowing an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
+    /// Returns a new [`CodePointInversionList`] by borrowing an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
     /// represented as a slice of [`u32`] code points.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
@@ -147,26 +147,26 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
-    /// use icu_uniset::UnicodeSetError;
+    /// use icu_uniset::CodePointInversionList;
+    /// use icu_uniset::CodePointSetError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
-    /// let result = UnicodeSet::from_inversion_list_slice(&valid);
-    /// assert!(matches!(result, UnicodeSet));
+    /// let result = CodePointInversionList::from_inversion_list_slice(&valid);
+    /// assert!(matches!(result, CodePointInversionList));
     ///
     /// let invalid: Vec<u32> = vec![0x0, 0x80, 0x3];
-    /// let result = UnicodeSet::from_inversion_list_slice(&invalid);
-    /// assert!(matches!(result, Err(UnicodeSetError::InvalidSet(_))));
-    /// if let Err(UnicodeSetError::InvalidSet(actual)) = result {
+    /// let result = CodePointInversionList::from_inversion_list_slice(&invalid);
+    /// assert!(matches!(result, Err(CodePointSetError::InvalidSet(_))));
+    /// if let Err(CodePointSetError::InvalidSet(actual)) = result {
     ///     assert_eq!(&invalid, &actual);
     /// }
     /// ```
-    pub fn from_inversion_list_slice(inv_list: &'data [u32]) -> Result<Self, UnicodeSetError> {
+    pub fn from_inversion_list_slice(inv_list: &'data [u32]) -> Result<Self, CodePointSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(inv_list);
-        UnicodeSet::from_inversion_list(inv_list_zv)
+        CodePointInversionList::from_inversion_list(inv_list_zv)
     }
 
-    /// Returns a new, fully-owned [`UnicodeSet`] by cloning an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
+    /// Returns a new, fully-owned [`CodePointInversionList`] by cloning an [inversion list](https://en.wikipedia.org/wiki/Inversion_list)
     /// represented as a slice of [`u32`] code points.
     ///
     /// The inversion list must be of even length, sorted ascending non-overlapping,
@@ -175,14 +175,14 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
-    /// use icu_uniset::UnicodeSetError;
+    /// use icu_uniset::CodePointInversionList;
+    /// use icu_uniset::CodePointSetError;
     /// use zerovec::ZeroVec;
     ///
     /// use std::vec::Vec;
     ///
-    /// fn inv_list_to_owned_unicodeset(inv_list: &[u32]) -> UnicodeSet {
-    ///     UnicodeSet::clone_from_inversion_list_slice(inv_list).unwrap()
+    /// fn inv_list_to_owned_codepointinversionlist(inv_list: &[u32]) -> CodePointInversionList {
+    ///     CodePointInversionList::clone_from_inversion_list_slice(inv_list).unwrap()
     /// }
     ///
     /// let bmp_list: [u32; 2] = [0x0, 0x10000];
@@ -190,42 +190,42 @@ impl<'data> UnicodeSet<'data> {
     /// let sip_list: &[u32] = &vec![0x20000, 0x30000];
     ///
     /// let inv_lists: [&[u32]; 3] = [&bmp_list, &smp_list, sip_list];
-    /// let unicodesets: Vec<UnicodeSet> = inv_lists
+    /// let codepointinversionlists: Vec<CodePointInversionList> = inv_lists
     ///     .iter()
-    ///     .map(|il| inv_list_to_owned_unicodeset(il))
+    ///     .map(|il| inv_list_to_owned_codepointinversionlist(il))
     ///     .collect();
     ///
-    /// let bmp = &unicodesets.get(0).unwrap();
+    /// let bmp = &codepointinversionlists.get(0).unwrap();
     /// assert!(bmp.contains_u32(0xFFFF));
     /// assert!(!bmp.contains_u32(0x10000));
     ///
-    /// assert!(!&unicodesets.iter().any(|set| set.contains_u32(0x40000)));
+    /// assert!(!&codepointinversionlists.iter().any(|set| set.contains_u32(0x40000)));
     /// ```
-    pub fn clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, UnicodeSetError> {
+    pub fn clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, CodePointSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::alloc_from_slice(inv_list);
-        UnicodeSet::from_inversion_list(inv_list_zv)
+        CodePointInversionList::from_inversion_list(inv_list_zv)
     }
 
-    /// Returns an owned inversion list representing the current [`UnicodeSet`]
-    pub fn get_inversion_list(&self) -> Vec<u32> {
+    /// Returns an owned inversion list representing the current [`CodePointInversionList`]
+    pub fn get_inversion_list_vec(&self) -> Vec<u32> {
         let result: Vec<u32> = self.as_inversion_list().to_vec(); // Only crate public, to not leak impl
         result
     }
 
-    /// Returns [`UnicodeSet`] spanning entire Unicode range
+    /// Returns [`CodePointInversionList`] spanning entire Unicode range
     ///
     /// The range spans from `0x0 -> 0x10FFFF` inclusive.
     ///  
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// use zerovec::ZeroVec;
     ///
     /// let expected = vec![0x0, (char::MAX as u32) + 1];
-    /// assert_eq!(UnicodeSet::all().get_inversion_list(), expected);
+    /// assert_eq!(CodePointInversionList::all().get_inversion_list_vec(), expected);
     /// assert_eq!(
-    ///     UnicodeSet::all().size(),
+    ///     CodePointInversionList::all().size(),
     ///     (expected[1] - expected[0]) as usize
     /// );
     /// ```
@@ -236,22 +236,22 @@ impl<'data> UnicodeSet<'data> {
         }
     }
 
-    /// Returns [`UnicodeSet`] spanning BMP range
+    /// Returns [`CodePointInversionList`] spanning BMP range
     ///
     /// The range spans from `0x0 -> 0xFFFF` inclusive.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// use zerovec::ZeroVec;
     ///
     /// const BMP_MAX: u32 = 0xFFFF;
     ///
     /// let expected = vec![0x0, BMP_MAX + 1];
-    /// assert_eq!(UnicodeSet::bmp().get_inversion_list(), expected);
+    /// assert_eq!(CodePointInversionList::bmp().get_inversion_list_vec(), expected);
     /// assert_eq!(
-    ///     UnicodeSet::bmp().size(),
+    ///     CodePointInversionList::bmp().size(),
     ///     (expected[1] - expected[0]) as usize
     /// );
     /// ```
@@ -269,14 +269,14 @@ impl<'data> UnicodeSet<'data> {
         &self.inv_list
     }
 
-    /// Yields an [`Iterator`] going through the character set in the [`UnicodeSet`]
+    /// Yields an [`Iterator`] going through the character set in the [`CodePointInversionList`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// let example_list = [0x41, 0x44, 0x45, 0x46];
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// let mut ex_iter_chars = example.iter_chars();
     /// assert_eq!(Some('A'), ex_iter_chars.next());
     /// assert_eq!(Some('B'), ex_iter_chars.next());
@@ -294,18 +294,18 @@ impl<'data> UnicodeSet<'data> {
     }
 
     /// Yields an [`Iterator`] returning the ranges of the code points that are
-    /// included in the [`UnicodeSet`]
+    /// included in the [`CodePointInversionList`]
     ///
     /// Ranges are returned as [`RangeInclusive`], which is inclusive of its
     /// `end` bound value. An end-inclusive behavior matches the ICU4C/J
-    /// behavior of ranges, ex: `UnicodeSet::contains(UChar32 start, UChar32 end)`.
+    /// behavior of ranges, ex: `CodePointInversionList::contains(UChar32 start, UChar32 end)`.
     ///
     /// # Example
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// let example_list = [0x41, 0x44, 0x45, 0x46];
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// let mut example_iter_ranges = example.iter_ranges();
     /// assert_eq!(Some(0x41..=0x43), example_iter_ranges.next());
     /// assert_eq!(Some(0x45..=0x45), example_iter_ranges.next());
@@ -320,12 +320,12 @@ impl<'data> UnicodeSet<'data> {
         })
     }
 
-    /// Returns the number of ranges contained in this [`UnicodeSet`]
+    /// Returns the number of ranges contained in this [`CodePointInversionList`]
     pub fn get_range_count(&self) -> usize {
         self.inv_list.len() / 2
     }
 
-    /// Returns a specific range contained in this [`UnicodeSet`] by index.
+    /// Returns a specific range contained in this [`CodePointInversionList`] by index.
     /// Intended for use in FFI.
     pub fn get_nth_range(&self, idx: usize) -> Option<RangeInclusive<u32>> {
         let start_idx = idx * 2;
@@ -335,7 +335,7 @@ impl<'data> UnicodeSet<'data> {
         Some(RangeInclusive::new(start, end - 1))
     }
 
-    /// Returns the number of elements of the [`UnicodeSet`]
+    /// Returns the number of elements of the [`CodePointInversionList`]
     pub fn size(&self) -> usize {
         if self.is_empty() {
             return 0;
@@ -343,7 +343,7 @@ impl<'data> UnicodeSet<'data> {
         self.size
     }
 
-    /// Returns whether or not the [`UnicodeSet`] is empty
+    /// Returns whether or not the [`CodePointInversionList`] is empty
     pub fn is_empty(&self) -> bool {
         self.inv_list.is_empty()
     }
@@ -371,7 +371,7 @@ impl<'data> UnicodeSet<'data> {
         }
     }
 
-    /// Checks to see the query is in the [`UnicodeSet`]
+    /// Checks to see the query is in the [`CodePointInversionList`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using [`core`] implementation
@@ -379,9 +379,9 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains('A'));
     /// assert!(!example.contains('C'));
     /// ```
@@ -389,7 +389,7 @@ impl<'data> UnicodeSet<'data> {
         self.contains_query(query as u32).is_some()
     }
 
-    /// Checks to see the unsigned int is in the [`UnicodeSet::all()`](UnicodeSet::all())
+    /// Checks to see the unsigned int is in the [`CodePointInversionList::all()`](CodePointInversionList::all())
     ///
     /// Note: Even though [`u32`] and [`prim@char`] in Rust are non-negative 4-byte
     /// values, there is an important difference. A [`u32`] can take values up to
@@ -402,9 +402,9 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains_u32(0x41));
     /// assert!(!example.contains_u32(0x43));
     /// ```
@@ -412,7 +412,7 @@ impl<'data> UnicodeSet<'data> {
         self.contains_query(query).is_some()
     }
 
-    /// Checks to see if the range is in the [`UnicodeSet`]
+    /// Checks to see if the range is in the [`CodePointInversionList`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
     /// in the set using [`Vec`] implementation. Only runs the search once on the `start`
@@ -421,30 +421,30 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains_range(&('A'..'C')));
     /// assert!(example.contains_range(&('A'..='B')));
     /// assert!(!example.contains_range(&('A'..='C')));
     /// ```
     ///
     /// Surrogate points (`0xD800 -> 0xDFFF`) will return [`false`] if the Range contains them but the
-    /// [`UnicodeSet`] does not.
+    /// [`CodePointInversionList`] does not.
     ///
     /// Note: when comparing to ICU4C/J, keep in mind that `Range`s in Rust are
     /// constructed inclusive of start boundary and exclusive of end boundary.
-    /// The ICU4C/J `UnicodeSet::contains(UChar32 start, UChar32 end)` method
+    /// The ICU4C/J `CodePointInversionList::contains(UChar32 start, UChar32 end)` method
     /// differs by including the end boundary.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// use std::char;
     /// let check = char::from_u32(0xD7FE).unwrap()..char::from_u32(0xE001).unwrap();
     /// let example_list = [0xD7FE, 0xD7FF, 0xE000, 0xE001];
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(!example.contains_range(&(check)));
     /// ```
     pub fn contains_range(&self, range: &impl RangeBounds<char>) -> bool {
@@ -468,17 +468,17 @@ impl<'data> UnicodeSet<'data> {
         }
     }
 
-    /// Check if the calling [`UnicodeSet`] contains all the characters of the given [`UnicodeSet`]
+    /// Check if the calling [`CodePointInversionList`] contains all the characters of the given [`CodePointInversionList`]
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// let example_list = [0x41, 0x46, 0x55, 0x5B]; // A - E, U - Z
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
-    /// let a_to_d = UnicodeSet::from_inversion_list_slice(&[0x41, 0x45]).unwrap();
-    /// let f_to_t = UnicodeSet::from_inversion_list_slice(&[0x46, 0x55]).unwrap();
-    /// let r_to_x = UnicodeSet::from_inversion_list_slice(&[0x52, 0x58]).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
+    /// let a_to_d = CodePointInversionList::from_inversion_list_slice(&[0x41, 0x45]).unwrap();
+    /// let f_to_t = CodePointInversionList::from_inversion_list_slice(&[0x46, 0x55]).unwrap();
+    /// let r_to_x = CodePointInversionList::from_inversion_list_slice(&[0x52, 0x58]).unwrap();
     /// assert!(example.contains_set(&a_to_d)); // contains all
     /// assert!(!example.contains_set(&f_to_t)); // contains none
     /// assert!(!example.contains_set(&r_to_x)); // contains some
@@ -513,9 +513,9 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// let example_list = [0x41, 0x44]; // {A, B, C}
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert_eq!(example.span("CABXYZ", true), 3);
     /// assert_eq!(example.span("XYZC", false), 3);
     /// assert_eq!(example.span("XYZ", true), 0);
@@ -534,9 +534,9 @@ impl<'data> UnicodeSet<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_uniset::UnicodeSet;
+    /// use icu_uniset::CodePointInversionList;
     /// let example_list = [0x41, 0x44]; // {A, B, C}
-    /// let example = UnicodeSet::from_inversion_list_slice(&example_list).unwrap();
+    /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert_eq!(example.span_back("XYZCAB", true), 3);
     /// assert_eq!(example.span_back("ABCXYZ", true), 6);
     /// assert_eq!(example.span_back("CABXYZ", false), 3);
@@ -553,34 +553,34 @@ impl<'data> UnicodeSet<'data> {
 
 #[cfg(test)]
 mod tests {
-    use super::{UnicodeSet, UnicodeSetError};
+    use super::{CodePointInversionList, CodePointSetError};
     use std::{char, vec::Vec};
     use zerovec::ZeroVec;
 
     #[test]
-    fn test_unicodeset_try_from_vec() {
+    fn test_codepointinversionlist_try_from_vec() {
         let ex = vec![0x2, 0x3, 0x4, 0x5];
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
-        assert_eq!(ex, check.get_inversion_list());
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
+        assert_eq!(ex, check.get_inversion_list_vec());
         assert_eq!(2, check.size());
     }
 
     #[test]
-    fn test_unicodeset_try_from_vec_error() {
+    fn test_codepointinversionlist_try_from_vec_error() {
         let check = vec![0x1, 0x1, 0x2, 0x3, 0x4];
         let inv_list = ZeroVec::from_slice_or_alloc(&check);
-        let set = UnicodeSet::from_inversion_list(inv_list);
-        assert!(matches!(set, Err(UnicodeSetError::InvalidSet(_))));
-        if let Err(UnicodeSetError::InvalidSet(actual)) = set {
+        let set = CodePointInversionList::from_inversion_list(inv_list);
+        assert!(matches!(set, Err(CodePointSetError::InvalidSet(_))));
+        if let Err(CodePointSetError::InvalidSet(actual)) = set {
             assert_eq!(&check, &actual);
         }
     }
 
-    // UnicodeSet membership functions
+    // CodePointInversionList membership functions
     #[test]
-    fn test_unicodeset_contains_query() {
+    fn test_codepointinversionlist_contains_query() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert!(check.contains_query(0x40).is_none());
         assert_eq!(check.contains_query(0x41).unwrap(), 0);
         assert_eq!(check.contains_query(0x44).unwrap(), 0);
@@ -590,9 +590,9 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains() {
+    fn test_codepointinversionlist_contains() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert!(check.contains(0x2 as char));
         assert!(check.contains(0x4 as char));
         assert!(check.contains(0xA as char));
@@ -600,9 +600,9 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains_false() {
+    fn test_codepointinversionlist_contains_false() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert!(!check.contains(0x1 as char));
         assert!(!check.contains(0x5 as char));
         assert!(!check.contains(0x9 as char));
@@ -611,9 +611,9 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains_range() {
+    fn test_codepointinversionlist_contains_range() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert!(check.contains_range(&('A'..='E'))); // 65 - 69
         assert!(check.contains_range(&('C'..'D'))); // 67 - 67
         assert!(check.contains_range(&('L'..'P'))); // 76 - 80
@@ -621,49 +621,49 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_contains_range_false() {
+    fn test_codepointinversionlist_contains_range_false() {
         let ex = vec![0x41, 0x46, 0x4B, 0x55];
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert!(!check.contains_range(&('!'..'A'))); // 33 - 65
         assert!(!check.contains_range(&('F'..'K'))); // 70 - 74
         assert!(!check.contains_range(&('U'..))); // 85 - ..
     }
 
     #[test]
-    fn test_unicodeset_contains_range_invalid() {
-        let check = UnicodeSet::all();
+    fn test_codepointinversionlist_contains_range_invalid() {
+        let check = CodePointInversionList::all();
         assert!(!check.contains_range(&('A'..'!'))); // 65 - 33
         assert!(!check.contains_range(&('A'..'A'))); // 65 - 65
     }
 
     #[test]
-    fn test_unicodeset_contains_set_u() {
+    fn test_codepointinversionlist_contains_set_u() {
         let ex = vec![0xA, 0x14, 0x28, 0x32, 0x46, 0x50, 0x64, 0x6E];
-        let u = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let u = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         let inside = vec![0xF, 0x14, 0x2C, 0x31, 0x46, 0x50, 0x64, 0x6D];
-        let s = UnicodeSet::from_inversion_list_slice(&inside).unwrap();
+        let s = CodePointInversionList::from_inversion_list_slice(&inside).unwrap();
         assert!(u.contains_set(&s));
     }
 
     #[test]
-    fn test_unicodeset_contains_set_u_false() {
+    fn test_codepointinversionlist_contains_set_u_false() {
         let ex = vec![0xA, 0x14, 0x28, 0x32, 0x46, 0x50, 0x64, 0x78];
-        let u = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let u = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         let outside = vec![0x0, 0xA, 0x16, 0x2C, 0x32, 0x46, 0x4F, 0x51, 0x6D, 0x6F];
-        let s = UnicodeSet::from_inversion_list_slice(&outside).unwrap();
+        let s = CodePointInversionList::from_inversion_list_slice(&outside).unwrap();
         assert!(!u.contains_set(&s));
     }
 
     #[test]
-    fn test_unicodeset_size() {
+    fn test_codepointinversionlist_size() {
         let ex = vec![0x2, 0x5, 0xA, 0xF];
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(8, check.size());
-        let check = UnicodeSet::all();
+        let check = CodePointInversionList::all();
         let expected = (char::MAX as u32) + 1;
         assert_eq!(expected as usize, check.size());
         let inv_list_vec: Vec<u32> = vec![];
-        let check = UnicodeSet {
+        let check = CodePointInversionList {
             inv_list: ZeroVec::from_slice_or_alloc(&inv_list_vec),
             size: 0,
         };
@@ -671,9 +671,9 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_is_empty() {
+    fn test_codepointinversionlist_is_empty() {
         let inv_list_vec: Vec<u32> = vec![];
-        let check = UnicodeSet {
+        let check = CodePointInversionList {
             inv_list: ZeroVec::from_slice_or_alloc(&inv_list_vec),
             size: 0,
         };
@@ -681,15 +681,15 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_is_not_empty() {
-        let check = UnicodeSet::all();
+    fn test_codepointinversionlist_is_not_empty() {
+        let check = CodePointInversionList::all();
         assert!(!check.is_empty());
     }
 
     #[test]
-    fn test_unicodeset_iter_chars() {
+    fn test_codepointinversionlist_iter_chars() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         let mut iter = check.iter_chars();
         assert_eq!(Some('A'), iter.next());
         assert_eq!(Some('B'), iter.next());
@@ -699,9 +699,9 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_iter_ranges() {
+    fn test_codepointinversionlist_iter_ranges() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let set = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         let mut ranges = set.iter_ranges();
         assert_eq!(Some(0x41..=0x43), ranges.next());
         assert_eq!(Some(0x45..=0x45), ranges.next());
@@ -710,24 +710,24 @@ mod tests {
     }
 
     #[test]
-    fn test_unicodeset_iter_ranges_exactsizeiter_trait() {
+    fn test_codepointinversionlist_iter_ranges_exactsizeiter_trait() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let set = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         let ranges = set.iter_ranges();
         assert_eq!(3, ranges.len());
     }
 
     #[test]
-    fn test_unicodeset_range_count() {
+    fn test_codepointinversionlist_range_count() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let set = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(3, set.get_range_count());
     }
 
     #[test]
-    fn test_unicodeset_get_nth_range() {
+    fn test_codepointinversionlist_get_nth_range() {
         let ex = vec![0x41, 0x44, 0x45, 0x46, 0xD800, 0xD801];
-        let set = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let set = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(Some(0x41..=0x43), set.get_nth_range(0));
         assert_eq!(Some(0x45..=0x45), set.get_nth_range(1));
         assert_eq!(Some(0xD800..=0xD800), set.get_nth_range(2));
@@ -737,42 +737,42 @@ mod tests {
     // Range<char> cannot represent the upper bound (non-inclusive) for
     // char::MAX, whereas Range<u32> can.
     #[test]
-    fn test_unicodeset_iter_ranges_with_max_code_point() {
+    fn test_codepointinversionlist_iter_ranges_with_max_code_point() {
         let ex = vec![0x80, (char::MAX as u32) + 1];
-        let set = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let set = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         let mut ranges = set.iter_ranges();
         assert_eq!(Some(0x80..=(char::MAX as u32)), ranges.next());
         assert_eq!(None, ranges.next());
     }
 
     #[test]
-    fn test_unicodeset_span_contains() {
+    fn test_codepointinversionlist_span_contains() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(check.span("ABCDE", true), 3);
         assert_eq!(check.span("E", true), 0);
     }
 
     #[test]
-    fn test_unicodeset_span_does_not_contain() {
+    fn test_codepointinversionlist_span_does_not_contain() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(check.span("DEF", false), 2);
         assert_eq!(check.span("KLMA", false), 3);
     }
 
     #[test]
-    fn test_unicodeset_span_back_contains() {
+    fn test_codepointinversionlist_span_back_contains() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(check.span_back("XYZABFH", true), 3);
         assert_eq!(check.span_back("ABCXYZ", true), 6);
     }
 
     #[test]
-    fn test_unicodeset_span_back_does_not_contain() {
+    fn test_codepointinversionlist_span_back_does_not_contain() {
         let ex = vec![0x41, 0x44, 0x46, 0x4B]; // A - D, F - K
-        let check = UnicodeSet::from_inversion_list_slice(&ex).unwrap();
+        let check = CodePointInversionList::from_inversion_list_slice(&ex).unwrap();
         assert_eq!(check.span_back("ABCXYZ", false), 3);
         assert_eq!(check.span_back("XYZABC", false), 6);
     }
@@ -784,15 +784,16 @@ mod tests {
             0x202A, 0x202F, 0x2030, 0x205F, 0x2060, 0x3000, 0x3001,
         ];
         let inv_list_clone = (&inv_list).clone();
-        let s: UnicodeSet = UnicodeSet::from_inversion_list_slice(&inv_list_clone).unwrap();
-        let round_trip_inv_list = s.get_inversion_list();
+        let s: CodePointInversionList =
+            CodePointInversionList::from_inversion_list_slice(&inv_list_clone).unwrap();
+        let round_trip_inv_list = s.get_inversion_list_vec();
         assert_eq!(round_trip_inv_list, inv_list);
     }
 
     #[test]
     fn test_serde_serialize() {
         let inv_list = vec![0x41, 0x46, 0x4B, 0x55];
-        let uniset = UnicodeSet::from_inversion_list_slice(&inv_list).unwrap();
+        let uniset = CodePointInversionList::from_inversion_list_slice(&inv_list).unwrap();
         let json_str = serde_json::to_string(&uniset).unwrap();
         assert_eq!(json_str, "[65,70,75,85]");
     }
@@ -801,23 +802,25 @@ mod tests {
     fn test_serde_deserialize() {
         let inv_list_str = "[65,70,75,85]";
         let exp_inv_list = vec![0x41, 0x46, 0x4B, 0x55];
-        let exp_uniset = UnicodeSet::from_inversion_list_slice(&exp_inv_list).unwrap();
-        let act_uniset: UnicodeSet = serde_json::from_str(inv_list_str).unwrap();
+        let exp_uniset = CodePointInversionList::from_inversion_list_slice(&exp_inv_list).unwrap();
+        let act_uniset: CodePointInversionList = serde_json::from_str(inv_list_str).unwrap();
         assert_eq!(act_uniset, exp_uniset);
     }
 
     #[test]
     fn test_serde_deserialize_invalid() {
         let inv_list_str = "[65,70,98775,85]";
-        let act_result: Result<UnicodeSet, serde_json::Error> = serde_json::from_str(inv_list_str);
+        let act_result: Result<CodePointInversionList, serde_json::Error> =
+            serde_json::from_str(inv_list_str);
         assert!(matches!(act_result, Err(_)));
     }
 
     #[test]
     fn test_serde_with_postcard_roundtrip() -> Result<(), postcard::Error> {
-        let set = UnicodeSet::bmp();
+        let set = CodePointInversionList::bmp();
         let set_serialized: Vec<u8> = postcard::to_allocvec(&set).unwrap();
-        let set_deserialized: UnicodeSet = postcard::from_bytes::<UnicodeSet>(&set_serialized)?;
+        let set_deserialized: CodePointInversionList =
+            postcard::from_bytes::<CodePointInversionList>(&set_serialized)?;
 
         assert_eq!(&set, &set_deserialized);
         assert!(matches!(set_deserialized.inv_list, ZeroVec::Borrowed(_)));
@@ -828,10 +831,10 @@ mod tests {
     #[test]
     fn databake() {
         databake::test_bake!(
-            UnicodeSet<'static>,
+            CodePointInversionList<'static>,
             const: unsafe {
                 #[allow(unused_unsafe)]
-                crate::UnicodeSet::from_parts_unchecked(
+                crate::CodePointInversionList::from_parts_unchecked(
                     unsafe {
                         ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             48u8, 0u8, 0u8, 0u8, 58u8, 0u8, 0u8, 0u8, 65u8, 0u8, 0u8, 0u8, 71u8,

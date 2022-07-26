@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! [`icu_plurals`](crate) is one of the [`ICU4X`] components.
+//! Determine the plural category appropriate for a given number in a given language.
 //!
-//! This API provides functionality to determine the plural category
-//! appropriate for a given number in a given language.
+//! This module is published as its own crate ([`icu_plural`](https://docs.rs/icu_plural/latest/icu_plural/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! For example in English language, when constructing a message
 //! such as `{ num } items`, the user has to prepare
@@ -29,7 +29,7 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let pr = PluralRules::try_new(locale!("en"), &provider, PluralRuleType::Cardinal)
+//! let pr = PluralRules::try_new(&locale!("en").into(), &provider, PluralRuleType::Cardinal)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -87,7 +87,6 @@ pub mod rules;
 
 use core::cmp::{Ord, PartialOrd};
 pub use error::PluralRulesError;
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 pub use operands::PluralOperands;
 use provider::CardinalV1Marker;
@@ -138,11 +137,10 @@ pub enum PluralRuleType {
 /// ```
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let dp = InvariantDataProvider;
+/// let dp = icu_testdata::get_provider();
 ///
-/// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
+/// let pr = PluralRules::try_new(&locale!("en").into(), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -265,11 +263,10 @@ impl PluralCategory {
 /// ```
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let dp = InvariantDataProvider;
+/// let dp = icu_testdata::get_provider();
 ///
-/// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
+/// let pr = PluralRules::try_new(&locale!("en").into(), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.select(5_usize), PluralCategory::Other);
@@ -278,10 +275,7 @@ impl PluralCategory {
 /// [`ICU4X`]: ../icu/index.html
 /// [`Plural Type`]: PluralRuleType
 /// [`Plural Category`]: PluralCategory
-pub struct PluralRules {
-    _locale: Locale,
-    rules: DataPayload<ErasedPluralRulesV1Marker>,
-}
+pub struct PluralRules(DataPayload<ErasedPluralRulesV1Marker>);
 
 impl PluralRules {
     /// Constructs a new `PluralRules` for a given locale, [`type`] and [`data provider`].
@@ -293,24 +287,23 @@ impl PluralRules {
     /// ```
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralRuleType, PluralRules};
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let lid = locale!("en");
     ///
-    /// let dp = InvariantDataProvider;
+    /// let dp = icu_testdata::get_provider();
     ///
-    /// let _ = PluralRules::try_new(lid, &dp, PluralRuleType::Cardinal);
+    /// let _ = PluralRules::try_new(&lid.into(), &dp, PluralRuleType::Cardinal);
     /// ```
     ///
     /// [`type`]: PluralRuleType
     /// [`data provider`]: icu_provider
-    pub fn try_new<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new<D>(
+        locale: &DataLocale,
         data_provider: &D,
         rule_type: PluralRuleType,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<CardinalV1Marker> + ResourceProvider<OrdinalV1Marker> + ?Sized,
+        D: DataProvider<CardinalV1Marker> + DataProvider<OrdinalV1Marker> + ?Sized,
     {
         match rule_type {
             PluralRuleType::Cardinal => Self::try_new_cardinal(locale, data_provider),
@@ -336,29 +329,29 @@ impl PluralRules {
     ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let rules = PluralRules::try_new_cardinal(locale!("ru"), &dp).expect("Data should be present");
+    /// let rules = PluralRules::try_new_cardinal(&locale!("ru").into(), &dp).expect("Data should be present");
     ///
     /// assert_eq!(rules.select(2_usize), PluralCategory::Few);
     /// ```
     ///
     /// [`One`]: PluralCategory::One
     /// [`Other`]: PluralCategory::Other
-    pub fn try_new_cardinal<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new_cardinal<D>(
+        locale: &DataLocale,
         data_provider: &D,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<CardinalV1Marker> + ?Sized,
+        D: DataProvider<CardinalV1Marker> + ?Sized,
     {
-        let locale = locale.into();
-        let rules = data_provider
-            .load_resource(&DataRequest {
-                options: locale.clone().into(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?
-            .cast();
-        Self::new(locale, rules)
+        Ok(Self(
+            data_provider
+                .load(DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                })?
+                .take_payload()?
+                .cast(),
+        ))
     }
 
     /// Constructs a new `PluralRules` for a given locale for ordinal numbers.
@@ -380,7 +373,7 @@ impl PluralRules {
     ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let rules = PluralRules::try_new_ordinal(locale!("ru"), &dp).expect("Data should be present");
+    /// let rules = PluralRules::try_new_ordinal(&locale!("ru").into(), &dp).expect("Data should be present");
     ///
     /// assert_eq!(rules.select(2_usize), PluralCategory::Other);
     /// ```
@@ -389,22 +382,22 @@ impl PluralRules {
     /// [`Two`]: PluralCategory::Two
     /// [`Few`]: PluralCategory::Few
     /// [`Other`]: PluralCategory::Other
-    pub fn try_new_ordinal<T: Into<Locale>, D>(
-        locale: T,
+    pub fn try_new_ordinal<D>(
+        locale: &DataLocale,
         data_provider: &D,
     ) -> Result<Self, PluralRulesError>
     where
-        D: ResourceProvider<OrdinalV1Marker> + ?Sized,
+        D: DataProvider<OrdinalV1Marker> + ?Sized,
     {
-        let locale = locale.into();
-        let rules = data_provider
-            .load_resource(&DataRequest {
-                options: locale.clone().into(),
-                metadata: Default::default(),
-            })?
-            .take_payload()?
-            .cast();
-        Self::new(locale, rules)
+        Ok(Self(
+            data_provider
+                .load(DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                })?
+                .take_payload()?
+                .cast(),
+        ))
     }
 
     /// Returns the [`Plural Category`] appropriate for the given number.
@@ -414,11 +407,10 @@ impl PluralRules {
     /// ```
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let dp = InvariantDataProvider;
+    /// let dp = icu_testdata::get_provider();
     ///
-    /// let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
+    /// let pr = PluralRules::try_new(&locale!("en").into(), &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// match pr.select(1_usize) {
@@ -442,12 +434,11 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralOperands};
     /// use icu::plurals::{PluralRuleType, PluralRules};
-    /// use icu_provider::inv::InvariantDataProvider;
     /// use std::convert::TryFrom;
     /// #
-    /// # let dp = InvariantDataProvider;
+    /// # let dp = icu_testdata::get_provider();
     /// #
-    /// # let pr = PluralRules::try_new(locale!("en"), &dp, PluralRuleType::Cardinal)
+    /// # let pr = PluralRules::try_new(&locale!("en").into(), &dp, PluralRuleType::Cardinal)
     /// #     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let operands = PluralOperands::try_from(-5).expect("Failed to parse to operands.");
@@ -460,7 +451,7 @@ impl PluralRules {
     /// [`Plural Category`]: PluralCategory
     /// [`Plural Operands`]: operands::PluralOperands
     pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
-        let rules = self.rules.get();
+        let rules = self.0.get();
         let input = input.into();
 
         macro_rules! test_rule {
@@ -492,11 +483,10 @@ impl PluralRules {
     /// ```
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
     /// let dp = icu_testdata::get_provider();
     ///
-    /// let pr = PluralRules::try_new(locale!("fr"), &dp, PluralRuleType::Cardinal)
+    /// let pr = PluralRules::try_new(&locale!("fr").into(), &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let mut categories = pr.categories();
@@ -508,7 +498,7 @@ impl PluralRules {
     ///
     /// [`Plural Categories`]: PluralCategory
     pub fn categories(&self) -> impl Iterator<Item = PluralCategory> + '_ {
-        let rules = self.rules.get();
+        let rules = self.0.get();
 
         macro_rules! test_rule {
             ($rule:ident, $cat:ident) => {
@@ -526,18 +516,5 @@ impl PluralRules {
             .chain(test_rule!(few, Few))
             .chain(test_rule!(many, Many))
             .chain(Some(PluralCategory::Other).into_iter())
-    }
-
-    /// Lower-level constructor that allows constructing a [`PluralRules`] directly from
-    /// data obtained from a provider.
-    fn new<T: Into<Locale>>(
-        locale: T,
-        rules: DataPayload<ErasedPluralRulesV1Marker>,
-    ) -> Result<Self, PluralRulesError> {
-        let locale = locale.into();
-        Ok(Self {
-            _locale: locale,
-            rules,
-        })
     }
 }

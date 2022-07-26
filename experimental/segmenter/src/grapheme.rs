@@ -6,6 +6,7 @@ use alloc::vec::Vec;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
 
+use crate::complex::Dictionary;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
@@ -25,17 +26,20 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 /// different string encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct GraphemeClusterBreakSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    dictionary: Dictionary,
 }
 
 impl GraphemeClusterBreakSegmenter {
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
+        D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
-        let payload = provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
-        Ok(Self { payload })
+        let payload = provider.load(Default::default())?.take_payload()?;
+        let dictionary = Dictionary::default();
+        Ok(Self {
+            payload,
+            dictionary,
+        })
     }
 
     /// Create a grapheme cluster break iterator for an `str` (a UTF-8 string).
@@ -46,7 +50,7 @@ impl GraphemeClusterBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
         }
     }
 
@@ -61,7 +65,7 @@ impl GraphemeClusterBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
         }
     }
 
@@ -76,7 +80,7 @@ impl GraphemeClusterBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
         }
     }
 }

@@ -361,12 +361,20 @@ dependencies = [
     "wasm-twiggy-dominators-examples",
 ]
 
+[tasks.wasm-copy-to-diplomat]
+description = "Copy the WASM files from release into Diplomat"
+category = "ICU4X WASM"
+dependencies = ["wasm-build-release"]
+command = "cp"
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm", "ffi/diplomat/wasm/lib/icu_capi.wasm"]
+
 [tasks.wasm-test-release]
 description = "Run WASM tests in release mode"
 category = "ICU4X WASM"
 dependencies = [
     "wasm-release",
-    "diplomat-gen-js"
+    "diplomat-gen-js",
+    "wasm-copy-to-diplomat"
 ]
 script_runner = "@duckscript"
 script = '''
@@ -383,10 +391,9 @@ script = '''
 exit_on_error true
 cd ffi/diplomat
 
-# Duckscript doesn't support globs in rm, so we delete the relevant files
-rm ./wasm/lib/api.mjs
-rm ./wasm/lib/diplomat-runtime.mjs
-rm -r ./wasm/docs/
+rm -r ./wasm/lib
+rm -r ./wasm/docs
+mkdir ./wasm/lib
 mkdir ./wasm/docs
 
 exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/

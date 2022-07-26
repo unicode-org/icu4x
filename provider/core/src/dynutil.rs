@@ -6,7 +6,7 @@
 
 /// Trait to allow conversion from `DataPayload<T>` to `DataPayload<S>`.
 ///
-/// This trait can be manually implemented in order to enable [`impl_dyn_provider`].
+/// This trait can be manually implemented in order to enable [`impl_dynamic_data_provider`].
 ///
 /// [`DataPayload::downcast`]: crate::DataPayload::downcast
 pub trait UpcastDataPayload<M>
@@ -23,152 +23,120 @@ where
     ///
     /// ```
     /// use icu_provider::dynutil::UpcastDataPayload;
-    /// use icu_provider::marker::CowStrMarker;
+    /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
     /// use std::borrow::Cow;
     ///
-    /// let data = "foo".to_string();
-    /// let original = DataPayload::<CowStrMarker>::from_owned(Cow::Owned(data));
+    /// let original = DataPayload::<HelloWorldV1Marker>::from_static_str("foo");
     /// let upcasted = AnyMarker::upcast(original);
     /// let downcasted = upcasted
-    ///     .downcast::<CowStrMarker>()
+    ///     .downcast::<HelloWorldV1Marker>()
     ///     .expect("Type conversion");
-    /// assert_eq!(downcasted.get(), "foo");
+    /// assert_eq!(downcasted.get().message, "foo");
     /// ```
     fn upcast(other: crate::DataPayload<M>) -> crate::DataPayload<Self>;
 }
 
-/// Implements [`DynProvider`] for a marker type `S` on a type that already implements
-/// [`DynProvider`] or [`ResourceProvider`] for one or more `M`, where `M` is a concrete type
+/// Implements [`DynamicDataProvider`] for a marker type `S` on a type that already implements
+/// [`DynamicDataProvider`] or [`DataProvider`] for one or more `M`, where `M` is a concrete type
 /// that is convertible to `S` via [`UpcastDataPayload`].
 ///
 /// Use this macro to add support to your data provider for:
 ///
 /// - [`AnyPayload`] if your provider can return typed objects as [`Any`](core::any::Any).
 ///
-/// ## Wrapping ResourceProvider
+/// ## Wrapping DataProvider
 ///
-/// If your type implements [`ResourceProvider`], pass a list of markers as the second argument.
-/// This results in a `DynProvider<AnyMarker>` that delegates to a specific marker if the key
-/// matches or else returns [`DataErrorKind::MissingResourceKey`].
+/// If your type implements [`DataProvider`], pass a list of markers as the second argument.
+/// This results in a `DynamicDataProvider` that delegates to a specific marker if the key
+/// matches or else returns [`DataErrorKind::MissingDataKey`].
 ///
 /// ```
-/// use icu_provider::datagen::*;
-/// use icu_provider::hello_world::*;
-/// use icu_provider::inv::InvariantDataProvider;
 /// use icu_provider::prelude::*;
+/// use icu_provider::hello_world::*;
+/// #
+/// # // Duplicating HelloWorldProvider because the real one already implements DynamicDataProvider<AnyMarker>
+/// # struct HelloWorldProvider;
+/// # impl DataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+/// #     fn load(
+/// #         &self,
+/// #         req: DataRequest,
+/// #     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+/// #         icu_provider::hello_world::HelloWorldProvider.load(req)
+/// #     }
+/// # }
 ///
-/// // Example struct that implements ResourceProvider<HelloWorldV1Marker>
-/// struct MyProvider;
-/// impl ResourceProvider<HelloWorldV1Marker> for MyProvider {
-///     fn load_resource(
-///         &self,
-///         req: &DataRequest,
-///     ) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-///         let provider = InvariantDataProvider;
-///         provider.load_resource(req)
-///     }
-/// }
+/// // Implement DynamicDataProvider<AnyMarker> on HelloWorldProvider: DataProvider<HelloWorldV1Marker>
+/// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker);
 ///
-/// impl IterableResourceProvider<HelloWorldV1Marker> for MyProvider {
-///     fn supported_options(
-///         &self,
-///     ) -> Result<Vec<ResourceOptions>, DataError> {
-///         Ok(vec![Default::default()])
-///     }
-/// }
+/// let req = DataRequest {
+///     locale: &icu_locid::locale!("de").into(),
+///     metadata: Default::default(),
+/// };
 ///
-/// // Implement DataProvider<AnyMarker> on this struct
-/// icu_provider::impl_dyn_provider!(MyProvider, [HelloWorldV1Marker,], AnyMarker);
+/// // Successful because the key matches:
+/// HelloWorldProvider.load_data(HelloWorldV1Marker::KEY, req).unwrap();
 ///
-/// let provider = MyProvider;
-///
-/// // Successful result if the key matches:
-/// assert!(matches!(
-///     provider.load_payload(HelloWorldV1Marker::KEY, &Default::default()),
-///     Ok(_)
-/// ));
-///
-/// // Failure if the key does not match:
-/// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
-/// assert!(matches!(
-///     provider.load_payload(DUMMY_KEY, &Default::default()),
-///     Err(DataError {
-///         kind: DataErrorKind::MissingResourceKey,
-///         ..
-///     })
-/// ));
+/// // MissingDataKey error as the key does not match:
+/// assert_eq!(
+///     HelloWorldProvider.load_data(icu_provider::data_key!("dummy@1"), req).unwrap_err().kind,
+///     DataErrorKind::MissingDataKey,
+/// );
 /// ```
 ///
-/// ## Wrapping DynProvider
+/// ## Wrapping DynamicDataProvider
 ///
-/// It is also possible to wrap a [`DynProvider`] to create another [`DynProvider`]. To do this,
+/// It is also possible to wrap a [`DynamicDataProvider`] to create another [`DynamicDataProvider`]. To do this,
 /// pass a match-like statement for keys as the second argument:
 ///
 /// ```
 /// use icu_provider::prelude::*;
-/// use icu_provider::datagen::*;
 /// use icu_provider::hello_world::*;
-/// use icu_provider::inv::InvariantDataProvider;
+/// #
+/// # struct HelloWorldProvider;
+/// # impl DynamicDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
+/// #     fn load_data(&self, key: DataKey, req: DataRequest)
+/// #             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+/// #         icu_provider::hello_world::HelloWorldProvider.load(req)
+/// #     }
+/// # }
 ///
-/// // Example struct that implements DynProvider<HelloWorldV1Marker>
-/// struct MyProvider;
-/// impl DynProvider<HelloWorldV1Marker> for MyProvider {
-///     fn load_payload(&self, key: ResourceKey, req: &DataRequest)
-///             -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
-///         let provider = InvariantDataProvider;
-///         provider.load_resource(req)
-///     }
-/// }
-///
-/// impl IterableDynProvider<HelloWorldV1Marker> for MyProvider {
-///     fn supported_options_for_key(&self, _: ResourceKey)
-///         -> Result<Vec<ResourceOptions>, DataError> {
-///         Ok(vec![Default::default()])
-///     }
-/// }
-///
-/// // Implement DataProvider<AnyMarker> on this struct.
-/// // Match HelloWorldV1Marker::KEY and delegate to DynProvider<HelloWorldV1Marker>.
-/// // Send the wildcard match also to DynProvider<HelloWorldV1Marker>.
-/// icu_provider::impl_dyn_provider!(MyProvider, {
+/// // Implement DataProvider<AnyMarker> on HelloWorldProvider: DynamicDataProvider<HelloWorldV1Marker>
+/// icu_provider::impl_dynamic_data_provider!(HelloWorldProvider, {
+///     // Match HelloWorldV1Marker::KEY and delegate to DynamicDataProvider<HelloWorldV1Marker>.
 ///     HW = HelloWorldV1Marker::KEY => HelloWorldV1Marker,
+///     // Send the wildcard match also to DynamicDataProvider<HelloWorldV1Marker>.
 ///     _ => HelloWorldV1Marker,
 /// }, AnyMarker);
 ///
-/// let provider = MyProvider;
-/// let provider = provider.as_any_provider();
+/// let req = DataRequest {
+///     locale: &icu_locid::locale!("de").into(),
+///     metadata: Default::default(),
+/// };
 ///
-/// // Successful result if the key matches:
-/// assert!(matches!(
-///     provider.load_any(HelloWorldV1Marker::KEY, &Default::default()),
-///     Ok(_)
-/// ));
+/// // Successful because the key matches:
+/// HelloWorldProvider.as_any_provider().load_any(HelloWorldV1Marker::KEY, req).unwrap();
 ///
-/// // Because of the wildcard, non-matching requests are captured:
-/// let DUMMY_KEY = icu_provider::resource_key!("dummy@1");
-/// assert!(matches!(
-///     provider.load_any(DUMMY_KEY, &Default::default()),
-///     Ok(_)
-/// ));
+/// // Because of the wildcard, any key actually works:
+/// HelloWorldProvider.as_any_provider().load_any(icu_provider::data_key!("dummy@1"), req).unwrap();
 /// ```
 ///
-/// [`DynProvider`]: crate::DynProvider
-/// [`ResourceProvider`]: crate::ResourceProvider
+/// [`DynamicDataProvider`]: crate::DynamicDataProvider
+/// [`DataProvider`]: crate::DataProvider
 /// [`AnyPayload`]: (crate::any::AnyPayload)
-/// [`DataErrorKind::MissingResourceKey`]: (crate::DataErrorKind::MissingResourceKey)
+/// [`DataErrorKind::MissingDataKey`]: (crate::DataErrorKind::MissingDataKey)
 /// [`SerializeMarker`]: (crate::serde::SerializeMarker)
 #[macro_export]
-macro_rules! impl_dyn_provider {
+macro_rules! impl_dynamic_data_provider {
     // allow passing in multiple things to do and get dispatched
     ($provider:ty, $arms:tt, $one:path, $($rest:path),+) => {
-        $crate::impl_dyn_provider!(
+        $crate::impl_dynamic_data_provider!(
             $provider,
             $arms,
             $one
         );
 
-        $crate::impl_dyn_provider!(
+        $crate::impl_dynamic_data_provider!(
             $provider,
             $arms,
             $($rest),+
@@ -176,24 +144,24 @@ macro_rules! impl_dyn_provider {
     };
 
     ($provider:ty, { $($ident:ident = $key:path => $struct_m:ty),+, $(_ => $struct_d:ty,)?}, $dyn_m:ty) => {
-        impl $crate::DynProvider<$dyn_m> for $provider
+        impl $crate::DynamicDataProvider<$dyn_m> for $provider
         {
-            fn load_payload(
+            fn load_data(
                 &self,
-                key: $crate::ResourceKey,
-                req: &$crate::DataRequest,
+                key: $crate::DataKey,
+                req: $crate::DataRequest,
             ) -> Result<
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
             > {
                 $(
-                    const $ident: ResourceKeyHash = $key.get_hash();
+                    const $ident: DataKeyHash = $key.get_hash();
                 )+
                 match key.get_hash() {
                     $(
                         $ident => {
                             let result: $crate::DataResponse<$struct_m> =
-                                $crate::DynProvider::<$struct_m>::load_payload(self, key, req)?;
+                                $crate::DynamicDataProvider::<$struct_m>::load_data(self, key, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -205,7 +173,7 @@ macro_rules! impl_dyn_provider {
                     $(
                         _ => {
                             let result: $crate::DataResponse<$struct_d> =
-                                $crate::DynProvider::<$struct_d>::load_payload(self, key, req)?;
+                                $crate::DynamicDataProvider::<$struct_d>::load_data(self, key, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -214,19 +182,19 @@ macro_rules! impl_dyn_provider {
                             })
                         }
                     )?
-                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
+                    _ => Err($crate::DataErrorKind::MissingDataKey.with_req(key, req))
                 }
             }
         }
 
     };
     ($provider:ty, [ $($struct_m:ident),+, ], $dyn_m:path) => {
-        impl $crate::DynProvider<$dyn_m> for $provider
+        impl $crate::DynamicDataProvider<$dyn_m> for $provider
         {
-            fn load_payload(
+            fn load_data(
                 &self,
-                key: $crate::ResourceKey,
-                req: &$crate::DataRequest,
+                key: $crate::DataKey,
+                req: $crate::DataRequest,
             ) -> Result<
                 $crate::DataResponse<$dyn_m>,
                 $crate::DataError,
@@ -234,13 +202,13 @@ macro_rules! impl_dyn_provider {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
-                    const $struct_m: $crate::ResourceKeyHash = $struct_m::KEY.get_hash();
+                    const $struct_m: $crate::DataKeyHash = $struct_m::KEY.get_hash();
                 )+
                 match key.get_hash() {
                     $(
                         $struct_m => {
                             let result: $crate::DataResponse<$struct_m> =
-                                $crate::ResourceProvider::load_resource(self, req)?;
+                                $crate::DataProvider::load(self, req)?;
                             Ok(DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
@@ -249,7 +217,7 @@ macro_rules! impl_dyn_provider {
                             })
                         }
                     )+,
-                    _ => Err($crate::DataErrorKind::MissingResourceKey.with_req(key, req))
+                    _ => Err($crate::DataErrorKind::MissingDataKey.with_req(key, req))
                 }
             }
         }

@@ -4,10 +4,10 @@
 
 #![warn(missing_docs)]
 
-//! [`icu_decimal`](crate) offers localized decimal number formatting.
+//! Formatting basic decimal numbers.
 //!
-//! Currently, [`icu_decimal`](crate) provides [`FixedDecimalFormatter`], which renders basic decimal numbers
-//! in a locale-sensitive way.
+//! This module is published as its own crate ([`icu_decimal`](https://docs.rs/icu_decimal/latest/icu_decimal/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! Support for currencies, measurement units, and compact notation is planned. To track progress,
 //! follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
@@ -22,7 +22,7 @@
 //! use writeable::Writeable;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let fdf = FixedDecimalFormatter::try_new(locale!("bn"), &provider, Default::default())
+//! let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), &provider, Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
@@ -40,8 +40,8 @@
 //! use icu::locid::Locale;
 //! use writeable::Writeable;
 //!
-//! let provider = icu_provider::inv::InvariantDataProvider;
-//! let fdf = FixedDecimalFormatter::try_new(Locale::UND, &provider, Default::default())
+//! let provider = icu_testdata::get_provider();
+//! let fdf = FixedDecimalFormatter::try_new(&Locale::UND.into(), &provider, Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050)
@@ -49,6 +49,28 @@
 //!     .expect("Operation is fully in range");
 //!
 //! assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
+//! ```
+//!
+//! ### Format a number using an alternative numbering system
+//!
+//! Numbering systems specified in the `-u-nu` subtag will be followed as long as the locale has
+//! symbols for that numbering system.
+//!
+//! ```
+//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::locid::Locale;
+//! use writeable::Writeable;
+//!
+//! let provider = icu_testdata::get_provider();
+//! let locale = "th-u-nu-thai".parse::<Locale>().unwrap();
+//! let fdf = FixedDecimalFormatter::try_new(&locale.into(), &provider, Default::default())
+//!     .expect("Data should load successfully");
+//!
+//! let fixed_decimal = 1000007.into();
+//! let formatted_value = fdf.format(&fixed_decimal);
+//! let formatted_str = formatted_value.write_to_string();
+//!
+//! assert_eq!("๑,๐๐๐,๐๐๗", formatted_str);
 //! ```
 //!
 //! [`FixedDecimalFormatter`]: FixedDecimalFormatter
@@ -80,7 +102,6 @@ pub use error::Error as FixedDecimalFormatterError;
 pub use format::FormattedFixedDecimal;
 
 use fixed_decimal::FixedDecimal;
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
@@ -101,17 +122,14 @@ pub struct FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    pub fn try_new<
-        T: Into<Locale>,
-        D: ResourceProvider<provider::DecimalSymbolsV1Marker> + ?Sized,
-    >(
-        locale: T,
+    pub fn try_new<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
+        locale: &DataLocale,
         data_provider: &D,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, FixedDecimalFormatterError> {
         let symbols = data_provider
-            .load_resource(&DataRequest {
-                options: locale.into().into(),
+            .load(DataRequest {
+                locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;

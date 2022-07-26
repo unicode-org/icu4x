@@ -33,7 +33,7 @@ The data struct definitions should live in the crate that uses them. By conventi
 
 - `icu::decimal::provider::DecimalSymbolsV1`
 - `icu::locale_canonicalizer::provider::LikelySubtagsV1`
-- `icu::uniset::provider::UnicodePropertyV1`
+- `icu::uniset::provider::PropertyCodePointSetV1`
 
 In general, data structs should be annotated with `#[icu_provider::data_struct]`, and they should support *at least* `Debug`, `PartialEq`, `Clone`, `Default`, and Serde `Serialize` and `Deserialize`.
 
@@ -54,14 +54,14 @@ Although they may share common code, source data providers are implemented speci
 Examples of source data providers include:
 
 - [`NumbersProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/cldr/struct.NumbersProvider.html)
-- [`BinaryPropertyUnicodeSetDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/uprops/struct.BinaryPropertyUnicodeSetDataProvider.html)
+- [`BinaryPropertyCodePointSetDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/uprops/struct.BinaryPropertyCodePointSetDataProvider.html)
 - [&hellip; more examples](https://unicode-org.github.io/icu4x-docs/doc/icu_datagen/transform/index.html)
 
 Source data providers must implement the following traits:
 
-- `ResourceProvider<M>` or `DynProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
-- `IterableDynProvider<M>`. or `IterableResourceProvider<M>`, required for the data exporter (see below)
-- `DynProvider<SerializeMarker>` and `IterableDynProvider<SerializeMarker>`, usually implemented with the macro [`impl_dyn_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dyn_provider.html) after the above traits have been implemented
+- `DataProvider<M>` or `DynamicDataProvider<M>` for one or more data markers `M`; this impl is the main step where data transformation takes place
+- `IterableDataProvider<M>`, required for the data exporter (see below)
+- `DynamicDataProvider<SerializeMarker>` and `IterableDynamicDataProvider<SerializeMarker>`, usually implemented with the macro [`impl_dynamic_data_provider!`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/macro.impl_dynamic_data_provider.html) after the above traits have been implemented
 
 Source data providers are often complex to write. Rules of thumb:
 
@@ -103,7 +103,7 @@ macro_rules! create_datagen_provider {
 as well as to the list of keys 
 
 ```rust
-pub fn get_all_keys() -> Vec<ResourceKey> {
+pub fn get_all_keys() -> Vec<DataKey> {
     // ...
     v.push(FooV1Marker::KEY)
 }
@@ -208,28 +208,28 @@ impl From<&SourceData> for FooProvider {
     }
 }
 
-impl ResourceProvider<FooV1Marker> for FooProvider {
-    fn load_resource(
+impl DataProvider<FooV1Marker> for FooProvider {
+    fn load(
         &self,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<FooV1Marker>, DataError> {
         // Load the data from CLDR JSON and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
-        // This method will be called once per option returned by supported_options.
+        // This method will be called once per option returned by supported_locales.
         // Use internal mutability (RwLock) to avoid duplicating work.
     }
 }
 
-impl IterableResourceProvider<FooV1Marker> for FooProvider {
-    fn supported_options(
+impl IterableDataProvider<FooV1Marker> for FooProvider {
+    fn supported_locales(
         &self,
-    ) -> Result<Vec<ResourceOptions>, DataError> {
+    ) -> Result<Vec<DataLocale>, DataError> {
         // This should list all supported locales, for example.
     }
 }
 
-// Once we have ResourceProvider and IterableResourceProvider, we can apply this macro:
+// Once we have DataProvider and IterableDataProvider, we can apply this macro:
 icu_provider::make_exportable_provider!(FooProvider, [FooV1Marker,]);
 ```
 

@@ -236,7 +236,7 @@ pub struct PluralRules {
 impl ecma402_traits::pluralrules::PluralRules for PluralRules {
     type Error = PluralRulesError;
 
-    fn try_new<L>(l: L, opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
+    fn try_new<L>(_l: L, _opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
     where
         L: ecma402_traits::Locale,
         Self: Sized,
@@ -263,8 +263,8 @@ impl PluralRules {
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::ResourceProvider<ipr::provider::OrdinalV1Marker>
-            + icu_provider::ResourceProvider<ipr::provider::CardinalV1Marker>,
+        P: icu_provider::DataProvider<ipr::provider::OrdinalV1Marker>
+            + icu_provider::DataProvider<ipr::provider::CardinalV1Marker>,
         Self: Sized,
     {
         let locale: String = format!("{}", l);

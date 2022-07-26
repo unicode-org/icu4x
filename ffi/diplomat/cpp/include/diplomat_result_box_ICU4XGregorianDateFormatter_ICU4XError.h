@@ -6,11 +6,12 @@
 #include <stdbool.h>
 #include "diplomat_runtime.h"
 
-#ifdef __cplusplus
-extern "C" {
-#endif
 typedef struct ICU4XGregorianDateFormatter ICU4XGregorianDateFormatter;
 #include "ICU4XError.h"
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 typedef struct diplomat_result_box_ICU4XGregorianDateFormatter_ICU4XError {
     union {
         ICU4XGregorianDateFormatter* ok;
@@ -19,6 +20,7 @@ typedef struct diplomat_result_box_ICU4XGregorianDateFormatter_ICU4XError {
     bool is_ok;
 } diplomat_result_box_ICU4XGregorianDateFormatter_ICU4XError;
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

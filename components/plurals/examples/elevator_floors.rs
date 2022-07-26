@@ -31,7 +31,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         print("\n====== Elevator Floor (en) example ============", None);
-        let pr = PluralRules::try_new_ordinal(locale!("en"), &provider)
+        let pr = PluralRules::try_new_ordinal(&locale!("en").into(), &provider)
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {

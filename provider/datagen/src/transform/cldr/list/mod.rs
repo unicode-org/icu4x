@@ -7,7 +7,7 @@ use crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider
 use crate::SourceData;
 use icu_list::provider::*;
 use icu_locid::subtags_language as language;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
 
@@ -25,11 +25,11 @@ impl From<&SourceData> for ListProvider {
     }
 }
 
-impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourceProvider<M>
+impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> DataProvider<M>
     for ListProvider
 {
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let langid = req.options.get_langid();
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        let langid = req.locale.get_langid();
 
         let resource: &cldr_serde::list_patterns::Resource = self
             .source
@@ -104,7 +104,7 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                     .with_display_context(&e))?
                 .get_set_for_value(icu_properties::Script::Hebrew)
-                .to_unicode_set()
+                .to_code_point_inversion_list()
                 .iter_ranges()
                 .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
                 .fold(String::new(), |a, b| a + &b)
@@ -124,7 +124,6 @@ impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> ResourcePro
         }
 
         let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_owned(patterns)),
@@ -137,16 +136,16 @@ icu_provider::make_exportable_provider!(
     [AndListV1Marker, OrListV1Marker, UnitListV1Marker,]
 );
 
-impl<M: ResourceMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableResourceProvider<M>
+impl<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>> IterableDataProvider<M>
     for ListProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
             .cldr()?
             .misc()
             .list_langs()?
-            .map(Into::<ResourceOptions>::into)
+            .map(DataLocale::from)
             .collect())
     }
 }

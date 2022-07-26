@@ -19,10 +19,10 @@
 )]
 #![warn(missing_docs)]
 
-//! `icu_collation` is one of the ICU4X components.
+//! Comparing strings according to language-dependent conventions.
 //!
-//! This API provides necessary functionality for comparing strings according to language-dependent
-//! conventions.
+//! This module is published as its own crate ([`icu_collator`](https://docs.rs/icu_collator/latest/icu_collator/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! `Collator` is the main structure of the component. It accepts a set of arguments
 //! which allow it to collect necessary data from the data provider, and once
@@ -39,7 +39,7 @@
 //!
 //! Create a directory `$PROJECTS/icu-build` and `cd` into it.
 //!
-//! Run `../icu/icu4c/source/runConfigureICU --enable-debug Linux --prefix /opt/Projects/localicu --enable-static`
+//! Run `../icu/icu4c/source/runConfigureICU --enable-debug Linux --prefix $PROJECTS/localicu --enable-static`
 //!
 //! Run `make`
 //!

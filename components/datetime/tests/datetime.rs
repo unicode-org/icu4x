@@ -20,7 +20,7 @@ use icu_calendar::{
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::{
     any::AnyDateTimeFormatter,
-    mock::{parse_gregorian_from_str, zoned_datetime::MockZonedDateTime},
+    mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
     provider::{
         calendar::{
@@ -39,8 +39,8 @@ use icu_locid::{
 };
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
+use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::by_key::MultiForkByKeyProvider;
-use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -88,7 +88,7 @@ fn test_fixture(fixture_name: &str) {
             if let Some(kind) = AnyCalendarKind::from_locale(&locale) {
                 match kind {
                     AnyCalendarKind::Buddhist => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_buddhist,
                         &input_iso,
                         &output_value,
@@ -97,7 +97,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Japanese => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_japanese,
                         &input_iso,
                         &output_value,
@@ -106,7 +106,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Japanext => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_japanext,
                         &input_iso,
                         &output_value,
@@ -115,7 +115,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Coptic => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_coptic,
                         &input_iso,
                         &output_value,
@@ -124,7 +124,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Indian => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_indian,
                         &input_iso,
                         &output_value,
@@ -133,7 +133,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Ethiopic => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_ethiopic,
                         &input_iso,
                         &output_value,
@@ -142,7 +142,7 @@ fn test_fixture(fixture_name: &str) {
                         &description,
                     ),
                     AnyCalendarKind::Ethioaa => assert_fixture_element(
-                        locale,
+                        &locale,
                         &input_ethioaa,
                         &input_iso,
                         &output_value,
@@ -154,7 +154,7 @@ fn test_fixture(fixture_name: &str) {
                 }
             } else {
                 assert_fixture_element(
-                    locale,
+                    &locale,
                     &input_value,
                     &input_iso,
                     &output_value,
@@ -168,7 +168,7 @@ fn test_fixture(fixture_name: &str) {
 }
 
 fn assert_fixture_element<A, D>(
-    locale: Locale,
+    locale: &Locale,
     input_value: &DateTime<A>,
     input_iso: &DateTime<Iso>,
     output_value: &str,
@@ -179,25 +179,25 @@ fn assert_fixture_element<A, D>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
-    D: ResourceProvider<DateSymbolsV1Marker>
-        + ResourceProvider<TimeSymbolsV1Marker>
-        + ResourceProvider<DatePatternsV1Marker>
-        + ResourceProvider<TimePatternsV1Marker>
-        + ResourceProvider<DateSkeletonPatternsV1Marker>
-        + ResourceProvider<DecimalSymbolsV1Marker>
-        + ResourceProvider<OrdinalV1Marker>
-        + ResourceProvider<WeekDataV1Marker>
-        + ResourceProvider<JapaneseErasV1Marker>,
+    D: DataProvider<DateSymbolsV1Marker>
+        + DataProvider<TimeSymbolsV1Marker>
+        + DataProvider<DatePatternsV1Marker>
+        + DataProvider<TimePatternsV1Marker>
+        + DataProvider<DateSkeletonPatternsV1Marker>
+        + DataProvider<DecimalSymbolsV1Marker>
+        + DataProvider<OrdinalV1Marker>
+        + DataProvider<WeekDataV1Marker>
+        + DataProvider<JapaneseErasV1Marker>,
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = DateTimeFormatter::<A::Calendar>::try_new(locale.clone(), provider, options).unwrap();
+    let dtf = DateTimeFormatter::<A::Calendar>::try_new(&locale.into(), provider, options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
 
     let any_dtf =
-        AnyDateTimeFormatter::try_new_unstable(locale.clone(), provider, options).unwrap();
+        AnyDateTimeFormatter::try_new_unstable(&locale.into(), provider, options).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(
@@ -229,10 +229,10 @@ fn assert_fixture_element<A, D>(
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(locale.clone(), provider, bag.date.unwrap())
+                DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
                     .unwrap();
             let tf = TimeFormatter::<A::Calendar>::try_new(
-                locale,
+                &locale.into(),
                 provider,
                 bag.time.unwrap(),
                 bag.preferences,
@@ -257,7 +257,8 @@ fn assert_fixture_element<A, D>(
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(locale, provider, bag.date.unwrap()).unwrap();
+                DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
+                    .unwrap();
             let result = df.format_to_string(input_value);
 
             assert_eq!(result, output_value, "{}", description);
@@ -275,7 +276,7 @@ fn assert_fixture_element<A, D>(
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
             let tf = TimeFormatter::<A::Calendar>::try_new(
-                locale,
+                &locale.into(),
                 provider,
                 bag.time.unwrap(),
                 bag.preferences,
@@ -310,10 +311,10 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
     {
         let options = fixtures::get_options(&fx.input.options);
 
-        let mut input_value: MockZonedDateTime = fx.input.value.parse().unwrap();
-        input_value.time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
-        input_value.time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
-        input_value.time_zone.time_variant = config.time_variant;
+        let (input_date, mut time_zone) = parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
+        time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
+        time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
+        time_zone.time_variant = config.time_variant;
 
         let description = match fx.description {
             Some(description) => {
@@ -327,7 +328,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
             let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                locale,
+                &locale.into(),
                 &provider,
                 &provider,
                 &provider,
@@ -336,15 +337,16 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
                 &TimeZoneFormatterOptions::default(),
             )
             .unwrap();
-            let result = dtf.format_to_string(&input_value);
+            let result = dtf.format_to_string(&input_date, &time_zone);
 
             assert_eq!(result, output_value, "{}", description);
 
             let mut s = String::new();
-            dtf.format_to_write(&mut s, &input_value).unwrap();
+            dtf.format_to_write(&mut s, &input_date, &time_zone)
+                .unwrap();
             assert_eq!(s, output_value, "{}", description);
 
-            let fdt = dtf.format(&input_value);
+            let fdt = dtf.format(&input_date, &time_zone);
             let s = fdt.to_string();
             assert_eq!(s, output_value, "{}", description);
 
@@ -366,63 +368,33 @@ fn test_dayperiod_patterns() {
             .unicode
             .keywords
             .set(key!("ca"), value!("gregory"));
-        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let mut data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
+        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let date_symbols_data: DataPayload<DateSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let week_data: DataPayload<WeekDataV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::temp_for_region(locale.id.region),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let date_symbols_data: DataPayload<DateSymbolsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        let time_symbols_data: DataPayload<TimeSymbolsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> =
+            provider.load(req).unwrap().take_payload().unwrap();
+        data_locale.retain_unicode_ext(|_| false);
         let decimal_data: DataPayload<DecimalSymbolsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(locale.id.clone()),
+            .load(DataRequest {
+                locale: &data_locale,
                 metadata: Default::default(),
             })
             .unwrap()
@@ -472,7 +444,7 @@ fn test_dayperiod_patterns() {
                             ],
                         };
                         let dtf = DateTimeFormatter::<Gregorian>::try_new(
-                            locale.clone(),
+                            &data_locale,
                             &local_provider.as_downcasting(),
                             &format_options,
                         )
@@ -502,10 +474,10 @@ fn test_time_zone_format_configs() {
     for test in get_time_zone_tests("time_zones").unwrap().0 {
         let langid: LanguageIdentifier = test.locale.parse().unwrap();
         let mut config = test.config;
-        let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
-        datetime.time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        datetime.time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        datetime.time_zone.time_variant = config.time_variant.take();
+        let (_, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
+        time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
+        time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
+        time_zone.time_variant = config.time_variant.take();
         for TimeZoneExpectation {
             patterns: _,
             configs,
@@ -523,7 +495,7 @@ fn test_time_zone_format_configs() {
                     )
                     .unwrap();
                     let mut buffer = String::new();
-                    tzf.format_to_write(&mut buffer, &datetime).unwrap();
+                    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
                     assert_eq!(
                         buffer.to_string(),
                         *expect,
@@ -559,52 +531,27 @@ fn test_time_zone_patterns() {
             .unicode
             .keywords
             .set(key!("ca"), value!("gregory"));
+        let data_locale = DataLocale::from(&locale);
+        let req = DataRequest {
+            locale: &data_locale,
+            metadata: Default::default(),
+        };
         let mut config = test.config;
-        let mut datetime: MockZonedDateTime = test.datetime.parse().unwrap();
-        datetime.time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        datetime.time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        datetime.time_zone.time_variant = config.time_variant.take();
+        let (datetime, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
+        time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
+        time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
+        time_zone.time_variant = config.time_variant.take();
 
-        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> = date_provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> = date_provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = date_provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let symbols_data: DataPayload<DateSymbolsV1Marker> = date_provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
-        let week_data: DataPayload<WeekDataV1Marker> = date_provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::temp_for_region(locale.id.region),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
+        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
+        let symbols_data: DataPayload<DateSymbolsV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
+        let week_data: DataPayload<WeekDataV1Marker> =
+            date_provider.load(req).unwrap().take_payload().unwrap();
 
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -651,7 +598,7 @@ fn test_time_zone_patterns() {
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
-                        locale.clone(),
+                        &data_locale,
                         &local_provider.as_downcasting(),
                         &zone_provider,
                         &plural_provider,
@@ -662,7 +609,7 @@ fn test_time_zone_patterns() {
                     .unwrap();
 
                     assert_eq!(
-                        dtf.format(&datetime).to_string(),
+                        dtf.format(&datetime, &time_zone).to_string(),
                         *expect,
                         "\n\
                     locale:   `{}`,\n\
@@ -768,7 +715,8 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     let options = DateTimeFormatterOptions::Length(length_bag);
 
     let provider = icu_testdata::get_provider();
-    let result = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options);
+    let result =
+        DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options);
 
     assert!(result.is_err());
 }

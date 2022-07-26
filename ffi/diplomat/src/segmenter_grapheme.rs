@@ -9,7 +9,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
-    use icu_provider::ResourceProvider;
+    use icu_provider::DataProvider;
     use icu_segmenter::{
         GraphemeClusterBreakDataV1Marker, GraphemeClusterBreakIterator,
         GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
@@ -50,7 +50,7 @@ pub mod ffi {
             provider: &D,
         ) -> DiplomatResult<Box<ICU4XGraphemeClusterBreakSegmenter>, ICU4XError>
         where
-            D: ResourceProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
+            D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
         {
             GraphemeClusterBreakSegmenter::try_new(provider)
                 .map(|o| Box::new(ICU4XGraphemeClusterBreakSegmenter(o)))

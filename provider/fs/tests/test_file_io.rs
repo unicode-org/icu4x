@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_locid::langid;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::hello_world::{HelloWorldProvider, HelloWorldV1, HelloWorldV1Marker};
 use icu_provider::prelude::*;
 use icu_provider_fs::FsDataProvider;
@@ -18,28 +18,25 @@ const PATHS: &[&str] = &[JSON_PATH, BINCODE_PATH, POSTCARD_PATH];
 fn test_provider() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
-        for options in HelloWorldProvider.supported_options().unwrap() {
+        for locale in HelloWorldProvider.supported_locales().unwrap() {
             let req = DataRequest {
-                options,
+                locale: &locale,
                 metadata: Default::default(),
             };
 
             let expected = HelloWorldProvider
-                .load_resource(&req)
+                .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
 
-            let actual: DataPayload<HelloWorldV1Marker> = provider
-                .load_resource(&req)
-                .unwrap()
-                .take_payload()
-                .unwrap();
+            let actual: DataPayload<HelloWorldV1Marker> =
+                provider.load(req).unwrap().take_payload().unwrap();
             assert_eq!(actual.get(), expected.get());
 
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
                 .as_deserializing()
-                .load_resource(&req)
+                .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
@@ -53,17 +50,16 @@ fn test_errors() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
 
-        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
-            provider.load_resource(&DataRequest {
-                options: langid!("zh-DE").into(),
-                metadata: Default::default(),
-            });
+        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> = provider.load(DataRequest {
+            locale: &langid!("zh-DE").into(),
+            metadata: Default::default(),
+        });
 
         assert!(
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingResourceOptions,
+                    kind: DataErrorKind::MissingLocale,
                     ..
                 })
             ),
@@ -75,18 +71,17 @@ fn test_errors() {
         impl DataMarker for WrongV1Marker {
             type Yokeable = HelloWorldV1<'static>;
         }
-        impl ResourceMarker for WrongV1Marker {
-            const KEY: ResourceKey = resource_key!("nope@1");
+        impl KeyedDataMarker for WrongV1Marker {
+            const KEY: DataKey = data_key!("nope@1");
         }
 
-        let err: Result<DataResponse<WrongV1Marker>, DataError> =
-            provider.load_resource(&Default::default());
+        let err: Result<DataResponse<WrongV1Marker>, DataError> = provider.load(Default::default());
 
         assert!(
             matches!(
                 err,
                 Err(DataError {
-                    kind: DataErrorKind::MissingResourceKey,
+                    kind: DataErrorKind::MissingDataKey,
                     ..
                 })
             ),

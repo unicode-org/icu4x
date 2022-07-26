@@ -12,7 +12,7 @@
 use crate::script::ScriptWithExtensions;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSet;
+use icu_uniset::CodePointInversionList;
 use zerofrom::ZeroFrom;
 
 /// A set of characters with a particular property.
@@ -27,9 +27,9 @@ use zerofrom::ZeroFrom;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum UnicodePropertyV1<'data> {
+pub enum PropertyCodePointSetV1<'data> {
     /// The set of characters, represented as an inversion list
-    InversionList(#[cfg_attr(feature = "serde", serde(borrow))] UnicodeSet<'data>),
+    InversionList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionList<'data>),
     // new variants should go BELOW existing ones
     // Serde serializes based on variant name and index in the enum
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
@@ -47,7 +47,7 @@ pub enum UnicodePropertyV1<'data> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[non_exhaustive]
-pub enum UnicodePropertyMapV1<'data, T: TrieValue> {
+pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
     CodePointTrie(#[cfg_attr(feature = "serde", serde(borrow))] CodePointTrie<'data, T>),
     // new variants should go BELOW existing ones
@@ -71,7 +71,7 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
 }
 
 // See CodePointSetData for documentation of these functions
-impl<'data> UnicodePropertyV1<'data> {
+impl<'data> PropertyCodePointSetV1<'data> {
     #[inline]
     pub(crate) fn contains(&self, ch: char) -> bool {
         match *self {
@@ -86,12 +86,12 @@ impl<'data> UnicodePropertyV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn from_unicode_set(l: UnicodeSet<'static>) -> Self {
+    pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
         Self::InversionList(l)
     }
 
     #[inline]
-    pub(crate) fn to_unicode_set(&'_ self) -> UnicodeSet<'_> {
+    pub(crate) fn to_code_point_inversion_list(&'_ self) -> CodePointInversionList<'_> {
         match *self {
             Self::InversionList(ref l) => ZeroFrom::zero_from(l),
         }
@@ -99,7 +99,7 @@ impl<'data> UnicodePropertyV1<'data> {
 }
 
 // See CodePointMapData for documentation of these functions
-impl<'data, T: TrieValue> UnicodePropertyMapV1<'data, T> {
+impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     #[inline]
     pub(crate) fn get_u32(&self, ch: u32) -> T {
         match *self {
@@ -108,7 +108,7 @@ impl<'data, T: TrieValue> UnicodePropertyMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn get_set_for_value(&self, value: T) -> UnicodeSet<'static> {
+    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         match *self {
             Self::CodePointTrie(ref t) => t.get_set_for_value(value),
         }
@@ -138,10 +138,10 @@ macro_rules! expand {
                 pub struct $bin_marker;
 
                 impl DataMarker for $bin_marker {
-                    type Yokeable = UnicodePropertyV1<'static>;
+                    type Yokeable = PropertyCodePointSetV1<'static>;
                 }
-                impl ResourceMarker for $bin_marker {
-                    const KEY: ResourceKey = resource_key!(concat!("props/", $bin_s, "@1"));
+                impl KeyedDataMarker for $bin_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
@@ -165,11 +165,11 @@ macro_rules! expand {
                 pub struct $enum_marker;
 
                 impl DataMarker for $enum_marker {
-                    type Yokeable = UnicodePropertyMapV1<'static, crate::$value_ty>;
+                    type Yokeable = PropertyCodePointMapV1<'static, crate::$value_ty>;
                 }
 
-                impl ResourceMarker for $enum_marker {
-                    const KEY: ResourceKey = resource_key!(concat!("props/", $enum_s, "@1"));
+                impl KeyedDataMarker for $enum_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
@@ -190,7 +190,7 @@ macro_rules! expand {
 
             #[cfg(feature = "datagen")]
             /// The set of all resource keys supported by [`icu_uniset`](crate).
-            pub const ALL_KEYS: [ResourceKey; 75] = [
+            pub const ALL_KEYS: [DataKey; 75] = [
                 $(
                     $bin_marker::KEY,
                 )+

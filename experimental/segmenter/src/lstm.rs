@@ -4,7 +4,7 @@
 
 use crate::language::*;
 use crate::lstm_bies::Lstm;
-use crate::lstm_structs::{LstmData, LstmDataMarker};
+use crate::lstm_structs::{LstmDataV1, LstmDataV1Marker};
 
 use alloc::string::String;
 use alloc::string::ToString;
@@ -25,18 +25,18 @@ const LAO_MODEL: &[u8; 372529] =
     include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/lo.json");
 
 lazy_static! {
-    static ref THAI_LSTM: LstmData<'static> =
+    static ref THAI_LSTM: LstmDataV1<'static> =
         serde_json::from_slice(THAI_MODEL).expect("JSON syntax error");
-    static ref BURMESE_LSTM: LstmData<'static> =
+    static ref BURMESE_LSTM: LstmDataV1<'static> =
         serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
-    static ref KHMER_LSTM: LstmData<'static> =
+    static ref KHMER_LSTM: LstmDataV1<'static> =
         serde_json::from_slice(KHMER_MODEL).expect("JSON syntax error");
-    static ref LAO_LSTM: LstmData<'static> =
+    static ref LAO_LSTM: LstmDataV1<'static> =
         serde_json::from_slice(LAO_MODEL).expect("JSON syntax error");
 }
 
 // LSTM model depends on language, So we have to switch models per language.
-pub fn get_best_lstm_model(codepoint: u32) -> Option<DataPayload<LstmDataMarker>> {
+pub fn get_best_lstm_model(codepoint: u32) -> Option<DataPayload<LstmDataV1Marker>> {
     let lang = get_language(codepoint);
     match lang {
         Language::Thai => Some(DataPayload::from_owned(THAI_LSTM.clone())),
@@ -121,7 +121,7 @@ pub struct LstmSegmenter {
 }
 
 impl LstmSegmenter {
-    pub fn try_new(payload: DataPayload<LstmDataMarker>) -> Result<Self, DataError> {
+    pub fn try_new(payload: DataPayload<LstmDataV1Marker>) -> Result<Self, DataError> {
         let lstm = Lstm::try_new(payload).unwrap();
 
         Ok(Self { lstm })
@@ -141,12 +141,22 @@ impl LstmSegmenter {
 #[cfg(test)]
 mod tests {
     use crate::lstm::*;
+    use icu_locid::locale;
+    use icu_provider::prelude::*;
 
     #[test]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 
-        let payload = get_best_lstm_model(TEST_STR.chars().next().unwrap() as u32).unwrap();
+        let provider = icu_testdata::get_provider();
+        let payload = provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale!("th")),
+                metadata: Default::default(),
+            })
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
         let segmenter = LstmSegmenter::try_new(payload).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         assert_eq!(breaks, [12, 21, 33], "Thai test");

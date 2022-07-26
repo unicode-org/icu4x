@@ -5,7 +5,7 @@
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
@@ -23,15 +23,12 @@ impl From<&SourceData> for LikelySubtagsProvider {
     }
 }
 
-impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
+impl DataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
-        if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+        if !req.locale.is_empty() {
+            return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
         let data: &cldr_serde::likely_subtags::Resource = self
@@ -40,10 +37,8 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
             .core()
             .read_and_parse("supplemental/likelySubtags.json")?;
 
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(data))),
         })
     }
@@ -51,8 +46,8 @@ impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
 
 icu_provider::make_exportable_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,]);
 
-impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -151,7 +146,7 @@ fn test_basic() {
 
     let provider = LikelySubtagsProvider::from(&SourceData::for_test());
     let result: DataPayload<LikelySubtagsV1Marker> = provider
-        .load_resource(&Default::default())
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();

@@ -18,27 +18,25 @@ use crate::{
     pattern::{PatternError, PatternItem},
     provider::{self, calendar::patterns::PatternPluralsFromPatternsV1Marker},
 };
-use icu_locid::{LanguageIdentifier, Locale};
+use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
 /// Loads a resource into its destination if the destination has not already been filled.
-fn load_resource<D, L, P>(
-    locale: &L,
+fn load<D, P>(
+    locale: &DataLocale,
     destination: &mut Option<DataPayload<D>>,
     provider: &P,
 ) -> Result<(), DateTimeFormatterError>
 where
-    D: ResourceMarker,
-    L: Clone + Into<LanguageIdentifier>,
-    P: ResourceProvider<D> + ?Sized,
+    D: KeyedDataMarker,
+    P: DataProvider<D> + ?Sized,
 {
-    let langid: LanguageIdentifier = locale.clone().into();
     if destination.is_none() {
         *destination = Some(
             provider
-                .load_resource(&DataRequest {
-                    options: langid.into(),
+                .load(DataRequest {
+                    locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -65,9 +63,8 @@ where
 /// use icu_datetime::mock::time_zone::MockTimeZone;
 /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
 /// use icu_locid::locale;
-/// use icu_provider::inv::InvariantDataProvider;
 ///
-/// let provider = InvariantDataProvider;
+/// let provider = icu_testdata::get_provider();
 ///
 /// let tzf = TimeZoneFormatter::try_from_config(
 ///     locale!("en"),
@@ -84,7 +81,7 @@ where
 ///
 /// [data provider]: icu_provider
 pub struct TimeZoneFormatter {
-    pub(super) locale: Locale,
+    pub(super) locale: DataLocale,
     pub(super) data_payloads: TimeZoneDataPayloads,
     pub(super) format_units: SmallVec<[TimeZoneFormatterUnit; 3]>,
     pub(super) fallback_unit: TimeZoneFormatterUnit,
@@ -113,28 +110,26 @@ pub struct TimeZoneDataPayloads {
 impl TimeZoneFormatter {
     /// Constructor that selectively loads data based on what is required to
     /// format the given pattern into the given locale.
-    pub(super) fn try_new<L, ZP>(
-        locale: L,
+    pub(super) fn try_new<ZP>(
+        locale: &DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         zone_provider: &ZP,
         options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        L: Into<Locale>,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
-        let locale = locale.into();
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
-                .load_resource(&DataRequest {
-                    options: ResourceOptions::from(&locale),
+                .load(DataRequest {
+                    locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -161,7 +156,8 @@ impl TimeZoneFormatter {
 
         let mut tz_format: TimeZoneFormatter = Self {
             data_payloads,
-            locale,
+            // TODO(#2237): Determine whether we need to save the locale in the formatter
+            locale: locale.clone(),
             format_units,
             fallback_unit: TimeZoneFormatter::get_fallback_unit(options.fallback_format),
         };
@@ -352,9 +348,8 @@ impl TimeZoneFormatter {
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormatter::try_from_config(
     ///     locale!("en"),
@@ -373,20 +368,20 @@ impl TimeZoneFormatter {
     ) -> Result<Self, DateTimeFormatterError>
     where
         L: Into<Locale>,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
-        let locale = locale.into();
+        let locale = DataLocale::from(locale.into());
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
-                .load_resource(&DataRequest {
-                    options: ResourceOptions::from(&locale),
+                .load(DataRequest {
+                    locale: &locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -436,10 +431,10 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_generic_long == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.mz_generic_long,
                 zone_provider,
@@ -458,10 +453,10 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_generic_short == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.mz_generic_short,
                 zone_provider,
@@ -480,10 +475,10 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_specific_long == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.mz_specific_long,
                 zone_provider,
@@ -502,10 +497,10 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_specific_short == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.mz_specific_short,
                 zone_provider,
@@ -524,10 +519,10 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
     {
         if self.data_payloads.exemplar_cities == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.exemplar_cities,
                 zone_provider,
@@ -546,10 +541,10 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::ExemplarCitiesV1Marker> + ?Sized,
     {
         if self.data_payloads.exemplar_cities == None {
-            load_resource(
+            load(
                 &self.locale,
                 &mut self.data_payloads.exemplar_cities,
                 zone_provider,
@@ -612,9 +607,8 @@ impl TimeZoneFormatter {
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormatter::try_from_config(
     ///     locale!("en"),
@@ -648,9 +642,8 @@ impl TimeZoneFormatter {
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormatter::try_from_config(
     ///     locale!("en"),
@@ -685,9 +678,8 @@ impl TimeZoneFormatter {
     /// use icu_datetime::mock::time_zone::MockTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
-    /// use icu_provider::inv::InvariantDataProvider;
     ///
-    /// let provider = InvariantDataProvider;
+    /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormatter::try_from_config(
     ///     locale!("en"),

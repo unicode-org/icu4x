@@ -2,9 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_datetime` is one of the [`ICU4X`] components.
+//! Formatting date and time.
 //!
-//! This API provides necessary functionality for formatting date and time to user readable textual representation.
+//! This module is published as its own crate ([`icu_datetime`](https://docs.rs/icu_datetime/latest/icu_datetime/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! [`DateTimeFormatter`] is the main structure of the component. It accepts a set of arguments which
 //! allow it to collect necessary data from the [data provider], and once instantiated, can be
@@ -27,7 +28,7 @@
 //!     length::Time::Short,
 //! ));
 //!
-//! let dtf = DateTimeFormatter::<Gregorian>::try_new(locale!("en"), &provider, &options)
+//! let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options)
 //!     .expect("Failed to create DateTimeFormatter instance.");
 //!
 //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
@@ -47,7 +48,7 @@
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
 //!
-//! let dtf = DateTimeFormatter::<Gregorian>::try_new(locale, &provider, &options);
+//! let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale.into(), &provider, &options);
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Length`] bag, but in the future,

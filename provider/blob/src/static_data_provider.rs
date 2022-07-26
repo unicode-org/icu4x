@@ -34,8 +34,8 @@ use serde::de::Deserialize;
 ///     .expect("Deserialization should succeed");
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
-///     .load_resource(&DataRequest {
-///         options: locale!("la").into(),
+///     .load(DataRequest {
+///         locale: &locale!("la").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
@@ -79,10 +79,10 @@ impl StaticDataProvider {
     ///
     /// let stub_provider = StaticDataProvider::new_empty();
     ///
-    /// ResourceProvider::<HelloWorldV1Marker>::load_resource(
+    /// DataProvider::<HelloWorldV1Marker>::load(
     ///     &stub_provider,
-    ///     &DataRequest {
-    ///         options: locale!("la").into(),
+    ///     DataRequest {
+    ///         locale: &locale!("la").into(),
     ///         metadata: Default::default(),
     ///     },
     /// )
@@ -98,21 +98,20 @@ impl StaticDataProvider {
 impl BufferProvider for StaticDataProvider {
     fn load_buffer(
         &self,
-        key: ResourceKey,
-        req: &DataRequest,
+        key: DataKey,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard1);
         let idx = self
             .data
             .keys
             .get0(&key.get_hash())
-            .ok_or(DataErrorKind::MissingResourceKey)
+            .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
                 cursor
-                    .get1_copied_by(|bytes| req.options.strict_cmp(bytes).reverse())
-                    .ok_or(DataErrorKind::MissingResourceOptions)
+                    .get1_copied_by(|bytes| req.locale.strict_cmp(bytes).reverse())
+                    .ok_or(DataErrorKind::MissingLocale)
             })
             .map_err(|kind| kind.with_req(key, req))?;
         let bytes = self

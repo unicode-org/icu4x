@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XError.h"
-}
 
 
 
@@ -35,20 +33,19 @@ enum struct ICU4XError {
    */
   WriteableError = 1,
   OutOfBoundsError = 2,
-  DataMissingResourceKeyError = 256,
+  DataMissingDataKeyError = 256,
   DataMissingVariantError = 257,
   DataMissingLocaleError = 258,
-  DataMissingResourceOptionsError = 259,
-  DataNeedsVariantError = 260,
-  DataNeedsLocaleError = 261,
-  DataExtraneousResourceOptionsError = 262,
-  DataFilteredResourceError = 263,
-  DataMismatchedTypeError = 264,
-  DataMissingPayloadError = 265,
-  DataInvalidStateError = 266,
-  DataCustomError = 267,
-  DataIoError = 268,
-  DataUnavailableBufferFormatError = 269,
+  DataNeedsVariantError = 259,
+  DataNeedsLocaleError = 260,
+  DataExtraneousLocaleError = 261,
+  DataFilteredResourceError = 262,
+  DataMismatchedTypeError = 263,
+  DataMissingPayloadError = 264,
+  DataInvalidStateError = 265,
+  DataCustomError = 266,
+  DataIoError = 267,
+  DataUnavailableBufferFormatError = 268,
 
   /**
    * The subtag being requested was not set

@@ -7,7 +7,6 @@ use icu_codepointtrie::toml::CodePointTrieToml;
 #[derive(serde::Deserialize)]
 pub struct DecompositionData {
     pub trie: CodePointTrieToml,
-    pub ranges: Vec<(u32, u32)>,
 }
 
 #[derive(serde::Deserialize)]
@@ -24,10 +23,17 @@ pub struct DecompositionTables {
 
 #[derive(serde::Deserialize)]
 pub struct CompositionPassthrough {
-    pub ranges: Vec<(u32, u32)>,
+    pub trie: CodePointTrieToml,
+    pub first: u32,
 }
 
 #[derive(serde::Deserialize)]
 pub struct CanonicalCompositions {
     pub compositions: Vec<u16>,
+}
+
+#[derive(serde::Deserialize)]
+pub struct NonRecursiveDecompositionSupplement {
+    pub trie: CodePointTrieToml,
+    pub scalars32: Vec<u32>,
 }

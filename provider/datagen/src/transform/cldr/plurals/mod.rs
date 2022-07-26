@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
 /// A data provider reading from CLDR JSON plural rule files.
@@ -24,7 +24,7 @@ impl From<&SourceData> for PluralsProvider {
 }
 
 impl PluralsProvider {
-    fn get_rules_for(&self, key: ResourceKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
+    fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
         if key == CardinalV1Marker::KEY {
             self.source
                 .cldr()?
@@ -48,17 +48,15 @@ impl PluralsProvider {
     }
 }
 
-impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> for PluralsProvider {
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
+impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> DataProvider<M> for PluralsProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(PluralRulesV1::from(
                 #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.get_rules_for(M::KEY)?
                     .0
-                    .get(&req.options.get_langid())
+                    .get(&req.locale.get_langid())
                     .ok_or(DataErrorKind::MissingLocale.into_error())?,
             ))),
         })
@@ -67,17 +65,17 @@ impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> f
 
 icu_provider::make_exportable_provider!(PluralsProvider, [OrdinalV1Marker, CardinalV1Marker,]);
 
-impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>
+impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> IterableDataProvider<M>
     for PluralsProvider
 {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .get_rules_for(M::KEY)?
             .0
             .keys()
             // TODO(#568): Avoid the clone
             .cloned()
-            .map(ResourceOptions::from)
+            .map(DataLocale::from)
             .collect())
     }
 }
@@ -109,8 +107,8 @@ fn test_basic() {
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: langid!("cs").into(),
+        .load(DataRequest {
+            locale: &langid!("cs").into(),
             metadata: Default::default(),
         })
         .unwrap()

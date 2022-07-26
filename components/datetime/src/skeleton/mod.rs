@@ -42,20 +42,18 @@ mod test {
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
         let provider = icu_testdata::get_provider();
-        let locale: Locale = "en-u-ca-gregory".parse().unwrap();
+        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let req = DataRequest {
+            locale: &locale,
+            metadata: Default::default(),
+        };
         let patterns = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
+            .load(req)
             .expect("Failed to load payload")
             .take_payload()
             .expect("Failed to retrieve payload");
         let skeletons = provider
-            .load_resource(&DataRequest {
-                options: locale.into(),
-                metadata: Default::default(),
-            })
+            .load(req)
             .expect("Failed to load payload")
             .take_payload()
             .expect("Failed to retrieve payload");
