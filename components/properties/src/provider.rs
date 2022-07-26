@@ -55,7 +55,7 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-/// A data structure efficiently storing `Script` and `Script_Extensions` property data.
+/// A struct that efficiently stores `Script` and `Script_Extensions` property data.
 #[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker = "props/scx@1")]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
