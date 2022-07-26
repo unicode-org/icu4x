@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658795792459,
+  "lastUpdate": 1658798828284,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39269,6 +39269,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "069f72620601268f3328bf4375c2000ef2f4a4b1",
+          "message": "Add a feature option not to use unicode-segmentation (#2212)",
+          "timestamp": "2022-07-26T10:15:46+09:00",
+          "tree_id": "5a6d6a0deaf8734d5625d88afb853bc11c0c670d",
+          "url": "https://github.com/unicode-org/icu4x/commit/069f72620601268f3328bf4375c2000ef2f4a4b1"
+        },
+        "date": 1658798792574,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105109,
+            "range": "± 863",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21283,
+            "range": "± 84",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64287,
+            "range": "± 252",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 172,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
