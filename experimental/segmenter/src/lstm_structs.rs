@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "lstm")]
 use crate::lstm_error::Error;
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
+#[cfg(feature = "lstm")]
 use ndarray::{Array, Array1, Array2};
 use zerovec::{ZeroMap, ZeroVec};
 
@@ -24,6 +26,7 @@ pub struct LstmMatrix<'data> {
     pub data: ZeroVec<'data, f32>,
 }
 
+#[cfg(feature = "lstm")]
 impl<'data> LstmMatrix<'data> {
     pub fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
         if self.dim.len() == 1 {

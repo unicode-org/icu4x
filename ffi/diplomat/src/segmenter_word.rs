@@ -11,8 +11,8 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
     use icu_segmenter::{
-        UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker, WordBreakIterator,
-        WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakSegmenter,
+        LstmDataV1Marker, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
+        WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakSegmenter,
     };
 
     #[diplomat::opaque]
@@ -44,6 +44,7 @@ pub mod ffi {
         where
             D: DataProvider<WordBreakDataV1Marker>
                 + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<LstmDataV1Marker>
                 + ?Sized,
         {
             WordBreakSegmenter::try_new(provider)

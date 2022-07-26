@@ -6,7 +6,7 @@ use alloc::vec::Vec;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
 
-use crate::complex::Dictionary;
+use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
@@ -25,6 +25,7 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 pub struct SentenceBreakSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,
     dictionary: Dictionary,
+    lstm: LstmPayloads,
 }
 
 impl SentenceBreakSegmenter {
@@ -34,9 +35,11 @@ impl SentenceBreakSegmenter {
     {
         let payload = provider.load(Default::default())?.take_payload()?;
         let dictionary = Dictionary::default();
+        let lstm = LstmPayloads::default();
         Ok(Self {
             payload,
             dictionary,
+            lstm,
         })
     }
 
@@ -49,6 +52,7 @@ impl SentenceBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -64,6 +68,7 @@ impl SentenceBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -76,6 +81,7 @@ impl SentenceBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 }

@@ -38,6 +38,7 @@ fn word_break_th() {
     );
 }
 
+#[ignore]
 #[test]
 fn word_break_my() {
     let provider = icu_testdata::get_provider();
