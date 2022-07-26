@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658875161564,
+  "lastUpdate": 1658879439037,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21478,6 +21478,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4036908,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1602d46878fa471d1e79dfcf5af5fbc2134d0fcf",
+          "message": "Add an offset_fallback field in TimeZoneFormatV1 (#2253)\n\n* Add an offset_fallback field in TimeZoneFormatV1\r\n\r\n* add TODO",
+          "timestamp": "2022-07-26T16:48:55-07:00",
+          "tree_id": "90f3aae64dcd3606da3b2f7c79d39f362ea190da",
+          "url": "https://github.com/unicode-org/icu4x/commit/1602d46878fa471d1e79dfcf5af5fbc2134d0fcf"
+        },
+        "date": 1658879406475,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036998,
             "unit": "bytes",
             "biggerIsBetter": false
           }
