@@ -10,8 +10,10 @@ use alloc::vec::Vec;
 use core::str;
 use icu_provider::DataPayload;
 use ndarray::{Array1, Array2, ArrayBase, Dim, ViewRepr};
-use unicode_segmentation::UnicodeSegmentation;
 use zerovec::ule::AsULE;
+
+#[cfg(feature = "lstm-grapheme")]
+use unicode_segmentation::UnicodeSegmentation;
 
 pub struct Lstm {
     data: DataPayload<LstmDataV1Marker>,
@@ -32,10 +34,18 @@ impl Lstm {
         if data.get().dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
+
+        #[cfg(feature = "lstm-grapheme")]
         if !data.get().model.contains("_codepoints_") && !data.get().model.contains("_graphclust_")
         {
             return Err(Error::Syntax);
         }
+
+        #[cfg(not(feature = "lstm-grapheme"))]
+        if !data.get().model.contains("_codepoints_") {
+            return Err(Error::Syntax);
+        }
+
         let mat1 = data.get().mat1.as_ndarray2()?;
         let mat2 = data.get().mat2.as_ndarray2()?;
         let mat3 = data.get().mat3.as_ndarray2()?;
@@ -136,9 +146,17 @@ impl Lstm {
                 .map(|c| self.return_id(&c.to_string()))
                 .collect()
         } else {
-            UnicodeSegmentation::graphemes(input, true)
-                .map(|s| self.return_id(s))
-                .collect()
+            #[cfg(feature = "lstm-grapheme")]
+            {
+                UnicodeSegmentation::graphemes(input, true)
+                    .map(|s| self.return_id(s))
+                    .collect()
+            }
+
+            #[cfg(not(feature = "lstm-grapheme"))]
+            {
+                panic!("Unreachable")
+            }
         };
 
         // x_data is the data ready to be feed into the model
@@ -252,6 +270,7 @@ mod tests {
 
     #[test]
     #[ignore = "dic entries of graphclust data aren't sorted"]
+    #[cfg(feature = "lstm-grapheme")]
     fn test_model_loading() {
         let filename = "tests/testdata/Thai_graphclust_exclusive_model4_heavy/weights.json";
         let lstm_data = load_lstm_data(filename);
