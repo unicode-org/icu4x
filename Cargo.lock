@@ -1863,6 +1863,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_timezone"
+version = "0.6.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu",
+ "icu_locid",
+ "icu_provider",
+ "icu_testdata",
+ "serde",
+ "tinystr 0.6.0",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_uniset"
 version = "0.5.0"
 dependencies = [
