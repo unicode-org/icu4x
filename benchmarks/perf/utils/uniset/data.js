@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658795130852,
+  "lastUpdate": 1658795629366,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -38609,6 +38609,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 39930150,
             "range": "± 1930084",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "354fe3b899217384eb861be7fea7f9b1606a9032",
+          "message": "Rename CodePointSet to CodePointInversionList (#2230)",
+          "timestamp": "2022-07-26T00:23:53Z",
+          "tree_id": "04ce151a08e694f043aa16ce1982efbdb82b248b",
+          "url": "https://github.com/unicode-org/icu4x/commit/354fe3b899217384eb861be7fea7f9b1606a9032"
+        },
+        "date": 1658795596064,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44462753,
+            "range": "± 236931",
             "unit": "ns/iter"
           },
           {
