@@ -42,6 +42,9 @@ use crate::{
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
+/// The number of years the Amete Alem epoch precedes the Amete Mihret epoch
+const AMETE_ALEM_OFFSET: i32 = 5500;
+
 /// Which era style the ethiopic calendar uses
 #[derive(Clone, Copy, PartialEq, Eq, Hash, Debug)]
 #[non_exhaustive]
@@ -105,7 +108,7 @@ impl Calendar for Ethiopic {
             }
             1 - year
         } else if era.0 == tinystr!(16, "mundi") {
-            year - 5493
+            year - AMETE_ALEM_OFFSET
         } else {
             return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
         };
@@ -255,7 +258,7 @@ impl Ethiopic {
         if amete_alem {
             types::FormattableYear {
                 era: types::Era(tinystr!(16, "mundi")),
-                number: year + 5493,
+                number: year + AMETE_ALEM_OFFSET,
                 related_iso: None,
             }
         } else if year > 0 {
@@ -300,7 +303,7 @@ impl Date<Ethiopic> {
         day: u8,
     ) -> Result<Date<Ethiopic>, DateTimeError> {
         if era_style == EthiopicEraStyle::AmeteAlem {
-            year -= 5493;
+            year -= AMETE_ALEM_OFFSET;
         }
         let inner = ArithmeticDate {
             year,
