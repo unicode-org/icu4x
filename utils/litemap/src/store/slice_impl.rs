@@ -4,7 +4,14 @@
 
 use super::*;
 
-impl<'a, K: 'a + ?Sized, V: 'a + ?Sized> Store<K, V> for &'a [(&'a K, &'a V)] {
+type MapF<K, V> = fn(&(K, V)) -> (&K, &V);
+
+#[inline]
+fn map_f<K, V>(input: &(K, V)) -> (&K, &V) {
+    (&input.0, &input.1)
+}
+
+impl<'a, K: 'a, V: 'a> Store<K, V> for &'a [(K, V)] {
     #[inline]
     fn lm_len(&self) -> usize {
         self.len()
@@ -17,12 +24,12 @@ impl<'a, K: 'a + ?Sized, V: 'a + ?Sized> Store<K, V> for &'a [(&'a K, &'a V)] {
 
     #[inline]
     fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
-        self.get(index).copied()
+        self.get(index).map(map_f)
     }
 
     #[inline]
     fn lm_last(&self) -> Option<(&K, &V)> {
-        self.last().copied()
+        self.last().map(map_f)
     }
 
     #[inline]
@@ -34,11 +41,11 @@ impl<'a, K: 'a + ?Sized, V: 'a + ?Sized> Store<K, V> for &'a [(&'a K, &'a V)] {
     }
 }
 
-impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for &'a [(&'a K, &'a V)] {
-    type KeyValueIter = core::iter::Copied<core::slice::Iter<'a, (&'a K, &'a V)>>;
+impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for &'a [(K, V)] {
+    type KeyValueIter = core::iter::Map<core::slice::Iter<'a, (K, V)>, MapF<K, V>>;
 
     #[inline]
     fn lm_iter(&'a self) -> Self::KeyValueIter {
-        self.iter().copied()
+        self.iter().map(map_f)
     }
 }
