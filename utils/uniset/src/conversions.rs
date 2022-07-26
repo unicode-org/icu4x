@@ -11,24 +11,24 @@ use core::{
 
 use super::CodePointSetError;
 use crate::utils::deconstruct_range;
-use crate::{CodePointSet, CodePointSetBuilder};
+use crate::{CodePointInversionList, CodePointInversionListBuilder};
 use zerovec::ZeroVec;
 
 fn try_from_range<'data, 'r>(
     range: &'r impl RangeBounds<char>,
-) -> Result<CodePointSet<'data>, CodePointSetError> {
+) -> Result<CodePointInversionList<'data>, CodePointSetError> {
     let (from, till) = deconstruct_range(range);
     if from < till {
         let set = vec![from, till];
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&set);
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Ok(CodePointSet::from_inversion_list(inv_list).unwrap())
+        Ok(CodePointInversionList::from_inversion_list(inv_list).unwrap())
     } else {
         Err(CodePointSetError::InvalidRange(from, till))
     }
 }
 
-impl<'data> TryFrom<&Range<char>> for CodePointSet<'data> {
+impl<'data> TryFrom<&Range<char>> for CodePointInversionList<'data> {
     type Error = CodePointSetError;
 
     fn try_from(range: &Range<char>) -> Result<Self, Self::Error> {
@@ -36,7 +36,7 @@ impl<'data> TryFrom<&Range<char>> for CodePointSet<'data> {
     }
 }
 
-impl<'data> TryFrom<&RangeFrom<char>> for CodePointSet<'data> {
+impl<'data> TryFrom<&RangeFrom<char>> for CodePointInversionList<'data> {
     type Error = CodePointSetError;
 
     fn try_from(range: &RangeFrom<char>) -> Result<Self, Self::Error> {
@@ -44,7 +44,7 @@ impl<'data> TryFrom<&RangeFrom<char>> for CodePointSet<'data> {
     }
 }
 
-impl<'data> TryFrom<&RangeFull> for CodePointSet<'data> {
+impl<'data> TryFrom<&RangeFull> for CodePointInversionList<'data> {
     type Error = CodePointSetError;
 
     fn try_from(_: &RangeFull) -> Result<Self, Self::Error> {
@@ -52,7 +52,7 @@ impl<'data> TryFrom<&RangeFull> for CodePointSet<'data> {
     }
 }
 
-impl<'data> TryFrom<&RangeInclusive<char>> for CodePointSet<'data> {
+impl<'data> TryFrom<&RangeInclusive<char>> for CodePointInversionList<'data> {
     type Error = CodePointSetError;
 
     fn try_from(range: &RangeInclusive<char>) -> Result<Self, Self::Error> {
@@ -60,7 +60,7 @@ impl<'data> TryFrom<&RangeInclusive<char>> for CodePointSet<'data> {
     }
 }
 
-impl<'data> TryFrom<&RangeTo<char>> for CodePointSet<'data> {
+impl<'data> TryFrom<&RangeTo<char>> for CodePointInversionList<'data> {
     type Error = CodePointSetError;
 
     fn try_from(range: &RangeTo<char>) -> Result<Self, Self::Error> {
@@ -68,7 +68,7 @@ impl<'data> TryFrom<&RangeTo<char>> for CodePointSet<'data> {
     }
 }
 
-impl<'data> TryFrom<&RangeToInclusive<char>> for CodePointSet<'data> {
+impl<'data> TryFrom<&RangeToInclusive<char>> for CodePointInversionList<'data> {
     type Error = CodePointSetError;
 
     fn try_from(range: &RangeToInclusive<char>) -> Result<Self, Self::Error> {
@@ -76,9 +76,9 @@ impl<'data> TryFrom<&RangeToInclusive<char>> for CodePointSet<'data> {
     }
 }
 
-impl FromIterator<RangeInclusive<u32>> for CodePointSet<'_> {
+impl FromIterator<RangeInclusive<u32>> for CodePointInversionList<'_> {
     fn from_iter<I: IntoIterator<Item = RangeInclusive<u32>>>(iter: I) -> Self {
-        let mut builder = CodePointSetBuilder::new();
+        let mut builder = CodePointInversionListBuilder::new();
         for range in iter {
             builder.add_range_u32(&range);
         }
@@ -89,12 +89,12 @@ impl FromIterator<RangeInclusive<u32>> for CodePointSet<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::CodePointSet;
+    use crate::CodePointInversionList;
     use core::{char, convert::TryFrom};
 
     #[test]
     fn test_try_from_range() {
-        let check: Vec<char> = CodePointSet::try_from(&('A'..'B'))
+        let check: Vec<char> = CodePointInversionList::try_from(&('A'..'B'))
             .unwrap()
             .iter_chars()
             .collect();
@@ -103,7 +103,7 @@ mod tests {
 
     #[test]
     fn test_try_from_range_error() {
-        let check = CodePointSet::try_from(&('A'..'A'));
+        let check = CodePointInversionList::try_from(&('A'..'A'));
         assert!(matches!(
             check,
             Err(CodePointSetError::InvalidRange(65, 65))
@@ -112,7 +112,7 @@ mod tests {
 
     #[test]
     fn test_try_from_range_inclusive() {
-        let check: Vec<char> = CodePointSet::try_from(&('A'..='A'))
+        let check: Vec<char> = CodePointInversionList::try_from(&('A'..='A'))
             .unwrap()
             .iter_chars()
             .collect();
@@ -121,7 +121,7 @@ mod tests {
 
     #[test]
     fn test_try_from_range_inclusive_err() {
-        let check = CodePointSet::try_from(&('B'..'A'));
+        let check = CodePointInversionList::try_from(&('B'..'A'));
         assert!(matches!(
             check,
             Err(CodePointSetError::InvalidRange(66, 65))
@@ -130,7 +130,7 @@ mod tests {
 
     #[test]
     fn test_try_from_range_from() {
-        let uset = CodePointSet::try_from(&('A'..)).unwrap();
+        let uset = CodePointInversionList::try_from(&('A'..)).unwrap();
         let check: usize = uset.size();
         let expected: usize = (char::MAX as usize) + 1 - 65;
         assert_eq!(expected, check);
@@ -138,7 +138,7 @@ mod tests {
 
     #[test]
     fn test_try_from_range_to() {
-        let uset = CodePointSet::try_from(&(..'A')).unwrap();
+        let uset = CodePointInversionList::try_from(&(..'A')).unwrap();
         let check: usize = uset.size();
         let expected: usize = 65;
         assert_eq!(expected, check);
@@ -146,13 +146,13 @@ mod tests {
 
     #[test]
     fn test_try_from_range_to_err() {
-        let check = CodePointSet::try_from(&(..(0x0 as char)));
+        let check = CodePointInversionList::try_from(&(..(0x0 as char)));
         assert!(matches!(check, Err(CodePointSetError::InvalidRange(0, 0))));
     }
 
     #[test]
     fn test_try_from_range_to_inclusive() {
-        let uset = CodePointSet::try_from(&(..='A')).unwrap();
+        let uset = CodePointInversionList::try_from(&(..='A')).unwrap();
         let check: usize = uset.size();
         let expected: usize = 66;
         assert_eq!(expected, check);
@@ -160,7 +160,7 @@ mod tests {
 
     #[test]
     fn test_try_from_range_full() {
-        let uset = CodePointSet::try_from(&(..)).unwrap();
+        let uset = CodePointInversionList::try_from(&(..)).unwrap();
         let check: usize = uset.size();
         let expected: usize = (char::MAX as usize) + 1;
         assert_eq!(expected, check);
@@ -175,8 +175,8 @@ mod tests {
             RangeInclusive::new(0xC000, 0xFFFF),
         ];
         let ranges_iter = ranges.into_iter();
-        let expected = CodePointSet::from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
-        let actual = CodePointSet::from_iter(ranges_iter);
+        let expected = CodePointInversionList::from_inversion_list_slice(&[0x0, 0x1_0000]).unwrap();
+        let actual = CodePointInversionList::from_iter(ranges_iter);
         assert_eq!(expected, actual);
     }
 }

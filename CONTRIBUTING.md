@@ -49,6 +49,13 @@ Handy commands (run from the root directory):
 
 See the [Testing](#testing) section below for more information on the various testsuites available.
 
+There are various files that auto-generated across the ICU4X repository.  Here are some of the commands that you may
+need to run in order to recreate them.  These files may be run in more comprehensive tests such as those included in `cargo make ci-job-test` or `cargo make ci-all`.
+
+- `cargo make testdata` - regenerates all test data in the `provider/testdata` directory.
+- `cargo make generate-readmes` - generates README files according to Rust docs. Output files must be committed in git for check to pass.
+- `cargo make diplomat-gen` - recreates the Diplomat generated files in the `ffi/diplomat` directory.
+
 ### Testing
 
 It's recommended to run `cargo test --all-features` in crates you're modifying to ensure that nothing is breaking, and `cargo quick` to get a reasonable check that everything still builds and lint checks pass.
@@ -59,6 +66,7 @@ Our wider testsuite is organized as `ci-job-foo` make tasks corresponding to eac
  - `cargo make tidy`: A quick test that ensures that `cargo fmt` has been run, that code has the appropriate license headers and files and that READMEs are in sync. This is run as two separate tasks on CI (`ci-job-fmt` and `ci-job-tidy`) to ensure early results.
  - `cargo make ci-job-test`: Runs `cargo test` on all the crates. This takes a while but is the main way of ensuring that nothing has been broken.
  - `cargo make ci-job-clippy`: Runs `cargo clippy` on all the crates.
+ - `cargo doc --no-deps --all-features`: Recreates API docs locally; any warning should be fixed since it will be treated as an error in CI.
  - `cargo make ci-job-ffi`: Runs all of the FFI tests; mostly important if you're changing the FFI interface. This has several additional dependencies:
      + Rust toolchain `nightly-2022-04-05`: `rustup install nightly-2022-04-05`
          * `rust-src` for that toolchain: `rustup component add --toolchain nightly-2022-04-05 rust-src`

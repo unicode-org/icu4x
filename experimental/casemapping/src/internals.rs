@@ -9,7 +9,7 @@ use icu_codepointtrie::CodePointTrieHeader;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
-use icu_uniset::CodePointSetBuilder;
+use icu_uniset::CodePointInversionListBuilder;
 #[cfg(feature = "datagen")]
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE};
@@ -1036,12 +1036,12 @@ pub trait ClosureSet {
     fn add_string(&mut self, string: &str);
 }
 
-impl ClosureSet for CodePointSetBuilder {
+impl ClosureSet for CodePointInversionListBuilder {
     fn add_char(&mut self, c: char) {
         self.add_char(c)
     }
 
-    // The current version of CodePointSet doesn't include strings.
+    // The current version of CodePointInversionList doesn't include strings.
     // Trying to add a string is a no-op that will be optimized away.
     #[inline]
     fn add_string(&mut self, _string: &str) {}
