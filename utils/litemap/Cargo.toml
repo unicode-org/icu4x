@@ -48,7 +48,7 @@ default = ["alloc"]
 alloc = []
 
 # Enables the `testing` module with tools for testing custom stores.
-testing = []
+testing = ["alloc"]
 
 [[test]]
 name = "serde"

@@ -108,7 +108,7 @@ where
 
 /// Tests that the given litemap instance has behavior consistent with the reference impl.
 ///
-/// Call this function in a test and pass it an instance of a `LiteMap` populated with the above data.
+/// Call this function in a test and pass it an empty instance of a `LiteMap` with a custom store.
 // Test code
 #[allow(clippy::expect_used)]
 pub fn check_litemap<'a, S>(mut litemap_test: LiteMap<u32, u64, S>)
@@ -169,5 +169,5 @@ where
 
     litemap_test.clear();
     litemap_std.clear();
-    check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_equivalence(litemap_test.values, litemap_std.values);
 }
