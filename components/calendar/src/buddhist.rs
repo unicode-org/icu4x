@@ -33,7 +33,9 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{
+    types, ArithmeticDate, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError,
+};
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -53,6 +55,21 @@ pub struct Buddhist;
 
 impl Calendar for Buddhist {
     type DateInner = IsoDateInner;
+
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        if era.0 != tinystr!(16, "be") {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        }
+        let year = year - BUDDHIST_ERA_OFFSET;
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IsoDateInner)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
         *iso.inner()
     }

@@ -26,9 +26,7 @@ pub trait Calendar {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-    ) -> Result<Self::DateInner, DateTimeError> {
-        Err(DateTimeError::OutOfRange)
-    }
+    ) -> Result<Self::DateInner, DateTimeError>;
     /// Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner;
     /// Obtain an ISO date from this date

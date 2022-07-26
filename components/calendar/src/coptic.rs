@@ -76,6 +76,29 @@ impl CalendarArithmetic for Coptic {
 
 impl Calendar for Coptic {
     type DateInner = CopticDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let year = if era.0 == tinystr!(16, "ad") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            year
+        } else if era.0 == tinystr!(16, "bd") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            1 - year
+        } else {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(CopticDateInner)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> CopticDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
         Self::coptic_from_fixed(fixed_iso)

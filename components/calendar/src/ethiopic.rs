@@ -87,6 +87,31 @@ impl CalendarArithmetic for Ethiopic {
 
 impl Calendar for Ethiopic {
     type DateInner = EthiopicDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let year = if era.0 == tinystr!(16, "incar") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            year
+        } else if era.0 == tinystr!(16, "pre-incar") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            1 - year
+        } else if era.0 == tinystr!(16, "mundi") {
+            year - 5493
+        } else {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(EthiopicDateInner)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> EthiopicDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
         Self::ethiopic_from_fixed(fixed_iso)

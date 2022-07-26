@@ -47,7 +47,7 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner};
 use crate::provider::{self, EraStartDate};
 use crate::{
-    types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError,
+    types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
 };
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 use icu_provider::prelude::*;
@@ -119,6 +119,32 @@ impl Japanese {
 
 impl Calendar for Japanese {
     type DateInner = JapaneseDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let month = crate::calendar_arithmetic::ordinal_solar_month_from_code(month_code);
+        let month = if let Some(month) = month {
+            month
+        } else {
+            return Err(DateTimeError::UnknownMonthCode(
+                month_code.0,
+                self.debug_name(),
+            ));
+        };
+
+        if month > 12 {
+            return Err(DateTimeError::UnknownMonthCode(
+                month_code.0,
+                self.debug_name(),
+            ));
+        }
+
+        self.new_japanese_date_inner(era, year, month, day)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
         let (adjusted_year, era) = self.adjusted_year_for(iso.inner());
         JapaneseDateInner {
@@ -268,42 +294,9 @@ impl Date<Japanese> {
         month: u8,
         day: u8,
     ) -> Result<Date<A>, DateTimeError> {
-        if era.0 == tinystr!(16, "bce") {
-            if year < 0 {
-                return Err(DateTimeError::OutOfRange);
-            }
-            return Ok(Date::new_iso_date(1 - year, month, day)?.to_calendar(japanese_calendar));
-        } else if era.0 == tinystr!(16, "ce") {
-            if year <= 0 {
-                return Err(DateTimeError::OutOfRange);
-            }
-            return Ok(Date::new_iso_date(year, month, day)?.to_calendar(japanese_calendar));
-        }
-
-        let japanese = japanese_calendar.as_calendar();
-
-        let (era_start, next_era_start) = japanese.japanese_era_range_for(era.0)?;
-
-        let date_in_iso = EraStartDate {
-            year: era_start.year + year - 1,
-            month,
-            day,
-        };
-
-        if date_in_iso < era_start {
-            return Err(DateTimeError::OutOfRange);
-        } else if let Some(next_era_start) = next_era_start {
-            if date_in_iso >= next_era_start {
-                return Err(DateTimeError::OutOfRange);
-            }
-        }
-
-        let iso = Date::new_iso_date(date_in_iso.year, date_in_iso.month, date_in_iso.day)?;
-        let inner = JapaneseDateInner {
-            inner: iso.inner,
-            adjusted_year: year,
-            era: era.0,
-        };
+        let inner = japanese_calendar
+            .as_calendar()
+            .new_japanese_date_inner(era, year, month, day)?;
         Ok(Date::from_raw(inner, japanese_calendar))
     }
 }
@@ -487,6 +480,52 @@ impl Japanese {
         }
 
         Err(DateTimeError::UnknownEra(era, self.debug_name()))
+    }
+
+    fn new_japanese_date_inner(
+        &self,
+        era: types::Era,
+        year: i32,
+        month: u8,
+        day: u8,
+    ) -> Result<JapaneseDateInner, DateTimeError> {
+        let cal = Ref(self);
+        if era.0 == tinystr!(16, "bce") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            return Ok(Date::new_iso_date(1 - year, month, day)?
+                .to_calendar(cal)
+                .inner);
+        } else if era.0 == tinystr!(16, "ce") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            return Ok(Date::new_iso_date(year, month, day)?.to_calendar(cal).inner);
+        }
+
+        let (era_start, next_era_start) = self.japanese_era_range_for(era.0)?;
+
+        let date_in_iso = EraStartDate {
+            year: era_start.year + year - 1,
+            month,
+            day,
+        };
+
+        if date_in_iso < era_start {
+            return Err(DateTimeError::OutOfRange);
+        } else if let Some(next_era_start) = next_era_start {
+            if date_in_iso >= next_era_start {
+                return Err(DateTimeError::OutOfRange);
+            }
+        }
+
+        let iso = Date::new_iso_date(date_in_iso.year, date_in_iso.month, date_in_iso.day)?;
+        Ok(JapaneseDateInner {
+            inner: iso.inner,
+            adjusted_year: year,
+            era: era.0,
+        })
     }
 }
 

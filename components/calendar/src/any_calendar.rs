@@ -11,7 +11,9 @@ use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
 use crate::japanese::{Japanese, JapaneseEraStyle};
-use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
+use crate::{
+    types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
+};
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
@@ -80,6 +82,39 @@ macro_rules! match_cal_and_date {
 
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let ret = match *self {
+            Self::Gregorian(ref c) => {
+                AnyDateInner::Gregorian(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Buddhist(ref c) => {
+                AnyDateInner::Buddhist(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Japanese(ref c) => {
+                AnyDateInner::Japanese(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Japanext(ref c) => {
+                AnyDateInner::Japanext(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Ethiopic(ref c) => {
+                AnyDateInner::Ethiopic(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Indian(ref c) => {
+                AnyDateInner::Indian(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Coptic(ref c) => {
+                AnyDateInner::Coptic(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_codes(era, year, month_code, day)?),
+        };
+        Ok(ret)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> AnyDateInner {
         match *self {
             Self::Gregorian(ref c) => AnyDateInner::Gregorian(c.date_from_iso(iso)),
