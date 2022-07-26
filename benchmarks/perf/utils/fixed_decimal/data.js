@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658801449891,
+  "lastUpdate": 1658863141393,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39388,6 +39388,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "57224050+QnnOkabayashi@users.noreply.github.com",
+            "name": "Quinn",
+            "username": "QnnOkabayashi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c454f26a6a7f5dcdeef7ed3236b68f750e58530",
+          "message": "Update Diplomat bindings (#2248)\n\n* update to most recent diplomat\r\n\r\n* update paths\r\n\r\n* add ci wasm cp to diplomat\r\n\r\n* fix duckscript for ci",
+          "timestamp": "2022-07-26T19:07:53Z",
+          "tree_id": "85fa1f8fe4509ff328c7f9d25abbfff9329faf85",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c454f26a6a7f5dcdeef7ed3236b68f750e58530"
+        },
+        "date": 1658863107458,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122949,
+            "range": "± 319",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25403,
+            "range": "± 129",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71821,
+            "range": "± 156",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 94,
             "range": "± 0",
             "unit": "ns/iter"
           }
