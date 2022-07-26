@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658863141393,
+  "lastUpdate": 1658872187539,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39448,6 +39448,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 94,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7215608a0984a33439e43835de17a729a521bd51",
+          "message": "Add Han and Hiragana script mapping to use dictionary for word segmenter (#2251)",
+          "timestamp": "2022-07-26T21:38:31Z",
+          "tree_id": "67640b29186b82f1e3b5f2bee46fbe5fc0f89c85",
+          "url": "https://github.com/unicode-org/icu4x/commit/7215608a0984a33439e43835de17a729a521bd51"
+        },
+        "date": 1658872153264,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122960,
+            "range": "± 588",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25288,
+            "range": "± 201",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71652,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 86,
             "range": "± 0",
             "unit": "ns/iter"
           }
