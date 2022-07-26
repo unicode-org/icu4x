@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658787279370,
+  "lastUpdate": 1658794633528,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21263,6 +21263,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c99b3122a7e7702ed87214faa166c92f134a0ac9"
         },
         "date": 1658787243047,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4035913,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cc8645eb0bf3c0c1725c193d88c7fd01a389ce5b",
+          "message": "Update ICU tag for icuexportdata (#2247)",
+          "timestamp": "2022-07-25T17:15:27-07:00",
+          "tree_id": "268ad2cdef70c181d318e8ff1e731c118e8c4aba",
+          "url": "https://github.com/unicode-org/icu4x/commit/cc8645eb0bf3c0c1725c193d88c7fd01a389ce5b"
+        },
+        "date": 1658794598875,
         "tool": "ndjson",
         "benches": [
           {
