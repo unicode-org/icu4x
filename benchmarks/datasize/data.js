@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658800763869,
+  "lastUpdate": 1658862578763,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21383,6 +21383,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a06a127e40a1dec00683182e8655aa68e55e7ee9"
         },
         "date": 1658800728977,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036144,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "57224050+QnnOkabayashi@users.noreply.github.com",
+            "name": "Quinn",
+            "username": "QnnOkabayashi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4c454f26a6a7f5dcdeef7ed3236b68f750e58530",
+          "message": "Update Diplomat bindings (#2248)\n\n* update to most recent diplomat\r\n\r\n* update paths\r\n\r\n* add ci wasm cp to diplomat\r\n\r\n* fix duckscript for ci",
+          "timestamp": "2022-07-26T19:07:53Z",
+          "tree_id": "85fa1f8fe4509ff328c7f9d25abbfff9329faf85",
+          "url": "https://github.com/unicode-org/icu4x/commit/4c454f26a6a7f5dcdeef7ed3236b68f750e58530"
+        },
+        "date": 1658862542797,
         "tool": "ndjson",
         "benches": [
           {
