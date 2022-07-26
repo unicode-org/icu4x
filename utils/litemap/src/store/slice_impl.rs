@@ -5,11 +5,11 @@
 use super::*;
 
 #[inline]
-fn map_f<K: ?Sized, V: ?Sized>(input: &(&'static K, &'static V)) -> (&'static K, &'static V) {
+fn map_f<'a, K: ?Sized, V: ?Sized>(input: &(&'a K, &'a V)) -> (&'a K, &'a V) {
     *input
 }
 
-impl<K: 'static + ?Sized, V: 'static + ?Sized> Store<K, V> for &'static [(&'static K, &'static V)] {
+impl<'a, K: 'a + ?Sized, V: 'a + ?Sized> Store<K, V> for &'a [(&'a K, &'a V)] {
     #[inline]
     fn lm_len(&self) -> usize {
         self.len()

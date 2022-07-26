@@ -50,8 +50,6 @@ impl<K, V> Store<K, V> for Vec<(K, V)> {
 }
 
 impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
-    type KeyValueIntoIter = alloc::vec::IntoIter<(K, V)>;
-
     #[inline]
     fn lm_with_capacity(capacity: usize) -> Self {
         Self::with_capacity(capacity)
@@ -83,16 +81,6 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
     }
 
     #[inline]
-    fn lm_extend_end(&mut self, other: Self) {
-        self.extend(other)
-    }
-
-    #[inline]
-    fn lm_extend_start(&mut self, other: Self) {
-        self.splice(0..0, other);
-    }
-
-    #[inline]
     fn lm_clear(&mut self) {
         self.clear()
     }
@@ -103,11 +91,6 @@ impl<K, V> StoreMut<K, V> for Vec<(K, V)> {
         F: FnMut(&K, &V) -> bool,
     {
         self.retain(|(k, v)| predicate(k, v))
-    }
-
-    #[inline]
-    fn lm_into_iter(self) -> Self::KeyValueIntoIter {
-        IntoIterator::into_iter(self)
     }
 }
 
@@ -122,10 +105,26 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for Vec<(K, V)> {
 
 impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for Vec<(K, V)> {
     type KeyValueIterMut = core::iter::Map<core::slice::IterMut<'a, (K, V)>, MapFMut<K, V>>;
+    type KeyValueIntoIter = alloc::vec::IntoIter<(K, V)>;
 
     #[inline]
     fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut {
         self.as_mut_slice().iter_mut().map(map_f_mut)
+    }
+
+    #[inline]
+    fn lm_into_iter(self) -> Self::KeyValueIntoIter {
+        IntoIterator::into_iter(self)
+    }
+
+    #[inline]
+    fn lm_extend_end(&mut self, other: Self) {
+        self.extend(other)
+    }
+
+    #[inline]
+    fn lm_extend_start(&mut self, other: Self) {
+        self.splice(0..0, other);
     }
 }
 

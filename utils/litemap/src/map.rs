@@ -2,14 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::store::*;
 use alloc::borrow::Borrow;
+use alloc::vec::Vec;
+use core::cmp::Ordering;
 use core::iter::FromIterator;
 use core::marker::PhantomData;
 use core::mem;
 use core::ops::{Index, IndexMut};
-use alloc::vec::Vec;
-use crate::store::*;
-use core::cmp::Ordering;
 
 /// A simple "flat" map based on a sorted vector
 ///
@@ -57,14 +57,14 @@ impl<K, V> LiteMap<K, V, Vec<(K, V)>> {
     }
 }
 
-impl<K: ?Sized, V: ?Sized> LiteMap<K, V, &'static[(&'static K, &'static V)]> {
-    /// Convert a `&'static [(K, V)]` into a [`LiteMap`].
+impl<'a, K: ?Sized, V: ?Sized> LiteMap<K, V, &'a [(&'a K, &'a V)]> {
+    /// Convert a `&'a [(K, V)]` into a [`LiteMap`].
     ///
     /// # Safety
     ///
     /// The slice must be sorted and have no duplicate keys.
     #[inline]
-    pub const unsafe fn from_slice_unchecked(values: &'static [(&'static K, &'static V)]) -> Self {
+    pub const unsafe fn from_slice_unchecked(values: &'a [(&'a K, &'a V)]) -> Self {
         Self {
             values,
             _key_type: PhantomData,

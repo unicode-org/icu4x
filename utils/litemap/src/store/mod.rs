@@ -23,9 +23,9 @@
 //!
 //! [`check_litemap()`]: crate::testing::check_litemap
 
+mod slice_impl;
 #[cfg(feature = "alloc")]
 mod vec_impl;
-mod slice_impl;
 
 use core::cmp::Ordering;
 use core::iter::DoubleEndedIterator;
@@ -67,8 +67,6 @@ pub trait Store<K: ?Sized, V: ?Sized>: Sized {
 }
 
 pub trait StoreMut<K, V>: Store<K, V> {
-    type KeyValueIntoIter: Iterator<Item = (K, V)>;
-
     /// Creates a new store with the specified capacity hint.
     ///
     /// Implementations may ignore the argument if they do not support pre-allocating capacity.
@@ -98,26 +96,6 @@ pub trait StoreMut<K, V>: Store<K, V> {
     /// Panics if `index` is greater than the length.
     fn lm_remove(&mut self, index: usize) -> (K, V);
 
-    /// Adds items from another store to the end of this store.
-    fn lm_extend_end(&mut self, other: Self)
-    where
-        Self: Sized,
-    {
-        for item in other.lm_into_iter() {
-            self.lm_push(item.0, item.1);
-        }
-    }
-
-    /// Adds items from another store to the beginning of this store.
-    fn lm_extend_start(&mut self, other: Self)
-    where
-        Self: Sized,
-    {
-        for (i, item) in other.lm_into_iter().enumerate() {
-            self.lm_insert(i, item.0, item.1);
-        }
-    }
-
     /// Removes all items from the store.
     fn lm_clear(&mut self);
 
@@ -137,10 +115,6 @@ pub trait StoreMut<K, V>: Store<K, V> {
             }
         }
     }
-
-    /// Returns an iterator that moves every item from this store.
-    fn lm_into_iter(self) -> Self::KeyValueIntoIter;
-
 }
 
 /// Iterator methods for the LiteMap store.
@@ -153,9 +127,33 @@ pub trait StoreIterable<'a, K: 'a, V: 'a>: Store<K, V> {
 
 pub trait StoreIterableMut<'a, K: 'a, V: 'a>: StoreMut<K, V> + StoreIterable<'a, K, V> {
     type KeyValueIterMut: Iterator<Item = (&'a K, &'a mut V)> + DoubleEndedIterator + 'a;
+    type KeyValueIntoIter: Iterator<Item = (K, V)>;
 
     /// Returns an iterator over key/value pairs, with a mutable value.
     fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut;
+
+    /// Returns an iterator that moves every item from this store.
+    fn lm_into_iter(self) -> Self::KeyValueIntoIter;
+
+    /// Adds items from another store to the end of this store.
+    fn lm_extend_end(&mut self, other: Self)
+    where
+        Self: Sized,
+    {
+        for item in other.lm_into_iter() {
+            self.lm_push(item.0, item.1);
+        }
+    }
+
+    /// Adds items from another store to the beginning of this store.
+    fn lm_extend_start(&mut self, other: Self)
+    where
+        Self: Sized,
+    {
+        for (i, item) in other.lm_into_iter().enumerate() {
+            self.lm_insert(i, item.0, item.1);
+        }
+    }
 }
 
 /// A store that can be built from a tuple iterator.
