@@ -65,6 +65,7 @@ impl From<&CldrTimeZonesData> for TimeZoneFormatsV1<'static> {
                 })
                 .collect(),
             fallback_format: data.fallback_format.clone().into(),
+            gmt_offset_fallback: "GMT+?".to_string().into(),
         }
     }
 }
