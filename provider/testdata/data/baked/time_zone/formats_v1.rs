@@ -51,6 +51,7 @@ static AR_AR_EG: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFor
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static BN: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -83,6 +84,7 @@ static BN: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static CCP: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -121,6 +123,7 @@ static CCP: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static EN_EN_001_EN_ZA: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -150,6 +153,7 @@ static EN_EN_001_EN_ZA: DataStruct = &::icu_datetime::provider::time_zones::Time
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static ES: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -180,6 +184,7 @@ static ES: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static ES_AR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -210,6 +215,7 @@ static ES_AR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormat
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static FIL: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -240,6 +246,7 @@ static FIL: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static FR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -270,6 +277,7 @@ static FR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static JA: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -298,6 +306,7 @@ static JA: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1}（{0}）"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static RU: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -330,6 +339,7 @@ static RU: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static SR_LATN: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -360,6 +370,7 @@ static SR_LATN: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneForm
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static SR_SR_CYRL: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -392,6 +403,7 @@ static SR_SR_CYRL: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneF
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static TH: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -425,6 +437,7 @@ static TH: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static TR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -454,6 +467,7 @@ static TR: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };
 static UND: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
@@ -481,4 +495,5 @@ static UND: DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV
         )
     },
     fallback_format: alloc::borrow::Cow::Borrowed("{1} ({0})"),
+    gmt_offset_fallback: alloc::borrow::Cow::Borrowed("GMT+?"),
 };

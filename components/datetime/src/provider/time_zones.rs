@@ -43,6 +43,9 @@ pub struct TimeZoneFormatsV1<'data> {
     /// The format string to fall back to if data is unavailable.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub fallback_format: Cow<'data, str>,
+    /// The fallback of GMT-offset.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub gmt_offset_fallback: Cow<'data, str>,
 }
 
 /// TimeZone ID in BCP47 format
