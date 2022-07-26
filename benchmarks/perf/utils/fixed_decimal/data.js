@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658798828284,
+  "lastUpdate": 1658801449891,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39316,6 +39316,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 172,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a06a127e40a1dec00683182e8655aa68e55e7ee9",
+          "message": "Add numbering system support (#2246)",
+          "timestamp": "2022-07-25T18:57:40-07:00",
+          "tree_id": "96d94fef446db00bba5a47899ea8e8cbcfe74d65",
+          "url": "https://github.com/unicode-org/icu4x/commit/a06a127e40a1dec00683182e8655aa68e55e7ee9"
+        },
+        "date": 1658801414706,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105158,
+            "range": "± 463",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21284,
+            "range": "± 89",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64355,
+            "range": "± 703",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 169,
             "range": "± 1",
             "unit": "ns/iter"
           },
