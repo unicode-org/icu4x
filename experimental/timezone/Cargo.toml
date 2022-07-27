@@ -48,5 +48,5 @@ zerovec = { version = "0.7", path = "../../utils/zerovec", default-features = fa
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
 
 [dev-dependencies]
-icu = { path = "../../components/icu", default-features = false }
+icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }

@@ -60,7 +60,7 @@ where
 ///
 /// ```
 /// use icu_datetime::date::GmtOffset;
-/// use icu_datetime::mock::time_zone::MockTimeZone;
+/// use icu::timezone::TimeZone;
 /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
 /// use icu_locid::locale;
 ///
@@ -74,7 +74,7 @@ where
 /// )
 /// .expect("Failed to create TimeZoneFormatter");
 ///
-/// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+/// let time_zone = TimeZone::new(GmtOffset::default(), None, None, None);
 ///
 /// let value = tzf.format_to_string(&time_zone);
 /// ```
@@ -345,7 +345,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu::timezone::TimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -604,7 +604,7 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu_datetime::date::GmtOffset;
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu::timezone::TimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -618,7 +618,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = TimeZone::new(GmtOffset::default(), None, None, None);
     ///
     /// let _ = tzf.format(&time_zone);
     /// ```
@@ -639,7 +639,7 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu_datetime::date::GmtOffset;
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu::timezone::TimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -653,7 +653,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = TimeZone::new(GmtOffset::default(), None, None, None);
     ///
     /// let mut buffer = String::new();
     /// tzf.format_to_write(&mut buffer, &time_zone)
@@ -675,7 +675,7 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu_datetime::date::GmtOffset;
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu::timezone::TimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -689,7 +689,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = TimeZone::new(GmtOffset::default(), None, None, None);
     ///
     /// let _ = tzf.format_to_string(&time_zone);
     /// ```

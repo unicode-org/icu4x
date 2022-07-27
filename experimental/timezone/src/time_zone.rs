@@ -14,8 +14,8 @@ use icu_calendar::DateTimeError;
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::date::GmtOffset;
-/// use icu::datetime::mock::time_zone::TimeZone;
+/// use icu::calendar::types::GmtOffset;
+/// use icu::timezone::TimeZone;
 ///
 /// let tz1 = TimeZone::new(
 ///     GmtOffset::default(),
@@ -75,7 +75,7 @@ impl FromStr for TimeZone {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::mock::time_zone::TimeZone;
+    /// use icu::timezone::TimeZone;
     ///
     /// let tz0: TimeZone = "Z".parse().expect("Failed to parse a time zone.");
     /// let tz1: TimeZone = "+02".parse().expect("Failed to parse a time zone.");

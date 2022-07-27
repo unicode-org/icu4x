@@ -52,7 +52,7 @@ fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu = { path = "../icu", default-features = false }
+icu = { path = "../icu", default-features = false, features = ["experimental"] }
 icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "0.6", path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }

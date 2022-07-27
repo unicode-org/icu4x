@@ -1311,6 +1311,7 @@ dependencies = [
  "icu_properties",
  "icu_segmenter",
  "icu_testdata",
+ "icu_timezone",
  "icu_uniset",
 ]
 

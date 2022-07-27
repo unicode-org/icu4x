@@ -39,6 +39,7 @@ icu_plurals = { version = "0.6", path = "../plurals", default-features = false }
 icu_properties = { version = "0.6", path = "../properties", default-features = false }
 
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", default-features = false, optional = true }
+icu_timezone = { version = "0.6", path = "../../experimental/timezone", default-features = false, optional = true }
 
 [dev-dependencies]
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }
@@ -69,7 +70,7 @@ serde = [
 serde_human = [
     "icu_list/serde_human"
 ]
-experimental = ["icu_segmenter"]
+experimental = ["icu_segmenter", "icu_timezone"]
 
 [[example]]
 name = "tui"
