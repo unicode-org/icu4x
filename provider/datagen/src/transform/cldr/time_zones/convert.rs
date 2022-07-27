@@ -50,12 +50,12 @@ fn compute_bcp47_tzids_hashmap(
     let mut bcp47_tzids = HashMap::new();
     for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
         if let Some(alias) = &bcp47_tzid_data.alias {
-            for data_value in alias.split(" ") {
+            for data_value in alias.split(' ') {
                 bcp47_tzids.insert(data_value.to_string(), *bcp47_tzid);
             }
         }
     }
-    return bcp47_tzids;
+    bcp47_tzids
 }
 
 fn compute_meta_zone_ids_hashmap(
@@ -63,9 +63,9 @@ fn compute_meta_zone_ids_hashmap(
 ) -> HashMap<String, MetaZoneId> {
     let mut meta_zone_ids = HashMap::new();
     for (meta_zone_id, meta_zone_id_data) in meta_zone_ids_resource.iter() {
-        meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.clone());
+        meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
     }
-    return meta_zone_ids;
+    meta_zone_ids
 }
 
 impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
