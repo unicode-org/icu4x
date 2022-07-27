@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#![cfg_attr(not(feature = "experimental"), allow(dead_code))]
+
 use crate::transform::cldr::source::CldrCache;
 pub use crate::transform::cldr::source::LocaleSubset as CldrLocaleSubset;
 use elsa::sync::FrozenMap;
@@ -22,27 +24,24 @@ use zip::ZipArchive;
 #[non_exhaustive]
 pub struct SourceData {
     cldr_paths: Option<Arc<CldrCache>>,
-    icuexport_paths: Option<Arc<TomlCache>>,
-    segmenter_paths: Arc<TomlCache>,
-    segmenter_lstm_paths: Arc<CldrCache>,
+    icuexport_paths: Option<Arc<SerdeCache>>,
+    segmenter_paths: Arc<SerdeCache>,
+    segmenter_lstm_paths: Arc<SerdeCache>,
     trie_type: IcuTrieType,
     collation_han_database: CollationHanDatabase,
 }
 
 impl Default for SourceData {
     fn default() -> Self {
+        let segmenter_path =
+            PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/data/segmenter"));
         Self {
             cldr_paths: None,
             icuexport_paths: None,
-            segmenter_paths: Arc::new(TomlCache::new(
-                AbstractFs::new(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
-                    .expect("valid dir"),
-            )),
-            segmenter_lstm_paths: Arc::new(CldrCache::new(
-                AbstractFs::new(PathBuf::from(std::env!("CARGO_MANIFEST_DIR")).join("data"))
-                    .expect("valid dir"),
-                CldrLocaleSubset::Full,
-            )),
+            segmenter_paths: Arc::new(SerdeCache::new(&segmenter_path).expect("valid dir")),
+            segmenter_lstm_paths: Arc::new(
+                SerdeCache::new(segmenter_path.join("lstm")).expect("valid dir"),
+            ),
             trie_type: IcuTrieType::Small,
             collation_han_database: CollationHanDatabase::Implicit,
         }
@@ -59,10 +58,7 @@ impl SourceData {
         locale_subset: CldrLocaleSubset,
     ) -> Result<Self, DataError> {
         Ok(Self {
-            cldr_paths: Some(Arc::new(CldrCache::new(
-                AbstractFs::new(root)?,
-                locale_subset,
-            ))),
+            cldr_paths: Some(Arc::new(CldrCache::new(root, locale_subset)?)),
             ..self
         })
     }
@@ -72,7 +68,7 @@ impl SourceData {
     /// https://github.com/unicode-org/icu/releases)).
     pub fn with_icuexport(self, root: PathBuf) -> Result<Self, DataError> {
         Ok(Self {
-            icuexport_paths: Some(Arc::new(TomlCache::new(AbstractFs::new(root)?))),
+            icuexport_paths: Some(Arc::new(SerdeCache::new(root)?)),
             ..self
         })
     }
@@ -177,28 +173,25 @@ impl SourceData {
     }
 
     /// Path to Unicode Properties source data.
-    pub(crate) fn icuexport(&self) -> Result<&TomlCache, DataError> {
+    pub(crate) fn icuexport(&self) -> Result<&SerdeCache, DataError> {
         self.icuexport_paths
             .as_deref()
             .ok_or(crate::error::MISSING_ICUEXPORT_ERROR)
     }
 
     /// Path to segmenter data.
-    #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
-    pub(crate) fn segmenter(&self) -> Result<&TomlCache, DataError> {
+    pub(crate) fn segmenter(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_paths)
     }
 
-    pub(crate) fn segmenter_lstm(&self) -> Result<&CldrCache, DataError> {
+    pub(crate) fn segmenter_lstm(&self) -> Result<&SerdeCache, DataError> {
         Ok(&self.segmenter_lstm_paths)
     }
 
-    #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub(crate) fn trie_type(&self) -> IcuTrieType {
         self.trie_type
     }
 
-    #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub(crate) fn collation_han_database(&self) -> CollationHanDatabase {
         self.collation_han_database
     }
@@ -211,7 +204,6 @@ pub(crate) enum IcuTrieType {
 }
 
 impl IcuTrieType {
-    #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub(crate) fn to_internal(self) -> icu_codepointtrie::TrieType {
         match self {
             IcuTrieType::Fast => icu_codepointtrie::TrieType::Fast,
@@ -229,8 +221,10 @@ impl std::fmt::Display for IcuTrieType {
     }
 }
 
-/// Specifies the collation Han database to use. Unihan is more precise but significantly increases data size.
-/// See <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
+/// Specifies the collation Han database to use.
+///
+/// Unihan is more precise but significantly increases data size. See
+/// <https://github.com/unicode-org/icu/blob/main/docs/userguide/icu_data/buildtool.md#collation-ucadata>
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
 pub enum CollationHanDatabase {
@@ -249,60 +243,81 @@ impl std::fmt::Display for CollationHanDatabase {
     }
 }
 
-pub(crate) struct TomlCache {
+pub(crate) struct SerdeCache {
     root: AbstractFs,
-    cache: Arc<FrozenMap<String, Box<dyn Any + Send + Sync>>>,
+    cache: FrozenMap<String, Box<dyn Any + Send + Sync>>,
 }
 
-impl Debug for TomlCache {
+impl Debug for SerdeCache {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        f.debug_struct("TomlCache")
+        f.debug_struct("SerdeCache")
             .field("root", &self.root)
             // skip formatting the cache
             .finish()
     }
 }
 
-impl TomlCache {
-    pub fn new(root: AbstractFs) -> Self {
-        Self {
-            root,
-            cache: Arc::new(FrozenMap::new()),
+impl SerdeCache {
+    pub fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
+        Ok(Self {
+            root: AbstractFs::new(root)?,
+            cache: FrozenMap::new(),
+        })
+    }
+
+    fn read_and_parse<S>(
+        &self,
+        path: &str,
+        parser: fn(&[u8]) -> Result<S, DataError>,
+    ) -> Result<&S, DataError>
+    where
+        for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
+    {
+        match self.cache.get(path) {
+            Some(x) => x,
+            None => self.cache.insert(
+                path.to_string(),
+                Box::new(
+                    parser(&self.root.read_to_buf(path)?)
+                        .map_err(|e| e.with_path_context(&path))?,
+                ),
+            ),
         }
+        .downcast_ref::<S>()
+        .ok_or_else(|| DataError::custom("Cache error").with_type_context::<S>())
+    }
+
+    pub fn read_and_parse_json<S>(&self, path: &str) -> Result<&S, DataError>
+    where
+        for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
+    {
+        self.read_and_parse(path, |bytes| {
+            serde_json::from_slice(bytes).map_err(DataError::from)
+        })
     }
 
     pub fn read_and_parse_toml<S>(&self, path: &str) -> Result<&S, DataError>
     where
         for<'de> S: serde::Deserialize<'de> + 'static + Send + Sync,
     {
-        match self.cache.get(path) {
-            Some(x) => x,
-            None => {
-                let file = self.root.read_to_buf(path)?;
-                let file: S = toml::from_slice(&file).map_err(|e| {
-                    crate::error::data_error_from_toml(e).with_display_context(&path)
-                })?;
-                self.cache.insert(path.to_string(), Box::new(file))
-            }
-        }
-        .downcast_ref::<S>()
-        .ok_or_else(|| DataError::custom("Uprops TOML error").with_type_context::<S>())
+        self.read_and_parse(path, |bytes| {
+            toml::from_slice(bytes).map_err(crate::error::data_error_from_toml)
+        })
     }
 
-    #[cfg_attr(not(feature = "experimental"), allow(dead_code))]
     pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
         self.root.list(path)
     }
 }
 
 #[derive(Debug)]
-pub(crate) enum AbstractFs {
+enum AbstractFs {
     Fs(PathBuf),
     Zip(RwLock<ZipArchive<Cursor<Vec<u8>>>>),
 }
 
 impl AbstractFs {
-    pub fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
+    fn new<P: AsRef<Path>>(root: P) -> Result<Self, DataError> {
         if std::fs::metadata(root.as_ref())
             .map_err(|e| DataError::from(e).with_path_context(root.as_ref()))?
             .is_dir()
@@ -316,7 +331,7 @@ impl AbstractFs {
         }
     }
 
-    pub fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
+    fn read_to_buf(&self, path: &str) -> Result<Vec<u8>, DataError> {
         match self {
             Self::Fs(root) => {
                 log::trace!("Reading: {}/{}", root.display(), path);
@@ -340,7 +355,7 @@ impl AbstractFs {
         }
     }
 
-    pub fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
+    fn list(&self, path: &str) -> Result<impl Iterator<Item = PathBuf>, DataError> {
         Ok(match self {
             Self::Fs(root) => std::fs::read_dir(&root.join(path))
                 .map_err(|e| DataError::from(e).with_display_context(path))?
