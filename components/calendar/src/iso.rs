@@ -69,6 +69,21 @@ impl CalendarArithmetic for Iso {
 
 impl Calendar for Iso {
     type DateInner = IsoDateInner;
+    /// Construct a date from era/month codes and fields
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        if era.0 != tinystr!(16, "default") {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        }
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IsoDateInner)
+    }
+
     fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
         *iso.inner()
     }

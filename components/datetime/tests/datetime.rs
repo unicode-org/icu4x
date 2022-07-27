@@ -11,7 +11,7 @@ use icu_calendar::{
     any_calendar::{AnyCalendarKind, IncludedInAnyCalendar},
     buddhist::Buddhist,
     coptic::Coptic,
-    ethiopic::Ethiopic,
+    ethiopic::{Ethiopic, EthiopicEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseEraStyle},
     provider::JapaneseErasV1Marker,
@@ -73,7 +73,8 @@ fn test_fixture(fixture_name: &str) {
         let input_indian = input_value.to_calendar(Indian);
         let input_ethiopic = input_value.to_calendar(Ethiopic::new());
 
-        let input_ethioaa = input_value.to_calendar(Ethiopic::new_with_amete_alem(true));
+        let input_ethioaa =
+            input_value.to_calendar(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem));
         let description = match fx.description {
             Some(description) => {
                 format!(
