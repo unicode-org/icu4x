@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658938731963,
+  "lastUpdate": 1658940540289,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39203,6 +39203,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 58018934,
             "range": "± 902526",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10f9ea445c36062ba044a06ba41a8bdc8bdca753",
+          "message": "Add Norwegian collator test (#2250)",
+          "timestamp": "2022-07-27T09:39:45-07:00",
+          "tree_id": "7e9928dc013e50d56e5a7068578c293516536f9a",
+          "url": "https://github.com/unicode-org/icu4x/commit/10f9ea445c36062ba044a06ba41a8bdc8bdca753"
+        },
+        "date": 1658940502590,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 40282381,
+            "range": "± 1672120",
             "unit": "ns/iter"
           },
           {
