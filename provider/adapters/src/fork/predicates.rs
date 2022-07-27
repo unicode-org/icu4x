@@ -29,7 +29,7 @@ pub trait ForkByErrorPredicate {
     /// [`DataKey`]: icu_provider::DataKey
     /// [`DataRequest`]: icu_provider::DataRequest
     /// [`IterableDynamicDataProvider`]: icu_provider::datagen::IterableDynamicDataProvider
-    fn predicate(&self, key: DataKey, req: Option<DataRequest>, err: DataError) -> bool;
+    fn test(&self, key: DataKey, req: Option<DataRequest>, err: DataError) -> bool;
 }
 
 /// A predicate that allows forking providers to search for a provider that supports a
@@ -40,7 +40,7 @@ pub struct ForkByKeyPredicate;
 
 impl ForkByErrorPredicate for ForkByKeyPredicate {
     #[inline]
-    fn predicate(&self, _: DataKey, _: Option<DataRequest>, err: DataError) -> bool {
+    fn test(&self, _: DataKey, _: Option<DataRequest>, err: DataError) -> bool {
         matches!(
             err,
             DataError {

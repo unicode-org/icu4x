@@ -39,7 +39,7 @@ where
         let result = self.0.load_buffer(key, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.predicate(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
             _ => (),
         };
         self.1.load_buffer(key, req)
@@ -56,7 +56,7 @@ where
         let result = self.0.load_any(key, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.predicate(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
             _ => (),
         };
         self.1.load_any(key, req)
@@ -74,7 +74,7 @@ where
         let result = self.0.load_data(key, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.predicate(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.test(key, Some(req), err) => return Err(err),
             _ => (),
         };
         self.1.load_data(key, req)
@@ -93,7 +93,7 @@ where
         let result = self.0.supported_locales_for_key(key);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !self.2.predicate(key, None, err) => return Err(err),
+            Err(err) if !self.2.test(key, None, err) => return Err(err),
             _ => (),
         };
         self.1.supported_locales_for_key(key)
@@ -136,7 +136,7 @@ where
             let result = provider.load_buffer(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.predicate(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
@@ -154,7 +154,7 @@ where
             let result = provider.load_any(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.predicate(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
@@ -173,7 +173,7 @@ where
             let result = provider.load_data(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.predicate(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.test(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
@@ -193,7 +193,7 @@ where
             let result = provider.supported_locales_for_key(key);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !self.predicate.predicate(key, None, err) => return Err(err),
+                Err(err) if !self.predicate.test(key, None, err) => return Err(err),
                 _ => (),
             };
         }
@@ -222,7 +222,7 @@ where
                 Ok(ok) => return Ok(ok),
                 Err(e) => {
                     let ReturnedPayloadError(returned, err) = e;
-                    if !self.predicate.predicate(key, None, err) {
+                    if !self.predicate.test(key, None, err) {
                         return Err(ReturnedPayloadError(returned, err));
                     }
                     from = returned;
@@ -256,7 +256,7 @@ where
             Ok(ok) => return Ok(ok),
             Err(e) => {
                 let ReturnedPayloadError(returned, err) = e;
-                if !self.2.predicate(key, None, err) {
+                if !self.2.test(key, None, err) {
                     return Err(ReturnedPayloadError(returned, err));
                 }
                 from = returned;
