@@ -93,13 +93,18 @@ macro_rules! impl_data_provider {
 
             impl IterableDataProvider<$marker> for TimeZonesProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    Ok(self
-                        .source
-                        .cldr()?
-                        .dates("gregorian")
-                        .list_langs()?
-                        .map(DataLocale::from)
-                        .collect())
+                    if <$marker>::KEY == MetaZonePeriodV1Marker::KEY {
+                        // MetaZonePeriodV1 does not require localized time zone data
+                        Ok(vec![Default::default()])
+                    } else {
+                        Ok(self
+                            .source
+                            .cldr()?
+                            .dates("gregorian")
+                            .list_langs()?
+                            .map(DataLocale::from)
+                            .collect())
+                    }
                 }
             }
         )+
