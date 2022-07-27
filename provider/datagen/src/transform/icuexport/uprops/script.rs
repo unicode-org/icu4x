@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
@@ -14,25 +13,8 @@ use icu_provider::prelude::*;
 use std::convert::TryFrom;
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVec};
 
-/// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
-///
-/// This data provider returns a [`ScriptWithExtensions`] instance,
-/// which efficiently represents data for the Script and Script_Extensions
-/// properties.
-pub struct ScriptWithExtensionsPropertyProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for ScriptWithExtensionsPropertyProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
 // implement data provider
-impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensionsPropertyProvider {
+impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         _: DataRequest,
@@ -79,18 +61,11 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for ScriptWithExtensions
     }
 }
 
-impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker>
-    for ScriptWithExtensionsPropertyProvider
-{
+impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
-
-icu_provider::make_exportable_provider!(
-    ScriptWithExtensionsPropertyProvider,
-    [ScriptWithExtensionsPropertyV1Marker,]
-);
 
 #[cfg(test)]
 mod tests {
@@ -98,7 +73,7 @@ mod tests {
 
     #[test]
     fn test_script_val_from_script_extensions() {
-        let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -117,7 +92,7 @@ mod tests {
 
     #[test]
     fn test_scx_array_from_script_extensions() {
-        let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -190,7 +165,7 @@ mod tests {
 
     #[test]
     fn test_has_script() {
-        let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())
@@ -269,7 +244,7 @@ mod tests {
 
     #[test]
     fn test_get_script_extensions_set() {
-        let provider = ScriptWithExtensionsPropertyProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let payload: DataPayload<ScriptWithExtensionsPropertyV1Marker> = provider
             .load(Default::default())

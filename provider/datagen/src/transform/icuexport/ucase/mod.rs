@@ -5,7 +5,8 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-use crate::SourceData;
+#![cfg(feature = "experimental")]
+
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
 use icu_codepointtrie::toml::CodePointDataSlice;
@@ -15,20 +16,7 @@ use std::convert::TryFrom;
 
 mod ucase_serde;
 
-/// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
-pub struct CaseMappingDataProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for CaseMappingDataProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
+impl DataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<CaseMappingV1Marker>, DataError> {
         let toml = &self
             .source
@@ -73,25 +61,22 @@ impl DataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
     }
 }
 
-impl icu_provider::datagen::IterableDataProvider<CaseMappingV1Marker> for CaseMappingDataProvider {
+impl icu_provider::datagen::IterableDataProvider<CaseMappingV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-icu_provider::make_exportable_provider!(CaseMappingDataProvider, [CaseMappingV1Marker,]);
-
 #[cfg(test)]
 mod tests {
-    use super::*;
     use core::str::FromStr;
     use icu_casemapping::CaseMapping;
     use icu_locid::Locale;
 
     #[test]
     fn test_simple_mappings() {
-        let provider = CaseMappingDataProvider::from(&SourceData::for_test());
-        let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
+        let case_mapping = CaseMapping::try_new(&crate::DatagenProvider::for_test())
+            .expect("Loading was successful");
 
         // Basic case mapping
         assert_eq!(case_mapping.to_uppercase('a'), 'A');
@@ -134,18 +119,20 @@ mod tests {
     // These tests are taken from StringCaseTest::TestCaseConversion in ICU4C.
     #[test]
     fn test_full_mappings() {
-        let provider = CaseMappingDataProvider::from(&SourceData::for_test());
-
-        let case_mapping = CaseMapping::try_new(&provider).expect("Loading was successful");
-
-        let turkish_locale = Locale::from_str("tr").expect("Parsing was successful");
-        let turkish_case_mapping = CaseMapping::try_new_with_locale(&provider, &turkish_locale)
+        let case_mapping = CaseMapping::try_new(&crate::DatagenProvider::for_test())
             .expect("Loading was successful");
 
-        let lithuanian_locale = Locale::from_str("lt").expect("Parsing was successful");
-        let lithuanian_case_mapping =
-            CaseMapping::try_new_with_locale(&provider, &lithuanian_locale)
+        let turkish_locale = Locale::from_str("tr").expect("Parsing was successful");
+        let turkish_case_mapping =
+            CaseMapping::try_new_with_locale(&crate::DatagenProvider::for_test(), &turkish_locale)
                 .expect("Loading was successful");
+
+        let lithuanian_locale = Locale::from_str("lt").expect("Parsing was successful");
+        let lithuanian_case_mapping = CaseMapping::try_new_with_locale(
+            &crate::DatagenProvider::for_test(),
+            &lithuanian_locale,
+        )
+        .expect("Loading was successful");
 
         let uppercase_greek = "ΙΕΣΥΣ ΧΡΙΣΤΟΣ"; // "IESUS CHRISTOS"
         let lowercase_greek = "ιεσυς χριστος"; // "IESUS CHRISTOS"

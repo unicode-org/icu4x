@@ -5,7 +5,6 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-use crate::SourceData;
 use icu_codepointtrie::CodePointTrie;
 use icu_collator::provider::*;
 use icu_locid::extensions::unicode::Value;
@@ -15,7 +14,6 @@ use icu_locid::LanguageIdentifier;
 use icu_locid::Locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_provider::DataKey;
 use std::convert::TryFrom;
 use std::str::FromStr;
 use writeable::Writeable;
@@ -25,16 +23,6 @@ mod collator_serde;
 
 #[cfg(test)]
 mod test;
-
-/// Collection of all the key for easy reference from the datagen registry.
-pub const ALL_KEYS: [DataKey; 6] = [
-    CollationDataV1Marker::KEY,
-    CollationDiacriticsV1Marker::KEY,
-    CollationJamoV1Marker::KEY,
-    CollationMetadataV1Marker::KEY,
-    CollationReorderingV1Marker::KEY,
-    CollationSpecialPrimariesV1Marker::KEY,
-];
 
 fn locale_to_file_name(locale: &DataLocale) -> String {
     let mut s = if locale.get_langid() == LanguageIdentifier::UND {
@@ -101,23 +89,10 @@ fn file_name_to_locale(file_name: &str) -> Option<Locale> {
     Some(locale)
 }
 
-/// A data provider reading from .toml files produced by the ICU4C genrb tool.
-pub struct CollationProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for CollationProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
 macro_rules! collation_provider {
     ($(($marker:ident, $serde_struct:ident, $suffix:literal, $conversion:expr)),+, $toml_data:ident) => {
         $(
-            impl DataProvider<$marker> for CollationProvider {
+            impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let $toml_data: &collator_serde::$serde_struct = self
                         .source
@@ -148,7 +123,7 @@ macro_rules! collation_provider {
                 }
             }
 
-            impl IterableDataProvider<$marker> for CollationProvider {
+            impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
                         .source
@@ -170,7 +145,6 @@ macro_rules! collation_provider {
                 }
             }
         )+
-        icu_provider::make_exportable_provider!(CollationProvider, [$($marker),+,]);
     };
 }
 

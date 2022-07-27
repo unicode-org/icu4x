@@ -4,7 +4,6 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
-use crate::SourceData;
 use icu_locid::locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -48,21 +47,7 @@ struct RawLstmData {
     mat9: RawLstmMatrix,
 }
 
-/// A data provider reading from segmenter lstm files.
-#[derive(Debug)]
-pub struct SegmenterLstmProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for SegmenterLstmProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
+impl DataProvider<LstmDataV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
         let lstm_data = self
             .source
@@ -89,9 +74,7 @@ impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(SegmenterLstmProvider, [LstmDataV1Marker,]);
-
-impl IterableDataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
+impl IterableDataProvider<LstmDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             locale!("km").into(),

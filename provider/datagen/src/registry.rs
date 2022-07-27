@@ -4,198 +4,188 @@
 
 use icu_provider::{DataKey, KeyedDataMarker};
 
-/// List of all supported keys
-pub fn all_keys() -> Vec<DataKey> {
-    let mut v = vec![
-        icu_calendar::provider::JapaneseErasV1Marker::KEY,
-        icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
-        icu_datetime::provider::calendar::TimePatternsV1Marker::KEY,
-        icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
-        icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
-        icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
-        icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY,
-        icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY,
-        icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY,
-        icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY,
-        icu_datetime::provider::time_zones::MetaZonePeriodV1Marker::KEY,
-        icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY,
-        icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY,
-        icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
-        icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
-        icu_list::provider::AndListV1Marker::KEY,
-        icu_list::provider::OrListV1Marker::KEY,
-        icu_list::provider::UnitListV1Marker::KEY,
-        icu_locale_canonicalizer::provider::AliasesV1Marker::KEY,
-        icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY,
-        icu_plurals::provider::CardinalV1Marker::KEY,
-        icu_plurals::provider::OrdinalV1Marker::KEY,
-        icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY,
-        icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY,
-        #[cfg(feature = "experimental")]
-        icu_casemapping::provider::CaseMappingV1Marker::KEY,
-        icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY,
-        icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY,
-        #[cfg(feature = "experimental")]
-        icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY,
-        icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY,
-        icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY,
-        icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY,
-        icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY,
-        icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY,
-        #[cfg(feature = "experimental")]
-        icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY,
-        icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY,
-    ];
-    v.extend(icu_properties::provider::ALL_KEYS);
-    #[cfg(feature = "experimental")]
-    v.extend(icu_segmenter::ALL_KEYS);
-    v.extend(crate::transform::icuexport::collator::ALL_KEYS);
-    v
-}
+use icu_calendar::provider::*;
+use icu_collator::provider::*;
+use icu_datetime::provider::calendar::*;
+use icu_datetime::provider::time_zones::*;
+use icu_datetime::provider::week_data::*;
+use icu_decimal::provider::*;
+use icu_list::provider::*;
+use icu_locale_canonicalizer::provider::*;
+use icu_normalizer::provider::*;
+use icu_plurals::provider::*;
+use icu_properties::provider::*;
+use icu_provider::hello_world::HelloWorldV1Marker;
+use icu_provider_adapters::fallback::provider::*;
 
-/// Create a data provider reading from source files that generates data for all,
-/// or a subset, of ICU4X.
-///
-/// The macro behaves like a function that takes the following arguments:
-///
-/// 1. An instance of [`SourceData`](crate::SourceData) (required)
-/// 2. A list of providers to instantiate (optional)
-///
-/// The return value is a complex type that implements all of the key data provider traits.
-///
-/// To create a data provider for all of ICU4X:
-///
-/// ```no_run
-/// use icu_datagen::SourceData;
-///
-/// // This data provider supports all keys required by ICU4X.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::default());
-/// ```
-///
-/// To create a data provider for a subset:
-///
-/// ```no_run
-/// use icu_datagen::SourceData;
-///
-/// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(
-///     SourceData::default(),
-///     [
-///         icu_datagen::transform::cldr::AliasesProvider,
-///         icu_datagen::transform::cldr::LikelySubtagsProvider,
-///     ]
-/// );
-/// ```
-#[macro_export]
-#[cfg(not(feature = "experimental"))]
-macro_rules! create_datagen_provider {
-    ($source_data:expr) => {
-        $crate::create_datagen_provider!(
-            $source_data,
-            [
-                $crate::transform::cldr::AliasesProvider,
-                $crate::transform::cldr::CommonDateProvider,
-                $crate::transform::cldr::FallbackRulesProvider,
-                $crate::transform::cldr::JapaneseErasProvider,
-                $crate::transform::cldr::LikelySubtagsProvider,
-                $crate::transform::cldr::NumbersProvider,
-                $crate::transform::cldr::PluralsProvider,
-                $crate::transform::cldr::TimeZonesProvider,
-                $crate::transform::cldr::WeekDataProvider,
-                $crate::transform::cldr::ListProvider,
-                $crate::transform::icuexport::collator::CollationProvider,
-                $crate::transform::icuexport::normalizer::NormalizationProvider,
-                $crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider,
-                $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
-                $crate::transform::icuexport::uprops::BinaryPropertyCodePointSetDataProvider,
-            ]
-        )
-    };
-    ($source_data:expr, [ $($constructor:path),+, ]) => {{
-        let __source = &$source_data;
-        icu_provider_adapters::make_forking_provider!(
-            icu_provider_adapters::fork::ForkByKeyProvider::new,
-            [
-                icu_provider::hello_world::HelloWorldProvider,
-                $(<$constructor>::from(__source)),+,
-            ]
-        )
-    }};
-}
-
-/// Create a data provider reading from source files that generates data for all,
-/// or a subset, of ICU4X.
-///
-/// The macro behaves like a function that takes the following arguments:
-///
-/// 1. An instance of [`SourceData`](crate::SourceData) (required)
-/// 2. A list of providers to instantiate (optional)
-///
-/// The return value is a complex type that implements all of the key data provider traits.
-///
-/// To create a data provider for all of ICU4X:
-///
-/// ```no_run
-/// use icu_datagen::SourceData;
-///
-/// // This data provider supports all keys required by ICU4X.
-/// let provider = icu_datagen::create_datagen_provider!(SourceData::default());
-/// ```
-///
-/// To create a data provider for a subset:
-///
-/// ```no_run
-/// use icu_datagen::SourceData;
-///
-/// // This data provider supports the keys for LocaleCanonicalizer.
-/// let provider = icu_datagen::create_datagen_provider!(
-///     SourceData::default(),
-///     [
-///         icu_datagen::transform::cldr::AliasesProvider,
-///         icu_datagen::transform::cldr::LikelySubtagsProvider,
-///     ]
-/// );
-/// ```
-#[macro_export]
 #[cfg(feature = "experimental")]
-macro_rules! create_datagen_provider {
-    ($source_data:expr) => {
-        $crate::create_datagen_provider!(
-            $source_data,
-            [
-                $crate::transform::cldr::AliasesProvider,
-                $crate::transform::cldr::CommonDateProvider,
-                $crate::transform::cldr::FallbackRulesProvider,
-                $crate::transform::cldr::JapaneseErasProvider,
-                $crate::transform::cldr::LikelySubtagsProvider,
-                $crate::transform::cldr::NumbersProvider,
-                $crate::transform::cldr::PluralsProvider,
-                $crate::transform::cldr::TimeZonesProvider,
-                $crate::transform::cldr::WeekDataProvider,
-                $crate::transform::cldr::ListProvider,
-                $crate::transform::icuexport::collator::CollationProvider,
-                $crate::transform::icuexport::normalizer::NormalizationProvider,
-                $crate::transform::icuexport::ucase::CaseMappingDataProvider,
-                $crate::transform::icuexport::uprops::EnumeratedPropertyCodePointTrieProvider,
-                $crate::transform::icuexport::uprops::ScriptWithExtensionsPropertyProvider,
-                $crate::transform::icuexport::uprops::BinaryPropertyCodePointSetDataProvider,
-                $crate::transform::segmenter::SegmenterDictionaryProvider,
-                $crate::transform::segmenter::SegmenterLstmProvider,
-                $crate::transform::segmenter::SegmenterRuleProvider,
+use icu_casemapping::provider::*;
+#[cfg(feature = "experimental")]
+use icu_segmenter::*;
+
+macro_rules! registry {
+    ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {
+        /// List of all supported keys
+        pub fn all_keys() -> Vec<DataKey> {
+            vec![
+                $(
+                    <$marker>::KEY,
+                )+
+                $(
+                    #[cfg(feature = "experimental")]
+                    <$exp_marker>::KEY,
+                )+
             ]
-        )
-    };
-    ($source_data:expr, [ $($constructor:path),+, ]) => {{
-        let __source = &$source_data;
-        icu_provider_adapters::make_forking_provider!(
-            icu_provider_adapters::fork::ForkByKeyProvider::new,
+        }
+
+        #[cfg(feature = "experimental")]
+        icu_provider::make_exportable_provider!(
+            crate::DatagenProvider,
             [
-                icu_provider::hello_world::HelloWorldProvider,
-                $(<$constructor>::from(__source)),+,
+                HelloWorldV1Marker,
+                $($marker,)+
+                $($exp_marker,)+
             ]
-        )
-    }};
+        );
+
+        #[cfg(not(feature = "experimental"))]
+        icu_provider::make_exportable_provider!(
+            crate::DatagenProvider,
+            [
+                HelloWorldV1Marker,
+                $($marker,)+
+            ]
+        );
+    }
 }
+
+registry!(
+    AliasesV1Marker,
+    AlnumV1Marker,
+    AlphabeticV1Marker,
+    AndListV1Marker,
+    AsciiHexDigitV1Marker,
+    BidiClassV1Marker,
+    BidiControlV1Marker,
+    BidiMirroredV1Marker,
+    BlankV1Marker,
+    CanonicalCombiningClassV1Marker,
+    CanonicalCompositionPassthroughV1Marker,
+    CanonicalCompositionsV1Marker,
+    CanonicalDecompositionDataV1Marker,
+    CanonicalDecompositionTablesV1Marker,
+    CardinalV1Marker,
+    CasedV1Marker,
+    CaseIgnorableV1Marker,
+    CaseSensitiveV1Marker,
+    ChangesWhenCasefoldedV1Marker,
+    ChangesWhenCasemappedV1Marker,
+    ChangesWhenLowercasedV1Marker,
+    ChangesWhenNfkcCasefoldedV1Marker,
+    ChangesWhenTitlecasedV1Marker,
+    ChangesWhenUppercasedV1Marker,
+    CollationDataV1Marker,
+    CollationDiacriticsV1Marker,
+    CollationJamoV1Marker,
+    CollationMetadataV1Marker,
+    CollationReorderingV1Marker,
+    CollationSpecialPrimariesV1Marker,
+    CompatibilityCompositionPassthroughV1Marker,
+    CompatibilityDecompositionSupplementV1Marker,
+    CompatibilityDecompositionTablesV1Marker,
+    DashV1Marker,
+    DatePatternsV1Marker,
+    DateSkeletonPatternsV1Marker,
+    DateSymbolsV1Marker,
+    DecimalSymbolsV1Marker,
+    DefaultIgnorableCodePointV1Marker,
+    DeprecatedV1Marker,
+    DiacriticV1Marker,
+    EastAsianWidthV1Marker,
+    EmojiComponentV1Marker,
+    EmojiModifierBaseV1Marker,
+    EmojiModifierV1Marker,
+    EmojiPresentationV1Marker,
+    EmojiV1Marker,
+    ExemplarCitiesV1Marker,
+    ExtendedPictographicV1Marker,
+    ExtenderV1Marker,
+    FullCompositionExclusionV1Marker,
+    GeneralCategoryV1Marker,
+    GraphemeBaseV1Marker,
+    GraphemeClusterBreakV1Marker,
+    GraphemeExtendV1Marker,
+    GraphemeLinkV1Marker,
+    GraphV1Marker,
+    HexDigitV1Marker,
+    HyphenV1Marker,
+    IdContinueV1Marker,
+    IdeographicV1Marker,
+    IdsBinaryOperatorV1Marker,
+    IdStartV1Marker,
+    IdsTrinaryOperatorV1Marker,
+    JapaneseErasV1Marker,
+    JoinControlV1Marker,
+    LikelySubtagsV1Marker,
+    LineBreakV1Marker,
+    LocaleFallbackLikelySubtagsV1Marker,
+    LocaleFallbackParentsV1Marker,
+    LogicalOrderExceptionV1Marker,
+    LowercaseV1Marker,
+    MathV1Marker,
+    MetaZoneGenericNamesLongV1Marker,
+    MetaZoneGenericNamesShortV1Marker,
+    MetaZonePeriodV1Marker,
+    MetaZoneSpecificNamesLongV1Marker,
+    MetaZoneSpecificNamesShortV1Marker,
+    NfcInertV1Marker,
+    NfdInertV1Marker,
+    NfkcInertV1Marker,
+    NfkdInertV1Marker,
+    NoncharacterCodePointV1Marker,
+    NonRecursiveDecompositionSupplementV1Marker,
+    OrdinalV1Marker,
+    OrListV1Marker,
+    PatternSyntaxV1Marker,
+    PatternWhiteSpaceV1Marker,
+    PrependedConcatenationMarkV1Marker,
+    PrintV1Marker,
+    QuotationMarkV1Marker,
+    RadicalV1Marker,
+    RegionalIndicatorV1Marker,
+    ScriptV1Marker,
+    ScriptWithExtensionsPropertyV1Marker,
+    SegmentStarterV1Marker,
+    SentenceBreakV1Marker,
+    SentenceTerminalV1Marker,
+    SoftDottedV1Marker,
+    TerminalPunctuationV1Marker,
+    TimePatternsV1Marker,
+    TimeSymbolsV1Marker,
+    TimeZoneFormatsV1Marker,
+    UnifiedIdeographV1Marker,
+    UnitListV1Marker,
+    UppercaseV1Marker,
+    Uts46CompositionPassthroughV1Marker,
+    Uts46DecompositionSupplementV1Marker,
+    VariationSelectorV1Marker,
+    WeekDataV1Marker,
+    WhiteSpaceV1Marker,
+    WordBreakV1Marker,
+    XdigitV1Marker,
+    XidContinueV1Marker,
+    XidStartV1Marker,
+    #[cfg(feature = "experimental")]
+    {
+        CaseMappingV1Marker,
+        GraphemeClusterBreakDataV1Marker,
+        LineBreakDataV1Marker,
+        LstmDataV1Marker,
+        SentenceBreakDataV1Marker,
+        UCharDictionaryBreakDataV1Marker,
+        WordBreakDataV1Marker,
+    }
+);
 
 #[test]
 fn no_key_collisions() {

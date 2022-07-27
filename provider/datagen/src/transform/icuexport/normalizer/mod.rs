@@ -5,7 +5,6 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-use crate::SourceData;
 use icu_char16trie::char16trie::Char16Trie;
 use icu_codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
@@ -17,24 +16,11 @@ use zerovec::ZeroVec;
 
 mod normalizer_serde;
 
-/// A provider for normalization data reading from icuexportdata TOML files.
-pub struct NormalizationProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for NormalizationProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
 macro_rules! normalization_provider {
     ($marker:ident, $serde_struct:ident, $file_name:literal, $conversion:expr, $toml_data:ident) => {
         use icu_normalizer::provider::$marker;
 
-        impl DataProvider<$marker> for NormalizationProvider {
+        impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, _req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                 let $toml_data: &normalizer_serde::$serde_struct =
                     self.source.icuexport()?.read_and_parse_toml(&format!(
@@ -47,7 +33,7 @@ macro_rules! normalization_provider {
             }
         }
 
-        impl IterableDataProvider<$marker> for NormalizationProvider {
+        impl IterableDataProvider<$marker> for crate::DatagenProvider {
             fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                 Ok(vec![DataLocale::default()])
             }
@@ -250,20 +236,4 @@ normalization_canonical_compositions_provider!(CanonicalCompositionsV1Marker, "c
 normalization_non_recursive_decomposition_supplement_provider!(
     NonRecursiveDecompositionSupplementV1Marker,
     "decompositionex"
-);
-
-icu_provider::make_exportable_provider!(
-    NormalizationProvider,
-    [
-        CanonicalDecompositionDataV1Marker,
-        CompatibilityDecompositionSupplementV1Marker,
-        Uts46DecompositionSupplementV1Marker,
-        CanonicalDecompositionTablesV1Marker,
-        CompatibilityDecompositionTablesV1Marker,
-        CanonicalCompositionPassthroughV1Marker,
-        CompatibilityCompositionPassthroughV1Marker,
-        Uts46CompositionPassthroughV1Marker,
-        CanonicalCompositionsV1Marker,
-        NonRecursiveDecompositionSupplementV1Marker,
-    ]
 );

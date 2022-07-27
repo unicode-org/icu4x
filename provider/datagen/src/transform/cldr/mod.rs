@@ -4,24 +4,13 @@
 
 //! This module contains provider implementations backed by the JSON files shipped by CLDR.
 
-mod calendar;
-mod cldr_serde;
-mod datetime;
-mod decimal;
-mod fallback;
-mod list;
-mod locale_canonicalizer;
-mod plurals;
-pub(crate) mod source;
-mod time_zones;
-
-pub use calendar::japanese::JapaneseErasProvider;
-pub use datetime::week_data::WeekDataProvider;
-pub use datetime::CommonDateProvider;
-pub use decimal::NumbersProvider;
-pub use fallback::FallbackRulesProvider;
-pub use list::ListProvider;
-pub use locale_canonicalizer::aliases::AliasesProvider;
-pub use locale_canonicalizer::likely_subtags::LikelySubtagsProvider;
-pub use plurals::PluralsProvider;
-pub use time_zones::TimeZonesProvider;
+pub mod calendar;
+pub mod cldr_serde;
+pub mod datetime;
+pub mod decimal;
+pub mod fallback;
+pub mod list;
+pub mod locale_canonicalizer;
+pub mod plurals;
+pub mod source;
+pub mod time_zones;

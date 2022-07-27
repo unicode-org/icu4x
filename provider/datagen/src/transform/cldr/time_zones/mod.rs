@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetaZoneAliasData;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
@@ -24,24 +23,10 @@ struct CldrTimeZonesData<'a> {
     pub meta_zone_periods_resource: &'a HashMap<String, ZonePeriod>,
 }
 
-/// A data provider reading from CLDR JSON zones files.
-#[derive(Debug)]
-pub struct TimeZonesProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for TimeZonesProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
 macro_rules! impl_data_provider {
     ($($marker:ident),+) => {
         $(
-            impl DataProvider<$marker> for TimeZonesProvider {
+            impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let langid = req.locale.get_langid();
 
@@ -91,7 +76,7 @@ macro_rules! impl_data_provider {
                 }
             }
 
-            impl IterableDataProvider<$marker> for TimeZonesProvider {
+            impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     if <$marker>::KEY == MetaZonePeriodV1Marker::KEY {
                         // MetaZonePeriodV1 does not require localized time zone data
@@ -109,7 +94,6 @@ macro_rules! impl_data_provider {
             }
         )+
 
-        icu_provider::make_exportable_provider!(TimeZonesProvider, [$($marker),+,]);
     };
 }
 
@@ -133,7 +117,7 @@ mod tests {
     fn basic_cldr_time_zones() {
         use icu_locid::langid;
 
-        let provider = TimeZonesProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load(DataRequest {

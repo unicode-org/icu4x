@@ -187,18 +187,6 @@ macro_rules! expand {
                     }
                 }
             )+
-
-            #[cfg(feature = "datagen")]
-            /// The set of all resource keys supported by [`icu_uniset`](crate).
-            pub const ALL_KEYS: [DataKey; 75] = [
-                $(
-                    $bin_marker::KEY,
-                )+
-                $(
-                    $enum_marker::KEY,
-                )+
-                ScriptWithExtensionsPropertyV1Marker::KEY,
-            ];
     };
 }
 

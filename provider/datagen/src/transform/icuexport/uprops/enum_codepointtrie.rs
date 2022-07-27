@@ -9,21 +9,6 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 
-/// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
-///
-/// This data provider returns `CodePointTrie` data inside a `UnicodePropertyMap` data struct.
-pub struct EnumeratedPropertyCodePointTrieProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for EnumeratedPropertyCodePointTrieProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
 fn get_enumerated<'a>(
     source: &'a SourceData,
     key: &str,
@@ -43,7 +28,7 @@ fn get_enumerated<'a>(
 macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+,) => {
         $(
-            impl DataProvider<$marker> for EnumeratedPropertyCodePointTrieProvider
+            impl DataProvider<$marker> for crate::DatagenProvider
             {
                 fn load(&self, _: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let source_cpt_data = &get_enumerated(&self.source, $prop_name)?.code_point_trie;
@@ -59,7 +44,7 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableDataProvider<$marker> for EnumeratedPropertyCodePointTrieProvider {
+            impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
@@ -68,8 +53,6 @@ macro_rules! expand {
                 }
             }
         )+
-
-        icu_provider::make_exportable_provider!(EnumeratedPropertyCodePointTrieProvider, [$($marker),+,]);
     };
 }
 
@@ -100,7 +83,7 @@ mod tests {
     // the ICU CodePointTrie that ICU4X is reading from.
     #[test]
     fn test_general_category() {
-        let provider = EnumeratedPropertyCodePointTrieProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let payload: DataPayload<GeneralCategoryV1Marker> = provider
             .load(Default::default())
@@ -118,7 +101,7 @@ mod tests {
 
     #[test]
     fn test_script() {
-        let provider = EnumeratedPropertyCodePointTrieProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let payload: DataPayload<ScriptV1Marker> = provider
             .load(Default::default())

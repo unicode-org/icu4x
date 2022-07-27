@@ -185,7 +185,7 @@ pub use crate::lstm_structs::{LstmDataV1, LstmDataV1Marker, LstmMatrix};
 pub use crate::provider::{
     GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, RuleBreakDataV1,
     RuleBreakPropertyTable, RuleBreakStateTable, SentenceBreakDataV1Marker,
-    UCharDictionaryBreakDataV1, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker, ALL_KEYS,
+    UCharDictionaryBreakDataV1, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
 };
 pub use crate::sentence::{
     SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
