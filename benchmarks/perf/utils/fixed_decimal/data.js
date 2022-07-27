@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658880008240,
+  "lastUpdate": 1658894505800,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39628,6 +39628,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 87,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "318a73f3927d9edd2313e2f0333d7935d3401b49",
+          "message": "Add Date::new_from_codes, also document and fix up per-calendar constructor functions (#2255)\n\n* Add Copy/Clone for Ref\r\n\r\n* More general ZeroVec iterators\r\n\r\n* Better ethiopic constructors\r\n\r\n* Better docs for remaining ctors\r\n\r\n* Add Japanese date ctors\r\n\r\n* Add tests for japanese eras\r\n\r\n* Add new_from_codes\r\n\r\n* Any roundtrip tests\r\n\r\n* Fix amete alem offset",
+          "timestamp": "2022-07-27T03:49:56Z",
+          "tree_id": "5db500057f358dec6a8dbfacf1f03cb7abde37ff",
+          "url": "https://github.com/unicode-org/icu4x/commit/318a73f3927d9edd2313e2f0333d7935d3401b49"
+        },
+        "date": 1658894473575,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122923,
+            "range": "± 355",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25437,
+            "range": "± 187",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71721,
+            "range": "± 704",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 76,
             "range": "± 0",
             "unit": "ns/iter"
           }
