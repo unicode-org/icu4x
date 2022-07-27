@@ -258,8 +258,7 @@ impl crate::DatagenProvider {
         let data = maps::get_script(self).expect("The data should be valid");
         let script = data.as_borrowed();
 
-        let data =
-            sets::get_extended_pictographic(self).expect("The data should be valid!");
+        let data = sets::get_extended_pictographic(self).expect("The data should be valid!");
         let extended_pictographic = data.as_borrowed();
 
         // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
