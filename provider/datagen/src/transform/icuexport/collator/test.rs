@@ -18,7 +18,8 @@ struct TestCase<'a> {
 }
 
 fn check_expectations(locale: &Locale, options: CollatorOptions, cases: &[TestCase<'_>]) {
-    let collator = Collator::try_new(&DatagenProvider::for_test(), locale.clone(), options).unwrap();
+    let collator =
+        Collator::try_new(&DatagenProvider::for_test(), locale.clone(), options).unwrap();
     for cas in cases {
         let TestCase {
             left,
