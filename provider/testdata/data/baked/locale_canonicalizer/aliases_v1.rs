@@ -2,7 +2,7 @@
 type DataStruct =
     <::icu_locale_canonicalizer::provider::AliasesV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    unsafe { litemap::LiteMap::from_slice_unchecked(&[("und", UND)]) };
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_locale_canonicalizer::provider::AliasesV1 {
     language_variants: unsafe {
         ::zerovec::VarZeroVec::from_bytes_unchecked(&[

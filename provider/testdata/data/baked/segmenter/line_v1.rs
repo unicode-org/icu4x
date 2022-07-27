@@ -2,7 +2,7 @@
 type DataStruct =
     <::icu_segmenter::provider::LineBreakDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    unsafe { litemap::LiteMap::from_slice_unchecked(&[("und", UND)]) };
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
     property_table: ::icu_segmenter::provider::RuleBreakPropertyTable(
         ::icu_codepointtrie::CodePointTrie::from_parts(

@@ -1,8 +1,8 @@
 // @generated
 type DataStruct =
     <::icu_plurals::provider::CardinalV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
-    litemap::LiteMap::from_slice_unchecked(&[
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR),
         ("bn", BN),
         ("en", EN),
@@ -15,8 +15,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = u
         ("th", JA_TH_UND),
         ("tr", TR),
         ("und", JA_TH_UND),
-    ])
-};
+    ]);
 static AR: &DataStruct = &::icu_plurals::provider::PluralRulesV1 {
     zero: Some(::icu_plurals::rules::runtime::ast::Rule(unsafe {
         ::zerovec::VarZeroVec::from_bytes_unchecked(&[

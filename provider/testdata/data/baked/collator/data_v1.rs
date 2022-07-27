@@ -1,16 +1,15 @@
 // @generated
 type DataStruct =
     <::icu_collator::provider::CollationDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
-    litemap::LiteMap::from_slice_unchecked(&[
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("bn", BN),
         ("es", ES),
         ("ja", JA),
         ("th", TH),
         ("tr", TR),
         ("und", UND),
-    ])
-};
+    ]);
 static BN: &DataStruct = &::icu_collator::provider::CollationDataV1 {
     trie: ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {

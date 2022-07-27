@@ -1,12 +1,11 @@
 // @generated
 type DataStruct =
     <::icu_calendar::provider::JapaneseErasV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
-    litemap::LiteMap::from_slice_unchecked(&[
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("und-u-ca-japanese", UND_U_CA_JAPANESE),
         ("und-u-ca-japanext", UND_U_CA_JAPANEXT),
-    ])
-};
+    ]);
 static UND_U_CA_JAPANESE: &DataStruct = &::icu_calendar::provider::JapaneseErasV1 {
     dates_to_eras: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[

@@ -1,7 +1,7 @@
 // @generated
 type DataStruct = < :: icu_datetime :: provider :: calendar :: DatePatternsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
-    litemap::LiteMap::from_slice_unchecked(&[
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar-EG-u-ca-buddhist", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
         ("ar-EG-u-ca-coptic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
         ("ar-EG-u-ca-ethiopic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
@@ -375,8 +375,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = u
             "und-u-ca-japanext",
             UND_U_CA_BUDDHIST_UND_U_CA_COPTIC_UND_U_CA_ETHIOPIC,
         ),
-    ])
-};
+    ]);
 static AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC: &DataStruct =
     &::icu_datetime::provider::calendar::DatePatternsV1 {
         date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {

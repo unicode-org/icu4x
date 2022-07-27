@@ -1,8 +1,8 @@
 // @generated
 type DataStruct =
     <::icu_decimal::provider::DecimalSymbolsV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
-    litemap::LiteMap::from_slice_unchecked(&[
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
         ("ar-EG", AR_AR_EG),
         ("ar-EG-u-nu-latn", AR_EG_U_NU_LATN_AR_U_NU_LATN),
@@ -27,8 +27,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = u
         ("th-u-nu-thai", TH_U_NU_THAI),
         ("tr", ES_AR_SR_SR_CYRL_SR_LATN_TR),
         ("und", EN_EN_001_FIL_JA_TH_UND),
-    ])
-};
+    ]);
 static AR_AR_EG: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
     minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("\u{61c}-"),

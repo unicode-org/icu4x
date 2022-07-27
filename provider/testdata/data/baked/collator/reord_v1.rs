@@ -2,7 +2,7 @@
 type DataStruct =
     <::icu_collator::provider::CollationReorderingV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    unsafe { litemap::LiteMap::from_slice_unchecked(&[("bn", BN), ("ja", JA), ("th", TH)]) };
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("bn", BN), ("ja", JA), ("th", TH)]);
 static BN: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
     min_high_no_reorder: 1906311168u32,
     reorder_table: unsafe {

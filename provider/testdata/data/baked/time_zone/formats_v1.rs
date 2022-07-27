@@ -1,7 +1,7 @@
 // @generated
 type DataStruct = < :: icu_datetime :: provider :: time_zones :: TimeZoneFormatsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
-    litemap::LiteMap::from_slice_unchecked(&[
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
         ("ar-EG", AR_AR_EG),
         ("bn", BN),
@@ -21,8 +21,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = u
         ("th", TH),
         ("tr", TR),
         ("und", UND),
-    ])
-};
+    ]);
 static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::TimeZoneFormatsV1 {
     hour_format: (
         alloc::borrow::Cow::Borrowed("+HH:mm"),

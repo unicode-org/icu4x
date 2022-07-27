@@ -1,7 +1,7 @@
 // @generated
 type DataStruct = < :: icu_datetime :: provider :: time_zones :: MetaZoneGenericNamesShortV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
-    litemap::LiteMap::from_slice_unchecked(&[
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
         ("ar-EG", AR_AR_EG),
         ("bn", BN_CCP),
@@ -21,8 +21,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = u
         ("th", FIL_FR_RU_TH_TR_UND),
         ("tr", FIL_FR_RU_TH_TR_UND),
         ("und", FIL_FR_RU_TH_TR_UND),
-    ])
-};
+    ]);
 static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]

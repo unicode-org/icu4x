@@ -1,7 +1,7 @@
 // @generated
 type DataStruct = < :: icu_normalizer :: provider :: CanonicalDecompositionTablesV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    unsafe { litemap::LiteMap::from_slice_unchecked(&[("und", UND)]) };
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_normalizer::provider::DecompositionTablesV1 {
     scalars16: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[

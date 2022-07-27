@@ -1,9 +1,13 @@
 // @generated
 type DataStruct =
     <::icu_provider::hello_world::HelloWorldV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> = unsafe {
-    litemap::LiteMap::from_slice_unchecked(&[("bn", BN), ("en", EN), ("ja", JA), ("ru", RU)])
-};
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
+        ("bn", BN),
+        ("en", EN),
+        ("ja", JA),
+        ("ru", RU),
+    ]);
 static BN: &DataStruct = &::icu_provider::hello_world::HelloWorldV1 {
     message: alloc::borrow::Cow::Borrowed("ওহে বিশ\u{9cd}ব"),
 };
