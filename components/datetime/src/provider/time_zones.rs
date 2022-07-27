@@ -4,9 +4,10 @@
 
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};
-use tinystr::{TinyAsciiStr, TinyStr8};
-use zerovec::ule::{AsULE, ULE};
-use zerovec::{ZeroMap, ZeroMap2d, ZeroSlice, ZeroVec};
+use tinystr::TinyStr8;
+use zerovec::{ZeroMap, ZeroMap2d};
+
+pub use icu_timezone::provider::{MetaZoneId, TimeZoneBcp47Id};
 
 /// An ICU4X mapping to the CLDR timeZoneNames format strings.
 /// See CLDR-JSON timeZoneNames.json for more context.
@@ -46,62 +47,6 @@ pub struct TimeZoneFormatsV1<'data> {
     /// The fallback of GMT-offset.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub gmt_offset_fallback: Cow<'data, str>,
-}
-
-/// TimeZone ID in BCP47 format
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
-
-impl AsULE for TimeZoneBcp47Id {
-    type ULE = Self;
-
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
-    type Container = ZeroVec<'a, TimeZoneBcp47Id>;
-    type Slice = ZeroSlice<TimeZoneBcp47Id>;
-    type GetType = TimeZoneBcp47Id;
-    type OwnedType = TimeZoneBcp47Id;
-}
-
-/// MetaZone ID in a compact format
-#[repr(transparent)]
-#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct MetaZoneId(pub TinyAsciiStr<4>);
-
-impl AsULE for MetaZoneId {
-    type ULE = Self;
-
-    #[inline]
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-
-    #[inline]
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
-    type Container = ZeroVec<'a, MetaZoneId>;
-    type Slice = ZeroSlice<MetaZoneId>;
-    type GetType = MetaZoneId;
-    type OwnedType = MetaZoneId;
 }
 
 /// An ICU4X mapping to the CLDR timeZoneNames exemplar cities.
