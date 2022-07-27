@@ -210,10 +210,9 @@ fn test_nb_nn_no() {
     assert_ne!(strs, expected);
 
     // Test "nb" without fallback (should fail to load)
-    match Collator::try_new(&provider, locale!("nb"), CollatorOptions::new()) {
-        Ok(_) => panic!("Should fail to create 'nb' without fallback enabled"),
-        Err(_) => (),
-    };
+    if Collator::try_new(&provider, locale!("nb"), CollatorOptions::new()).is_ok() {
+        panic!("Should fail to create 'nb' without fallback enabled")
+    }
 
     // Enable locale fallback on the provider now
     let provider = LocaleFallbackProvider::try_new(any_provider.as_downcasting()).unwrap();
