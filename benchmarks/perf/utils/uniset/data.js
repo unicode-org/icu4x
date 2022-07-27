@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658952080127,
+  "lastUpdate": 1658959612412,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39365,6 +39365,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 58105195,
             "range": "± 873768",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aab626bda661607da63a609bb7908d58e2b04506",
+          "message": "Using static `LiteMap`s in databake (#2264)",
+          "timestamp": "2022-07-27T23:56:30+02:00",
+          "tree_id": "15e4ee7bec543e67065d2dfcb14c4061c2d41131",
+          "url": "https://github.com/unicode-org/icu4x/commit/aab626bda661607da63a609bb7908d58e2b04506"
+        },
+        "date": 1658959567872,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44392991,
+            "range": "± 178669",
             "unit": "ns/iter"
           },
           {
