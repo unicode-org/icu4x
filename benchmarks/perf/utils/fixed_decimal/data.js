@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658940705133,
+  "lastUpdate": 1658948047302,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39929,6 +39929,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 103,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0f88681b5ca9f0efe066f238a1cbd341068bc1e4",
+          "message": "Use an abstract predicate function in ForkByKeyProvider (#2249)",
+          "timestamp": "2022-07-27T11:42:05-07:00",
+          "tree_id": "9b0e69eef6fbbb6d2134ce91956ec7db3a99b4dc",
+          "url": "https://github.com/unicode-org/icu4x/commit/0f88681b5ca9f0efe066f238a1cbd341068bc1e4"
+        },
+        "date": 1658948011692,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123654,
+            "range": "± 419",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25332,
+            "range": "± 137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71674,
+            "range": "± 808",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 86,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
