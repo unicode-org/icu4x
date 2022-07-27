@@ -4,6 +4,8 @@
 
 //! Providers that combine multiple other providers.
 
+use alloc::vec::Vec;
+
 mod by_error;
 
 pub mod predicates;
