@@ -147,7 +147,7 @@ mod tests {
     macro_rules! test {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let f = ListFormatter::$type(
-                locale!($locale),
+                &locale!($locale).into(),
                 &crate::DatagenProvider::for_test(),
                 ListStyle::Wide
             ).unwrap();

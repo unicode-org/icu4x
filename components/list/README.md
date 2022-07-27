@@ -12,7 +12,7 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 ```rust
 #
 let list_formatter = ListFormatter::try_new_and(
-    locale!("es"),
+    &locale!("es").into(),
     &icu_testdata::get_provider(),
     ListStyle::Wide,
 )
@@ -35,7 +35,7 @@ assert_writeable_eq!(
 ```rust
 #
 let list_formatter = ListFormatter::try_new_or(
-    locale!("th"),
+    &locale!("th").into(),
     &icu_testdata::get_provider(),
     ListStyle::Short,
 )
@@ -53,7 +53,7 @@ assert_writeable_eq!(
 ```rust
 #
 let list_formatter = ListFormatter::try_new_unit(
-    locale!("en"),
+    &locale!("en").into(),
     &icu_testdata::get_provider(),
     ListStyle::Wide,
 )
