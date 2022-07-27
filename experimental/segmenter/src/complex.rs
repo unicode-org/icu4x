@@ -5,9 +5,9 @@
 use alloc::vec::Vec;
 use icu_provider::{DataError, DataPayload};
 
+use crate::dictionary::DictionarySegmenter;
 use crate::language::*;
 use crate::provider::*;
-use crate::DictionarySegmenter;
 use crate::LstmDataV1Marker;
 
 // Use the LSTM when the feature is enabled.
