@@ -172,8 +172,8 @@ pub use crate::grapheme::{
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
 };
 pub use crate::line::{
-    Latin1Char, LineBreakIterator, LineBreakOptions, LineBreakRule, LineBreakSegmenter, Utf16Char,
-    WordBreakRule,
+    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8,
+    LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule,
 };
 pub use crate::lstm_structs::{LstmDataV1, LstmDataV1Marker, LstmMatrix};
 pub use crate::provider::{

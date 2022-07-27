@@ -235,7 +235,7 @@ pub struct WordBreakTypeLatin1;
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
-    type CharType = u8; // TODO: Latin1Char
+    type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")
