@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658938440032,
+  "lastUpdate": 1658938731963,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39149,6 +39149,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 58158284,
             "range": "± 919077",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1a3b41f8048b58ed33340e177163bd7d6c88a9a7",
+          "message": "Produce only \"und\" data for metazone periods (#2260)",
+          "timestamp": "2022-07-27T09:03:58-07:00",
+          "tree_id": "840afb47ec75eed92f1e1c18d7ddd9fb5339b186",
+          "url": "https://github.com/unicode-org/icu4x/commit/1a3b41f8048b58ed33340e177163bd7d6c88a9a7"
+        },
+        "date": 1658938695554,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 58018934,
+            "range": "± 902526",
             "unit": "ns/iter"
           },
           {
