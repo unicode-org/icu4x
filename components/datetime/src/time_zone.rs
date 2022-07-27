@@ -734,7 +734,7 @@ impl TimeZoneFormatter {
     }
 }
 
-/// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).
+/// Determines which ISO-8601 format should be used to format a [`GmtOffset`](icu_timezone::GmtOffset).
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoFormat {

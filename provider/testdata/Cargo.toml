@@ -357,6 +357,7 @@ baked = [
     "icu_properties",
     "icu_provider_adapters",
     "icu_segmenter",
+    "icu_timezone",
     "icu_char16trie",
     "icu_codepointtrie",
     "icu_uniset",
