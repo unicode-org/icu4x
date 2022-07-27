@@ -9,107 +9,114 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use lazy_static::lazy_static;
 
+fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
+    selff: &crate::DatagenProvider,
+    req: DataRequest,
+) -> Result<DataResponse<M>, DataError> {
+    let langid = req.locale.get_langid();
+
+    let resource: &cldr_serde::list_patterns::Resource = selff
+        .source
+        .cldr()?
+        .misc()
+        .read_and_parse(&langid, "listPatterns.json")?;
+
+    let data = &resource
+        .main
+        .0
+        .get(&langid)
+        .expect("CLDR file contains the expected language")
+        .list_patterns;
+
+    let (wide, short, narrow) = if M::KEY == AndListV1Marker::KEY {
+        (&data.standard, &data.standard_short, &data.standard_narrow)
+    } else if M::KEY == OrListV1Marker::KEY {
+        (&data.or, &data.or_short, &data.or_narrow)
+    } else if M::KEY == UnitListV1Marker::KEY {
+        (&data.unit, &data.unit_short, &data.unit_narrow)
+    } else {
+        return Err(DataError::custom("Unknown key for ListFormatterPatternsV1"));
+    };
+
+    let mut patterns = ListFormatterPatternsV1::try_new([
+        &wide.start,
+        &wide.middle,
+        &wide.end,
+        &wide.pair,
+        &short.start,
+        &short.middle,
+        &short.end,
+        &short.pair,
+        &narrow.start,
+        &narrow.middle,
+        &narrow.end,
+        &narrow.pair,
+    ])?;
+
+    if langid.language == language!("es") {
+        if M::KEY == AndListV1Marker::KEY || M::KEY == UnitListV1Marker::KEY {
+            lazy_static! {
+                // Starts with i or (hi but not hia/hie)
+                static ref I_SOUND: StringMatcher<'static> = StringMatcher::new("i|hi([^ae]|$)").expect("Valid regex");
+            }
+            // Replace " y " with " e " before /i/ sounds.
+            // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
+            patterns
+                .make_conditional("{0} y {1}", &*I_SOUND, "{0} e {1}")
+                .expect("valid pattern");
+        } else if M::KEY == OrListV1Marker::KEY {
+            lazy_static! {
+                // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
+                // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
+                static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))").expect("Valid regex");
+            }
+            // Replace " o " with " u " before /o/ sound.
+            // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
+            patterns
+                .make_conditional("{0} o {1}", &*O_SOUND, "{0} u {1}")
+                .expect("valid pattern");
+        }
+    }
+
+    if langid.language == language!("he") {
+        // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
+        let non_hebrew = StringMatcher::new(&format!(
+            "[^{}]",
+            icu_properties::maps::get_script(selff)
+                .map_err(|e| DataError::custom("data for CodePointTrie of Script")
+                    .with_display_context(&e))?
+                .get_set_for_value(icu_properties::Script::Hebrew)
+                .to_code_point_inversion_list()
+                .iter_ranges()
+                .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
+                .fold(String::new(), |a, b| a + &b)
+        ))
+        .expect("valid regex");
+
+        // Add dashes between ו and non-Hebrew characters
+        // https://unicode.org/reports/tr35/tr35-general.html#:~:text=is%20not%20mute.-,Hebrew,AND,-Use%20%E2%80%98%2D%D7%95%E2%80%99%20instead
+        patterns
+            .make_conditional(
+                "{0} \u{05D5}{1}", // ״{0} ו {1}״
+                // Starts with a non-Hebrew letter
+                &non_hebrew,
+                "{0} \u{05D5}-{1}", // ״{0} ו- {1}״
+            )
+            .expect("valid pattern");
+    }
+
+    let metadata = DataResponseMetadata::default();
+    Ok(DataResponse {
+        metadata,
+        payload: Some(DataPayload::from_owned(patterns)),
+    })
+}
+
 macro_rules! implement {
     ($marker:ident) => {
         impl DataProvider<$marker> for crate::DatagenProvider {
             fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                let langid = req.locale.get_langid();
-
-                let resource: &cldr_serde::list_patterns::Resource = self
-                    .source
-                    .cldr()?
-                    .misc()
-                    .read_and_parse(&langid, "listPatterns.json")?;
-
-                let data = &resource
-                    .main
-                    .0
-                    .get(&langid)
-                    .expect("CLDR file contains the expected language")
-                    .list_patterns;
-
-                let (wide, short, narrow) = if <$marker>::KEY == AndListV1Marker::KEY {
-                    (&data.standard, &data.standard_short, &data.standard_narrow)
-                } else if <$marker>::KEY == OrListV1Marker::KEY {
-                    (&data.or, &data.or_short, &data.or_narrow)
-                } else if <$marker>::KEY == UnitListV1Marker::KEY {
-                    (&data.unit, &data.unit_short, &data.unit_narrow)
-                } else {
-                    return Err(DataError::custom("Unknown key for ListFormatterPatternsV1"));
-                };
-
-                let mut patterns = ListFormatterPatternsV1::try_new([
-                    &wide.start,
-                    &wide.middle,
-                    &wide.end,
-                    &wide.pair,
-                    &short.start,
-                    &short.middle,
-                    &short.end,
-                    &short.pair,
-                    &narrow.start,
-                    &narrow.middle,
-                    &narrow.end,
-                    &narrow.pair,
-                ])?;
-
-                if langid.language == language!("es") {
-                    if <$marker>::KEY == AndListV1Marker::KEY || <$marker>::KEY == UnitListV1Marker::KEY {
-                        lazy_static! {
-                            // Starts with i or (hi but not hia/hie)
-                            static ref I_SOUND: StringMatcher<'static> = StringMatcher::new("i|hi([^ae]|$)").expect("Valid regex");
-                        }
-                        // Replace " y " with " e " before /i/ sounds.
-                        // https://unicode.org/reports/tr35/tr35-general.html#:~:text=important.%20For%20example%3A-,Spanish,AND,-Use%20%E2%80%98e%E2%80%99%20instead
-                        patterns
-                            .make_conditional("{0} y {1}", &*I_SOUND, "{0} e {1}")
-                            .expect("valid pattern");
-                    } else if <$marker>::KEY == OrListV1Marker::KEY {
-                        lazy_static! {
-                            // Starts with o, ho, 8 (including 80, 800, ...), or 11 either alone or followed
-                            // by thousand groups and/or decimals (excluding e.g. 110, 1100, ...)
-                            static ref O_SOUND: StringMatcher<'static> = StringMatcher::new(r"o|ho|8|(11(\.?\d\d\d)*(,\d*)?([^\.,\d]|$))").expect("Valid regex");
-                        }
-                        // Replace " o " with " u " before /o/ sound.
-                        // https://unicode.org/reports/tr35/tr35-general.html#:~:text=agua%20e%20hielo-,OR,-Use%20%E2%80%98u%E2%80%99%20instead
-                        patterns
-                            .make_conditional("{0} o {1}", &*O_SOUND, "{0} u {1}")
-                            .expect("valid pattern");
-                    }
-                }
-
-                if langid.language == language!("he") {
-                    // Cannot cache this because it depends on `self`. However we don't expect many Hebrew locales.
-                    let non_hebrew = StringMatcher::new(&format!(
-                        "[^{}]",
-                        icu_properties::maps::get_script(self)
-                        .map_err(|e| DataError::custom("data for CodePointTrie of Script")
-                            .with_display_context(&e))?
-                        .get_set_for_value(icu_properties::Script::Hebrew)
-                        .to_code_point_inversion_list()
-                        .iter_ranges()
-                        .map(|range| format!(r#"\u{:04x}-\u{:04x}"#, range.start(), range.end()))
-                        .fold(String::new(), |a, b| a + &b)
-                    ))
-                    .expect("valid regex");
-
-                    // Add dashes between ו and non-Hebrew characters
-                    // https://unicode.org/reports/tr35/tr35-general.html#:~:text=is%20not%20mute.-,Hebrew,AND,-Use%20%E2%80%98%2D%D7%95%E2%80%99%20instead
-                    patterns
-                        .make_conditional(
-                            "{0} \u{05D5}{1}", // ״{0} ו {1}״
-                            // Starts with a non-Hebrew letter
-                            &non_hebrew,
-                            "{0} \u{05D5}-{1}", // ״{0} ו- {1}״
-                        )
-                        .expect("valid pattern");
-                }
-
-                let metadata = DataResponseMetadata::default();
-                Ok(DataResponse {
-                    metadata,
-                    payload: Some(DataPayload::from_owned(patterns)),
-                })
+                load(self, req)
             }
         }
 
@@ -124,7 +131,7 @@ macro_rules! implement {
                     .collect())
             }
         }
-    }
+    };
 }
 
 implement!(AndListV1Marker);
