@@ -1871,7 +1871,6 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
- "icu_calendar",
  "icu_locid",
  "icu_provider",
  "icu_testdata",

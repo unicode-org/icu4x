@@ -59,8 +59,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::date::GmtOffset;
-/// use icu::timezone::TimeZone;
+/// use icu::timezone::{GmtOffset, TimeZone};
 /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
 /// use icu_locid::locale;
 ///
@@ -603,8 +602,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::date::GmtOffset;
-    /// use icu::timezone::TimeZone;
+    /// use icu::timezone::{GmtOffset, TimeZone};
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -638,8 +636,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::date::GmtOffset;
-    /// use icu::timezone::TimeZone;
+    /// use icu::timezone::{GmtOffset, TimeZone};
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -674,8 +671,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::date::GmtOffset;
-    /// use icu::timezone::TimeZone;
+    /// use icu::timezone::{GmtOffset, TimeZone};
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///

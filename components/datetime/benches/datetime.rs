@@ -14,8 +14,8 @@ use icu_datetime::{
     time_zone::TimeZoneFormatterOptions,
     ZonedDateTimeFormatter,
 };
-use icu_timezone::TimeZone;
 use icu_locid::Locale;
+use icu_timezone::TimeZone;
 
 fn datetime_benches(c: &mut Criterion) {
     let provider = icu_testdata::get_provider();

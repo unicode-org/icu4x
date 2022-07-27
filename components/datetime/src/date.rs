@@ -10,7 +10,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
 use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
 use icu_provider::DataLocale;
-use icu_timezone::TimeZone;
+use icu_timezone::{GmtOffset, TimeZone};
 use tinystr::TinyStr8;
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar

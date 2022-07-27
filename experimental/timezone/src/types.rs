@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::TimeZoneError;
+use core::str::FromStr;
 
 /// The GMT offset in seconds for a timezone
 #[derive(Copy, Clone, Debug, Default)]
@@ -14,12 +15,12 @@ impl GmtOffset {
     pub fn try_new(seconds: i32) -> Result<Self, TimeZoneError> {
         // Valid range is from GMT-12 to GMT+14 in seconds.
         if seconds < -(12 * 60 * 60) {
-            Err(DateTimeError::Underflow {
+            Err(TimeZoneError::Underflow {
                 field: "GmtOffset",
                 min: -(12 * 60 * 60),
             })
         } else if seconds > (14 * 60 * 60) {
-            Err(DateTimeError::Overflow {
+            Err(TimeZoneError::Overflow {
                 field: "GmtOffset",
                 max: (14 * 60 * 60),
             })
@@ -82,7 +83,7 @@ impl FromStr for GmtOffset {
             /* ASCII */ Some('-') => -1,
             /* U+2212 */ Some('−') => -1,
             Some('Z') => return Ok(Self(0)),
-            _ => return Err(DateTimeError::InvalidTimeZoneOffset),
+            _ => return Err(TimeZoneError::InvalidTimeZoneOffset),
         };
 
         let seconds = match input.chars().count() {

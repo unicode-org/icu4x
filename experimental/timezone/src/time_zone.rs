@@ -5,17 +5,15 @@
 use crate::provider::{MetaZoneId, TimeZoneBcp47Id};
 use tinystr::TinyStr8;
 
+use crate::{GmtOffset, TimeZoneError};
 use core::str::FromStr;
-use icu_calendar::types::*;
-use icu_calendar::DateTimeError;
 
 /// A utility type that can hold time zone information
 ///
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::types::GmtOffset;
-/// use icu::timezone::TimeZone;
+/// use icu::timezone::{GmtOffset, TimeZone};
 ///
 /// let tz1 = TimeZone::new(
 ///     GmtOffset::default(),
@@ -59,7 +57,7 @@ impl TimeZone {
 }
 
 impl FromStr for TimeZone {
-    type Err = DateTimeError;
+    type Err = TimeZoneError;
 
     /// Parse a [`TimeZone`] from a string.
     ///

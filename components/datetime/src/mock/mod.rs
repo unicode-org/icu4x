@@ -90,7 +90,9 @@ pub fn parse_zoned_gregorian_from_str(
         .rfind(|c| c == '+' || /* ASCII */ c == '-' || /* U+2212 */ c == '−' || c == 'Z')
     {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Some(index) => FromStr::from_str(&input[index..])?,
+        Some(index) => {
+            FromStr::from_str(&input[index..]).map_err(|_| DateTimeError::InvalidTimeZoneOffset)?
+        }
         None => return Err(DateTimeError::InvalidTimeZoneOffset),
     };
 

@@ -26,7 +26,7 @@ include = [
 [features]
 std = []
 bench = []
-serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde", "icu_calendar/serde"]
+serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
 datagen = ["serde", "databake", "zerovec/databake", "tinystr/databake"]
 
 [package.metadata.docs.rs]
@@ -42,7 +42,6 @@ displaydoc = { version = "0.2.3", default-features = false }
 tinystr = { path = "../../utils/tinystr", version = "0.6.0", features = ["alloc", "zerovec"], default-features = false }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 icu_locid = { version = "0.6", path = "../../components/locid" }
-icu_calendar = { version = "0.6", path = "../../components/calendar" }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", default-features = false, features = ["derive", "yoke"] }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }

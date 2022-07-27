@@ -20,6 +20,11 @@
 
 extern crate alloc;
 
+mod error;
 pub mod provider;
 mod time_zone;
+mod types;
+
+pub use error::TimeZoneError;
 pub use time_zone::TimeZone;
+pub use types::GmtOffset;
