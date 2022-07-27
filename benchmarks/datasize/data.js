@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658938139820,
+  "lastUpdate": 1658940091688,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21623,6 +21623,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1a3b41f8048b58ed33340e177163bd7d6c88a9a7"
         },
         "date": 1658938105253,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10f9ea445c36062ba044a06ba41a8bdc8bdca753",
+          "message": "Add Norwegian collator test (#2250)",
+          "timestamp": "2022-07-27T09:39:45-07:00",
+          "tree_id": "7e9928dc013e50d56e5a7068578c293516536f9a",
+          "url": "https://github.com/unicode-org/icu4x/commit/10f9ea445c36062ba044a06ba41a8bdc8bdca753"
+        },
+        "date": 1658940057623,
         "tool": "ndjson",
         "benches": [
           {
