@@ -1,28 +1,28 @@
 // @generated
-type DataStruct =
-    &'static <::icu_list::provider::OrListV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: &[(&str, DataStruct)] = &[
-    ("ar", AR_AR_EG),
-    ("ar-EG", AR_AR_EG),
-    ("bn", BN),
-    ("ccp", CCP_EN_UND),
-    ("en", CCP_EN_UND),
-    ("en-001", EN_001_EN_ZA),
-    ("en-ZA", EN_001_EN_ZA),
-    ("es", ES_ES_AR),
-    ("es-AR", ES_ES_AR),
-    ("fil", FIL),
-    ("fr", FR),
-    ("ja", JA),
-    ("ru", RU_SR_SR_CYRL),
-    ("sr", RU_SR_SR_CYRL),
-    ("sr-Cyrl", RU_SR_SR_CYRL),
-    ("sr-Latn", SR_LATN),
-    ("th", TH),
-    ("tr", TR),
-    ("und", CCP_EN_UND),
-];
-static AR_AR_EG: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+type DataStruct = <::icu_list::provider::OrListV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[
+        ("ar", AR_AR_EG),
+        ("ar-EG", AR_AR_EG),
+        ("bn", BN),
+        ("ccp", CCP_EN_UND),
+        ("en", CCP_EN_UND),
+        ("en-001", EN_001_EN_ZA),
+        ("en-ZA", EN_001_EN_ZA),
+        ("es", ES_ES_AR),
+        ("es-AR", ES_ES_AR),
+        ("fil", FIL),
+        ("fr", FR),
+        ("ja", JA),
+        ("ru", RU_SR_SR_CYRL),
+        ("sr", RU_SR_SR_CYRL),
+        ("sr-Cyrl", RU_SR_SR_CYRL),
+        ("sr-Latn", SR_LATN),
+        ("th", TH),
+        ("tr", TR),
+        ("und", CCP_EN_UND),
+    ]);
+static AR_AR_EG: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
@@ -96,7 +96,7 @@ static AR_AR_EG: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         special_case: None,
     },
 ]);
-static BN: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static BN: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -170,7 +170,7 @@ static BN: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         special_case: None,
     },
 ]);
-static CCP_EN_UND: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static CCP_EN_UND: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -244,7 +244,7 @@ static CCP_EN_UND: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         special_case: None,
     },
 ]);
-static EN_001_EN_ZA: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static EN_001_EN_ZA: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -318,7 +318,7 @@ static EN_001_EN_ZA: DataStruct = &::icu_list::provider::ListFormatterPatternsV1
         special_case: None,
     },
 ]);
-static ES_ES_AR: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static ES_ES_AR: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -2600,7 +2600,7 @@ static ES_ES_AR: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         }),
     },
 ]);
-static FIL: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static FIL: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -2674,7 +2674,7 @@ static FIL: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         special_case: None,
     },
 ]);
-static FR: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static FR: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -2748,7 +2748,7 @@ static FR: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         special_case: None,
     },
 ]);
-static JA: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static JA: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
@@ -2822,7 +2822,7 @@ static JA: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         special_case: None,
     },
 ]);
-static RU_SR_SR_CYRL: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static RU_SR_SR_CYRL: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -2896,7 +2896,7 @@ static RU_SR_SR_CYRL: DataStruct = &::icu_list::provider::ListFormatterPatternsV
         special_case: None,
     },
 ]);
-static SR_LATN: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static SR_LATN: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -2970,7 +2970,7 @@ static SR_LATN: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         special_case: None,
     },
 ]);
-static TH: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static TH: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
@@ -3044,7 +3044,7 @@ static TH: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
         special_case: None,
     },
 ]);
-static TR: DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+static TR: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
     ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
             ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)

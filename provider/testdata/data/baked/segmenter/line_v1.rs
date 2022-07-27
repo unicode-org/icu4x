@@ -1,7 +1,9 @@
 // @generated
-type DataStruct = & 'static < :: icu_segmenter :: provider :: LineBreakDataV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
+type DataStruct =
+    <::icu_segmenter::provider::LineBreakDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
     property_table: ::icu_segmenter::provider::RuleBreakPropertyTable(
         ::icu_codepointtrie::CodePointTrie::from_parts(
             ::icu_codepointtrie::CodePointTrieHeader {

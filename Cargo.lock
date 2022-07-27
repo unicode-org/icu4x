@@ -1849,6 +1849,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_uniset",
+ "litemap",
  "log",
  "reqwest",
  "serde",

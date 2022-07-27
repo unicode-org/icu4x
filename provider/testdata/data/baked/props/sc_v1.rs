@@ -1,8 +1,9 @@
 // @generated
 type DataStruct =
-    &'static <::icu_properties::provider::ScriptV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_properties::provider::PropertyCodePointMapV1::CodePointTrie(
+    <::icu_properties::provider::ScriptV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_properties::provider::PropertyCodePointMapV1::CodePointTrie(
     ::icu_codepointtrie::CodePointTrie::from_parts(
         ::icu_codepointtrie::CodePointTrieHeader {
             high_start: 918016u32,

@@ -1,7 +1,8 @@
 // @generated
-type DataStruct = & 'static < :: icu_provider_adapters :: fallback :: provider :: LocaleFallbackLikelySubtagsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct =
+type DataStruct = < :: icu_provider_adapters :: fallback :: provider :: LocaleFallbackLikelySubtagsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct =
     &::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1 {
         l2s: unsafe {
             #[allow(unused_unsafe)]

@@ -1,7 +1,8 @@
 // @generated
-type DataStruct = & 'static < :: icu_locale_canonicalizer :: provider :: LikelySubtagsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_locale_canonicalizer::provider::LikelySubtagsV1 {
+type DataStruct = < :: icu_locale_canonicalizer :: provider :: LikelySubtagsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_locale_canonicalizer::provider::LikelySubtagsV1 {
     language_script: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(

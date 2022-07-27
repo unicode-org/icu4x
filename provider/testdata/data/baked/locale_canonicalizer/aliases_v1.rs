@@ -1,7 +1,9 @@
 // @generated
-type DataStruct = & 'static < :: icu_locale_canonicalizer :: provider :: AliasesV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_locale_canonicalizer::provider::AliasesV1 {
+type DataStruct =
+    <::icu_locale_canonicalizer::provider::AliasesV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_locale_canonicalizer::provider::AliasesV1 {
     language_variants: unsafe {
         ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             19u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 23u8, 0u8, 0u8, 0u8, 48u8, 0u8, 0u8, 0u8,

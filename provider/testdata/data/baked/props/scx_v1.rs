@@ -1,7 +1,8 @@
 // @generated
-type DataStruct = & 'static < :: icu_properties :: provider :: ScriptWithExtensionsPropertyV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_properties::provider::ScriptWithExtensionsPropertyV1 {
+type DataStruct = < :: icu_properties :: provider :: ScriptWithExtensionsPropertyV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_properties::provider::ScriptWithExtensionsPropertyV1 {
     data: ::icu_properties::script::ScriptWithExtensions {
         trie: ::icu_codepointtrie::CodePointTrie::from_parts(
             ::icu_codepointtrie::CodePointTrieHeader {

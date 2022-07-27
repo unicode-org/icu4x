@@ -1,7 +1,8 @@
 // @generated
-type DataStruct = & 'static < :: icu_normalizer :: provider :: CanonicalCompositionsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_normalizer::provider::CanonicalCompositionsV1 {
+type DataStruct = < :: icu_normalizer :: provider :: CanonicalCompositionsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_normalizer::provider::CanonicalCompositionsV1 {
     canonical_compositions: ::icu_char16trie::char16trie::Char16Trie {
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
