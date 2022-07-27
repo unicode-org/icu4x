@@ -215,18 +215,6 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShor
         })
     }
 }
-impl DataProvider<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *time_zone::metazone_period_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker::KEY, req))?,
-            ))),
-        })
-    }
-}
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1333,6 +1321,18 @@ impl DataProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDat
                 *segmenter::word_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::WordBreakDataV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_timezone::provider::MetaZonePeriodV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_timezone::provider::MetaZonePeriodV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *time_zone::metazone_period_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_timezone::provider::MetaZonePeriodV1Marker::KEY, req))?,
             ))),
         })
     }

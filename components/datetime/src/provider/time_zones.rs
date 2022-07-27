@@ -145,20 +145,3 @@ pub struct MetaZoneSpecificNamesShortV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub overrides: ZeroMap2d<'data, TimeZoneBcp47Id, TinyStr8, str>,
 }
-
-/// An ICU4X mapping to the metazones at a given period.
-/// See CLDR-JSON metaZones.json for more context.
-#[icu_provider::data_struct(MetaZonePeriodV1Marker = "time_zone/metazone_period@1")]
-#[derive(PartialEq, Debug, Clone, Default)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_datetime::provider::time_zones),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[yoke(prove_covariance_manually)]
-pub struct MetaZonePeriodV1<'data>(
-    /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as the number of minutes since the local unix epoch. It represents when the metazone started to be used.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZoneBcp47Id, i32, Option<MetaZoneId>>,
-);

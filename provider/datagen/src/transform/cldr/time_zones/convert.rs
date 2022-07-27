@@ -5,17 +5,22 @@
 use super::CldrTimeZonesData;
 use crate::transform::cldr::cldr_serde;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
+#[cfg(feature = "experimental")]
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
 use cldr_serde::time_zones::meta_zones::MetaZoneAliasData;
+#[cfg(feature = "experimental")]
 use cldr_serde::time_zones::meta_zones::MetaZoneForPeriod;
+#[cfg(feature = "experimental")]
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
+#[cfg(feature = "experimental")]
 use icu_calendar::DateTime;
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
-    MetaZonePeriodV1, MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id,
-    TimeZoneFormatsV1,
+    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
+#[cfg(feature = "experimental")]
+use icu_timezone::provider::MetaZonePeriodV1;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
@@ -171,6 +176,7 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
     }
 }
 
+#[cfg(feature = "experimental")]
 impl From<CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
         let data = other.meta_zone_periods_resource;
@@ -466,6 +472,7 @@ fn iterate_zone_format_for_time_zone_id(
         })
 }
 
+#[cfg(feature = "experimental")]
 fn metazone_periods_iter(
     pair: (
         TimeZoneBcp47Id,

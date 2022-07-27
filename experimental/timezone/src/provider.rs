@@ -9,10 +9,10 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_provider::yoke;
+use icu_provider::{yoke, zerofrom};
 use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
-use zerovec::{ZeroSlice, ZeroVec};
+use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 
 /// TimeZone ID in BCP47 format
 #[repr(transparent)]
@@ -69,3 +69,20 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
     type GetType = MetaZoneId;
     type OwnedType = MetaZoneId;
 }
+
+/// An ICU4X mapping to the metazones at a given period.
+/// See CLDR-JSON metaZones.json for more context.
+#[icu_provider::data_struct(MetaZonePeriodV1Marker = "time_zone/metazone_period@1")]
+#[derive(PartialEq, Debug, Clone, Default)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_timezone::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct MetaZonePeriodV1<'data>(
+    /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as the number of minutes since the local unix epoch. It represents when the metazone started to be used.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub ZeroMap2d<'data, TimeZoneBcp47Id, i32, Option<MetaZoneId>>,
+);
