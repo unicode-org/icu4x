@@ -39,6 +39,7 @@ use crate::{
 };
 use core::convert::TryInto;
 use core::marker::PhantomData;
+use tinystr::tinystr;
 
 // Julian epoch is equivalent to fixed_from_iso of December 30th of 0 year
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
@@ -75,6 +76,29 @@ impl CalendarArithmetic for Julian {
 
 impl Calendar for Julian {
     type DateInner = JulianDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let year = if era.0 == tinystr!(16, "ce") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            year
+        } else if era.0 == tinystr!(16, "bce") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            1 - year
+        } else {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(JulianDateInner)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> JulianDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
         Self::julian_from_fixed(fixed_iso)
@@ -229,6 +253,8 @@ impl Julian {
 impl Date<Julian> {
     /// Construct new Julian Date.
     ///
+    /// Zero and negative years are in BC, with year 0 = 1 BC
+    ///
     /// ```rust
     /// use icu::calendar::Date;
     ///
@@ -260,6 +286,8 @@ impl Date<Julian> {
 
 impl DateTime<Julian> {
     /// Construct a new Julian datetime from integers.
+    ///
+    /// Zero and negative years are in BC, with year 0 = 1 BC
     ///
     /// ```rust
     /// use icu::calendar::DateTime;

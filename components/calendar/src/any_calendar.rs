@@ -6,12 +6,14 @@
 
 use crate::buddhist::Buddhist;
 use crate::coptic::Coptic;
-use crate::ethiopic::Ethiopic;
+use crate::ethiopic::{Ethiopic, EthiopicEraStyle};
 use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
 use crate::japanese::{Japanese, JapaneseEraStyle};
-use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
+use crate::{
+    types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
+};
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
@@ -80,6 +82,39 @@ macro_rules! match_cal_and_date {
 
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let ret = match *self {
+            Self::Gregorian(ref c) => {
+                AnyDateInner::Gregorian(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Buddhist(ref c) => {
+                AnyDateInner::Buddhist(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Japanese(ref c) => {
+                AnyDateInner::Japanese(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Japanext(ref c) => {
+                AnyDateInner::Japanext(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Ethiopic(ref c) => {
+                AnyDateInner::Ethiopic(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Indian(ref c) => {
+                AnyDateInner::Indian(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Coptic(ref c) => {
+                AnyDateInner::Coptic(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_codes(era, year, month_code, day)?),
+        };
+        Ok(ret)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> AnyDateInner {
         match *self {
             Self::Gregorian(ref c) => AnyDateInner::Gregorian(c.date_from_iso(iso)),
@@ -299,9 +334,11 @@ impl AnyCalendar {
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
@@ -335,9 +372,11 @@ impl AnyCalendar {
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
@@ -363,9 +402,11 @@ impl AnyCalendar {
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
@@ -649,5 +690,244 @@ impl IncludedInAnyCalendar for Iso {
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Iso(*d)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Ref;
+    use core::convert::TryInto;
+
+    fn single_test_roundtrip(
+        calendar: Ref<AnyCalendar>,
+        era: &str,
+        year: i32,
+        month_code: &str,
+        day: u8,
+    ) {
+        let era = types::Era(era.parse().expect("era must parse"));
+        let month = types::MonthCode(month_code.parse().expect("month code must parse"));
+
+        let date = Date::new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
+            panic!(
+                "Failed to construct date for {} with {:?}, {}, {}, {}: {}",
+                calendar.debug_name(),
+                era,
+                year,
+                month,
+                day,
+                e,
+            )
+        });
+
+        let roundtrip_year = date.year();
+        let roundtrip_era = roundtrip_year.era;
+        let roundtrip_year = roundtrip_year.number;
+        let roundtrip_month = date.month().code;
+        let roundtrip_day = date.day_of_month().0.try_into().expect("Must fit in u8");
+
+        assert_eq!(
+            (era, year, month, day),
+            (
+                roundtrip_era,
+                roundtrip_year,
+                roundtrip_month,
+                roundtrip_day
+            ),
+            "Failed to roundtrip for calendar {}",
+            calendar.debug_name()
+        );
+
+        let iso = date.to_iso();
+        let reconstructed = Date::new_from_iso(iso, calendar);
+        assert_eq!(
+            date, reconstructed,
+            "Failed to roundtrip via iso with {era:?}, {year}, {month}, {day}"
+        )
+    }
+
+    fn single_test_error(
+        calendar: Ref<AnyCalendar>,
+        era: &str,
+        year: i32,
+        month_code: &str,
+        day: u8,
+        error: DateTimeError,
+    ) {
+        let era = types::Era(era.parse().expect("era must parse"));
+        let month = types::MonthCode(month_code.parse().expect("month code must parse"));
+
+        let date = Date::new_from_codes(era, year, month, day, calendar);
+        assert_eq!(
+            date,
+            Err(error),
+            "Construction with {era:?}, {year}, {month}, {day} did not return {error:?}"
+        )
+    }
+
+    #[test]
+    fn test_any_construction() {
+        let provider = icu_testdata::get_provider();
+
+        let buddhist =
+            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Buddhist, &provider)
+                .expect("Calendar construction must succeed");
+        let coptic = AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Coptic, &provider)
+            .expect("Calendar construction must succeed");
+        let ethiopic =
+            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Ethiopic, &provider)
+                .expect("Calendar construction must succeed");
+        let ethioaa =
+            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Ethioaa, &provider)
+                .expect("Calendar construction must succeed");
+        let gregorian =
+            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Gregorian, &provider)
+                .expect("Calendar construction must succeed");
+        let indian = AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Indian, &provider)
+            .expect("Calendar construction must succeed");
+        let japanese =
+            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Japanese, &provider)
+                .expect("Calendar construction must succeed");
+        let japanext =
+            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Japanext, &provider)
+                .expect("Calendar construction must succeed");
+        let buddhist = Ref(&buddhist);
+        let coptic = Ref(&coptic);
+        let ethiopic = Ref(&ethiopic);
+        let ethioaa = Ref(&ethioaa);
+        let gregorian = Ref(&gregorian);
+        let indian = Ref(&indian);
+        let japanese = Ref(&japanese);
+        let japanext = Ref(&japanext);
+
+        single_test_roundtrip(buddhist, "be", 100, "M03", 1);
+        single_test_roundtrip(buddhist, "be", 2000, "M03", 1);
+        single_test_roundtrip(buddhist, "be", -100, "M03", 1);
+        single_test_error(
+            buddhist,
+            "be",
+            100,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode("M13".parse().unwrap(), "Buddhist"),
+        );
+
+        single_test_roundtrip(coptic, "ad", 100, "M03", 1);
+        single_test_roundtrip(coptic, "ad", 2000, "M03", 1);
+        // fails ISO roundtrip
+        // single_test_roundtrip(coptic, "bd", 100, "M03", 1);
+        single_test_roundtrip(coptic, "ad", 100, "M13", 1);
+        single_test_error(
+            coptic,
+            "ad",
+            100,
+            "M14",
+            1,
+            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Coptic"),
+        );
+        single_test_error(coptic, "ad", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(coptic, "bd", 0, "M03", 1, DateTimeError::OutOfRange);
+
+        single_test_roundtrip(ethiopic, "incar", 100, "M03", 1);
+        single_test_roundtrip(ethiopic, "incar", 2000, "M03", 1);
+        single_test_roundtrip(ethiopic, "incar", 2000, "M13", 1);
+        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
+        // single_test_roundtrip(ethiopic, "pre-incar", 100, "M03", 1);
+        single_test_error(ethiopic, "incar", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(
+            ethiopic,
+            "pre-incar",
+            0,
+            "M03",
+            1,
+            DateTimeError::OutOfRange,
+        );
+        single_test_error(
+            ethiopic,
+            "incar",
+            100,
+            "M14",
+            1,
+            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Ethiopic"),
+        );
+
+        single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
+        single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
+        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
+        // single_test_roundtrip(ethioaa, "mundi", 100, "M03", 1);
+        single_test_error(
+            ethiopic,
+            "mundi",
+            100,
+            "M14",
+            1,
+            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Ethiopic"),
+        );
+
+        single_test_roundtrip(gregorian, "ce", 100, "M03", 1);
+        single_test_roundtrip(gregorian, "ce", 2000, "M03", 1);
+        single_test_roundtrip(gregorian, "bce", 100, "M03", 1);
+        single_test_error(gregorian, "ce", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(gregorian, "bce", 0, "M03", 1, DateTimeError::OutOfRange);
+
+        single_test_error(
+            gregorian,
+            "bce",
+            100,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode("M13".parse().unwrap(), "Gregorian"),
+        );
+
+        single_test_roundtrip(indian, "saka", 100, "M03", 1);
+        single_test_roundtrip(indian, "saka", 2000, "M12", 1);
+        single_test_roundtrip(indian, "saka", -100, "M03", 1);
+        single_test_roundtrip(indian, "saka", 0, "M03", 1);
+        single_test_error(
+            indian,
+            "saka",
+            100,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode("M13".parse().unwrap(), "Indian"),
+        );
+        single_test_roundtrip(japanese, "reiwa", 3, "M03", 1);
+        single_test_roundtrip(japanese, "heisei", 6, "M12", 1);
+        single_test_roundtrip(japanese, "meiji", 10, "M03", 1);
+        single_test_roundtrip(japanese, "ce", 1000, "M03", 1);
+        single_test_roundtrip(japanese, "bce", 10, "M03", 1);
+        single_test_error(japanese, "ce", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(japanese, "bce", 0, "M03", 1, DateTimeError::OutOfRange);
+
+        single_test_error(
+            japanese,
+            "reiwa",
+            2,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode("M13".parse().unwrap(), "Japanese (Modern eras only)"),
+        );
+
+        single_test_roundtrip(japanext, "reiwa", 3, "M03", 1);
+        single_test_roundtrip(japanext, "heisei", 6, "M12", 1);
+        single_test_roundtrip(japanext, "meiji", 10, "M03", 1);
+        single_test_roundtrip(japanext, "tenpyokampo-749", 1, "M04", 20);
+        single_test_roundtrip(japanext, "ce", 100, "M03", 1);
+        single_test_roundtrip(japanext, "bce", 10, "M03", 1);
+        single_test_error(japanext, "ce", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(japanext, "bce", 0, "M03", 1, DateTimeError::OutOfRange);
+
+        single_test_error(
+            japanext,
+            "reiwa",
+            2,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode(
+                "M13".parse().unwrap(),
+                "Japanese (With historical eras)",
+            ),
+        );
     }
 }
