@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 use icu_locale_canonicalizer::provider::*;
 use icu_locid::{subtags, subtags_language as language, LanguageIdentifier};
 use icu_provider::datagen::IterableDataProvider;
@@ -11,21 +10,7 @@ use icu_provider::prelude::*;
 use tinystr::TinyAsciiStr;
 use zerovec::{ZeroMap, ZeroSlice};
 
-/// A data provider reading from CLDR JSON likely subtags rule files.
-#[derive(Debug)]
-pub struct AliasesProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for AliasesProvider {
-    fn from(source: &SourceData) -> Self {
-        AliasesProvider {
-            source: source.clone(),
-        }
-    }
-}
-
-impl DataProvider<AliasesV1Marker> for AliasesProvider {
+impl DataProvider<AliasesV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<AliasesV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
@@ -45,9 +30,7 @@ impl DataProvider<AliasesV1Marker> for AliasesProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(AliasesProvider, [AliasesV1Marker,]);
-
-impl IterableDataProvider<AliasesV1Marker> for AliasesProvider {
+impl IterableDataProvider<AliasesV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -283,7 +266,7 @@ fn test_appendix_c_cmp() {
 fn test_basic() {
     use tinystr::tinystr;
 
-    let provider = AliasesProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
     let data: DataPayload<AliasesV1Marker> = provider
         .load(Default::default())
         .unwrap()

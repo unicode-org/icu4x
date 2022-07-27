@@ -197,27 +197,15 @@ The above example is an abridged definition of the Serde structure corresponding
 [*provider/datagen/src/transform/cldr/numbers/mod.rs*](https://github.com/unicode-org/icu4x/blob/main/provider/datagen/src/transform/cldr/numbers/mod.rs)
 
 ```rust
-struct FooProvider {
-    // ...
-}
-
-impl From<&SourceData> for FooProvider {
-    fn from(source: &SourceData) -> Self {
-        // Don't do any heavy lifting here. Ideally you just want to save
-        // the paths you need. In particular, you cannot error here.
-    }
-}
-
-impl DataProvider<FooV1Marker> for FooProvider {
+impl DataProvider<FooV1Marker> for DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
     ) -> Result<DataResponse<FooV1Marker>, DataError> {
-        // Load the data from CLDR JSON and emit it as an ICU4X data struct.
+        // Use the data inside self.source and emit it as an ICU4X data struct.
         // This is the core transform operation. This step could take a lot of
         // work, such as pre-parsing patterns, re-organizing the data, etc.
         // This method will be called once per option returned by supported_locales.
-        // Use internal mutability (RwLock) to avoid duplicating work.
     }
 }
 
@@ -225,7 +213,7 @@ impl IterableDataProvider<FooV1Marker> for FooProvider {
     fn supported_locales(
         &self,
     ) -> Result<Vec<DataLocale>, DataError> {
-        // This should list all supported locales, for example.
+        // This should list all supported locales.
     }
 }
 

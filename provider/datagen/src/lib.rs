@@ -60,7 +60,7 @@ mod databake;
 mod error;
 mod registry;
 mod source;
-pub mod transform;
+mod transform;
 
 pub use error::*;
 pub use registry::all_keys;
@@ -75,6 +75,33 @@ use rayon::prelude::*;
 use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
+
+/// [`DataProvider`] backed by [`SourceData`]
+#[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
+pub struct DatagenProvider {
+    /// The underlying raw data
+    pub source: SourceData,
+}
+
+#[cfg(test)]
+impl DatagenProvider {
+    /// Create a `DatagenProvider` that uses test data.
+    pub fn for_test() -> &'static Self {
+        lazy_static::lazy_static! {
+            static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
+                source: SourceData::default()
+                    .with_cldr(
+                        icu_testdata::paths::cldr_json_root(),
+                        CldrLocaleSubset::Full,
+                    )
+                    .expect("testdata is valid")
+                    .with_icuexport(icu_testdata::paths::icuexport_toml_root())
+                    .expect("testdata is valid"),
+            };
+        }
+        &*TEST_PROVIDER
+    }
+}
 
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`DataKey`]s.
@@ -226,7 +253,7 @@ pub enum Out {
 pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
     keys: &[DataKey],
-    sources: &SourceData,
+    source: &SourceData,
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
     let exporters = outs
@@ -267,7 +294,9 @@ pub fn datagen(
         })
         .collect::<Result<Vec<_>, DataError>>()?;
 
-    let mut provider: Box<dyn ExportableProvider> = Box::new(create_datagen_provider!(*sources));
+    let mut provider: Box<dyn ExportableProvider> = Box::new(DatagenProvider {
+        source: source.clone(),
+    });
 
     if let Some(locales) = locales {
         let locales = locales.to_vec();
@@ -317,8 +346,8 @@ fn test_keys() {
     assert_eq!(
         keys(&["list/and@1", "datetime/datelengths@1[u-ca]", "trash",]),
         vec![
-            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
             icu_list::provider::AndListV1Marker::KEY,
+            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
         ]
     );
 }
@@ -334,10 +363,10 @@ fn test_keys_from_file() {
             icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
-            icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
-            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
+            icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
+            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
         ]
     );
 }
@@ -352,13 +381,13 @@ fn test_keys_from_bin() {
             .unwrap(),
         vec![
             icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
-            icu_datetime::provider::calendar::TimePatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
-            icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
-            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
+            icu_datetime::provider::calendar::TimePatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
+            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
         ]
     );
 }

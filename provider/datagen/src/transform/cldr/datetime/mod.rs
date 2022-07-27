@@ -3,54 +3,40 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 use icu_calendar::provider::EraStartDate;
 use icu_datetime::provider::calendar::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, Locale};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use lazy_static::lazy_static;
 use std::collections::HashMap;
 use std::collections::HashSet;
 use std::str::FromStr;
-use std::sync::RwLock;
+
 mod patterns;
 mod skeletons;
 mod symbols;
 pub mod week_data;
 
-/// A data provider reading from CLDR JSON dates files.
-#[derive(Debug)]
-pub struct CommonDateProvider {
-    source: SourceData,
+lazy_static! {
     // BCP-47 value -> CLDR identifier
-    supported_cals: HashMap<icu_locid::extensions::unicode::Value, &'static str>,
-    modern_japanese_eras: RwLock<Option<HashSet<String>>>,
-}
-
-impl From<&SourceData> for CommonDateProvider {
-    fn from(source: &SourceData) -> Self {
-        CommonDateProvider {
-            source: source.clone(),
-            supported_cals: [
-                (value!("gregory"), "gregorian"),
-                (value!("buddhist"), "buddhist"),
-                (value!("japanese"), "japanese"),
-                (value!("japanext"), "japanese"),
-                (value!("coptic"), "coptic"),
-                (value!("indian"), "indian"),
-                (value!("ethiopic"), "ethiopic"),
-            ]
-            .into_iter()
-            .collect(),
-            modern_japanese_eras: RwLock::new(None),
-        }
-    }
+    static ref SUPPORTED_CALS: HashMap<icu_locid::extensions::unicode::Value, &'static str> = [
+        (value!("gregory"), "gregorian"),
+        (value!("buddhist"), "buddhist"),
+        (value!("japanese"), "japanese"),
+        (value!("japanext"), "japanese"),
+        (value!("coptic"), "coptic"),
+        (value!("indian"), "indian"),
+        (value!("ethiopic"), "ethiopic"),
+    ]
+    .into_iter()
+    .collect();
 }
 
 macro_rules! impl_data_provider {
     ($(($marker:ident, $expr:expr)),+) => {
         $(
-            impl DataProvider<$marker> for CommonDateProvider {
+            impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(
                     &self,
                     req: DataRequest,
@@ -65,8 +51,7 @@ macro_rules! impl_data_provider {
                         .get_unicode_ext(&key!("ca"))
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
-                    let cldr_cal = self
-                        .supported_cals
+                    let cldr_cal = SUPPORTED_CALS
                         .get(&calendar)
                         .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
 
@@ -114,29 +99,22 @@ macro_rules! impl_data_provider {
                     }
 
                     if calendar == value!("japanese") {
-                        if self.modern_japanese_eras.read().expect("poison").is_none() {
-                                let era_dates: &cldr_serde::japanese::Resource = self
-                                    .source
-                                    .cldr()?
-                                    .core()
-                                    .read_and_parse("supplemental/calendarData.json")?;
-                            let mut set = HashSet::new();
-                            let era_dates_map = &era_dates.supplemental.calendar_data.japanese.eras;
-                            for (era_index, date) in era_dates_map.iter() {
-                                 let start_date = EraStartDate::from_str(&date.start).map_err(|_| {
-                                     DataError::custom("calendarData.json contains unparseable data for a japanese era")
-                                         .with_display_context(&format!("era index {}", era_index))
-                                 })?;
+                        let era_dates: &cldr_serde::japanese::Resource = self
+                            .source
+                            .cldr()?
+                            .core()
+                            .read_and_parse("supplemental/calendarData.json")?;
+                        let mut set = HashSet::<String>::new();
+                        for (era_index, date) in era_dates.supplemental.calendar_data.japanese.eras.iter() {
+                                let start_date = EraStartDate::from_str(&date.start).map_err(|_| {
+                                    DataError::custom("calendarData.json contains unparseable data for a japanese era")
+                                        .with_display_context(&format!("era index {}", era_index))
+                                })?;
 
-                                if start_date.year >= 1868 {
-                                    set.insert(era_index.into());
-                                }
+                            if start_date.year >= 1868 {
+                                set.insert(era_index.into());
                             }
-                            *self.modern_japanese_eras.write().expect("poison") = Some(set);
                         }
-                        let set = self.modern_japanese_eras.read().expect("poison");
-                        let set = set.as_ref().unwrap();
-
 
                         data.eras.names.retain(|e, _| set.contains(e));
                         data.eras.abbr.retain(|e, _| set.contains(e));
@@ -180,10 +158,10 @@ macro_rules! impl_data_provider {
                 }
             }
 
-            impl IterableDataProvider<$marker> for CommonDateProvider {
+            impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     let mut r = Vec::new();
-                    for (cal_value, cldr_cal) in self.supported_cals.iter() {
+                    for (cal_value, cldr_cal) in &*SUPPORTED_CALS {
                         r.extend(self
                                     .source
                                     .cldr()?
@@ -202,8 +180,6 @@ macro_rules! impl_data_provider {
                 }
             }
         )+
-
-        icu_provider::make_exportable_provider!(CommonDateProvider, [$($marker),+,]);
     };
 }
 
@@ -227,7 +203,7 @@ mod test {
 
     #[test]
     fn test_basic_patterns() {
-        let provider = CommonDateProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
@@ -244,7 +220,7 @@ mod test {
 
     #[test]
     fn test_with_numbering_system() {
-        let provider = CommonDateProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DatePatternsV1Marker> = provider
@@ -265,7 +241,7 @@ mod test {
     fn test_datetime_skeletons() {
         use std::convert::TryFrom;
 
-        let provider = CommonDateProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let locale: Locale = "fil-u-ca-gregory".parse().unwrap();
         let skeletons: DataPayload<DateSkeletonPatternsV1Marker> = provider
@@ -309,7 +285,7 @@ mod test {
     fn test_basic_symbols() {
         use icu_calendar::types::MonthCode;
         use tinystr::tinystr;
-        let provider = CommonDateProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
@@ -340,7 +316,7 @@ mod test {
 
     #[test]
     fn unalias_contexts() {
-        let provider = CommonDateProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
         let cs_dates: DataPayload<DateSymbolsV1Marker> = provider

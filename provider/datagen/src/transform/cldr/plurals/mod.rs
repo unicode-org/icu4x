@@ -3,27 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
-/// A data provider reading from CLDR JSON plural rule files.
-#[derive(Debug)]
-pub struct PluralsProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for PluralsProvider {
-    fn from(source: &SourceData) -> Self {
-        PluralsProvider {
-            source: source.clone(),
-        }
-    }
-}
-
-impl PluralsProvider {
+impl crate::DatagenProvider {
     fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
         if key == CardinalV1Marker::KEY {
             self.source
@@ -48,37 +33,41 @@ impl PluralsProvider {
     }
 }
 
-impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> DataProvider<M> for PluralsProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(PluralRulesV1::from(
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.get_rules_for(M::KEY)?
+macro_rules! implement {
+    ($marker:ident) => {
+        impl DataProvider<$marker> for crate::DatagenProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: Some(DataPayload::from_owned(PluralRulesV1::from(
+                        #[allow(clippy::unwrap_used)]
+                        // TODO(#1668) Clippy exceptions need docs or fixing.
+                        self.get_rules_for(<$marker>::KEY)?
+                            .0
+                            .get(&req.locale.get_langid())
+                            .ok_or(DataErrorKind::MissingLocale.into_error())?,
+                    ))),
+                })
+            }
+        }
+
+        impl IterableDataProvider<$marker> for crate::DatagenProvider {
+            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                Ok(self
+                    .get_rules_for(<$marker>::KEY)?
                     .0
-                    .get(&req.locale.get_langid())
-                    .ok_or(DataErrorKind::MissingLocale.into_error())?,
-            ))),
-        })
-    }
+                    .keys()
+                    // TODO(#568): Avoid the clone
+                    .cloned()
+                    .map(DataLocale::from)
+                    .collect())
+            }
+        }
+    };
 }
 
-icu_provider::make_exportable_provider!(PluralsProvider, [OrdinalV1Marker, CardinalV1Marker,]);
-
-impl<M: KeyedDataMarker<Yokeable = PluralRulesV1<'static>>> IterableDataProvider<M>
-    for PluralsProvider
-{
-    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(self
-            .get_rules_for(M::KEY)?
-            .0
-            .keys()
-            // TODO(#568): Avoid the clone
-            .cloned()
-            .map(DataLocale::from)
-            .collect())
-    }
-}
+implement!(CardinalV1Marker);
+implement!(OrdinalV1Marker);
 
 impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
     fn from(other: &cldr_serde::plurals::LocalePluralRules) -> Self {
@@ -103,7 +92,7 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 fn test_basic() {
     use icu_locid::langid;
 
-    let provider = PluralsProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider

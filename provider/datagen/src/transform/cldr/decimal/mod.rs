@@ -6,7 +6,6 @@
 #![allow(clippy::expect_used)]
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 use icu_decimal::provider::*;
 use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions_unicode_key as key;
@@ -19,21 +18,7 @@ use tinystr::TinyAsciiStr;
 
 mod decimal_pattern;
 
-/// A data provider reading from CLDR JSON plural rule files.
-#[derive(Debug)]
-pub struct NumbersProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for NumbersProvider {
-    fn from(source: &SourceData) -> Self {
-        NumbersProvider {
-            source: source.clone(),
-        }
-    }
-}
-
-impl NumbersProvider {
+impl crate::DatagenProvider {
     /// Returns the digits for the given numbering system name.
     fn get_digits_for_numbering_system(
         &self,
@@ -97,7 +82,7 @@ impl NumbersProvider {
     }
 }
 
-impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+impl DataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<DecimalSymbolsV1Marker>, DataError> {
         let langid = req.locale.get_langid();
 
@@ -138,9 +123,7 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(NumbersProvider, [DecimalSymbolsV1Marker,]);
-
-impl IterableDataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
+impl IterableDataProvider<DecimalSymbolsV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(self
             .source
@@ -208,7 +191,7 @@ impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
 fn test_basic() {
     use icu_locid::locale;
 
-    let provider = NumbersProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
 
     let ar_decimal: DataPayload<DecimalSymbolsV1Marker> = provider
         .load(DataRequest {

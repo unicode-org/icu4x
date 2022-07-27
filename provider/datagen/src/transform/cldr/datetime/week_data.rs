@@ -6,7 +6,6 @@ use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use crate::SourceData;
 use icu_calendar::arithmetic::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
 use icu_locid::LanguageIdentifier;
@@ -14,21 +13,7 @@ use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-/// A data provider reading from CLDR JSON weekData files.
-#[derive(Debug)]
-pub struct WeekDataProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for WeekDataProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
+impl IterableDataProvider<WeekDataV1Marker> for crate::DatagenProvider {
     #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
@@ -53,7 +38,7 @@ impl IterableDataProvider<WeekDataV1Marker> for WeekDataProvider {
     }
 }
 
-impl DataProvider<WeekDataV1Marker> for WeekDataProvider {
+impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         let territory = req
             .locale
@@ -93,14 +78,12 @@ impl DataProvider<WeekDataV1Marker> for WeekDataProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(WeekDataProvider, [WeekDataV1Marker,]);
-
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
     use icu_locid::langid;
 
-    let provider = WeekDataProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(Default::default())

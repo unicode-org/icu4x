@@ -18,3 +18,19 @@ pub mod cldr;
 pub mod icuexport;
 #[cfg(feature = "experimental")]
 pub mod segmenter;
+
+use icu_provider::datagen::*;
+use icu_provider::hello_world::*;
+use icu_provider::prelude::*;
+
+impl DataProvider<HelloWorldV1Marker> for crate::DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<HelloWorldV1Marker>, DataError> {
+        HelloWorldProvider.load(req)
+    }
+}
+
+impl IterableDataProvider<HelloWorldV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        HelloWorldProvider.supported_locales()
+    }
+}

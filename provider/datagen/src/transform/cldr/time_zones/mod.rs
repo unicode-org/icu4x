@@ -4,7 +4,6 @@
 
 use crate::transform::cldr::cldr_serde;
 use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
-use crate::SourceData;
 use icu_datetime::provider::time_zones::*;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -12,24 +11,10 @@ use std::collections::HashMap;
 
 mod convert;
 
-/// A data provider reading from CLDR JSON zones files.
-#[derive(Debug)]
-pub struct TimeZonesProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for TimeZonesProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
 macro_rules! impl_data_provider {
     ($($marker:ident),+) => {
         $(
-            impl DataProvider<$marker> for TimeZonesProvider {
+            impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
                     let langid = req.locale.get_langid();
 
@@ -90,7 +75,7 @@ macro_rules! impl_data_provider {
                 }
             }
 
-            impl IterableDataProvider<$marker> for TimeZonesProvider {
+            impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     Ok(self
                         .source
@@ -103,7 +88,6 @@ macro_rules! impl_data_provider {
             }
         )+
 
-        icu_provider::make_exportable_provider!(TimeZonesProvider, [$($marker),+,]);
     };
 }
 
@@ -127,7 +111,7 @@ mod tests {
     fn basic_cldr_time_zones() {
         use icu_locid::langid;
 
-        let provider = TimeZonesProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
             .load(DataRequest {

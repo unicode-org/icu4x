@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 use icu_calendar::provider::*;
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, langid, Locale};
 use icu_provider::datagen::IterableDataProvider;
@@ -18,21 +17,7 @@ use zerovec::ZeroVec;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 
-/// A data provider reading from CLDR JSON Japanese calendar files.
-#[derive(Debug)]
-pub struct JapaneseErasProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for JapaneseErasProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl DataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
         let japanext = req.locale.get_unicode_ext(&key!("ca")) == Some(value!("japanext"));
         // The era codes depend on the Latin romanizations of the eras, found
@@ -180,9 +165,7 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,]);
-
-impl IterableDataProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
+impl IterableDataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             DataLocale::from(Locale::from_str("und-u-ca-japanese").unwrap()),
