@@ -17,7 +17,7 @@ pub use by_error::MultiForkByErrorProvider;
 use predicates::ForkByErrorPredicate;
 use predicates::ForkByKeyPredicate;
 
-/// A provider that returns data from one of two child providers based on the key.
+/// Create a provider that returns data from one of two child providers based on the key.
 ///
 /// The result of the first provider that supports a particular [`DataKey`] will be returned,
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
@@ -118,6 +118,15 @@ use predicates::ForkByKeyPredicate;
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
 pub type ForkByKeyProvider<P0, P1> = ForkByErrorProvider<P0, P1, ForkByKeyPredicate>;
 
+impl<P0, P1> ForkByKeyProvider<P0, P1> {
+    /// A provider that returns data from one of two child providers based on the key.
+    ///
+    /// See [`ForkByKeyProvider`].
+    pub fn new(p0: P0, p1: P1) -> Self {
+        ForkByErrorProvider::new_with_predicate(p0, p1, ForkByKeyPredicate)
+    }
+}
+
 /// A provider that returns data from the first child provider supporting the key.
 ///
 /// The result of the first provider that supports a particular [`DataKey`] will be returned,
@@ -180,3 +189,12 @@ pub type ForkByKeyProvider<P0, P1> = ForkByErrorProvider<P0, P1, ForkByKeyPredic
 /// [`BufferProvider`]: icu_provider::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
 pub type MultiForkByKeyProvider<P> = MultiForkByErrorProvider<P, ForkByKeyPredicate>;
+
+impl<P> MultiForkByKeyProvider<P> {
+    /// Create a provider that returns data from the first child provider supporting the key.
+    ///
+    /// See [`MultiForkByKeyProvider`].
+    pub fn new(providers: Vec<P>) -> Self {
+        MultiForkByErrorProvider::new_with_predicate(providers, ForkByKeyPredicate)
+    }
+}

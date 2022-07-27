@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::marker::PhantomData;
-
 use super::ForkByErrorPredicate;
 use alloc::vec::Vec;
 #[cfg(feature = "datagen")]
@@ -15,12 +13,15 @@ use icu_provider::prelude::*;
 /// This is an abstract forking provider that must be provided with a type implementing the
 /// [`ForkByErrorPredicate`] trait.
 #[derive(Debug, PartialEq, Eq)]
-pub struct ForkByErrorProvider<P0, P1, F>(pub P0, pub P1, PhantomData<F>);
+pub struct ForkByErrorProvider<P0, P1, F>(pub P0, pub P1, F);
 
 impl<P0, P1, F> ForkByErrorProvider<P0, P1, F> {
     /// Create a new provider that forks between the two children.
-    pub fn new(p0: P0, p1: P1) -> Self {
-        Self(p0, p1, PhantomData)
+    ///
+    /// The `predicate` argument should be an instance of a struct implementing
+    /// [`ForkByErrorPredicate`].
+    pub fn new_with_predicate(p0: P0, p1: P1, predicate: F) -> Self {
+        Self(p0, p1, predicate)
     }
 }
 
@@ -38,7 +39,7 @@ where
         let result = self.0.load_buffer(key, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !F::predicate(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.predicate(key, Some(req), err) => return Err(err),
             _ => (),
         };
         self.1.load_buffer(key, req)
@@ -55,7 +56,7 @@ where
         let result = self.0.load_any(key, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !F::predicate(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.predicate(key, Some(req), err) => return Err(err),
             _ => (),
         };
         self.1.load_any(key, req)
@@ -73,7 +74,7 @@ where
         let result = self.0.load_data(key, req);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !F::predicate(key, Some(req), err) => return Err(err),
+            Err(err) if !self.2.predicate(key, Some(req), err) => return Err(err),
             _ => (),
         };
         self.1.load_data(key, req)
@@ -92,7 +93,7 @@ where
         let result = self.0.supported_locales_for_key(key);
         match result {
             Ok(ok) => return Ok(ok),
-            Err(err) if !F::predicate(key, None, err) => return Err(err),
+            Err(err) if !self.2.predicate(key, None, err) => return Err(err),
             _ => (),
         };
         self.1.supported_locales_for_key(key)
@@ -105,15 +106,18 @@ where
 /// [`ForkByErrorPredicate`] trait.
 pub struct MultiForkByErrorProvider<P, F> {
     pub providers: Vec<P>,
-    _predicate: PhantomData<F>,
+    predicate: F,
 }
 
 impl<P, F> MultiForkByErrorProvider<P, F> {
     /// Create a new provider that forks between the vector of children.
-    pub fn new(providers: Vec<P>) -> Self {
+    ///
+    /// The `predicate` argument should be an instance of a struct implementing
+    /// [`ForkByErrorPredicate`].
+    pub fn new_with_predicate(providers: Vec<P>, predicate: F) -> Self {
         Self {
             providers,
-            _predicate: PhantomData,
+            predicate,
         }
     }
 }
@@ -132,7 +136,7 @@ where
             let result = provider.load_buffer(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !F::predicate(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.predicate(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
@@ -150,7 +154,7 @@ where
             let result = provider.load_any(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !F::predicate(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.predicate(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
@@ -169,7 +173,7 @@ where
             let result = provider.load_data(key, req);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !F::predicate(key, Some(req), err) => return Err(err),
+                Err(err) if !self.predicate.predicate(key, Some(req), err) => return Err(err),
                 _ => (),
             };
         }
@@ -189,7 +193,7 @@ where
             let result = provider.supported_locales_for_key(key);
             match result {
                 Ok(ok) => return Ok(ok),
-                Err(err) if !F::predicate(key, None, err) => return Err(err),
+                Err(err) if !self.predicate.predicate(key, None, err) => return Err(err),
                 _ => (),
             };
         }
@@ -218,7 +222,7 @@ where
                 Ok(ok) => return Ok(ok),
                 Err(e) => {
                     let ReturnedPayloadError(returned, err) = e;
-                    if !F::predicate(key, None, err) {
+                    if !self.predicate.predicate(key, None, err) {
                         return Err(ReturnedPayloadError(returned, err));
                     }
                     from = returned;
@@ -252,7 +256,7 @@ where
             Ok(ok) => return Ok(ok),
             Err(e) => {
                 let ReturnedPayloadError(returned, err) = e;
-                if !F::predicate(key, None, err) {
+                if !self.2.predicate(key, None, err) {
                     return Err(ReturnedPayloadError(returned, err));
                 }
                 from = returned;
