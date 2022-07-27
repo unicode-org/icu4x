@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658938946132,
+  "lastUpdate": 1658940705133,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39869,6 +39869,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 93,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "10f9ea445c36062ba044a06ba41a8bdc8bdca753",
+          "message": "Add Norwegian collator test (#2250)",
+          "timestamp": "2022-07-27T09:39:45-07:00",
+          "tree_id": "7e9928dc013e50d56e5a7068578c293516536f9a",
+          "url": "https://github.com/unicode-org/icu4x/commit/10f9ea445c36062ba044a06ba41a8bdc8bdca753"
+        },
+        "date": 1658940663444,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 144402,
+            "range": "± 3094",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 29174,
+            "range": "± 514",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 84372,
+            "range": "± 1188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 239,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 114,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 103,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
