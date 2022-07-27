@@ -42,6 +42,14 @@ icu_locid = { version = "0.6", path = "../../components/locid" }
 icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
 criterion = "0.3.4"
 
+[features]
+bench = []
+default = ["alloc"]
+alloc = []
+
+# Enables the `testing` module with tools for testing custom stores.
+testing = ["alloc"]
+
 [[test]]
 name = "serde"
 required-features = ["serde"]
@@ -59,12 +67,6 @@ required-features = ["serde"]
 name = "litemap_postcard"
 path = "benches/bin/litemap_postcard.rs"
 required-features = ["serde"]
-
-[features]
-bench = []
-
-# Enables the `testing` module with tools for testing custom stores.
-testing = []
 
 [[bench]]
 name = "litemap"
