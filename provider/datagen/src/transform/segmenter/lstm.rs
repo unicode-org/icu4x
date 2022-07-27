@@ -74,11 +74,7 @@ impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(LstmDataV1 {
                 model: Cow::from(lstm_data.model.clone()),
-                dic: lstm_data
-                    .dic
-                    .iter()
-                    .map(|(k, v)| (k.as_str(), v))
-                    .collect(),
+                dic: lstm_data.dic.iter().map(|(k, v)| (k.as_str(), v)).collect(),
                 mat1: lstm_data.mat1.as_lstm_matrix(),
                 mat2: lstm_data.mat2.as_lstm_matrix(),
                 mat3: lstm_data.mat3.as_lstm_matrix(),
