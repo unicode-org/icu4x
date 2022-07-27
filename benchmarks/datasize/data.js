@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658951650667,
+  "lastUpdate": 1658959117139,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21713,6 +21713,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3edad50eb2ae5365060d1884e2ae157717fda266"
         },
         "date": 1658951613878,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aab626bda661607da63a609bb7908d58e2b04506",
+          "message": "Using static `LiteMap`s in databake (#2264)",
+          "timestamp": "2022-07-27T23:56:30+02:00",
+          "tree_id": "15e4ee7bec543e67065d2dfcb14c4061c2d41131",
+          "url": "https://github.com/unicode-org/icu4x/commit/aab626bda661607da63a609bb7908d58e2b04506"
+        },
+        "date": 1658959075015,
         "tool": "ndjson",
         "benches": [
           {
