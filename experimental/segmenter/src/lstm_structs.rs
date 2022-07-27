@@ -20,9 +20,9 @@ use zerovec::{ZeroMap, ZeroVec};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LstmMatrix<'data> {
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub dim: ZeroVec<'data, i16>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ZeroVec<'data, f32>,
 }
 
@@ -69,26 +69,26 @@ impl<'data> LstmMatrix<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LstmDataV1<'data> {
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub model: Cow<'data, str>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub dic: ZeroMap<'data, str, i16>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat1: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat2: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat3: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat4: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat5: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat6: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat7: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat8: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat9: LstmMatrix<'data>,
 }
