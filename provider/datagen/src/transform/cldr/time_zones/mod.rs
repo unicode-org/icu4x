@@ -3,14 +3,24 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
 use crate::SourceData;
+use cldr_serde::time_zones::meta_zones::ZonePeriod;
+use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use icu_datetime::provider::time_zones::*;
+use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashMap;
 
 mod convert;
+
+#[derive(Debug)]
+struct CldrTimeZonesData {
+    pub time_zone_names: TimeZoneNames,
+    pub bcp47_tzids: HashMap<String, TimeZoneBcp47Id>,
+    pub meta_zone_ids: HashMap<String, MetaZoneId>,
+    pub meta_zone_periods: HashMap<String, ZonePeriod>,
+}
 
 /// A data provider reading from CLDR JSON zones files.
 #[derive(Debug)]

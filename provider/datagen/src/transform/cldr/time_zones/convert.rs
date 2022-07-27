@@ -13,12 +13,11 @@ use std::collections::HashMap;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
 
+use super::CldrTimeZonesData;
 use crate::transform::cldr::cldr_serde::time_zones::meta_zones::{
     MetaLocationOrSubRegion, MetaZoneForPeriod, ZonePeriod,
 };
-use crate::transform::cldr::cldr_serde::{
-    time_zones::time_zone_names::*, time_zones::CldrTimeZonesData,
-};
+use crate::transform::cldr::cldr_serde::time_zones::time_zone_names::*;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
