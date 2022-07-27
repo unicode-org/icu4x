@@ -25,9 +25,8 @@ use predicates::ForkByKeyPredicate;
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// Note: A forking [`DataProvider`] does not make sense, since there is only one key that
-/// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
-/// or [`DynamicDataProvider`].
+/// [`ForkByKeyProvider] does not support forking between [`DataProvider`]s. However, it
+/// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
 ///
 /// # Examples
 ///
@@ -135,9 +134,8 @@ impl<P0, P1> ForkByKeyProvider<P0, P1> {
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// Note: A forking [`DataProvider`] does not make sense, since there is only one key that
-/// type can support. Instead, you can create a forking [`AnyProvider`], [`BufferProvider`],
-/// or [`DynamicDataProvider`].
+/// [`ForkByKeyProvider] does not support forking between [`DataProvider`]s. However, it
+/// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
 ///
 /// # Examples
 ///
