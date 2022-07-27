@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658875764741,
+  "lastUpdate": 1658880008240,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39569,6 +39569,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 78,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "samchen61661@gmail.com",
+            "name": "samchen",
+            "username": "samchen61661"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1602d46878fa471d1e79dfcf5af5fbc2134d0fcf",
+          "message": "Add an offset_fallback field in TimeZoneFormatV1 (#2253)\n\n* Add an offset_fallback field in TimeZoneFormatV1\r\n\r\n* add TODO",
+          "timestamp": "2022-07-26T16:48:55-07:00",
+          "tree_id": "90f3aae64dcd3606da3b2f7c79d39f362ea190da",
+          "url": "https://github.com/unicode-org/icu4x/commit/1602d46878fa471d1e79dfcf5af5fbc2134d0fcf"
+        },
+        "date": 1658879974405,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122787,
+            "range": "± 428",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25109,
+            "range": "± 154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71749,
+            "range": "± 188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
