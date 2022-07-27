@@ -4,6 +4,8 @@
 
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
+use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
+use cldr_serde::time_zones::meta_zones::MetaZoneAliasData;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use icu_datetime::provider::time_zones::*;
@@ -14,12 +16,12 @@ use std::collections::HashMap;
 
 mod convert;
 
-#[derive(Debug)]
-struct CldrTimeZonesData {
-    pub time_zone_names: TimeZoneNames,
-    pub bcp47_tzids: HashMap<String, TimeZoneBcp47Id>,
-    pub meta_zone_ids: HashMap<String, MetaZoneId>,
-    pub meta_zone_periods: HashMap<String, ZonePeriod>,
+#[derive(Debug, Copy, Clone)]
+struct CldrTimeZonesData<'a> {
+    pub time_zone_names_resource: &'a TimeZoneNames,
+    pub bcp47_tzids_resource: &'a HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+    pub meta_zone_ids_resource: &'a HashMap<MetaZoneId, MetaZoneAliasData>,
+    pub meta_zone_periods_resource: &'a HashMap<String, ZonePeriod>,
 }
 
 /// A data provider reading from CLDR JSON zones files.
@@ -48,14 +50,14 @@ macro_rules! impl_data_provider {
                         .cldr()?
                         .dates("gregorian")
                         .read_and_parse(&langid, "timeZoneNames.json")?;
-                    let time_zone_names = resource
+
+                    let time_zone_names_resource = &resource
                         .main
                         .0
                         .get(&langid)
                         .expect("CLDR file contains the expected language")
                         .dates
-                        .time_zone_names
-                        .clone();
+                        .time_zone_names;
 
                     let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = self
                         .source
@@ -63,14 +65,7 @@ macro_rules! impl_data_provider {
                         .bcp47()
                         .read_and_parse("timezone.json")?;
 
-                    let mut bcp47_tzids = HashMap::new();
-                    for (bcp47_tzid, bcp47_tzid_data) in resource.keyword.u.time_zones.values.iter() {
-                        if let Some(alias) = &bcp47_tzid_data.alias {
-                            for data_value in alias.split(" ") {
-                                bcp47_tzids.insert(data_value.to_string(), *bcp47_tzid);
-                            }
-                        }
-                    }
+                    let bcp47_tzids_resource = &resource.keyword.u.time_zones.values;
 
                     let resource: &cldr_serde::time_zones::meta_zones::Resource = self
                         .source
@@ -78,22 +73,18 @@ macro_rules! impl_data_provider {
                         .core()
                         .read_and_parse("supplemental/metaZones.json")?;
 
-                    let mut meta_zone_ids = HashMap::new();
-                    for (meta_zone_id, meta_zone_id_data) in
-                        resource.supplemental.meta_zones.meta_zone_ids.0.iter()
-                    {
-                        meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.clone());
-                    }
-                    let meta_zone_periods = resource.supplemental.meta_zones.meta_zone_info.time_zone.0.clone();
+                    let meta_zone_ids_resource = &resource.supplemental.meta_zones.meta_zone_ids.0;
+
+                    let meta_zone_periods_resource = &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
 
                     Ok(DataResponse {
                         metadata: Default::default(),
                         payload: Some(DataPayload::from_owned(
-                            <$marker as DataMarker>::Yokeable::from(&CldrTimeZonesData {
-                                time_zone_names,
-                                bcp47_tzids,
-                                meta_zone_ids,
-                                meta_zone_periods,
+                            <$marker as DataMarker>::Yokeable::from(CldrTimeZonesData {
+                                time_zone_names_resource,
+                                bcp47_tzids_resource,
+                                meta_zone_ids_resource,
+                                meta_zone_periods_resource,
                             }),
                         )),
                     })

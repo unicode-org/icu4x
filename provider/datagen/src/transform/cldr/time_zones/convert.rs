@@ -2,6 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use super::CldrTimeZonesData;
+use crate::transform::cldr::cldr_serde;
+use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
+use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
+use cldr_serde::time_zones::meta_zones::MetaZoneAliasData;
+use cldr_serde::time_zones::meta_zones::MetaZoneForPeriod;
+use cldr_serde::time_zones::meta_zones::ZonePeriod;
+use cldr_serde::time_zones::time_zone_names::*;
 use icu_calendar::DateTime;
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
@@ -12,12 +20,6 @@ use std::borrow::Cow;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
 use zerovec::{ZeroMap, ZeroMap2d};
-
-use super::CldrTimeZonesData;
-use crate::transform::cldr::cldr_serde::time_zones::meta_zones::{
-    MetaLocationOrSubRegion, MetaZoneForPeriod, ZonePeriod,
-};
-use crate::transform::cldr::cldr_serde::time_zones::time_zone_names::*;
 
 /// Performs part 1 of type fallback as specified in the UTS-35 spec for TimeZone Goals:
 /// https://unicode.org/reports/tr35/tr35-dates.html#Time_Zone_Goals
@@ -42,9 +44,33 @@ fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>
     (Cow::Owned(positive), Cow::Owned(negative))
 }
 
-impl From<&CldrTimeZonesData> for TimeZoneFormatsV1<'static> {
-    fn from(other: &CldrTimeZonesData) -> Self {
-        let data = &other.time_zone_names;
+fn compute_bcp47_tzids_hashmap(
+    bcp47_tzids_resource: &HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+) -> HashMap<String, TimeZoneBcp47Id> {
+    let mut bcp47_tzids = HashMap::new();
+    for (bcp47_tzid, bcp47_tzid_data) in bcp47_tzids_resource.iter() {
+        if let Some(alias) = &bcp47_tzid_data.alias {
+            for data_value in alias.split(" ") {
+                bcp47_tzids.insert(data_value.to_string(), *bcp47_tzid);
+            }
+        }
+    }
+    return bcp47_tzids;
+}
+
+fn compute_meta_zone_ids_hashmap(
+    meta_zone_ids_resource: &HashMap<MetaZoneId, MetaZoneAliasData>,
+) -> HashMap<String, MetaZoneId> {
+    let mut meta_zone_ids = HashMap::new();
+    for (meta_zone_id, meta_zone_id_data) in meta_zone_ids_resource.iter() {
+        meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.clone());
+    }
+    return meta_zone_ids;
+}
+
+impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
+    fn from(other: CldrTimeZonesData<'_>) -> Self {
+        let data = other.time_zone_names_resource;
         Self {
             hour_format: parse_hour_format(&data.hour_format),
             gmt_format: data.gmt_format.clone().into(),
@@ -96,10 +122,10 @@ impl Location {
     }
 }
 
-impl From<&CldrTimeZonesData> for ExemplarCitiesV1<'static> {
-    fn from(other: &CldrTimeZonesData) -> Self {
-        let time_zone_names_data = &other.time_zone_names;
-        let bcp47_tzid_data = &other.bcp47_tzids;
+impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
+    fn from(other: CldrTimeZonesData<'_>) -> Self {
+        let time_zone_names_data = other.time_zone_names_resource;
+        let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
         Self(
             time_zone_names_data
                 .zone
@@ -145,11 +171,11 @@ impl From<&CldrTimeZonesData> for ExemplarCitiesV1<'static> {
     }
 }
 
-impl From<&CldrTimeZonesData> for MetaZonePeriodV1<'static> {
-    fn from(other: &CldrTimeZonesData) -> Self {
-        let data = &other.meta_zone_periods;
-        let bcp47_tzid_data = &other.bcp47_tzids;
-        let meta_zone_id_data = &other.meta_zone_ids;
+impl From<CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
+    fn from(other: CldrTimeZonesData<'_>) -> Self {
+        let data = other.meta_zone_periods_resource;
+        let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
+        let meta_zone_id_data = &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
         Self(
             data.iter()
                 .flat_map(|(key, zone)| {
@@ -211,11 +237,12 @@ impl From<&CldrTimeZonesData> for MetaZonePeriodV1<'static> {
 
 macro_rules! long_short_impls {
     ($generic:ty, $specific:ty, $field:ident, $metazones_name:ident) => {
-        impl From<&CldrTimeZonesData> for $generic {
-            fn from(other: &CldrTimeZonesData) -> Self {
-                let data = &other.time_zone_names;
-                let bcp47_tzid_data = &other.bcp47_tzids;
-                let meta_zone_id_data = &other.meta_zone_ids;
+        impl From<CldrTimeZonesData<'_>> for $generic {
+            fn from(other: CldrTimeZonesData<'_>) -> Self {
+                let data = other.time_zone_names_resource;
+                let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
+                let meta_zone_id_data =
+                    &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
                         None => ZeroMap::new(),
@@ -298,11 +325,12 @@ macro_rules! long_short_impls {
             }
         }
 
-        impl From<&CldrTimeZonesData> for $specific {
-            fn from(other: &CldrTimeZonesData) -> Self {
-                let data = &other.time_zone_names;
-                let bcp47_tzid_data = &other.bcp47_tzids;
-                let meta_zone_id_data = &other.meta_zone_ids;
+        impl From<CldrTimeZonesData<'_>> for $specific {
+            fn from(other: CldrTimeZonesData<'_>) -> Self {
+                let data = other.time_zone_names_resource;
+                let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
+                let meta_zone_id_data =
+                    &compute_meta_zone_ids_hashmap(other.meta_zone_ids_resource);
                 Self {
                     defaults: match &data.metazone {
                         None => ZeroMap2d::new(),
