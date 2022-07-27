@@ -269,7 +269,7 @@ impl Date<Japanese> {
     ///
     /// let era = types::Era(tinystr!(16, "heisei"));
     ///
-    /// let date = Date::new_japanese_date(japanese_calendar, era, 14, 1, 2)
+    /// let date = Date::new_japanese_date(era, 14, 1, 2, japanese_calendar)
     ///     .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().era, era);
@@ -279,20 +279,20 @@ impl Date<Japanese> {
     ///
     /// // This function will error for eras that are out of bounds:
     /// // (Heisei was 32 years long, Heisei 33 is in Reiwa)
-    /// let oob_date = Date::new_japanese_date(japanese_calendar, era, 33, 1, 2);
+    /// let oob_date = Date::new_japanese_date(era, 33, 1, 2, japanese_calendar);
     /// assert!(oob_date.is_err());
     ///
     /// // and for unknown eras
     /// let fake_era = types::Era(tinystr!(16, "neko")); // 🐱
-    /// let fake_date = Date::new_japanese_date(japanese_calendar, fake_era, 10, 1, 2);
+    /// let fake_date = Date::new_japanese_date(fake_era, 10, 1, 2, japanese_calendar);
     /// assert!(fake_date.is_err());
     /// ```
     pub fn new_japanese_date<A: AsCalendar<Calendar = Japanese>>(
-        japanese_calendar: A,
         era: types::Era,
         year: i32,
         month: u8,
         day: u8,
+        japanese_calendar: A,
     ) -> Result<Date<A>, DateTimeError> {
         let inner = japanese_calendar
             .as_calendar()
@@ -316,7 +316,7 @@ impl DateTime<Japanese> {
     ///
     /// let era = types::Era(tinystr!(16, "heisei"));
     ///
-    /// let datetime = DateTime::new_japanese_datetime(japanese_calendar, era, 14, 1, 2, 13, 1, 0)
+    /// let datetime = DateTime::new_japanese_datetime(era, 14, 1, 2, 13, 1, 0, japanese_calendar)
     ///     .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(datetime.date.year().era, era);
@@ -331,7 +331,6 @@ impl DateTime<Japanese> {
                                          // if people wish to construct this by parts they can use
                                          // Date::new_japanese_date() + DateTime::new(date, time)
     pub fn new_japanese_datetime<A: AsCalendar<Calendar = Japanese>>(
-        japanese_calendar: A,
         era: types::Era,
         year: i32,
         month: u8,
@@ -339,9 +338,10 @@ impl DateTime<Japanese> {
         hour: u8,
         minute: u8,
         second: u8,
+        japanese_calendar: A,
     ) -> Result<DateTime<A>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_japanese_date(japanese_calendar, era, year, month, day)?,
+            date: Date::new_japanese_date(era, year, month, day, japanese_calendar)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -538,7 +538,7 @@ mod tests {
     fn single_test_roundtrip(calendar: Ref<Japanese>, era: &str, year: i32, month: u8, day: u8) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date = Date::new_japanese_date(calendar, era, year, month, day).unwrap_or_else(|e| {
+        let date = Date::new_japanese_date(era, year, month, day, calendar).unwrap_or_else(|e| {
             panic!(
                 "Failed to construct date with {:?}, {}, {}, {}: {}",
                 era, year, month, day, e
@@ -566,14 +566,14 @@ mod tests {
         let era2 = types::Era(era2.parse().expect("era must parse"));
 
         let expected =
-            Date::new_japanese_date(calendar, era2, year2, month, day).unwrap_or_else(|e| {
+            Date::new_japanese_date(era2, year2, month, day, calendar).unwrap_or_else(|e| {
                 panic!(
                     "Failed to construct expectation date with {:?}, {}, {}, {}: {}",
                     era2, year2, month, day, e
                 )
             });
 
-        let date = Date::new_japanese_date(calendar, era, year, month, day).unwrap_or_else(|e| {
+        let date = Date::new_japanese_date(era, year, month, day, calendar).unwrap_or_else(|e| {
             panic!(
                 "Failed to construct date with {:?}, {}, {}, {}: {}",
                 era, year, month, day, e
@@ -597,7 +597,7 @@ mod tests {
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date = Date::new_japanese_date(calendar, era, year, month, day);
+        let date = Date::new_japanese_date(era, year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),

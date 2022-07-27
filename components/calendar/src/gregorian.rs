@@ -70,9 +70,9 @@ impl Calendar for Gregorian {
             return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
         };
 
-        Ok(GregorianDateInner(IsoDateInner(
-            ArithmeticDate::new_from_solar(self, year, month_code, day)?,
-        )))
+        ArithmeticDate::new_from_solar(self, year, month_code, day)
+            .map(IsoDateInner)
+            .map(GregorianDateInner)
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> GregorianDateInner {
