@@ -1711,7 +1711,7 @@ where
                                 // Let's just set this flag here instead of trying to make
                                 // it more granular and, therefore, more error-prone.
                                 // After all, this flag is just about optimizing away one
-                                // `CodePointSet` check in the common case.
+                                // `CodePointInversionList` check in the common case.
                                 may_have_contracted_starter = true;
                                 debug_assert!(pending_removals.is_empty());
                                 loop {

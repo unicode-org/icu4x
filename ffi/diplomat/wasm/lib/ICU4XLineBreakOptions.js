@@ -1,4 +1,4 @@
-import wasm from "../wasm.mjs"
+import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XLineBreakRule_js_to_rust, ICU4XLineBreakRule_rust_to_js } from "./ICU4XLineBreakRule.js"
 import { ICU4XWordBreakRule_js_to_rust, ICU4XWordBreakRule_rust_to_js } from "./ICU4XWordBreakRule.js"

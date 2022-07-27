@@ -7,37 +7,37 @@ This API provides necessary functionality for highly efficient querying of sets 
 It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
 ## Architecture
-ICU4X [`CodePointSet`] is split up into independent levels, with [`CodePointSet`] representing the membership/query API,
-and [`CodePointSetBuilder`] representing the builder API.
+ICU4X [`CodePointInversionList`] is split up into independent levels, with [`CodePointInversionList`] representing the membership/query API,
+and [`CodePointInversionListBuilder`] representing the builder API.
 
 ## Examples:
 
-### Creating a `CodePointSet`
+### Creating a `CodePointInversionList`
 
-CodePointSets are created from either serialized [`CodePointSets`](CodePointSet),
+CodePointSets are created from either serialized [`CodePointSets`](CodePointInversionList),
 represented by [inversion lists](http://userguide.icu-project.org/strings/properties),
-the [`CodePointSetBuilder`], or from the TBA Properties API.
+the [`CodePointInversionListBuilder`], or from the Properties API.
 
 ```rust
-use icu_uniset::{CodePointSet, CodePointSetBuilder};
+use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
 
-let mut builder = CodePointSetBuilder::new();
+let mut builder = CodePointInversionListBuilder::new();
 builder.add_range(&('A'..'Z'));
-let set: CodePointSet = builder.build();
+let set: CodePointInversionList = builder.build();
 
 assert!(set.contains('A'));
 ```
 
-### Querying a `CodePointSet`
+### Querying a `CodePointInversionList`
 
-Currently, you can check if a character/range of characters exists in the [`CodePointSet`], or iterate through the characters.
+Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 
 ```rust
-use icu_uniset::{CodePointSet, CodePointSetBuilder};
+use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
 
-let mut builder = CodePointSetBuilder::new();
+let mut builder = CodePointInversionListBuilder::new();
 builder.add_range(&('A'..'Z'));
-let set: CodePointSet = builder.build();
+let set: CodePointInversionList = builder.build();
 
 assert!(set.contains('A'));
 assert!(set.contains_range(&('A'..='C')));

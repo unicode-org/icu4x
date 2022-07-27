@@ -6,7 +6,7 @@ use crate::SourceData;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointSetBuilder;
+use icu_uniset::CodePointInversionListBuilder;
 
 /// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
 pub struct BinaryPropertyCodePointSetDataProvider {
@@ -47,7 +47,7 @@ macro_rules! expand {
                 ) -> Result<DataResponse<$marker>, DataError> {
                     let data = get_binary(&self.source, $prop_name)?;
 
-                    let mut builder = CodePointSetBuilder::new();
+                    let mut builder = CodePointInversionListBuilder::new();
                     for (start, end) in &data.ranges {
                         builder.add_range_u32(&(start..=end));
                     }
@@ -149,7 +149,7 @@ expand!(
 fn test_basic() {
     use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
-    use icu_uniset::CodePointSet;
+    use icu_uniset::CodePointInversionList;
 
     let provider = BinaryPropertyCodePointSetDataProvider::from(&SourceData::for_test());
 
@@ -158,7 +158,7 @@ fn test_basic() {
         .and_then(DataResponse::take_payload)
         .expect("Loading was successful");
 
-    let whitespace: &CodePointSet = match payload.get() {
+    let whitespace: &CodePointInversionList = match payload.get() {
         PropertyCodePointSetV1::InversionList(ref l) => l,
         _ => unreachable!("Should have serialized to an inversion list"),
     };

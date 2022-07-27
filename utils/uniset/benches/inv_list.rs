@@ -3,14 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_uniset::CodePointSet;
+use icu_uniset::CodePointInversionList;
 use std::char;
 
 fn uniset_bench(c: &mut Criterion) {
     let best_ex = vec![0x41, 0x46];
-    let best_sample = CodePointSet::from_inversion_list_slice(&best_ex).unwrap();
+    let best_sample = CodePointInversionList::from_inversion_list_slice(&best_ex).unwrap();
     let worst_ex: Vec<u32> = (0x0..((char::MAX as u32) + 1)).collect();
-    let worst_sample = CodePointSet::from_inversion_list_slice(&worst_ex).unwrap();
+    let worst_sample = CodePointInversionList::from_inversion_list_slice(&worst_ex).unwrap();
 
     c.bench_function("uniset/overview", |b| {
         #[allow(clippy::suspicious_map)]

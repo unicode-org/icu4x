@@ -60,6 +60,7 @@ required-features = ["lstm"]
 
 [features]
 default = []
-lstm = ["ndarray", "num-traits", "serde", "unicode-segmentation"]
+lstm = ["ndarray", "num-traits", "serde"]
 serde = ["dep:serde", "zerovec/serde", "icu_codepointtrie/serde"]
 datagen = ["serde", "databake", "zerovec/databake", "icu_codepointtrie/databake"]
+lstm-grapheme = ["lstm", "unicode-segmentation"]

@@ -10,7 +10,7 @@ use core::fmt::Display;
 use core::iter::FromIterator;
 use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
-use icu_uniset::CodePointSet;
+use icu_uniset::CodePointInversionList;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::ZeroVec;
@@ -816,7 +816,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             .map(|cpm_range| cpm_range.range)
     }
 
-    /// Returns a [`CodePointSet`] for the code points that have the given
+    /// Returns a [`CodePointInversionList`] for the code points that have the given
     /// [`TrieValue`] in the trie.
     ///
     /// # Examples
@@ -837,9 +837,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert!(sip.contains_u32(end));
     /// assert!(!sip.contains_u32(end + 1));
     /// ```
-    pub fn get_set_for_value(&self, value: T) -> CodePointSet<'static> {
+    pub fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         let value_ranges = self.get_ranges_for_value(value);
-        CodePointSet::from_iter(value_ranges)
+        CodePointInversionList::from_iter(value_ranges)
     }
 }
 

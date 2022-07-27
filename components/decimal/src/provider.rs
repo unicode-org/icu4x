@@ -56,7 +56,11 @@ pub struct GroupingSizesV1 {
 }
 
 /// Symbols and metadata required for formatting a [`FixedDecimal`](crate::FixedDecimal).
-#[icu_provider::data_struct(DecimalSymbolsV1Marker = "decimal/symbols@1")]
+#[icu_provider::data_struct(marker(
+    DecimalSymbolsV1Marker,
+    "decimal/symbols@1",
+    extension_key = "nu"
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",

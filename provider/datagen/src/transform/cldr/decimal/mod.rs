@@ -2,14 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// All expects in this file have appropriate messages
+#![allow(clippy::expect_used)]
+
 use crate::transform::cldr::cldr_serde;
 use crate::SourceData;
 use icu_decimal::provider::*;
+use icu_locid::extensions::unicode::Value;
+use icu_locid::extensions_unicode_key as key;
+use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::borrow::Cow;
 use std::convert::TryFrom;
-use tinystr::TinyStr8;
+use tinystr::TinyAsciiStr;
 
 mod decimal_pattern;
 
@@ -29,7 +35,10 @@ impl From<&SourceData> for NumbersProvider {
 
 impl NumbersProvider {
     /// Returns the digits for the given numbering system name.
-    fn get_digits_for_numbering_system(&self, nsname: TinyStr8) -> Result<[char; 10], DataError> {
+    fn get_digits_for_numbering_system(
+        &self,
+        nsname: TinyAsciiStr<8>,
+    ) -> Result<[char; 10], DataError> {
         let resource: &cldr_serde::numbering_systems::Resource = self
             .source
             .cldr()?
@@ -60,6 +69,32 @@ impl NumbersProvider {
             DataError::custom("Could not process numbering system").with_display_context(&nsname)
         })
     }
+
+    fn get_supported_numsys_for_langid_without_default(
+        &self,
+        langid: &LanguageIdentifier,
+    ) -> Result<Vec<TinyAsciiStr<8>>, DataError> {
+        let resource: &cldr_serde::numbers::Resource = self
+            .source
+            .cldr()?
+            .numbers()
+            .read_and_parse(langid, "numbers.json")?;
+
+        let numbers = &resource
+            .main
+            .0
+            .get(langid)
+            .expect("CLDR file contains the expected language")
+            .numbers;
+
+        Ok(numbers
+            .numsys_data
+            .symbols
+            .keys()
+            .filter(|nsname| **nsname != numbers.default_numbering_system)
+            .copied()
+            .collect())
+    }
 }
 
 impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
@@ -72,7 +107,6 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .numbers()
             .read_and_parse(&langid, "numbers.json")?;
 
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let numbers = &resource
             .main
             .0
@@ -80,11 +114,22 @@ impl DataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .expect("CLDR file contains the expected language")
             .numbers;
 
-        let mut result = DecimalSymbolsV1::try_from(numbers).map_err(|s| {
-            DataError::custom("Could not create decimal symbols").with_display_context(&s)
-        })?;
+        let nsname = match req.locale.get_unicode_ext(&key!("nu")) {
+            Some(v) => *v
+                .as_tinystr_slice()
+                .first()
+                .expect("expecting subtag if key is present"),
+            None => numbers.default_numbering_system,
+        };
 
-        result.digits = self.get_digits_for_numbering_system(numbers.default_numbering_system)?;
+        let mut result =
+            DecimalSymbolsV1::try_from(NumbersWithNumsys(numbers, nsname)).map_err(|s| {
+                DataError::custom("Could not create decimal symbols")
+                    .with_display_context(&s)
+                    .with_display_context(&nsname)
+            })?;
+
+        result.digits = self.get_digits_for_numbering_system(nsname)?;
 
         Ok(DataResponse {
             metadata: Default::default(),
@@ -102,26 +147,43 @@ impl IterableDataProvider<DecimalSymbolsV1Marker> for NumbersProvider {
             .cldr()?
             .numbers()
             .list_langs()?
-            .map(DataLocale::from)
+            .flat_map(|langid| {
+                let last = DataLocale::from(&langid);
+                self.get_supported_numsys_for_langid_without_default(&langid)
+                    .expect("All languages from list_langs should be present")
+                    .into_iter()
+                    .map(move |nsname| {
+                        let mut data_locale = DataLocale::from(&langid);
+                        data_locale.set_unicode_ext(
+                            key!("nu"),
+                            Value::try_from_single_subtag(nsname.as_bytes())
+                                .expect("CLDR should have valid numbering system names"),
+                        );
+                        data_locale
+                    })
+                    .chain(core::iter::once(last))
+            })
             .collect())
     }
 }
 
-impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
+struct NumbersWithNumsys<'a>(pub &'a cldr_serde::numbers::Numbers, pub TinyAsciiStr<8>);
+
+impl TryFrom<NumbersWithNumsys<'_>> for DecimalSymbolsV1<'static> {
     type Error = Cow<'static, str>;
 
-    fn try_from(other: &cldr_serde::numbers::Numbers) -> Result<Self, Self::Error> {
-        // TODO(#510): Select from non-default numbering systems
-        let symbols = other
+    fn try_from(other: NumbersWithNumsys<'_>) -> Result<Self, Self::Error> {
+        let NumbersWithNumsys(numbers, nsname) = other;
+        let symbols = numbers
             .numsys_data
             .symbols
-            .get(&other.default_numbering_system)
-            .ok_or("Could not find symbols for default numbering system")?;
-        let formats = other
+            .get(&nsname)
+            .ok_or("Could not find symbols for numbering system")?;
+        let formats = numbers
             .numsys_data
             .formats
-            .get(&other.default_numbering_system)
-            .ok_or("Could not find formats for default numbering system")?;
+            .get(&nsname)
+            .ok_or("Could not find formats for numbering system")?;
         let parsed_pattern: decimal_pattern::DecimalPattern = formats
             .standard
             .parse()
@@ -135,7 +197,7 @@ impl TryFrom<&cldr_serde::numbers::Numbers> for DecimalSymbolsV1<'static> {
             grouping_sizes: GroupingSizesV1 {
                 primary: parsed_pattern.positive.primary_grouping,
                 secondary: parsed_pattern.positive.secondary_grouping,
-                min_grouping: other.minimum_grouping_digits,
+                min_grouping: numbers.minimum_grouping_digits,
             },
             digits: Default::default(), // to be filled in
         })

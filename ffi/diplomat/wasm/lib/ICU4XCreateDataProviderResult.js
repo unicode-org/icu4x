@@ -1,4 +1,4 @@
-import wasm from "../wasm.mjs"
+import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XDataProvider } from "./ICU4XDataProvider.js"
 
