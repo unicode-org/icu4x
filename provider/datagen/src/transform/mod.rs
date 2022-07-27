@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains implementations of the [`ICU4X`] [data provider] interface
-//! based on CLDR and ICU export data.
-
 pub mod cldr;
 pub mod icuexport;
 #[cfg(feature = "experimental")]
