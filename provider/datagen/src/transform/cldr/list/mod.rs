@@ -148,7 +148,7 @@ mod tests {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let f = ListFormatter::$type(
                 locale!($locale),
-                crate::DatagenProvider::for_test(),
+                &crate::DatagenProvider::for_test(),
                 ListStyle::Wide
             ).unwrap();
             $(

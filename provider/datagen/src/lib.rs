@@ -78,6 +78,7 @@ use std::path::{Path, PathBuf};
 
 /// [`DataProvider`] backed by [`SourceData`]
 #[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
+#[derive(Debug, Clone)]
 pub struct DatagenProvider {
     /// The underlying raw data
     pub source: SourceData,
@@ -86,7 +87,7 @@ pub struct DatagenProvider {
 #[cfg(test)]
 impl DatagenProvider {
     /// Create a `DatagenProvider` that uses test data.
-    pub fn for_test() -> &'static Self {
+    pub fn for_test() -> Self {
         lazy_static::lazy_static! {
             static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
                 source: SourceData::default()
@@ -99,7 +100,7 @@ impl DatagenProvider {
                     .expect("testdata is valid"),
             };
         }
-        &*TEST_PROVIDER
+        TEST_PROVIDER.clone()
     }
 }
 
