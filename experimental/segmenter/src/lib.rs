@@ -168,8 +168,8 @@ mod math_helper;
 
 pub use crate::dictionary::{DictionaryBreakIterator, DictionarySegmenter};
 pub use crate::grapheme::{
-    GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
-    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
+    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
+    GraphemeClusterBreakIteratorUtf8, GraphemeClusterBreakSegmenter,
 };
 pub use crate::line::{
     LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8,
@@ -182,9 +182,9 @@ pub use crate::provider::{
     UCharDictionaryBreakDataV1, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
 };
 pub use crate::sentence::{
-    SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
+    SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8,
     SentenceBreakSegmenter,
 };
 pub use crate::word::{
-    WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakSegmenter,
+    WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordBreakSegmenter,
 };

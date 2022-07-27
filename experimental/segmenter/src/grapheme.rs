@@ -12,7 +12,8 @@ use crate::provider::*;
 use crate::rule_segmenter::*;
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
-pub type GraphemeClusterBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, GraphemeClusterBreakType>;
+pub type GraphemeClusterBreakIteratorUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, GraphemeClusterBreakTypeUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 pub type GraphemeClusterBreakIteratorLatin1<'l, 's> =
@@ -46,8 +47,11 @@ impl GraphemeClusterBreakSegmenter {
     }
 
     /// Create a grapheme cluster break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> GraphemeClusterBreakIterator<'l, 's> {
-        GraphemeClusterBreakIterator {
+    pub fn segment_str<'l, 's>(
+        &'l self,
+        input: &'s str,
+    ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
+        GraphemeClusterBreakIteratorUtf8 {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
@@ -91,9 +95,9 @@ impl GraphemeClusterBreakSegmenter {
     }
 }
 
-pub struct GraphemeClusterBreakType;
+pub struct GraphemeClusterBreakTypeUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakType {
+impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 

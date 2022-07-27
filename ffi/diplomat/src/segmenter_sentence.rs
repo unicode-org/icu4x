@@ -11,8 +11,8 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
     use icu_segmenter::{
-        SentenceBreakDataV1Marker, SentenceBreakIterator, SentenceBreakIteratorLatin1,
-        SentenceBreakIteratorUtf16, SentenceBreakSegmenter,
+        SentenceBreakDataV1Marker, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
+        SentenceBreakIteratorUtf8, SentenceBreakSegmenter,
     };
 
     #[diplomat::opaque]
@@ -21,7 +21,7 @@ pub mod ffi {
     pub struct ICU4XSentenceBreakSegmenter(SentenceBreakSegmenter);
 
     #[diplomat::opaque]
-    pub struct ICU4XSentenceBreakIteratorUtf8<'a>(SentenceBreakIterator<'a, 'a>);
+    pub struct ICU4XSentenceBreakIteratorUtf8<'a>(SentenceBreakIteratorUtf8<'a, 'a>);
 
     #[diplomat::opaque]
     pub struct ICU4XSentenceBreakIteratorUtf16<'a>(SentenceBreakIteratorUtf16<'a, 'a>);
