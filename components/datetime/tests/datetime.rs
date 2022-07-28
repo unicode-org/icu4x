@@ -529,7 +529,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         Some(tinystr!(8, "daylight")),
     );
     let tzf = TimeZoneFormatter::try_from_config(
-        langid.clone(),
+        langid,
         TimeZoneFormatterConfig::LocalizedGMT,
         &zone_provider,
         &TimeZoneFormatterOptions::default(),
@@ -551,7 +551,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         Some(tinystr!(8, "daylight")),
     );
     let tzf = TimeZoneFormatter::try_from_config(
-        langid.clone(),
+        langid,
         TimeZoneFormatterConfig::LocalizedGMT,
         &zone_provider,
         &TimeZoneFormatterOptions::default(),
