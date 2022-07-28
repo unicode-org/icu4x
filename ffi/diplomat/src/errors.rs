@@ -158,7 +158,7 @@ impl From<DateTimeFormatterError> for ICU4XError {
             DateTimeFormatterError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
             DateTimeFormatterError::Format(err) => err.into(),
             DateTimeFormatterError::DataProvider(err) => err.into(),
-            DateTimeFormatterError::MissingInputField => {
+            DateTimeFormatterError::MissingInputField(_) => {
                 ICU4XError::DateTimeFormatMissingInputFieldError
             }
             DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,

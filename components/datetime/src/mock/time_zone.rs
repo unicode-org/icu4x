@@ -7,8 +7,6 @@ use tinystr::TinyStr8;
 
 use crate::date::*;
 use crate::metazone::MetaZoneCalculator;
-use alloc::string::String;
-use alloc::string::ToString;
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
 
@@ -47,8 +45,6 @@ pub struct MockTimeZone {
     pub metazone_id: Option<MetaZoneId>,
     /// The time variant e.g. "daylight" or "standard"
     pub time_variant: Option<TinyStr8>,
-    /// The fallback of GMT offset if it is set to None.
-    pub gmt_offset_fallback: String,
 }
 
 impl MockTimeZone {
@@ -61,13 +57,11 @@ impl MockTimeZone {
         metazone_id: Option<MetaZoneId>,
         time_variant: Option<TinyStr8>,
     ) -> Self {
-        debug_assert!(gmt_offset.is_some(), "GMT offset unknown: GMT+?");
         Self {
             gmt_offset,
             time_zone_id,
             metazone_id,
             time_variant,
-            gmt_offset_fallback: "GMT+?".to_string(),
         }
     }
 
@@ -137,13 +131,11 @@ impl FromStr for MockTimeZone {
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let gmt_offset = input.parse::<GmtOffset>().ok();
-        debug_assert!(gmt_offset.is_some(), "GMT offset unknown: GMT+?");
         Ok(Self {
             gmt_offset,
             time_zone_id: None,
             metazone_id: None,
             time_variant: None,
-            gmt_offset_fallback: "GMT+?".to_string(),
         })
     }
 }

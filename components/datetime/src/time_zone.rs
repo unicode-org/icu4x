@@ -721,8 +721,9 @@ impl TimeZoneFormatter {
                 padding,
             ))
         } else {
-            debug_assert!(false, "GMT offset unknown: GMT+?");
-            Err(DateTimeFormatterError::MissingInputField)
+            Err(DateTimeFormatterError::MissingInputField(Some(
+                "gmt_offset",
+            )))
         }
     }
 
@@ -736,8 +737,9 @@ impl TimeZoneFormatter {
                 ZeroPadding::On,
             ))
         } else {
-            debug_assert!(false, "GMT offset unknown: GMT+?");
-            Err(DateTimeFormatterError::MissingInputField)
+            Err(DateTimeFormatterError::MissingInputField(Some(
+                "gmt_offset",
+            )))
         }
     }
 
@@ -745,15 +747,16 @@ impl TimeZoneFormatter {
     fn format_offset_seconds<W: fmt::Write + ?Sized>(
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
-    ) -> fmt::Result {
+    ) -> Result<fmt::Result, DateTimeFormatterError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
-            sink.write_str(&TimeZoneFormatter::format_time_segment(
+            Ok(sink.write_str(&TimeZoneFormatter::format_time_segment(
                 (gmt_offset.raw_offset_seconds() % 3600 % 60).abs() as u8,
                 ZeroPadding::On,
-            ))
+            )))
         } else {
-            debug_assert!(false, "GMT offset unknown: GMT+?");
-            Err(core::fmt::Error)
+            Err(DateTimeFormatterError::MissingInputField(Some(
+                "gmt_offset",
+            )))
         }
     }
 }
@@ -1133,7 +1136,9 @@ impl FormatTimeZone for LocalizedGmtFormat {
                             {
                                 offset_hours
                             } else {
-                                return Err(DateTimeFormatterError::MissingInputField);
+                                return Err(DateTimeFormatterError::MissingInputField(Some(
+                                    "gmt_offset",
+                                )));
                             },
                         )
                         .replace(
@@ -1143,7 +1148,9 @@ impl FormatTimeZone for LocalizedGmtFormat {
                             {
                                 offset_minutes
                             } else {
-                                return Err(DateTimeFormatterError::MissingInputField);
+                                return Err(DateTimeFormatterError::MissingInputField(Some(
+                                    "gmt_offset",
+                                )));
                             },
                         )
                         .replace(
@@ -1153,17 +1160,17 @@ impl FormatTimeZone for LocalizedGmtFormat {
                             {
                                 offset_hours
                             } else {
-                                return Err(DateTimeFormatterError::MissingInputField);
+                                return Err(DateTimeFormatterError::MissingInputField(Some(
+                                    "gmt_offset",
+                                )));
                             },
                         ),
                 ))
             };
         };
-        debug_assert!(
-            time_zone.gmt_offset().is_some(),
-            "GMT offset unknown: GMT+?"
-        );
-        Err(DateTimeFormatterError::MissingInputField)
+        Err(DateTimeFormatterError::MissingInputField(Some(
+            "gmt_offset",
+        )))
     }
 }
 
@@ -1236,7 +1243,9 @@ impl FormatTimeZone for Iso8601Format {
                     return Ok(Err(e));
                 }
             } else {
-                return Err(DateTimeFormatterError::MissingInputField);
+                return Err(DateTimeFormatterError::MissingInputField(Some(
+                    "gmt_offset",
+                )));
             }
 
             match self.minutes {
@@ -1252,7 +1261,9 @@ impl FormatTimeZone for Iso8601Format {
                             return Ok(Err(e));
                         }
                     } else {
-                        return Err(DateTimeFormatterError::MissingInputField);
+                        return Err(DateTimeFormatterError::MissingInputField(Some(
+                            "gmt_offset",
+                        )));
                     }
                 }
                 IsoMinutes::Optional => {
@@ -1269,7 +1280,9 @@ impl FormatTimeZone for Iso8601Format {
                                 return Ok(Err(e));
                             }
                         } else {
-                            return Err(DateTimeFormatterError::MissingInputField);
+                            return Err(DateTimeFormatterError::MissingInputField(Some(
+                                "gmt_offset",
+                            )));
                         }
                     }
                 }
@@ -1283,17 +1296,15 @@ impl FormatTimeZone for Iso8601Format {
                         }
                     }
                     if let Err(e) = TimeZoneFormatter::format_offset_seconds(sink, time_zone) {
-                        return Ok(Err(e));
+                        return Err(e);
                     }
                 }
             }
             return Ok(Ok(()));
         };
-        debug_assert!(
-            time_zone.gmt_offset().is_some(),
-            "GMT offset unknown: GMT+?"
-        );
-        Err(DateTimeFormatterError::MissingInputField)
+        Err(DateTimeFormatterError::MissingInputField(Some(
+            "gmt_offset",
+        )))
     }
 }
 

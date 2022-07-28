@@ -38,10 +38,29 @@ where
                     ) {
                         Ok(Ok(r)) => Ok(r),
                         Ok(Err(e)) => Err(e),
-                        Err(_e) => {
-                            debug_assert!(false, "{:?}", _e);
-                            Err(core::fmt::Error)
-                        }
+                        Err(e) => match e {
+                            DateTimeFormatterError::MissingInputField(Some("gmt_offset")) => {
+                                debug_assert!(
+                                    false,
+                                    "{:?}",
+                                    &self
+                                        .time_zone_format
+                                        .data_payloads
+                                        .zone_formats
+                                        .get()
+                                        .gmt_offset_fallback
+                                );
+                                sink.write_str(
+                                    &self
+                                        .time_zone_format
+                                        .data_payloads
+                                        .zone_formats
+                                        .get()
+                                        .gmt_offset_fallback,
+                                )
+                            }
+                            _ => Err(core::fmt::Error),
+                        },
                     }
                 }
                 TimeZoneFormatterUnit::Iso8601(fallback) => {
@@ -52,10 +71,29 @@ where
                     ) {
                         Ok(Ok(r)) => Ok(r),
                         Ok(Err(e)) => Err(e),
-                        Err(_e) => {
-                            debug_assert!(false, "{:?}", _e);
-                            Err(core::fmt::Error)
-                        }
+                        Err(e) => match e {
+                            DateTimeFormatterError::MissingInputField(Some("gmt_offset")) => {
+                                debug_assert!(
+                                    false,
+                                    "{:?}",
+                                    &self
+                                        .time_zone_format
+                                        .data_payloads
+                                        .zone_formats
+                                        .get()
+                                        .gmt_offset_fallback
+                                );
+                                sink.write_str(
+                                    &self
+                                        .time_zone_format
+                                        .data_payloads
+                                        .zone_formats
+                                        .get()
+                                        .gmt_offset_fallback,
+                                )
+                            }
+                            _ => Err(core::fmt::Error),
+                        },
                     }
                 }
                 _ => Err(core::fmt::Error),

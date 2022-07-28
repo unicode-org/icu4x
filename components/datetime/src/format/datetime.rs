@@ -208,7 +208,7 @@ where
             let era = datetime
                 .datetime()
                 .year()
-                .ok_or(Error::MissingInputField)?
+                .ok_or(Error::MissingInputField(Some("year")))?
                 .era;
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = date_symbols
@@ -224,7 +224,7 @@ where
                     datetime
                         .datetime()
                         .year()
-                        .ok_or(Error::MissingInputField)?
+                        .ok_or(Error::MissingInputField(Some("year")))?
                         .number,
                 ),
                 field.length,
@@ -244,7 +244,7 @@ where
                     datetime
                         .datetime()
                         .month()
-                        .ok_or(Error::MissingInputField)?
+                        .ok_or(Error::MissingInputField(Some("month")))?
                         .ordinal,
                 ),
                 field.length,
@@ -259,7 +259,7 @@ where
                         datetime
                             .datetime()
                             .month()
-                            .ok_or(Error::MissingInputField)?
+                            .ok_or(Error::MissingInputField(Some("month")))?
                             .code,
                     )?;
                 w.write_str(symbol)?
@@ -283,7 +283,7 @@ where
             let dow = datetime
                 .datetime()
                 .iso_weekday()
-                .ok_or(Error::MissingInputField)?;
+                .ok_or(Error::MissingInputField(Some("iso_weekday")))?;
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = date_symbols
                 .expect("Expect date symbols to be present")
@@ -298,7 +298,7 @@ where
                     datetime
                         .datetime()
                         .day_of_month()
-                        .ok_or(Error::MissingInputField)?
+                        .ok_or(Error::MissingInputField(Some("day_of_month")))?
                         .0
                 }
                 fields::Day::DayOfWeekInMonth => datetime.day_of_week_in_month()?.0,
@@ -307,8 +307,12 @@ where
             field.length,
         )?,
         FieldSymbol::Hour(hour) => {
-            let h =
-                usize::from(datetime.datetime().hour().ok_or(Error::MissingInputField)?) as isize;
+            let h = usize::from(
+                datetime
+                    .datetime()
+                    .hour()
+                    .ok_or(Error::MissingInputField(Some("hour")))?,
+            ) as isize;
             let value = match hour {
                 fields::Hour::H11 => h % 12,
                 fields::Hour::H12 => {
@@ -342,7 +346,7 @@ where
                 datetime
                     .datetime()
                     .minute()
-                    .ok_or(Error::MissingInputField)?,
+                    .ok_or(Error::MissingInputField(Some("minute")))?,
             )),
             field.length,
         )?,
@@ -351,7 +355,7 @@ where
                 datetime
                     .datetime()
                     .second()
-                    .ok_or(Error::MissingInputField)?,
+                    .ok_or(Error::MissingInputField(Some("second")))?,
             ));
             if let Some(PatternItem::Field(next_field)) = next_item {
                 if let FieldSymbol::Second(Second::FractionalSecond) = next_field.symbol {
@@ -359,7 +363,7 @@ where
                         datetime
                             .datetime()
                             .nanosecond()
-                            .ok_or(Error::MissingInputField)?,
+                            .ok_or(Error::MissingInputField(Some("nanosecond")))?,
                     ));
 
                     // We only support fixed field length for fractional seconds.
@@ -400,7 +404,10 @@ where
                 .get_symbol_for_day_period(
                     period,
                     field.length,
-                    datetime.datetime().hour().ok_or(Error::MissingInputField)?,
+                    datetime
+                        .datetime()
+                        .hour()
+                        .ok_or(Error::MissingInputField(Some("hour")))?,
                     pattern.time_granularity.is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
