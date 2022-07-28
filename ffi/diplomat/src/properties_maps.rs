@@ -13,7 +13,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. For properties whose values fit into 16 bits.
-    #[diplomat::rust_link(icu_properties, Mod)]
+    #[diplomat::rust_link(icu::properties, Mod)]
     pub struct ICU4XCodePointMapData16(maps::CodePointMapData<Script>);
 
     pub struct ICU4XCodePointMapData16Response {
@@ -25,7 +25,7 @@ pub mod ffi {
 
     impl ICU4XCodePointMapData16 {
         /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
-        #[diplomat::rust_link(icu_properties::maps::get_script, Fn)]
+        #[diplomat::rust_link(icu::properties::maps::get_script, Fn)]
         pub fn try_get_script(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData16>, ICU4XError> {
@@ -38,7 +38,10 @@ pub mod ffi {
         }
 
         /// Gets the value for a code point.
-        #[diplomat::rust_link(icu_codepointtrie::codepointtrie::CodePointTrie::get_u32, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::codepointtrie::codepointtrie::CodePointTrie::get_u32,
+            FnInStruct
+        )]
         pub fn get(&self, cp: char) -> u16 {
             self.0.get(cp).0
         }

@@ -17,7 +17,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
-    #[diplomat::rust_link(icu_segmenter::SentenceBreakSegmenter, Struct)]
+    #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter, Struct)]
     pub struct ICU4XSentenceBreakSegmenter(SentenceBreakSegmenter);
 
     #[diplomat::opaque]
@@ -31,7 +31,7 @@ pub mod ffi {
 
     impl ICU4XSentenceBreakSegmenter {
         /// Construct an [`ICU4XSentenceBreakSegmenter`].
-        #[diplomat::rust_link(icu_segmenter::SentenceBreakSegmenter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::try_new, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XSentenceBreakSegmenter>, ICU4XError> {
@@ -53,7 +53,7 @@ pub mod ffi {
         }
 
         /// Segments a UTF-8 string.
-        #[diplomat::rust_link(icu_segmenter::SentenceBreakSegmenter::segment_str, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::segment_str, FnInStruct)]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a str,
@@ -62,7 +62,7 @@ pub mod ffi {
         }
 
         /// Segments a UTF-16 string.
-        #[diplomat::rust_link(icu_segmenter::SentenceBreakSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::segment_utf16, FnInStruct)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a [u16],
@@ -71,7 +71,7 @@ pub mod ffi {
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(icu_segmenter::SentenceBreakSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::segment_latin1, FnInStruct)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],

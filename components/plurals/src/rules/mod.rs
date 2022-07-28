@@ -148,7 +148,7 @@
 //! [`AST`]: super::rules::reference::ast
 pub mod reference;
 
-// Need to expose it for `icu::provider_cldr` use, but we don't
+// Need to expose it for `icu_datagen` use, but we don't
 // have a reason to make it fully public, so hiding docs for now.
 #[doc(hidden)]
 pub mod runtime;

@@ -13,7 +13,11 @@ use icu_provider::DataLocale;
 use tinystr::TinyStr8;
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
-pub use icu_calendar::types::*;
+pub use icu_calendar::types::{
+    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, Era, FormattableMonth, FormattableYear, GmtOffset,
+    IsoHour, IsoMinute, IsoSecond, IsoWeekday, MonthCode, NanoSecond, Time, WeekOfMonth,
+    WeekOfYear,
+};
 pub use icu_calendar::DateTimeError;
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses

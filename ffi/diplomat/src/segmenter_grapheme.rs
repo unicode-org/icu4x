@@ -19,7 +19,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
     /// in strings.
-    #[diplomat::rust_link(icu_segmenter::GraphemeClusterBreakSegmenter, Struct)]
+    #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakSegmenter, Struct)]
     pub struct ICU4XGraphemeClusterBreakSegmenter(GraphemeClusterBreakSegmenter);
 
     #[diplomat::opaque]
@@ -37,7 +37,7 @@ pub mod ffi {
 
     impl ICU4XGraphemeClusterBreakSegmenter {
         /// Construct an [`ICU4XGraphemeClusterBreakSegmenter`].
-        #[diplomat::rust_link(icu_segmenter::GraphemeClusterBreakSegmenter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::GraphemeClusterBreakSegmenter::try_new, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XGraphemeClusterBreakSegmenter>, ICU4XError> {
