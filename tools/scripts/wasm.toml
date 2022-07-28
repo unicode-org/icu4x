@@ -366,7 +366,7 @@ description = "Copy the WASM files from release into Diplomat"
 category = "ICU4X WASM"
 dependencies = ["wasm-build-release"]
 command = "cp"
-args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm", "ffi/diplomat/wasm/lib/icu_capi.wasm"]
+args = ["${CARGO_MAKE_WORKSPACE_WORKING_DIRECTORY}/target/wasm32-unknown-unknown/release-opt-size/icu_capi_cdylib.wasm", "ffi/diplomat/wasm/icu4x/lib/icu_capi.wasm"]
 
 [tasks.wasm-test-release]
 description = "Run WASM tests in release mode"
@@ -391,12 +391,24 @@ script = '''
 exit_on_error true
 cd ffi/diplomat
 
-rm -r ./wasm/lib
-rm -r ./wasm/docs
-mkdir ./wasm/lib
-mkdir ./wasm/docs
+rm -r ./wasm/icu4x/lib
+rm -r ./wasm/icu4x/docs
+mkdir ./wasm/icu4x/lib
+mkdir ./wasm/icu4x/docs
 
 exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
+'''
+
+[tasks.diplomat-build-webpack-demo]
+description = "Webpack the demo app using WASM bindings"
+category = "ICU4X Development"
+dependencies = ["wasm-copy-to-diplomat"]
+script_runner = "@duckscript"
+script = '''
+cd ffi/diplomat/wasm/wasm-demo
+mkdir dist
+exec --fail-on-error npm install
+exec --fail-on-error npm run build
 '''
 
 [tasks.wasm-clean]
