@@ -142,7 +142,7 @@ impl<T> core::ops::Deref for RcWrap<T> {
 }
 
 // Safe because both Rc and Arc are CloneableCart
-unsafe impl<T: std::clone::Clone> CloneableCart for RcWrap<T> {}
+unsafe impl<T: Clone> CloneableCart for RcWrap<T> {}
 
 // Safe because both Rc and Arc are StableDeref
 unsafe impl<T> stable_deref_trait::StableDeref for RcWrap<T> {}
@@ -155,7 +155,7 @@ impl<T> From<alloc::vec::Vec<T>> for RcWrap<T> {
 
 // Constructing from `Box<[T]>` copies the whole slice, so we might
 // as well define this on a slice directly.
-impl<T: std::clone::Clone> From<&[T]> for RcWrap<T> {
+impl<T: Clone> From<&[T]> for RcWrap<T> {
     fn from(other: &[T]) -> Self {
         Self(other.into())
     }
