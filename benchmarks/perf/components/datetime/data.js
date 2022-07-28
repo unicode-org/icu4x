@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659046148872,
+  "lastUpdate": 1659049604468,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -53735,6 +53735,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4577,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb55be57d6296cce5861453cc7f09b999e95f3b7",
+          "message": "Replace unbounded arithmetic for calendar numeric types with bounded arithmetic. (#2273)\n\nReplaces `Add` and `Sub` implementations with fallible `try_add` and `try_sub` associated functions that ensure the resulting value is within bounds by returning an `Option`.",
+          "timestamp": "2022-07-28T15:53:14-07:00",
+          "tree_id": "494defac7fa35e2c4554a65df78ac1c1b8693615",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb55be57d6296cce5861453cc7f09b999e95f3b7"
+        },
+        "date": 1659049560907,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 126173,
+            "range": "± 13122",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1117779,
+            "range": "± 68149",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 237211,
+            "range": "± 16376",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 115365,
+            "range": "± 14941",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 126647,
+            "range": "± 5241",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 123399,
+            "range": "± 5232",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 135282,
+            "range": "± 6111",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 224175,
+            "range": "± 13858",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 247408,
+            "range": "± 14919",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 239454,
+            "range": "± 20385",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 252781,
+            "range": "± 9581",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6210,
+            "range": "± 301",
             "unit": "ns/iter"
           }
         ]
