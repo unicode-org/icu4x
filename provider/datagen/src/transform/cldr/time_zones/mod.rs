@@ -109,7 +109,6 @@ impl_data_provider!(
     MetaZonePeriodV1Marker
 );
 
-
 #[cfg(test)]
 mod tests {
     use tinystr::tinystr;
