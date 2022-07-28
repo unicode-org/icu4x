@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659045544487,
+  "lastUpdate": 1659048925863,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21893,6 +21893,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4158631d6ea657896f485cd18056b824849ac293"
         },
         "date": 1659045501958,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb55be57d6296cce5861453cc7f09b999e95f3b7",
+          "message": "Replace unbounded arithmetic for calendar numeric types with bounded arithmetic. (#2273)\n\nReplaces `Add` and `Sub` implementations with fallible `try_add` and `try_sub` associated functions that ensure the resulting value is within bounds by returning an `Option`.",
+          "timestamp": "2022-07-28T15:53:14-07:00",
+          "tree_id": "494defac7fa35e2c4554a65df78ac1c1b8693615",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb55be57d6296cce5861453cc7f09b999e95f3b7"
+        },
+        "date": 1659048882462,
         "tool": "ndjson",
         "benches": [
           {
