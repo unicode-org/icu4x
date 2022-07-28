@@ -21,9 +21,9 @@ use core::iter::FromIterator;
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 
-/// A wrapper around code point set data. It is returned by APIs that return Unicode 
+/// A wrapper around code point set data. It is returned by APIs that return Unicode
 /// property data in a set-like form, ex: a set of code points sharing the same
-/// value for a Unicode property. Access its data via the borrowed version, 
+/// value for a Unicode property. Access its data via the borrowed version,
 /// [`CodePointSetDataBorrowed`].
 pub struct CodePointSetData {
     data: DataPayload<ErasedSetlikeMarker>,
@@ -38,50 +38,6 @@ impl DataMarker for ErasedSetlikeMarker {
 }
 
 impl CodePointSetData {
-    /// Check if the set contains a character
-    ///
-    /// If calling multiple times, consider calling [`Self::as_borrowed()`]
-    /// first
-    ///
-    /// ```rust
-    /// use icu_properties::sets;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    /// let alphabetic =
-    ///     sets::get_alphabetic(&provider)
-    ///         .expect("The data should be valid");
-    ///
-    /// assert!(!alphabetic.contains('3'));
-    /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
-    /// assert!(alphabetic.contains('A'));
-    /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
-    /// ```
-    #[inline]
-    pub fn contains(&self, ch: char) -> bool {
-        self.data.get().contains(ch)
-    }
-
-    /// Check if the set contains a character as a UTF32 code unit
-    ///
-    /// If calling multiple times, consider calling [`Self::as_borrowed()`]
-    /// first
-    ///
-    /// ```rust
-    /// use icu_properties::sets;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    /// let alphabetic =
-    ///     sets::get_alphabetic(&provider)
-    ///         .expect("The data should be valid");
-    ///
-    /// assert!(!alphabetic.contains_u32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
-    /// assert!(alphabetic.contains_u32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
-    /// ```
-    #[inline]
-    pub fn contains_u32(&self, ch: u32) -> bool {
-        self.data.get().contains_u32(ch)
-    }
-
     /// Construct a borrowed version of this type that can be queried
     ///
     /// This avoids a potential small cost per [`Self::contains()`] call by consolidating it
@@ -1720,8 +1676,10 @@ mod tests {
         use icu::properties::GeneralCategoryGroup;
 
         let provider = icu_testdata::get_provider();
-        let digits = sets::get_for_general_category_group(&provider, GeneralCategoryGroup::Number)
-            .expect("The data should be valid");
+        let digits_data =
+            sets::get_for_general_category_group(&provider, GeneralCategoryGroup::Number)
+                .expect("The data should be valid");
+        let digits = digits_data.as_borrowed();
 
         assert!(digits.contains('5'));
         assert!(digits.contains('\u{0665}')); // U+0665 ARABIC-INDIC DIGIT FIVE
@@ -1737,7 +1695,8 @@ mod tests {
 
         let provider = icu_testdata::get_provider();
         let data = maps::get_script(&provider).expect("The data should be valid");
-        let thai = data.get_set_for_value(Script::Thai);
+        let thai_data = data.as_borrowed().get_set_for_value(Script::Thai);
+        let thai = thai_data.as_borrowed();
 
         assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
         assert!(thai.contains('\u{0e50}')); // U+0E50 THAI DIGIT ZERO
@@ -1852,7 +1811,8 @@ mod tests {
         let provider = icu_testdata::get_provider();
         let data = maps::get_general_category(&provider).expect("The data should be valid");
         let gc = data.as_borrowed();
-        let surrogates = gc.get_set_for_value(GeneralCategory::Surrogate);
+        let surrogates_data = gc.get_set_for_value(GeneralCategory::Surrogate);
+        let surrogates = surrogates_data.as_borrowed();
 
         assert!(surrogates.contains_u32(0xd800));
         assert!(surrogates.contains_u32(0xd900));

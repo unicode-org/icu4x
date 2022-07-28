@@ -85,6 +85,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
             icu_properties::maps::get_script(selff)
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                     .with_display_context(&e))?
+                .as_borrowed()
                 .get_set_for_value(icu_properties::Script::Hebrew)
                 .to_code_point_inversion_list()
                 .iter_ranges()

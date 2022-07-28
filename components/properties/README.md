@@ -33,7 +33,8 @@ assert!(!emoji.contains('木')); // U+6728
 
 let data = maps::get_general_category(&provider).expect("The data should be valid");
 let gc = data.as_borrowed();
-let line_sep = gc.get_set_for_value(GeneralCategory::LineSeparator);
+let line_sep_data = gc.get_set_for_value(GeneralCategory::LineSeparator);
+let line_sep = line_sep_data.as_borrowed();
 
 assert!(line_sep.contains_u32(0x2028));
 assert!(!line_sep.contains_u32(0x2029));

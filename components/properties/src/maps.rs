@@ -20,9 +20,9 @@ use core::marker::PhantomData;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 
-/// A wrapper around code point map data. It is returned by APIs that return Unicode 
+/// A wrapper around code point map data. It is returned by APIs that return Unicode
 /// property data in a map-like form, ex: enumerated property value data keyed
-/// by code point. Access its data via the borrowed version, 
+/// by code point. Access its data via the borrowed version,
 /// [`CodePointMapDataBorrowed`].
 pub struct CodePointMapData<T: TrieValue> {
     data: DataPayload<ErasedMaplikeMarker<T>>,
@@ -64,70 +64,6 @@ impl<T: TrieValue> CodePointMapData<T> {
         CodePointMapDataBorrowed {
             map: self.data.get(),
         }
-    }
-
-    /// Get the value this map has associated with code point `ch`
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_codepointtrie::CodePointTrie;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let gc =
-    ///     maps::get_general_category(&provider)
-    ///         .expect("The data should be valid");
-    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
-    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
-    /// ```
-    pub fn get(&self, ch: char) -> T {
-        self.data.get().get_u32(ch as u32)
-    }
-
-    /// Get the value this map has associated with code point `ch`
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_codepointtrie::CodePointTrie;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let gc =
-    ///     maps::get_general_category(&provider)
-    ///         .expect("The data should be valid");
-    /// assert_eq!(gc.get_u32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
-    /// assert_eq!(gc.get_u32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
-    /// ```
-    pub fn get_u32(&self, ch: u32) -> T {
-        self.data.get().get_u32(ch)
-    }
-
-    /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_codepointtrie::CodePointTrie;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let gc =
-    ///     maps::get_general_category(&provider)
-    ///         .expect("The data should be valid");
-    ///
-    /// let other_letter_set = gc.get_set_for_value(GeneralCategory::OtherLetter);
-    ///
-    /// assert!(other_letter_set.contains('木'));  // U+6728
-    /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
-    /// ```
-    pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
-        let set = self.data.get().get_set_for_value(value);
-        CodePointSetData::from_code_point_inversion_list(set)
     }
 
     /// Construct a new one from loaded data
@@ -227,7 +163,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
-    /// let other_letter_set = gc.get_set_for_value(GeneralCategory::OtherLetter);
+    /// let other_letter_set_data = gc.get_set_for_value(GeneralCategory::OtherLetter);
+    /// let other_letter_set = other_letter_set_data.as_borrowed();
     ///
     /// assert!(other_letter_set.contains('木'));  // U+6728
     /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
