@@ -43,10 +43,11 @@ icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_ca
 icu_normalizer = { version = "0.6", path = "../../components/normalizer", features = ["datagen"] }
 icu_plurals = { version = "0.6", path = "../../components/plurals", features = ["datagen"] }
 icu_properties = { version = "0.6", path = "../../components/properties", features = ["datagen"]}
+icu_timezone = { version = "0.6", path = "../../components/timezone", features = ["datagen"] }
+
 # (experimental)
 icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", features = ["datagen", "lstm"], optional = true }
-icu_timezone = { version = "0.6", path = "../../experimental/timezone", features = ["datagen"], optional = true }
 
 # ICU provider infrastructure
 icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context", "datagen"]}
@@ -93,7 +94,7 @@ icu_testdata = { path = "../testdata", features = ["metadata"] }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter", "icu_timezone"]
+experimental = ["icu_casemapping", "icu_segmenter"]
 bin = ["clap", "eyre", "simple_logger"]
 
 [[bin]]

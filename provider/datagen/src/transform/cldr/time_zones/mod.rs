@@ -11,7 +11,6 @@ use icu_datetime::provider::time_zones::*;
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-#[cfg(feature = "experimental")]
 use icu_timezone::provider::*;
 use std::collections::HashMap;
 
@@ -22,7 +21,6 @@ struct CldrTimeZonesData<'a> {
     pub time_zone_names_resource: &'a TimeZoneNames,
     pub bcp47_tzids_resource: &'a HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
     pub meta_zone_ids_resource: &'a HashMap<MetaZoneId, MetaZoneAliasData>,
-    #[cfg_attr(not(feature = "experimental"), allow(unused))]
     pub meta_zone_periods_resource: &'a HashMap<String, ZonePeriod>,
 }
 
@@ -81,11 +79,10 @@ macro_rules! impl_data_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    #[cfg(feature = "experimental")]
                     if <$marker>::KEY == MetaZonePeriodV1Marker::KEY {
                         // MetaZonePeriodV1 does not require localized time zone data
-                        return Ok(vec![Default::default()])
-                    }
+                        Ok(vec![Default::default()])
+                    } else {
 
                     Ok(self
                         .source
@@ -94,7 +91,7 @@ macro_rules! impl_data_provider {
                         .list_langs()?
                         .map(DataLocale::from)
                         .collect())
-
+}
                 }
             }
         )+

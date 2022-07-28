@@ -17,13 +17,12 @@ use icu_plurals::provider::*;
 use icu_properties::provider::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider_adapters::fallback::provider::*;
+use icu_timezone::provider::*;
 
 #[cfg(feature = "experimental")]
 use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
 use icu_segmenter::*;
-#[cfg(feature = "experimental")]
-use icu_timezone::provider::*;
 
 macro_rules! registry {
     ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {
@@ -139,6 +138,7 @@ registry!(
     MetaZoneGenericNamesShortV1Marker,
     MetaZoneSpecificNamesLongV1Marker,
     MetaZoneSpecificNamesShortV1Marker,
+        MetaZonePeriodV1Marker,
     NfcInertV1Marker,
     NfdInertV1Marker,
     NfkcInertV1Marker,
@@ -182,7 +182,6 @@ registry!(
         GraphemeClusterBreakDataV1Marker,
         LineBreakDataV1Marker,
         LstmDataV1Marker,
-        MetaZonePeriodV1Marker,
         SentenceBreakDataV1Marker,
         UCharDictionaryBreakDataV1Marker,
         WordBreakDataV1Marker,

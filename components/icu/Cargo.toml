@@ -37,9 +37,9 @@ icu_locid = { version = "0.6", path = "../locid", default-features = false }
 icu_normalizer = { version = "0.6", path = "../normalizer", default-features = false }
 icu_plurals = { version = "0.6", path = "../plurals", default-features = false }
 icu_properties = { version = "0.6", path = "../properties", default-features = false }
+icu_timezone = { version = "0.6", path = "../timezone", default-features = false, optional = true }
 
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", default-features = false, optional = true }
-icu_timezone = { version = "0.6", path = "../../experimental/timezone", default-features = false, optional = true }
 
 [dev-dependencies]
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }

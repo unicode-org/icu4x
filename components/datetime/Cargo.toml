@@ -37,7 +37,7 @@ icu_locid = { version = "0.6", path = "../locid" }
 icu_plurals = { version = "0.6", path = "../plurals" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 icu_calendar = { version = "0.6", path = "../calendar" }
-icu_timezone = { version = "0.6", path = "../../experimental/timezone" }
+icu_timezone = { version = "0.6", path = "../timezone" }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 litemap = { version = "0.4.0", path = "../../utils/litemap" }
 tinystr = { path = "../../utils/tinystr", version = "0.6.0", features = ["alloc", "zerovec"], default-features = false }
