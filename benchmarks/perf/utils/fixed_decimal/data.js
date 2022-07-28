@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659046116666,
+  "lastUpdate": 1659049518091,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40409,6 +40409,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 73,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb55be57d6296cce5861453cc7f09b999e95f3b7",
+          "message": "Replace unbounded arithmetic for calendar numeric types with bounded arithmetic. (#2273)\n\nReplaces `Add` and `Sub` implementations with fallible `try_add` and `try_sub` associated functions that ensure the resulting value is within bounds by returning an `Option`.",
+          "timestamp": "2022-07-28T15:53:14-07:00",
+          "tree_id": "494defac7fa35e2c4554a65df78ac1c1b8693615",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb55be57d6296cce5861453cc7f09b999e95f3b7"
+        },
+        "date": 1659049476342,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121054,
+            "range": "± 5688",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25531,
+            "range": "± 1685",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 70242,
+            "range": "± 2769",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 206,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 91,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
