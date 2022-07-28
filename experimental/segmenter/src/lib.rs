@@ -166,7 +166,6 @@ mod lstm_structs;
 #[cfg(feature = "lstm")]
 mod math_helper;
 
-pub use crate::dictionary::{DictionaryBreakIterator, DictionarySegmenter};
 pub use crate::grapheme::{
     GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
     GraphemeClusterBreakIteratorUtf8, GraphemeClusterBreakSegmenter,
