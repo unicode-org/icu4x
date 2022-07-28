@@ -23,7 +23,7 @@ pub struct LstmPayloads {
 }
 
 impl LstmPayloads {
-    #[allow(dead_code)]
+    #[cfg(feature = "lstm")]
     pub fn best(&self, codepoint: u32) -> Option<&DataPayload<LstmDataV1Marker>> {
         let lang = get_language(codepoint);
         match lang {
