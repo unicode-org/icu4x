@@ -74,9 +74,8 @@ pub mod ffi {
         DateTimeParseError = 0x7_00,
         DateTimeOverflowError = 0x7_01,
         DateTimeUnderflowError = 0x7_02,
-        DateTimeInvalidTimeZoneOffsetError = 0x7_03,
-        DateTimeOutOfRangeError = 0x7_04,
-        DateTimeMissingInputError = 0x7_05,
+        DateTimeOutOfRangeError = 0x7_03,
+        DateTimeMissingInputError = 0x7_04,
 
         // datetime format errors
         DateTimeFormatPatternError = 0x8_00,

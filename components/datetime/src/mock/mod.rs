@@ -6,8 +6,9 @@
 //! and examples.
 
 use core::str::FromStr;
+use either::Either;
 use icu_calendar::{DateTime, DateTimeError, Gregorian};
-use icu_timezone::CustomTimeZone;
+use icu_timezone::{CustomTimeZone, TimeZoneError};
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -84,16 +85,14 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
 /// ```
 pub fn parse_zoned_gregorian_from_str(
     input: &str,
-) -> Result<(DateTime<Gregorian>, CustomTimeZone), DateTimeError> {
-    let datetime = parse_gregorian_from_str(input)?;
+) -> Result<(DateTime<Gregorian>, CustomTimeZone), Either<DateTimeError, TimeZoneError>> {
+    let datetime = parse_gregorian_from_str(input).map_err(Either::Left)?;
     let time_zone = match input
         .rfind(|c| c == '+' || /* ASCII */ c == '-' || /* U+2212 */ c == '−' || c == 'Z')
     {
         #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Some(index) => {
-            FromStr::from_str(&input[index..]).map_err(|_| DateTimeError::InvalidTimeZoneOffset)?
-        }
-        None => return Err(DateTimeError::InvalidTimeZoneOffset),
+        Some(index) => FromStr::from_str(&input[index..]).map_err(Either::Right)?,
+        None => return Err(Either::Right(TimeZoneError::InvalidOffset)),
     };
 
     Ok((datetime, time_zone))
