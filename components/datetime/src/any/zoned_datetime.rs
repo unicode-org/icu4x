@@ -47,7 +47,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::timezone::TimeZone;
+/// use icu::timezone::CustomTimeZone;
 /// use icu::datetime::{options::length, any::ZonedAnyDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatterOptions;
@@ -67,7 +67,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let time_zone: TimeZone = "+05:00".parse().expect("Timezone should parse");
+/// let time_zone: CustomTimeZone = "+05:00".parse().expect("Timezone should parse");
 ///
 /// let value = zdtf.format_to_string(&any_datetime, &time_zone).expect("calendars should match");
 ///

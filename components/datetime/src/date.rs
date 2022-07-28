@@ -10,7 +10,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
 use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
 use icu_provider::DataLocale;
-use icu_timezone::{GmtOffset, TimeZone};
+use icu_timezone::{CustomTimeZone, GmtOffset};
 use tinystr::TinyStr8;
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
@@ -467,7 +467,7 @@ impl<A: AsCalendar> IsoTimeInput for DateTime<A> {
     }
 }
 
-impl TimeZoneInput for TimeZone {
+impl TimeZoneInput for CustomTimeZone {
     fn gmt_offset(&self) -> GmtOffset {
         self.gmt_offset
     }

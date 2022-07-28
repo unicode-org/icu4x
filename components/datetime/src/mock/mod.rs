@@ -7,7 +7,7 @@
 
 use core::str::FromStr;
 use icu_calendar::{DateTime, DateTimeError, Gregorian};
-use icu_timezone::TimeZone;
+use icu_timezone::CustomTimeZone;
 
 /// Temporary function for parsing a `DateTime<Gregorian>`
 ///
@@ -65,7 +65,7 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
     Ok(datetime)
 }
 
-/// Parse a [`DateTime`] and [`TimeZone`] from a string.
+/// Parse a [`DateTime`] and [`CustomTimeZone`] from a string.
 ///
 /// This utility is for easily creating dates, not a complete robust solution. The
 /// string must take a specific form of the ISO 8601 format:
@@ -84,7 +84,7 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
 /// ```
 pub fn parse_zoned_gregorian_from_str(
     input: &str,
-) -> Result<(DateTime<Gregorian>, TimeZone), DateTimeError> {
+) -> Result<(DateTime<Gregorian>, CustomTimeZone), DateTimeError> {
     let datetime = parse_gregorian_from_str(input)?;
     let time_zone = match input
         .rfind(|c| c == '+' || /* ASCII */ c == '-' || /* U+2212 */ c == '−' || c == 'Z')
