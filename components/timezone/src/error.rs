@@ -12,32 +12,10 @@ impl std::error::Error for TimeZoneError {}
 #[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum TimeZoneError {
-    /// An input could not be parsed.
-    #[displaydoc("Could not parse as integer")]
-    Parse,
     /// An input overflowed its range.
-    #[displaydoc("{field} must be between 0-{max}")]
-    Overflow {
-        /// The name of the field
-        field: &'static str,
-        /// The maximum value
-        max: usize,
-    },
-    #[displaydoc("{field} must be between {min}-0")]
-    /// An input underflowed its range.
-    Underflow {
-        /// The name of the field
-        field: &'static str,
-        /// The minimum value
-        min: isize,
-    },
+    #[displaydoc("GmtOffset must be between (-12 × 60 × 60) - (14 × 60 × 60)")]
+    OffsetOutOfBounds,
     /// The time zone offset was invalid.
     #[displaydoc("Failed to parse time-zone offset")]
-    InvalidTimeZoneOffset,
-}
-
-impl From<core::num::ParseIntError> for TimeZoneError {
-    fn from(_: core::num::ParseIntError) -> Self {
-        TimeZoneError::Parse
-    }
+    InvalidOffset,
 }

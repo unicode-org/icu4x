@@ -15,15 +15,9 @@ impl GmtOffset {
     pub fn try_new(seconds: i32) -> Result<Self, TimeZoneError> {
         // Valid range is from GMT-12 to GMT+14 in seconds.
         if seconds < -(12 * 60 * 60) {
-            Err(TimeZoneError::Underflow {
-                field: "GmtOffset",
-                min: -(12 * 60 * 60),
-            })
+            Err(TimeZoneError::OffsetOutOfBounds)
         } else if seconds > (14 * 60 * 60) {
-            Err(TimeZoneError::Overflow {
-                field: "GmtOffset",
-                max: (14 * 60 * 60),
-            })
+            Err(TimeZoneError::OffsetOutOfBounds)
         } else {
             Ok(Self(seconds))
         }
@@ -83,7 +77,7 @@ impl FromStr for GmtOffset {
             /* ASCII */ Some('-') => -1,
             /* U+2212 */ Some('−') => -1,
             Some('Z') => return Ok(Self(0)),
-            _ => return Err(TimeZoneError::InvalidTimeZoneOffset),
+            _ => return Err(TimeZoneError::InvalidOffset),
         };
 
         let seconds = match input.chars().count() {
@@ -91,27 +85,27 @@ impl FromStr for GmtOffset {
             3 => {
                 #[allow(clippy::indexing_slicing)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3].parse()?;
+                let hour: u8 = input[1..3].parse().map_err(|_| TimeZoneError::InvalidOffset)?;
                 offset_sign * (hour as i32 * 60 * 60)
             }
             /* ±hhmm */
             5 => {
                 #[allow(clippy::indexing_slicing)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3].parse()?;
+                let hour: u8 = input[1..3].parse().map_err(|_| TimeZoneError::InvalidOffset)?;
                 #[allow(clippy::indexing_slicing)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                let minute: u8 = input[3..5].parse()?;
+                let minute: u8 = input[3..5].parse().map_err(|_| TimeZoneError::InvalidOffset)?;
                 offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
             }
             /* ±hh:mm */
             6 => {
                 #[allow(clippy::indexing_slicing)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3].parse()?;
+                let hour: u8 = input[1..3].parse().map_err(|_| TimeZoneError::InvalidOffset)?;
                 #[allow(clippy::indexing_slicing)]
                 // TODO(#1668) Clippy exceptions need docs or fixing.
-                let minute: u8 = input[4..6].parse()?;
+                let minute: u8 = input[4..6].parse().map_err(|_| TimeZoneError::InvalidOffset)?;
                 offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
             }
             #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
