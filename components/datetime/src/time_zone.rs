@@ -74,7 +74,7 @@ where
 /// )
 /// .expect("Failed to create TimeZoneFormatter");
 ///
-/// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+/// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
 ///
 /// let value = tzf.format_to_string(&time_zone);
 /// ```
@@ -618,7 +618,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let _ = tzf.format(&time_zone);
     /// ```
@@ -653,7 +653,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let mut buffer = String::new();
     /// tzf.format_to_write(&mut buffer, &time_zone)
@@ -689,7 +689,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(GmtOffset::default(), None, None, None);
+    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let _ = tzf.format_to_string(&time_zone);
     /// ```
@@ -711,30 +711,53 @@ impl TimeZoneFormatter {
     }
 
     /// Formats the hours as a [`String`] with optional zero-padding.
-    fn format_offset_hours(time_zone: &impl TimeZoneInput, padding: ZeroPadding) -> String {
-        TimeZoneFormatter::format_time_segment(
-            (time_zone.gmt_offset().raw_offset_seconds() / 3600).abs() as u8,
-            padding,
-        )
+    fn format_offset_hours(
+        time_zone: &impl TimeZoneInput,
+        padding: ZeroPadding,
+    ) -> Result<String, DateTimeFormatterError> {
+        if let Some(gmt_offset) = time_zone.gmt_offset() {
+            Ok(TimeZoneFormatter::format_time_segment(
+                (gmt_offset.raw_offset_seconds() / 3600).abs() as u8,
+                padding,
+            ))
+        } else {
+            Err(DateTimeFormatterError::MissingInputField(Some(
+                "gmt_offset",
+            )))
+        }
     }
 
     /// Formats the minutes as a [`String`] with zero-padding.
-    fn format_offset_minutes(time_zone: &impl TimeZoneInput) -> String {
-        TimeZoneFormatter::format_time_segment(
-            (time_zone.gmt_offset().raw_offset_seconds() % 3600 / 60).abs() as u8,
-            ZeroPadding::On,
-        )
+    fn format_offset_minutes(
+        time_zone: &impl TimeZoneInput,
+    ) -> Result<String, DateTimeFormatterError> {
+        if let Some(gmt_offset) = time_zone.gmt_offset() {
+            Ok(TimeZoneFormatter::format_time_segment(
+                (gmt_offset.raw_offset_seconds() % 3600 / 60).abs() as u8,
+                ZeroPadding::On,
+            ))
+        } else {
+            Err(DateTimeFormatterError::MissingInputField(Some(
+                "gmt_offset",
+            )))
+        }
     }
 
     /// Formats the seconds as a [`String`] with zero-padding.
     fn format_offset_seconds<W: fmt::Write + ?Sized>(
         sink: &mut W,
         time_zone: &impl TimeZoneInput,
-    ) -> fmt::Result {
-        sink.write_str(&TimeZoneFormatter::format_time_segment(
-            (time_zone.gmt_offset().raw_offset_seconds() % 3600 % 60).abs() as u8,
-            ZeroPadding::On,
-        ))
+    ) -> Result<fmt::Result, DateTimeFormatterError> {
+        if let Some(gmt_offset) = time_zone.gmt_offset() {
+            Ok(sink.write_str(&TimeZoneFormatter::format_time_segment(
+                (gmt_offset.raw_offset_seconds() % 3600 % 60).abs() as u8,
+                ZeroPadding::On,
+            )))
+        } else {
+            Err(DateTimeFormatterError::MissingInputField(Some(
+                "gmt_offset",
+            )))
+        }
     }
 }
 
@@ -1087,36 +1110,67 @@ impl FormatTimeZone for LocalizedGmtFormat {
         time_zone: &impl TimeZoneInput,
         data_payloads: &TimeZoneDataPayloads,
     ) -> Result<fmt::Result, DateTimeFormatterError> {
-        let gmt_offset = time_zone.gmt_offset();
-        if gmt_offset.is_zero() {
-            Ok(sink.write_str(&data_payloads.zone_formats.get().gmt_zero_format.clone()))
-        } else {
-            // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
-            Ok(sink.write_str(
-                &data_payloads
-                    .zone_formats
-                    .get()
-                    .gmt_format
-                    .replace(
-                        "{0}",
-                        if gmt_offset.is_positive() {
-                            &data_payloads.zone_formats.get().hour_format.0
-                        } else {
-                            &data_payloads.zone_formats.get().hour_format.1
-                        },
-                    )
-                    // support all combos of "(HH|H):mm" by replacing longest patterns first.
-                    .replace(
-                        "HH",
-                        &TimeZoneFormatter::format_offset_hours(time_zone, ZeroPadding::On),
-                    )
-                    .replace("mm", &TimeZoneFormatter::format_offset_minutes(time_zone))
-                    .replace(
-                        'H',
-                        &TimeZoneFormatter::format_offset_hours(time_zone, ZeroPadding::Off),
-                    ),
-            ))
-        }
+        if let Some(gmt_offset) = time_zone.gmt_offset() {
+            return if gmt_offset.is_zero() {
+                Ok(sink.write_str(&data_payloads.zone_formats.get().gmt_zero_format.clone()))
+            } else {
+                // TODO(blocked on #277) Use formatter utility instead of replacing "{0}".
+                Ok(sink.write_str(
+                    &data_payloads
+                        .zone_formats
+                        .get()
+                        .gmt_format
+                        .replace(
+                            "{0}",
+                            if gmt_offset.is_positive() {
+                                &data_payloads.zone_formats.get().hour_format.0
+                            } else {
+                                &data_payloads.zone_formats.get().hour_format.1
+                            },
+                        )
+                        // support all combos of "(HH|H):mm" by replacing longest patterns first.
+                        .replace(
+                            "HH",
+                            if let Ok(offset_hours) =
+                                &TimeZoneFormatter::format_offset_hours(time_zone, ZeroPadding::On)
+                            {
+                                offset_hours
+                            } else {
+                                return Err(DateTimeFormatterError::MissingInputField(Some(
+                                    "gmt_offset",
+                                )));
+                            },
+                        )
+                        .replace(
+                            "mm",
+                            if let Ok(offset_minutes) =
+                                &TimeZoneFormatter::format_offset_minutes(time_zone)
+                            {
+                                offset_minutes
+                            } else {
+                                return Err(DateTimeFormatterError::MissingInputField(Some(
+                                    "gmt_offset",
+                                )));
+                            },
+                        )
+                        .replace(
+                            'H',
+                            if let Ok(offset_hours) =
+                                &TimeZoneFormatter::format_offset_hours(time_zone, ZeroPadding::Off)
+                            {
+                                offset_hours
+                            } else {
+                                return Err(DateTimeFormatterError::MissingInputField(Some(
+                                    "gmt_offset",
+                                )));
+                            },
+                        ),
+                ))
+            };
+        };
+        Err(DateTimeFormatterError::MissingInputField(Some(
+            "gmt_offset",
+        )))
     }
 }
 
@@ -1168,67 +1222,89 @@ impl FormatTimeZone for Iso8601Format {
         time_zone: &impl TimeZoneInput,
         _data_payloads: &TimeZoneDataPayloads,
     ) -> Result<fmt::Result, DateTimeFormatterError> {
-        let gmt_offset = time_zone.gmt_offset();
-        if gmt_offset.is_zero()
-            && matches!(self.format, IsoFormat::UtcBasic | IsoFormat::UtcExtended)
-        {
-            if let Err(e) = sink.write_char('Z') {
-                return Ok(Err(e));
-            }
-        }
-
-        let extended_format = matches!(self.format, IsoFormat::Extended | IsoFormat::UtcExtended);
-        if let Err(e) = sink.write_char(if gmt_offset.is_positive() { '+' } else { '-' }) {
-            return Ok(Err(e));
-        }
-        if let Err(e) = sink.write_str(&TimeZoneFormatter::format_offset_hours(
-            time_zone,
-            ZeroPadding::On,
-        )) {
-            return Ok(Err(e));
-        }
-
-        match self.minutes {
-            IsoMinutes::Required => {
-                if extended_format {
-                    if let Err(e) = sink.write_char(':') {
-                        return Ok(Err(e));
-                    }
-                }
-                if let Err(e) = sink.write_str(&TimeZoneFormatter::format_offset_minutes(time_zone))
-                {
+        if let Some(gmt_offset) = time_zone.gmt_offset() {
+            if gmt_offset.is_zero()
+                && matches!(self.format, IsoFormat::UtcBasic | IsoFormat::UtcExtended)
+            {
+                if let Err(e) = sink.write_char('Z') {
                     return Ok(Err(e));
                 }
             }
-            IsoMinutes::Optional => {
-                if gmt_offset.has_minutes() {
+
+            let extended_format =
+                matches!(self.format, IsoFormat::Extended | IsoFormat::UtcExtended);
+            if let Err(e) = sink.write_char(if gmt_offset.is_positive() { '+' } else { '-' }) {
+                return Ok(Err(e));
+            }
+            if let Ok(offset_hours) =
+                &TimeZoneFormatter::format_offset_hours(time_zone, ZeroPadding::On)
+            {
+                if let Err(e) = sink.write_str(offset_hours) {
+                    return Ok(Err(e));
+                }
+            } else {
+                return Err(DateTimeFormatterError::MissingInputField(Some(
+                    "gmt_offset",
+                )));
+            }
+
+            match self.minutes {
+                IsoMinutes::Required => {
                     if extended_format {
                         if let Err(e) = sink.write_char(':') {
                             return Ok(Err(e));
                         }
                     }
-                    if let Err(e) =
-                        sink.write_str(&TimeZoneFormatter::format_offset_minutes(time_zone))
+                    if let Ok(offset_minutes) = &TimeZoneFormatter::format_offset_minutes(time_zone)
                     {
-                        return Ok(Err(e));
+                        if let Err(e) = sink.write_str(offset_minutes) {
+                            return Ok(Err(e));
+                        }
+                    } else {
+                        return Err(DateTimeFormatterError::MissingInputField(Some(
+                            "gmt_offset",
+                        )));
+                    }
+                }
+                IsoMinutes::Optional => {
+                    if gmt_offset.has_minutes() {
+                        if extended_format {
+                            if let Err(e) = sink.write_char(':') {
+                                return Ok(Err(e));
+                            }
+                        }
+                        if let Ok(offset_minutes) =
+                            &TimeZoneFormatter::format_offset_minutes(time_zone)
+                        {
+                            if let Err(e) = sink.write_str(offset_minutes) {
+                                return Ok(Err(e));
+                            }
+                        } else {
+                            return Err(DateTimeFormatterError::MissingInputField(Some(
+                                "gmt_offset",
+                            )));
+                        }
                     }
                 }
             }
-        }
 
-        if let IsoSeconds::Optional = self.seconds {
-            if gmt_offset.has_seconds() {
-                if extended_format {
-                    if let Err(e) = sink.write_char(':') {
-                        return Ok(Err(e));
+            if let IsoSeconds::Optional = self.seconds {
+                if gmt_offset.has_seconds() {
+                    if extended_format {
+                        if let Err(e) = sink.write_char(':') {
+                            return Ok(Err(e));
+                        }
+                    }
+                    if let Err(e) = TimeZoneFormatter::format_offset_seconds(sink, time_zone) {
+                        return Err(e);
                     }
                 }
-                if let Err(e) = TimeZoneFormatter::format_offset_seconds(sink, time_zone) {
-                    return Ok(Err(e));
-                }
             }
-        }
-        Ok(Ok(()))
+            return Ok(Ok(()));
+        };
+        Err(DateTimeFormatterError::MissingInputField(Some(
+            "gmt_offset",
+        )))
     }
 }
 

@@ -88,6 +88,8 @@ pub mod datetime;
 mod error;
 pub mod fields;
 mod format;
+/// A module for metazone id calculation.
+pub mod metazone;
 pub mod mock;
 pub mod options;
 #[doc(hidden)]

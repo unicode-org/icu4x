@@ -6,7 +6,9 @@ use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use tinystr::TinyStr8;
 
 use crate::date::*;
+use crate::metazone::MetaZoneCalculator;
 use core::str::FromStr;
+use icu_calendar::{DateTime, Iso};
 
 /// A temporary struct that implements [`TimeZoneInput`]
 /// and is used in tests, benchmarks and examples of this component.
@@ -24,7 +26,7 @@ use core::str::FromStr;
 /// use icu::datetime::mock::time_zone::MockTimeZone;
 ///
 /// let tz1 = MockTimeZone::new(
-///     GmtOffset::default(),
+///     Some(GmtOffset::default()),
 ///     /* time_zone_id */ None,
 ///     /* metazone_id */ None,
 ///     /* time_variaint */ None,
@@ -36,7 +38,7 @@ use core::str::FromStr;
 #[allow(clippy::exhaustive_structs)] // this type will not add fields (it is largely an example type)
 pub struct MockTimeZone {
     /// The GMT offset in seconds.
-    pub gmt_offset: GmtOffset,
+    pub gmt_offset: Option<GmtOffset>,
     /// The IANA time-zone identifier
     pub time_zone_id: Option<TimeZoneBcp47Id>,
     /// The CLDR metazone identifier
@@ -49,8 +51,8 @@ impl MockTimeZone {
     /// Creates a new [`MockTimeZone`].
     /// A GMT offset is required, as it is used as a final fallback for formatting.
     /// The other arguments optionally allow access to more robust formats.
-    pub const fn new(
-        gmt_offset: GmtOffset,
+    pub fn new(
+        gmt_offset: Option<GmtOffset>,
         time_zone_id: Option<TimeZoneBcp47Id>,
         metazone_id: Option<MetaZoneId>,
         time_variant: Option<TinyStr8>,
@@ -61,6 +63,45 @@ impl MockTimeZone {
             metazone_id,
             time_variant,
         }
+    }
+
+    /// Overwrite the metazone id in MockTimeZone.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::datetime::date::GmtOffset;
+    /// use icu::datetime::metazone::MetaZoneCalculator;
+    /// use icu::datetime::mock::time_zone::MockTimeZone;
+    /// use icu_calendar::DateTime;
+    /// use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+    /// use icu_locid::locale;
+    /// use tinystr::tinystr;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let mzc = MetaZoneCalculator::new(locale!("en"), &provider).expect("data exists");
+    /// let mut tz = MockTimeZone::new(
+    ///     /* gmt_offset */ Some("+11".parse().expect("Failed to parse a GMT offset.")),
+    ///     /* time_zone_id */ Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
+    ///     /* metazone_id */ None,
+    ///     /* time_variaint */ None,
+    /// );
+    /// tz.try_set_metazone(
+    ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
+    ///     &mzc,
+    /// );
+    /// assert_eq!(tz.metazone_id, Some(MetaZoneId(tinystr!(4, "guam"))));
+    /// ```
+    pub fn try_set_metazone(
+        &mut self,
+        local_datetime: &DateTime<Iso>,
+        metazone_calculator: &MetaZoneCalculator,
+    ) -> &mut Self {
+        if let Some(time_zone_id) = self.time_zone_id {
+            self.metazone_id =
+                metazone_calculator.compute_metazone_from_timezone(time_zone_id, local_datetime);
+        }
+        self
     }
 }
 
@@ -89,7 +130,7 @@ impl FromStr for MockTimeZone {
     /// let tz3: MockTimeZone = "+02:30".parse().expect("Failed to parse a time zone.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let gmt_offset = GmtOffset::from_str(input)?;
+        let gmt_offset = input.parse::<GmtOffset>().ok();
         Ok(Self {
             gmt_offset,
             time_zone_id: None,
@@ -100,7 +141,7 @@ impl FromStr for MockTimeZone {
 }
 
 impl TimeZoneInput for MockTimeZone {
-    fn gmt_offset(&self) -> GmtOffset {
+    fn gmt_offset(&self) -> Option<GmtOffset> {
         self.gmt_offset
     }
 

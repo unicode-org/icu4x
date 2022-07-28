@@ -30,7 +30,7 @@ pub enum DateTimeFormatterError {
     /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
     #[displaydoc("Missing input field")]
-    MissingInputField,
+    MissingInputField(Option<&'static str>),
     /// An error originating from skeleton matching.
     #[displaydoc("{0}")]
     Skeleton(SkeletonError),
