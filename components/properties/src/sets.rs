@@ -21,8 +21,10 @@ use core::iter::FromIterator;
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 
-/// A wrapper around code point set data, returned by property getters for
-/// unicode sets.
+/// A wrapper around code point set data. It is returned by APIs that return Unicode 
+/// property data in a set-like form, ex: a set of code points sharing the same
+/// value for a Unicode property. Access its data via the borrowed version, 
+/// [`CodePointSetDataBorrowed`].
 pub struct CodePointSetData {
     data: DataPayload<ErasedSetlikeMarker>,
 }

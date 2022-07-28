@@ -2,14 +2,13 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! The functions in this module return a [`CodePointTrie`] representing, for
+//! The functions in this module return a [`CodePointMapData`] representing, for
 //! each code point in the entire range of code points, the property values
 //! for a particular Unicode property.
 //!
 //! The descriptions of most properties are taken from [`TR44`], the documentation for the
 //! Unicode Character Database.
 //!
-//! [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
 //! [`TR44`]: https://www.unicode.org/reports/tr44
 
 use crate::error::PropertiesError;
@@ -21,8 +20,10 @@ use core::marker::PhantomData;
 use icu_codepointtrie::{CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 
-/// A wrapper around code point set data, returned by property getters for
-/// unicode sets.
+/// A wrapper around code point map data. It is returned by APIs that return Unicode 
+/// property data in a map-like form, ex: enumerated property value data keyed
+/// by code point. Access its data via the borrowed version, 
+/// [`CodePointMapDataBorrowed`].
 pub struct CodePointMapData<T: TrieValue> {
     data: DataPayload<ErasedMaplikeMarker<T>>,
 }
@@ -264,7 +265,7 @@ make_map_property! {
     value: crate::GeneralCategory;
     keyed_data_marker: GeneralCategoryV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
+    /// Return a [`CodePointMapData`] for the General_Category Unicode enumerated property. See [`GeneralCategory`].
     ///
     /// # Example
     ///
@@ -292,7 +293,7 @@ make_map_property! {
     value: crate::BidiClass;
     keyed_data_marker: BidiClassV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
+    /// Return a [`CodePointMapData`] for the Bidi_Class Unicode enumerated property. See [`BidiClass`].
     ///
     /// # Example
     ///
@@ -320,7 +321,7 @@ make_map_property! {
     value: crate::Script;
     keyed_data_marker: ScriptV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the Script Unicode enumerated property. See [`Script`].
+    /// Return a [`CodePointMapData`] for the Script Unicode enumerated property. See [`Script`].
     ///
     /// # Example
     ///
@@ -348,7 +349,7 @@ make_map_property! {
     value: crate::EastAsianWidth;
     keyed_data_marker: EastAsianWidthV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the East_Asian_Width Unicode enumerated
+    /// Return a [`CodePointMapData`] for the East_Asian_Width Unicode enumerated
     /// property. See [`EastAsianWidth`].
     ///
     /// # Example
@@ -374,7 +375,7 @@ make_map_property! {
     value: crate::LineBreak;
     keyed_data_marker: LineBreakV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the Line_Break Unicode enumerated
+    /// Return a [`CodePointMapData`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
     ///
     /// # Example
@@ -400,7 +401,7 @@ make_map_property! {
     value: crate::GraphemeClusterBreak;
     keyed_data_marker: GraphemeClusterBreakV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the Grapheme_Cluster_Break Unicode enumerated
+    /// Return a [`CodePointMapData`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
     ///
     /// # Example
@@ -426,7 +427,7 @@ make_map_property! {
     value: crate::WordBreak;
     keyed_data_marker: WordBreakV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the Word_Break Unicode enumerated
+    /// Return a [`CodePointMapData`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
     ///
     /// # Example
@@ -452,7 +453,7 @@ make_map_property! {
     value: crate::SentenceBreak;
     keyed_data_marker: SentenceBreakV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the Sentence_Break Unicode enumerated
+    /// Return a [`CodePointMapData`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
     ///
     /// # Example
@@ -478,7 +479,7 @@ make_map_property! {
     value: crate::CanonicalCombiningClass;
     keyed_data_marker: CanonicalCombiningClassV1Marker;
     func:
-    /// Return a [`CodePointTrie`] for the Canonical_Combining_Class Unicode property. See
+    /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].
     ///
     /// # Example
