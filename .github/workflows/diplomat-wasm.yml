@@ -27,8 +27,16 @@ jobs:
       GCP_BUCKET_ID: "icu4x-pr-artifacts"
     steps:
     - uses: actions/checkout@v2
+
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
+
+    - name: Install prerequisites for wasm build
+      run: |
+        rustup toolchain list
+        rustup toolchain install nightly-2022-04-05
+        rustup component add --toolchain nightly-2022-04-05 rust-src
+
     - name: Authenticate to Google Cloud
       uses: google-github-actions/setup-gcloud@v0.2
       with:
@@ -41,6 +49,7 @@ jobs:
       run: |
         echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
       shell: bash
+
     - name: Attempt to load cached cargo-make
       uses: actions/cache@v2
       id: cargo-make-cache
@@ -49,6 +58,7 @@ jobs:
           ~/.cargo/bin/cargo-make
           ~/.cargo/bin/cargo-make.exe
         key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+
     - name: Install cargo-make
       if: steps.cargo-make-cache.outputs.cache-hit != 'true'
       uses: actions-rs/install@v0.1.2
@@ -61,9 +71,11 @@ jobs:
       with:
         command: make
         args: diplomat-build-webpack-demo
+
     - name: Upload Webpack bundle to Google Cloud Storage
       run: |
         gsutil -m cp -r ffi/diplomat/wasm/demo-app/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
+
     # - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
     #   run: |
     #     echo "::group::📖 Docs Preview"
