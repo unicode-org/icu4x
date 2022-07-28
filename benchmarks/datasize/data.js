@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658959117139,
+  "lastUpdate": 1658976414950,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21743,6 +21743,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/aab626bda661607da63a609bb7908d58e2b04506"
         },
         "date": 1658959075015,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee9391ebad05a1644630d17dd5e2bd955220bec2",
+          "message": "Use LSTM data from DataProvider (#2252)\n\n* Use LSTM data from DataProvider\r\n\r\n* Fix Build and Test / features\r\n\r\n* Update ignore comment and use cfg intead of allow(dead_code).",
+          "timestamp": "2022-07-28T11:45:10+09:00",
+          "tree_id": "8fda2fccc8d3a6ccc6537176cdc2b160b30c6a00",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee9391ebad05a1644630d17dd5e2bd955220bec2"
+        },
+        "date": 1658976380384,
         "tool": "ndjson",
         "benches": [
           {
