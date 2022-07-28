@@ -1,0 +1,21 @@
+{
+  "name": "icu4x-demo",
+  "version": "1.0.0",
+  "description": "A demo web application using ICU4X bindings.",
+  "type": "module",
+  "scripts": {
+    "clean": "rm dist/*.js dist/*.wasm",
+    "build": "webpack"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "icu4x": "file:../icu4x"
+  },
+  "devDependencies": {
+    "ts-loader": "^9.3.1",
+    "typescript": "^4.7.4",
+    "webpack": "^5.73.0",
+    "webpack-cli": "^4.10.0"
+  }
+}
