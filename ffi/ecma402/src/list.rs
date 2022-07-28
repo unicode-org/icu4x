@@ -15,7 +15,6 @@ pub struct ListFormat(icu::list::ListFormatter);
 impl ecma402_traits::listformat::Format for ListFormat {
     type Error = icu_provider::DataError;
 
-    #[allow(unused_variables)]
     fn try_new<L>(l: L, opts: Options) -> Result<Self, Self::Error>
     where
         L: Locale,
@@ -54,11 +53,7 @@ impl ListFormat {
         P: icu_provider::DataProvider<icu::list::provider::AndListV1Marker>
             + icu_provider::DataProvider<icu::list::provider::OrListV1Marker>,
     {
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let locale: icu::locid::Locale = locale
-            .to_string()
-            .parse()
-            .expect("Converting from locale string to locale should always succeed");
+        let locale = crate::DataLocale::from_ecma_locale(locale);
 
         let style = match opts.style {
             Style::Long => icu::list::ListStyle::Wide,
@@ -67,8 +62,8 @@ impl ListFormat {
         };
 
         Ok(Self(match opts.in_type {
-            Type::Conjunction => icu::list::ListFormatter::try_new_and(locale, provider, style),
-            Type::Disjunction => icu::list::ListFormatter::try_new_or(locale, provider, style),
+            Type::Conjunction => icu::list::ListFormatter::try_new_and(&locale, provider, style),
+            Type::Disjunction => icu::list::ListFormatter::try_new_or(&locale, provider, style),
         }?))
     }
 }

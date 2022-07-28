@@ -997,16 +997,16 @@ dependencies = [
 name = "icu"
 version = "0.6.0"
 dependencies = [
- "fixed_decimal",
  "icu_calendar",
+ "icu_collator",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_normalizer",
  "icu_plurals",
  "icu_properties",
- "writeable",
 ]
 
 [[package]]
@@ -1040,6 +1040,7 @@ dependencies = [
 name = "icu_char16trie"
 version = "0.1.0"
 dependencies = [
+ "databake",
  "serde",
  "zerofrom",
  "zerovec",
@@ -1070,6 +1071,27 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_collator"
+version = "0.6.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu_char16trie",
+ "icu_codepointtrie",
+ "icu_locid",
+ "icu_normalizer",
+ "icu_properties",
+ "icu_provider",
+ "icu_uniset",
+ "serde",
+ "smallvec",
+ "utf16_iter",
+ "utf8_iter",
+ "zerofrom",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_datagen"
 version = "0.6.0"
 dependencies = [
@@ -1082,11 +1104,13 @@ dependencies = [
  "icu_char16trie",
  "icu_codepointtrie",
  "icu_codepointtrie_builder",
+ "icu_collator",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
  "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_normalizer",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1183,6 +1207,26 @@ dependencies = [
  "serde",
  "tinystr",
  "writeable",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_normalizer"
+version = "0.6.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu_char16trie",
+ "icu_codepointtrie",
+ "icu_properties",
+ "icu_provider",
+ "icu_uniset",
+ "serde",
+ "smallvec",
+ "utf16_iter",
+ "utf8_iter",
+ "write16",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -2702,6 +2746,18 @@ dependencies = [
 ]
 
 [[package]]
+name = "utf16_iter"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6a246759e66403993abca5a7165eebc0735d7781e178f03fe9ab255fae1747b5"
+
+[[package]]
+name = "utf8_iter"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59e6dbc4923e5a3d7b88c78500d0e389fd202601a671b4914580071bdb931188"
+
+[[package]]
 name = "vcell"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3235,6 +3291,12 @@ checksum = "80d0f4e272c85def139476380b12f9ac60926689dd2e01d4923222f40580869d"
 dependencies = [
  "winapi",
 ]
+
+[[package]]
+name = "write16"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 
 [[package]]
 name = "writeable"

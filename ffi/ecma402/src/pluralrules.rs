@@ -236,7 +236,7 @@ pub struct PluralRules {
 impl ecma402_traits::pluralrules::PluralRules for PluralRules {
     type Error = PluralRulesError;
 
-    fn try_new<L>(_l: L, _opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
+    fn try_new<L>(l: L, opts: ecma402_traits::pluralrules::Options) -> Result<Self, Self::Error>
     where
         L: ecma402_traits::Locale,
         Self: Sized,
@@ -267,15 +267,9 @@ impl PluralRules {
             + icu_provider::DataProvider<ipr::provider::CardinalV1Marker>,
         Self: Sized,
     {
-        let locale: String = format!("{}", l);
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let locale: icu::locid::Locale = locale
-            .parse()
-            .expect("Converting from locale string to locale should always succeed");
         let rule_type = internal::to_icu4x_type(&opts.in_type);
 
-        // Oops, there is no slot in the ECMA 402 APIs to add the data provider.  What to do?
-        let rep = ipr::PluralRules::try_new(locale, provider, rule_type)?;
+        let rep = ipr::PluralRules::try_new(&crate::DataLocale::from_ecma_locale(l), provider, rule_type)?;
         Ok(Self { opts, rep })
     }
 }
