@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659045990671,
+  "lastUpdate": 1659049387047,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39706,6 +39706,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/best",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "58569820+nordzilla@users.noreply.github.com",
+            "name": "Erik Nordin",
+            "username": "nordzilla"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bb55be57d6296cce5861453cc7f09b999e95f3b7",
+          "message": "Replace unbounded arithmetic for calendar numeric types with bounded arithmetic. (#2273)\n\nReplaces `Add` and `Sub` implementations with fallible `try_add` and `try_sub` associated functions that ensure the resulting value is within bounds by returning an `Option`.",
+          "timestamp": "2022-07-28T15:53:14-07:00",
+          "tree_id": "494defac7fa35e2c4554a65df78ac1c1b8693615",
+          "url": "https://github.com/unicode-org/icu4x/commit/bb55be57d6296cce5861453cc7f09b999e95f3b7"
+        },
+        "date": 1659049343333,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 53357557,
+            "range": "± 115539",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           },
