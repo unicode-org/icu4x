@@ -143,7 +143,6 @@ impl From<DateTimeError> for ICU4XError {
             DateTimeError::Parse => ICU4XError::DateTimeParseError,
             DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
             DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
-            DateTimeError::InvalidTimeZoneOffset => ICU4XError::DateTimeInvalidTimeZoneOffsetError,
             DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
             DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
             _ => ICU4XError::UnknownError,
