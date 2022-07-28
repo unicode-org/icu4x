@@ -168,12 +168,12 @@ mod math_helper;
 
 pub use crate::dictionary::{DictionaryBreakIterator, DictionarySegmenter};
 pub use crate::grapheme::{
-    GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
-    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
+    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
+    GraphemeClusterBreakIteratorUtf8, GraphemeClusterBreakSegmenter,
 };
 pub use crate::line::{
-    Latin1Char, LineBreakIterator, LineBreakOptions, LineBreakRule, LineBreakSegmenter, Utf16Char,
-    WordBreakRule,
+    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8,
+    LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule,
 };
 pub use crate::lstm_structs::{LstmDataV1, LstmDataV1Marker, LstmMatrix};
 pub use crate::provider::{
@@ -182,9 +182,9 @@ pub use crate::provider::{
     UCharDictionaryBreakDataV1, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
 };
 pub use crate::sentence::{
-    SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
+    SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8,
     SentenceBreakSegmenter,
 };
 pub use crate::word::{
-    WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakSegmenter,
+    WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordBreakSegmenter,
 };

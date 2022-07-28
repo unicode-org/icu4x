@@ -17,7 +17,7 @@ use crate::rule_segmenter::*;
 use crate::LstmDataV1Marker;
 
 /// Word break iterator for an `str` (a UTF-8 string).
-pub type WordBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, WordBreakType>;
+pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
 
 /// Word break iterator for a Latin-1 (8-bit) string.
 pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeLatin1>;
@@ -140,8 +140,8 @@ impl WordBreakSegmenter {
     }
 
     /// Create a word break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIterator<'l, 's> {
-        WordBreakIterator {
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
+        WordBreakIteratorUtf8 {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
@@ -179,9 +179,9 @@ impl WordBreakSegmenter {
     }
 }
 
-pub struct WordBreakType;
+pub struct WordBreakTypeUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakType {
+impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -235,7 +235,7 @@ pub struct WordBreakTypeLatin1;
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
-    type CharType = u8; // TODO: Latin1Char
+    type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")

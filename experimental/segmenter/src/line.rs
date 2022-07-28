@@ -96,6 +96,15 @@ impl Default for LineBreakOptions {
     }
 }
 
+/// Line break iterator for an `str` (a UTF-8 string).
+pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
+
+/// Line break iterator for a Latin-1 (8-bit) string.
+pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
+
+/// Line break iterator for a UTF-16 string.
+pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
+
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct LineBreakSegmenter {
@@ -210,7 +219,7 @@ impl LineBreakSegmenter {
     }
 
     /// Create a line break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIterator<'l, 's, char> {
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
         LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -224,10 +233,7 @@ impl LineBreakSegmenter {
     }
 
     /// Create a line break iterator for a Latin-1 (8-bit) string.
-    pub fn segment_latin1<'l, 's>(
-        &'l self,
-        input: &'s [u8],
-    ) -> LineBreakIterator<'l, 's, Latin1Char> {
+    pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
         LineBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -241,10 +247,7 @@ impl LineBreakSegmenter {
     }
 
     /// Create a line break iterator for a UTF-16 string.
-    pub fn segment_utf16<'l, 's>(
-        &'l self,
-        input: &'s [u16],
-    ) -> LineBreakIterator<'l, 's, Utf16Char> {
+    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
         LineBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
@@ -676,7 +679,9 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
     }
 }
 
-impl<'l, 's> LineBreakType<'l, 's> for char {
+pub struct LineBreakTypeUtf8;
+
+impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -740,11 +745,11 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
     }
 }
 
-pub struct Latin1Char(pub u8);
+pub struct LineBreakTypeLatin1;
 
-impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
+impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
-    type CharType = u8; // TODO: Latin1Char
+    type CharType = u8;
 
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u8) -> u8 {
         // No CJ on Latin1
@@ -768,12 +773,11 @@ impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
     }
 }
 
-// TODO: This should be u16
-pub struct Utf16Char(pub u32);
+pub struct LineBreakTypeUtf16;
 
-impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
+impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
-    type CharType = u32; // TODO: Utf16Char
+    type CharType = u32;
 
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u32) -> u8 {
         get_linebreak_property_utf32_with_rule(

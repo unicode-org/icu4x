@@ -12,7 +12,7 @@ use crate::provider::*;
 use crate::rule_segmenter::*;
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
-pub type SentenceBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakType>;
+pub type SentenceBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf8>;
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
 pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeLatin1>;
@@ -44,8 +44,8 @@ impl SentenceBreakSegmenter {
     }
 
     /// Create a sentence break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIterator<'l, 's> {
-        SentenceBreakIterator {
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> SentenceBreakIteratorUtf8<'l, 's> {
+        SentenceBreakIteratorUtf8 {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
@@ -86,9 +86,9 @@ impl SentenceBreakSegmenter {
     }
 }
 
-pub struct SentenceBreakType;
+pub struct SentenceBreakTypeUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakType {
+impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -108,7 +108,7 @@ pub struct SentenceBreakTypeLatin1;
 
 impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
-    type CharType = u8; // TODO: Latin1Char
+    type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")

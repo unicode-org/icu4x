@@ -14,13 +14,11 @@ pub mod ffi {
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
-    use icu_segmenter::Latin1Char;
     use icu_segmenter::LineBreakDataV1Marker;
-    use icu_segmenter::LineBreakIterator;
     use icu_segmenter::LineBreakSegmenter;
     use icu_segmenter::LstmDataV1Marker;
     use icu_segmenter::UCharDictionaryBreakDataV1Marker;
-    use icu_segmenter::Utf16Char;
+    use icu_segmenter::{LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8};
 
     #[diplomat::opaque]
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
@@ -50,13 +48,13 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIterator<'a, 'a, char>);
+    pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorUtf8<'a, 'a>);
 
     #[diplomat::opaque]
-    pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIterator<'a, 'a, Utf16Char>);
+    pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIteratorUtf16<'a, 'a>);
 
     #[diplomat::opaque]
-    pub struct ICU4XLineBreakIteratorLatin1<'a>(LineBreakIterator<'a, 'a, Latin1Char>);
+    pub struct ICU4XLineBreakIteratorLatin1<'a>(LineBreakIteratorLatin1<'a, 'a>);
 
     impl ICU4XLineBreakSegmenter {
         /// Construct a [`ICU4XLineBreakSegmenter`] with default options.
