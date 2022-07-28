@@ -18,6 +18,7 @@ pub mod ffi {
     use icu_segmenter::LineBreakDataV1Marker;
     use icu_segmenter::LineBreakIterator;
     use icu_segmenter::LineBreakSegmenter;
+    use icu_segmenter::LstmDataV1Marker;
     use icu_segmenter::UCharDictionaryBreakDataV1Marker;
     use icu_segmenter::Utf16Char;
 
@@ -72,6 +73,7 @@ pub mod ffi {
         where
             D: DataProvider<LineBreakDataV1Marker>
                 + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<LstmDataV1Marker>
                 + ?Sized,
         {
             LineBreakSegmenter::try_new(provider)
@@ -98,6 +100,7 @@ pub mod ffi {
         where
             D: DataProvider<LineBreakDataV1Marker>
                 + DataProvider<UCharDictionaryBreakDataV1Marker>
+                + DataProvider<LstmDataV1Marker>
                 + ?Sized,
         {
             LineBreakSegmenter::try_new_with_options(provider, options.into())

@@ -7,13 +7,14 @@ use crate::indices::*;
 use crate::language::*;
 use crate::provider::*;
 use crate::symbols::*;
+#[cfg(feature = "lstm")]
+use crate::LstmDataV1Marker;
 
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
-#[cfg(not(feature = "lstm"))]
 use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
@@ -101,13 +102,14 @@ pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
     dictionary: Dictionary,
+    lstm: LstmPayloads,
 }
 
 impl LineBreakSegmenter {
     #[cfg(feature = "lstm")]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+        D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
     {
         Self::try_new_with_options(provider, Default::default())
     }
@@ -128,13 +130,25 @@ impl LineBreakSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+        D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
+
+        let burmese = Self::load_lstm(provider, locale!("my")).ok();
+        let khmer = Self::load_lstm(provider, locale!("km")).ok();
+        let lao = Self::load_lstm(provider, locale!("lo")).ok();
+        let thai = Self::load_lstm(provider, locale!("th")).ok();
+
         Ok(Self {
             options,
             payload,
             dictionary: Dictionary::default(),
+            lstm: LstmPayloads {
+                burmese,
+                khmer,
+                lao,
+                thai,
+            },
         })
     }
 
@@ -165,6 +179,7 @@ impl LineBreakSegmenter {
                 thai,
                 cj: None,
             },
+            lstm: LstmPayloads::default(),
         })
     }
 
@@ -173,6 +188,19 @@ impl LineBreakSegmenter {
         provider: &D,
         locale: Locale,
     ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
+    }
+
+    #[cfg(feature = "lstm")]
+    fn load_lstm<D: DataProvider<LstmDataV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<LstmDataV1Marker>, DataError> {
         provider
             .load(DataRequest {
                 locale: &DataLocale::from(locale),
@@ -191,6 +219,7 @@ impl LineBreakSegmenter {
             data: self.payload.get(),
             options: &self.options,
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -207,6 +236,7 @@ impl LineBreakSegmenter {
             data: self.payload.get(),
             options: &self.options,
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -223,6 +253,7 @@ impl LineBreakSegmenter {
             data: self.payload.get(),
             options: &self.options,
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 }
@@ -463,6 +494,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     data: &'l RuleBreakDataV1<'l>,
     options: &'l LineBreakOptions,
     dictionary: &'l Dictionary,
+    lstm: &'l LstmPayloads,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -689,7 +721,7 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary, &s);
+        let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
         iter.result_cache = breaks;
         let mut i = iter.current_pos_data.unwrap().1.len_utf8();
         loop {
@@ -788,7 +820,7 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.dictionary, &s);
+        let breaks = complex_language_segment_utf16(iterator.dictionary, iterator.lstm, &s);
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.

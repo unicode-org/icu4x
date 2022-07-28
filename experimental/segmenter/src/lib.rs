@@ -155,10 +155,6 @@ mod word;
 pub mod provider;
 pub mod symbols;
 
-#[cfg(feature = "lstm")]
-#[macro_use]
-extern crate lazy_static;
-
 // Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
 mod lstm;
@@ -166,7 +162,6 @@ mod lstm;
 mod lstm_bies;
 #[cfg(feature = "lstm")]
 mod lstm_error;
-#[cfg(feature = "lstm")]
 mod lstm_structs;
 #[cfg(feature = "lstm")]
 mod math_helper;
@@ -180,7 +175,6 @@ pub use crate::line::{
     Latin1Char, LineBreakIterator, LineBreakOptions, LineBreakRule, LineBreakSegmenter, Utf16Char,
     WordBreakRule,
 };
-#[cfg(feature = "lstm")]
 pub use crate::lstm_structs::{LstmDataV1, LstmDataV1Marker, LstmMatrix};
 pub use crate::provider::{
     GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, RuleBreakDataV1,
