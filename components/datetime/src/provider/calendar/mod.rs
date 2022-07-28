@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(missing_docs)] // TODO(#686) - Add missing docs.
-
 mod skeletons;
 mod symbols;
 
@@ -13,6 +11,7 @@ use icu_provider::{yoke, zerofrom};
 pub use skeletons::*;
 pub use symbols::*;
 
+/// Pattern data for dates.
 #[icu_provider::data_struct(marker(
     DatePatternsV1Marker,
     "datetime/datelengths@1",
@@ -26,6 +25,7 @@ pub use symbols::*;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DatePatternsV1<'data> {
+    /// Date pattern data, broken down by pattern length.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub date: patterns::LengthPatternsV1<'data>,
 
@@ -34,6 +34,7 @@ pub struct DatePatternsV1<'data> {
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
 }
 
+/// Pattern data for times.
 #[icu_provider::data_struct(marker(
     TimePatternsV1Marker,
     "datetime/timelengths@1",
@@ -63,11 +64,14 @@ pub struct TimePatternsV1<'data> {
     pub preferred_hour_cycle: pattern::CoarseHourCycle,
 }
 
+/// Data structs for date / time patterns that store data corresponding to pattern lengths
+/// and/or plural forms.
 pub mod patterns {
     use super::*;
     use crate::pattern::runtime::{self, GenericPattern, PatternPlurals};
     use icu_provider::{yoke, zerofrom};
 
+    /// Data struct for date/time patterns broken down by pattern length.
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
@@ -86,6 +90,7 @@ pub mod patterns {
         pub short: runtime::Pattern<'data>,
     }
 
+    /// Data struct for date/time patterns based on plural category, broken down by pattern length.
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
@@ -104,6 +109,7 @@ pub mod patterns {
         pub short: PatternPlurals<'data>,
     }
 
+    /// Data struct for generic date/time patterns, broken down by pattern length.
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
@@ -122,6 +128,7 @@ pub mod patterns {
         pub short: GenericPattern<'data>,
     }
 
+    /// 
     #[icu_provider::data_struct]
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]

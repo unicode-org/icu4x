@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(missing_docs)] // TODO(#686) - Add missing docs.
-
 use crate::{
     pattern::runtime::PatternPlurals,
     skeleton::{reference::Skeleton, SkeletonError},
@@ -12,6 +10,8 @@ use core::convert::TryFrom;
 use icu_provider::{yoke, zerofrom};
 use litemap::LiteMap;
 
+/// Skeleton data for dates and times, along with the corresponding plural pattern
+/// information.
 #[icu_provider::data_struct(marker(
     DateSkeletonPatternsV1Marker,
     "datetime/skeletons@1",

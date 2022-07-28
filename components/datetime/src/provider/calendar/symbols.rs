@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(missing_docs)] // TODO(#686) - Add missing docs.
-
 // allowed for providers
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
@@ -13,6 +11,9 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
+/// Symbol data for the months, weekdays, and eras needed to format a date.
+/// 
+/// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 #[icu_provider::data_struct(marker(
     DateSymbolsV1Marker,
     "datetime/datesymbols@1",
@@ -27,14 +28,20 @@ use zerovec::ZeroMap;
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct DateSymbolsV1<'data> {
+    /// Symbol data for months.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub months: months::ContextsV1<'data>,
+    /// Symbol data for weekdays.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub weekdays: weekdays::ContextsV1<'data>,
+    /// Symbol data for eras.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub eras: Eras<'data>,
 }
 
+/// Symbol data for the day periods needed to format a time.
+/// 
+/// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 #[icu_provider::data_struct(marker(
     TimeSymbolsV1Marker,
     "datetime/timesymbols@1",
@@ -49,10 +56,14 @@ pub struct DateSymbolsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct TimeSymbolsV1<'data> {
+    /// Symbol data for day periods.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub day_periods: day_periods::ContextsV1<'data>,
 }
 
+/// String data for the name, abbrevation, and narrow form of a date's era.
+/// 
+/// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen",
@@ -62,16 +73,30 @@ pub struct TimeSymbolsV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct Eras<'data> {
+    /// Symbol data for era names.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, str, str>,
+    /// Symbol data for era abbreviations.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub abbr: ZeroMap<'data, str, str>,
+    /// Symbol data for era narrow forms.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub narrow: ZeroMap<'data, str, str>,
 }
 
+
+// Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to 
+// avoid macro parsing ambiguity caused by other metadata already attached to `$symbols`.
 macro_rules! symbols {
-    ($name: ident, $symbols: item) => {
+    ($(#[$symbols_attr:meta])*  $name: ident, $field_id: ident, $symbols: item) => {
+        
+        $(#[$symbols_attr])*
+        #[doc = concat!("Formatting symbols for [`",
+                stringify!($field_id),
+                "`](crate::fields::FieldSymbol::",
+                stringify!($field_id),
+                ").\n\n",
+                "For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).")]
         pub mod $name {
             use super::*;
 
@@ -83,10 +108,11 @@ macro_rules! symbols {
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
+            #[doc = concat!("Locale data for ", stringify!($field_id), " corresponding to the symbols.")]
             $symbols
 
-            // UTS 35 specifies that `format` widths are mandatory
-            // except of `short`.
+            // UTS 35 specifies that `format` widths are mandatory,
+            // except for `short`.
             #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
             #[cfg_attr(
                 feature = "datagen",
@@ -95,13 +121,20 @@ macro_rules! symbols {
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
+            #[doc = concat!("Symbol data for the \"format\" style formatting of ", stringify!($field_id), 
+                ".\n\nThe format style is used in contexts where it is different from the stand-alone form, ex: ",
+                "a case inflected form where the stand-alone form is the nominative case.")]
             pub struct FormatWidthsV1<'data> {
+                #[doc = concat!("Abbreviated length symbol for \"format\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub abbreviated: SymbolsV1<'data>,
+                #[doc = concat!("Narrow length symbol for \"format\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub narrow: SymbolsV1<'data>,
+                #[doc = concat!("Short length symbol for \"format\" style symbol for ", stringify!($name), ", if present.")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub short: Option<SymbolsV1<'data>>,
+                #[doc = concat!("Wide length symbol for \"format\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub wide: SymbolsV1<'data>,
             }
@@ -115,13 +148,19 @@ macro_rules! symbols {
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
+            #[doc = concat!("Symbol data for the \"stand-alone\" style formatting of ", stringify!($field_id), 
+                ".\n\nThe stand-alone style is used in contexts where the field is displayed by itself.")]
             pub struct StandAloneWidthsV1<'data> {
+                #[doc = concat!("Abbreviated length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub abbreviated: Option<SymbolsV1<'data>>,
+                #[doc = concat!("Narrow length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub narrow: Option<SymbolsV1<'data>>,
+                #[doc = concat!("Short length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub short: Option<SymbolsV1<'data>>,
+                #[doc = concat!("Wide length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub wide: Option<SymbolsV1<'data>>,
             }
@@ -134,9 +173,13 @@ macro_rules! symbols {
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
+            #[doc = concat!("The struct containing the symbol data for ", stringify!($field_id), 
+                " that contains the \"format\" style symbol data ([`FormatWidthsV1`]) and \"stand-alone\" style symbol data ([`StandAloneWidthsV1`]).")]
             pub struct ContextsV1<'data> {
+                /// The symbol data for "format" style symbols.
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub format: FormatWidthsV1<'data>,
+                /// The symbol data for "stand-alone" style symbols.
                 #[cfg_attr(feature = "serde", serde(borrow))]
                 pub stand_alone: Option<StandAloneWidthsV1<'data>>,
             }
@@ -146,6 +189,7 @@ macro_rules! symbols {
 
 symbols!(
     months,
+    Month,
     #[allow(clippy::large_enum_variant)]
     pub enum SymbolsV1<'data> {
         /// Twelve symbols for a solar calendar
@@ -216,6 +260,7 @@ impl Default for months::SymbolsV1<'_> {
 
 symbols!(
     weekdays,
+    Weekday,
     #[derive(Default)]
     pub struct SymbolsV1<'data>(
         #[cfg_attr(
@@ -231,10 +276,13 @@ symbols!(
 
 symbols!(
     day_periods,
+    DayPeriod,
     #[derive(Default)]
     pub struct SymbolsV1<'data> {
+        /// Day period for AM (before noon).
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub am: Cow<'data, str>,
+        /// Day period for PM (after noon).
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub pm: Cow<'data, str>,
         #[cfg_attr(
@@ -244,6 +292,7 @@ symbols!(
                 deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
             )
         )]
+        /// Day period for noon, in locales that support it.
         pub noon: Option<Cow<'data, str>>,
         #[cfg_attr(
             feature = "serde",
@@ -252,6 +301,7 @@ symbols!(
                 deserialize_with = "icu_provider::serde::borrow_de_utils::option_of_cow"
             )
         )]
+        /// Day period for midnight, in locales that support it.
         pub midnight: Option<Cow<'data, str>>,
     }
 );

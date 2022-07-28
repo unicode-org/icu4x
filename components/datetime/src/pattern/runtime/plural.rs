@@ -131,7 +131,9 @@ impl<'data> PluralPattern<'data> {
     }
 }
 
-/// Either a single Pattern or a collection of pattern when there are plural variants.
+/// Either a [`Pattern`] single pattern or a [`PluralPattern`] collection of 
+/// patterns when there are plural variants. Plural information is based on
+/// the week number.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
