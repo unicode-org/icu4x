@@ -10,7 +10,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::script::ScriptWithExtensions;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use core::ops::RangeInclusive;
+use icu_codepointtrie::{CodePointMapRangeIterator, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 use zerofrom::ZeroFrom;
@@ -78,10 +79,18 @@ impl<'data> PropertyCodePointSetV1<'data> {
             Self::InversionList(ref l) => l.contains(ch),
         }
     }
+
     #[inline]
     pub(crate) fn contains_u32(&self, ch: u32) -> bool {
         match *self {
             Self::InversionList(ref l) => l.contains_u32(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges(),
         }
     }
 
@@ -111,6 +120,13 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         match *self {
             Self::CodePointTrie(ref t) => t.get_set_for_value(value),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> CodePointMapRangeIterator<'_, T> {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges(),
         }
     }
 

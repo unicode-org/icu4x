@@ -17,7 +17,7 @@ use crate::sets::CodePointSetData;
 #[cfg(doc)]
 use crate::*;
 use core::marker::PhantomData;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_codepointtrie::{CodePointMapRangeIterator, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 
 /// A wrapper around code point map data. It is returned by APIs that return Unicode
@@ -37,9 +37,9 @@ impl<T: TrieValue> DataMarker for ErasedMaplikeMarker<T> {
 }
 
 impl<T: TrieValue> CodePointMapData<T> {
-    /// Construct a borrowed version of this type that can be queried
+    /// Construct a borrowed version of this type that can be queried.
     ///
-    /// This avoids a potential small cost per [`Self::get()`] call by consolidating it
+    /// This avoids a potential small underlying cost per API call (like `get()`) by consolidating it
     /// up front.
     ///
     /// # Example
@@ -172,6 +172,44 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.map.get_set_for_value(value);
         CodePointSetData::from_code_point_inversion_list(set)
+    }
+
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// share the same value in the [`CodePointMapData`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::ops::RangeInclusive;
+    /// use icu::properties::maps::CodePointMapData;
+    /// use icu_codepointtrie::CodePointMapRange;
+    /// use icu_codepointtrie::planes;
+    ///
+    /// let planes_trie = planes::get_planes_trie();
+    /// let cp_map_data = CodePointMapData::from_code_point_trie(planes_trie);
+    /// let cp_map = cp_map_data.as_borrowed();
+    ///
+    /// let mut ranges = cp_map.iter_ranges();
+    ///
+    /// for plane in 0..=16 {
+    ///     let exp_start = plane * 0x1_0000;
+    ///     let exp_end = exp_start + 0xffff;
+    ///     assert_eq!(
+    ///         ranges.next(),
+    ///         Some(CodePointMapRange {
+    ///             range: RangeInclusive::new(exp_start, exp_end),
+    ///             value: plane as u8
+    ///         })
+    ///     );
+    /// }
+    ///
+    /// // Hitting the end of the iterator returns `None`, as will subsequent
+    /// // calls to .next().
+    /// assert_eq!(ranges.next(), None);
+    /// assert_eq!(ranges.next(), None);
+    /// ```
+    pub fn iter_ranges(&self) -> CodePointMapRangeIterator<'_, T> {
+        self.map.iter_ranges()
     }
 }
 

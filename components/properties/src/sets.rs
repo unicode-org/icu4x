@@ -18,6 +18,7 @@ use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
 use core::iter::FromIterator;
+use core::ops::RangeInclusive;
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 
@@ -38,9 +39,9 @@ impl DataMarker for ErasedSetlikeMarker {
 }
 
 impl CodePointSetData {
-    /// Construct a borrowed version of this type that can be queried
+    /// Construct a borrowed version of this type that can be queried.
     ///
-    /// This avoids a potential small cost per [`Self::contains()`] call by consolidating it
+    /// This avoids a potential small underlying cost per API call (ex: `contains()`) by consolidating it
     /// up front.
     ///
     /// ```rust
@@ -141,6 +142,33 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     #[inline]
     pub fn contains_u32(&self, ch: u32) -> bool {
         self.set.contains_u32(ch)
+    }
+
+    // Yields an [`Iterator`] returning the ranges of the code points that are
+    /// included in the [`CodePointSetData`]
+    ///
+    /// Ranges are returned as [`RangeInclusive`], which is inclusive of its
+    /// `end` bound value. An end-inclusive behavior matches the ICU4C/J
+    /// behavior of ranges, ex: `UnicodeSet::contains(UChar32 start, UChar32 end)`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::sets;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let data =
+    ///     sets::get_alphabetic(&provider)
+    ///         .expect("The data should be valid");
+    /// let alphabetic = data.as_borrowed();
+    /// let mut ranges = alphabetic.iter_ranges();
+    ///
+    /// assert_eq!(Some(0x0041..=0x005A), ranges.next());  // 'A'..'Z'
+    /// assert_eq!(Some(0x0061..=0x007A), ranges.next());  // 'a'..'z'
+    /// ```
+    #[inline]
+    pub fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.set.iter_ranges()
     }
 }
 
