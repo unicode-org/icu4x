@@ -3,6 +3,32 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Providers that combine multiple other providers.
+//!
+//! # Types of Forking Providers
+//!
+//! ## Key-Based
+//!
+//! To fork between providers that support different data keys, see:
+//!
+//! - [`ForkByKeyProvider`]
+//! - [`MultiForkByKeyProvider`]
+//!
+//! ## Locale-Based
+//!
+//! To fork between providers that support different locales, see:
+//!
+//! - [`ForkByErrorProvider`]`<`[`MissingLocalePredicate`]`>`
+//! - [`MultiForkByErrorProvider`]`<`[`MissingLocalePredicate`]`>`
+//!
+//! [`MissingLocalePredicate`]: predicates::MissingLocalePredicate
+//! 
+//! # Examples
+//! 
+//! See:
+//! 
+//! - [`ForkByKeyProvider`]
+//! - [`MultiForkByKeyProvider`]
+//! - [`MissingLocalePredicate`]
 
 use alloc::vec::Vec;
 
@@ -17,7 +43,7 @@ pub use by_error::ForkByErrorProvider;
 pub use by_error::MultiForkByErrorProvider;
 
 use predicates::ForkByErrorPredicate;
-use predicates::ForkByKeyPredicate;
+use predicates::MissingDataKeyPredicate;
 
 /// Create a provider that returns data from one of two child providers based on the key.
 ///
@@ -25,7 +51,7 @@ use predicates::ForkByKeyPredicate;
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// [`ForkByKeyProvider] does not support forking between [`DataProvider`]s. However, it
+/// [`ForkByKeyProvider`] does not support forking between [`DataProvider`]s. However, it
 /// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
 ///
 /// # Examples
@@ -117,14 +143,14 @@ use predicates::ForkByKeyPredicate;
 /// [`AnyProvider`]: icu_provider::AnyProvider
 /// [`BufferProvider`]: icu_provider::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
-pub type ForkByKeyProvider<P0, P1> = ForkByErrorProvider<P0, P1, ForkByKeyPredicate>;
+pub type ForkByKeyProvider<P0, P1> = ForkByErrorProvider<P0, P1, MissingDataKeyPredicate>;
 
 impl<P0, P1> ForkByKeyProvider<P0, P1> {
     /// A provider that returns data from one of two child providers based on the key.
     ///
     /// See [`ForkByKeyProvider`].
     pub fn new(p0: P0, p1: P1) -> Self {
-        ForkByErrorProvider::new_with_predicate(p0, p1, ForkByKeyPredicate)
+        ForkByErrorProvider::new_with_predicate(p0, p1, MissingDataKeyPredicate)
     }
 }
 
@@ -134,7 +160,7 @@ impl<P0, P1> ForkByKeyProvider<P0, P1> {
 /// even if the request failed for other reasons (such as an unsupported language). Therefore,
 /// you should add child providers that support disjoint sets of keys.
 ///
-/// [`ForkByKeyProvider] does not support forking between [`DataProvider`]s. However, it
+/// [`MultiForkByKeyProvider`] does not support forking between [`DataProvider`]s. However, it
 /// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
 ///
 /// # Examples
@@ -188,13 +214,13 @@ impl<P0, P1> ForkByKeyProvider<P0, P1> {
 /// [`AnyProvider`]: icu_provider::AnyProvider
 /// [`BufferProvider`]: icu_provider::BufferProvider
 /// [`DynamicDataProvider`]: icu_provider::DynamicDataProvider
-pub type MultiForkByKeyProvider<P> = MultiForkByErrorProvider<P, ForkByKeyPredicate>;
+pub type MultiForkByKeyProvider<P> = MultiForkByErrorProvider<P, MissingDataKeyPredicate>;
 
 impl<P> MultiForkByKeyProvider<P> {
     /// Create a provider that returns data from the first child provider supporting the key.
     ///
     /// See [`MultiForkByKeyProvider`].
     pub fn new(providers: Vec<P>) -> Self {
-        MultiForkByErrorProvider::new_with_predicate(providers, ForkByKeyPredicate)
+        MultiForkByErrorProvider::new_with_predicate(providers, MissingDataKeyPredicate)
     }
 }
