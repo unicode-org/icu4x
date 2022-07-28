@@ -35,6 +35,27 @@ jobs:
         project_id: ${{ env.GCP_PROJECT_ID }}
         service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
         export_default_credentials: true
+
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
     - name: Run Webpack
       uses: actions-rs/cargo@v1
       with:
