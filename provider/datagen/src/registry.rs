@@ -138,7 +138,7 @@ registry!(
     MetaZoneGenericNamesShortV1Marker,
     MetaZoneSpecificNamesLongV1Marker,
     MetaZoneSpecificNamesShortV1Marker,
-        MetaZonePeriodV1Marker,
+    MetaZonePeriodV1Marker,
     NfcInertV1Marker,
     NfdInertV1Marker,
     NfkcInertV1Marker,

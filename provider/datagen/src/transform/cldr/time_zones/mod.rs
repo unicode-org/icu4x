@@ -98,7 +98,7 @@ macro_rules! impl_data_provider {
 
     };
 }
-#[cfg(feature = "experimental")]
+
 impl_data_provider!(
     TimeZoneFormatsV1Marker,
     ExemplarCitiesV1Marker,
@@ -109,15 +109,6 @@ impl_data_provider!(
     MetaZonePeriodV1Marker
 );
 
-#[cfg(not(feature = "experimental"))]
-impl_data_provider!(
-    TimeZoneFormatsV1Marker,
-    ExemplarCitiesV1Marker,
-    MetaZoneGenericNamesLongV1Marker,
-    MetaZoneGenericNamesShortV1Marker,
-    MetaZoneSpecificNamesLongV1Marker,
-    MetaZoneSpecificNamesShortV1Marker
-);
 
 #[cfg(test)]
 mod tests {

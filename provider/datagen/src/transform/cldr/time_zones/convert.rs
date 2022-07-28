@@ -15,7 +15,6 @@ use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
     MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
-#[cfg(feature = "experimental")]
 use icu_timezone::provider::MetaZonePeriodV1;
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -172,7 +171,6 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
     }
 }
 
-#[cfg(feature = "experimental")]
 impl From<CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
         let data = other.meta_zone_periods_resource;
@@ -468,7 +466,6 @@ fn iterate_zone_format_for_time_zone_id(
         })
 }
 
-#[cfg(feature = "experimental")]
 fn metazone_periods_iter(
     pair: (
         TimeZoneBcp47Id,
