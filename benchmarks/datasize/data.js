@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658976414950,
+  "lastUpdate": 1659017778364,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21773,6 +21773,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ee9391ebad05a1644630d17dd5e2bd955220bec2"
         },
         "date": 1658976380384,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2342f275328440524d7415b1ae8689b91a878c08",
+          "message": "Remove two char types in line segmenter and polish utf8 iterator naming (#2269)\n\n* Remove Latin1Char and Utf16Char in line.rs\r\n\r\nWe don't use these two char types to store data. It's sufficient to use\r\nunit-like struct similar to what we do for UAX29 iterators.\r\n\r\n* Append 'Utf8' to UAX29 iterators iterating over str\r\n\r\nMake these iterators' name more explicit, matching their counterpart types in\r\nFFI.",
+          "timestamp": "2022-07-28T14:14:27Z",
+          "tree_id": "90030f8af6fac3f49590c4b630dc23fa0213bb05",
+          "url": "https://github.com/unicode-org/icu4x/commit/2342f275328440524d7415b1ae8689b91a878c08"
+        },
+        "date": 1659017742681,
         "tool": "ndjson",
         "benches": [
           {
