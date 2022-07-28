@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658959775533,
+  "lastUpdate": 1658977087751,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -53255,6 +53255,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5066,
             "range": "± 26",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee9391ebad05a1644630d17dd5e2bd955220bec2",
+          "message": "Use LSTM data from DataProvider (#2252)\n\n* Use LSTM data from DataProvider\r\n\r\n* Fix Build and Test / features\r\n\r\n* Update ignore comment and use cfg intead of allow(dead_code).",
+          "timestamp": "2022-07-28T11:45:10+09:00",
+          "tree_id": "8fda2fccc8d3a6ccc6537176cdc2b160b30c6a00",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee9391ebad05a1644630d17dd5e2bd955220bec2"
+        },
+        "date": 1658977053806,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 83858,
+            "range": "± 221",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 818683,
+            "range": "± 1740",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 192530,
+            "range": "± 491",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 86026,
+            "range": "± 204",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 83061,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 83808,
+            "range": "± 270",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 90998,
+            "range": "± 280",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 160102,
+            "range": "± 256",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 170556,
+            "range": "± 491",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 169422,
+            "range": "± 192",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 182220,
+            "range": "± 283",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4602,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
