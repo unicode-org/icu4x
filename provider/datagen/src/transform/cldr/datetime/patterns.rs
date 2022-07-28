@@ -156,7 +156,7 @@ impl From<&cldr_serde::ca::Dates> for TimePatternsV1<'_> {
 
         let (time_h11_h12, time_h23_h24) = {
             let time = (&other.time_formats).into();
-                let alt_time = patterns::LengthPatternsV1 {
+            let alt_time = patterns::LengthPatternsV1 {
                 full: alt_hour_cycle
                     .apply_on_pattern(
                         &length_combinations_v1,
