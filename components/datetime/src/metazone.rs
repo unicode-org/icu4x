@@ -8,7 +8,6 @@ use crate::error::DateTimeFormatterError;
 use crate::provider::time_zones::MetaZonePeriodV1Marker;
 use icu_calendar::DateTime;
 use icu_calendar::Iso;
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 
@@ -28,22 +27,19 @@ impl MetaZoneCalculator {
     /// use icu::datetime::metazone::MetaZoneCalculator;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::new(
-    ///     locale!("en"),
-    ///     &provider,
-    /// );
+    /// let mzc = MetaZoneCalculator::try_new(&provider);
     ///
     /// assert!(mzc.is_ok());
     /// ```
-    pub fn new<L, ZP>(locale: L, zone_provider: &ZP) -> Result<Self, DateTimeFormatterError>
+    pub fn try_new<P>(
+        zone_provider: &P,
+    ) -> Result<Self, DateTimeFormatterError>
     where
-        L: Into<Locale>,
-        ZP: DataProvider<MetaZonePeriodV1Marker> + ?Sized,
+        P: DataProvider<MetaZonePeriodV1Marker> + ?Sized,
     {
-        let locale = locale.into();
         let metazone_period = zone_provider
             .load(DataRequest {
-                locale: &DataLocale::from(locale),
+                locale: Default::default(),
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -62,7 +58,7 @@ impl MetaZoneCalculator {
     /// use tinystr::tinystr;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::new(locale!("en"), &provider).expect("data exists");
+    /// let mzc = MetaZoneCalculator::try_new(&provider).expect("data exists");
     ///
     /// assert_eq!(
     ///     mzc.compute_metazone_from_timezone(

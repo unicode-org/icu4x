@@ -79,7 +79,7 @@ impl MockTimeZone {
     /// use tinystr::tinystr;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::new(locale!("en"), &provider).expect("data exists");
+    /// let mzc = MetaZoneCalculator::try_new(&provider).expect("data exists");
     /// let mut tz = MockTimeZone::new(
     ///     /* gmt_offset */ Some("+11".parse().expect("Failed to parse a GMT offset.")),
     ///     /* time_zone_id */ Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
