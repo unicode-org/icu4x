@@ -26,5 +26,5 @@ mod time_zone;
 mod types;
 
 pub use error::TimeZoneError;
-pub use time_zone::TimeZone;
+pub use time_zone::CustomTimeZone;
 pub use types::GmtOffset;

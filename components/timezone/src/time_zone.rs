@@ -13,20 +13,20 @@ use core::str::FromStr;
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::{GmtOffset, TimeZone};
+/// use icu::timezone::{GmtOffset, CustomTimeZone};
 ///
-/// let tz1 = TimeZone::new(
+/// let tz1 = CustomTimeZone::new(
 ///     GmtOffset::default(),
 ///     /* time_zone_id */ None,
 ///     /* metazone_id */ None,
 ///     /* time_variaint */ None,
 /// );
 ///
-/// let tz2: TimeZone = "+05:00".parse().expect("Failed to parse a time zone.");
+/// let tz2: CustomTimeZone = "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
 #[derive(Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type will not add fields (it is largely an example type)
-pub struct TimeZone {
+pub struct CustomTimeZone {
     /// The GMT offset in seconds.
     pub gmt_offset: GmtOffset,
     /// The IANA time-zone identifier
@@ -37,8 +37,8 @@ pub struct TimeZone {
     pub time_variant: Option<TinyStr8>,
 }
 
-impl TimeZone {
-    /// Creates a new [`TimeZone`].
+impl CustomTimeZone {
+    /// Creates a new [`CustomTimeZone`].
     /// A GMT offset is required, as it is used as a final fallback for formatting.
     /// The other arguments optionally allow access to more robust formats.
     pub const fn new(
@@ -56,10 +56,10 @@ impl TimeZone {
     }
 }
 
-impl FromStr for TimeZone {
+impl FromStr for CustomTimeZone {
     type Err = TimeZoneError;
 
-    /// Parse a [`TimeZone`] from a string.
+    /// Parse a [`CustomTimeZone`] from a string.
     ///
     /// This utility is for easily creating time zones, not a complete robust solution.
     ///
@@ -73,12 +73,12 @@ impl FromStr for TimeZone {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::TimeZone;
+    /// use icu::timezone::CustomTimeZone;
     ///
-    /// let tz0: TimeZone = "Z".parse().expect("Failed to parse a time zone.");
-    /// let tz1: TimeZone = "+02".parse().expect("Failed to parse a time zone.");
-    /// let tz2: TimeZone = "-0230".parse().expect("Failed to parse a time zone.");
-    /// let tz3: TimeZone = "+02:30".parse().expect("Failed to parse a time zone.");
+    /// let tz0: CustomTimeZone = "Z".parse().expect("Failed to parse a time zone.");
+    /// let tz1: CustomTimeZone = "+02".parse().expect("Failed to parse a time zone.");
+    /// let tz2: CustomTimeZone = "-0230".parse().expect("Failed to parse a time zone.");
+    /// let tz3: CustomTimeZone = "+02:30".parse().expect("Failed to parse a time zone.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let gmt_offset = GmtOffset::from_str(input)?;
