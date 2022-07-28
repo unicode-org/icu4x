@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1658959612412,
+  "lastUpdate": 1658976895374,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39419,6 +39419,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44392991,
             "range": "± 178669",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ee9391ebad05a1644630d17dd5e2bd955220bec2",
+          "message": "Use LSTM data from DataProvider (#2252)\n\n* Use LSTM data from DataProvider\r\n\r\n* Fix Build and Test / features\r\n\r\n* Update ignore comment and use cfg intead of allow(dead_code).",
+          "timestamp": "2022-07-28T11:45:10+09:00",
+          "tree_id": "8fda2fccc8d3a6ccc6537176cdc2b160b30c6a00",
+          "url": "https://github.com/unicode-org/icu4x/commit/ee9391ebad05a1644630d17dd5e2bd955220bec2"
+        },
+        "date": 1658976858020,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 58146482,
+            "range": "± 817268",
             "unit": "ns/iter"
           },
           {
