@@ -74,7 +74,7 @@ jobs:
 
     - name: Upload Webpack bundle to Google Cloud Storage
       run: |
-        gsutil -m cp -r ffi/diplomat/wasm/demo-app/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
+        gsutil -m cp -r ffi/diplomat/wasm/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
 
     # - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
     #   run: |
