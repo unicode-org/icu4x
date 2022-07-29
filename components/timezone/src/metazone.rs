@@ -25,7 +25,7 @@ impl MetaZoneCalculator {
     ///
     /// ```
     /// use icu_locid::locale;
-    /// use icu::datetime::metazone::MetaZoneCalculator;
+    /// use icu::timezone::MetaZoneCalculator;
     ///
     /// let provider = icu_testdata::get_provider();
     /// let mzc = MetaZoneCalculator::try_new(&provider);
@@ -50,9 +50,9 @@ impl MetaZoneCalculator {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::metazone::MetaZoneCalculator;
+    /// use icu::timezone::MetaZoneCalculator;
     /// use icu_calendar::DateTime;
-    /// use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+    /// use icu::timezone::provider::{MetaZoneId, TimeZoneBcp47Id};
     /// use icu_locid::locale;
     /// use tinystr::tinystr;
     ///

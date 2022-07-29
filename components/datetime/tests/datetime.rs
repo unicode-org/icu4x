@@ -17,7 +17,6 @@ use icu_calendar::{
     provider::JapaneseErasV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
 };
-use icu_datetime::mock::time_zone::MockTimeZone;
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
@@ -43,6 +42,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByKeyProvider;
+use icu_timezone::CustomTimeZone;
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -523,7 +523,7 @@ fn test_time_zone_format_configs() {
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let zone_provider = icu_testdata::get_provider();
     let langid: LanguageIdentifier = "en".parse().unwrap();
-    let time_zone = MockTimeZone::new(
+    let time_zone = CustomTimeZone::new(
         None,
         Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
         Some(MetaZoneId(tinystr!(4, "ampa"))),
