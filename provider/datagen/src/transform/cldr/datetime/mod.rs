@@ -34,22 +34,26 @@ lazy_static! {
 }
 
 macro_rules! impl_data_provider {
-    ($(($marker:ident, $expr:expr)),+) => {
+    ($(($marker:ident, $expr:expr, calendared = $calendared:expr)),+) => {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(
                     &self,
                     req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    if req.locale.is_empty() {
+                    if $calendared && req.locale.is_empty() {
                         return Err(DataErrorKind::NeedsLocale.into_error());
                     }
 
                     let langid = req.locale.get_langid();
-                    let calendar = req
-                        .locale
-                        .get_unicode_ext(&key!("ca"))
-                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+                    let calendar = if $calendared {
+                        req
+                            .locale
+                            .get_unicode_ext(&key!("ca"))
+                            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
+                    } else {
+                        value!("gregory")
+                    };
 
                     let cldr_cal = SUPPORTED_CALS
                         .get(&calendar)
@@ -161,21 +165,33 @@ macro_rules! impl_data_provider {
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     let mut r = Vec::new();
-                    for (cal_value, cldr_cal) in &*SUPPORTED_CALS {
+                    if $calendared {
+                        for (cal_value, cldr_cal) in &*SUPPORTED_CALS {
+                            r.extend(self
+                                        .source
+                                        .cldr()?
+                                        .dates(cldr_cal).list_langs()?
+                                .map(|lid| {
+                                    let mut locale: Locale = lid.into();
+                                    locale
+                                        .extensions
+                                        .unicode
+                                        .keywords
+                                        .set(key!("ca"), cal_value.clone());
+                                    DataLocale::from(locale)
+                                }));
+                        }
+                    } else {
                         r.extend(self
                                     .source
                                     .cldr()?
-                                    .dates(cldr_cal).list_langs()?
-                            .map(|lid| {
-                                let mut locale: Locale = lid.into();
-                                locale
-                                    .extensions
-                                    .unicode
-                                    .keywords
-                                    .set(key!("ca"), cal_value.clone());
-                                DataLocale::from(locale)
-                            }));
+                                    .dates("gregorian").list_langs()?
+                                .map(|lid| {
+                                    let locale: Locale = lid.into();
+                                    DataLocale::from(locale)
+                                }));
                     }
+
                     Ok(r)
                 }
             }
@@ -184,15 +200,31 @@ macro_rules! impl_data_provider {
 }
 
 impl_data_provider!(
-    (DateSymbolsV1Marker, symbols::convert_dates),
-    (TimeSymbolsV1Marker, |dates, _| {
-        symbols::convert_times(dates)
-    }),
-    (DateSkeletonPatternsV1Marker, |dates, _| {
-        DateSkeletonPatternsV1::from(dates)
-    }),
-    (DatePatternsV1Marker, |dates, _| DatePatternsV1::from(dates)),
-    (TimePatternsV1Marker, |dates, _| TimePatternsV1::from(dates))
+    (
+        DateSymbolsV1Marker,
+        symbols::convert_dates,
+        calendared = true
+    ),
+    (
+        TimeSymbolsV1Marker,
+        |dates, _| { symbols::convert_times(dates) },
+        calendared = false
+    ),
+    (
+        DateSkeletonPatternsV1Marker,
+        |dates, _| { DateSkeletonPatternsV1::from(dates) },
+        calendared = true
+    ),
+    (
+        DatePatternsV1Marker,
+        |dates, _| DatePatternsV1::from(dates),
+        calendared = true
+    ),
+    (
+        TimePatternsV1Marker,
+        |dates, _| TimePatternsV1::from(dates),
+        calendared = false
+    )
 );
 
 #[cfg(test)]

@@ -21,7 +21,8 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
-    calendar, date::DateTimeInput, date::IsoTimeInput, CldrCalendar, DateTimeFormatterError, FormattedDateTime,
+    calendar, date::DateTimeInput, date::IsoTimeInput, CldrCalendar, DateTimeFormatterError,
+    FormattedDateTime,
 };
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
@@ -101,9 +102,12 @@ impl TimeFormatter {
     {
         let locale = locale.clone();
 
-        Ok(Self(
-            raw::TimeFormatter::try_new(locale, data_provider, length, preferences)?,
-        ))
+        Ok(Self(raw::TimeFormatter::try_new(
+            locale,
+            data_provider,
+            length,
+            preferences,
+        )?))
     }
 
     /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]

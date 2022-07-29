@@ -34,11 +34,7 @@ pub struct DatePatternsV1<'data> {
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
 }
 
-#[icu_provider::data_struct(marker(
-    TimePatternsV1Marker,
-    "datetime/timelengths@1",
-    extension_key = "ca"
-))]
+#[icu_provider::data_struct(marker(TimePatternsV1Marker, "datetime/timelengths@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
