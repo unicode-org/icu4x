@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659125620829,
+  "lastUpdate": 1659132837903,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40828,6 +40828,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 71,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3e1fa176d47cea0470287fc2c61ac0c3261a5a63",
+          "message": "Add binary search and other utilities to FlexZeroVec (#2284)",
+          "timestamp": "2022-07-29T15:01:25-07:00",
+          "tree_id": "b4bc49e34a4e329c474e5293d50c4d6a52f353cb",
+          "url": "https://github.com/unicode-org/icu4x/commit/3e1fa176d47cea0470287fc2c61ac0c3261a5a63"
+        },
+        "date": 1659132802600,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123007,
+            "range": "± 490",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25103,
+            "range": "± 88",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71718,
+            "range": "± 203",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 200,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
             "range": "± 0",
             "unit": "ns/iter"
           }
