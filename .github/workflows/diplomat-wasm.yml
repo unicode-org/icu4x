@@ -18,6 +18,7 @@ jobs:
           echo "GCP key not found. Webpack artifacts will not be uploaded. If you are a frequent contributor, you may add the key to your fork; for instructions, see 'artifacts-build.yml'"
           exit 1;
         fi
+
   webpack:
     name: Build
     needs: credentials
@@ -83,8 +84,8 @@ jobs:
       with:
         repository: QnnOkabayashi/icu4x
         ref: gh-pages
-      run: |
-        rm -rf wasm-demo
+    - run: |
+        # rm -rf wasm-demo
         mkdir wasm-demo
         printf "const gcs=document.createElement('script');gcs.setAttribute('src','https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/bundle.js');document.body.appendChild(gcs);" ${{ github.sha }} > wasm-demo/index.js
         git checkout wasm-demo -- ffi/diplomat/wasm/wasm-demo/index.html > wasm-demo/index.html
