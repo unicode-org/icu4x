@@ -132,6 +132,7 @@ impl FromStr for GmtOffset {
 #[repr(transparent)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct TimeVariant(pub TinyStr8);
 
 impl FromStr for TimeVariant {
