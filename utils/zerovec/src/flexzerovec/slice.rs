@@ -395,7 +395,7 @@ impl FlexZeroSlice {
     ) -> Option<Result<usize, usize>> {
         // Note: We need to check bounds separately, since `self.data.get(range)` does not return
         // bounds errors, since it is indexing directly into the upscaled data array
-        if range.start >= self.len() || range.end > self.len() {
+        if range.start > self.len() || range.end > self.len() {
             return None;
         }
         let scaled_slice = self.data.get(range)?;
@@ -430,7 +430,7 @@ impl FlexZeroSlice {
     ) -> Option<Result<usize, usize>> {
         // Note: We need to check bounds separately, since `self.data.get(range)` does not return
         // bounds errors, since it is indexing directly into the upscaled data array
-        if range.start >= self.len() || range.end > self.len() {
+        if range.start > self.len() || range.end > self.len() {
             return None;
         }
         let scaled_slice = self.data.get(range)?;
