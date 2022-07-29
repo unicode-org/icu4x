@@ -234,7 +234,7 @@ fn assert_fixture_element<A, D>(
             let df =
                 DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
                     .unwrap();
-            let tf = TimeFormatter::<A::Calendar>::try_new(
+            let tf = TimeFormatter::try_new(
                 &locale.into(),
                 provider,
                 bag.time.unwrap(),
@@ -278,7 +278,7 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::<A::Calendar>::try_new(
+            let tf = TimeFormatter::try_new(
                 &locale.into(),
                 provider,
                 bag.time.unwrap(),

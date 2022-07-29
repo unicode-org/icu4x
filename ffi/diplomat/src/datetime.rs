@@ -18,12 +18,11 @@ pub mod ffi {
     };
 
     #[diplomat::opaque]
-    /// An ICU4X TimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string,
-    /// using the Gregorian Calendar.
+    /// An ICU4X TimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string
     #[diplomat::rust_link(icu::datetime::TimeFormatter, Struct)]
     // TODO(#2153) - Rename to ICU4XTimeFormatter when we remove the dependency on calendar
     // from TimeFormatter.
-    pub struct ICU4XGregorianTimeFormatter(pub TimeFormatter<Gregorian>);
+    pub struct ICU4XGregorianTimeFormatter(pub TimeFormatter);
 
     pub enum ICU4XTimeLength {
         Full,

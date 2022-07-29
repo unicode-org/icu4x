@@ -132,6 +132,7 @@ pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
 ///
 /// See [`DateTimeInput`] for documentation on individual fields
+#[derive(Default)]
 pub(crate) struct ExtractedDateTimeInput {
     year: Option<FormattableYear>,
     month: Option<FormattableMonth>,
@@ -169,6 +170,16 @@ impl ExtractedDateTimeInput {
             minute: input.minute(),
             second: input.second(),
             nanosecond: input.nanosecond(),
+        }
+    }
+    /// Construct given an instance of a [`DateTimeInput`].
+    pub(crate) fn extract_from_time<T: IsoTimeInput>(input: &T) -> Self {
+        Self {
+            hour: input.hour(),
+            minute: input.minute(),
+            second: input.second(),
+            nanosecond: input.nanosecond(),
+            ..Default::default()
         }
     }
 }

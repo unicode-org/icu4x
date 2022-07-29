@@ -21,7 +21,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
-    calendar, date::DateTimeInput, CldrCalendar, DateTimeFormatterError, FormattedDateTime,
+    calendar, date::DateTimeInput, date::IsoTimeInput, CldrCalendar, DateTimeFormatterError, FormattedDateTime,
 };
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
@@ -37,14 +37,14 @@ use crate::{
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
+/// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length::Time, TimeFormatter};
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let tf = TimeFormatter::<Gregorian>::try_new(
+/// let tf = TimeFormatter::try_new(
 ///     &locale!("en").into(),
 ///     &provider,
 ///     Time::Short,
@@ -61,9 +61,9 @@ use crate::{
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct TimeFormatter<C>(pub(super) raw::TimeFormatter, PhantomData<C>);
+pub struct TimeFormatter(pub(super) raw::TimeFormatter);
 
-impl<C: CldrCalendar> TimeFormatter<C> {
+impl TimeFormatter {
     /// Constructor that takes a selected locale, reference to a [data provider] and
     /// a list of preferences, then collects all data necessary to format date and time values into the given locale,
     /// using the short style.
@@ -71,13 +71,12 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// TimeFormatter::<Gregorian>::try_new(
+    /// TimeFormatter::try_new(
     ///     &locale!("en").into(),
     ///     &provider,
     ///     Time::Short,
@@ -100,30 +99,26 @@ impl<C: CldrCalendar> TimeFormatter<C> {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
-        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
-        // separately into the raw formatter.
-        let mut locale = locale.clone();
+        let locale = locale.clone();
 
-        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
             raw::TimeFormatter::try_new(locale, data_provider, length, preferences)?,
-            PhantomData,
         ))
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::<Gregorian>::try_new(&locale.into(), &provider, Time::Short, None)
+    ///     TimeFormatter::try_new(&locale.into(), &provider, Time::Short, None)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -138,23 +133,23 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     #[inline]
     pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
     where
-        T: DateTimeInput,
+        T: IsoTimeInput,
     {
         self.0.format(value)
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`IsoTimeInput`] implementer and populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::<Gregorian>::try_new(&locale.into(), &provider, Time::Short, None)
+    ///     TimeFormatter::try_new(&locale.into(), &provider, Time::Short, None)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -170,22 +165,22 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput,
+        value: &impl IsoTimeInput,
     ) -> core::fmt::Result {
         self.0.format_to_write(w, value)
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`IsoTimeInput`] implementer and returns it formatted as a string.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::<Gregorian>::try_new(&locale.into(), &provider, Time::Short, None)
+    ///     TimeFormatter::try_new(&locale.into(), &provider, Time::Short, None)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -194,7 +189,7 @@ impl<C: CldrCalendar> TimeFormatter<C> {
     /// assert_eq!(tf.format_to_string(&datetime), "12:34 PM");
     /// ```
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
+    pub fn format_to_string(&self, value: &impl IsoTimeInput) -> String {
         self.0.format_to_string(value)
     }
 }
@@ -416,7 +411,7 @@ impl<C: CldrCalendar> DateTimeFormatter<C> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tf = TimeFormatter::<Gregorian>::try_new(
+    /// let tf = TimeFormatter::try_new(
     ///     &locale!("en").into(),
     ///     &provider,
     ///     length::Time::Short,
@@ -437,7 +432,7 @@ impl<C: CldrCalendar> DateTimeFormatter<C> {
     #[inline]
     pub fn try_from_date_and_time(
         date: DateFormatter<C>,
-        time: TimeFormatter<C>,
+        time: TimeFormatter,
     ) -> Result<Self, DateTimeFormatterError>
 where {
         Ok(Self(
