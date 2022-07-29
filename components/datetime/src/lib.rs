@@ -84,7 +84,7 @@
 extern crate alloc;
 
 mod calendar;
-pub mod date;
+pub mod input;
 pub mod datetime;
 mod error;
 pub mod fields;
