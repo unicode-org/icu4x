@@ -103,6 +103,13 @@ It is expected that text formatting functions will fit into this output category
 
 For Rust callers, a given ICU4X operation may be provided as a version that takes input via an iterator that yields `char` and provides output by implementing an iterator that yields `char`. For some operations, this may be the sole internal implementation such that the slice versions are merely wrapper around this one. However, for operations that need lookahead, the slice operations may be implemented more efficiently by performing lookahead on the slice as opposed to having an iterator implementation that allocates internally in order to turn lookahead into buffering. The name annotation for the function that creates the iterator is `_iter`.
 
+## Encoding over FFI
+
+We tend to try and match the FFI ecosystem's approach to encoding where possible. So, in JS/WASM, Rust APIs that take in `&str` will instead consume a JS `String` and convert it to UTF-8 on the fly. On the other hand, in C we take in a `char*` and a length, and in C++ we take a `std::string_view`, and assume that they are UTF-8.
+
+The `char8_t` and `std::u8string_view` types were considered but not chosen due to compatibility concerns. `u8"..."` style literals are recommended to be used if available as they will be compatible with `std::string_view`.
+
+
 ## Example: `to_lowercase` without locale-sensitive behavior
 
 This example is instructive, because, due to final sigma, a slice-based implementation can work without heap allocation, but an iterator-based implementation potentially has to allocate on the heap, so specializing the implementation for slices instead of just delegating them to an iterator avoids heap allocation. Furthermore, when there are no locale-sensitive behaviors, the Latin1 case stays within range. (Not true for the uppercasing direction due to 'ÿ'. Also, not true for 'I' when lowercasing with Turkish locale.)
