@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659049387047,
+  "lastUpdate": 1659056742592,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39760,6 +39760,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/best",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f86ed6c03a886fa9e0853d014f6dbf56f2c45c12",
+          "message": "Improvements to MetaZoneCalculator (#2274)",
+          "timestamp": "2022-07-28T17:55:30-07:00",
+          "tree_id": "e2d0f51a57f59a5a5155ad0b021a75f5cf96efc6",
+          "url": "https://github.com/unicode-org/icu4x/commit/f86ed6c03a886fa9e0853d014f6dbf56f2c45c12"
+        },
+        "date": 1659056701289,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44889008,
+            "range": "± 1777950",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           },
