@@ -74,7 +74,8 @@ jobs:
 
     - name: Upload Webpack bundle to Google Cloud Storage
       run: |
-        gsutil cors set ffi/diplomat/wasm/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
+        # debug this later
+        # gsutil cors set ffi/diplomat/wasm/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
         gsutil -m cp -r ffi/diplomat/wasm/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
 
     - uses: actions/checkout@v2
