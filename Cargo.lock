@@ -1311,6 +1311,7 @@ dependencies = [
  "icu_properties",
  "icu_segmenter",
  "icu_testdata",
+ "icu_timezone",
  "icu_uniset",
 ]
 
@@ -1513,6 +1514,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_testdata",
+ "icu_timezone",
  "icu_uniset",
  "itertools",
  "lazy_static",
@@ -1553,6 +1555,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_adapters",
  "icu_testdata",
+ "icu_timezone",
  "litemap",
  "serde",
  "serde-tuple-vec-map",
@@ -1848,6 +1851,7 @@ dependencies = [
  "icu_provider_blob",
  "icu_provider_fs",
  "icu_segmenter",
+ "icu_timezone",
  "icu_uniset",
  "litemap",
  "log",
@@ -1860,6 +1864,22 @@ dependencies = [
  "writeable",
  "zerovec",
  "zip 0.6.2",
+]
+
+[[package]]
+name = "icu_timezone"
+version = "0.6.0"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "icu",
+ "icu_calendar",
+ "icu_locid",
+ "icu_provider",
+ "icu_testdata",
+ "serde",
+ "tinystr 0.6.0",
+ "zerovec",
 ]
 
 [[package]]

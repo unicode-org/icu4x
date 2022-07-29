@@ -77,8 +77,6 @@
 
     .. cpp:enumerator:: DateTimeUnderflowError
 
-    .. cpp:enumerator:: DateTimeInvalidTimeZoneOffsetError
-
     .. cpp:enumerator:: DateTimeOutOfRangeError
 
     .. cpp:enumerator:: DateTimeMissingInputError

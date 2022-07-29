@@ -136,3 +136,7 @@ pub use icu_properties as properties;
 #[cfg(feature = "experimental")]
 #[doc(inline)]
 pub use icu_segmenter as segmenter;
+
+#[cfg(feature = "experimental")]
+#[doc(inline)]
+pub use icu_timezone as timezone;

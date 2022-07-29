@@ -11,6 +11,7 @@ use icu_datetime::provider::time_zones::*;
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use icu_timezone::provider::*;
 use std::collections::HashMap;
 
 mod convert;
@@ -82,14 +83,15 @@ macro_rules! impl_data_provider {
                         // MetaZonePeriodV1 does not require localized time zone data
                         Ok(vec![Default::default()])
                     } else {
-                        Ok(self
-                            .source
-                            .cldr()?
-                            .dates("gregorian")
-                            .list_langs()?
-                            .map(DataLocale::from)
-                            .collect())
-                    }
+
+                    Ok(self
+                        .source
+                        .cldr()?
+                        .dates("gregorian")
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect())
+}
                 }
             }
         )+

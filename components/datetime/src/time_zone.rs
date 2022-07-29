@@ -59,8 +59,7 @@ where
 /// # Examples
 ///
 /// ```
-/// use icu_datetime::date::GmtOffset;
-/// use icu_datetime::mock::time_zone::MockTimeZone;
+/// use icu::timezone::{GmtOffset, CustomTimeZone};
 /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
 /// use icu_locid::locale;
 ///
@@ -74,7 +73,7 @@ where
 /// )
 /// .expect("Failed to create TimeZoneFormatter");
 ///
-/// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
+/// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
 ///
 /// let value = tzf.format_to_string(&time_zone);
 /// ```
@@ -87,7 +86,7 @@ pub struct TimeZoneFormatter {
     pub(super) fallback_unit: TimeZoneFormatterUnit,
 }
 
-/// A container contains all data payloads for TimeZone.
+/// A container contains all data payloads for CustomTimeZone.
 pub struct TimeZoneDataPayloads {
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
@@ -345,7 +344,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu::timezone::CustomTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -603,8 +602,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::date::GmtOffset;
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu::timezone::{GmtOffset, CustomTimeZone};
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -618,7 +616,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
+    /// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let _ = tzf.format(&time_zone);
     /// ```
@@ -638,8 +636,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::date::GmtOffset;
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu::timezone::{GmtOffset, CustomTimeZone};
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -653,7 +650,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
+    /// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let mut buffer = String::new();
     /// tzf.format_to_write(&mut buffer, &time_zone)
@@ -674,8 +671,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu_datetime::date::GmtOffset;
-    /// use icu_datetime::mock::time_zone::MockTimeZone;
+    /// use icu::timezone::{GmtOffset, CustomTimeZone};
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -689,7 +685,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = MockTimeZone::new(Some(GmtOffset::default()), None, None, None);
+    /// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let _ = tzf.format_to_string(&time_zone);
     /// ```
@@ -761,7 +757,7 @@ impl TimeZoneFormatter {
     }
 }
 
-/// Determines which ISO-8601 format should be used to format a [`GmtOffset`](crate::date::GmtOffset).
+/// Determines which ISO-8601 format should be used to format a [`GmtOffset`](icu_timezone::GmtOffset).
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum IsoFormat {

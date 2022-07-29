@@ -1,0 +1,52 @@
+# This file is part of ICU4X. For terms of use, please see the file
+# called LICENSE at the top level of the ICU4X source tree
+# (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+[package]
+name = "icu_timezone"
+description = "API for resolving and manipulating time zone information"
+version = "0.6.0"
+authors = ["The ICU4X Project Developers"]
+edition = "2018"
+readme = "README.md"
+repository = "https://github.com/unicode-org/icu4x"
+license-file = "LICENSE"
+categories = ["internationalization"]
+# Keep this in sync with other crates unless there are exceptions
+include = [
+    "src/**/*",
+    "examples/**/*",
+    "benches/**/*",
+    "tests/**/*",
+    "Cargo.toml",
+    "LICENSE",
+    "README.md"
+]
+
+[features]
+std = []
+bench = []
+serde = ["dep:serde", "zerovec/serde", "tinystr/serde", "icu_provider/serde"]
+datagen = ["serde", "databake", "zerovec/databake", "tinystr/databake"]
+
+[package.metadata.docs.rs]
+all-features = true
+
+[package.metadata.cargo-all-features]
+skip_optional_dependencies = true
+# Bench feature gets tested separately and is only relevant for CI
+denylist = ["bench"]
+
+[dependencies]
+displaydoc = { version = "0.2.3", default-features = false }
+tinystr = { path = "../../utils/tinystr", version = "0.6.0", features = ["alloc", "zerovec"], default-features = false }
+icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
+icu_locid = { version = "0.6", path = "../../components/locid" }
+icu_calendar = { version = "0.6", path = "../../components/calendar" }
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+zerovec = { version = "0.7", path = "../../utils/zerovec", default-features = false, features = ["derive", "yoke"] }
+databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"] }
+
+[dev-dependencies]
+icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
+icu_testdata = { version = "0.6", path = "../../provider/testdata" }

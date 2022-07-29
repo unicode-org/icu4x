@@ -13,9 +13,9 @@ use cldr_serde::time_zones::time_zone_names::*;
 use icu_calendar::DateTime;
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
-    MetaZonePeriodV1, MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id,
-    TimeZoneFormatsV1,
+    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
+use icu_timezone::provider::MetaZonePeriodV1;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use tinystr::TinyStr8;

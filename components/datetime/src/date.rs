@@ -10,6 +10,7 @@ use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
 use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
 use icu_provider::DataLocale;
+use icu_timezone::{CustomTimeZone, GmtOffset};
 use tinystr::TinyStr8;
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
@@ -463,5 +464,23 @@ impl<A: AsCalendar> IsoTimeInput for DateTime<A> {
     /// Gets the fractional second input.
     fn nanosecond(&self) -> Option<NanoSecond> {
         Some(self.time.nanosecond)
+    }
+}
+
+impl TimeZoneInput for CustomTimeZone {
+    fn gmt_offset(&self) -> Option<GmtOffset> {
+        self.gmt_offset
+    }
+
+    fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
+        self.time_zone_id
+    }
+
+    fn metazone_id(&self) -> Option<MetaZoneId> {
+        self.metazone_id
+    }
+
+    fn time_variant(&self) -> Option<TinyStr8> {
+        self.time_variant
     }
 }
