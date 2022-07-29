@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659078905612,
+  "lastUpdate": 1659086942299,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40589,6 +40589,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7216d0ad92b9ff248f1f37619825901be4c4f0dc",
+          "message": "Adding `missing_debug_implementations` lint or todo (#2268)",
+          "timestamp": "2022-07-29T11:16:13+02:00",
+          "tree_id": "a31e363c3815d795fd1936b643c285d0bc665112",
+          "url": "https://github.com/unicode-org/icu4x/commit/7216d0ad92b9ff248f1f37619825901be4c4f0dc"
+        },
+        "date": 1659086905829,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115645,
+            "range": "± 6715",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23207,
+            "range": "± 880",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69683,
+            "range": "± 4143",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 190,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 90,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 85,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
