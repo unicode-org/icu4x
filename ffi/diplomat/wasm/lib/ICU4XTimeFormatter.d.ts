@@ -12,16 +12,16 @@ import { ICU4XTimeLength } from "./ICU4XTimeLength";
 
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html Rust documentation} for more information.
  */
-export class ICU4XGregorianTimeFormatter {
+export class ICU4XTimeFormatter {
 
   /**
 
-   * Creates a new {@link ICU4XGregorianTimeFormatter `ICU4XGregorianTimeFormatter`} from locale data.
+   * Creates a new {@link ICU4XTimeFormatter `ICU4XTimeFormatter`} from locale data.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.DateFormatter.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(locale: ICU4XLocale, provider: ICU4XDataProvider, length: ICU4XTimeLength, preferences: ICU4XHourCyclePreference): ICU4XGregorianTimeFormatter | never;
+  static try_new(locale: ICU4XLocale, provider: ICU4XDataProvider, length: ICU4XTimeLength, preferences: ICU4XHourCyclePreference): ICU4XTimeFormatter | never;
 
   /**
 
@@ -30,5 +30,5 @@ export class ICU4XGregorianTimeFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  format_datetime(value: ICU4XGregorianDateTime): string | never;
+  format_gregorian_datetime(value: ICU4XGregorianDateTime): string | never;
 }
