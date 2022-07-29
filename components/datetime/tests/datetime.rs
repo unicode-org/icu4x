@@ -25,8 +25,8 @@ use icu_datetime::{
     pattern::runtime,
     provider::{
         calendar::{
-            DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimePatternsV1Marker, TimeSymbolsV1Marker,
+            DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
     },
@@ -184,8 +184,8 @@ fn assert_fixture_element<A, D>(
     A::Calendar: IncludedInAnyCalendar,
     D: DataProvider<DateSymbolsV1Marker>
         + DataProvider<TimeSymbolsV1Marker>
-        + DataProvider<DatePatternsV1Marker>
-        + DataProvider<TimePatternsV1Marker>
+        + DataProvider<DateLengthsV1Marker>
+        + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + DataProvider<DecimalSymbolsV1Marker>
         + DataProvider<OrdinalV1Marker>
@@ -234,7 +234,7 @@ fn assert_fixture_element<A, D>(
             let df =
                 DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
                     .unwrap();
-            let tf = TimeFormatter::<A::Calendar>::try_new(
+            let tf = TimeFormatter::try_new(
                 &locale.into(),
                 provider,
                 bag.time.unwrap(),
@@ -278,7 +278,7 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::<A::Calendar>::try_new(
+            let tf = TimeFormatter::try_new(
                 &locale.into(),
                 provider,
                 bag.time.unwrap(),
@@ -376,12 +376,12 @@ fn test_dayperiod_patterns() {
             locale: &data_locale,
             metadata: Default::default(),
         };
-        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
+        let mut date_patterns_data: DataPayload<DateLengthsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -428,11 +428,11 @@ fn test_dayperiod_patterns() {
                                 data: skeleton_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
-                                key: DatePatternsV1Marker::KEY,
+                                key: DateLengthsV1Marker::KEY,
                                 data: date_patterns_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
-                                key: TimePatternsV1Marker::KEY,
+                                key: TimeLengthsV1Marker::KEY,
                                 data: time_patterns_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
@@ -589,9 +589,9 @@ fn test_time_zone_patterns() {
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         time_zone.time_variant = config.time_variant.take();
 
-        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
+        let mut date_patterns_data: DataPayload<DateLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
@@ -628,11 +628,11 @@ fn test_time_zone_patterns() {
                         data: skeleton_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
-                        key: DatePatternsV1Marker::KEY,
+                        key: DateLengthsV1Marker::KEY,
                         data: date_patterns_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
-                        key: TimePatternsV1Marker::KEY,
+                        key: TimeLengthsV1Marker::KEY,
                         data: time_patterns_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
