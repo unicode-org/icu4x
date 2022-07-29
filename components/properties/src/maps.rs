@@ -81,8 +81,8 @@ impl<T: TrieValue> CodePointMapData<T> {
         let set = PropertyCodePointMapV1::from_code_point_trie(trie);
         CodePointMapData::from_data(DataPayload::<ErasedMaplikeMarker<T>>::from_owned(set))
     }
-    /// Convert this type to a [`CodePointTrie`] as a borrowed value. if possible,
-    /// otherwise allocating a new [`CodePointTrie`].
+
+    /// Convert this type to a [`CodePointTrie`] as a borrowed value.
     ///
     /// The data backing this is extensible and supports multiple implementations.
     /// Currently it is always [`CodePointTrie`]; however in the future more backends may be

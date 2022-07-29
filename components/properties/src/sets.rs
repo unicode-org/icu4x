@@ -81,8 +81,7 @@ impl CodePointSetData {
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
     }
 
-    /// Convert this type to a [`CodePointInversionList`], borrowing if possible,
-    /// otherwise allocating a new [`CodePointInversionList`].
+    /// Convert this type to a [`CodePointInversionList`] as a borrowed value.
     ///
     /// The data backing this is extensible and supports multiple implementations.
     /// Currently it is always [`CodePointInversionList`]; however in the future more backends may be
