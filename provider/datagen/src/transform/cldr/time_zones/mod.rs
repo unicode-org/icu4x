@@ -111,6 +111,7 @@ impl_data_provider!(
 
 #[cfg(test)]
 mod tests {
+    use icu_timezone::TimeVariant;
     use tinystr::tinystr;
 
     use super::*;
@@ -186,7 +187,7 @@ mod tests {
             specific_names_long
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "aucw")), &tinystr!(8, "standard"))
+                .get(&MetaZoneId(tinystr!(4, "aucw")), &TimeVariant::standard())
                 .unwrap()
         );
         assert_eq!(
@@ -196,7 +197,7 @@ mod tests {
                 .overrides
                 .get(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
-                    &tinystr!(8, "standard")
+                    &TimeVariant::standard()
                 )
                 .unwrap()
         );
@@ -239,7 +240,7 @@ mod tests {
             specific_names_short
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "ampa")), &tinystr!(8, "daylight"))
+                .get(&MetaZoneId(tinystr!(4, "ampa")), &TimeVariant::daylight())
                 .unwrap()
         );
         assert_eq!(
@@ -249,7 +250,7 @@ mod tests {
                 .overrides
                 .get(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
-                    &tinystr!(8, "standard")
+                    &TimeVariant::standard()
                 )
                 .unwrap()
         );
