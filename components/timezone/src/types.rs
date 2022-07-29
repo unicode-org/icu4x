@@ -150,7 +150,7 @@ impl TimeVariant {
     }
     /// Return the `"daylight"` `TimeVariant`
     pub const fn daylight() -> Self {
-        Self(tinystr!(8, "standard"))
+        Self(tinystr!(8, "daylight"))
     }
 }
 
