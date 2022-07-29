@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659078729884,
+  "lastUpdate": 1659086819373,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39851,6 +39851,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 58146105,
             "range": "± 873018",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7216d0ad92b9ff248f1f37619825901be4c4f0dc",
+          "message": "Adding `missing_debug_implementations` lint or todo (#2268)",
+          "timestamp": "2022-07-29T11:16:13+02:00",
+          "tree_id": "a31e363c3815d795fd1936b643c285d0bc665112",
+          "url": "https://github.com/unicode-org/icu4x/commit/7216d0ad92b9ff248f1f37619825901be4c4f0dc"
+        },
+        "date": 1659086784451,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44399875,
+            "range": "± 414008",
             "unit": "ns/iter"
           },
           {
