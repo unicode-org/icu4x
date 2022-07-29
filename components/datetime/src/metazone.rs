@@ -11,8 +11,9 @@ use icu_calendar::Iso;
 use icu_provider::prelude::*;
 use zerovec::ule::AsULE;
 
-/// [`MetaZoneCalculator`] uses data from the [data provider], the selected [`Locale`] to calculate
-/// metazone id.
+/// [`MetaZoneCalculator`] uses data from the [data provider] to calculate metazone id.
+///
+/// [data provider]: icu_provider
 pub struct MetaZoneCalculator {
     pub(super) metazone_period: DataPayload<MetaZonePeriodV1Marker>,
 }
@@ -31,9 +32,7 @@ impl MetaZoneCalculator {
     ///
     /// assert!(mzc.is_ok());
     /// ```
-    pub fn try_new<P>(
-        zone_provider: &P,
-    ) -> Result<Self, DateTimeFormatterError>
+    pub fn try_new<P>(zone_provider: &P) -> Result<Self, DateTimeFormatterError>
     where
         P: DataProvider<MetaZonePeriodV1Marker> + ?Sized,
     {
