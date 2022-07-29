@@ -69,7 +69,7 @@
 
 .. cpp:class:: ICU4XGregorianTimeFormatter
 
-    An ICU4X TimeFormatter object capable of formatting a :cpp:class:`ICU4XGregorianDateTime` as a string, using the Gregorian Calendar.
+    An ICU4X TimeFormatter object capable of formatting a :cpp:class:`ICU4XGregorianDateTime` as a string
 
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html>`__ for more information.
 

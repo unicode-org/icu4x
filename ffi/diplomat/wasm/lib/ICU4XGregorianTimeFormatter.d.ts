@@ -8,7 +8,7 @@ import { ICU4XTimeLength } from "./ICU4XTimeLength";
 
 /**
 
- * An ICU4X TimeFormatter object capable of formatting a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} as a string, using the Gregorian Calendar.
+ * An ICU4X TimeFormatter object capable of formatting a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} as a string
 
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html Rust documentation} for more information.
  */

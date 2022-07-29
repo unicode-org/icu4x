@@ -29,8 +29,7 @@ struct ICU4XGregorianTimeFormatterDeleter {
 };
 
 /**
- * An ICU4X TimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string,
- * using the Gregorian Calendar.
+ * An ICU4X TimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string
  * 
  * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html) for more information.
  */
