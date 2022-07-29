@@ -216,7 +216,7 @@ impl_data_provider!(
         calendared = true
     ),
     (
-        DatePatternsV1Marker,
+        DateLengthsV1Marker,
         |dates, _| DatePatternsV1::from(dates),
         calendared = true
     ),
@@ -238,7 +238,7 @@ mod test {
         let provider = crate::DatagenProvider::for_test();
 
         let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DatePatternsV1Marker> = provider
+        let cs_dates: DataPayload<DateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
@@ -255,7 +255,7 @@ mod test {
         let provider = crate::DatagenProvider::for_test();
 
         let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DatePatternsV1Marker> = provider
+        let cs_dates: DataPayload<DateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),

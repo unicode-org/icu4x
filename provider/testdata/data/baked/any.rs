@@ -17,8 +17,8 @@ impl AnyProvider for BakedDataProvider {
             ::icu_collator::provider::CollationReorderingV1Marker::KEY.get_hash();
         const COLLATIONSPECIALPRIMARIESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.get_hash();
-        const DATEPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::DatePatternsV1Marker::KEY.get_hash();
+        const DATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::DateLengthsV1Marker::KEY.get_hash();
         const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
         const DATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
@@ -245,7 +245,7 @@ impl AnyProvider for BakedDataProvider {
                 COLLATIONSPECIALPRIMARIESV1MARKER => collator::prim_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                DATEPATTERNSV1MARKER => datetime::datelengths_v1_u_ca::DATA
+                DATELENGTHSV1MARKER => datetime::datelengths_v1_u_ca::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1_u_ca::DATA

@@ -14,7 +14,7 @@ pub use skeletons::*;
 pub use symbols::*;
 
 #[icu_provider::data_struct(marker(
-    DatePatternsV1Marker,
+    DateLengthsV1Marker,
     "datetime/datelengths@1",
     extension_key = "ca"
 ))]

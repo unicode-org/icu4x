@@ -11,7 +11,7 @@ use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
 use crate::provider::calendar::{
     patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
-    DatePatternsV1Marker, DateSkeletonPatternsV1Marker, TimeLengthsV1Marker,
+    DateLengthsV1Marker, DateSkeletonPatternsV1Marker, TimeLengthsV1Marker,
 };
 use crate::provider::calendar::{DatePatternsV1, TimeLengthsV1};
 use crate::skeleton;
@@ -101,9 +101,9 @@ where
 fn date_patterns_data_payload<D>(
     data_provider: &D,
     locale: &DataLocale,
-) -> Result<DataPayload<DatePatternsV1Marker>>
+) -> Result<DataPayload<DateLengthsV1Marker>>
 where
-    D: DataProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DateLengthsV1Marker> + ?Sized,
 {
     let data = data_provider
         .load(DataRequest {
@@ -121,7 +121,7 @@ pub(crate) fn pattern_for_date_length<D>(
     length: length::Date,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
 where
-    D: DataProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DateLengthsV1Marker> + ?Sized,
 {
     let patterns_data = date_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -137,7 +137,7 @@ pub(crate) fn generic_pattern_for_date_length<D>(
     length: length::Date,
 ) -> Result<DataPayload<GenericPatternV1Marker>>
 where
-    D: DataProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DateLengthsV1Marker> + ?Sized,
 {
     let patterns_data = date_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -168,7 +168,7 @@ impl<D: ?Sized> Clone for PatternSelector<'_, D> {
 
 impl<D> PatternSelector<'_, D>
 where
-    D: DataProvider<DatePatternsV1Marker>
+    D: DataProvider<DateLengthsV1Marker>
         + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + ?Sized,

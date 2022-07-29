@@ -14,7 +14,7 @@ use crate::{
     provider,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{
-        patterns::GenericPatternV1Marker, DatePatternsV1Marker, DateSkeletonPatternsV1Marker,
+        patterns::GenericPatternV1Marker, DateLengthsV1Marker, DateSkeletonPatternsV1Marker,
         DateSymbolsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
@@ -182,7 +182,7 @@ impl DateFormatter {
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DateLengthsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -380,7 +380,7 @@ impl DateTimeFormatter {
     where
         D: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DateLengthsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>

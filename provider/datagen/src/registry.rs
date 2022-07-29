@@ -95,7 +95,7 @@ registry!(
     CompatibilityDecompositionSupplementV1Marker,
     CompatibilityDecompositionTablesV1Marker,
     DashV1Marker,
-    DatePatternsV1Marker,
+    DateLengthsV1Marker,
     DateSkeletonPatternsV1Marker,
     DateSymbolsV1Marker,
     DecimalSymbolsV1Marker,

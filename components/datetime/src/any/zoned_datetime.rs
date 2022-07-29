@@ -13,7 +13,7 @@ use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{
     self,
     calendar::{
-        DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+        DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
         TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     week_data::WeekDataV1Marker,
@@ -135,7 +135,7 @@ impl ZonedAnyDateTimeFormatter {
     where
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DateLengthsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>

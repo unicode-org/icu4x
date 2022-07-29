@@ -8,7 +8,7 @@
 use crate::{
     options::{components, length, preferences, DateTimeFormatterOptions},
     provider::calendar::{
-        DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+        DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
         TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
@@ -257,7 +257,7 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DateLengthsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -477,7 +477,7 @@ where {
     where
         D: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
+            + DataProvider<DateLengthsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
