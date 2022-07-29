@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659056236582,
+  "lastUpdate": 1659078285576,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21953,6 +21953,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f86ed6c03a886fa9e0853d014f6dbf56f2c45c12"
         },
         "date": 1659056201131,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6404784d61eb1d450092c96bccd5504209761c28",
+          "message": "Fix the naming of the rounding modes. (#2261)\n\nFix the naming of the rounding modes.",
+          "timestamp": "2022-07-29T09:02:57+02:00",
+          "tree_id": "43831354d3dd458ad3b54bbe88804ce921012319",
+          "url": "https://github.com/unicode-org/icu4x/commit/6404784d61eb1d450092c96bccd5504209761c28"
+        },
+        "date": 1659078249732,
         "tool": "ndjson",
         "benches": [
           {
