@@ -1686,7 +1686,9 @@ pub fn get_for_general_category_group(
     enum_val: GeneralCategoryGroup,
 ) -> Result<CodePointSetData, PropertiesError> {
     let gc_map_payload = maps::get_general_category(provider)?;
-    let trie = gc_map_payload.to_code_point_trie();
+    let trie = gc_map_payload
+        .to_code_point_trie()
+        .expect("The data should be valid");
     let matching_gc_ranges = trie
         .iter_ranges()
         .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)

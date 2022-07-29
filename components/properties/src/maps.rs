@@ -88,10 +88,10 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// Currently it is always [`CodePointTrie`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
-    /// If using this function it is preferable to stick to [`CodePointTrie`] representations
-    /// in the data, however exceptions can be made if the performance hit is considered to
-    /// be okay.
-    pub fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
+    /// This method returns an `Option` in order to return `None` when the backing data provider
+    /// cannot return a [`CodePointTrie`], or cannot do so within the expected constant time
+    /// constraint.
+    pub fn to_code_point_trie(&self) -> Option<CodePointTrie<'_, T>> {
         self.data.get().to_code_point_trie()
     }
 }
