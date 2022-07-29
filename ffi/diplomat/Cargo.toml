@@ -44,6 +44,8 @@ deserialize_json = ["icu_provider/deserialize_json"]
 deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
 
+completeness = ["syn-inline-mod", "serde_json", "rustdoc-types", "diplomat_core", "lazy_static", "elsa"]
+
 [dependencies]
 fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_calendar = { version = "0.6", path = "../../components/calendar"}
@@ -69,11 +71,13 @@ diplomat = { git = "https://github.com/robertbastian/diplomat", rev = "6945dd5b9
 diplomat-runtime = { git = "https://github.com/robertbastian/diplomat", rev = "6945dd5b9c76814b48d2573888b05985c2b57eb6" }
 icu_testdata = { version = "0.6", path = "../../provider/testdata", optional = true }
 
-[dev-dependencies]
-syn-inline-mod = "0.4.0"
-serde_json = "1"
-rustdoc-types = "0.11"
-diplomat_core = { git = "https://github.com/robertbastian/diplomat", rev = "6945dd5b9c76814b48d2573888b05985c2b57eb6" }
+# completeness feature
+syn-inline-mod = { version =  "0.4.0", optional = true }
+serde_json = { version =  "1", optional = true }
+rustdoc-types = { version =  "0.11", optional = true }
+diplomat_core = { git = "https://github.com/robertbastian/diplomat", rev = "8f045a049dd47ed8211396254eb6b618af394b43", optional = true }
+lazy_static = { version =  "1", optional = true }
+elsa = { version = "1", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
@@ -81,6 +85,7 @@ log = { version = "0.4" }
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { version = "0.6", path = "../../provider/fs/", optional = true }
 
-[[test]]
+[[bin]]
 name = "completeness"
-path = "tests/completeness.rs"
+path = "src/bin/completeness.rs"
+required-features = ["completeness"]
