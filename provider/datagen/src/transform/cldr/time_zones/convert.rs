@@ -16,6 +16,7 @@ use icu_datetime::provider::time_zones::{
     MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
 use icu_timezone::provider::MetaZonePeriodV1;
+use icu_timezone::TimeVariant;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
@@ -427,15 +428,15 @@ long_short_impls!(
 
 fn iterate_zone_format_for_meta_zone_id(
     pair: (MetaZoneId, ZoneFormat),
-) -> impl Iterator<Item = (MetaZoneId, TinyStr8, String)> {
+) -> impl Iterator<Item = (MetaZoneId, TimeVariant, String)> {
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
                 key1,
-                key.parse::<TinyStr8>()
-                    .expect("Time-zone variant was not compatible with TinyStr8"),
+                key.parse::<TimeVariant>()
+                    .expect("Time-zone variant was not compatible with TimeVariant"),
                 value,
             )
         })
@@ -443,15 +444,15 @@ fn iterate_zone_format_for_meta_zone_id(
 
 fn iterate_zone_format_for_time_zone_id(
     pair: (TimeZoneBcp47Id, ZoneFormat),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, TinyStr8, String)> {
+) -> impl Iterator<Item = (TimeZoneBcp47Id, TimeVariant, String)> {
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
                 key1,
-                key.parse::<TinyStr8>()
-                    .expect("Time-zone variant was not compatible with TinyStr8"),
+                key.parse::<TimeVariant>()
+                    .expect("Time-zone variant was not compatible with TimeVariant"),
                 value,
             )
         })
