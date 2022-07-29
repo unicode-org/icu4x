@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
+use icu_provider::prelude::DataError;
 
 #[cfg(feature = "std")]
 impl std::error::Error for TimeZoneError {}
@@ -18,4 +19,13 @@ pub enum TimeZoneError {
     /// The time zone offset was invalid.
     #[displaydoc("Failed to parse time-zone offset")]
     InvalidOffset,
+    /// An error originating inside of the [data provider](icu_provider).
+    #[displaydoc("{0}")]
+    DataProvider(DataError),
+}
+
+impl From<DataError> for TimeZoneError {
+    fn from(e: DataError) -> Self {
+        TimeZoneError::DataProvider(e)
+    }
 }

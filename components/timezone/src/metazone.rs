@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use crate::provider::{MetaZoneId, TimeZoneBcp47Id};
 
-use crate::error::DateTimeFormatterError;
-use crate::provider::time_zones::MetaZonePeriodV1Marker;
+use crate::error::TimeZoneError;
+use crate::provider::MetaZonePeriodV1Marker;
 use icu_calendar::DateTime;
 use icu_calendar::Iso;
 use icu_provider::prelude::*;
@@ -32,7 +32,7 @@ impl MetaZoneCalculator {
     ///
     /// assert!(mzc.is_ok());
     /// ```
-    pub fn try_new<P>(zone_provider: &P) -> Result<Self, DateTimeFormatterError>
+    pub fn try_new<P>(zone_provider: &P) -> Result<Self, TimeZoneError>
     where
         P: DataProvider<MetaZonePeriodV1Marker> + ?Sized,
     {

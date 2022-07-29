@@ -5,8 +5,8 @@
 use crate::provider::{MetaZoneId, TimeZoneBcp47Id};
 use tinystr::TinyStr8;
 
-use crate::{GmtOffset, TimeZoneError};
 use crate::metazone::MetaZoneCalculator;
+use crate::{GmtOffset, TimeZoneError};
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
 
