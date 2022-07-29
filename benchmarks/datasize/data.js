@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659132192687,
+  "lastUpdate": 1659134031179,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22133,6 +22133,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3e1fa176d47cea0470287fc2c61ac0c3261a5a63"
         },
         "date": 1659132157223,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a32efd04ed51e057ee232ebff763d0625807ca7a",
+          "message": "Avoid regression (#2286)",
+          "timestamp": "2022-07-29T22:32:15Z",
+          "tree_id": "53cf62bcb3ac840eff142cf2158371aa4002c824",
+          "url": "https://github.com/unicode-org/icu4x/commit/a32efd04ed51e057ee232ebff763d0625807ca7a"
+        },
+        "date": 1659134000014,
         "tool": "ndjson",
         "benches": [
           {
