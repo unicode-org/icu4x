@@ -14,7 +14,6 @@ use core::ops::RangeInclusive;
 use icu_codepointtrie::{CodePointMapRangeIterator, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
-use zerofrom::ZeroFrom;
 
 /// A set of characters with a particular property.
 ///
@@ -139,9 +138,9 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn to_code_point_trie(&self) -> Option<CodePointTrie<'_, T>> {
+    pub(crate) fn as_code_point_trie(&self) -> Option<&CodePointTrie<'data, T>> {
         match *self {
-            Self::CodePointTrie(ref t) => Some(ZeroFrom::zero_from(t)),
+            Self::CodePointTrie(ref t) => Some(t),
             // any other backing data structure that cannot return a CPT in O(1) time should return None
         }
     }

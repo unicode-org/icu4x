@@ -91,8 +91,8 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// This method returns an `Option` in order to return `None` when the backing data provider
     /// cannot return a [`CodePointTrie`], or cannot do so within the expected constant time
     /// constraint.
-    pub fn to_code_point_trie(&self) -> Option<CodePointTrie<'_, T>> {
-        self.data.get().to_code_point_trie()
+    pub fn as_code_point_trie(&self) -> Option<&CodePointTrie<'_, T>> {
+        self.data.get().as_code_point_trie()
     }
 }
 
