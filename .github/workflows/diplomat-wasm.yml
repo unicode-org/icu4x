@@ -79,7 +79,7 @@ jobs:
         gsutil -m cp -r ffi/diplomat/wasm/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
 
     - name: Copy index.html to gh-pages
-    - uses: actions/checkout@v2
+      uses: actions/checkout@v2
       with:
         repository: QnnOkabayashi/icu4x
         ref: gh-pages
