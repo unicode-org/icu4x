@@ -13,12 +13,12 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
-    input::{DateTimeInput, TimeZoneInput},
-    input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
     format::{
         datetime,
         zoned_datetime::{self, FormattedZonedDateTime},
     },
+    input::{DateTimeInput, TimeZoneInput},
+    input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
     options::DateTimeFormatterOptions,
     pattern::runtime::PatternPlurals,
     provider::{

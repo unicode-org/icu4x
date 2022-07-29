@@ -6,8 +6,8 @@
 //! Central to this is the [`DateTimeFormatter`].
 
 use crate::{
-    input::{DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
     format::datetime,
+    input::{DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
     options::components,
     options::{length, preferences, DateTimeFormatterOptions},
     pattern::runtime::PatternPlurals,

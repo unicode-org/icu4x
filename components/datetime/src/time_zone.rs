@@ -11,10 +11,10 @@ use smallvec::SmallVec;
 use tinystr::tinystr;
 
 use crate::{
-    input::TimeZoneInput,
     error::DateTimeFormatterError,
     fields::{FieldSymbol, TimeZone},
     format::time_zone::FormattedTimeZone,
+    input::TimeZoneInput,
     pattern::{PatternError, PatternItem},
     provider::{self, calendar::patterns::PatternPluralsFromPatternsV1Marker},
 };

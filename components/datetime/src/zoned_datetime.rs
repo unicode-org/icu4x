@@ -10,8 +10,8 @@ use icu_provider::prelude::*;
 
 use crate::{
     calendar,
-    input::{DateTimeInput, TimeZoneInput},
     format::zoned_datetime::FormattedZonedDateTime,
+    input::{DateTimeInput, TimeZoneInput},
     options::DateTimeFormatterOptions,
     provider::{
         self,

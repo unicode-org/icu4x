@@ -84,11 +84,11 @@
 extern crate alloc;
 
 mod calendar;
-pub mod input;
 pub mod datetime;
 mod error;
 pub mod fields;
 mod format;
+pub mod input;
 pub mod mock;
 pub mod options;
 #[doc(hidden)]
