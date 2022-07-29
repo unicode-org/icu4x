@@ -114,9 +114,9 @@ fn operands(c: &mut Criterion) {
 
         {
             let samples = [
-                FixedDecimal::from(1 as i128).multiplied_pow10(0),
-                FixedDecimal::from(123450 as i128).multiplied_pow10(-4),
-                FixedDecimal::from(2500 as i128).multiplied_pow10(-2),
+                FixedDecimal::from(1_i128).multiplied_pow10(0),
+                FixedDecimal::from(123450_i128).multiplied_pow10(-4),
+                FixedDecimal::from(2500_i128).multiplied_pow10(-2),
             ];
             let mut group = c.benchmark_group("plurals/operands/create/from_fixed_decimal/samples");
             for s in samples.iter() {
