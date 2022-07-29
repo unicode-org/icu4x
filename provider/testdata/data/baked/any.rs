@@ -23,8 +23,8 @@ impl AnyProvider for BakedDataProvider {
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
         const DATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY.get_hash();
-        const TIMEPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::TimePatternsV1Marker::KEY.get_hash();
+        const TIMELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY.get_hash();
         const TIMESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY.get_hash();
         const EXEMPLARCITIESV1MARKER: ::icu_provider::DataKeyHash =
@@ -260,7 +260,7 @@ impl AnyProvider for BakedDataProvider {
                 DATESYMBOLSV1MARKER => datetime::datesymbols_v1_u_ca::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                TIMEPATTERNSV1MARKER => datetime::timelengths_v1::DATA
+                TIMELENGTHSV1MARKER => datetime::timelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 TIMESYMBOLSV1MARKER => datetime::timesymbols_v1::DATA

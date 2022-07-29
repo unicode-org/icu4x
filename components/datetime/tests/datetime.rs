@@ -26,7 +26,7 @@ use icu_datetime::{
     provider::{
         calendar::{
             DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimePatternsV1Marker, TimeSymbolsV1Marker,
+            TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
     },
@@ -185,7 +185,7 @@ fn assert_fixture_element<A, D>(
     D: DataProvider<DateSymbolsV1Marker>
         + DataProvider<TimeSymbolsV1Marker>
         + DataProvider<DatePatternsV1Marker>
-        + DataProvider<TimePatternsV1Marker>
+        + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + DataProvider<DecimalSymbolsV1Marker>
         + DataProvider<OrdinalV1Marker>
@@ -381,7 +381,7 @@ fn test_dayperiod_patterns() {
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -432,7 +432,7 @@ fn test_dayperiod_patterns() {
                                 data: date_patterns_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
-                                key: TimePatternsV1Marker::KEY,
+                                key: TimeLengthsV1Marker::KEY,
                                 data: time_patterns_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
@@ -591,7 +591,7 @@ fn test_time_zone_patterns() {
 
         let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
@@ -632,7 +632,7 @@ fn test_time_zone_patterns() {
                         data: date_patterns_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
-                        key: TimePatternsV1Marker::KEY,
+                        key: TimeLengthsV1Marker::KEY,
                         data: time_patterns_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {

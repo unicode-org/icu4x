@@ -221,8 +221,8 @@ impl_data_provider!(
         calendared = true
     ),
     (
-        TimePatternsV1Marker,
-        |dates, _| TimePatternsV1::from(dates),
+        TimeLengthsV1Marker,
+        |dates, _| TimeLengthsV1::from(dates),
         calendared = false
     )
 );

@@ -151,14 +151,14 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker> for B
         })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::TimePatternsV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::calendar::TimeLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::TimeLengthsV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *datetime::timelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimePatternsV1Marker::KEY, req))?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY, req))?,
             ))),
         })
     }

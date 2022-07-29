@@ -1,5 +1,5 @@
 // @generated
-type DataStruct = < :: icu_datetime :: provider :: calendar :: TimePatternsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu_datetime :: provider :: calendar :: TimeLengthsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG_BN_CCP_EN_EN_001_FIL),
@@ -23,7 +23,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("und", EN_ZA_FR_RU_SR_SR_CYRL_SR_LATN_UND),
     ]);
 static AR_AR_EG_BN_CCP_EN_EN_001_FIL: &DataStruct =
-    &::icu_datetime::provider::calendar::TimePatternsV1 {
+    &::icu_datetime::provider::calendar::TimeLengthsV1 {
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
@@ -104,7 +104,7 @@ static AR_AR_EG_BN_CCP_EN_EN_001_FIL: &DataStruct =
         preferred_hour_cycle: ::icu_datetime::pattern::CoarseHourCycle::H11H12,
     };
 static EN_ZA_FR_RU_SR_SR_CYRL_SR_LATN_UND: &DataStruct =
-    &::icu_datetime::provider::calendar::TimePatternsV1 {
+    &::icu_datetime::provider::calendar::TimeLengthsV1 {
         time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
             full: ::icu_datetime::pattern::runtime::Pattern {
                 items: unsafe {
@@ -184,7 +184,7 @@ static EN_ZA_FR_RU_SR_SR_CYRL_SR_LATN_UND: &DataStruct =
         },
         preferred_hour_cycle: ::icu_datetime::pattern::CoarseHourCycle::H23H24,
     };
-static ES: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 {
+static ES: &DataStruct = &::icu_datetime::provider::calendar::TimeLengthsV1 {
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
@@ -264,7 +264,7 @@ static ES: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 {
     },
     preferred_hour_cycle: ::icu_datetime::pattern::CoarseHourCycle::H23H24,
 };
-static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 {
+static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::TimeLengthsV1 {
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
@@ -344,7 +344,7 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 
     },
     preferred_hour_cycle: ::icu_datetime::pattern::CoarseHourCycle::H23H24,
 };
-static JA: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 {
+static JA: &DataStruct = &::icu_datetime::provider::calendar::TimeLengthsV1 {
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
@@ -421,7 +421,7 @@ static JA: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 {
     },
     preferred_hour_cycle: ::icu_datetime::pattern::CoarseHourCycle::H23H24,
 };
-static TH: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 {
+static TH: &DataStruct = &::icu_datetime::provider::calendar::TimeLengthsV1 {
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {
@@ -509,7 +509,7 @@ static TH: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 {
     },
     preferred_hour_cycle: ::icu_datetime::pattern::CoarseHourCycle::H23H24,
 };
-static TR: &DataStruct = &::icu_datetime::provider::calendar::TimePatternsV1 {
+static TR: &DataStruct = &::icu_datetime::provider::calendar::TimeLengthsV1 {
     time_h11_h12: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
         full: ::icu_datetime::pattern::runtime::Pattern {
             items: unsafe {

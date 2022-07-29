@@ -11,9 +11,9 @@ use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
 use crate::provider::calendar::{
     patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
-    DatePatternsV1Marker, DateSkeletonPatternsV1Marker, TimePatternsV1Marker,
+    DatePatternsV1Marker, DateSkeletonPatternsV1Marker, TimeLengthsV1Marker,
 };
-use crate::provider::calendar::{DatePatternsV1, TimePatternsV1};
+use crate::provider::calendar::{DatePatternsV1, TimeLengthsV1};
 use crate::skeleton;
 use icu_calendar::types::{Era, MonthCode};
 use icu_provider::prelude::*;
@@ -21,7 +21,7 @@ use icu_provider::prelude::*;
 type Result<T> = core::result::Result<T, DateTimeFormatterError>;
 
 fn pattern_for_time_length_inner<'data>(
-    data: TimePatternsV1<'data>,
+    data: TimeLengthsV1<'data>,
     length: length::Time,
     preferences: &Option<preferences::Bag>,
 ) -> PatternPlurals<'data> {
@@ -56,9 +56,9 @@ fn pattern_for_time_length_inner<'data>(
 fn time_patterns_data_payload<D>(
     data_provider: &D,
     locale: &DataLocale,
-) -> Result<DataPayload<TimePatternsV1Marker>>
+) -> Result<DataPayload<TimeLengthsV1Marker>>
 where
-    D: DataProvider<TimePatternsV1Marker> + ?Sized,
+    D: DataProvider<TimeLengthsV1Marker> + ?Sized,
 {
     let data = data_provider
         .load(DataRequest {
@@ -89,7 +89,7 @@ pub(crate) fn pattern_for_time_length<'a, D>(
     preferences: Option<preferences::Bag>,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
 where
-    D: DataProvider<TimePatternsV1Marker> + ?Sized,
+    D: DataProvider<TimeLengthsV1Marker> + ?Sized,
 {
     let patterns_data = time_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -169,7 +169,7 @@ impl<D: ?Sized> Clone for PatternSelector<'_, D> {
 impl<D> PatternSelector<'_, D>
 where
     D: DataProvider<DatePatternsV1Marker>
-        + DataProvider<TimePatternsV1Marker>
+        + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + ?Sized,
 {

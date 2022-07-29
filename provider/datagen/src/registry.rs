@@ -161,7 +161,7 @@ registry!(
     SentenceTerminalV1Marker,
     SoftDottedV1Marker,
     TerminalPunctuationV1Marker,
-    TimePatternsV1Marker,
+    TimeLengthsV1Marker,
     TimeSymbolsV1Marker,
     TimeZoneFormatsV1Marker,
     UnifiedIdeographV1Marker,
