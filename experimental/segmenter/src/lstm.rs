@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::lstm_bies::Lstm;
-use crate::lstm_structs::LstmDataV1Marker;
+use crate::provider::LstmDataV1Marker;
 
 use alloc::string::String;
 use alloc::string::ToString;
@@ -105,7 +105,7 @@ impl<'l> LstmSegmenter<'l> {
 #[cfg(test)]
 mod tests {
     use crate::lstm::*;
-    use crate::LstmDataV1;
+    use crate::provider::LstmDataV1;
     use icu_locid::locale;
     use icu_provider::prelude::*;
 

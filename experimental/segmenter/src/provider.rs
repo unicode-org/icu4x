@@ -6,9 +6,15 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use alloc::borrow::Cow;
 use icu_codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::ZeroVec;
+use zerovec::{ZeroMap, ZeroVec};
+
+#[cfg(feature = "lstm")]
+use crate::lstm_error::Error;
+#[cfg(feature = "lstm")]
+use ndarray::{Array, Array1, Array2};
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
@@ -79,4 +85,92 @@ pub struct UCharDictionaryBreakDataV1<'data> {
     /// Dictionary data of char16trie.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub trie_data: ZeroVec<'data, u16>,
+}
+
+/// The struct that stores a LSTM's matrix.
+#[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct LstmMatrix<'data> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub dim: ZeroVec<'data, i16>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub data: ZeroVec<'data, f32>,
+}
+
+#[cfg(feature = "lstm")]
+impl<'data> LstmMatrix<'data> {
+    pub fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
+        if self.dim.len() == 1 {
+            Ok(Array::from_vec(self.data.to_vec()))
+        } else {
+            Err(Error::DimensionMismatch)
+        }
+    }
+
+    pub fn as_ndarray2(&self) -> Result<Array2<f32>, Error> {
+        if self.dim.len() == 2 {
+            Array::from_shape_vec(
+                (
+                    self.dim.get(0).unwrap() as usize,
+                    self.dim.get(1).unwrap() as usize,
+                ),
+                self.data.to_vec(),
+            )
+            .map_err(|_| Error::DimensionMismatch)
+        } else {
+            Err(Error::DimensionMismatch)
+        }
+    }
+}
+
+/// The struct that stores a LSTM model.
+#[icu_provider::data_struct(LstmDataV1Marker = "segmenter/lstm@1")]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct LstmDataV1<'data> {
+    /// Name of the model
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub model: Cow<'data, str>,
+    /// The grapheme cluster dictionary used to train the model
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub dic: ZeroMap<'data, str, i16>,
+    /// The matrix associateed with embedding layer
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat1: LstmMatrix<'data>,
+    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat2: LstmMatrix<'data>,
+    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat3: LstmMatrix<'data>,
+    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat4: LstmMatrix<'data>,
+    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat5: LstmMatrix<'data>,
+    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat6: LstmMatrix<'data>,
+    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat7: LstmMatrix<'data>,
+    /// The matrices associated with output layer (weight and bias term respectiely)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat8: LstmMatrix<'data>,
+    /// The matrices associated with output layer (weight and bias term respectiely)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat9: LstmMatrix<'data>,
 }

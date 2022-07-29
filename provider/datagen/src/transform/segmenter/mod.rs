@@ -13,8 +13,8 @@ use icu_properties::{
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use icu_segmenter::provider::*;
 use icu_segmenter::symbols::*;
-use icu_segmenter::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 

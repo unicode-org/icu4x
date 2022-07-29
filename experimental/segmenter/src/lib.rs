@@ -162,7 +162,6 @@ mod lstm;
 mod lstm_bies;
 #[cfg(feature = "lstm")]
 mod lstm_error;
-mod lstm_structs;
 #[cfg(feature = "lstm")]
 mod math_helper;
 
@@ -173,12 +172,6 @@ pub use crate::grapheme::{
 pub use crate::line::{
     LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8,
     LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule,
-};
-pub use crate::lstm_structs::{LstmDataV1, LstmDataV1Marker, LstmMatrix};
-pub use crate::provider::{
-    GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, RuleBreakDataV1,
-    RuleBreakPropertyTable, RuleBreakStateTable, SentenceBreakDataV1Marker,
-    UCharDictionaryBreakDataV1, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
 };
 pub use crate::sentence::{
     SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8,

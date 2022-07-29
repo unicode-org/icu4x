@@ -1253,18 +1253,6 @@ impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackPar
         })
     }
 }
-impl DataProvider<::icu_segmenter::LstmDataV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::LstmDataV1Marker>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *segmenter::lstm_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::LstmDataV1Marker::KEY, req))?,
-            ))),
-        })
-    }
-}
 impl DataProvider<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1285,6 +1273,18 @@ impl DataProvider<::icu_segmenter::provider::LineBreakDataV1Marker> for BakedDat
                 *segmenter::line_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::LineBreakDataV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_segmenter::provider::LstmDataV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::LstmDataV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *segmenter::lstm_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::LstmDataV1Marker::KEY, req))?,
             ))),
         })
     }
