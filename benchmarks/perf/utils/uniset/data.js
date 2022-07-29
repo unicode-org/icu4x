@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659114863003,
+  "lastUpdate": 1659115152623,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39959,6 +39959,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44443433,
             "range": "± 64274",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "169ee04162b875fa7039278b4f0b5fcd02418a41",
+          "message": "Add icu_timezone crate (#2265)\n\n* Add timezones crate\r\n\r\n* Move MockTimeZone and timezone provider types\r\n\r\n* Move over GmtOffset and add error type\r\n\r\n* Move MetaZonePeriodV1 over to icu_timezone\r\n\r\n* rename to CustomTimeZone\r\n\r\n* Move metazone calculator",
+          "timestamp": "2022-07-29T17:09:54Z",
+          "tree_id": "0df0dd06ba38e7c0938614a56bcaff655e8668a7",
+          "url": "https://github.com/unicode-org/icu4x/commit/169ee04162b875fa7039278b4f0b5fcd02418a41"
+        },
+        "date": 1659115115471,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 57910053,
+            "range": "± 817664",
             "unit": "ns/iter"
           },
           {
