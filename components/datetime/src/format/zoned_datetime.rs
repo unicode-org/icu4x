@@ -4,7 +4,7 @@
 
 //! A collection of code for formatting DateTimes with time zones.
 
-use crate::date::{
+use crate::input::{
     DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, ExtractedTimeZoneInput,
     LocalizedDateTimeInput, TimeZoneInput,
 };

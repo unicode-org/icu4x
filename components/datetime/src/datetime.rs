@@ -21,7 +21,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
-    calendar, date::DateTimeInput, date::IsoTimeInput, CldrCalendar, DateTimeFormatterError,
+    calendar, input::DateTimeInput, input::IsoTimeInput, CldrCalendar, DateTimeFormatterError,
     FormattedDateTime,
 };
 

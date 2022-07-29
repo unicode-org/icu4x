@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date;
+use crate::input;
 use crate::error::DateTimeFormatterError;
 use crate::fields;
 use crate::options::{components, length, preferences, DateTimeFormatterOptions};
@@ -295,7 +295,7 @@ pub trait DateSymbols {
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::IsoWeekday,
+        day: input::IsoWeekday,
     ) -> Result<&str>;
     fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str;
 }
@@ -305,7 +305,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::IsoWeekday,
+        day: input::IsoWeekday,
     ) -> Result<&str> {
         let widths = match weekday {
             fields::Weekday::Format => &self.weekdays.format,
@@ -405,7 +405,7 @@ pub trait TimeSymbols {
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::IsoHour,
+        hour: input::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str>;
 }
@@ -415,7 +415,7 @@ impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::IsoHour,
+        hour: input::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str> {
         use fields::{DayPeriod::NoonMidnight, FieldLength};

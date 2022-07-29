@@ -11,7 +11,7 @@ use smallvec::SmallVec;
 use tinystr::tinystr;
 
 use crate::{
-    date::TimeZoneInput,
+    input::TimeZoneInput,
     error::DateTimeFormatterError,
     fields::{FieldSymbol, TimeZone},
     format::time_zone::FormattedTimeZone,
@@ -1201,7 +1201,7 @@ impl FormatTimeZone for GenericLocationFormat {
 }
 
 impl FormatTimeZone for Iso8601Format {
-    /// Writes a [`GmtOffset`](crate::date::GmtOffset) in ISO-8601 format according to the
+    /// Writes a [`GmtOffset`](crate::input::GmtOffset) in ISO-8601 format according to the
     /// given formatting options.
     ///
     /// [`IsoFormat`] determines whether the format should be Basic or Extended,

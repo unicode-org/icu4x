@@ -47,7 +47,7 @@ use serde::{Deserialize, Serialize};
 
 /// A structure to represent the set of lengths in which the [`DateTimeInput`] implementer should be formatted to.
 ///
-/// [`DateTimeInput`]: crate::date::DateTimeInput
+/// [`DateTimeInput`]: crate::input::DateTimeInput
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
@@ -137,7 +137,7 @@ impl Bag {
 /// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
-/// [`DateTimeInput`]: crate::date::DateTimeInput
+/// [`DateTimeInput`]: crate::input::DateTimeInput
 ///
 /// # Examples
 ///
@@ -209,7 +209,7 @@ pub enum Date {
 /// Represents different length lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
-/// [`DateTimeInput`]: crate::date::DateTimeInput
+/// [`DateTimeInput`]: crate::input::DateTimeInput
 ///
 /// # Examples
 ///

@@ -9,7 +9,7 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 
 use icu_provider::prelude::*;
 
-use crate::date::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
+use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{
     self,
     calendar::{

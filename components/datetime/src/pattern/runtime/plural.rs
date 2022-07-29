@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    date::{DateTimeInput, LocalizedDateTimeInput},
+    input::{DateTimeInput, LocalizedDateTimeInput},
     error::DateTimeFormatterError,
     fields::{Field, FieldSymbol, Week},
     pattern::{runtime::Pattern, PatternError, PatternItem},

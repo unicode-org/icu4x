@@ -6,7 +6,7 @@
 //! Central to this is the [`DateTimeFormatter`].
 
 use crate::{
-    date::{DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
+    input::{DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
     format::datetime,
     options::components,
     options::{length, preferences, DateTimeFormatterOptions},
