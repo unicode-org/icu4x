@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659136264107,
+  "lastUpdate": 1659138620115,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22193,6 +22193,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a0ed971e238b96b5484ad5b527b68c32431f1d6b"
         },
         "date": 1659136226054,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c32c54eefcd948e0901f6085134b1db5f687baf3",
+          "message": "Fix and run datetime cpp CI (#2290)",
+          "timestamp": "2022-07-29T23:48:27Z",
+          "tree_id": "5a191d68e489d224f0f506a11b04a6cd898497fd",
+          "url": "https://github.com/unicode-org/icu4x/commit/c32c54eefcd948e0901f6085134b1db5f687baf3"
+        },
+        "date": 1659138581435,
         "tool": "ndjson",
         "benches": [
           {
