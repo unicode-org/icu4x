@@ -156,7 +156,7 @@ impl DataProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker> for 
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::timelengths_v1_u_ca::DATA
+                *datetime::timelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimePatternsV1Marker::KEY, req))?,
             ))),
@@ -168,7 +168,7 @@ impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker> for B
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::timesymbols_v1_u_ca::DATA
+                *datetime::timesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY, req))?,
             ))),

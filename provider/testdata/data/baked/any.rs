@@ -260,10 +260,10 @@ impl AnyProvider for BakedDataProvider {
                 DATESYMBOLSV1MARKER => datetime::datesymbols_v1_u_ca::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                TIMEPATTERNSV1MARKER => datetime::timelengths_v1_u_ca::DATA
+                TIMEPATTERNSV1MARKER => datetime::timelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                TIMESYMBOLSV1MARKER => datetime::timesymbols_v1_u_ca::DATA
+                TIMESYMBOLSV1MARKER => datetime::timesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 EXEMPLARCITIESV1MARKER => time_zone::exemplar_cities_v1::DATA
