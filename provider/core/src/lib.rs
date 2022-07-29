@@ -175,7 +175,9 @@ pub mod prelude {
     pub use crate::serde::AsDeserializingBufferProvider;
 
     /// Re-export of the yoke and zerofrom crates for convenience of downstream implementors.
+    #[doc(hidden)]
     pub use yoke;
+    #[doc(hidden)]
     pub use zerofrom;
 }
 
