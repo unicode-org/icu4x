@@ -88,10 +88,10 @@ impl CodePointSetData {
     /// Currently it is always [`CodePointInversionList`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
-    /// If using this function it is preferable to stick to [`CodePointInversionList`] representations
-    /// in the data, however exceptions can be made if the performance hit is considered to
-    /// be okay.
-    pub fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
+    /// This method returns an `Option` in order to return `None` when the backing data provider
+    /// cannot return a [`CodePointInversionList`], or cannot do so within the expected constant time
+    /// constraint.
+    pub fn to_code_point_inversion_list(&self) -> Option<CodePointInversionList<'_>> {
         self.data.get().to_code_point_inversion_list()
     }
 }
@@ -1744,17 +1744,20 @@ mod tests {
         let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
-            let category_set = category_set.to_code_point_inversion_list();
+            let category_set = category_set
+                .to_code_point_inversion_list()
+                .expect("The data should be valid");
 
             let data = maps::get_general_category(&provider).expect("The data should be valid");
             let gc = data.as_borrowed();
 
             let mut builder = CodePointInversionListBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(
-                    &gc.get_set_for_value(*subcategory)
-                        .to_code_point_inversion_list(),
-                );
+                let gc_set_data = &gc.get_set_for_value(*subcategory);
+                let gc_set = gc_set_data.as_borrowed();
+                for range in gc_set.iter_ranges() {
+                    builder.add_range_u32(&range);
+                }
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);
