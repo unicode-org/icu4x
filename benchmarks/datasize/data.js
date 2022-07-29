@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659078285576,
+  "lastUpdate": 1659086284576,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -21983,6 +21983,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6404784d61eb1d450092c96bccd5504209761c28"
         },
         "date": 1659078249732,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7216d0ad92b9ff248f1f37619825901be4c4f0dc",
+          "message": "Adding `missing_debug_implementations` lint or todo (#2268)",
+          "timestamp": "2022-07-29T11:16:13+02:00",
+          "tree_id": "a31e363c3815d795fd1936b643c285d0bc665112",
+          "url": "https://github.com/unicode-org/icu4x/commit/7216d0ad92b9ff248f1f37619825901be4c4f0dc"
+        },
+        "date": 1659086248580,
         "tool": "ndjson",
         "benches": [
           {
