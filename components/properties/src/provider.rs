@@ -100,9 +100,11 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn to_code_point_inversion_list(&'_ self) -> Option<CodePointInversionList<'_>> {
+    pub(crate) fn as_code_point_inversion_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionList<'data>> {
         match *self {
-            Self::InversionList(ref l) => Some(ZeroFrom::zero_from(l)),
+            Self::InversionList(ref l) => Some(l),
             // any other backing data structure that cannot return a CPInvList in O(1) time should return None
         }
     }

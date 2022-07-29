@@ -91,8 +91,8 @@ impl CodePointSetData {
     /// This method returns an `Option` in order to return `None` when the backing data provider
     /// cannot return a [`CodePointInversionList`], or cannot do so within the expected constant time
     /// constraint.
-    pub fn to_code_point_inversion_list(&self) -> Option<CodePointInversionList<'_>> {
-        self.data.get().to_code_point_inversion_list()
+    pub fn as_code_point_inversion_list(&self) -> Option<&CodePointInversionList<'_>> {
+        self.data.get().as_code_point_inversion_list()
     }
 }
 
@@ -1745,7 +1745,7 @@ mod tests {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
             let category_set = category_set
-                .to_code_point_inversion_list()
+                .as_code_point_inversion_list()
                 .expect("The data should be valid");
 
             let data = maps::get_general_category(&provider).expect("The data should be valid");
