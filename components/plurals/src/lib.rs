@@ -32,7 +32,7 @@
 //! let pr = PluralRules::try_new(&locale!("en").into(), &provider, PluralRuleType::Cardinal)
 //!     .expect("Failed to construct a PluralRules struct.");
 //!
-//! assert_eq!(pr.select(5_usize), PluralCategory::Other);
+//! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 //! ```
 //!
 //! ## Plural Rules
@@ -144,7 +144,7 @@ pub enum PluralRuleType {
 /// let pr = PluralRules::try_new(&locale!("en").into(), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
-/// assert_eq!(pr.select(5_usize), PluralCategory::Other);
+/// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
 #[derive(Debug, PartialEq, Eq, Clone, Copy, Hash, Ord, PartialOrd)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
@@ -270,7 +270,7 @@ impl PluralCategory {
 /// let pr = PluralRules::try_new(&locale!("en").into(), &dp, PluralRuleType::Cardinal)
 ///     .expect("Failed to construct a PluralRules struct.");
 ///
-/// assert_eq!(pr.select(5_usize), PluralCategory::Other);
+/// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
 ///
 /// [`ICU4X`]: ../icu/index.html
@@ -332,7 +332,7 @@ impl PluralRules {
     ///
     /// let rules = PluralRules::try_new_cardinal(&locale!("ru").into(), &dp).expect("Data should be present");
     ///
-    /// assert_eq!(rules.select(2_usize), PluralCategory::Few);
+    /// assert_eq!(rules.category_for(2_usize), PluralCategory::Few);
     /// ```
     ///
     /// [`One`]: PluralCategory::One
@@ -376,7 +376,7 @@ impl PluralRules {
     ///
     /// let rules = PluralRules::try_new_ordinal(&locale!("ru").into(), &dp).expect("Data should be present");
     ///
-    /// assert_eq!(rules.select(2_usize), PluralCategory::Other);
+    /// assert_eq!(rules.category_for(2_usize), PluralCategory::Other);
     /// ```
     ///
     /// [`One`]: PluralCategory::One
@@ -414,7 +414,7 @@ impl PluralRules {
     /// let pr = PluralRules::try_new(&locale!("en").into(), &dp, PluralRuleType::Cardinal)
     ///     .expect("Failed to construct a PluralRules struct.");
     ///
-    /// match pr.select(1_usize) {
+    /// match pr.category_for(1_usize) {
     ///     PluralCategory::One => "One item",
     ///     PluralCategory::Other => "Many items",
     ///     _ => unreachable!(),
@@ -427,7 +427,7 @@ impl PluralRules {
     ///
     /// For signed numbers and strings, [`Plural Operands`] implement [`TryFrom`](std::convert::TryFrom)
     /// and [`FromStr`](std::str::FromStr), which should be used before passing the result to
-    /// [`select()`](PluralRules::select()).
+    /// [`category_for()`](PluralRules::category_for()).
     ///
     /// # Examples
     ///
@@ -445,13 +445,13 @@ impl PluralRules {
     /// let operands = PluralOperands::try_from(-5).expect("Failed to parse to operands.");
     /// let operands2: PluralOperands = "5.10".parse().expect("Failed to parse to operands.");
     ///
-    /// assert_eq!(pr.select(operands), PluralCategory::Other);
-    /// assert_eq!(pr.select(operands2), PluralCategory::Other);
+    /// assert_eq!(pr.category_for(operands), PluralCategory::Other);
+    /// assert_eq!(pr.category_for(operands2), PluralCategory::Other);
     /// ```
     ///
     /// [`Plural Category`]: PluralCategory
     /// [`Plural Operands`]: operands::PluralOperands
-    pub fn select<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
+    pub fn category_for<I: Into<PluralOperands>>(&self, input: I) -> PluralCategory {
         let rules = self.0.get();
         let input = input.into();
 

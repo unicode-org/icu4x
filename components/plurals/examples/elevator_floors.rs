@@ -35,7 +35,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {
-            match pr.select(*value) {
+            match pr.category_for(*value) {
                 PluralCategory::One => print("You are on the {}st floor.", Some(*value)),
                 PluralCategory::Two => print("You are on the {}nd floor.", Some(*value)),
                 PluralCategory::Few => print("You are on the {}rd floor.", Some(*value)),
