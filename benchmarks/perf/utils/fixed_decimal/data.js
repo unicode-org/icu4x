@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659134838646,
+  "lastUpdate": 1659136855605,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40948,6 +40948,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a0ed971e238b96b5484ad5b527b68c32431f1d6b",
+          "message": "Remove Calendar type parameter from TimeFormat (#2282)\n\n* Remove generic from TimeFormatter\r\n\r\n* no calendar on key\r\n\r\n* regen\r\n\r\n* rename TimePatternsV1 to TimeLengthsV1\r\n\r\n* rename date module\r\n\r\n* replace\r\n\r\n* fmt\r\n\r\n* test\r\n\r\n* diplomat regen\r\n\r\n* fix\r\n\r\n* datepatterns -> datelengths\r\n\r\n* rename ffi\r\n\r\n* regen\r\n\r\n* docs",
+          "timestamp": "2022-07-29T23:09:13Z",
+          "tree_id": "a7e12e5848aa8ce81657fdbd0374bb710fae4578",
+          "url": "https://github.com/unicode-org/icu4x/commit/a0ed971e238b96b5484ad5b527b68c32431f1d6b"
+        },
+        "date": 1659136817490,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105529,
+            "range": "± 375",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21298,
+            "range": "± 86",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64519,
+            "range": "± 764",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 172,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
             "range": "± 0",
             "unit": "ns/iter"
           }
