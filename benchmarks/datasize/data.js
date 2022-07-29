@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659125041904,
+  "lastUpdate": 1659132192687,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22103,6 +22103,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/021a92e43a07f4178d97fd48ba509fb72164fa14"
         },
         "date": 1659125007125,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4036829,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3e1fa176d47cea0470287fc2c61ac0c3261a5a63",
+          "message": "Add binary search and other utilities to FlexZeroVec (#2284)",
+          "timestamp": "2022-07-29T15:01:25-07:00",
+          "tree_id": "b4bc49e34a4e329c474e5293d50c4d6a52f353cb",
+          "url": "https://github.com/unicode-org/icu4x/commit/3e1fa176d47cea0470287fc2c61ac0c3261a5a63"
+        },
+        "date": 1659132157223,
         "tool": "ndjson",
         "benches": [
           {
