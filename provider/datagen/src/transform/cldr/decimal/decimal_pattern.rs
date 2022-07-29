@@ -47,16 +47,12 @@ impl FromStr for DecimalSubPattern {
             Some(i) => i,
             None => return Err(Error::NoBodyInSubpattern),
         };
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let j = subpattern[i..]
             .find(|c: char| !matches!(c, '#' | '0' | ',' | '.'))
             .unwrap_or(subpattern.len() - i)
             + i;
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let prefix = &subpattern[..i];
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let body = &subpattern[i..j];
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
         let suffix = &subpattern[j..];
 
         // For now, we expect one of a handful of pattern bodies.
