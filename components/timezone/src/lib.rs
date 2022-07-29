@@ -29,4 +29,4 @@ mod types;
 pub use error::TimeZoneError;
 pub use metazone::MetaZoneCalculator;
 pub use time_zone::CustomTimeZone;
-pub use types::GmtOffset;
+pub use types::{GmtOffset, TimeVariant};
