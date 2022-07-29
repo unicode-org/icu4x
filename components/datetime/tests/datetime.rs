@@ -518,7 +518,8 @@ fn test_time_zone_format_configs() {
 }
 
 #[test]
-#[cfg_attr(debug_assertions, should_panic(expected = "GMT+?"))]
+#[cfg(debug_assertions)]
+#[should_panic(expected = "using last-resort time zone fallback")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let zone_provider = icu_testdata::get_provider();
     let langid: LanguageIdentifier = "en".parse().unwrap();
