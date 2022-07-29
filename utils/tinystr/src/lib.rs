@@ -58,7 +58,10 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        // TODO(#1668): enable clippy::exhaustive_enums,
+        missing_debug_implementations,
     )
 )]
 

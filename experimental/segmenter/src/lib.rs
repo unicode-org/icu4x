@@ -155,10 +155,6 @@ mod word;
 pub mod provider;
 pub mod symbols;
 
-#[cfg(feature = "lstm")]
-#[macro_use]
-extern crate lazy_static;
-
 // Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
 mod lstm;
@@ -166,21 +162,18 @@ mod lstm;
 mod lstm_bies;
 #[cfg(feature = "lstm")]
 mod lstm_error;
-#[cfg(feature = "lstm")]
 mod lstm_structs;
 #[cfg(feature = "lstm")]
 mod math_helper;
 
-pub use crate::dictionary::{DictionaryBreakIterator, DictionarySegmenter};
 pub use crate::grapheme::{
-    GraphemeClusterBreakIterator, GraphemeClusterBreakIteratorLatin1,
-    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
+    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
+    GraphemeClusterBreakIteratorUtf8, GraphemeClusterBreakSegmenter,
 };
 pub use crate::line::{
-    Latin1Char, LineBreakIterator, LineBreakOptions, LineBreakRule, LineBreakSegmenter, Utf16Char,
-    WordBreakRule,
+    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8,
+    LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule,
 };
-#[cfg(feature = "lstm")]
 pub use crate::lstm_structs::{LstmDataV1, LstmDataV1Marker, LstmMatrix};
 pub use crate::provider::{
     GraphemeClusterBreakDataV1Marker, LineBreakDataV1Marker, RuleBreakDataV1,
@@ -188,9 +181,9 @@ pub use crate::provider::{
     UCharDictionaryBreakDataV1, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
 };
 pub use crate::sentence::{
-    SentenceBreakIterator, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
+    SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8,
     SentenceBreakSegmenter,
 };
 pub use crate::word::{
-    WordBreakIterator, WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakSegmenter,
+    WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordBreakSegmenter,
 };

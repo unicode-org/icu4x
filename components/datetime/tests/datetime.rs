@@ -17,7 +17,9 @@ use icu_calendar::{
     provider::JapaneseErasV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
 };
+use icu_datetime::mock::time_zone::MockTimeZone;
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
     any::AnyDateTimeFormatter,
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
@@ -513,6 +515,52 @@ fn test_time_zone_format_configs() {
             }
         }
     }
+}
+
+#[test]
+#[cfg(debug_assertions)]
+#[should_panic(expected = "using last-resort time zone fallback")]
+fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
+    let zone_provider = icu_testdata::get_provider();
+    let langid: LanguageIdentifier = "en".parse().unwrap();
+    let time_zone = MockTimeZone::new(
+        None,
+        Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
+        Some(MetaZoneId(tinystr!(4, "ampa"))),
+        Some(tinystr!(8, "daylight")),
+    );
+    let tzf = TimeZoneFormatter::try_from_config(
+        langid,
+        TimeZoneFormatterConfig::LocalizedGMT,
+        &zone_provider,
+        &TimeZoneFormatterOptions::default(),
+    )
+    .unwrap();
+    let mut buffer = String::new();
+    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
+}
+
+#[test]
+#[cfg(not(debug_assertions))]
+fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
+    let zone_provider = icu_testdata::get_provider();
+    let langid: LanguageIdentifier = "en".parse().unwrap();
+    let time_zone = MockTimeZone::new(
+        None,
+        Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
+        Some(MetaZoneId(tinystr!(4, "ampa"))),
+        Some(tinystr!(8, "daylight")),
+    );
+    let tzf = TimeZoneFormatter::try_from_config(
+        langid,
+        TimeZoneFormatterConfig::LocalizedGMT,
+        &zone_provider,
+        &TimeZoneFormatterOptions::default(),
+    )
+    .unwrap();
+    let mut buffer = String::new();
+    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
+    assert_eq!(buffer.to_string(), "GMT+?".to_string());
 }
 
 #[test]

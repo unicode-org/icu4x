@@ -73,25 +73,25 @@ export class ICU4XFixedDecimal {
 
    * Zero-pad the {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} on the left to a particular position
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_start Rust documentation} for more information.
    */
-  pad_left(position: i16): void;
+  pad_start(position: i16): void;
 
   /**
 
    * Truncate the {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years ("2022" -> "22")
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.set_max_position Rust documentation} for more information.
    */
-  truncate_left(position: i16): void;
+  set_max_position(position: i16): void;
 
   /**
 
    * Zero-pad the {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} on the right to a particular position
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_end Rust documentation} for more information.
    */
-  pad_right(position: i16): void;
+  pad_end(position: i16): void;
 
   /**
 

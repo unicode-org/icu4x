@@ -5,13 +5,36 @@
 use alloc::vec::Vec;
 use icu_provider::{DataError, DataPayload};
 
+use crate::dictionary::DictionarySegmenter;
 use crate::language::*;
 use crate::provider::*;
-use crate::DictionarySegmenter;
+use crate::LstmDataV1Marker;
 
 // Use the LSTM when the feature is enabled.
 #[cfg(feature = "lstm")]
-use crate::lstm::{get_best_lstm_model, LstmSegmenter};
+use crate::lstm::LstmSegmenter;
+
+#[derive(Default)]
+pub struct LstmPayloads {
+    pub burmese: Option<DataPayload<LstmDataV1Marker>>,
+    pub khmer: Option<DataPayload<LstmDataV1Marker>>,
+    pub lao: Option<DataPayload<LstmDataV1Marker>>,
+    pub thai: Option<DataPayload<LstmDataV1Marker>>,
+}
+
+impl LstmPayloads {
+    #[cfg(feature = "lstm")]
+    pub fn best(&self, codepoint: u32) -> Option<&DataPayload<LstmDataV1Marker>> {
+        let lang = get_language(codepoint);
+        match lang {
+            Language::Burmese => self.burmese.as_ref(),
+            Language::Khmer => self.khmer.as_ref(),
+            Language::Lao => self.lao.as_ref(),
+            Language::Thai => self.thai.as_ref(),
+            _ => None,
+        }
+    }
+}
 
 #[derive(Default)]
 pub struct Dictionary {
@@ -36,14 +59,19 @@ impl Dictionary {
 }
 
 /// Return UTF-16 segment offset array using dictionary or lstm segmenter.
-pub fn complex_language_segment_utf16(dictionary: &Dictionary, input: &[u16]) -> Vec<usize> {
+#[allow(unused_variables)]
+pub fn complex_language_segment_utf16(
+    dictionary: &Dictionary,
+    lstm: &LstmPayloads,
+    input: &[u16],
+) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIteratorUtf16::new(input);
     let mut offset = 0;
     for str_per_lang in lang_iter {
         #[cfg(feature = "lstm")]
         {
-            if let Some(model) = get_best_lstm_model(str_per_lang[0] as u32) {
+            if let Some(model) = lstm.best(str_per_lang[0] as u32) {
                 if let Ok(segmenter) = LstmSegmenter::try_new(model) {
                     let breaks = segmenter.segment_utf16(&str_per_lang);
                     let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
@@ -72,14 +100,19 @@ pub fn complex_language_segment_utf16(dictionary: &Dictionary, input: &[u16]) ->
 }
 
 /// Return UTF-8 segment offset array using dictionary or lstm segmenter.
-pub fn complex_language_segment_str(dictionary: &Dictionary, input: &str) -> Vec<usize> {
+#[allow(unused_variables)]
+pub fn complex_language_segment_str(
+    dictionary: &Dictionary,
+    lstm: &LstmPayloads,
+    input: &str,
+) -> Vec<usize> {
     let mut result: Vec<usize> = Vec::new();
     let lang_iter = LanguageIterator::new(input);
     let mut offset = 0;
     for str_per_lang in lang_iter {
         #[cfg(feature = "lstm")]
         {
-            if let Some(model) = get_best_lstm_model(str_per_lang.chars().next().unwrap() as u32) {
+            if let Some(model) = lstm.best(str_per_lang.chars().next().unwrap() as u32) {
                 if let Ok(segmenter) = LstmSegmenter::try_new(model) {
                     let breaks = segmenter.segment_str(&str_per_lang);
                     let mut r: Vec<usize> = breaks.map(|n| offset + n).collect();
@@ -137,11 +170,26 @@ mod tests {
             thai: Some(payload),
             cj: None,
         };
-        let breaks = complex_language_segment_str(&dictionary, TEST_STR);
+        let locale = locale!("th");
+        let payload = provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
+                metadata: Default::default(),
+            })
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let lstm = LstmPayloads {
+            burmese: None,
+            khmer: None,
+            lao: None,
+            thai: Some(payload),
+        };
+        let breaks = complex_language_segment_str(&dictionary, &lstm, TEST_STR);
         assert_eq!(breaks, [12, 21, 33, 42], "Thai test by UTF-8");
 
         let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
-        let breaks = complex_language_segment_utf16(&dictionary, &utf16);
+        let breaks = complex_language_segment_utf16(&dictionary, &lstm, &utf16);
         assert_eq!(breaks, [4, 7, 11, 14], "Thai test by UTF-16");
     }
 }

@@ -15,8 +15,8 @@ use zerovec::ule::AsULE;
 #[cfg(feature = "lstm-grapheme")]
 use unicode_segmentation::UnicodeSegmentation;
 
-pub struct Lstm {
-    data: DataPayload<LstmDataV1Marker>,
+pub struct Lstm<'l> {
+    data: &'l DataPayload<LstmDataV1Marker>,
     mat1: Array2<f32>,
     mat2: Array2<f32>,
     mat3: Array2<f32>,
@@ -28,9 +28,9 @@ pub struct Lstm {
     mat9: Array1<f32>,
 }
 
-impl Lstm {
+impl<'l> Lstm<'l> {
     /// `try_new` is the initiator of struct `Lstm`
-    pub fn try_new(data: DataPayload<LstmDataV1Marker>) -> Result<Self, Error> {
+    pub fn try_new(data: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, Error> {
         if data.get().dic.len() > core::i16::MAX as usize {
             return Err(Error::Limit);
         }
@@ -274,7 +274,7 @@ mod tests {
     fn test_model_loading() {
         let filename = "tests/testdata/Thai_graphclust_exclusive_model4_heavy/weights.json";
         let lstm_data = load_lstm_data(filename);
-        let lstm = Lstm::try_new(lstm_data).unwrap();
+        let lstm = Lstm::try_new(&lstm_data).unwrap();
         assert_eq!(
             lstm.get_model_name(),
             String::from("Thai_graphclust_exclusive_model4_heavy")
@@ -289,7 +289,7 @@ mod tests {
         model_filename.push_str(embedding);
         model_filename.push_str("_exclusive_model4_heavy/weights.json");
         let lstm_data = load_lstm_data(&model_filename);
-        let lstm = Lstm::try_new(lstm_data).unwrap();
+        let lstm = Lstm::try_new(&lstm_data).unwrap();
 
         // Importing the test data
         let mut test_text_filename = "tests/testdata/test_text_".to_owned();

@@ -78,7 +78,7 @@ pub trait IsoTimeInput {
 /// All data represented in [`TimeZoneInput`] should be locale-agnostic.
 pub trait TimeZoneInput {
     /// The GMT offset in Nanoseconds.
-    fn gmt_offset(&self) -> GmtOffset;
+    fn gmt_offset(&self) -> Option<GmtOffset>;
 
     /// The IANA time-zone identifier.
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id>;
@@ -149,7 +149,7 @@ pub(crate) struct ExtractedDateTimeInput {
 ///
 /// See [`TimeZoneInput`] for documentation on individual fields
 pub(crate) struct ExtractedTimeZoneInput {
-    gmt_offset: GmtOffset,
+    gmt_offset: Option<GmtOffset>,
     time_zone_id: Option<TimeZoneBcp47Id>,
     metazone_id: Option<MetaZoneId>,
     time_variant: Option<TinyStr8>,
@@ -230,7 +230,7 @@ impl IsoTimeInput for ExtractedDateTimeInput {
 }
 
 impl TimeZoneInput for ExtractedTimeZoneInput {
-    fn gmt_offset(&self) -> GmtOffset {
+    fn gmt_offset(&self) -> Option<GmtOffset> {
         self.gmt_offset
     }
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
@@ -468,7 +468,7 @@ impl<A: AsCalendar> IsoTimeInput for DateTime<A> {
 }
 
 impl TimeZoneInput for CustomTimeZone {
-    fn gmt_offset(&self) -> GmtOffset {
+    fn gmt_offset(&self) -> Option<GmtOffset> {
         self.gmt_offset
     }
 

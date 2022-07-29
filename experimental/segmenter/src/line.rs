@@ -7,13 +7,14 @@ use crate::indices::*;
 use crate::language::*;
 use crate::provider::*;
 use crate::symbols::*;
+#[cfg(feature = "lstm")]
+use crate::LstmDataV1Marker;
 
 use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::char;
 use core::str::CharIndices;
-#[cfg(not(feature = "lstm"))]
 use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
@@ -95,19 +96,29 @@ impl Default for LineBreakOptions {
     }
 }
 
+/// Line break iterator for an `str` (a UTF-8 string).
+pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
+
+/// Line break iterator for a Latin-1 (8-bit) string.
+pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
+
+/// Line break iterator for a UTF-16 string.
+pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
+
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings. Please see the [module-level documentation](crate) for its usages.
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
     dictionary: Dictionary,
+    lstm: LstmPayloads,
 }
 
 impl LineBreakSegmenter {
     #[cfg(feature = "lstm")]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+        D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
     {
         Self::try_new_with_options(provider, Default::default())
     }
@@ -128,13 +139,25 @@ impl LineBreakSegmenter {
         options: LineBreakOptions,
     ) -> Result<Self, DataError>
     where
-        D: DataProvider<LineBreakDataV1Marker> + ?Sized,
+        D: DataProvider<LineBreakDataV1Marker> + DataProvider<LstmDataV1Marker> + ?Sized,
     {
         let payload = provider.load(Default::default())?.take_payload()?;
+
+        let burmese = Self::load_lstm(provider, locale!("my")).ok();
+        let khmer = Self::load_lstm(provider, locale!("km")).ok();
+        let lao = Self::load_lstm(provider, locale!("lo")).ok();
+        let thai = Self::load_lstm(provider, locale!("th")).ok();
+
         Ok(Self {
             options,
             payload,
             dictionary: Dictionary::default(),
+            lstm: LstmPayloads {
+                burmese,
+                khmer,
+                lao,
+                thai,
+            },
         })
     }
 
@@ -165,6 +188,7 @@ impl LineBreakSegmenter {
                 thai,
                 cj: None,
             },
+            lstm: LstmPayloads::default(),
         })
     }
 
@@ -181,8 +205,21 @@ impl LineBreakSegmenter {
             .take_payload()
     }
 
+    #[cfg(feature = "lstm")]
+    fn load_lstm<D: DataProvider<LstmDataV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<LstmDataV1Marker>, DataError> {
+        provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
+    }
+
     /// Create a line break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIterator<'l, 's, char> {
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> LineBreakIteratorUtf8<'l, 's> {
         LineBreakIterator {
             iter: input.char_indices(),
             len: input.len(),
@@ -191,14 +228,12 @@ impl LineBreakSegmenter {
             data: self.payload.get(),
             options: &self.options,
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
     /// Create a line break iterator for a Latin-1 (8-bit) string.
-    pub fn segment_latin1<'l, 's>(
-        &'l self,
-        input: &'s [u8],
-    ) -> LineBreakIterator<'l, 's, Latin1Char> {
+    pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
         LineBreakIterator {
             iter: Latin1Indices::new(input),
             len: input.len(),
@@ -207,14 +242,12 @@ impl LineBreakSegmenter {
             data: self.payload.get(),
             options: &self.options,
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
     /// Create a line break iterator for a UTF-16 string.
-    pub fn segment_utf16<'l, 's>(
-        &'l self,
-        input: &'s [u16],
-    ) -> LineBreakIterator<'l, 's, Utf16Char> {
+    pub fn segment_utf16<'l, 's>(&'l self, input: &'s [u16]) -> LineBreakIteratorUtf16<'l, 's> {
         LineBreakIterator {
             iter: Utf16Indices::new(input),
             len: input.len(),
@@ -223,6 +256,7 @@ impl LineBreakSegmenter {
             data: self.payload.get(),
             options: &self.options,
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 }
@@ -463,6 +497,7 @@ pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     data: &'l RuleBreakDataV1<'l>,
     options: &'l LineBreakOptions,
     dictionary: &'l Dictionary,
+    lstm: &'l LstmPayloads,
 }
 
 impl<'l, 's, Y: LineBreakType<'l, 's>> Iterator for LineBreakIterator<'l, 's, Y> {
@@ -644,7 +679,9 @@ impl<'l, 's, Y: LineBreakType<'l, 's>> LineBreakIterator<'l, 's, Y> {
     }
 }
 
-impl<'l, 's> LineBreakType<'l, 's> for char {
+pub struct LineBreakTypeUtf8;
+
+impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -689,7 +726,7 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary, &s);
+        let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
         iter.result_cache = breaks;
         let mut i = iter.current_pos_data.unwrap().1.len_utf8();
         loop {
@@ -708,11 +745,11 @@ impl<'l, 's> LineBreakType<'l, 's> for char {
     }
 }
 
-pub struct Latin1Char(pub u8);
+pub struct LineBreakTypeLatin1;
 
-impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
+impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
-    type CharType = u8; // TODO: Latin1Char
+    type CharType = u8;
 
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u8) -> u8 {
         // No CJ on Latin1
@@ -736,12 +773,11 @@ impl<'l, 's> LineBreakType<'l, 's> for Latin1Char {
     }
 }
 
-// TODO: This should be u16
-pub struct Utf16Char(pub u32);
+pub struct LineBreakTypeUtf16;
 
-impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
+impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf16 {
     type IterAttr = Utf16Indices<'s>;
-    type CharType = u32; // TODO: Utf16Char
+    type CharType = u32;
 
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: u32) -> u8 {
         get_linebreak_property_utf32_with_rule(
@@ -788,7 +824,7 @@ impl<'l, 's> LineBreakType<'l, 's> for Utf16Char {
         // Restore iterator to move to head of complex string
         iterator.iter = start_iter;
         iterator.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iterator.dictionary, &s);
+        let breaks = complex_language_segment_utf16(iterator.dictionary, iterator.lstm, &s);
         let mut i = 1;
         iterator.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.

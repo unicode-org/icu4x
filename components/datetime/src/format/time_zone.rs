@@ -38,10 +38,7 @@ where
                     ) {
                         Ok(Ok(r)) => Ok(r),
                         Ok(Err(e)) => Err(e),
-                        Err(_e) => {
-                            debug_assert!(false, "{:?}", _e);
-                            Err(core::fmt::Error)
-                        }
+                        Err(e) => self.handle_last_resort_error(e, sink),
                     }
                 }
                 TimeZoneFormatterUnit::Iso8601(fallback) => {
@@ -52,10 +49,7 @@ where
                     ) {
                         Ok(Ok(r)) => Ok(r),
                         Ok(Err(e)) => Err(e),
-                        Err(_e) => {
-                            debug_assert!(false, "{:?}", _e);
-                            Err(core::fmt::Error)
-                        }
+                        Err(e) => self.handle_last_resort_error(e, sink),
                     }
                 }
                 _ => Err(core::fmt::Error),
@@ -92,5 +86,38 @@ where
             }
         }
         Err(DateTimeFormatterError::UnsupportedOptions)
+    }
+
+    fn handle_last_resort_error<W>(&self, e: DateTimeFormatterError, sink: &mut W) -> fmt::Result
+    where
+        W: core::fmt::Write + ?Sized,
+    {
+        match e {
+            DateTimeFormatterError::MissingInputField(Some("gmt_offset")) => {
+                debug_assert!(
+                    false,
+                    "Warning: using last-resort time zone fallback: {:?}.\
+ To fix this warning, ensure the gmt_offset field is present.",
+                    &self
+                        .time_zone_format
+                        .data_payloads
+                        .zone_formats
+                        .get()
+                        .gmt_offset_fallback
+                );
+                sink.write_str(
+                    &self
+                        .time_zone_format
+                        .data_payloads
+                        .zone_formats
+                        .get()
+                        .gmt_offset_fallback,
+                )
+            }
+            _ => {
+                debug_assert!(false, "{:?}", e);
+                Err(core::fmt::Error)
+            }
+        }
     }
 }

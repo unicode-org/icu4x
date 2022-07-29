@@ -75,7 +75,8 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -88,6 +89,8 @@ pub mod datetime;
 mod error;
 pub mod fields;
 mod format;
+/// A module for metazone id calculation.
+pub mod metazone;
 pub mod mock;
 pub mod options;
 #[doc(hidden)]

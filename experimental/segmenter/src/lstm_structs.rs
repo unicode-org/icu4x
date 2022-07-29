@@ -2,10 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+#[cfg(feature = "lstm")]
 use crate::lstm_error::Error;
 
 use alloc::borrow::Cow;
 use icu_provider::prelude::*;
+#[cfg(feature = "lstm")]
 use ndarray::{Array, Array1, Array2};
 use zerovec::{ZeroMap, ZeroVec};
 
@@ -18,12 +20,13 @@ use zerovec::{ZeroMap, ZeroVec};
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LstmMatrix<'data> {
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub dim: ZeroVec<'data, i16>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ZeroVec<'data, f32>,
 }
 
+#[cfg(feature = "lstm")]
 impl<'data> LstmMatrix<'data> {
     pub fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
         if self.dim.len() == 1 {
@@ -66,26 +69,26 @@ impl<'data> LstmMatrix<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LstmDataV1<'data> {
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub model: Cow<'data, str>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub dic: ZeroMap<'data, str, i16>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat1: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat2: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat3: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat4: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat5: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat6: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat7: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat8: LstmMatrix<'data>,
-    #[serde(borrow)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub mat9: LstmMatrix<'data>,
 }

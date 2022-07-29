@@ -35,11 +35,11 @@ bool ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
 
 void ICU4XFixedDecimal_set_sign(ICU4XFixedDecimal* self, ICU4XFixedDecimalSign sign);
 
-void ICU4XFixedDecimal_pad_left(ICU4XFixedDecimal* self, int16_t position);
+void ICU4XFixedDecimal_pad_start(ICU4XFixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_truncate_left(ICU4XFixedDecimal* self, int16_t position);
+void ICU4XFixedDecimal_set_max_position(ICU4XFixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_pad_right(ICU4XFixedDecimal* self, int16_t position);
+void ICU4XFixedDecimal_pad_end(ICU4XFixedDecimal* self, int16_t position);
 
 void ICU4XFixedDecimal_to_string(const ICU4XFixedDecimal* self, DiplomatWriteable* to);
 void ICU4XFixedDecimal_destroy(ICU4XFixedDecimal* self);

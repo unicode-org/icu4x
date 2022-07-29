@@ -17,7 +17,7 @@
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_and(
-//!     locale!("es"),
+//!     &locale!("es").into(),
 //!     &icu_testdata::get_provider(),
 //!     ListStyle::Wide,
 //! )
@@ -43,7 +43,7 @@
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_or(
-//!     locale!("th"),
+//!     &locale!("th").into(),
 //!     &icu_testdata::get_provider(),
 //!     ListStyle::Short,
 //! )
@@ -64,7 +64,7 @@
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_unit(
-//!     locale!("en"),
+//!     &locale!("en").into(),
 //!     &icu_testdata::get_provider(),
 //!     ListStyle::Wide,
 //! )
@@ -87,7 +87,8 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]

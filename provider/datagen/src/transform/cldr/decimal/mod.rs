@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// All expects in this file have appropriate messages
-#![allow(clippy::expect_used)]
-
 use crate::transform::cldr::cldr_serde;
 use icu_decimal::provider::*;
 use icu_locid::extensions::unicode::Value;
