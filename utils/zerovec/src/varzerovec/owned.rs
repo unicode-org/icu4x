@@ -430,6 +430,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         if len == 0 {
             let header_len = LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH;
             let cap = header_len + value_len;
+            // Initialize all bytes to 0
             self.entire_slice.resize(cap, 0);
             self.entire_slice[0] = 1; // set length
             element.encode_var_ule_write(&mut self.entire_slice[header_len..]);

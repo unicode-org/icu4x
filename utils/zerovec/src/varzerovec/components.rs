@@ -14,7 +14,7 @@ use core::ops::Range;
 
 // Also used by owned.rs
 pub(super) const LENGTH_WIDTH: usize = 4;
-pub(super) const METADATA_WIDTH: usize = 0;
+pub(super) const METADATA_WIDTH: usize = 1;
 pub(super) const INDEX_WIDTH: usize = 4;
 pub(super) const MAX_LENGTH: usize = u32::MAX as usize;
 pub(super) const MAX_INDEX: usize = u32::MAX as usize;
@@ -404,6 +404,7 @@ where
 /// # Panics
 ///
 /// Panics if the buffer is not exactly the correct length.
+#[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
 pub fn write_serializable_bytes<T, A>(elements: &[A], output: &mut [u8])
 where
     T: VarULE + ?Sized,
@@ -411,8 +412,11 @@ where
 {
     assert!(elements.len() <= MAX_LENGTH);
     let num_elements_bytes = elements.len().to_le_bytes();
-    #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
     output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
+
+    for i in LENGTH_WIDTH..LENGTH_WIDTH+METADATA_WIDTH {
+        output[i] = 0;
+    }
 
     // idx_offset = offset from the start of the buffer for the next index
     let mut idx_offset: usize = LENGTH_WIDTH + METADATA_WIDTH;
@@ -425,7 +429,6 @@ where
         let element_len = element.encode_var_ule_len();
 
         let idx_limit = idx_offset + INDEX_WIDTH;
-        #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
         let idx = dat_offset - first_dat_offset;
@@ -433,7 +436,6 @@ where
         idx_slice.copy_from_slice(&idx.to_le_bytes()[..INDEX_WIDTH]);
 
         let dat_limit = dat_offset + element_len;
-        #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let dat_slice = &mut output[dat_offset..dat_limit];
         element.encode_var_ule_write(dat_slice);
         debug_assert_eq!(T::validate_byte_slice(dat_slice), Ok(()));
