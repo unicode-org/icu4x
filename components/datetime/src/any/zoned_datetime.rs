@@ -9,12 +9,12 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 
 use icu_provider::prelude::*;
 
-use crate::date::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
+use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{
     self,
     calendar::{
-        DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-        TimePatternsV1Marker, TimeSymbolsV1Marker,
+        DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+        TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     week_data::WeekDataV1Marker,
 };
@@ -135,8 +135,8 @@ impl ZonedAnyDateTimeFormatter {
     where
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateLengthsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
             + ?Sized,

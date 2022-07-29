@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    date::{DateTimeInput, LocalizedDateTimeInput},
     error::DateTimeFormatterError,
     fields::{Field, FieldSymbol, Week},
+    input::{DateTimeInput, LocalizedDateTimeInput},
     pattern::{runtime::Pattern, PatternError, PatternItem},
 };
 use either::Either;

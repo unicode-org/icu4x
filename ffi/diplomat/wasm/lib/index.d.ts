@@ -23,7 +23,6 @@ export { ICU4XGraphemeClusterBreakSegmenter } from './ICU4XGraphemeClusterBreakS
 export { ICU4XGregorianDateFormatter } from './ICU4XGregorianDateFormatter.js';
 export { ICU4XGregorianDateTime } from './ICU4XGregorianDateTime.js';
 export { ICU4XGregorianDateTimeFormatter } from './ICU4XGregorianDateTimeFormatter.js';
-export { ICU4XGregorianTimeFormatter } from './ICU4XGregorianTimeFormatter.js';
 export { ICU4XHourCyclePreference } from './ICU4XHourCyclePreference.js';
 export { ICU4XLineBreakIteratorLatin1 } from './ICU4XLineBreakIteratorLatin1.js';
 export { ICU4XLineBreakIteratorUtf16 } from './ICU4XLineBreakIteratorUtf16.js';
@@ -41,6 +40,7 @@ export { ICU4XSentenceBreakIteratorLatin1 } from './ICU4XSentenceBreakIteratorLa
 export { ICU4XSentenceBreakIteratorUtf16 } from './ICU4XSentenceBreakIteratorUtf16.js';
 export { ICU4XSentenceBreakIteratorUtf8 } from './ICU4XSentenceBreakIteratorUtf8.js';
 export { ICU4XSentenceBreakSegmenter } from './ICU4XSentenceBreakSegmenter.js';
+export { ICU4XTimeFormatter } from './ICU4XTimeFormatter.js';
 export { ICU4XTimeLength } from './ICU4XTimeLength.js';
 export { ICU4XWordBreakIteratorLatin1 } from './ICU4XWordBreakIteratorLatin1.js';
 export { ICU4XWordBreakIteratorUtf16 } from './ICU4XWordBreakIteratorUtf16.js';
