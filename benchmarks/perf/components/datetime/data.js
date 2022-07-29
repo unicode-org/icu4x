@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659049604468,
+  "lastUpdate": 1659056974999,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -53831,6 +53831,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6210,
             "range": "± 301",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f86ed6c03a886fa9e0853d014f6dbf56f2c45c12",
+          "message": "Improvements to MetaZoneCalculator (#2274)",
+          "timestamp": "2022-07-28T17:55:30-07:00",
+          "tree_id": "e2d0f51a57f59a5a5155ad0b021a75f5cf96efc6",
+          "url": "https://github.com/unicode-org/icu4x/commit/f86ed6c03a886fa9e0853d014f6dbf56f2c45c12"
+        },
+        "date": 1659056930666,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 131601,
+            "range": "± 6561",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1141463,
+            "range": "± 55042",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 245731,
+            "range": "± 22816",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 118702,
+            "range": "± 5920",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 131351,
+            "range": "± 6898",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 130105,
+            "range": "± 13109",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 141903,
+            "range": "± 13518",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 240438,
+            "range": "± 27700",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 248164,
+            "range": "± 18156",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 246695,
+            "range": "± 17183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 265732,
+            "range": "± 18850",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6323,
+            "range": "± 290",
             "unit": "ns/iter"
           }
         ]
