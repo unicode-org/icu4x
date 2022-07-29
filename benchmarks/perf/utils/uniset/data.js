@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659115152623,
+  "lastUpdate": 1659125482521,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40013,6 +40013,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 57910053,
             "range": "± 817664",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "021a92e43a07f4178d97fd48ba509fb72164fa14",
+          "message": "hide yoke pub-use (#2283)",
+          "timestamp": "2022-07-29T20:02:16Z",
+          "tree_id": "958dbaa0da2f7fd4e02a3a7736f9b4bd1fb2fc2c",
+          "url": "https://github.com/unicode-org/icu4x/commit/021a92e43a07f4178d97fd48ba509fb72164fa14"
+        },
+        "date": 1659125444973,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 58145601,
+            "range": "± 916172",
             "unit": "ns/iter"
           },
           {
