@@ -21,11 +21,11 @@
 //! - [`MultiForkByErrorProvider`]`<`[`MissingLocalePredicate`]`>`
 //!
 //! [`MissingLocalePredicate`]: predicates::MissingLocalePredicate
-//! 
+//!
 //! # Examples
-//! 
+//!
 //! See:
-//! 
+//!
 //! - [`ForkByKeyProvider`]
 //! - [`MultiForkByKeyProvider`]
 //! - [`MissingLocalePredicate`]

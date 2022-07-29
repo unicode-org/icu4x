@@ -59,7 +59,7 @@ impl ForkByErrorPredicate for MissingDataKeyPredicate {
 /// particular locale, based on whether it returns [`DataErrorKind::MissingLocale`].
 ///
 /// # Examples
-/// 
+///
 /// Configure a multi-language data provider pointing at two language packs:
 ///
 /// ```
