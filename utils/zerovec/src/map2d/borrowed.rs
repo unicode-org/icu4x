@@ -23,9 +23,9 @@ use crate::map2d::{KeyError, ZeroMap2dCursor};
 /// use zerovec::maps::ZeroMap2dBorrowed;
 ///
 /// // Example byte buffer representing the map { 1: {2: "three" } }
-/// let BINCODE_BYTES: &[u8; 53] = &[
+/// let BINCODE_BYTES: &[u8; 54] = &[
 ///     2, 0, 0, 0, 0, 0, 0, 0, 1, 0, 4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0,
-///     2, 0, 13, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 116, 104, 114, 101, 101,
+///     2, 0, 14, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 4, 0, 0, 0, 0, 116, 104, 114, 101, 101,
 /// ];
 ///
 /// // Deserializing to ZeroMap2d requires no heap allocations.

@@ -107,6 +107,10 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
             .get(0)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?
             .as_unsigned_int();
+        assert_eq!(METADATA_WIDTH, 1);
+        if slice.get(LENGTH_WIDTH) != Some(&(INDEX_WIDTH as u8)) {
+            return Err(ZeroVecError::VarZeroVecFormatError);
+        }
         let indices_bytes = slice
             .get(
                 LENGTH_WIDTH + METADATA_WIDTH
@@ -414,9 +418,8 @@ where
     let num_elements_bytes = elements.len().to_le_bytes();
     output[0..LENGTH_WIDTH].copy_from_slice(&num_elements_bytes[0..LENGTH_WIDTH]);
 
-    for i in LENGTH_WIDTH..LENGTH_WIDTH+METADATA_WIDTH {
-        output[i] = 0;
-    }
+    assert_eq!(METADATA_WIDTH, 1);
+    output[LENGTH_WIDTH] = INDEX_WIDTH as u8;
 
     // idx_offset = offset from the start of the buffer for the next index
     let mut idx_offset: usize = LENGTH_WIDTH + METADATA_WIDTH;

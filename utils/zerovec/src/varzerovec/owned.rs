@@ -433,6 +433,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // Initialize all bytes to 0
             self.entire_slice.resize(cap, 0);
             self.entire_slice[0] = 1; // set length
+            assert_eq!(METADATA_WIDTH, 1);
+            self.entire_slice[LENGTH_WIDTH] = 4; // set width byte
             element.encode_var_ule_write(&mut self.entire_slice[header_len..]);
             return;
         }
