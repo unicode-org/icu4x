@@ -94,6 +94,19 @@ impl CodePointSetData {
     pub fn as_code_point_inversion_list(&self) -> Option<&CodePointInversionList<'_>> {
         self.data.get().as_code_point_inversion_list()
     }
+
+    /// Convert this type to a [`CodePointInversionList`], borrowing if possible,
+    /// otherwise allocating a new [`CodePointInversionList`].
+    ///
+    /// The data backing this is extensible and supports multiple implementations.
+    /// Currently it is always [`CodePointInversionList`]; however in the future more backends may be
+    /// added, and users may select which at data generation time.
+    ///
+    /// The performance of the conversion to this specific return type will vary
+    /// depending on the data structure that is backing `self`.
+    pub fn to_code_point_invesion_list(&self) -> CodePointInversionList<'_> {
+        self.data.get().to_code_point_inversion_list()
+    }
 }
 
 /// A borrowed wrapper around code point set data, returned by

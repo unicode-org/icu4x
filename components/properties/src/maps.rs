@@ -81,7 +81,7 @@ impl<T: TrieValue> CodePointMapData<T> {
         let set = PropertyCodePointMapV1::from_code_point_trie(trie);
         CodePointMapData::from_data(DataPayload::<ErasedMaplikeMarker<T>>::from_owned(set))
     }
-    /// Convert this type to a [`CodePointTrie`], borrowing if possible,
+    /// Convert this type to a [`CodePointTrie`] as a borrowed value. if possible,
     /// otherwise allocating a new [`CodePointTrie`].
     ///
     /// The data backing this is extensible and supports multiple implementations.
@@ -93,6 +93,19 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// constraint.
     pub fn as_code_point_trie(&self) -> Option<&CodePointTrie<'_, T>> {
         self.data.get().as_code_point_trie()
+    }
+
+    /// Convert this type to a [`CodePointTrie`], borrowing if possible,
+    /// otherwise allocating a new [`CodePointTrie`].
+    ///
+    /// The data backing this is extensible and supports multiple implementations.
+    /// Currently it is always [`CodePointTrie`]; however in the future more backends may be
+    /// added, and users may select which at data generation time.
+    ///
+    /// The performance of the conversion to this specific return type will vary
+    /// depending on the data structure that is backing `self`.
+    pub fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
+        self.data.get().to_code_point_trie()
     }
 }
 
