@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659056742592,
+  "lastUpdate": 1659078729884,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -39820,6 +39820,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6404784d61eb1d450092c96bccd5504209761c28",
+          "message": "Fix the naming of the rounding modes. (#2261)\n\nFix the naming of the rounding modes.",
+          "timestamp": "2022-07-29T09:02:57+02:00",
+          "tree_id": "43831354d3dd458ad3b54bbe88804ce921012319",
+          "url": "https://github.com/unicode-org/icu4x/commit/6404784d61eb1d450092c96bccd5504209761c28"
+        },
+        "date": 1659078692884,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 58146105,
+            "range": "± 873018",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
             "range": "± 0",
             "unit": "ns/iter"
           }
