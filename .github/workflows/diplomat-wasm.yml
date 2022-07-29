@@ -82,7 +82,7 @@ jobs:
       with:
         ref: gh-pages
     - run: |
-        rm -r wasm-demo
+        [ ! -e wasm-demo ] || rm -r wasm-demo
         mkdir wasm-demo
         printf "const gcs=document.createElement('script');gcs.setAttribute('src','https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/bundle.js');document.body.appendChild(gcs);" ${{ github.sha }} > wasm-demo/index.js
         git checkout wasm-demo -- ffi/diplomat/wasm/wasm-demo/index.html > wasm-demo/index.html
