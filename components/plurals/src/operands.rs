@@ -79,7 +79,8 @@ use fixed_decimal::FixedDecimal;
 ///     }),
 ///     FixedDecimal::from(12345)
 ///         .multiplied_pow10(-2)
-///         .map(|d| (&d).into())
+///         .to_string()
+///         .parse()
 /// )
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
