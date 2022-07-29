@@ -183,8 +183,8 @@ fn test_basic() {
         likely_subtags
             .get()
             .lr2s
-            .get_copied(&language!("zh").into(), &region!("TW").into()),
-        Ok(script!("Hant"))
+            .get_copied_2d(&language!("zh").into(), &region!("TW").into()),
+        Some(script!("Hant"))
     );
     assert_eq!(
         likely_subtags.get().l2r.get_copied(&language!("zh").into()),
@@ -194,8 +194,8 @@ fn test_basic() {
         likely_subtags
             .get()
             .ls2r
-            .get_copied(&language!("zh").into(), &script!("Hant").into()),
-        Ok(region!("TW"))
+            .get_copied_2d(&language!("zh").into(), &script!("Hant").into()),
+        Some(region!("TW"))
     );
 
     let parents: DataPayload<LocaleFallbackParentsV1Marker> = provider

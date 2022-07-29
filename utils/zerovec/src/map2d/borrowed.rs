@@ -9,7 +9,7 @@ use core::fmt;
 
 use crate::map::ZeroMapKV;
 use crate::map::ZeroVecLike;
-use crate::map2d::{KeyError, ZeroMap2dCursor};
+use crate::map2d::ZeroMap2dCursor;
 
 /// A borrowed-only version of [`ZeroMap2d`](super::ZeroMap2d)
 ///
@@ -31,7 +31,7 @@ use crate::map2d::{KeyError, ZeroMap2dCursor};
 /// // Deserializing to ZeroMap2d requires no heap allocations.
 /// let zero_map: ZeroMap2dBorrowed<u16, u16, str> =
 ///     bincode::deserialize(BINCODE_BYTES).expect("Should deserialize successfully");
-/// assert_eq!(zero_map.get(&1, &2), Ok("three"));
+/// assert_eq!(zero_map.get_2d(&1, &2), Some("three"));
 /// ```
 ///
 /// This can be obtained from a [`ZeroMap2d`](super::ZeroMap2d) via [`ZeroMap2d::as_borrowed`](super::ZeroMap2d::as_borrowed)
@@ -183,7 +183,7 @@ where
     /// primary advantage of using [`ZeroMap2dBorrowed`](super::ZeroMap2dBorrowed) over [`ZeroMap2d`](super::ZeroMap2d).
     ///
     /// ```rust
-    /// use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
+    /// use zerovec::maps::ZeroMap2dBorrowed;
     /// use zerovec::ZeroMap2d;
     ///
     /// let mut map = ZeroMap2d::new();
@@ -192,22 +192,19 @@ where
     /// map.insert(&2, "two", "baz");
     ///
     /// let borrowed = map.as_borrowed();
-    /// assert_eq!(borrowed.get(&1, "one"), Ok("foo"));
-    /// assert_eq!(borrowed.get(&1, "two"), Err(KeyError::K1));
-    /// assert_eq!(borrowed.get(&2, "one"), Ok("bar"));
-    /// assert_eq!(borrowed.get(&2, "two"), Ok("baz"));
-    /// assert_eq!(borrowed.get(&3, "three"), Err(KeyError::K0));
+    /// assert_eq!(borrowed.get_2d(&1, "one"), Some("foo"));
+    /// assert_eq!(borrowed.get_2d(&1, "two"), None);
+    /// assert_eq!(borrowed.get_2d(&2, "one"), Some("bar"));
+    /// assert_eq!(borrowed.get_2d(&2, "two"), Some("baz"));
+    /// assert_eq!(borrowed.get_2d(&3, "three"), None);
     ///
-    /// let borrow = borrowed.get(&1, "one");
+    /// let borrow = borrowed.get_2d(&1, "one");
     /// drop(borrowed);
     /// // still exists after the ZeroMap2dBorrowed has been dropped
-    /// assert_eq!(borrow, Ok("foo"));
+    /// assert_eq!(borrow, Some("foo"));
     /// ```
-    pub fn get(&self, key0: &K0, key1: &K1) -> Result<&'a V::GetType, KeyError> {
-        self.get0(key0)
-            .ok_or(KeyError::K0)?
-            .get1(key1)
-            .ok_or(KeyError::K1)
+    pub fn get_2d(&self, key0: &K0, key1: &K1) -> Option<&'a V::GetType> {
+        self.get0(key0)?.get1(key1)
     }
 }
 
@@ -304,11 +301,8 @@ where
     K1: ?Sized,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
-    pub fn get_copied(&self, key0: &K0, key1: &K1) -> Result<V, KeyError> {
-        self.get0(key0)
-            .ok_or(KeyError::K0)?
-            .get1_copied(key1)
-            .ok_or(KeyError::K1)
+    pub fn get_copied_2d(&self, key0: &K0, key1: &K1) -> Option<V> {
+        self.get0(key0)?.get1_copied(key1)
     }
 }
 

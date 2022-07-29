@@ -16,4 +16,3 @@ mod serde;
 pub use crate::ZeroMap2d;
 pub use borrowed::ZeroMap2dBorrowed;
 pub use cursor::ZeroMap2dCursor;
-pub use map::KeyError;

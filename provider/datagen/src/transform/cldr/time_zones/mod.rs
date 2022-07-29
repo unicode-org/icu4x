@@ -187,7 +187,7 @@ mod tests {
             specific_names_long
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "aucw")), &TimeVariant::standard())
+                .get_2d(&MetaZoneId(tinystr!(4, "aucw")), &TimeVariant::standard())
                 .unwrap()
         );
         assert_eq!(
@@ -195,7 +195,7 @@ mod tests {
             specific_names_long
                 .get()
                 .overrides
-                .get(
+                .get_2d(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
                     &TimeVariant::standard()
                 )
@@ -240,7 +240,7 @@ mod tests {
             specific_names_short
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "ampa")), &TimeVariant::daylight())
+                .get_2d(&MetaZoneId(tinystr!(4, "ampa")), &TimeVariant::daylight())
                 .unwrap()
         );
         assert_eq!(
@@ -248,7 +248,7 @@ mod tests {
             specific_names_short
                 .get()
                 .overrides
-                .get(
+                .get_2d(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
                     &TimeVariant::standard()
                 )
@@ -268,7 +268,7 @@ mod tests {
             metazone_period
                 .get()
                 .0
-                .get_copied(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)
+                .get_copied_2d(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)
                 .unwrap()
         );
     }
