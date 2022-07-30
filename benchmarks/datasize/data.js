@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659138620115,
+  "lastUpdate": 1659139535845,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22223,6 +22223,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c32c54eefcd948e0901f6085134b1db5f687baf3"
         },
         "date": 1659138581435,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "27cf90ed62ace148e8007f2a967b1a39586035e2",
+          "message": "Rename select() to category_for() for PluralRules (#2287)",
+          "timestamp": "2022-07-30T00:03:12Z",
+          "tree_id": "6a2661af6a60a47c0a0e128b0933a8861a03a71e",
+          "url": "https://github.com/unicode-org/icu4x/commit/27cf90ed62ace148e8007f2a967b1a39586035e2"
+        },
+        "date": 1659139491663,
         "tool": "ndjson",
         "benches": [
           {
