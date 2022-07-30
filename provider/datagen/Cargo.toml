@@ -57,8 +57,8 @@ icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", features = ["serde"] }
-icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", features = ["serde"] }
-icu_codepointtrie_builder = { path = "../../utils/codepointtrie/builder" }
+icu_codepointtrie = { version = "0.4", path = "../../components/collections/codepointtrie", features = ["serde"] }
+icu_codepointtrie_builder = { path = "../../components/collections/codepointtrie/builder" }
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
 icu_uniset = { version = "0.5", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"

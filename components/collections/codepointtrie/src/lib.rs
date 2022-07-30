@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `aicu_codepointtrie` is a utility crate of the [`ICU4X`] project.
+//! `icu_codepointtrie` is a utility crate of the [`ICU4X`] project.
 //!
 //! This component provides a data structure for an time-efficient lookup of values
 //! associated to code points.
@@ -21,7 +21,7 @@
 //! ## Querying a `CodePointTrie`
 //!
 //! ```
-//! use aicu_codepointtrie::planes;
+//! use icu_codepointtrie::planes;
 //! let trie = planes::get_planes_trie();
 //!
 //! assert_eq!(0, trie.get(0x41)); // 'A' as u32

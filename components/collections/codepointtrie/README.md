@@ -1,6 +1,6 @@
-# aicu_codepointtrie [![crates.io](https://img.shields.io/crates/v/aicu_codepointtrie)](https://crates.io/crates/aicu_codepointtrie)
+# icu_codepointtrie [![crates.io](https://img.shields.io/crates/v/icu_codepointtrie)](https://crates.io/crates/icu_codepointtrie)
 
-`aicu_codepointtrie` is a utility crate of the [`ICU4X`] project.
+`icu_codepointtrie` is a utility crate of the [`ICU4X`] project.
 
 This component provides a data structure for an time-efficient lookup of values
 associated to code points.
@@ -19,7 +19,7 @@ for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
 ### Querying a `CodePointTrie`
 
 ```rust
-use aicu_codepointtrie::planes;
+use icu_codepointtrie::planes;
 let trie = planes::get_planes_trie();
 
 assert_eq!(0, trie.get(0x41)); // 'A' as u32

@@ -27,4 +27,4 @@
 #![warn(missing_docs)]
 
 #[doc(inline)]
-pub use aicu_codepointtrie as codepointtrie;
+pub use icu_codepointtrie as codepointtrie;

@@ -29,7 +29,7 @@ skip_optional_dependencies = true
 
 [dependencies]
 icu_char16trie = { version = "0.1", path = "../char16trie" }
-icu_codepointtrie = { path = "../../utils/codepointtrie" }
+icu_codepointtrie = { path = "../../components/collections/codepointtrie" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }

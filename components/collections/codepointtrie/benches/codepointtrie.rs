@@ -4,7 +4,7 @@
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
-use aicu_codepointtrie::CodePointTrie;
+use icu_codepointtrie::CodePointTrie;
 
 #[path = "tries/mod.rs"]
 mod tries;

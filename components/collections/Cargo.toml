@@ -32,7 +32,7 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-aicu_codepointtrie = { path = "codepointtrie", features = ["serde"] }
+icu_codepointtrie = { path = "codepointtrie", features = ["serde"] }
 
 [dev-dependencies]
 

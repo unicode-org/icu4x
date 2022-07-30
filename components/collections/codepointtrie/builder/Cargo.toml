@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "aicu_codepointtrie_builder"
+name = "icu_codepointtrie_builder"
 description = "Runtime builder for CodePointTrie"
 version = "0.3.3"
 authors = ["The ICU4X Project Developers"]
@@ -24,7 +24,7 @@ include = [
 ]
 
 [dependencies]
-aicu_codepointtrie = { path = "..", features = ["serde"] }
+icu_codepointtrie = { path = "..", features = ["serde"] }
 lazy_static = { version = "1.4.0" }
 toml = "0.5"
 

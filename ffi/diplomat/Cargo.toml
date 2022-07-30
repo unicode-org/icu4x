@@ -47,7 +47,7 @@ deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
 [dependencies]
 fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_calendar = { version = "0.6", path = "../../components/calendar"}
-icu_codepointtrie = { version = "0.4.0", path = "../../utils/codepointtrie"}
+icu_codepointtrie = { version = "0.4.0", path = "../../components/collections/codepointtrie"}
 icu_datetime = { version = "0.6", path = "../../components/datetime/", features = ["serde"] }
 icu_decimal = { version = "0.6", path = "../../components/decimal/", features = ["serde"] }
 icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", features = ["serde"] }

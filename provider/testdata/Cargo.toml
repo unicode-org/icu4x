@@ -314,7 +314,7 @@ icu_plurals = { version = "0.6", path = "../../components/plurals", optional = t
 icu_properties = { version = "0.6", path = "../../components/properties", optional = true }
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true, features = ["lstm"] }
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", optional = true }
-icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", optional = true }
+icu_codepointtrie = { version = "0.4", path = "../../components/collections/codepointtrie", optional = true }
 icu_uniset = { version = "0.5", path = "../../utils/uniset", optional = true }
 litemap = { version = "0.4", path = "../../utils/litemap", optional = true, default-features = false }
 tinystr = { version = "0.6", path = "../../utils/tinystr", optional = true }

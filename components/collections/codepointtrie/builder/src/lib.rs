@@ -15,10 +15,10 @@
 //! # Examples
 //!
 //! ```
-//! use aicu_codepointtrie::CodePointTrie;
-//! use aicu_codepointtrie::TrieType;
-//! use aicu_codepointtrie_builder::CodePointTrieBuilder;
-//! use aicu_codepointtrie_builder::CodePointTrieBuilderData;
+//! use icu_codepointtrie::CodePointTrie;
+//! use icu_codepointtrie::TrieType;
+//! use icu_codepointtrie_builder::CodePointTrieBuilder;
+//! use icu_codepointtrie_builder::CodePointTrieBuilderData;
 //!
 //! let default_value = 1;
 //! let error_value = 2;
@@ -58,10 +58,10 @@
 #![allow(clippy::panic)]
 #![allow(clippy::expect_used)]
 
-use aicu_codepointtrie::toml::CodePointTrieToml;
-use aicu_codepointtrie::CodePointTrie;
-use aicu_codepointtrie::TrieType;
-use aicu_codepointtrie::TrieValue;
+use icu_codepointtrie::toml::CodePointTrieToml;
+use icu_codepointtrie::CodePointTrie;
+use icu_codepointtrie::TrieType;
+use icu_codepointtrie::TrieValue;
 use std::convert::TryInto;
 
 mod wasm;

@@ -4,9 +4,9 @@
 
 mod test_util;
 
-use aicu_codepointtrie::error::Error;
-use aicu_codepointtrie::planes::get_planes_trie;
-use aicu_codepointtrie::*;
+use icu_codepointtrie::error::Error;
+use icu_codepointtrie::planes::get_planes_trie;
+use icu_codepointtrie::*;
 use test_util::UnicodeEnumeratedProperty;
 
 use core::convert::TryFrom;

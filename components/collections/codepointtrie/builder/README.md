@@ -1,6 +1,6 @@
-# aicu_codepointtrie_builder [![crates.io](https://img.shields.io/crates/v/aicu_codepointtrie_builder)](https://crates.io/crates/aicu_codepointtrie_builder)
+# icu_codepointtrie_builder [![crates.io](https://img.shields.io/crates/v/icu_codepointtrie_builder)](https://crates.io/crates/icu_codepointtrie_builder)
 
-`aicu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
+`icu_codepointtrie_builder` is a utility crate of the [`ICU4X`] project.
 
 This crate exposes functionality to build a [`CodePointTrie`] from values provided at runtime.
 Because it is normally expected for CodePointTrie data to be pre-compiled, this crate is not
@@ -13,10 +13,10 @@ shipped as a WebAssembly module and then JIT-compiled at runtime. For more conte
 ## Examples
 
 ```rust
-use aicu_codepointtrie::CodePointTrie;
-use aicu_codepointtrie::TrieType;
-use aicu_codepointtrie_builder::CodePointTrieBuilder;
-use aicu_codepointtrie_builder::CodePointTrieBuilderData;
+use icu_codepointtrie::CodePointTrie;
+use icu_codepointtrie::TrieType;
+use icu_codepointtrie_builder::CodePointTrieBuilder;
+use icu_codepointtrie_builder::CodePointTrieBuilderData;
 
 let default_value = 1;
 let error_value = 2;

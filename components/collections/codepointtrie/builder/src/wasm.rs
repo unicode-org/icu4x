@@ -4,8 +4,8 @@
 
 use crate::CodePointTrieBuilder;
 use crate::CodePointTrieBuilderData;
-use aicu_codepointtrie::TrieType;
-use aicu_codepointtrie::TrieValue;
+use icu_codepointtrie::TrieType;
+use icu_codepointtrie::TrieValue;
 use lazy_static::lazy_static;
 use wasmer::{Instance, Module, Store};
 use wasmer_wasi::{Pipe, WasiState};

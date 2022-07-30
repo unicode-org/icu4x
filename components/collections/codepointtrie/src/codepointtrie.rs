@@ -21,7 +21,7 @@ use zerovec::ZeroVecError;
 /// See [`UCPTrieType`](https://unicode-org.github.io/icu-docs/apidoc/dev/icu4c/ucptrie_8h.html) in ICU4C.
 #[derive(Clone, Copy, PartialEq, Debug, Eq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = aicu_codepointtrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_codepointtrie))]
 pub enum TrieType {
     /// Represents the "fast" type code point tries for the
     /// [`TrieType`] trait. The "fast max" limit is set to `0xffff`.
@@ -116,7 +116,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = aicu_codepointtrie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_codepointtrie))]
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrieHeader {
     /// The code point of the start of the last range of the trie. A
@@ -314,7 +314,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use aicu_codepointtrie::planes;
+    /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
     /// assert_eq!(0, trie.get(0x41)); // 'A' as u32
@@ -335,7 +335,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use aicu_codepointtrie::planes;
+    /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
     /// assert_eq!(Some(&0), trie.get_ule(0x41)); // 'A' as u32
@@ -376,7 +376,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```no_run
-    /// use aicu_codepointtrie::CodePointTrie;
+    /// use icu_codepointtrie::CodePointTrie;
     ///
     /// let cpt1: CodePointTrie<char> = unimplemented!();
     /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted().expect("infallible");
@@ -411,7 +411,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use aicu_codepointtrie::planes;
+    /// use icu_codepointtrie::planes;
     ///
     /// let trie = planes::get_planes_trie();
     ///
@@ -424,7 +424,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_ne!(trie.get(exp_end + 1), start_val);
     ///
     /// use core::ops::RangeInclusive;
-    /// use aicu_codepointtrie::CodePointMapRange;
+    /// use icu_codepointtrie::CodePointMapRange;
     ///
     /// let cpm_range: CodePointMapRange<u8> = trie.get_range(start).unwrap();
     ///
@@ -755,7 +755,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     /// use core::ops::RangeInclusive;
     /// use icu::collections::codepointtrie::planes;
-    /// use aicu_codepointtrie::CodePointMapRange;
+    /// use icu_codepointtrie::CodePointMapRange;
     ///
     /// let planes_trie = planes::get_planes_trie();
     ///
@@ -795,7 +795,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use aicu_codepointtrie::planes;
+    /// use icu_codepointtrie::planes;
     ///
     /// let trie = planes::get_planes_trie();
     ///
@@ -822,7 +822,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use aicu_codepointtrie::planes;
+    /// use icu_codepointtrie::planes;
     ///
     /// let trie = planes::get_planes_trie();
     ///
@@ -849,7 +849,7 @@ impl<'trie, T: TrieValue> databake::Bake for CodePointTrie<'trie, T> {
         let header = self.header.bake(env);
         let index = self.index.bake(env);
         let data = self.data.bake(env);
-        databake::quote! { ::aicu_codepointtrie::CodePointTrie::from_parts(#header, #index, #data) }
+        databake::quote! { ::icu_codepointtrie::CodePointTrie::from_parts(#header, #index, #data) }
     }
 }
 
@@ -860,7 +860,7 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// # Examples
     ///
     /// ```
-    /// use aicu_codepointtrie::planes;
+    /// use icu_codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
     /// let cp = '𑖎' as u32;
@@ -1125,7 +1125,7 @@ mod tests {
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
             ),
-            aicu_codepointtrie,
+            icu_codepointtrie,
             [zerovec],
         );
     }

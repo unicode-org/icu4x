@@ -50,24 +50,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "aicu_codepointtrie"
-version = "0.4.0"
-dependencies = [
- "criterion",
- "databake",
- "displaydoc",
- "iai",
- "icu",
- "icu_uniset",
- "postcard",
- "serde",
- "toml",
- "yoke",
- "zerofrom",
- "zerovec",
-]
-
-[[package]]
 name = "ansi_term"
 version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1456,6 +1438,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "iai",
+ "icu",
  "icu_uniset",
  "postcard",
  "serde",
@@ -1504,7 +1487,7 @@ dependencies = [
 name = "icu_collections"
 version = "0.6.0"
 dependencies = [
- "aicu_codepointtrie",
+ "icu_codepointtrie",
 ]
 
 [[package]]
