@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659140004216,
+  "lastUpdate": 1659145608823,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40337,6 +40337,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44508671,
             "range": "± 178220",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0980af95605c54c51258e56c0feeae92a7ba39af",
+          "message": "Add TimeVariant wrapper (#2289)\n\n* Add TimeVariant wrapper\n\n* fix\n\n* clippy\n\n* fix\n\n* fix2",
+          "timestamp": "2022-07-29T18:37:13-07:00",
+          "tree_id": "be82359a578f1b1e6392ff8875b140cd9abb8aa3",
+          "url": "https://github.com/unicode-org/icu4x/commit/0980af95605c54c51258e56c0feeae92a7ba39af"
+        },
+        "date": 1659145572598,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44583517,
+            "range": "± 270535",
             "unit": "ns/iter"
           },
           {
