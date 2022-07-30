@@ -3,10 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::{MetaZoneId, TimeZoneBcp47Id};
-use tinystr::TinyStr8;
 
 use crate::metazone::MetaZoneCalculator;
-use crate::{GmtOffset, TimeZoneError};
+use crate::{GmtOffset, TimeVariant, TimeZoneError};
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
 
@@ -36,7 +35,7 @@ pub struct CustomTimeZone {
     /// The CLDR metazone identifier
     pub metazone_id: Option<MetaZoneId>,
     /// The time variant e.g. "daylight" or "standard"
-    pub time_variant: Option<TinyStr8>,
+    pub time_variant: Option<TimeVariant>,
 }
 
 impl CustomTimeZone {
@@ -47,7 +46,7 @@ impl CustomTimeZone {
         gmt_offset: Option<GmtOffset>,
         time_zone_id: Option<TimeZoneBcp47Id>,
         metazone_id: Option<MetaZoneId>,
-        time_variant: Option<TinyStr8>,
+        time_variant: Option<TimeVariant>,
     ) -> Self {
         Self {
             gmt_offset,

@@ -4,6 +4,9 @@
 
 use crate::TimeZoneError;
 use core::str::FromStr;
+use tinystr::{tinystr, TinyStr8};
+use zerovec::ule::{AsULE, ULE};
+use zerovec::{ZeroSlice, ZeroVec};
 
 /// The GMT offset in seconds for a timezone
 #[derive(Copy, Clone, Debug, Default)]
@@ -122,4 +125,52 @@ impl FromStr for GmtOffset {
 
         Self::try_new(seconds)
     }
+}
+
+/// A time variant, e.g. "daylight" or "standard"
+#[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ULE)]
+#[repr(transparent)]
+#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
+pub struct TimeVariant(pub TinyStr8);
+
+impl FromStr for TimeVariant {
+    type Err = <TinyStr8 as FromStr>::Err;
+
+    fn from_str(input: &str) -> Result<Self, Self::Err> {
+        input.parse().map(TimeVariant)
+    }
+}
+
+impl TimeVariant {
+    /// Return the `"standard"` `TimeVariant`
+    pub const fn standard() -> Self {
+        Self(tinystr!(8, "standard"))
+    }
+    /// Return the `"daylight"` `TimeVariant`
+    pub const fn daylight() -> Self {
+        Self(tinystr!(8, "daylight"))
+    }
+}
+
+impl AsULE for TimeVariant {
+    type ULE = Self;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeVariant {
+    type Container = ZeroVec<'a, TimeVariant>;
+    type Slice = ZeroSlice<TimeVariant>;
+    type GetType = TimeVariant;
+    type OwnedType = TimeVariant;
 }
