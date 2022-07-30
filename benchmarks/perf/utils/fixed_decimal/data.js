@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659136855605,
+  "lastUpdate": 1659139243563,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41009,6 +41009,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 74,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c32c54eefcd948e0901f6085134b1db5f687baf3",
+          "message": "Fix and run datetime cpp CI (#2290)",
+          "timestamp": "2022-07-29T23:48:27Z",
+          "tree_id": "5a191d68e489d224f0f506a11b04a6cd898497fd",
+          "url": "https://github.com/unicode-org/icu4x/commit/c32c54eefcd948e0901f6085134b1db5f687baf3"
+        },
+        "date": 1659139201055,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 148868,
+            "range": "± 9235",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28581,
+            "range": "± 725",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 82510,
+            "range": "± 1777",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 227,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 109,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 106,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
