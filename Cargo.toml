@@ -7,6 +7,8 @@ resolver = "2"
 members = [
     "components/calendar",
     "components/collator",
+    "components/collections/codepointtrie",
+    "components/collections/codepointtrie/builder",
     "components/datetime",
     "components/decimal",
     "components/icu",

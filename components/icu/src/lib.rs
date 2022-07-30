@@ -130,6 +130,9 @@ pub use icu_plurals as plurals;
 #[doc(inline)]
 pub use icu_properties as properties;
 
+#[doc(inline)]
+pub use icu_collections as collections;
+
 #[cfg(feature = "experimental")]
 #[doc(inline)]
 pub use icu_segmenter as segmenter;
