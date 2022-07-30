@@ -86,10 +86,10 @@ jobs:
 
     - name: Copy index.html from main
       run: |
-        rm -rf wasm-demo
-        mkdir wasm-demo
-        printf "const gcs=document.createElement('script');gcs.setAttribute('src','https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/bundle.js');document.body.appendChild(gcs);" ${{ github.sha }} > wasm-demo/index.js
-        git checkout ${GITHUB_REF##*/} -- ffi/diplomat/wasm/wasm-demo/index.html > wasm-demo/index.html
+        rm -rf wasm-demo-app
+        mkdir wasm-demo-app
+        printf "const gcs=document.createElement('script');gcs.setAttribute('src','https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/bundle.js');document.body.appendChild(gcs);" ${{ github.sha }} > wasm-demo-app/index.js
+        git checkout ${GITHUB_REF##*/} -- ffi/diplomat/wasm/wasm-demo/index.html > wasm-demo-app/index.html
         git diff-index --quiet HEAD ||  git commit -m "Deploy with new hash"
         git push
 
