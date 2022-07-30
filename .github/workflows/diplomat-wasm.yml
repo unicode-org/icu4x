@@ -88,6 +88,8 @@ jobs:
         rm -rf wasm-demo
         mkdir wasm-demo
         printf "const gcs=document.createElement('script');gcs.setAttribute('src','https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/bundle.js');document.body.appendChild(gcs);" ${{ github.sha }} > wasm-demo/index.js
-        git checkout main -- ffi/diplomat/wasm/wasm-demo/index.html > wasm-demo/index.html
+        git checkout ${GITHUB_REF##*/} -- ffi/diplomat/wasm/wasm-demo/index.html > wasm-demo/index.html
+        git diff-index --quiet HEAD ||  git commit -m "Deploy with new hash"
+        git push
 
 
