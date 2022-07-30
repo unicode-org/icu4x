@@ -11,7 +11,7 @@
 
 use crate::script::ScriptWithExtensions;
 use core::ops::RangeInclusive;
-use icu_codepointtrie::{CodePointMapRangeIterator, CodePointTrie, TrieValue};
+use icu_codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 use zerofrom::ZeroFrom;
@@ -134,7 +134,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 
     #[inline]
-    pub(crate) fn iter_ranges(&self) -> CodePointMapRangeIterator<'_, T> {
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
         match *self {
             Self::CodePointTrie(ref t) => t.iter_ranges(),
         }

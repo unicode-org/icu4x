@@ -17,7 +17,7 @@ use crate::sets::CodePointSetData;
 #[cfg(doc)]
 use crate::*;
 use core::marker::PhantomData;
-use icu_codepointtrie::{CodePointMapRangeIterator, CodePointTrie, TrieValue};
+use icu_codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 
 /// A wrapper around code point map data. It is returned by APIs that return Unicode
@@ -221,7 +221,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(ranges.next(), None);
     /// assert_eq!(ranges.next(), None);
     /// ```
-    pub fn iter_ranges(&self) -> CodePointMapRangeIterator<'_, T> {
+    pub fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
         self.map.iter_ranges()
     }
 }
