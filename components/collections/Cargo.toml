@@ -33,9 +33,3 @@ all-features = true
 
 [dependencies]
 icu_codepointtrie = { path = "codepointtrie", features = ["serde"] }
-
-[dev-dependencies]
-
-[lib]
-
-[features]

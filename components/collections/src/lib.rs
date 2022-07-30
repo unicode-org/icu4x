@@ -11,7 +11,6 @@
 //! from ICU4C. Detailed information about the design of the data structure can be found in the documentation
 //! for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
 //!
-//! # Examples
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
