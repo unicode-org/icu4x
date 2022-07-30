@@ -146,3 +146,41 @@ args = [
     "--",
     "-v",
 ]
+
+[tasks.hello-world-lang-de]
+description = "Build Hello World data for 'de'"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--hello-world-key",
+    "--locales=de",
+    "--out=provider/adapters/tests/data/langtest/de",
+    "--overwrite",
+]
+
+[tasks.hello-world-lang-ro]
+description = "Build Hello World data for 'ro'"
+category = "ICU4X Data"
+command = "cargo"
+args = [
+    "run",
+    "--bin=icu4x-datagen",
+    "--features=experimental,bin",
+    "--",
+    "--hello-world-key",
+    "--locales=ro",
+    "--out=provider/adapters/tests/data/langtest/ro",
+    "--overwrite",
+]
+
+[tasks.hello-world-lang-all]
+description = "Build all Hello World languages."
+category = "ICU4X Data"
+dependencies = [
+    "hello-world-lang-de",
+    "hello-world-lang-ro",
+]

@@ -18,12 +18,11 @@ pub mod ffi {
     };
 
     #[diplomat::opaque]
-    /// An ICU4X TimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string,
-    /// using the Gregorian Calendar.
+    /// An ICU4X TimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string
     #[diplomat::rust_link(icu::datetime::TimeFormatter, Struct)]
     // TODO(#2153) - Rename to ICU4XTimeFormatter when we remove the dependency on calendar
     // from TimeFormatter.
-    pub struct ICU4XGregorianTimeFormatter(pub TimeFormatter<Gregorian>);
+    pub struct ICU4XTimeFormatter(pub TimeFormatter);
 
     pub enum ICU4XTimeLength {
         Full,
@@ -40,15 +39,15 @@ pub mod ffi {
         None,
     }
 
-    impl ICU4XGregorianTimeFormatter {
-        /// Creates a new [`ICU4XGregorianTimeFormatter`] from locale data.
+    impl ICU4XTimeFormatter {
+        /// Creates a new [`ICU4XTimeFormatter`] from locale data.
         #[diplomat::rust_link(icu::decimal::DateFormatter::try_new, FnInStruct)]
         pub fn try_new(
             locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
             length: ICU4XTimeLength,
             preferences: ICU4XHourCyclePreference,
-        ) -> DiplomatResult<Box<ICU4XGregorianTimeFormatter>, ICU4XError> {
+        ) -> DiplomatResult<Box<ICU4XTimeFormatter>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
 
@@ -76,14 +75,14 @@ pub mod ffi {
             };
 
             TimeFormatter::try_new(locale, &provider, length, preferences)
-                .map(|tf| Box::new(ICU4XGregorianTimeFormatter(tf)))
+                .map(|tf| Box::new(ICU4XTimeFormatter(tf)))
                 .map_err(Into::into)
                 .into()
         }
 
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
-        pub fn format_datetime(
+        pub fn format_gregorian_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,

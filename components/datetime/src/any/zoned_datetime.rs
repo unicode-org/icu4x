@@ -9,12 +9,12 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 
 use icu_provider::prelude::*;
 
-use crate::date::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
+use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
 use crate::provider::{
     self,
     calendar::{
-        DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-        TimePatternsV1Marker, TimeSymbolsV1Marker,
+        DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+        TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     week_data::WeekDataV1Marker,
 };
@@ -47,7 +47,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::mock::time_zone::MockTimeZone;
+/// use icu::timezone::CustomTimeZone;
 /// use icu::datetime::{options::length, any::ZonedAnyDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatterOptions;
@@ -67,7 +67,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let time_zone: MockTimeZone = "+05:00".parse().expect("Timezone should parse");
+/// let time_zone: CustomTimeZone = "+05:00".parse().expect("Timezone should parse");
 ///
 /// let value = zdtf.format_to_string(&any_datetime, &time_zone).expect("calendars should match");
 ///
@@ -135,8 +135,8 @@ impl ZonedAnyDateTimeFormatter {
     where
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateLengthsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
             + ?Sized,

@@ -19,6 +19,7 @@ members = [
     "components/normalizer",
     "components/plurals",
     "components/properties",
+    "components/timezone",
     "experimental/bies",
     "experimental/casemapping",
     "experimental/char16trie",

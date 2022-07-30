@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date::DateTimeError;
 use crate::fields::FieldSymbol;
+use crate::input::DateTimeError;
 use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
@@ -43,7 +43,7 @@ pub enum DateTimeFormatterError {
     /// An error originating from [`PluralRules`][icu_plurals::PluralRules].
     #[displaydoc("{0}")]
     PluralRules(PluralRulesError),
-    /// An error originating from [`DateTimeInput`][crate::date::DateTimeInput].
+    /// An error originating from [`DateTimeInput`][crate::input::DateTimeInput].
     #[displaydoc("{0}")]
     DateTimeInput(DateTimeError),
     /// An error originating from a missing weekday symbol in the data.

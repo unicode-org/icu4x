@@ -65,7 +65,7 @@ pub mod ffi {
         /// FFI version of `PluralRules::select()`.
         #[diplomat::rust_link(icu_plurals::PluralRules::select, FnInStruct)]
         pub fn select(&self, op: ICU4XPluralOperands) -> ICU4XPluralCategory {
-            let res = self.0.select(PluralOperands {
+            let res = self.0.category_for(PluralOperands {
                 i: op.i,
                 v: op.v,
                 w: op.w,

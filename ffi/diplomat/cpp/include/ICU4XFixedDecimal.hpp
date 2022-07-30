@@ -85,24 +85,24 @@ class ICU4XFixedDecimal {
   /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_left) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_start) for more information.
    */
-  void pad_left(int16_t position);
+  void pad_start(int16_t position);
 
   /**
    * Truncate the [`ICU4XFixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
    * ("2022" -> "22")
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.truncate_left) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.set_max_position) for more information.
    */
-  void truncate_left(int16_t position);
+  void set_max_position(int16_t position);
 
   /**
    * Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular position
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_right) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_end) for more information.
    */
-  void pad_right(int16_t position);
+  void pad_end(int16_t position);
 
   /**
    * Format the [`ICU4XFixedDecimal`] as a string.
@@ -177,14 +177,14 @@ inline bool ICU4XFixedDecimal::multiply_pow10(int16_t power) {
 inline void ICU4XFixedDecimal::set_sign(ICU4XFixedDecimalSign sign) {
   capi::ICU4XFixedDecimal_set_sign(this->inner.get(), static_cast<capi::ICU4XFixedDecimalSign>(sign));
 }
-inline void ICU4XFixedDecimal::pad_left(int16_t position) {
-  capi::ICU4XFixedDecimal_pad_left(this->inner.get(), position);
+inline void ICU4XFixedDecimal::pad_start(int16_t position) {
+  capi::ICU4XFixedDecimal_pad_start(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::truncate_left(int16_t position) {
-  capi::ICU4XFixedDecimal_truncate_left(this->inner.get(), position);
+inline void ICU4XFixedDecimal::set_max_position(int16_t position) {
+  capi::ICU4XFixedDecimal_set_max_position(this->inner.get(), position);
 }
-inline void ICU4XFixedDecimal::pad_right(int16_t position) {
-  capi::ICU4XFixedDecimal_pad_right(this->inner.get(), position);
+inline void ICU4XFixedDecimal::pad_end(int16_t position) {
+  capi::ICU4XFixedDecimal_pad_end(this->inner.get(), position);
 }
 template<typename W> inline void ICU4XFixedDecimal::to_string_to_writeable(W& to) const {
   capi::DiplomatWriteable to_writer = diplomat::WriteableTrait<W>::Construct(to);

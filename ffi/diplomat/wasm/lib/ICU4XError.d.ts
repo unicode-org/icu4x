@@ -99,9 +99,6 @@ export enum ICU4XError {
   DateTimeUnderflowError = 'DateTimeUnderflowError',
   /**
    */
-  DateTimeInvalidTimeZoneOffsetError = 'DateTimeInvalidTimeZoneOffsetError',
-  /**
-   */
   DateTimeOutOfRangeError = 'DateTimeOutOfRangeError',
   /**
    */

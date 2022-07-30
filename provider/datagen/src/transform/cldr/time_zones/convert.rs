@@ -13,9 +13,10 @@ use cldr_serde::time_zones::time_zone_names::*;
 use icu_calendar::DateTime;
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
-    MetaZonePeriodV1, MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id,
-    TimeZoneFormatsV1,
+    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
+use icu_timezone::provider::MetaZonePeriodV1;
+use icu_timezone::TimeVariant;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
@@ -35,11 +36,8 @@ fn type_fallback(zone_format: &ZoneFormat) -> Option<&String> {
 
 fn parse_hour_format(hour_format: &str) -> (Cow<'static, str>, Cow<'static, str>) {
     // e.g. "+HH:mm;-HH:mm" -> ("+HH:mm", "-HH:mm")
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let index = hour_format.rfind(';').unwrap();
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let positive = String::from(&hour_format[0..index]);
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
     let negative = String::from(&hour_format[index + 1..]);
     (Cow::Owned(positive), Cow::Owned(negative))
 }
@@ -80,8 +78,6 @@ impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
                 .region_format_variants
                 .iter()
                 .map(|(key, value)| {
-                    #[allow(clippy::expect_used)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     (
                         key.parse::<TinyStr8>()
                             .expect("Time-zone variant was not compatible with TinyStr8"),
@@ -99,25 +95,25 @@ impl From<CldrTimeZonesData<'_>> for TimeZoneFormatsV1<'static> {
 impl Location {
     fn exemplar_city(&self) -> Option<String> {
         match self {
-            Self::LocationWithCity(place) => Some(place.exemplar_city.clone()),
-            Self::LocationWithLong(place) => place.exemplar_city.clone(),
-            Self::LocationWithShort(place) => place.exemplar_city.clone(),
+            Self::City(place) => Some(place.exemplar_city.clone()),
+            Self::Long(place) => place.exemplar_city.clone(),
+            Self::Short(place) => place.exemplar_city.clone(),
         }
     }
 
     fn long_metazone_names(&self) -> Option<ZoneFormat> {
         match self {
-            Self::LocationWithCity(place) => place.long.clone(),
-            Self::LocationWithLong(place) => Some(place.long.clone()),
-            Self::LocationWithShort(place) => place.long.clone(),
+            Self::City(place) => place.long.clone(),
+            Self::Long(place) => Some(place.long.clone()),
+            Self::Short(place) => place.long.clone(),
         }
     }
 
     fn short_metazone_names(&self) -> Option<ZoneFormat> {
         match self {
-            Self::LocationWithCity(place) => place.short.clone(),
-            Self::LocationWithLong(place) => place.short.clone(),
-            Self::LocationWithShort(place) => Some(place.short.clone()),
+            Self::City(place) => place.short.clone(),
+            Self::Long(place) => place.short.clone(),
+            Self::Short(place) => Some(place.short.clone()),
         }
     }
 }
@@ -432,17 +428,15 @@ long_short_impls!(
 
 fn iterate_zone_format_for_meta_zone_id(
     pair: (MetaZoneId, ZoneFormat),
-) -> impl Iterator<Item = (MetaZoneId, TinyStr8, String)> {
+) -> impl Iterator<Item = (MetaZoneId, TimeVariant, String)> {
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
                 key1,
-                #[allow(clippy::expect_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                key.parse::<TinyStr8>()
-                    .expect("Time-zone variant was not compatible with TinyStr8"),
+                key.parse::<TimeVariant>()
+                    .expect("Time-zone variant was not compatible with TimeVariant"),
                 value,
             )
         })
@@ -450,17 +444,15 @@ fn iterate_zone_format_for_meta_zone_id(
 
 fn iterate_zone_format_for_time_zone_id(
     pair: (TimeZoneBcp47Id, ZoneFormat),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, TinyStr8, String)> {
+) -> impl Iterator<Item = (TimeZoneBcp47Id, TimeVariant, String)> {
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
         .map(move |(key, value)| {
             (
                 key1,
-                #[allow(clippy::expect_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                key.parse::<TinyStr8>()
-                    .expect("Time-zone variant was not compatible with TinyStr8"),
+                key.parse::<TimeVariant>()
+                    .expect("Time-zone variant was not compatible with TimeVariant"),
                 value,
             )
         })

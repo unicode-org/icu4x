@@ -14,7 +14,6 @@ use icu_provider::prelude::*;
 use std::collections::HashSet;
 
 impl IterableDataProvider<WeekDataV1Marker> for crate::DatagenProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .source

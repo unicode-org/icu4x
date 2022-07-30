@@ -52,11 +52,10 @@ pub struct LocationWithLong {
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
-#[allow(clippy::enum_variant_names)]
 pub enum Location {
-    LocationWithCity(LocationWithExemplarCity),
-    LocationWithLong(LocationWithLong),
-    LocationWithShort(LocationWithShort),
+    City(LocationWithExemplarCity),
+    Long(LocationWithLong),
+    Short(LocationWithShort),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
@@ -116,8 +115,6 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
                 let value = map.next_value::<String>()?;
                 if key.contains('-') {
                     // key is of the form: "regionFormat-type-variant"
-                    #[allow(clippy::unwrap_used)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     let variant = key.split('-').last().unwrap();
                     time_zone_names
                         .region_format_variants

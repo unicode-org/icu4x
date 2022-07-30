@@ -17,6 +17,7 @@ use icu_plurals::provider::*;
 use icu_properties::provider::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider_adapters::fallback::provider::*;
+use icu_timezone::provider::*;
 
 #[cfg(feature = "experimental")]
 use icu_casemapping::provider::*;
@@ -94,7 +95,7 @@ registry!(
     CompatibilityDecompositionSupplementV1Marker,
     CompatibilityDecompositionTablesV1Marker,
     DashV1Marker,
-    DatePatternsV1Marker,
+    DateLengthsV1Marker,
     DateSkeletonPatternsV1Marker,
     DateSymbolsV1Marker,
     DecimalSymbolsV1Marker,
@@ -135,9 +136,9 @@ registry!(
     MathV1Marker,
     MetaZoneGenericNamesLongV1Marker,
     MetaZoneGenericNamesShortV1Marker,
-    MetaZonePeriodV1Marker,
     MetaZoneSpecificNamesLongV1Marker,
     MetaZoneSpecificNamesShortV1Marker,
+    MetaZonePeriodV1Marker,
     NfcInertV1Marker,
     NfdInertV1Marker,
     NfkcInertV1Marker,
@@ -160,7 +161,7 @@ registry!(
     SentenceTerminalV1Marker,
     SoftDottedV1Marker,
     TerminalPunctuationV1Marker,
-    TimePatternsV1Marker,
+    TimeLengthsV1Marker,
     TimeSymbolsV1Marker,
     TimeZoneFormatsV1Marker,
     UnifiedIdeographV1Marker,

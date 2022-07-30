@@ -100,16 +100,16 @@ export class ICU4XFixedDecimal {
     wasm.ICU4XFixedDecimal_set_sign(this.underlying, ICU4XFixedDecimalSign_js_to_rust[arg_sign]);
   }
 
-  pad_left(arg_position) {
-    wasm.ICU4XFixedDecimal_pad_left(this.underlying, arg_position);
+  pad_start(arg_position) {
+    wasm.ICU4XFixedDecimal_pad_start(this.underlying, arg_position);
   }
 
-  truncate_left(arg_position) {
-    wasm.ICU4XFixedDecimal_truncate_left(this.underlying, arg_position);
+  set_max_position(arg_position) {
+    wasm.ICU4XFixedDecimal_set_max_position(this.underlying, arg_position);
   }
 
-  pad_right(arg_position) {
-    wasm.ICU4XFixedDecimal_pad_right(this.underlying, arg_position);
+  pad_end(arg_position) {
+    wasm.ICU4XFixedDecimal_pad_end(this.underlying, arg_position);
   }
 
   to_string() {
