@@ -13,7 +13,7 @@ fn test_plural_rules() {
     let pr =
         PluralRules::try_new(&locale!("en").into(), &provider, PluralRuleType::Cardinal).unwrap();
 
-    assert_eq!(pr.select(5_usize), PluralCategory::Other);
+    assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 }
 
 #[test]

@@ -30,7 +30,7 @@ let provider = icu_testdata::get_provider();
 let pr = PluralRules::try_new(&locale!("en").into(), &provider, PluralRuleType::Cardinal)
     .expect("Failed to construct a PluralRules struct.");
 
-assert_eq!(pr.select(5_usize), PluralCategory::Other);
+assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 ```
 
 ### Plural Rules

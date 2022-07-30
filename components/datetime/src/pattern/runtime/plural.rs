@@ -168,7 +168,7 @@ impl<'data> PatternPlurals<'data> {
                 // TODO(#1668) Clippy exceptions need docs or fixing.
                 let category = ordinal_rules
                     .expect("ordinal_rules must be set with PatternPlurals::MultipleVariants")
-                    .select(week_number);
+                    .category_for(week_number);
                 Ok(plural_pattern.variant(category))
             }
         }
