@@ -93,7 +93,7 @@ export class ICU4XFixedDecimal {
   }
 
   multiply_pow10(arg_power) {
-    return wasm.ICU4XFixedDecimal_multiply_pow10(this.underlying, arg_power);
+    void wasm.ICU4XFixedDecimal_multiply_pow10(this.underlying, arg_power);
   }
 
   set_sign(arg_sign) {
