@@ -10,7 +10,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(locale, provider, length)
+    .. js:staticfunction:: try_new(provider, locale, length)
 
         Creates a new :js:class:`ICU4XGregorianDateFormatter` from locale data.
 
@@ -31,7 +31,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(locale, provider, date_length, time_length, time_preferences)
+    .. js:staticfunction:: try_new(provider, locale, date_length, time_length, time_preferences)
 
         Creates a new :js:class:`ICU4XGregorianDateFormatter` from locale data.
 
@@ -54,7 +54,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(locale, provider, length, preferences)
+    .. js:staticfunction:: try_new(provider, locale, length, preferences)
 
         Creates a new :js:class:`ICU4XTimeFormatter` from locale data.
 

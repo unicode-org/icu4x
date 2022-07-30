@@ -99,7 +99,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(&locale, plural_provider)?)
+            Some(PluralRules::try_new_ordinal(plural_provider, &locale)?)
         } else {
             None
         };
@@ -120,7 +120,7 @@ impl ZonedDateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, decimal_provider, fixed_decimal_format_options)
+            FixedDecimalFormatter::try_new(decimal_provider, &locale, fixed_decimal_format_options)
                 .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         let datetime_format = raw::DateTimeFormatter::new(

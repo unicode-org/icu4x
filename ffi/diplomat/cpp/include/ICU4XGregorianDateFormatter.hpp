@@ -11,8 +11,8 @@
 
 #include "ICU4XGregorianDateFormatter.h"
 
-class ICU4XLocale;
 class ICU4XDataProvider;
+class ICU4XLocale;
 #include "ICU4XDateLength.hpp"
 class ICU4XGregorianDateFormatter;
 #include "ICU4XError.hpp"
@@ -41,7 +41,7 @@ class ICU4XGregorianDateFormatter {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.DateFormatter.html#method.try_new) for more information.
    */
-  static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XDateLength length);
+  static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length);
 
   /**
    * Formats a [`ICU4XGregorianDateTime`] to a string.
@@ -66,12 +66,12 @@ class ICU4XGregorianDateFormatter {
   std::unique_ptr<capi::ICU4XGregorianDateFormatter, ICU4XGregorianDateFormatterDeleter> inner;
 };
 
-#include "ICU4XLocale.hpp"
 #include "ICU4XDataProvider.hpp"
+#include "ICU4XLocale.hpp"
 #include "ICU4XGregorianDateTime.hpp"
 
-inline diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> ICU4XGregorianDateFormatter::try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XDateLength length) {
-  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateFormatter_try_new(locale.AsFFI(), provider.AsFFI(), static_cast<capi::ICU4XDateLength>(length));
+inline diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> ICU4XGregorianDateFormatter::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length) {
+  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateFormatter_try_new(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XDateLength>(length));
   diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XGregorianDateFormatter>(std::move(ICU4XGregorianDateFormatter(diplomat_result_raw_out_value.ok)));

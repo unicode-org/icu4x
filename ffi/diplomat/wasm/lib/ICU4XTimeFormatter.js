@@ -18,10 +18,10 @@ export class ICU4XTimeFormatter {
     }
   }
 
-  static try_new(arg_locale, arg_provider, arg_length, arg_preferences) {
+  static try_new(arg_provider, arg_locale, arg_length, arg_preferences) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XTimeFormatter_try_new(diplomat_receive_buffer, arg_locale.underlying, arg_provider.underlying, ICU4XTimeLength_js_to_rust[arg_length], ICU4XHourCyclePreference_js_to_rust[arg_preferences]);
+      wasm.ICU4XTimeFormatter_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XTimeLength_js_to_rust[arg_length], ICU4XHourCyclePreference_js_to_rust[arg_preferences]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XTimeFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

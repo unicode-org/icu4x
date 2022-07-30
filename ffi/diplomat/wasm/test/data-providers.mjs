@@ -15,7 +15,7 @@ test("use create_from_byte_slice to format a simple decimal", async t => {
   const bytes = new Uint8Array(nodeBuffer.buffer, nodeBuffer.byteOffset, nodeBuffer.length);
   const provider = ICU4XDataProvider.create_from_byte_slice(bytes);
 
-  const format = ICU4XFixedDecimalFormatter.try_new(locale, provider, "Auto");
+  const format = ICU4XFixedDecimalFormatter.try_new(provider, locale, "Auto");
 
   const decimal = ICU4XFixedDecimal.create(1234);
   decimal.multiply_pow10(-2);

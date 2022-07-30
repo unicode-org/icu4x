@@ -17,10 +17,10 @@ export class ICU4XGregorianDateFormatter {
     }
   }
 
-  static try_new(arg_locale, arg_provider, arg_length) {
+  static try_new(arg_provider, arg_locale, arg_length) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XGregorianDateFormatter_try_new(diplomat_receive_buffer, arg_locale.underlying, arg_provider.underlying, ICU4XDateLength_js_to_rust[arg_length]);
+      wasm.ICU4XGregorianDateFormatter_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XDateLength_js_to_rust[arg_length]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XGregorianDateFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

@@ -22,7 +22,7 @@
 //! use writeable::Writeable;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), &provider, Default::default())
+//! let fdf = FixedDecimalFormatter::try_new(&provider, &locale!("bn").into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
@@ -41,7 +41,7 @@
 //! use writeable::Writeable;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let fdf = FixedDecimalFormatter::try_new(&Locale::UND.into(), &provider, Default::default())
+//! let fdf = FixedDecimalFormatter::try_new(&provider, &Locale::UND.into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050)
@@ -63,7 +63,7 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //! let locale = "th-u-nu-thai".parse::<Locale>().unwrap();
-//! let fdf = FixedDecimalFormatter::try_new(&locale.into(), &provider, Default::default())
+//! let fdf = FixedDecimalFormatter::try_new(&provider, &locale.into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
@@ -124,8 +124,8 @@ pub struct FixedDecimalFormatter {
 impl FixedDecimalFormatter {
     /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
     pub fn try_new<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
-        locale: &DataLocale,
         data_provider: &D,
+        locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
     ) -> Result<Self, FixedDecimalFormatterError> {
         let symbols = data_provider

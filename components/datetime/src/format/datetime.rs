@@ -39,7 +39,7 @@ use writeable::Writeable;
 /// use icu::locid::locale;
 /// # let provider = icu_testdata::get_provider();
 /// # let options = icu::datetime::DateTimeFormatterOptions::default();
-/// let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options)
+/// let dtf = DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options)
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -520,7 +520,7 @@ mod tests {
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
         let options =
             length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
-        let dtf = DateTimeFormatter::<Japanese>::try_new(&locale.into(), &provider, &options)
+        let dtf = DateTimeFormatter::<Japanese>::try_new(&provider, &locale.into(), &options)
             .expect("DateTimeFormat construction succeeds");
 
         let japanext =
@@ -553,7 +553,7 @@ mod tests {
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, &provider, Default::default()).unwrap();
+            FixedDecimalFormatter::try_new(&provider, &locale, Default::default()).unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &Locale::UND.into());
@@ -587,8 +587,8 @@ mod tests {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &icu_locid::locale!("en").into(),
             &provider,
+            &icu_locid::locale!("en").into(),
             fixed_decimal_format_options,
         )
         .unwrap();

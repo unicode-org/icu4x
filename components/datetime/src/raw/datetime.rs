@@ -44,8 +44,8 @@ impl TimeFormatter {
     /// using the short style.
     #[inline(never)]
     pub fn try_new<D>(
-        locale: DataLocale,
         data_provider: &D,
+        locale: DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
@@ -82,7 +82,7 @@ impl TimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
+            FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
                 .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
@@ -176,8 +176,8 @@ impl DateFormatter {
     /// a list of options, then collects all data necessary to format date values into the given locale.
     #[inline(never)]
     pub fn try_new<D>(
-        mut locale: DataLocale,
         data_provider: &D,
+        mut locale: DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
@@ -212,7 +212,7 @@ impl DateFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(&locale, data_provider)?)
+            Some(PluralRules::try_new_ordinal(data_provider, &locale)?)
         } else {
             None
         };
@@ -227,7 +227,7 @@ impl DateFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
+            FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
                 .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
@@ -373,8 +373,8 @@ impl DateTimeFormatter {
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     #[inline(never)]
     pub fn try_new<D>(
-        mut locale: DataLocale,
         data_provider: &D,
+        mut locale: DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
@@ -410,7 +410,7 @@ impl DateTimeFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(&locale, data_provider)?)
+            Some(PluralRules::try_new_ordinal(data_provider, &locale)?)
         } else {
             None
         };
@@ -431,7 +431,7 @@ impl DateTimeFormatter {
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
+            FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
                 .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(

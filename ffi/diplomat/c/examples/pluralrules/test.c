@@ -9,7 +9,7 @@
 int main() {
     ICU4XLocale* locale = ICU4XLocale_create("ar", 2);
     ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
-    diplomat_result_box_ICU4XPluralRules_ICU4XError plural_result = ICU4XPluralRules_try_new_cardinal(locale, provider);
+    diplomat_result_box_ICU4XPluralRules_ICU4XError plural_result = ICU4XPluralRules_try_new_cardinal(provider, locale);
     if (!plural_result.is_ok) {
         printf("Failed to create PluralRules\n");
         return 1;

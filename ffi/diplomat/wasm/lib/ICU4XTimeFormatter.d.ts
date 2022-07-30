@@ -21,7 +21,7 @@ export class ICU4XTimeFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.DateFormatter.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(locale: ICU4XLocale, provider: ICU4XDataProvider, length: ICU4XTimeLength, preferences: ICU4XHourCyclePreference): ICU4XTimeFormatter | never;
+  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XTimeLength, preferences: ICU4XHourCyclePreference): ICU4XTimeFormatter | never;
 
   /**
 

@@ -19,10 +19,10 @@ export class ICU4XGregorianDateTimeFormatter {
     }
   }
 
-  static try_new(arg_locale, arg_provider, arg_date_length, arg_time_length, arg_time_preferences) {
+  static try_new(arg_provider, arg_locale, arg_date_length, arg_time_length, arg_time_preferences) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XGregorianDateTimeFormatter_try_new(diplomat_receive_buffer, arg_locale.underlying, arg_provider.underlying, ICU4XDateLength_js_to_rust[arg_date_length], ICU4XTimeLength_js_to_rust[arg_time_length], ICU4XHourCyclePreference_js_to_rust[arg_time_preferences]);
+      wasm.ICU4XGregorianDateTimeFormatter_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XDateLength_js_to_rust[arg_date_length], ICU4XTimeLength_js_to_rust[arg_time_length], ICU4XHourCyclePreference_js_to_rust[arg_time_preferences]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XGregorianDateTimeFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
