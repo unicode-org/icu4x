@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659145726052,
+  "lastUpdate": 1659284617346,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41176,6 +41176,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 168,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "87313194fb06a53934176357055917c921364c4e",
+          "message": "Change argument order in constructors for plurals, datetime, and decimal (#2293)\n\n* Change argument order in constructors for plurals, datetime, and decimal\r\n\r\n* Fix another docs test\r\n\r\n* generate-readmes",
+          "timestamp": "2022-07-31T09:11:23-07:00",
+          "tree_id": "c6899e07fa9d3b06a895c1cc9a5ebf6791222142",
+          "url": "https://github.com/unicode-org/icu4x/commit/87313194fb06a53934176357055917c921364c4e"
+        },
+        "date": 1659284579064,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105512,
+            "range": "± 725",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21337,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64268,
+            "range": "± 491",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 172,
             "range": "± 1",
             "unit": "ns/iter"
           },
