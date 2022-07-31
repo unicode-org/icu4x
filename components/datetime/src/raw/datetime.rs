@@ -18,7 +18,7 @@ use crate::{
         DateSymbolsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
-    TypedDateTimeFormatterError, FormattedDateTime,
+    FormattedDateTime, TypedDateTimeFormatterError,
 };
 use alloc::string::String;
 

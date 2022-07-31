@@ -31,8 +31,8 @@ use icu_datetime::{
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
-    CldrCalendar, DateFormatter, TypedDateTimeFormatter, TypedDateTimeFormatterOptions, TimeFormatter,
-    TypedZonedDateTimeFormatter,
+    CldrCalendar, DateFormatter, TimeFormatter, TypedDateTimeFormatter,
+    TypedDateTimeFormatterOptions, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
@@ -194,7 +194,8 @@ fn assert_fixture_element<A, D>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = TypedDateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options).unwrap();
+    let dtf =
+        TypedDateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);

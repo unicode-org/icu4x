@@ -88,7 +88,11 @@ where
         Err(TypedDateTimeFormatterError::UnsupportedOptions)
     }
 
-    fn handle_last_resort_error<W>(&self, e: TypedDateTimeFormatterError, sink: &mut W) -> fmt::Result
+    fn handle_last_resort_error<W>(
+        &self,
+        e: TypedDateTimeFormatterError,
+        sink: &mut W,
+    ) -> fmt::Result
     where
         W: core::fmt::Write + ?Sized,
     {

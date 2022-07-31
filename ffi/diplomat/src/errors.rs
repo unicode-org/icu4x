@@ -174,7 +174,9 @@ impl From<TypedDateTimeFormatterError> for ICU4XError {
             TypedDateTimeFormatterError::MissingMonthSymbol(_) => {
                 ICU4XError::DateTimeFormatMissingMonthSymbolError
             }
-            TypedDateTimeFormatterError::FixedDecimal => ICU4XError::DateTimeFormatFixedDecimalError,
+            TypedDateTimeFormatterError::FixedDecimal => {
+                ICU4XError::DateTimeFormatFixedDecimalError
+            }
             TypedDateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
             TypedDateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
                 ICU4XError::DateTimeFormatMismatchedAnyCalendarError

@@ -19,7 +19,7 @@ use crate::provider::{
     week_data::WeekDataV1Marker,
 };
 use crate::time_zone::TimeZoneFormatterOptions;
-use crate::{TypedDateTimeFormatterError, FormattedZonedDateTime};
+use crate::{FormattedZonedDateTime, TypedDateTimeFormatterError};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::JapaneseErasV1Marker;
 use icu_calendar::{types::Time, DateTime};

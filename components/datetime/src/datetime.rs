@@ -21,8 +21,8 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
-    calendar, input::DateTimeInput, input::IsoTimeInput, CldrCalendar, TypedDateTimeFormatterError,
-    FormattedDateTime,
+    calendar, input::DateTimeInput, input::IsoTimeInput, CldrCalendar, FormattedDateTime,
+    TypedDateTimeFormatterError,
 };
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.

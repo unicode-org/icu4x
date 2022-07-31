@@ -9,7 +9,7 @@ pub mod ffi {
     use icu_calendar::Gregorian;
     use icu_datetime::{
         options::{length, preferences},
-        DateFormatter, TypedDateTimeFormatter, TimeFormatter,
+        DateFormatter, TimeFormatter, TypedDateTimeFormatter,
     };
 
     use crate::{

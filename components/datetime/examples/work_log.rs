@@ -54,9 +54,12 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     options.date = Some(length::Date::Medium);
     options.time = Some(length::Time::Short);
 
-    let dtf =
-        TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options.into())
-            .expect("Failed to create TypedDateTimeFormatter instance.");
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
+        &provider,
+        &locale!("en").into(),
+        &options.into(),
+    )
+    .expect("Failed to create TypedDateTimeFormatter instance.");
     {
         print("\n====== Work Log (en) example ============", None);
 
