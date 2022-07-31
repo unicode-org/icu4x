@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659145608823,
+  "lastUpdate": 1659284494155,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40391,6 +40391,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44583517,
             "range": "± 270535",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "87313194fb06a53934176357055917c921364c4e",
+          "message": "Change argument order in constructors for plurals, datetime, and decimal (#2293)\n\n* Change argument order in constructors for plurals, datetime, and decimal\r\n\r\n* Fix another docs test\r\n\r\n* generate-readmes",
+          "timestamp": "2022-07-31T09:11:23-07:00",
+          "tree_id": "c6899e07fa9d3b06a895c1cc9a5ebf6791222142",
+          "url": "https://github.com/unicode-org/icu4x/commit/87313194fb06a53934176357055917c921364c4e"
+        },
+        "date": 1659284458373,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44316898,
+            "range": "± 250360",
             "unit": "ns/iter"
           },
           {
