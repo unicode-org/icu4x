@@ -18,7 +18,7 @@ use crate::{
         DateSymbolsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
-    FormattedDateTime, TypedDateTimeFormatterError,
+    DateTimeFormatterError, FormattedDateTime,
 };
 use alloc::string::String;
 
@@ -48,7 +48,7 @@ impl TimeFormatter {
         locale: DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<TimeLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -63,7 +63,7 @@ impl TimeFormatter {
         )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| TypedDateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let symbols_data = if required.time_symbols_data {
             Some(
@@ -83,7 +83,7 @@ impl TimeFormatter {
 
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(TypedDateTimeFormatterError::FixedDecimalFormatter)?;
+                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -179,7 +179,7 @@ impl TypedDateFormatter {
         data_provider: &D,
         mut locale: DataLocale,
         length: length::Date,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
             + DataProvider<DateLengthsV1Marker>
@@ -198,7 +198,7 @@ impl TypedDateFormatter {
             provider::date_time::generic_pattern_for_date_length(data_provider, &locale, length)?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| TypedDateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
             locale: &locale,
@@ -228,7 +228,7 @@ impl TypedDateFormatter {
 
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(TypedDateTimeFormatterError::FixedDecimalFormatter)?;
+                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -333,12 +333,12 @@ impl TypedDateTimeFormatter {
     pub fn try_from_date_and_time(
         date: TypedDateFormatter,
         time: TimeFormatter,
-    ) -> Result<Self, TypedDateTimeFormatterError> {
+    ) -> Result<Self, DateTimeFormatterError> {
         let generic_pattern = &date.generic_pattern;
         let time_patterns = &time.patterns;
         let patterns = date
             .patterns
-            .try_map_project::<PatternPluralsFromPatternsV1Marker, _, TypedDateTimeFormatterError>(
+            .try_map_project::<PatternPluralsFromPatternsV1Marker, _, DateTimeFormatterError>(
                 |data, _| {
                     let date_pattern = data.0.expect_pattern("Lengths are single patterns");
                     let time_pattern: crate::pattern::runtime::Pattern = time_patterns
@@ -376,7 +376,7 @@ impl TypedDateTimeFormatter {
         data_provider: &D,
         mut locale: DataLocale,
         options: &DateTimeFormatterOptions,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -396,7 +396,7 @@ impl TypedDateTimeFormatter {
             provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| TypedDateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
             locale: &locale,
@@ -432,7 +432,7 @@ impl TypedDateTimeFormatter {
 
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(TypedDateTimeFormatterError::FixedDecimalFormatter)?;
+                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,

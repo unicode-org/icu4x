@@ -17,7 +17,7 @@ use tinystr::TinyStr16;
 /// A list of possible error outcomes for the [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) struct.
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
-pub enum TypedDateTimeFormatterError {
+pub enum DateTimeFormatterError {
     /// An error originating from parsing a pattern.
     #[displaydoc("{0}")]
     Pattern(PatternError),
@@ -69,40 +69,40 @@ pub enum TypedDateTimeFormatterError {
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for TypedDateTimeFormatterError {}
+impl std::error::Error for DateTimeFormatterError {}
 
-impl From<PatternError> for TypedDateTimeFormatterError {
+impl From<PatternError> for DateTimeFormatterError {
     fn from(e: PatternError) -> Self {
-        TypedDateTimeFormatterError::Pattern(e)
+        DateTimeFormatterError::Pattern(e)
     }
 }
 
-impl From<DataError> for TypedDateTimeFormatterError {
+impl From<DataError> for DateTimeFormatterError {
     fn from(e: DataError) -> Self {
-        TypedDateTimeFormatterError::DataProvider(e)
+        DateTimeFormatterError::DataProvider(e)
     }
 }
 
-impl From<core::fmt::Error> for TypedDateTimeFormatterError {
+impl From<core::fmt::Error> for DateTimeFormatterError {
     fn from(e: core::fmt::Error) -> Self {
-        TypedDateTimeFormatterError::Format(e)
+        DateTimeFormatterError::Format(e)
     }
 }
 
-impl From<SkeletonError> for TypedDateTimeFormatterError {
+impl From<SkeletonError> for DateTimeFormatterError {
     fn from(e: SkeletonError) -> Self {
-        TypedDateTimeFormatterError::Skeleton(e)
+        DateTimeFormatterError::Skeleton(e)
     }
 }
 
-impl From<PluralRulesError> for TypedDateTimeFormatterError {
+impl From<PluralRulesError> for DateTimeFormatterError {
     fn from(e: PluralRulesError) -> Self {
-        TypedDateTimeFormatterError::PluralRules(e)
+        DateTimeFormatterError::PluralRules(e)
     }
 }
 
-impl From<DateTimeError> for TypedDateTimeFormatterError {
+impl From<DateTimeError> for DateTimeFormatterError {
     fn from(e: DateTimeError) -> Self {
-        TypedDateTimeFormatterError::DateTimeInput(e)
+        DateTimeFormatterError::DateTimeInput(e)
     }
 }

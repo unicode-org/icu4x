@@ -6,7 +6,7 @@ use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
 use icu_calendar::DateTimeError;
-use icu_datetime::TypedDateTimeFormatterError;
+use icu_datetime::DateTimeFormatterError;
 use icu_decimal::FixedDecimalFormatterError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
@@ -150,38 +150,36 @@ impl From<DateTimeError> for ICU4XError {
     }
 }
 
-impl From<TypedDateTimeFormatterError> for ICU4XError {
-    fn from(e: TypedDateTimeFormatterError) -> Self {
+impl From<DateTimeFormatterError> for ICU4XError {
+    fn from(e: DateTimeFormatterError) -> Self {
         match e {
-            TypedDateTimeFormatterError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
-            TypedDateTimeFormatterError::Format(err) => err.into(),
-            TypedDateTimeFormatterError::DataProvider(err) => err.into(),
-            TypedDateTimeFormatterError::MissingInputField(_) => {
+            DateTimeFormatterError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
+            DateTimeFormatterError::Format(err) => err.into(),
+            DateTimeFormatterError::DataProvider(err) => err.into(),
+            DateTimeFormatterError::MissingInputField(_) => {
                 ICU4XError::DateTimeFormatMissingInputFieldError
             }
-            TypedDateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
-            TypedDateTimeFormatterError::UnsupportedField(_) => {
+            DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
+            DateTimeFormatterError::UnsupportedField(_) => {
                 ICU4XError::DateTimeFormatUnsupportedFieldError
             }
-            TypedDateTimeFormatterError::UnsupportedOptions => {
+            DateTimeFormatterError::UnsupportedOptions => {
                 ICU4XError::DateTimeFormatUnsupportedOptionsError
             }
-            TypedDateTimeFormatterError::PluralRules(err) => err.into(),
-            TypedDateTimeFormatterError::DateTimeInput(err) => err.into(),
-            TypedDateTimeFormatterError::MissingWeekdaySymbol(_) => {
+            DateTimeFormatterError::PluralRules(err) => err.into(),
+            DateTimeFormatterError::DateTimeInput(err) => err.into(),
+            DateTimeFormatterError::MissingWeekdaySymbol(_) => {
                 ICU4XError::DateTimeFormatMissingWeekdaySymbolError
             }
-            TypedDateTimeFormatterError::MissingMonthSymbol(_) => {
+            DateTimeFormatterError::MissingMonthSymbol(_) => {
                 ICU4XError::DateTimeFormatMissingMonthSymbolError
             }
-            TypedDateTimeFormatterError::FixedDecimal => {
-                ICU4XError::DateTimeFormatFixedDecimalError
-            }
-            TypedDateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
-            TypedDateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
+            DateTimeFormatterError::FixedDecimal => ICU4XError::DateTimeFormatFixedDecimalError,
+            DateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
+            DateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
                 ICU4XError::DateTimeFormatMismatchedAnyCalendarError
             }
-            TypedDateTimeFormatterError::MismatchedCalendarLocale(_, _) => {
+            DateTimeFormatterError::MismatchedCalendarLocale(_, _) => {
                 ICU4XError::DateTimeFormatMismatchedCalendarLocaleError
             }
             _ => ICU4XError::UnknownError,

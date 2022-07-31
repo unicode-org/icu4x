@@ -19,7 +19,7 @@ use crate::provider::{
     },
     week_data::WeekDataV1Marker,
 };
-use crate::{input::DateTimeInput, FormattedDateTime, TypedDateTimeFormatterError};
+use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::JapaneseErasV1Marker;
 use icu_calendar::{types::Time, DateTime};
@@ -82,7 +82,7 @@ impl DateTimeFormatter {
         data_provider: &P,
         locale: &DataLocale,
         options: &DateTimeFormatterOptions,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         P: AnyProvider,
     {
@@ -130,7 +130,7 @@ impl DateTimeFormatter {
         data_provider: &P,
         locale: &DataLocale,
         options: &DateTimeFormatterOptions,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         P: BufferProvider,
     {
@@ -174,7 +174,7 @@ impl DateTimeFormatter {
         data_provider: &P,
         locale: &DataLocale,
         options: &DateTimeFormatterOptions,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         P: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -221,7 +221,7 @@ impl DateTimeFormatter {
     pub fn format<'l, T>(
         &'l self,
         value: &T,
-    ) -> Result<FormattedDateTime<'l>, TypedDateTimeFormatterError>
+    ) -> Result<FormattedDateTime<'l>, DateTimeFormatterError>
     where
         T: DateTimeInput<Calendar = AnyCalendar>,
     {
@@ -243,7 +243,7 @@ impl DateTimeFormatter {
         &self,
         w: &mut impl core::fmt::Write,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<(), TypedDateTimeFormatterError> {
+    ) -> Result<(), DateTimeFormatterError> {
         if let Some(converted) = self.convert_if_necessary(value)? {
             self.0.format_to_write(w, &converted)?;
         } else {
@@ -261,7 +261,7 @@ impl DateTimeFormatter {
     pub fn format_to_string(
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<String, TypedDateTimeFormatterError> {
+    ) -> Result<String, DateTimeFormatterError> {
         if let Some(converted) = self.convert_if_necessary(value)? {
             Ok(self.0.format_to_string(&converted))
         } else {
@@ -313,14 +313,13 @@ impl DateTimeFormatter {
     fn convert_if_necessary<'a>(
         &'a self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, TypedDateTimeFormatterError>
-    {
+    ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatterError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
 
         if Some(this_calendar) != date_calendar {
             if date_calendar != Some(AnyCalendarKind::Iso) {
-                return Err(TypedDateTimeFormatterError::MismatchedAnyCalendar(
+                return Err(DateTimeFormatterError::MismatchedAnyCalendar(
                     this_calendar,
                     date_calendar,
                 ));

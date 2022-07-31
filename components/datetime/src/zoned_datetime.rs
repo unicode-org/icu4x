@@ -23,7 +23,7 @@ use crate::{
     },
     raw,
     time_zone::TimeZoneFormatterOptions,
-    CldrCalendar, TypedDateTimeFormatterError,
+    CldrCalendar, DateTimeFormatterError,
 };
 
 /// The composition of [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
@@ -109,7 +109,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         decimal_provider: &DEP,
         date_time_format_options: &DateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>

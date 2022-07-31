@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::TypedDateTimeFormatterError;
+use crate::error::DateTimeFormatterError;
 use crate::fields;
 use crate::input;
 use crate::options::{components, length, preferences, DateTimeFormatterOptions};
@@ -18,7 +18,7 @@ use crate::skeleton;
 use icu_calendar::types::{Era, MonthCode};
 use icu_provider::prelude::*;
 
-type Result<T> = core::result::Result<T, TypedDateTimeFormatterError>;
+type Result<T> = core::result::Result<T, DateTimeFormatterError>;
 
 fn pattern_for_time_length_inner<'data>(
     data: TimeLengthsV1<'data>,
@@ -266,7 +266,7 @@ where
             | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(pattern),
             skeleton::BestSkeleton::NoMatch => None,
         }
-        .ok_or(TypedDateTimeFormatterError::UnsupportedOptions)?;
+        .ok_or(DateTimeFormatterError::UnsupportedOptions)?;
         Ok(DataPayload::from_owned(PatternPluralsV1(
             patterns.into_owned(),
         )))
@@ -325,7 +325,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
                             .0
                             .get(idx)
                             .map(|x| &**x)
-                            .ok_or(TypedDateTimeFormatterError::MissingWeekdaySymbol(idx));
+                            .ok_or(DateTimeFormatterError::MissingWeekdaySymbol(idx));
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -346,7 +346,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
             .0
             .get(idx)
             .map(|x| &**x)
-            .ok_or(TypedDateTimeFormatterError::MissingWeekdaySymbol(idx))
+            .ok_or(DateTimeFormatterError::MissingWeekdaySymbol(idx))
     }
 
     fn get_symbol_for_month(
@@ -367,7 +367,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
                     if let Some(symbols) = symbols {
                         return symbols
                             .get(code)
-                            .ok_or(TypedDateTimeFormatterError::MissingMonthSymbol(code));
+                            .ok_or(DateTimeFormatterError::MissingMonthSymbol(code));
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, code);
                     }
@@ -383,7 +383,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
         };
         symbols
             .get(code)
-            .ok_or(TypedDateTimeFormatterError::MissingMonthSymbol(code))
+            .ok_or(DateTimeFormatterError::MissingMonthSymbol(code))
     }
 
     /// Get the era symbol

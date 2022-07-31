@@ -21,8 +21,8 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
-    calendar, input::DateTimeInput, input::IsoTimeInput, CldrCalendar, FormattedDateTime,
-    TypedDateTimeFormatterError,
+    calendar, input::DateTimeInput, input::IsoTimeInput, CldrCalendar, DateTimeFormatterError,
+    FormattedDateTime,
 };
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
@@ -93,7 +93,7 @@ impl TimeFormatter {
         locale: &DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<TimeLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -254,7 +254,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
         data_provider: &D,
         locale: &DataLocale,
         length: length::Date,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
             + DataProvider<DateLengthsV1Marker>
@@ -437,7 +437,7 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     pub fn try_from_date_and_time(
         date: TypedDateFormatter<C>,
         time: TimeFormatter,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
 where {
         Ok(Self(
             raw::TypedDateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
@@ -473,7 +473,7 @@ where {
         data_provider: &D,
         locale: &DataLocale,
         options: &DateTimeFormatterOptions,
-    ) -> Result<Self, TypedDateTimeFormatterError>
+    ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
