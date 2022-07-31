@@ -106,7 +106,7 @@ pub mod zoned_datetime;
 pub mod any;
 
 pub use calendar::CldrCalendar;
-pub use datetime::{TypedDateFormatter, TimeFormatter, TypedDateTimeFormatter};
+pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::TypedDateTimeFormatterError;
 pub use format::datetime::FormattedDateTime;
 pub use format::time_zone::FormattedTimeZone;
