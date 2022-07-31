@@ -5,7 +5,7 @@
 use icu_calendar::Gregorian;
 use icu_datetime::{
     options::{components, length, preferences},
-    TypedDateTimeFormatter, DateTimeFormatterOptions,
+    DateTimeFormatterOptions, TypedDateTimeFormatter,
 };
 use icu_locid::locale;
 

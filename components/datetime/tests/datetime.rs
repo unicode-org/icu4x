@@ -20,7 +20,6 @@ use icu_calendar::{
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
-    DateTimeFormatter,
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
     provider::{
@@ -31,8 +30,8 @@ use icu_datetime::{
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
-    CldrCalendar, TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter,
-    DateTimeFormatterOptions, TypedZonedDateTimeFormatter,
+    CldrCalendar, DateTimeFormatter, DateTimeFormatterOptions, TimeFormatter, TypedDateFormatter,
+    TypedDateTimeFormatter, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{

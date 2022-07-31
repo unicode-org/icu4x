@@ -184,9 +184,7 @@ where
         };
         match options {
             DateTimeFormatterOptions::Length(bag) => selector.pattern_for_length_bag(bag),
-            DateTimeFormatterOptions::Components(bag) => {
-                selector.patterns_for_components_bag(bag)
-            }
+            DateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
         }
     }
 
