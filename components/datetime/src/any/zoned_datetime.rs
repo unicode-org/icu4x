@@ -30,7 +30,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// dates from any calendar, selected at runtime.
 ///
 /// This is equivalently the composition of
-/// [`DateTimeFormatter`](crate::any::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
+/// [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
 ///
 /// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected [`DataLocale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.

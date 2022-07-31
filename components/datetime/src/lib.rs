@@ -84,7 +84,7 @@
 extern crate alloc;
 
 mod calendar;
-pub mod datetime;
+mod datetime;
 mod error;
 pub mod fields;
 mod format;
@@ -100,11 +100,11 @@ pub(crate) mod raw;
 pub mod skeleton;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod time_zone;
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
-pub mod zoned_datetime;
+mod zoned_datetime;
 
-pub mod any;
+mod any;
 
+pub use any::{DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::TypedDateTimeFormatterError;

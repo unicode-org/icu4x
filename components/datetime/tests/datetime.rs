@@ -20,7 +20,7 @@ use icu_calendar::{
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
-    any::DateTimeFormatter,
+    DateTimeFormatter,
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
     provider::{
