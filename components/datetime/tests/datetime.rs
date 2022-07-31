@@ -200,15 +200,10 @@ fn assert_fixture_element<A, D>(
 
     assert_eq!(result, output_value, "{}", description);
 
-    let any_dtf =
-        DateTimeFormatter::try_new_unstable(provider, &locale.into(), options).unwrap();
+    let any_dtf = DateTimeFormatter::try_new_unstable(provider, &locale.into(), options).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
-    assert_eq!(
-        result, output_value,
-        "(DateTimeFormatter) {}",
-        description
-    );
+    assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
 
     let result = any_dtf.format_to_string(&iso_any_input).unwrap();
 
