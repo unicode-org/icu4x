@@ -161,7 +161,7 @@ impl TimeFormatter {
     }
 }
 
-pub(crate) struct DateFormatter {
+pub(crate) struct TypedDateFormatter {
     pub locale: DataLocale,
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -171,7 +171,7 @@ pub(crate) struct DateFormatter {
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
 
-impl DateFormatter {
+impl TypedDateFormatter {
     /// Constructor that takes a selected [`DataLocale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date values into the given locale.
     #[inline(never)]
@@ -327,11 +327,11 @@ pub(crate) struct TypedDateTimeFormatter {
 }
 
 impl TypedDateTimeFormatter {
-    /// Constructor that takes previously constructed [`TimeFormatter`] and [`DateFormatter`] instances and builds a
+    /// Constructor that takes previously constructed [`TimeFormatter`] and [`TypedDateFormatter`] instances and builds a
     /// new [`TypedDateTimeFormatter`] instance from them.
     #[inline(never)]
     pub fn try_from_date_and_time(
-        date: DateFormatter,
+        date: TypedDateFormatter,
         time: TimeFormatter,
     ) -> Result<Self, TypedDateTimeFormatterError> {
         let generic_pattern = &date.generic_pattern;

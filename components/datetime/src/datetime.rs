@@ -198,27 +198,27 @@ impl TimeFormatter {
     }
 }
 
-/// [`DateFormatter`] is a structure of the [`icu_datetime`] component that provides date formatting only.
+/// [`TypedDateFormatter`] is a structure of the [`icu_datetime`] component that provides date formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any date into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`DateFormatter`], and then fast formatting of [`DateTimeInput`] data using the instance.
+/// heavy construction of [`TypedDateFormatter`], and then fast formatting of [`DateTimeInput`] data using the instance.
 ///
 /// [`icu_datetime`]: crate
-/// [`TypedDateTimeFormatter`]: crate::datetime::DateFormatter
+/// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateFormatter
 ///
 /// # Examples
 ///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::{options::length::Date, DateFormatter};
+/// use icu::datetime::{options::length::Date, TypedDateFormatter};
 /// use icu::locid::locale;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let df = DateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), Date::Full)
-///     .expect("Failed to create DateFormatter instance.");
+/// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), Date::Full)
+///     .expect("Failed to create TypedDateFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -229,9 +229,9 @@ impl TimeFormatter {
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct DateFormatter<C>(pub(super) raw::DateFormatter, PhantomData<C>);
+pub struct TypedDateFormatter<C>(pub(super) raw::TypedDateFormatter, PhantomData<C>);
 
-impl<C: CldrCalendar> DateFormatter<C> {
+impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// Constructor that takes a selected locale, reference to a [data provider] and
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     ///
@@ -239,12 +239,12 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{options::length::Date, DateFormatter};
+    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
     /// use icu::locid::locale;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// DateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), Date::Full)
+    /// TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), Date::Full)
     ///     .unwrap();
     /// ```
     ///
@@ -269,7 +269,7 @@ impl<C: CldrCalendar> DateFormatter<C> {
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
-            raw::DateFormatter::try_new(data_provider, locale, length)?,
+            raw::TypedDateFormatter::try_new(data_provider, locale, length)?,
             PhantomData,
         ))
     }
@@ -281,12 +281,12 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, DateFormatter};
+    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
     /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = DateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Full)
-    ///     .expect("Failed to create DateFormatter instance.");
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Full)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -312,11 +312,11 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, DateFormatter};
+    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = DateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Short)
-    ///     .expect("Failed to create DateFormatter instance.");
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Short)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -342,10 +342,10 @@ impl<C: CldrCalendar> DateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, DateFormatter};
+    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = DateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Short)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Short)
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -402,14 +402,14 @@ impl<C: CldrCalendar> DateFormatter<C> {
 pub struct TypedDateTimeFormatter<C>(pub(super) raw::TypedDateTimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
-    /// Constructor that takes a [`TimeFormatter`] and [`DateFormatter`] and combines them into a [`TypedDateTimeFormatter`].
+    /// Constructor that takes a [`TimeFormatter`] and [`TypedDateFormatter`] and combines them into a [`TypedDateTimeFormatter`].
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
-    ///     options::length, DateFormatter, TypedDateTimeFormatter, TimeFormatter,
+    ///     options::length, TypedDateFormatter, TypedDateTimeFormatter, TimeFormatter,
     /// };
     /// use icu::locid::locale;
     ///
@@ -422,12 +422,12 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     ///     None,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
-    /// let df = DateFormatter::<Gregorian>::try_new(
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     length::Date::Short,
     /// )
-    /// .expect("Failed to create DateFormatter instance.");
+    /// .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// TypedDateTimeFormatter::<Gregorian>::try_from_date_and_time(df, tf).unwrap();
     /// ```
@@ -435,7 +435,7 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     /// [data provider]: icu_provider
     #[inline]
     pub fn try_from_date_and_time(
-        date: DateFormatter<C>,
+        date: TypedDateFormatter<C>,
         time: TimeFormatter,
     ) -> Result<Self, TypedDateTimeFormatterError>
 where {

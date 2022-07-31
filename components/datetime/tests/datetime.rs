@@ -31,7 +31,7 @@ use icu_datetime::{
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
-    CldrCalendar, DateFormatter, TimeFormatter, TypedDateTimeFormatter,
+    CldrCalendar, TypedDateFormatter, TimeFormatter, TypedDateTimeFormatter,
     TypedDateTimeFormatterOptions, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -228,7 +228,7 @@ fn assert_fixture_element<A, D>(
     if let TypedDateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
+                TypedDateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
                     .unwrap();
             let tf = TimeFormatter::try_new(
                 provider,
@@ -256,7 +256,7 @@ fn assert_fixture_element<A, D>(
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
+                TypedDateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
                     .unwrap();
             let result = df.format_to_string(input_value);
 
