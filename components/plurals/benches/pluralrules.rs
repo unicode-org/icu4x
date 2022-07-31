@@ -21,7 +21,7 @@ fn pluralrules(c: &mut Criterion) {
                 let pr = PluralRules::try_new(&lang.into(), &provider, PluralRuleType::Cardinal)
                     .unwrap();
                 for s in &numbers_data.usize {
-                    let _ = pr.select(*s);
+                    let _ = pr.category_for(*s);
                 }
             }
         })
@@ -47,7 +47,7 @@ fn pluralrules(c: &mut Criterion) {
         c.bench_function("plurals/pluralrules/select/fs", |b| {
             b.iter(|| {
                 for s in &numbers_data.usize {
-                    let _ = pr.select(black_box(*s));
+                    let _ = pr.category_for(black_box(*s));
                 }
             })
         });

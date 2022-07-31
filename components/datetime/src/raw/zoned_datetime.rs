@@ -13,19 +13,19 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
-    date::{DateTimeInput, TimeZoneInput},
-    date::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
     format::{
         datetime,
         zoned_datetime::{self, FormattedZonedDateTime},
     },
+    input::{DateTimeInput, TimeZoneInput},
+    input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
     options::DateTimeFormatterOptions,
     pattern::runtime::PatternPlurals,
     provider::{
         self,
         calendar::{
-            DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimePatternsV1Marker, TimeSymbolsV1Marker,
+            DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
     },
@@ -60,8 +60,8 @@ impl ZonedDateTimeFormatter {
     where
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<TimePatternsV1Marker>
+            + DataProvider<DateLengthsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
             + ?Sized,

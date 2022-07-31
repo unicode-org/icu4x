@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date::{
-    DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, LocalizedDateTimeInput,
-};
 use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::input::{
+    DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, LocalizedDateTimeInput,
+};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
@@ -98,24 +98,24 @@ where
     match length {
         FieldLength::One => {}
         FieldLength::TwoDigit => {
-            num.pad_left(2);
-            num.truncate_left(2);
+            num.pad_start(2);
+            num.set_max_position(2);
         }
         FieldLength::Abbreviated => {
-            num.pad_left(3);
+            num.pad_start(3);
         }
         FieldLength::Wide => {
-            num.pad_left(4);
+            num.pad_start(4);
         }
         FieldLength::Narrow => {
-            num.pad_left(5);
+            num.pad_start(5);
         }
         FieldLength::Six => {
-            num.pad_left(6);
+            num.pad_start(6);
         }
         FieldLength::Fixed(p) => {
-            num.pad_left(p as i16);
-            num.truncate_left(p as i16);
+            num.pad_start(p as i16);
+            num.set_max_position(p as i16);
         }
     }
 
@@ -386,7 +386,7 @@ where
                     seconds
                         .concatenate_right(fraction)
                         .map_err(|_| Error::FixedDecimal)?;
-                    seconds.pad_right(-(precision as i16));
+                    seconds.pad_end(-(precision as i16));
                 }
             }
             format_number(w, fixed_decimal_format, seconds, field.length)?

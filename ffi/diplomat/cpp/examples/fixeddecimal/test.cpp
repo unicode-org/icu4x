@@ -48,7 +48,7 @@ int main() {
         return 1;
     }
 
-    decimal.pad_right(-4);
+    decimal.pad_end(-4);
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted left-padded float value is " << out << std::endl;
     if (out != "১০০.০১০০") {
@@ -56,7 +56,7 @@ int main() {
         return 1;
     }
 
-    decimal.pad_left(4);
+    decimal.pad_start(4);
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted right-padded float value is " << out << std::endl;
     if (out != "০,১০০.০১০০") {
@@ -64,7 +64,7 @@ int main() {
         return 1;
     }
 
-    decimal.truncate_left(3);
+    decimal.set_max_position(3);
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted truncated float value is " << out << std::endl;
     if (out != "১০০.০১০০") {

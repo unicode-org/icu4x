@@ -37,6 +37,7 @@ icu_locid = { version = "0.6", path = "../locid" }
 icu_plurals = { version = "0.6", path = "../plurals" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 icu_calendar = { version = "0.6", path = "../calendar" }
+icu_timezone = { version = "0.6", path = "../timezone" }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 litemap = { version = "0.4.0", path = "../../utils/litemap" }
 tinystr = { path = "../../utils/tinystr", version = "0.6.0", features = ["alloc", "zerovec"], default-features = false }
@@ -51,7 +52,7 @@ fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu = { path = "../icu", default-features = false }
+icu = { path = "../icu", default-features = false, features = ["experimental"] }
 icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "0.6", path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
@@ -71,8 +72,8 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = []
 bench = ["serde"]
-serde = ["dep:serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serde", "icu_decimal/serde", "icu_provider/serde", "icu_plurals/serde"]
-datagen = ["serde", "icu_calendar/datagen", "icu_provider/datagen", "std", "databake"]
+serde = ["dep:serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serde", "icu_decimal/serde", "icu_provider/serde", "icu_plurals/serde", "icu_timezone/serde"]
+datagen = ["serde", "icu_calendar/datagen", "icu_timezone/datagen", "icu_provider/datagen", "std", "databake"]
 
 [[bench]]
 name = "datetime"

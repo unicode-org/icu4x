@@ -2,18 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date;
 use crate::error::DateTimeFormatterError;
 use crate::fields;
+use crate::input;
 use crate::options::{components, length, preferences, DateTimeFormatterOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
 use crate::provider::calendar::{
     patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
-    DatePatternsV1Marker, DateSkeletonPatternsV1Marker, TimePatternsV1Marker,
+    DateLengthsV1Marker, DateSkeletonPatternsV1Marker, TimeLengthsV1Marker,
 };
-use crate::provider::calendar::{DatePatternsV1, TimePatternsV1};
+use crate::provider::calendar::{DatePatternsV1, TimeLengthsV1};
 use crate::skeleton;
 use icu_calendar::types::{Era, MonthCode};
 use icu_provider::prelude::*;
@@ -21,7 +21,7 @@ use icu_provider::prelude::*;
 type Result<T> = core::result::Result<T, DateTimeFormatterError>;
 
 fn pattern_for_time_length_inner<'data>(
-    data: TimePatternsV1<'data>,
+    data: TimeLengthsV1<'data>,
     length: length::Time,
     preferences: &Option<preferences::Bag>,
 ) -> PatternPlurals<'data> {
@@ -56,9 +56,9 @@ fn pattern_for_time_length_inner<'data>(
 fn time_patterns_data_payload<D>(
     data_provider: &D,
     locale: &DataLocale,
-) -> Result<DataPayload<TimePatternsV1Marker>>
+) -> Result<DataPayload<TimeLengthsV1Marker>>
 where
-    D: DataProvider<TimePatternsV1Marker> + ?Sized,
+    D: DataProvider<TimeLengthsV1Marker> + ?Sized,
 {
     let data = data_provider
         .load(DataRequest {
@@ -89,7 +89,7 @@ pub(crate) fn pattern_for_time_length<'a, D>(
     preferences: Option<preferences::Bag>,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
 where
-    D: DataProvider<TimePatternsV1Marker> + ?Sized,
+    D: DataProvider<TimeLengthsV1Marker> + ?Sized,
 {
     let patterns_data = time_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -101,9 +101,9 @@ where
 fn date_patterns_data_payload<D>(
     data_provider: &D,
     locale: &DataLocale,
-) -> Result<DataPayload<DatePatternsV1Marker>>
+) -> Result<DataPayload<DateLengthsV1Marker>>
 where
-    D: DataProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DateLengthsV1Marker> + ?Sized,
 {
     let data = data_provider
         .load(DataRequest {
@@ -121,7 +121,7 @@ pub(crate) fn pattern_for_date_length<D>(
     length: length::Date,
 ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
 where
-    D: DataProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DateLengthsV1Marker> + ?Sized,
 {
     let patterns_data = date_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -137,7 +137,7 @@ pub(crate) fn generic_pattern_for_date_length<D>(
     length: length::Date,
 ) -> Result<DataPayload<GenericPatternV1Marker>>
 where
-    D: DataProvider<DatePatternsV1Marker> + ?Sized,
+    D: DataProvider<DateLengthsV1Marker> + ?Sized,
 {
     let patterns_data = date_patterns_data_payload(data_provider, locale)?;
     Ok(patterns_data.map_project(|data, _| {
@@ -168,8 +168,8 @@ impl<D: ?Sized> Clone for PatternSelector<'_, D> {
 
 impl<D> PatternSelector<'_, D>
 where
-    D: DataProvider<DatePatternsV1Marker>
-        + DataProvider<TimePatternsV1Marker>
+    D: DataProvider<DateLengthsV1Marker>
+        + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + ?Sized,
 {
@@ -295,7 +295,7 @@ pub trait DateSymbols {
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::IsoWeekday,
+        day: input::IsoWeekday,
     ) -> Result<&str>;
     fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str;
 }
@@ -305,7 +305,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::IsoWeekday,
+        day: input::IsoWeekday,
     ) -> Result<&str> {
         let widths = match weekday {
             fields::Weekday::Format => &self.weekdays.format,
@@ -405,7 +405,7 @@ pub trait TimeSymbols {
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::IsoHour,
+        hour: input::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str>;
 }
@@ -415,7 +415,7 @@ impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::IsoHour,
+        hour: input::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str> {
         use fields::{DayPeriod::NoonMidnight, FieldLength};

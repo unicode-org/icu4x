@@ -74,9 +74,8 @@ pub mod ffi {
         DateTimeParseError = 0x7_00,
         DateTimeOverflowError = 0x7_01,
         DateTimeUnderflowError = 0x7_02,
-        DateTimeInvalidTimeZoneOffsetError = 0x7_03,
-        DateTimeOutOfRangeError = 0x7_04,
-        DateTimeMissingInputError = 0x7_05,
+        DateTimeOutOfRangeError = 0x7_03,
+        DateTimeMissingInputError = 0x7_04,
 
         // datetime format errors
         DateTimeFormatPatternError = 0x8_00,
@@ -144,7 +143,6 @@ impl From<DateTimeError> for ICU4XError {
             DateTimeError::Parse => ICU4XError::DateTimeParseError,
             DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
             DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
-            DateTimeError::InvalidTimeZoneOffset => ICU4XError::DateTimeInvalidTimeZoneOffsetError,
             DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
             DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
             _ => ICU4XError::UnknownError,

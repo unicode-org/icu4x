@@ -17,14 +17,14 @@ impl AnyProvider for BakedDataProvider {
             ::icu_collator::provider::CollationReorderingV1Marker::KEY.get_hash();
         const COLLATIONSPECIALPRIMARIESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.get_hash();
-        const DATEPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::DatePatternsV1Marker::KEY.get_hash();
+        const DATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::DateLengthsV1Marker::KEY.get_hash();
         const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
         const DATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY.get_hash();
-        const TIMEPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::TimePatternsV1Marker::KEY.get_hash();
+        const TIMELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY.get_hash();
         const TIMESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY.get_hash();
         const EXEMPLARCITIESV1MARKER: ::icu_provider::DataKeyHash =
@@ -33,8 +33,6 @@ impl AnyProvider for BakedDataProvider {
             ::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY.get_hash();
         const METAZONEGENERICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY.get_hash();
-        const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker::KEY.get_hash();
         const METAZONESPECIFICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY.get_hash();
         const METAZONESPECIFICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
@@ -219,6 +217,8 @@ impl AnyProvider for BakedDataProvider {
             ::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY.get_hash();
         const WORDBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.get_hash();
+        const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_timezone::provider::MetaZonePeriodV1Marker::KEY.get_hash();
         Ok(AnyResponse {
             payload: Some(match key.get_hash() {
                 JAPANESEERASV1MARKER => calendar::japanese_v1_u_ca::DATA
@@ -245,7 +245,7 @@ impl AnyProvider for BakedDataProvider {
                 COLLATIONSPECIALPRIMARIESV1MARKER => collator::prim_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                DATEPATTERNSV1MARKER => datetime::datelengths_v1_u_ca::DATA
+                DATELENGTHSV1MARKER => datetime::datelengths_v1_u_ca::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1_u_ca::DATA
@@ -260,10 +260,10 @@ impl AnyProvider for BakedDataProvider {
                 DATESYMBOLSV1MARKER => datetime::datesymbols_v1_u_ca::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                TIMEPATTERNSV1MARKER => datetime::timelengths_v1_u_ca::DATA
+                TIMELENGTHSV1MARKER => datetime::timelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                TIMESYMBOLSV1MARKER => datetime::timesymbols_v1_u_ca::DATA
+                TIMESYMBOLSV1MARKER => datetime::timesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 EXEMPLARCITIESV1MARKER => time_zone::exemplar_cities_v1::DATA
@@ -273,9 +273,6 @@ impl AnyProvider for BakedDataProvider {
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 METAZONEGENERICNAMESSHORTV1MARKER => time_zone::generic_short_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .map(AnyPayload::from_static_ref),
-                METAZONEPERIODV1MARKER => time_zone::metazone_period_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 METAZONESPECIFICNAMESLONGV1MARKER => time_zone::specific_long_v1::DATA
@@ -546,6 +543,9 @@ impl AnyProvider for BakedDataProvider {
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 WORDBREAKDATAV1MARKER => segmenter::word_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                METAZONEPERIODV1MARKER => time_zone::metazone_period_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),

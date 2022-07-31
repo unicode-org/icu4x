@@ -113,14 +113,14 @@ impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker> f
         })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::DatePatternsV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::DatePatternsV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::calendar::DateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::DateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *datetime::datelengths_v1_u_ca::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::DatePatternsV1Marker::KEY, req))?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::DateLengthsV1Marker::KEY, req))?,
             ))),
         })
     }
@@ -151,14 +151,14 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker> for B
         })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::TimePatternsV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::TimePatternsV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::calendar::TimeLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::TimeLengthsV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::timelengths_v1_u_ca::DATA
+                *datetime::timelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimePatternsV1Marker::KEY, req))?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY, req))?,
             ))),
         })
     }
@@ -168,7 +168,7 @@ impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker> for B
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::timesymbols_v1_u_ca::DATA
+                *datetime::timesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY, req))?,
             ))),
@@ -211,18 +211,6 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShor
                     .ok_or_else(|| {
                         DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY, req)
                     })?,
-            ))),
-        })
-    }
-}
-impl DataProvider<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *time_zone::metazone_period_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetaZonePeriodV1Marker::KEY, req))?,
             ))),
         })
     }
@@ -1333,6 +1321,18 @@ impl DataProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDat
                 *segmenter::word_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_segmenter::provider::WordBreakDataV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_timezone::provider::MetaZonePeriodV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_timezone::provider::MetaZonePeriodV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *time_zone::metazone_period_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_timezone::provider::MetaZonePeriodV1Marker::KEY, req))?,
             ))),
         })
     }

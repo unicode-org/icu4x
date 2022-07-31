@@ -32,9 +32,6 @@ pub enum DateTimeError {
         /// The minimum value
         min: isize,
     },
-    /// The time zone offset was invalid.
-    #[displaydoc("Failed to parse time-zone offset")]
-    InvalidTimeZoneOffset,
     /// Out of range
     // TODO(Manishearth) turn this into a proper variant
     OutOfRange,

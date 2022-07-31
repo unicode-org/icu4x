@@ -34,7 +34,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {
-            match pr.select(*value) {
+            match pr.category_for(*value) {
                 PluralCategory::One => print("You have one unread email.", None),
                 _ => print("You have {} unread emails.", Some(*value)),
             }

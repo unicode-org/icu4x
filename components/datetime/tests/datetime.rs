@@ -17,7 +17,6 @@ use icu_calendar::{
     provider::JapaneseErasV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
 };
-use icu_datetime::mock::time_zone::MockTimeZone;
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
@@ -26,8 +25,8 @@ use icu_datetime::{
     pattern::runtime,
     provider::{
         calendar::{
-            DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimePatternsV1Marker, TimeSymbolsV1Marker,
+            DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
     },
@@ -43,6 +42,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByKeyProvider;
+use icu_timezone::{CustomTimeZone, TimeVariant};
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -184,8 +184,8 @@ fn assert_fixture_element<A, D>(
     A::Calendar: IncludedInAnyCalendar,
     D: DataProvider<DateSymbolsV1Marker>
         + DataProvider<TimeSymbolsV1Marker>
-        + DataProvider<DatePatternsV1Marker>
-        + DataProvider<TimePatternsV1Marker>
+        + DataProvider<DateLengthsV1Marker>
+        + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + DataProvider<DecimalSymbolsV1Marker>
         + DataProvider<OrdinalV1Marker>
@@ -234,7 +234,7 @@ fn assert_fixture_element<A, D>(
             let df =
                 DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
                     .unwrap();
-            let tf = TimeFormatter::<A::Calendar>::try_new(
+            let tf = TimeFormatter::try_new(
                 &locale.into(),
                 provider,
                 bag.time.unwrap(),
@@ -278,7 +278,7 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::<A::Calendar>::try_new(
+            let tf = TimeFormatter::try_new(
                 &locale.into(),
                 provider,
                 bag.time.unwrap(),
@@ -317,7 +317,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let (input_date, mut time_zone) = parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
-        time_zone.time_variant = config.time_variant;
+        time_zone.time_variant = config.time_variant.map(TimeVariant);
 
         let description = match fx.description {
             Some(description) => {
@@ -376,12 +376,12 @@ fn test_dayperiod_patterns() {
             locale: &data_locale,
             metadata: Default::default(),
         };
-        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
+        let mut date_patterns_data: DataPayload<DateLengthsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -428,11 +428,11 @@ fn test_dayperiod_patterns() {
                                 data: skeleton_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
-                                key: DatePatternsV1Marker::KEY,
+                                key: DateLengthsV1Marker::KEY,
                                 data: date_patterns_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
-                                key: TimePatternsV1Marker::KEY,
+                                key: TimeLengthsV1Marker::KEY,
                                 data: time_patterns_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
@@ -478,7 +478,7 @@ fn test_time_zone_format_configs() {
         let (_, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.take();
+        time_zone.time_variant = config.time_variant.take().map(TimeVariant);
         for TimeZoneExpectation {
             patterns: _,
             configs,
@@ -518,15 +518,16 @@ fn test_time_zone_format_configs() {
 }
 
 #[test]
-#[cfg_attr(debug_assertions, should_panic(expected = "GMT+?"))]
+#[cfg(debug_assertions)]
+#[should_panic(expected = "using last-resort time zone fallback")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let zone_provider = icu_testdata::get_provider();
     let langid: LanguageIdentifier = "en".parse().unwrap();
-    let time_zone = MockTimeZone::new(
+    let time_zone = CustomTimeZone::new(
         None,
         Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
         Some(MetaZoneId(tinystr!(4, "ampa"))),
-        Some(tinystr!(8, "daylight")),
+        Some(TimeVariant::daylight()),
     );
     let tzf = TimeZoneFormatter::try_from_config(
         langid,
@@ -586,11 +587,11 @@ fn test_time_zone_patterns() {
         let (datetime, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.take();
+        time_zone.time_variant = config.time_variant.take().map(TimeVariant);
 
-        let mut date_patterns_data: DataPayload<DatePatternsV1Marker> =
+        let mut date_patterns_data: DataPayload<DateLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
-        let mut time_patterns_data: DataPayload<TimePatternsV1Marker> =
+        let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
@@ -627,11 +628,11 @@ fn test_time_zone_patterns() {
                         data: skeleton_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
-                        key: DatePatternsV1Marker::KEY,
+                        key: DateLengthsV1Marker::KEY,
                         data: date_patterns_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
-                        key: TimePatternsV1Marker::KEY,
+                        key: TimeLengthsV1Marker::KEY,
                         data: time_patterns_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {

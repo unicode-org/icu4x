@@ -14,7 +14,7 @@ pub use skeletons::*;
 pub use symbols::*;
 
 #[icu_provider::data_struct(marker(
-    DatePatternsV1Marker,
+    DateLengthsV1Marker,
     "datetime/datelengths@1",
     extension_key = "ca"
 ))]
@@ -34,11 +34,7 @@ pub struct DatePatternsV1<'data> {
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
 }
 
-#[icu_provider::data_struct(marker(
-    TimePatternsV1Marker,
-    "datetime/timelengths@1",
-    extension_key = "ca"
-))]
+#[icu_provider::data_struct(marker(TimeLengthsV1Marker, "datetime/timelengths@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -46,7 +42,7 @@ pub struct DatePatternsV1<'data> {
     databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct TimePatternsV1<'data> {
+pub struct TimeLengthsV1<'data> {
     /// These patterns are common uses of time formatting, broken down by the length of the
     /// pattern. Users can override the hour cycle with a preference, so there are two
     /// pattern groups stored here. Note that the pattern will contain either h11 or h12.
