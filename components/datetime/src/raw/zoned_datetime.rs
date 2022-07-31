@@ -34,14 +34,14 @@ use crate::{
     TypedDateTimeFormatterError,
 };
 
-/// This is the internal "raw" version of [crate::ZonedDateTimeFormatter], i.e. a version of ZonedDateTimeFormatter
-/// without the generic parameter. The actual implementation of [crate::ZonedDateTimeFormatter] should live here.
-pub(crate) struct ZonedDateTimeFormatter {
+/// This is the internal "raw" version of [crate::TypedZonedDateTimeFormatter], i.e. a version of TypedZonedDateTimeFormatter
+/// without the generic parameter. The actual implementation of [crate::TypedZonedDateTimeFormatter] should live here.
+pub(crate) struct TypedZonedDateTimeFormatter {
     pub datetime_format: raw::TypedDateTimeFormatter,
     pub time_zone_format: TimeZoneFormatter,
 }
 
-impl ZonedDateTimeFormatter {
+impl TypedZonedDateTimeFormatter {
     /// Constructor that takes a selected [`DataLocale`], a reference to a [`DataProvider`] for
     /// dates, a [`DataProvider`] for time zones, and a list of [`TypedDateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.

@@ -32,7 +32,7 @@ use icu_datetime::{
     },
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
     CldrCalendar, DateFormatter, TypedDateTimeFormatter, TypedDateTimeFormatterOptions, TimeFormatter,
-    ZonedDateTimeFormatter,
+    TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
@@ -330,7 +330,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         };
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
-            let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
+            let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
                 &locale.into(),
                 &provider,
                 &provider,
@@ -642,7 +642,7 @@ fn test_time_zone_patterns() {
                 ]);
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
-                    let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
+                    let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
                         &data_locale,
                         &local_provider.as_downcasting(),
                         &zone_provider,

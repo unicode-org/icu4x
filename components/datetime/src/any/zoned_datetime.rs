@@ -26,7 +26,7 @@ use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 
-/// [`ZonedAnyDateTimeFormatter`] is a [`ZonedDateTimeFormatter`](crate::ZonedDateTimeFormatter) capable of formatting
+/// [`ZonedAnyDateTimeFormatter`] is a [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter) capable of formatting
 /// dates from any calendar, selected at runtime.
 ///
 /// This is equivalently the composition of
@@ -73,7 +73,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
-pub struct ZonedAnyDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
+pub struct ZonedAnyDateTimeFormatter(raw::TypedZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedAnyDateTimeFormatter {
     /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
@@ -171,7 +171,7 @@ impl ZonedAnyDateTimeFormatter {
         let calendar = AnyCalendar::try_new_unstable(kind, calendar_provider)?;
 
         Ok(Self(
-            raw::ZonedDateTimeFormatter::try_new(
+            raw::TypedZonedDateTimeFormatter::try_new(
                 locale,
                 date_provider,
                 zone_provider,

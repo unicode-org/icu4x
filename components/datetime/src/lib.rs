@@ -115,4 +115,4 @@ pub use options::TypedDateTimeFormatterOptions;
 pub use time_zone::TimeZoneFormatter;
 pub use time_zone::TimeZoneFormatterConfig;
 pub use time_zone::TimeZoneFormatterOptions;
-pub use zoned_datetime::ZonedDateTimeFormatter;
+pub use zoned_datetime::TypedZonedDateTimeFormatter;

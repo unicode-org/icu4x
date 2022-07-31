@@ -10,7 +10,7 @@
 use icu::calendar::Gregorian;
 use icu::datetime::TypedDateTimeFormatterOptions;
 use icu::datetime::{
-    mock::parse_zoned_gregorian_from_str, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
+    mock::parse_zoned_gregorian_from_str, TimeZoneFormatterOptions, TypedZonedDateTimeFormatter,
 };
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
@@ -46,7 +46,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     print(format!("User: {}", user_name));
 
     {
-        let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
+        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
             &locale.into(),
             &provider,
             &provider,
