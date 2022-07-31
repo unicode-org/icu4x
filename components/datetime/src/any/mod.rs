@@ -8,5 +8,5 @@
 mod datetime;
 mod zoned_datetime;
 
-pub use datetime::AnyDateTimeFormatter;
+pub use datetime::DateTimeFormatter;
 pub use zoned_datetime::ZonedAnyDateTimeFormatter;

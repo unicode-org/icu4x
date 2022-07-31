@@ -20,7 +20,7 @@ use icu_calendar::{
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
-    any::AnyDateTimeFormatter,
+    any::DateTimeFormatter,
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
     provider::{
@@ -201,12 +201,12 @@ fn assert_fixture_element<A, D>(
     assert_eq!(result, output_value, "{}", description);
 
     let any_dtf =
-        AnyDateTimeFormatter::try_new_unstable(provider, &locale.into(), options).unwrap();
+        DateTimeFormatter::try_new_unstable(provider, &locale.into(), options).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(
         result, output_value,
-        "(AnyDateTimeFormatter) {}",
+        "(DateTimeFormatter) {}",
         description
     );
 
@@ -214,7 +214,7 @@ fn assert_fixture_element<A, D>(
 
     assert_eq!(
         result, output_value,
-        "(AnyDateTimeFormatter iso conversion) {}",
+        "(DateTimeFormatter iso conversion) {}",
         description
     );
 
