@@ -304,7 +304,7 @@ where
 
     /// Insert `value` with `key`, returning the existing value if it exists.
     ///
-    /// See example in [`Self::get()`].
+    /// See example in [`Self::get_2d()`].
     pub fn insert(&mut self, key0: &K0, key1: &K1, value: &V) -> Option<V::OwnedType> {
         let (key0_index, range) = self.get_or_insert_range_for_key0(key0);
         debug_assert!(range.start <= range.end); // '<=' because we may have inserted a new key0
