@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659145780798,
+  "lastUpdate": 1659284672505,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -54983,6 +54983,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5121,
             "range": "± 12",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "87313194fb06a53934176357055917c921364c4e",
+          "message": "Change argument order in constructors for plurals, datetime, and decimal (#2293)\n\n* Change argument order in constructors for plurals, datetime, and decimal\r\n\r\n* Fix another docs test\r\n\r\n* generate-readmes",
+          "timestamp": "2022-07-31T09:11:23-07:00",
+          "tree_id": "c6899e07fa9d3b06a895c1cc9a5ebf6791222142",
+          "url": "https://github.com/unicode-org/icu4x/commit/87313194fb06a53934176357055917c921364c4e"
+        },
+        "date": 1659284635934,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 94098,
+            "range": "± 490",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 910735,
+            "range": "± 6910",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 188148,
+            "range": "± 2552",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 85137,
+            "range": "± 385",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 93017,
+            "range": "± 159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 94239,
+            "range": "± 208",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 102636,
+            "range": "± 314",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 177595,
+            "range": "± 198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 189562,
+            "range": "± 177",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 188624,
+            "range": "± 2593",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 199549,
+            "range": "± 309",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5110,
+            "range": "± 32",
             "unit": "ns/iter"
           }
         ]
