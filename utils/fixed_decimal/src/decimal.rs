@@ -378,7 +378,7 @@ impl FixedDecimal {
         self.lower_magnitude = 0;
         self.magnitude = 0;
         self.digits.clear();
-        self.sign = Sign::Positive;
+        self.sign = Sign::None;
 
         #[cfg(debug_assertions)]
         self.check_invariants();

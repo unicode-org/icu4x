@@ -77,7 +77,7 @@ use fixed_decimal::FixedDecimal;
 ///         t: 45,
 ///         c: 0,
 ///     }),
-///     FixedDecimal::from(12345)
+///     FixedDecimal::from(12345_i128)
 ///         .multiplied_pow10(-2)
 ///         .to_string()
 ///         .parse()
