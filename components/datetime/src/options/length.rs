@@ -19,25 +19,25 @@
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::TypedDateTimeFormatterOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
 //!     length::Date::Medium, // "medium" date connector will be used
 //!     length::Time::Short,
 //! );
 //!
-//! let options = DateTimeFormatterOptions::Length(bag);
+//! let options = TypedDateTimeFormatterOptions::Length(bag);
 //! ```
 //!
 //! Or the options can be inferred through the [`Into`] trait.
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::DateTimeFormatterOptions;
-//! let options: DateTimeFormatterOptions = length::Bag::default().into();
+//! use icu::datetime::TypedDateTimeFormatterOptions;
+//! let options: TypedDateTimeFormatterOptions = length::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`DateTimeFormatter`](crate::DateTimeFormatter) is a subject to change over
+//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
@@ -55,19 +55,19 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::DateTimeFormatterOptions;
+/// use icu::datetime::TypedDateTimeFormatterOptions;
 ///
 /// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let options = DateTimeFormatterOptions::Length(bag);
+/// let options = TypedDateTimeFormatterOptions::Length(bag);
 /// ```
 ///
 /// Or the options can be inferred through the [`Into`] trait.
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::DateTimeFormatterOptions;
-/// let options: DateTimeFormatterOptions = length::Bag::default().into();
+/// use icu::datetime::TypedDateTimeFormatterOptions;
+/// let options: TypedDateTimeFormatterOptions = length::Bag::default().into();
 /// ```
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
@@ -149,13 +149,13 @@ impl Bag {
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
-/// *Note*: The exact result returned from [`DateTimeFormatter`] is a subject to change over
+/// *Note*: The exact result returned from [`TypedDateTimeFormatter`] is a subject to change over
 /// time. Formatted result should be treated as opaque and displayed to the user as-is,
 /// and it is strongly recommended to never write tests that expect a particular formatted output.
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
-/// [`DateTimeFormatter`]: super::super::DateTimeFormatter
+/// [`TypedDateTimeFormatter`]: super::super::TypedDateTimeFormatter
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
@@ -221,13 +221,13 @@ pub enum Date {
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
 ///
-/// *Note*: The exact result returned from [`DateTimeFormatter`] is a subject to change over
+/// *Note*: The exact result returned from [`TypedDateTimeFormatter`] is a subject to change over
 /// time. Formatted result should be treated as opaque and displayed to the user as-is,
 /// and it is strongly recommended to never write tests that expect a particular formatted output.
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#timeFormats
-/// [`DateTimeFormatter`]: super::super::DateTimeFormatter
+/// [`TypedDateTimeFormatter`]: super::super::TypedDateTimeFormatter
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]

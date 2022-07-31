@@ -5,14 +5,14 @@
 use icu_calendar::Gregorian;
 use icu_datetime::{
     options::{components, length, preferences},
-    DateTimeFormatter, DateTimeFormatterOptions,
+    TypedDateTimeFormatter, TypedDateTimeFormatterOptions,
 };
 use icu_locid::locale;
 
-fn assert_resolved_components(options: &DateTimeFormatterOptions, bag: &components::Bag) {
+fn assert_resolved_components(options: &TypedDateTimeFormatterOptions, bag: &components::Bag) {
     let provider = icu_testdata::get_provider();
-    let dtf = DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), options)
-        .expect("Failed to create a DateTimeFormatter.");
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), options)
+        .expect("Failed to create a TypedDateTimeFormatter.");
 
     assert_eq!(dtf.resolve_components(), *bag);
 }
@@ -26,7 +26,7 @@ fn test_length_date() {
     components_bag.month = Some(components::Month::Short);
     components_bag.day = Some(components::Day::NumericDayOfMonth);
     assert_resolved_components(
-        &DateTimeFormatterOptions::Length(length_bag),
+        &TypedDateTimeFormatterOptions::Length(length_bag),
         &components_bag,
     );
 }
@@ -42,7 +42,7 @@ fn test_length_time() {
         preferences::HourCycle::H12,
     ));
     assert_resolved_components(
-        &DateTimeFormatterOptions::Length(length_bag),
+        &TypedDateTimeFormatterOptions::Length(length_bag),
         &components_bag,
     );
 }
@@ -63,7 +63,7 @@ fn test_length_time_preferences() {
     ));
 
     assert_resolved_components(
-        &DateTimeFormatterOptions::Length(length_bag),
+        &TypedDateTimeFormatterOptions::Length(length_bag),
         &components_bag,
     );
 }
@@ -88,7 +88,7 @@ fn test_components_bag() {
     ));
 
     assert_resolved_components(
-        &DateTimeFormatterOptions::Components(input_bag),
+        &TypedDateTimeFormatterOptions::Components(input_bag),
         &output_bag,
     );
 }

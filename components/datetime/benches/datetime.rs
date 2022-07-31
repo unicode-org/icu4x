@@ -8,7 +8,7 @@ use criterion::{criterion_group, criterion_main, Criterion};
 use std::fmt::Write;
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_datetime::DateTimeFormatter;
+use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     time_zone::TimeZoneFormatterOptions,
@@ -36,12 +36,12 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().expect("Failed to parse locale.");
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
                             &options,
                         )
-                        .expect("Failed to create DateTimeFormatter.");
+                        .expect("Failed to create TypedDateTimeFormatter.");
 
                         let mut result = String::new();
 
@@ -102,7 +102,7 @@ fn datetime_benches(c: &mut Criterion) {
         let mut group = c.benchmark_group("datetime");
 
         let fxs = fixtures::get_fixture("lengths").unwrap();
-        group.bench_function("DateTimeFormatter/format_to_write", |b| {
+        group.bench_function("TypedDateTimeFormatter/format_to_write", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
                     let datetimes: Vec<DateTime<Gregorian>> = fx
@@ -114,7 +114,7 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
                             &options,
@@ -132,7 +132,7 @@ fn datetime_benches(c: &mut Criterion) {
             })
         });
 
-        group.bench_function("DateTimeFormatter/format_to_string", |b| {
+        group.bench_function("TypedDateTimeFormatter/format_to_string", |b| {
             b.iter(|| {
                 for fx in &fxs.0 {
                     let datetimes: Vec<DateTime<Gregorian>> = fx
@@ -144,7 +144,7 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
                             &options,
@@ -171,7 +171,7 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
                             &options,
@@ -202,7 +202,7 @@ fn datetime_benches(c: &mut Criterion) {
                     for setup in &fx.setups {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options);
-                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
                             &options,

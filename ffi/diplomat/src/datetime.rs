@@ -9,7 +9,7 @@ pub mod ffi {
     use icu_calendar::Gregorian;
     use icu_datetime::{
         options::{length, preferences},
-        DateFormatter, DateTimeFormatter, TimeFormatter,
+        DateFormatter, TypedDateTimeFormatter, TimeFormatter,
     };
 
     use crate::{
@@ -157,12 +157,12 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X DateFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string,
     /// using the Gregorian Calendar.
-    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
-    pub struct ICU4XGregorianDateTimeFormatter(pub DateTimeFormatter<Gregorian>);
+    #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter, Struct)]
+    pub struct ICU4XGregorianDateTimeFormatter(pub TypedDateTimeFormatter<Gregorian>);
 
     impl ICU4XGregorianDateTimeFormatter {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::try_new, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -204,14 +204,14 @@ pub mod ffi {
                 ICU4XHourCyclePreference::None => None,
             };
 
-            DateTimeFormatter::try_new(&provider, locale, &options.into())
+            TypedDateTimeFormatter::try_new(&provider, locale, &options.into())
                 .map(|dtf| Box::new(ICU4XGregorianDateTimeFormatter(dtf)))
                 .map_err(Into::into)
                 .into()
         }
 
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::format_to_write, FnInStruct)]
         pub fn format_datetime(
             &self,
             value: &ICU4XGregorianDateTime,

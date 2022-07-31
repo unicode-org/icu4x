@@ -8,7 +8,7 @@
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
 use icu::calendar::Gregorian;
-use icu::datetime::DateTimeFormatterOptions;
+use icu::datetime::TypedDateTimeFormatterOptions;
 use icu::datetime::{
     mock::parse_zoned_gregorian_from_str, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
 };
@@ -52,10 +52,10 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
             &provider,
             &provider,
             &provider,
-            &DateTimeFormatterOptions::default(),
+            &TypedDateTimeFormatterOptions::default(),
             &TimeZoneFormatterOptions::default(),
         )
-        .expect("Failed to create DateTimeFormatter.");
+        .expect("Failed to create TypedDateTimeFormatter.");
         let (today_date, today_tz) =
             parse_zoned_gregorian_from_str("2020-10-10T18:56:00Z").expect("Failed to parse date");
 

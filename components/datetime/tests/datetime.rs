@@ -31,7 +31,7 @@ use icu_datetime::{
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
-    CldrCalendar, DateFormatter, DateTimeFormatter, DateTimeFormatterOptions, TimeFormatter,
+    CldrCalendar, DateFormatter, TypedDateTimeFormatter, TypedDateTimeFormatterOptions, TimeFormatter,
     ZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
@@ -176,7 +176,7 @@ fn assert_fixture_element<A, D>(
     input_iso: &DateTime<Iso>,
     output_value: &str,
     provider: &D,
-    options: &DateTimeFormatterOptions,
+    options: &TypedDateTimeFormatterOptions,
     description: &str,
 ) where
     A: AsCalendar,
@@ -194,7 +194,7 @@ fn assert_fixture_element<A, D>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = DateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options).unwrap();
+    let dtf = TypedDateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
@@ -229,7 +229,7 @@ fn assert_fixture_element<A, D>(
     write!(s, "{}", fdt).unwrap();
     assert_eq!(s, output_value, "{}", description);
 
-    if let DateTimeFormatterOptions::Length(bag) = options {
+    if let TypedDateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
             let df =
                 DateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
@@ -242,7 +242,7 @@ fn assert_fixture_element<A, D>(
             )
             .unwrap();
 
-            let dtf = DateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
+            let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             let result = dtf.format_to_string(input_value);
 
             assert_eq!(result, output_value, "{}", description);
@@ -363,7 +363,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
 #[test]
 fn test_dayperiod_patterns() {
     let provider = icu_testdata::get_provider();
-    let format_options = DateTimeFormatterOptions::default();
+    let format_options = TypedDateTimeFormatterOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let mut locale: Locale = test.locale.parse().unwrap();
         locale
@@ -444,7 +444,7 @@ fn test_dayperiod_patterns() {
                                 data: decimal_data.clone().wrap_into_any_payload(),
                             },
                         ]);
-                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &local_provider.as_downcasting(),
                             &data_locale,
                             &format_options,
@@ -569,7 +569,7 @@ fn test_time_zone_patterns() {
     let decimal_provider = icu_testdata::get_provider();
     let plural_provider = icu_testdata::get_provider();
     let zone_provider = icu_testdata::get_provider();
-    let format_options = DateTimeFormatterOptions::default();
+    let format_options = TypedDateTimeFormatterOptions::default();
 
     for test in get_time_zone_tests("time_zones").unwrap().0 {
         let mut locale: Locale = test.locale.parse().unwrap();
@@ -751,17 +751,17 @@ fn test_components_combine_datetime() {
 fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     use icu_datetime::{
         options::length::{Bag, Time},
-        DateTimeFormatterOptions,
+        TypedDateTimeFormatterOptions,
     };
     use icu_locid::locale;
 
     let mut length_bag = Bag::default();
     length_bag.time = Some(Time::Full); // Full has timezone symbols
-    let options = DateTimeFormatterOptions::Length(length_bag);
+    let options = TypedDateTimeFormatterOptions::Length(length_bag);
 
     let provider = icu_testdata::get_provider();
     let result =
-        DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options);
+        TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options);
 
     assert!(result.is_err());
 }

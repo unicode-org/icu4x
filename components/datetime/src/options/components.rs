@@ -42,7 +42,7 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
+//! use icu::datetime::TypedDateTimeFormatterOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -53,18 +53,18 @@
 //! bag.minute = Some(components::Numeric::TwoDigit);
 //!
 //! // The options can be created manually.
-//! let options = DateTimeFormatterOptions::Components(bag);
+//! let options = TypedDateTimeFormatterOptions::Components(bag);
 //! ```
 //!
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatterOptions;
-//! let options: DateTimeFormatterOptions = components::Bag::default().into();
+//! use icu::datetime::TypedDateTimeFormatterOptions;
+//! let options: TypedDateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`DateTimeFormatter`](crate::DateTimeFormatter) is a subject to change over
+//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 use crate::{
@@ -530,7 +530,7 @@ impl From<TimeZoneName> for Field {
     }
 }
 
-/// Get the resolved components for a DateTimeFormatter, via the PatternPlurals. In the case of
+/// Get the resolved components for a TypedDateTimeFormatter, via the PatternPlurals. In the case of
 /// plurals resolve off of the required `other` pattern.
 impl<'data> From<&PatternPlurals<'data>> for Bag {
     fn from(other: &PatternPlurals) -> Self {

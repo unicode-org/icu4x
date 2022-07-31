@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    error::DateTimeFormatterError,
+    error::TypedDateTimeFormatterError,
     fields::{Field, FieldSymbol, Week},
     input::{DateTimeInput, LocalizedDateTimeInput},
     pattern::{runtime::Pattern, PatternError, PatternItem},
@@ -153,7 +153,7 @@ impl<'data> PatternPlurals<'data> {
         &self,
         loc_datetime: &impl LocalizedDateTimeInput<T>,
         ordinal_rules: Option<&PluralRules>,
-    ) -> Result<&Pattern, DateTimeFormatterError>
+    ) -> Result<&Pattern, TypedDateTimeFormatterError>
     where
         T: DateTimeInput,
     {

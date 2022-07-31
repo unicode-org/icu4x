@@ -19,7 +19,7 @@ use crate::{
     },
     input::{DateTimeInput, TimeZoneInput},
     input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
-    options::DateTimeFormatterOptions,
+    options::TypedDateTimeFormatterOptions,
     pattern::runtime::PatternPlurals,
     provider::{
         self,
@@ -31,19 +31,19 @@ use crate::{
     },
     raw,
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
-    DateTimeFormatterError,
+    TypedDateTimeFormatterError,
 };
 
 /// This is the internal "raw" version of [crate::ZonedDateTimeFormatter], i.e. a version of ZonedDateTimeFormatter
 /// without the generic parameter. The actual implementation of [crate::ZonedDateTimeFormatter] should live here.
 pub(crate) struct ZonedDateTimeFormatter {
-    pub datetime_format: raw::DateTimeFormatter,
+    pub datetime_format: raw::TypedDateTimeFormatter,
     pub time_zone_format: TimeZoneFormatter,
 }
 
 impl ZonedDateTimeFormatter {
     /// Constructor that takes a selected [`DataLocale`], a reference to a [`DataProvider`] for
-    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatterOptions`].
+    /// dates, a [`DataProvider`] for time zones, and a list of [`TypedDateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
@@ -54,9 +54,9 @@ impl ZonedDateTimeFormatter {
         zone_provider: &ZP,
         plural_provider: &PP,
         decimal_provider: &DEP,
-        date_time_format_options: &DateTimeFormatterOptions,
+        date_time_format_options: &TypedDateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, TypedDateTimeFormatterError>
     where
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -85,7 +85,7 @@ impl ZonedDateTimeFormatter {
             date_time_format_options,
         )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
-            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| TypedDateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
             locale: &locale,
@@ -121,9 +121,9 @@ impl ZonedDateTimeFormatter {
 
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new(decimal_provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+                .map_err(TypedDateTimeFormatterError::FixedDecimalFormatter)?;
 
-        let datetime_format = raw::DateTimeFormatter::new(
+        let datetime_format = raw::TypedDateTimeFormatter::new(
             locale,
             patterns,
             date_symbols_data,

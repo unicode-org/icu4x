@@ -3,13 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! The collection of code that is needed for handling formatting operations for DateTimes.
-//! Central to this is the [`DateTimeFormatter`].
+//! Central to this is the [`TypedDateTimeFormatter`].
 
 use crate::{
     format::datetime,
     input::{DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
     options::components,
-    options::{length, preferences, DateTimeFormatterOptions},
+    options::{length, preferences, TypedDateTimeFormatterOptions},
     pattern::runtime::PatternPlurals,
     provider,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
@@ -18,7 +18,7 @@ use crate::{
         DateSymbolsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
-    DateTimeFormatterError, FormattedDateTime,
+    TypedDateTimeFormatterError, FormattedDateTime,
 };
 use alloc::string::String;
 
@@ -48,7 +48,7 @@ impl TimeFormatter {
         locale: DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, TypedDateTimeFormatterError>
     where
         D: DataProvider<TimeLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -63,7 +63,7 @@ impl TimeFormatter {
         )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| TypedDateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let symbols_data = if required.time_symbols_data {
             Some(
@@ -83,7 +83,7 @@ impl TimeFormatter {
 
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+                .map_err(TypedDateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -179,7 +179,7 @@ impl DateFormatter {
         data_provider: &D,
         mut locale: DataLocale,
         length: length::Date,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, TypedDateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
             + DataProvider<DateLengthsV1Marker>
@@ -198,7 +198,7 @@ impl DateFormatter {
             provider::date_time::generic_pattern_for_date_length(data_provider, &locale, length)?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| TypedDateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
             locale: &locale,
@@ -228,7 +228,7 @@ impl DateFormatter {
 
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+                .map_err(TypedDateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -241,7 +241,7 @@ impl DateFormatter {
         ))
     }
 
-    /// Creates a new [`DateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
+    /// Creates a new [`TypedDateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
         locale: DataLocale,
         generic_pattern: DataPayload<GenericPatternV1Marker>,
@@ -314,9 +314,9 @@ impl DateFormatter {
     }
 }
 
-/// This is the internal "raw" version of [crate::DateTimeFormatter], i.e. a version of DateTimeFormatter
-/// without the generic parameter. The actual implementation of [crate::DateTimeFormatter] should live here.
-pub(crate) struct DateTimeFormatter {
+/// This is the internal "raw" version of [crate::TypedDateTimeFormatter], i.e. a version of TypedDateTimeFormatter
+/// without the generic parameter. The actual implementation of [crate::TypedDateTimeFormatter] should live here.
+pub(crate) struct TypedDateTimeFormatter {
     pub locale: DataLocale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
@@ -326,19 +326,19 @@ pub(crate) struct DateTimeFormatter {
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
 
-impl DateTimeFormatter {
+impl TypedDateTimeFormatter {
     /// Constructor that takes previously constructed [`TimeFormatter`] and [`DateFormatter`] instances and builds a
-    /// new [`DateTimeFormatter`] instance from them.
+    /// new [`TypedDateTimeFormatter`] instance from them.
     #[inline(never)]
     pub fn try_from_date_and_time(
         date: DateFormatter,
         time: TimeFormatter,
-    ) -> Result<Self, DateTimeFormatterError> {
+    ) -> Result<Self, TypedDateTimeFormatterError> {
         let generic_pattern = &date.generic_pattern;
         let time_patterns = &time.patterns;
         let patterns = date
             .patterns
-            .try_map_project::<PatternPluralsFromPatternsV1Marker, _, DateTimeFormatterError>(
+            .try_map_project::<PatternPluralsFromPatternsV1Marker, _, TypedDateTimeFormatterError>(
                 |data, _| {
                     let date_pattern = data.0.expect_pattern("Lengths are single patterns");
                     let time_pattern: crate::pattern::runtime::Pattern = time_patterns
@@ -375,8 +375,8 @@ impl DateTimeFormatter {
     pub fn try_new<D>(
         data_provider: &D,
         mut locale: DataLocale,
-        options: &DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+        options: &TypedDateTimeFormatterOptions,
+    ) -> Result<Self, TypedDateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -396,7 +396,7 @@ impl DateTimeFormatter {
             provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
-            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+            .map_err(|field| TypedDateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
             locale: &locale,
@@ -432,7 +432,7 @@ impl DateTimeFormatter {
 
         let fixed_decimal_format =
             FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+                .map_err(TypedDateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -445,7 +445,7 @@ impl DateTimeFormatter {
         ))
     }
 
-    /// Creates a new [`DateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
+    /// Creates a new [`TypedDateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
         locale: DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -519,7 +519,7 @@ impl DateTimeFormatter {
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the
-    /// options that were provided to the [`DateTimeFormatter`].
+    /// options that were provided to the [`TypedDateTimeFormatter`].
     pub fn resolve_components(&self) -> components::Bag {
         components::Bag::from(&self.patterns.get().0)
     }

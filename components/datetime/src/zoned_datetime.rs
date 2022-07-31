@@ -12,7 +12,7 @@ use crate::{
     calendar,
     format::zoned_datetime::FormattedZonedDateTime,
     input::{DateTimeInput, TimeZoneInput},
-    options::DateTimeFormatterOptions,
+    options::TypedDateTimeFormatterOptions,
     provider::{
         self,
         calendar::{
@@ -23,17 +23,17 @@ use crate::{
     },
     raw,
     time_zone::TimeZoneFormatterOptions,
-    CldrCalendar, DateTimeFormatterError,
+    CldrCalendar, TypedDateTimeFormatterError,
 };
 
-/// The composition of [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
+/// The composition of [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
 ///
 /// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected locale, and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
 /// As such, `TimeZoneFormatter` will pull in only the resources it needs to format that pattern
-/// that is derived from the provided [`DateTimeFormatterOptions`].
+/// that is derived from the provided [`TypedDateTimeFormatterOptions`].
 ///
 /// For that reason, one should think of the process of formatting a zoned datetime in two steps:
 /// first, a computationally heavy construction of [`ZonedDateTimeFormatter`], and then fast formatting
@@ -60,7 +60,7 @@ use crate::{
 ///     &options.into(),
 ///     &TimeZoneFormatterOptions::default(),
 /// )
-/// .expect("Failed to create DateTimeFormatter instance.");
+/// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
 ///     .expect("Failed to parse zoned datetime");
@@ -71,20 +71,20 @@ pub struct ZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>
 
 impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// Constructor that takes a selected locale, a reference to a [data provider] for
-    /// dates, a [data provider] for time zones, and a list of [`DateTimeFormatterOptions`].
+    /// dates, a [data provider] for time zones, and a list of [`TypedDateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// # Examples
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
+    /// use icu::datetime::{TypedDateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_datetime::TimeZoneFormatterOptions;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let options = DateTimeFormatterOptions::default();
+    /// let options = TypedDateTimeFormatterOptions::default();
     ///
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     &locale!("en").into(),
@@ -107,9 +107,9 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
         zone_provider: &ZP,
         plural_provider: &PP,
         decimal_provider: &DEP,
-        date_time_format_options: &DateTimeFormatterOptions,
+        date_time_format_options: &TypedDateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
+    ) -> Result<Self, TypedDateTimeFormatterError>
     where
         DP: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
@@ -159,7 +159,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// # let options = icu::datetime::DateTimeFormatterOptions::default();
+    /// # let options = icu::datetime::TypedDateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     &locale.into(),
     ///     &provider,
@@ -203,7 +203,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// # let options = icu::datetime::DateTimeFormatterOptions::default();
+    /// # let options = icu::datetime::TypedDateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     &locale.into(),
     ///     &provider,
@@ -245,7 +245,7 @@ impl<C: CldrCalendar> ZonedDateTimeFormatter<C> {
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// # let options = icu::datetime::DateTimeFormatterOptions::default();
+    /// # let options = icu::datetime::TypedDateTimeFormatterOptions::default();
     /// let zdtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     &locale.into(),
     ///     &provider,

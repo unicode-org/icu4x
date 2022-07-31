@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DateTimeFormatterError;
+use crate::error::TypedDateTimeFormatterError;
 use crate::fields;
 use crate::input;
-use crate::options::{components, length, preferences, DateTimeFormatterOptions};
+use crate::options::{components, length, preferences, TypedDateTimeFormatterOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
@@ -18,7 +18,7 @@ use crate::skeleton;
 use icu_calendar::types::{Era, MonthCode};
 use icu_provider::prelude::*;
 
-type Result<T> = core::result::Result<T, DateTimeFormatterError>;
+type Result<T> = core::result::Result<T, TypedDateTimeFormatterError>;
 
 fn pattern_for_time_length_inner<'data>(
     data: TimeLengthsV1<'data>,
@@ -176,15 +176,15 @@ where
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
         locale: &'a DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: &TypedDateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
             data_provider,
             locale,
         };
         match options {
-            DateTimeFormatterOptions::Length(bag) => selector.pattern_for_length_bag(bag),
-            DateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
+            TypedDateTimeFormatterOptions::Length(bag) => selector.pattern_for_length_bag(bag),
+            TypedDateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
         }
     }
 
@@ -266,7 +266,7 @@ where
             | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(pattern),
             skeleton::BestSkeleton::NoMatch => None,
         }
-        .ok_or(DateTimeFormatterError::UnsupportedOptions)?;
+        .ok_or(TypedDateTimeFormatterError::UnsupportedOptions)?;
         Ok(DataPayload::from_owned(PatternPluralsV1(
             patterns.into_owned(),
         )))
@@ -325,7 +325,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
                             .0
                             .get(idx)
                             .map(|x| &**x)
-                            .ok_or(DateTimeFormatterError::MissingWeekdaySymbol(idx));
+                            .ok_or(TypedDateTimeFormatterError::MissingWeekdaySymbol(idx));
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -346,7 +346,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
             .0
             .get(idx)
             .map(|x| &**x)
-            .ok_or(DateTimeFormatterError::MissingWeekdaySymbol(idx))
+            .ok_or(TypedDateTimeFormatterError::MissingWeekdaySymbol(idx))
     }
 
     fn get_symbol_for_month(
@@ -367,7 +367,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
                     if let Some(symbols) = symbols {
                         return symbols
                             .get(code)
-                            .ok_or(DateTimeFormatterError::MissingMonthSymbol(code));
+                            .ok_or(TypedDateTimeFormatterError::MissingMonthSymbol(code));
                     } else {
                         return self.get_symbol_for_month(fields::Month::Format, length, code);
                     }
@@ -383,7 +383,7 @@ impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
         };
         symbols
             .get(code)
-            .ok_or(DateTimeFormatterError::MissingMonthSymbol(code))
+            .ok_or(TypedDateTimeFormatterError::MissingMonthSymbol(code))
     }
 
     /// Get the era symbol

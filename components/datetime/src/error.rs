@@ -14,10 +14,10 @@ use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
 use tinystr::TinyStr16;
 
-/// A list of possible error outcomes for the [`DateTimeFormatter`](crate::DateTimeFormatter) struct.
+/// A list of possible error outcomes for the [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) struct.
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
-pub enum DateTimeFormatterError {
+pub enum TypedDateTimeFormatterError {
     /// An error originating from parsing a pattern.
     #[displaydoc("{0}")]
     Pattern(PatternError),
@@ -63,46 +63,46 @@ pub enum DateTimeFormatterError {
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
     /// An error from mixing calendar types in DateTimeFormat
     #[displaydoc(
-        "DateTimeFormatter<{0}> was given a locale asking for incompatible calendar u-ca-{1}"
+        "TypedDateTimeFormatter<{0}> was given a locale asking for incompatible calendar u-ca-{1}"
     )]
     MismatchedCalendarLocale(&'static str, TinyStr16),
 }
 
 #[cfg(feature = "std")]
-impl std::error::Error for DateTimeFormatterError {}
+impl std::error::Error for TypedDateTimeFormatterError {}
 
-impl From<PatternError> for DateTimeFormatterError {
+impl From<PatternError> for TypedDateTimeFormatterError {
     fn from(e: PatternError) -> Self {
-        DateTimeFormatterError::Pattern(e)
+        TypedDateTimeFormatterError::Pattern(e)
     }
 }
 
-impl From<DataError> for DateTimeFormatterError {
+impl From<DataError> for TypedDateTimeFormatterError {
     fn from(e: DataError) -> Self {
-        DateTimeFormatterError::DataProvider(e)
+        TypedDateTimeFormatterError::DataProvider(e)
     }
 }
 
-impl From<core::fmt::Error> for DateTimeFormatterError {
+impl From<core::fmt::Error> for TypedDateTimeFormatterError {
     fn from(e: core::fmt::Error) -> Self {
-        DateTimeFormatterError::Format(e)
+        TypedDateTimeFormatterError::Format(e)
     }
 }
 
-impl From<SkeletonError> for DateTimeFormatterError {
+impl From<SkeletonError> for TypedDateTimeFormatterError {
     fn from(e: SkeletonError) -> Self {
-        DateTimeFormatterError::Skeleton(e)
+        TypedDateTimeFormatterError::Skeleton(e)
     }
 }
 
-impl From<PluralRulesError> for DateTimeFormatterError {
+impl From<PluralRulesError> for TypedDateTimeFormatterError {
     fn from(e: PluralRulesError) -> Self {
-        DateTimeFormatterError::PluralRules(e)
+        TypedDateTimeFormatterError::PluralRules(e)
     }
 }
 
-impl From<DateTimeError> for DateTimeFormatterError {
+impl From<DateTimeError> for TypedDateTimeFormatterError {
     fn from(e: DateTimeError) -> Self {
-        DateTimeFormatterError::DateTimeInput(e)
+        TypedDateTimeFormatterError::DateTimeInput(e)
     }
 }
