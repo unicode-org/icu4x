@@ -69,18 +69,17 @@ use fixed_decimal::FixedDecimal;
 /// use fixed_decimal::FixedDecimal;
 /// use icu::plurals::PluralOperands;
 /// assert_eq!(
-///     Ok(PluralOperands {
+///     PluralOperands {
 ///         i: 123,
 ///         v: 2,
 ///         w: 2,
 ///         f: 45,
 ///         t: 45,
 ///         c: 0,
-///     }),
-///     FixedDecimal::from(12345_i128)
-///         .multiplied_pow10(-2)
-///         .to_string()
-///         .parse()
+///     },
+///     (&FixedDecimal::from(12345)
+///         .multiplied_pow10(-2))
+///         .into()
 /// )
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
