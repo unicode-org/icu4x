@@ -5,7 +5,7 @@ Formatting date and time.
 This module is published as its own crate ([`icu_datetime`](https://docs.rs/icu_datetime/latest/icu_datetime/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
-[`TypedDateTimeFormatter`] is the main structure of the component. It accepts a set of arguments which
+[`TypedDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
 allow it to collect necessary data from the [data provider], and once instantiated, can be
 used to quickly format any date and time provided.
 
@@ -14,9 +14,10 @@ used to quickly format any date and time provided.
 ```rust
 use icu::calendar::Gregorian;
 use icu::datetime::{
-    mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter, DateTimeFormatterOptions,
+    mock::parse_gregorian_from_str, options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
 };
-use icu::locid::locale;
+use icu::locid::{Locale, locale};
+use std::str::FromStr;
 
 let provider = icu_testdata::get_provider();
 
@@ -26,13 +27,23 @@ let options = DateTimeFormatterOptions::Length(length::Bag::from_date_time_style
     length::Time::Short,
 ));
 
-let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options)
+// You can work with a formatter that can select the calendar at runtime:
+let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), &options)
+    .expect("Failed to create DateTimeFormatter instance.");
+
+// Or one that selects a calendar at compile time:
+let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options)
     .expect("Failed to create TypedDateTimeFormatter instance.");
 
-let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
+let typed_date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
+let date = typed_date.to_any();
 
-let formatted_date = dtf.format(&date);
+let formatted_date = dtf.format(&date).expect("Formatting should succeed");
+let typed_formatted_date = typed_dtf.format(&typed_date);
+
 assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
+assert_eq!(typed_formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
 ```
 
 The options can be created more ergonomically using the `Into` trait to automatically
