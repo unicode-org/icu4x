@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{options::TypedDateTimeFormatterOptions, raw};
+use crate::{options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
@@ -37,7 +37,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
 /// As such, `TimeZoneFormatter` will pull in only the resources it needs to format that pattern
-/// that is derived from the provided [`TypedDateTimeFormatterOptions`].
+/// that is derived from the provided [`DateTimeFormatterOptions`].
 ///
 /// For that reason, one should think of the process of formatting a zoned datetime in two steps:
 /// first, a computationally heavy construction of [`ZonedDateTimeFormatter`], and then fast formatting
@@ -77,7 +77,7 @@ pub struct ZonedDateTimeFormatter(raw::TypedZonedDateTimeFormatter, AnyCalendar)
 
 impl ZonedDateTimeFormatter {
     /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
-    /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`TypedDateTimeFormatterOptions`].
+    /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
@@ -91,7 +91,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedDateTimeFormatter};
+    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
@@ -129,7 +129,7 @@ impl ZonedDateTimeFormatter {
         plural_provider: &PP,
         decimal_provider: &DEP,
         calendar_provider: &CEP,
-        date_time_format_options: &TypedDateTimeFormatterOptions,
+        date_time_format_options: &DateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where
@@ -204,7 +204,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedDateTimeFormatter};
+    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
@@ -231,7 +231,7 @@ impl ZonedDateTimeFormatter {
     pub fn try_new_with_any_provider<P>(
         locale: &DataLocale,
         data_provider: &P,
-        options: &TypedDateTimeFormatterOptions,
+        options: &DateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where
@@ -266,7 +266,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedDateTimeFormatter};
+    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
@@ -294,7 +294,7 @@ impl ZonedDateTimeFormatter {
     pub fn try_new_with_buffer_provider<P>(
         locale: &DataLocale,
         data_provider: &P,
-        options: &TypedDateTimeFormatterOptions,
+        options: &DateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where

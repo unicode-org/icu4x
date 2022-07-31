@@ -6,7 +6,7 @@
 //! Central to this is the [`TypedDateTimeFormatter`].
 
 use crate::{
-    options::{components, length, preferences, TypedDateTimeFormatterOptions},
+    options::{components, length, preferences, DateTimeFormatterOptions},
     provider::calendar::{
         DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
         TimeLengthsV1Marker, TimeSymbolsV1Marker,
@@ -472,7 +472,7 @@ where {
     pub fn try_new<D>(
         data_provider: &D,
         locale: &DataLocale,
-        options: &TypedDateTimeFormatterOptions,
+        options: &DateTimeFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>
@@ -594,7 +594,7 @@ where {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
     ///     options::{components, length},
-    ///     TypedDateTimeFormatter, TypedDateTimeFormatterOptions,
+    ///     TypedDateTimeFormatter, DateTimeFormatterOptions,
     /// };
     /// use icu::locid::locale;
     ///

@@ -19,22 +19,22 @@
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::TypedDateTimeFormatterOptions;
+//! use icu::datetime::DateTimeFormatterOptions;
 //!
 //! let bag = length::Bag::from_date_time_style(
 //!     length::Date::Medium, // "medium" date connector will be used
 //!     length::Time::Short,
 //! );
 //!
-//! let options = TypedDateTimeFormatterOptions::Length(bag);
+//! let options = DateTimeFormatterOptions::Length(bag);
 //! ```
 //!
 //! Or the options can be inferred through the [`Into`] trait.
 //!
 //! ```
 //! use icu::datetime::options::length;
-//! use icu::datetime::TypedDateTimeFormatterOptions;
-//! let options: TypedDateTimeFormatterOptions = length::Bag::default().into();
+//! use icu::datetime::DateTimeFormatterOptions;
+//! let options: DateTimeFormatterOptions = length::Bag::default().into();
 //! ```
 //!
 //! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
@@ -55,19 +55,19 @@ use serde::{Deserialize, Serialize};
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::TypedDateTimeFormatterOptions;
+/// use icu::datetime::DateTimeFormatterOptions;
 ///
 /// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let options = TypedDateTimeFormatterOptions::Length(bag);
+/// let options = DateTimeFormatterOptions::Length(bag);
 /// ```
 ///
 /// Or the options can be inferred through the [`Into`] trait.
 ///
 /// ```
 /// use icu::datetime::options::length;
-/// use icu::datetime::TypedDateTimeFormatterOptions;
-/// let options: TypedDateTimeFormatterOptions = length::Bag::default().into();
+/// use icu::datetime::DateTimeFormatterOptions;
+/// let options: DateTimeFormatterOptions = length::Bag::default().into();
 /// ```
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html

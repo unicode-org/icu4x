@@ -14,14 +14,14 @@ used to quickly format any date and time provided.
 ```rust
 use icu::calendar::Gregorian;
 use icu::datetime::{
-    mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter, TypedDateTimeFormatterOptions,
+    mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter, DateTimeFormatterOptions,
 };
 use icu::locid::locale;
 
 let provider = icu_testdata::get_provider();
 
 // See the next code example for a more ergonomic example with .into().
-let options = TypedDateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
+let options = DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
     length::Date::Medium,
     length::Time::Short,
 ));
@@ -36,11 +36,11 @@ assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
 ```
 
 The options can be created more ergonomically using the `Into` trait to automatically
-convert a [`options::length::Bag`] into a [`TypedDateTimeFormatterOptions::Length`].
+convert a [`options::length::Bag`] into a [`DateTimeFormatterOptions::Length`].
 
 ```rust
 use icu::calendar::Gregorian;
-use icu::datetime::{options::length, TypedDateTimeFormatter, TypedDateTimeFormatterOptions};
+use icu::datetime::{options::length, TypedDateTimeFormatter, DateTimeFormatterOptions};
 let options =
     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
 

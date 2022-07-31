@@ -32,7 +32,7 @@ use icu_datetime::{
     },
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
     CldrCalendar, TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter,
-    TypedDateTimeFormatterOptions, TypedZonedDateTimeFormatter,
+    DateTimeFormatterOptions, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
@@ -176,7 +176,7 @@ fn assert_fixture_element<A, D>(
     input_iso: &DateTime<Iso>,
     output_value: &str,
     provider: &D,
-    options: &TypedDateTimeFormatterOptions,
+    options: &DateTimeFormatterOptions,
     description: &str,
 ) where
     A: AsCalendar,
@@ -225,7 +225,7 @@ fn assert_fixture_element<A, D>(
     write!(s, "{}", fdt).unwrap();
     assert_eq!(s, output_value, "{}", description);
 
-    if let TypedDateTimeFormatterOptions::Length(bag) = options {
+    if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
             let df = TypedDateFormatter::<A::Calendar>::try_new(
                 provider,
@@ -365,7 +365,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
 #[test]
 fn test_dayperiod_patterns() {
     let provider = icu_testdata::get_provider();
-    let format_options = TypedDateTimeFormatterOptions::default();
+    let format_options = DateTimeFormatterOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let mut locale: Locale = test.locale.parse().unwrap();
         locale
@@ -571,7 +571,7 @@ fn test_time_zone_patterns() {
     let decimal_provider = icu_testdata::get_provider();
     let plural_provider = icu_testdata::get_provider();
     let zone_provider = icu_testdata::get_provider();
-    let format_options = TypedDateTimeFormatterOptions::default();
+    let format_options = DateTimeFormatterOptions::default();
 
     for test in get_time_zone_tests("time_zones").unwrap().0 {
         let mut locale: Locale = test.locale.parse().unwrap();
@@ -753,13 +753,13 @@ fn test_components_combine_datetime() {
 fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     use icu_datetime::{
         options::length::{Bag, Time},
-        TypedDateTimeFormatterOptions,
+        DateTimeFormatterOptions,
     };
     use icu_locid::locale;
 
     let mut length_bag = Bag::default();
     length_bag.time = Some(Time::Full); // Full has timezone symbols
-    let options = TypedDateTimeFormatterOptions::Length(length_bag);
+    let options = DateTimeFormatterOptions::Length(length_bag);
 
     let provider = icu_testdata::get_provider();
     let result =

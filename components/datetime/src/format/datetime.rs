@@ -38,7 +38,7 @@ use writeable::Writeable;
 /// use icu::datetime::TypedDateTimeFormatter;
 /// use icu::locid::locale;
 /// # let provider = icu_testdata::get_provider();
-/// # let options = icu::datetime::TypedDateTimeFormatterOptions::default();
+/// # let options = icu::datetime::DateTimeFormatterOptions::default();
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options)
 ///     .expect("Failed to create TypedDateTimeFormatter instance.");
 ///

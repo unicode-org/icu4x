@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    options::{components, TypedDateTimeFormatterOptions},
+    options::{components, DateTimeFormatterOptions},
     raw,
 };
 use alloc::string::String;
@@ -81,7 +81,7 @@ impl DateTimeFormatter {
     pub fn try_new_with_any_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &TypedDateTimeFormatterOptions,
+        options: &DateTimeFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where
         P: AnyProvider,
@@ -129,7 +129,7 @@ impl DateTimeFormatter {
     pub fn try_new_with_buffer_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &TypedDateTimeFormatterOptions,
+        options: &DateTimeFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where
         P: BufferProvider,
@@ -173,7 +173,7 @@ impl DateTimeFormatter {
     pub fn try_new_unstable<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &TypedDateTimeFormatterOptions,
+        options: &DateTimeFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where
         P: DataProvider<DateSymbolsV1Marker>
@@ -280,7 +280,7 @@ impl DateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
     ///     options::{components, length},
-    ///     any::DateTimeFormatter, TypedDateTimeFormatterOptions,
+    ///     any::DateTimeFormatter, DateTimeFormatterOptions,
     /// };
     /// use icu::locid::Locale;
     /// use std::str::FromStr;

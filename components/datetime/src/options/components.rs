@@ -42,7 +42,7 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::TypedDateTimeFormatterOptions;
+//! use icu::datetime::DateTimeFormatterOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -53,15 +53,15 @@
 //! bag.minute = Some(components::Numeric::TwoDigit);
 //!
 //! // The options can be created manually.
-//! let options = TypedDateTimeFormatterOptions::Components(bag);
+//! let options = DateTimeFormatterOptions::Components(bag);
 //! ```
 //!
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::TypedDateTimeFormatterOptions;
-//! let options: TypedDateTimeFormatterOptions = components::Bag::default().into();
+//! use icu::datetime::DateTimeFormatterOptions;
+//! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
 //! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over

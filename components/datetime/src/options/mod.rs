@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! [`TypedDateTimeFormatterOptions`] is a bag of options which, together with [`Locale`],
+//! [`DateTimeFormatterOptions`] is a bag of options which, together with [`Locale`],
 //! defines how dates will be formatted with a [`TypedDateTimeFormatter`] instance.
 //!
 //! Each variant of the bag is a combination of settings defining how to format
@@ -15,7 +15,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu::datetime::{options::length, TypedDateTimeFormatterOptions};
+//! use icu::datetime::{options::length, DateTimeFormatterOptions};
 //!
 //! let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 //! ```
@@ -36,7 +36,7 @@ pub mod preferences;
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::{options::length, TypedDateTimeFormatterOptions};
+/// use icu::datetime::{options::length, DateTimeFormatterOptions};
 ///
 /// let bag = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// ```
@@ -45,26 +45,26 @@ pub mod preferences;
 /// `ECMA402` like components bag later.
 #[derive(Debug, Clone)]
 #[non_exhaustive]
-pub enum TypedDateTimeFormatterOptions {
+pub enum DateTimeFormatterOptions {
     /// Bag of lengths for date and time.
     Length(length::Bag),
     /// Bag of components describing which fields and how should be displayed.
     Components(components::Bag),
 }
 
-impl Default for TypedDateTimeFormatterOptions {
+impl Default for DateTimeFormatterOptions {
     fn default() -> Self {
         Self::Length(length::Bag::default())
     }
 }
 
-impl From<length::Bag> for TypedDateTimeFormatterOptions {
+impl From<length::Bag> for DateTimeFormatterOptions {
     fn from(input: length::Bag) -> Self {
         Self::Length(input)
     }
 }
 
-impl From<components::Bag> for TypedDateTimeFormatterOptions {
+impl From<components::Bag> for DateTimeFormatterOptions {
     fn from(input: components::Bag) -> Self {
         Self::Components(input)
     }

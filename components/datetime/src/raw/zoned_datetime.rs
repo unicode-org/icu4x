@@ -19,7 +19,7 @@ use crate::{
     },
     input::{DateTimeInput, TimeZoneInput},
     input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
-    options::TypedDateTimeFormatterOptions,
+    options::DateTimeFormatterOptions,
     pattern::runtime::PatternPlurals,
     provider::{
         self,
@@ -43,7 +43,7 @@ pub(crate) struct TypedZonedDateTimeFormatter {
 
 impl TypedZonedDateTimeFormatter {
     /// Constructor that takes a selected [`DataLocale`], a reference to a [`DataProvider`] for
-    /// dates, a [`DataProvider`] for time zones, and a list of [`TypedDateTimeFormatterOptions`].
+    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
@@ -54,7 +54,7 @@ impl TypedZonedDateTimeFormatter {
         zone_provider: &ZP,
         plural_provider: &PP,
         decimal_provider: &DEP,
-        date_time_format_options: &TypedDateTimeFormatterOptions,
+        date_time_format_options: &DateTimeFormatterOptions,
         time_zone_format_options: &TimeZoneFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where

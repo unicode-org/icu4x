@@ -6,7 +6,7 @@
 
 pub mod structs;
 
-use icu_datetime::TypedDateTimeFormatterOptions;
+use icu_datetime::DateTimeFormatterOptions;
 use std::fs::File;
 use std::io::BufReader;
 
@@ -17,7 +17,7 @@ pub fn get_fixture(name: &str) -> std::io::Result<structs::Fixture> {
     Ok(serde_json::from_reader(reader)?)
 }
 
-pub fn get_options(input: &structs::TestOptions) -> TypedDateTimeFormatterOptions {
+pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatterOptions {
     match input {
         structs::TestOptions::Length(bag) => (*bag).into(),
         structs::TestOptions::Components(bag) => (*bag).into(),

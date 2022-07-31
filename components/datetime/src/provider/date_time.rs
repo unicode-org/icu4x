@@ -5,7 +5,7 @@
 use crate::error::TypedDateTimeFormatterError;
 use crate::fields;
 use crate::input;
-use crate::options::{components, length, preferences, TypedDateTimeFormatterOptions};
+use crate::options::{components, length, preferences, DateTimeFormatterOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
@@ -176,15 +176,15 @@ where
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
         locale: &'a DataLocale,
-        options: &TypedDateTimeFormatterOptions,
+        options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
             data_provider,
             locale,
         };
         match options {
-            TypedDateTimeFormatterOptions::Length(bag) => selector.pattern_for_length_bag(bag),
-            TypedDateTimeFormatterOptions::Components(bag) => {
+            DateTimeFormatterOptions::Length(bag) => selector.pattern_for_length_bag(bag),
+            DateTimeFormatterOptions::Components(bag) => {
                 selector.patterns_for_components_bag(bag)
             }
         }

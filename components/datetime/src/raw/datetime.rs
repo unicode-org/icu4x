@@ -9,7 +9,7 @@ use crate::{
     format::datetime,
     input::{DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
     options::components,
-    options::{length, preferences, TypedDateTimeFormatterOptions},
+    options::{length, preferences, DateTimeFormatterOptions},
     pattern::runtime::PatternPlurals,
     provider,
     provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
@@ -375,7 +375,7 @@ impl TypedDateTimeFormatter {
     pub fn try_new<D>(
         data_provider: &D,
         mut locale: DataLocale,
-        options: &TypedDateTimeFormatterOptions,
+        options: &DateTimeFormatterOptions,
     ) -> Result<Self, TypedDateTimeFormatterError>
     where
         D: DataProvider<DateSymbolsV1Marker>

@@ -16,14 +16,14 @@
 //! ```
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::{
-//!     mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter, TypedDateTimeFormatterOptions,
+//!     mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter, DateTimeFormatterOptions,
 //! };
 //! use icu::locid::locale;
 //!
 //! let provider = icu_testdata::get_provider();
 //!
 //! // See the next code example for a more ergonomic example with .into().
-//! let options = TypedDateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
+//! let options = DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
 //!     length::Date::Medium,
 //!     length::Time::Short,
 //! ));
@@ -38,11 +38,11 @@
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
-//! convert a [`options::length::Bag`] into a [`TypedDateTimeFormatterOptions::Length`].
+//! convert a [`options::length::Bag`] into a [`DateTimeFormatterOptions::Length`].
 //!
 //! ```
 //! use icu::calendar::Gregorian;
-//! use icu::datetime::{options::length, TypedDateTimeFormatter, TypedDateTimeFormatterOptions};
+//! use icu::datetime::{options::length, TypedDateTimeFormatter, DateTimeFormatterOptions};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale = icu::locid::locale!("en");
 //! let options =
@@ -111,7 +111,7 @@ pub use error::TypedDateTimeFormatterError;
 pub use format::datetime::FormattedDateTime;
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
-pub use options::TypedDateTimeFormatterOptions;
+pub use options::DateTimeFormatterOptions;
 pub use time_zone::TimeZoneFormatter;
 pub use time_zone::TimeZoneFormatterConfig;
 pub use time_zone::TimeZoneFormatterOptions;
