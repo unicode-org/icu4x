@@ -21,7 +21,7 @@ export class ICU4XFixedDecimalFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(locale: ICU4XLocale, provider: ICU4XDataProvider, grouping_strategy: ICU4XFixedDecimalGroupingStrategy): ICU4XFixedDecimalFormatter | never;
+  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, grouping_strategy: ICU4XFixedDecimalGroupingStrategy): ICU4XFixedDecimalFormatter | never;
 
   /**
 

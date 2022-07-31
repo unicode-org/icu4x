@@ -22,7 +22,7 @@ export class ICU4XGregorianDateTimeFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(locale: ICU4XLocale, provider: ICU4XDataProvider, date_length: ICU4XDateLength, time_length: ICU4XTimeLength, time_preferences: ICU4XHourCyclePreference): ICU4XGregorianDateTimeFormatter | never;
+  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, date_length: ICU4XDateLength, time_length: ICU4XTimeLength, time_preferences: ICU4XHourCyclePreference): ICU4XGregorianDateTimeFormatter | never;
 
   /**
 

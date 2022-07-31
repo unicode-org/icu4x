@@ -55,7 +55,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     options.time = Some(length::Time::Short);
 
     let dtf =
-        DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options.into())
+        DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options.into())
             .expect("Failed to create DateTimeFormatter instance.");
     {
         print("\n====== Work Log (en) example ============", None);

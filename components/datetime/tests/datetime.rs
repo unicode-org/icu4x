@@ -194,13 +194,13 @@ fn assert_fixture_element<A, D>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = DateTimeFormatter::<A::Calendar>::try_new(&locale.into(), provider, options).unwrap();
+    let dtf = DateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
 
     let any_dtf =
-        AnyDateTimeFormatter::try_new_unstable(&locale.into(), provider, options).unwrap();
+        AnyDateTimeFormatter::try_new_unstable(provider, &locale.into(), options).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(
@@ -232,11 +232,11 @@ fn assert_fixture_element<A, D>(
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
+                DateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
                     .unwrap();
             let tf = TimeFormatter::try_new(
-                &locale.into(),
                 provider,
+                &locale.into(),
                 bag.time.unwrap(),
                 bag.preferences,
             )
@@ -260,7 +260,7 @@ fn assert_fixture_element<A, D>(
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
             let df =
-                DateFormatter::<A::Calendar>::try_new(&locale.into(), provider, bag.date.unwrap())
+                DateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
                     .unwrap();
             let result = df.format_to_string(input_value);
 
@@ -279,8 +279,8 @@ fn assert_fixture_element<A, D>(
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
             let tf = TimeFormatter::try_new(
-                &locale.into(),
                 provider,
+                &locale.into(),
                 bag.time.unwrap(),
                 bag.preferences,
             )
@@ -445,8 +445,8 @@ fn test_dayperiod_patterns() {
                             },
                         ]);
                         let dtf = DateTimeFormatter::<Gregorian>::try_new(
-                            &data_locale,
                             &local_provider.as_downcasting(),
+                            &data_locale,
                             &format_options,
                         )
                         .unwrap();
@@ -761,7 +761,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
 
     let provider = icu_testdata::get_provider();
     let result =
-        DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options);
+        DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options);
 
     assert!(result.is_err());
 }

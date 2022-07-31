@@ -28,7 +28,7 @@ pub struct FixedDecimalFormatterOptions {
 /// let provider = icu_testdata::get_provider();
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormatter::try_new(&locale.into(), &provider, options)
+/// let fdf = FixedDecimalFormatter::try_new(&provider, &locale.into(), options)
 ///     .expect("Data should load successfully");
 ///
 /// let one_thousand = 1000.into();

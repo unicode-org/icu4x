@@ -70,14 +70,14 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_cardinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
         FFI version of ``PluralRules::try_new_cardinal()``.
 
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_ordinal(const ICU4XLocale& locale, const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
         FFI version of ``PluralRules::try_new_ordinal()``.
 

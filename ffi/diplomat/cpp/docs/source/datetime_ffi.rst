@@ -18,7 +18,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XDateLength length)
+    .. cpp:function:: static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length)
 
         Creates a new :cpp:class:`ICU4XGregorianDateFormatter` from locale data.
 
@@ -46,7 +46,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XHourCyclePreference time_preferences)
+    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XHourCyclePreference time_preferences)
 
         Creates a new :cpp:class:`ICU4XGregorianDateFormatter` from locale data.
 
@@ -86,7 +86,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XTimeLength length, ICU4XHourCyclePreference preferences)
+    .. cpp:function:: static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length, ICU4XHourCyclePreference preferences)
 
         Creates a new :cpp:class:`ICU4XTimeFormatter` from locale data.
 

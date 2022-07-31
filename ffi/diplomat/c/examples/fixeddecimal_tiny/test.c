@@ -12,7 +12,7 @@ int main() {
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create(1000007);
 
     diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError fdf_result =
-        ICU4XFixedDecimalFormatter_try_new(locale, provider, ICU4XFixedDecimalGroupingStrategy_Auto);
+        ICU4XFixedDecimalFormatter_try_new(provider, locale, ICU4XFixedDecimalGroupingStrategy_Auto);
     if (!fdf_result.is_ok)  {
         printf("Failed to create FixedDecimalFormatter\n");
         return 1;

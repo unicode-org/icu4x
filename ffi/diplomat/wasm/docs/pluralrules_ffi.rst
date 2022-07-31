@@ -58,14 +58,14 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_cardinal(locale, provider)
+    .. js:staticfunction:: try_new_cardinal(provider, locale)
 
         FFI version of ``PluralRules::try_new_cardinal()``.
 
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_ordinal(locale, provider)
+    .. js:staticfunction:: try_new_ordinal(provider, locale)
 
         FFI version of ``PluralRules::try_new_ordinal()``.
 

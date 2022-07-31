@@ -80,7 +80,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(&locale!("en").into(), &provider)
+        let pr = PluralRules::try_new_cardinal(&provider, &locale!("en").into())
             .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {

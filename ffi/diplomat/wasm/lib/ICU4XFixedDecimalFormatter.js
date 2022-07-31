@@ -17,10 +17,10 @@ export class ICU4XFixedDecimalFormatter {
     }
   }
 
-  static try_new(arg_locale, arg_provider, arg_grouping_strategy) {
+  static try_new(arg_provider, arg_locale, arg_grouping_strategy) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XFixedDecimalFormatter_try_new(diplomat_receive_buffer, arg_locale.underlying, arg_provider.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[arg_grouping_strategy]);
+      wasm.ICU4XFixedDecimalFormatter_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XFixedDecimalGroupingStrategy_js_to_rust[arg_grouping_strategy]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XFixedDecimalFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

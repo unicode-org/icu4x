@@ -50,7 +50,7 @@ use icu_provider::DataLocale;
 ///
 /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(&Locale::from_str("en-u-ca-gregory").unwrap().into(), &provider, &options.into())
+/// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), &options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -79,15 +79,15 @@ impl AnyDateTimeFormatter {
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     #[inline]
     pub fn try_new_with_any_provider<P>(
-        locale: &DataLocale,
         data_provider: &P,
+        locale: &DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: AnyProvider,
     {
         let downcasting = data_provider.as_downcasting();
-        Self::try_new_unstable(locale, &downcasting, options)
+        Self::try_new_unstable(&downcasting, locale, options)
     }
 
     /// Construct a new [`AnyDateTimeFormatter`] from a data provider that implements
@@ -114,7 +114,7 @@ impl AnyDateTimeFormatter {
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(&locale.into(), &provider, &options.into())
+    /// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), &options.into())
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -127,15 +127,15 @@ impl AnyDateTimeFormatter {
     #[inline]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider<P>(
-        locale: &DataLocale,
         data_provider: &P,
+        locale: &DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: BufferProvider,
     {
         let deserializing = data_provider.as_deserializing();
-        Self::try_new_unstable(locale, &deserializing, options)
+        Self::try_new_unstable(&deserializing, locale, options)
     }
 
     /// Construct a new [`AnyDateTimeFormatter`] from a data provider that can provide all of the requested data.
@@ -159,7 +159,7 @@ impl AnyDateTimeFormatter {
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = AnyDateTimeFormatter::try_new_unstable(&locale.into(), &provider, &options.into())
+    /// let dtf = AnyDateTimeFormatter::try_new_unstable(&provider, &locale.into(), &options.into())
     ///     .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -171,8 +171,8 @@ impl AnyDateTimeFormatter {
     /// ```
     #[inline(never)]
     pub fn try_new_unstable<P>(
-        locale: &DataLocale,
         data_provider: &P,
+        locale: &DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
@@ -207,7 +207,7 @@ impl AnyDateTimeFormatter {
         let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
 
         Ok(Self(
-            raw::DateTimeFormatter::try_new(locale, data_provider, options)?,
+            raw::DateTimeFormatter::try_new(data_provider, locale, options)?,
             calendar,
         ))
     }
@@ -288,9 +288,12 @@ impl AnyDateTimeFormatter {
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(&Locale::from_str("en-u-ca-gregory").unwrap().into(),
-    ///                                                           &provider, &options)
-    ///     .expect("Failed to create DateTimeFormatter instance.");
+    /// let dtf = AnyDateTimeFormatter::try_new_with_buffer_provider(
+    ///     &provider,
+    ///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
+    ///     &options
+    /// )
+    /// .expect("Failed to create DateTimeFormatter instance.");
     ///
     /// let mut expected_components_bag = components::Bag::default();
     /// expected_components_bag.year = Some(components::Year::Numeric);

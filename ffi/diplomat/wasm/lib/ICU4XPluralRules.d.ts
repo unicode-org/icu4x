@@ -21,7 +21,7 @@ export class ICU4XPluralRules {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_cardinal(locale: ICU4XLocale, provider: ICU4XDataProvider): ICU4XPluralRules | never;
+  static try_new_cardinal(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XPluralRules | never;
 
   /**
 
@@ -30,7 +30,7 @@ export class ICU4XPluralRules {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_ordinal(locale: ICU4XLocale, provider: ICU4XDataProvider): ICU4XPluralRules | never;
+  static try_new_ordinal(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XPluralRules | never;
 
   /**
 

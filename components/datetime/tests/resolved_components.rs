@@ -11,7 +11,7 @@ use icu_locid::locale;
 
 fn assert_resolved_components(options: &DateTimeFormatterOptions, bag: &components::Bag) {
     let provider = icu_testdata::get_provider();
-    let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, options)
+    let dtf = DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), options)
         .expect("Failed to create a DateTimeFormatter.");
 
     assert_eq!(dtf.resolve_components(), *bag);

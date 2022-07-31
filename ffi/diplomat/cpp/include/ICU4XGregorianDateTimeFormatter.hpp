@@ -11,8 +11,8 @@
 
 #include "ICU4XGregorianDateTimeFormatter.h"
 
-class ICU4XLocale;
 class ICU4XDataProvider;
+class ICU4XLocale;
 #include "ICU4XDateLength.hpp"
 #include "ICU4XTimeLength.hpp"
 #include "ICU4XHourCyclePreference.hpp"
@@ -43,7 +43,7 @@ class ICU4XGregorianDateTimeFormatter {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new) for more information.
    */
-  static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XHourCyclePreference time_preferences);
+  static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XHourCyclePreference time_preferences);
 
   /**
    * Formats a [`ICU4XGregorianDateTime`] to a string.
@@ -68,12 +68,12 @@ class ICU4XGregorianDateTimeFormatter {
   std::unique_ptr<capi::ICU4XGregorianDateTimeFormatter, ICU4XGregorianDateTimeFormatterDeleter> inner;
 };
 
-#include "ICU4XLocale.hpp"
 #include "ICU4XDataProvider.hpp"
+#include "ICU4XLocale.hpp"
 #include "ICU4XGregorianDateTime.hpp"
 
-inline diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> ICU4XGregorianDateTimeFormatter::try_new(const ICU4XLocale& locale, const ICU4XDataProvider& provider, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XHourCyclePreference time_preferences) {
-  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTimeFormatter_try_new(locale.AsFFI(), provider.AsFFI(), static_cast<capi::ICU4XDateLength>(date_length), static_cast<capi::ICU4XTimeLength>(time_length), static_cast<capi::ICU4XHourCyclePreference>(time_preferences));
+inline diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> ICU4XGregorianDateTimeFormatter::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XHourCyclePreference time_preferences) {
+  auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTimeFormatter_try_new(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XDateLength>(date_length), static_cast<capi::ICU4XTimeLength>(time_length), static_cast<capi::ICU4XHourCyclePreference>(time_preferences));
   diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XGregorianDateTimeFormatter>(std::move(ICU4XGregorianDateTimeFormatter(diplomat_result_raw_out_value.ok)));

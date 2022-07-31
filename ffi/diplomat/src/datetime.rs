@@ -43,8 +43,8 @@ pub mod ffi {
         /// Creates a new [`ICU4XTimeFormatter`] from locale data.
         #[diplomat::rust_link(icu::decimal::DateFormatter::try_new, FnInStruct)]
         pub fn try_new(
-            locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
+            locale: &ICU4XLocale,
             length: ICU4XTimeLength,
             preferences: ICU4XHourCyclePreference,
         ) -> DiplomatResult<Box<ICU4XTimeFormatter>, ICU4XError> {
@@ -74,7 +74,7 @@ pub mod ffi {
                 ICU4XHourCyclePreference::None => None,
             };
 
-            TimeFormatter::try_new(locale, &provider, length, preferences)
+            TimeFormatter::try_new(&provider, locale, length, preferences)
                 .map(|tf| Box::new(ICU4XTimeFormatter(tf)))
                 .map_err(Into::into)
                 .into()
@@ -115,8 +115,8 @@ pub mod ffi {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
         #[diplomat::rust_link(icu::decimal::DateFormatter::try_new, FnInStruct)]
         pub fn try_new(
-            locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
+            locale: &ICU4XLocale,
             length: ICU4XDateLength,
         ) -> DiplomatResult<Box<ICU4XGregorianDateFormatter>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
@@ -130,7 +130,7 @@ pub mod ffi {
                 ICU4XDateLength::Short => length::Date::Short,
             };
 
-            DateFormatter::try_new(locale, &provider, length)
+            DateFormatter::try_new(&provider, locale, length)
                 .map(|df| Box::new(ICU4XGregorianDateFormatter(df)))
                 .map_err(Into::into)
                 .into()
@@ -164,8 +164,8 @@ pub mod ffi {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new, FnInStruct)]
         pub fn try_new(
-            locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
+            locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
             time_preferences: ICU4XHourCyclePreference,
@@ -204,7 +204,7 @@ pub mod ffi {
                 ICU4XHourCyclePreference::None => None,
             };
 
-            DateTimeFormatter::try_new(locale, &provider, &options.into())
+            DateTimeFormatter::try_new(&provider, locale, &options.into())
                 .map(|dtf| Box::new(ICU4XGregorianDateTimeFormatter(dtf)))
                 .map_err(Into::into)
                 .into()

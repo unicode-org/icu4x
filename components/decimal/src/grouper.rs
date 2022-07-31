@@ -168,8 +168,8 @@ fn test_grouper() {
                 ..Default::default()
             };
             let fdf = FixedDecimalFormatter::try_new(
-                &LanguageIdentifier::UND.into(),
                 &provider.as_downcasting(),
+                &LanguageIdentifier::UND.into(),
                 options,
             )
             .unwrap();
