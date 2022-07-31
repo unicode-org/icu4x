@@ -389,8 +389,7 @@ impl FixedDecimal {
     /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
     /// before the decimal separator) visible.
     ///
-    /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
-    /// digits should fit in an i16.
+    /// NOTE: if the operation causes overflow, the number will be set to zero.
     ///
     /// # Examples
     ///
@@ -449,8 +448,7 @@ impl FixedDecimal {
     /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
     /// before the decimal separator) visible.
     ///
-    /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
-    /// digits should fit in an i16.
+    /// NOTE: if the operation causes overflow, the returned number will be zero.
     ///
     /// # Examples
     ///
