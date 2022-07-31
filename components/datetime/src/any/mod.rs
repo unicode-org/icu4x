@@ -9,4 +9,4 @@ mod datetime;
 mod zoned_datetime;
 
 pub use datetime::DateTimeFormatter;
-pub use zoned_datetime::ZonedAnyDateTimeFormatter;
+pub use zoned_datetime::ZonedDateTimeFormatter;

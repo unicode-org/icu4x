@@ -26,13 +26,13 @@ use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 
-/// [`ZonedAnyDateTimeFormatter`] is a [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter) capable of formatting
+/// [`ZonedDateTimeFormatter`] is a [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter) capable of formatting
 /// dates from any calendar, selected at runtime.
 ///
 /// This is equivalently the composition of
 /// [`DateTimeFormatter`](crate::any::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
 ///
-/// [`ZonedAnyDateTimeFormatter`] uses data from the [data provider]s, the selected [`DataLocale`], and the
+/// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected [`DataLocale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
 /// The various pattern symbols specified in UTS-35 require different sets of data for formatting.
@@ -40,7 +40,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// that is derived from the provided [`TypedDateTimeFormatterOptions`].
 ///
 /// For that reason, one should think of the process of formatting a zoned datetime in two steps:
-/// first, a computationally heavy construction of [`ZonedAnyDateTimeFormatter`], and then fast formatting
+/// first, a computationally heavy construction of [`ZonedDateTimeFormatter`], and then fast formatting
 /// of the data using the instance.
 ///
 /// # Examples
@@ -48,14 +48,14 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::timezone::CustomTimeZone;
-/// use icu::datetime::{options::length, any::ZonedAnyDateTimeFormatter};
+/// use icu::datetime::{options::length, any::ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatterOptions;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
-/// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_buffer_provider(
+/// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
 ///     &locale!("en").into(),
 ///     &provider,
 ///     &options.into(),
@@ -73,9 +73,9 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
-pub struct ZonedAnyDateTimeFormatter(raw::TypedZonedDateTimeFormatter, AnyCalendar);
+pub struct ZonedDateTimeFormatter(raw::TypedZonedDateTimeFormatter, AnyCalendar);
 
-impl ZonedAnyDateTimeFormatter {
+impl ZonedDateTimeFormatter {
     /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
     /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`TypedDateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
@@ -91,7 +91,7 @@ impl ZonedAnyDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
+    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
@@ -101,7 +101,7 @@ impl ZonedAnyDateTimeFormatter {
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let zdtf = ZonedAnyDateTimeFormatter::try_new_unstable(
+    /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
     ///     &locale.into(),
     ///     &provider,
     ///     &provider,
@@ -184,7 +184,7 @@ impl ZonedAnyDateTimeFormatter {
         ))
     }
 
-    /// Construct a new [`ZonedAnyDateTimeFormatter`] from a data provider that implements
+    /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
     /// [`AnyProvider`].
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
@@ -204,7 +204,7 @@ impl ZonedAnyDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
+    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
@@ -214,7 +214,7 @@ impl ZonedAnyDateTimeFormatter {
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_any_provider(
+    /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
     ///     &locale.into(),
     ///     &provider,
     ///     &options,
@@ -250,7 +250,7 @@ impl ZonedAnyDateTimeFormatter {
         )
     }
 
-    /// Construct a new [`ZonedAnyDateTimeFormatter`] from a data provider that implements
+    /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
     /// [`BufferProvider`].
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
@@ -266,7 +266,7 @@ impl ZonedAnyDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedAnyDateTimeFormatter};
+    /// use icu::datetime::{TypedDateTimeFormatterOptions, any::ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
@@ -276,7 +276,7 @@ impl ZonedAnyDateTimeFormatter {
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
     /// let locale = Locale::from_str("en").unwrap();
     ///
-    /// let zdtf = ZonedAnyDateTimeFormatter::try_new_with_buffer_provider(
+    /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
     ///     &locale.into(),
     ///     &provider,
     ///     &options,
