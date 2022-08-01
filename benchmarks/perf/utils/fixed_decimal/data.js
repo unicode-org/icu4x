@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659396130260,
+  "lastUpdate": 1659397359877,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41549,6 +41549,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 101,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "srl295@gmail.com",
+            "name": "Steven R. Loomis",
+            "username": "srl295"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "11cee99e9ccae335ed0d073809e14134c62c3409",
+          "message": "chore(license): update license to Unicode-DFS-2016 (#2303)\n\n* draft of license change\r\n\r\nSPDX: Unicode-DFS-2016\r\n\r\n* Update license files\r\n\r\n* Disable license header check\r\n\r\n* Change license in cargo.toml\r\n\r\n* reinstate license check\r\n\r\nrevert bca273be468d3a191bf0979b245b2d6643d23dfa\r\n\r\nCo-authored-by: Manish Goregaokar <manishsmail@gmail.com>",
+          "timestamp": "2022-08-01T23:29:49Z",
+          "tree_id": "d9e1a6f0728d0b478114a1f5b4b5c9009d6429de",
+          "url": "https://github.com/unicode-org/icu4x/commit/11cee99e9ccae335ed0d073809e14134c62c3409"
+        },
+        "date": 1659397316065,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 148052,
+            "range": "± 757",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 30472,
+            "range": "± 157",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 85957,
+            "range": "± 184",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 241,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 114,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 104,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
