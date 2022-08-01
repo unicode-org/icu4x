@@ -253,5 +253,6 @@ static UND: &DataStruct = &::icu_normalizer::provider::CompositionPassthroughV1 
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             ])
         },
+        0u8,
     ),
 };

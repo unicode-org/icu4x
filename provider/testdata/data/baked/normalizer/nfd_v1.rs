@@ -1562,5 +1562,6 @@ static UND: &DataStruct = &::icu_normalizer::provider::DecompositionDataV1 {
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             ])
         },
+        0u32,
     ),
 };

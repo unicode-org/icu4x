@@ -1276,6 +1276,7 @@ static UND: &DataStruct = &::icu_casemapping::provider::CaseMappingV1 {
                     0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 ])
             },
+            ::icu_casemapping::provider::CaseMappingData(0u16),
         ),
         exceptions: ::icu_casemapping::provider::CaseMappingExceptions {
             slots: unsafe {

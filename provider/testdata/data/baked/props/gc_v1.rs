@@ -1166,5 +1166,6 @@ static UND: &DataStruct = &::icu_properties::provider::PropertyCodePointMapV1::C
                 17u8, 17u8, 17u8, 17u8, 17u8, 17u8, 17u8, 0u8, 0u8, 0u8, 0u8,
             ])
         },
+        ::icu_properties::props::GeneralCategory::Unassigned,
     ),
 );

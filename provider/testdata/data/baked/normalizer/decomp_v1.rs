@@ -285,6 +285,7 @@ static UND: &DataStruct = &::icu_normalizer::provider::NonRecursiveDecomposition
                 0u8,
             ])
         },
+        0u32,
     ),
     scalars24: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[

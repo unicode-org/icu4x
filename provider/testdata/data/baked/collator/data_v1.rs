@@ -115,6 +115,7 @@ static BN: &DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8,
             ])
         },
+        192u32,
     ),
     ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
@@ -207,6 +208,7 @@ static ES: &DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8,
             ])
         },
+        192u32,
     ),
     ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
@@ -5754,6 +5756,7 @@ static JA: &DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 192u8, 0u8, 0u8, 0u8,
             ])
         },
+        192u32,
     ),
     ces: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -6228,6 +6231,7 @@ static TH: &DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8, 192u8, 0u8, 0u8, 0u8,
             ])
         },
+        192u32,
     ),
     ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     ce32s: unsafe {
@@ -6346,6 +6350,7 @@ static TR: &DataStruct = &::icu_collator::provider::CollationDataV1 {
                 0u8, 0u8,
             ])
         },
+        192u32,
     ),
     ces: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
@@ -13300,6 +13305,7 @@ static UND: &DataStruct = &::icu_collator::provider::CollationDataV1 {
                 255u8,
             ])
         },
+        4294967295u32,
     ),
     ces: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
