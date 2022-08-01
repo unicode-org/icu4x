@@ -48,7 +48,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::timezone::CustomTimeZone;
-/// use icu::datetime::{options::length, any::ZonedDateTimeFormatter};
+/// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu_datetime::TimeZoneFormatterOptions;
 ///
@@ -91,7 +91,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedDateTimeFormatter};
+    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
@@ -204,7 +204,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedDateTimeFormatter};
+    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
@@ -266,7 +266,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
-    /// use icu::datetime::{DateTimeFormatterOptions, any::ZonedDateTimeFormatter};
+    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;

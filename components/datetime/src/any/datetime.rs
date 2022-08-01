@@ -42,7 +42,7 @@ use icu_provider::DataLocale;
 ///
 /// ```
 /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
-/// use icu::datetime::{options::length, any::DateTimeFormatter};
+/// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::Locale;
 /// use std::str::FromStr;
 ///
@@ -104,7 +104,7 @@ impl DateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
-    /// use icu::datetime::{options::length, any::DateTimeFormatter};
+    /// use icu::datetime::{options::length, DateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
@@ -149,7 +149,7 @@ impl DateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
-    /// use icu::datetime::{options::length, any::DateTimeFormatter};
+    /// use icu::datetime::{options::length, DateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
@@ -280,7 +280,7 @@ impl DateTimeFormatter {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
     ///     options::{components, length},
-    ///     any::DateTimeFormatter, DateTimeFormatterOptions,
+    ///     DateTimeFormatter, DateTimeFormatterOptions,
     /// };
     /// use icu::locid::Locale;
     /// use std::str::FromStr;
