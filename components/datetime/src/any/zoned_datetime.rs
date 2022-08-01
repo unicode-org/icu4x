@@ -73,7 +73,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
-pub struct ZonedDateTimeFormatter(raw::TypedZonedDateTimeFormatter, AnyCalendar);
+pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedDateTimeFormatter {
     /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
@@ -171,7 +171,7 @@ impl ZonedDateTimeFormatter {
         let calendar = AnyCalendar::try_new_unstable(kind, calendar_provider)?;
 
         Ok(Self(
-            raw::TypedZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new(
                 locale,
                 date_provider,
                 zone_provider,

@@ -67,7 +67,7 @@ use crate::{
 ///
 /// let value = zdtf.format_to_string(&datetime, &time_zone);
 /// ```
-pub struct TypedZonedDateTimeFormatter<C>(raw::TypedZonedDateTimeFormatter, PhantomData<C>);
+pub struct TypedZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// Constructor that takes a selected locale, a reference to a [data provider] for
@@ -134,7 +134,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
-            raw::TypedZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new(
                 locale,
                 date_provider,
                 zone_provider,

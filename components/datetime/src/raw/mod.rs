@@ -6,5 +6,5 @@
 mod datetime;
 mod zoned_datetime;
 
-pub(crate) use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
-pub(crate) use zoned_datetime::TypedZonedDateTimeFormatter;
+pub(crate) use datetime::{DateFormatter, DateTimeFormatter, TimeFormatter};
+pub(crate) use zoned_datetime::ZonedDateTimeFormatter;

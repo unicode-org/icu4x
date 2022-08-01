@@ -64,7 +64,7 @@ use icu_provider::DataLocale;
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct DateTimeFormatter(pub(crate) raw::TypedDateTimeFormatter, AnyCalendar);
+pub struct DateTimeFormatter(pub(crate) raw::DateTimeFormatter, AnyCalendar);
 
 impl DateTimeFormatter {
     /// Construct a new [`DateTimeFormatter`] from a data provider that implements
@@ -207,7 +207,7 @@ impl DateTimeFormatter {
         let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
 
         Ok(Self(
-            raw::TypedDateTimeFormatter::try_new(data_provider, locale, options)?,
+            raw::DateTimeFormatter::try_new(data_provider, locale, options)?,
             calendar,
         ))
     }
@@ -258,7 +258,7 @@ impl DateTimeFormatter {
     ) -> Result<Self, DateTimeFormatterError>
 where {
         Ok(Self(
-            raw::TypedDateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
+            raw::DateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
             date.1,
         ))
     }

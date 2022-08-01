@@ -229,7 +229,7 @@ impl TimeFormatter {
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct TypedDateFormatter<C>(pub(super) raw::TypedDateFormatter, PhantomData<C>);
+pub struct TypedDateFormatter<C>(pub(super) raw::DateFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// Constructor that takes a selected locale, reference to a [data provider] and
@@ -269,7 +269,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
-            raw::TypedDateFormatter::try_new(data_provider, locale, length)?,
+            raw::DateFormatter::try_new(data_provider, locale, length)?,
             PhantomData,
         ))
     }
@@ -399,7 +399,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct TypedDateTimeFormatter<C>(pub(super) raw::TypedDateTimeFormatter, PhantomData<C>);
+pub struct TypedDateTimeFormatter<C>(pub(super) raw::DateTimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     /// Constructor that takes a [`TimeFormatter`] and [`TypedDateFormatter`] and combines them into a [`TypedDateTimeFormatter`].
@@ -440,7 +440,7 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     ) -> Result<Self, DateTimeFormatterError>
 where {
         Ok(Self(
-            raw::TypedDateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
+            raw::DateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
             PhantomData,
         ))
     }
@@ -491,7 +491,7 @@ where {
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
-            raw::TypedDateTimeFormatter::try_new(data_provider, locale, options)?,
+            raw::DateTimeFormatter::try_new(data_provider, locale, options)?,
             PhantomData,
         ))
     }
