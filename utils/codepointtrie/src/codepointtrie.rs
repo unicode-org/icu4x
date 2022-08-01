@@ -40,8 +40,9 @@ pub enum TrieType {
 pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     /// Last-resort fallback value to return if we cannot read data from the trie.
     ///
-    /// In most cases, the error value is read from the last element of the `data` array.
-    const DATA_GET_ERROR_VALUE: Self;
+    /// In most cases, the error value is read from the last element of the `data` array,
+    /// this value is used for empty codepointtrie arrays
+    const DEFAULT_ERROR_VALUE: Self;
     /// Error type when converting from a u32 to this TrieValue.
     type TryFromU32Error: Display;
     /// A parsing function that is primarily motivated by deserialization contexts.
@@ -51,7 +52,7 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
 }
 
 impl TrieValue for u8 {
-    const DATA_GET_ERROR_VALUE: u8 = 0;
+    const DEFAULT_ERROR_VALUE: u8 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
@@ -59,7 +60,7 @@ impl TrieValue for u8 {
 }
 
 impl TrieValue for u16 {
-    const DATA_GET_ERROR_VALUE: u16 = 0;
+    const DEFAULT_ERROR_VALUE: u16 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
@@ -67,7 +68,7 @@ impl TrieValue for u16 {
 }
 
 impl TrieValue for u32 {
-    const DATA_GET_ERROR_VALUE: u32 = 0;
+    const DEFAULT_ERROR_VALUE: u32 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Ok(i)
@@ -75,7 +76,7 @@ impl TrieValue for u32 {
 }
 
 impl TrieValue for char {
-    const DATA_GET_ERROR_VALUE: char = '\0';
+    const DEFAULT_ERROR_VALUE: char = '\0';
     type TryFromU32Error = core::char::CharTryFromError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         char::try_from(i)
@@ -200,7 +201,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // - The `ZeroVec` serializer stores the length of the array along with the
         //   ZeroVec data, meaning that a deserializer would also see that length info.
 
-        let error_value = data.last().unwrap_or(T::DATA_GET_ERROR_VALUE);
+        let error_value = data.last().unwrap_or(T::DEFAULT_ERROR_VALUE);
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
             index,
@@ -328,10 +329,10 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     #[inline]
     pub fn get(&self, code_point: u32) -> T {
         // If we cannot read from the data array, then return the associated constant
-        // DATA_GET_ERROR_VALUE for the instance type for T: TrieValue.
+        // DEFAULT_ERROR_VALUE for the instance type for T: TrieValue.
         self.get_ule(code_point)
             .map(|t| T::from_unaligned(*t))
-            .unwrap_or(T::DATA_GET_ERROR_VALUE)
+            .unwrap_or(T::DEFAULT_ERROR_VALUE)
     }
 
     /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
@@ -398,7 +399,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             header: self.header,
             index: self.index,
             data: converted_data,
-            error_value: error_converted.get(0).unwrap_or(P::DATA_GET_ERROR_VALUE),
+            error_value: error_converted.get(0).unwrap_or(P::DEFAULT_ERROR_VALUE),
         })
     }
 
@@ -477,8 +478,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let mut prev_i3_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
         let mut prev_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
         let mut c: u32 = start;
-        let mut trie_value: T = T::DATA_GET_ERROR_VALUE;
-        let mut value: T = T::DATA_GET_ERROR_VALUE;
+        let mut trie_value: T = T::DEFAULT_ERROR_VALUE;
+        let mut value: T = T::DEFAULT_ERROR_VALUE;
         let mut have_value: bool = false;
 
         loop {
@@ -790,7 +791,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
         let init_range = Some(CodePointMapRange {
             range: RangeInclusive::new(u32::MAX, u32::MAX),
-            value: T::DATA_GET_ERROR_VALUE,
+            value: T::DEFAULT_ERROR_VALUE,
         });
         CodePointMapRangeIterator::<T> {
             cpt: self,

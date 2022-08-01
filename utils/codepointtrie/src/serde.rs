@@ -39,7 +39,7 @@ where
         D: Deserializer<'de>,
     {
         let de = CodePointTrieSerde::deserialize(deserializer)?;
-        let error_value = de.data.last().unwrap_or(T::DATA_GET_ERROR_VALUE);
+        let error_value = de.data.last().unwrap_or(T::DEFAULT_ERROR_VALUE);
         Ok(CodePointTrie {
             header: de.header,
             index: de.index,

@@ -317,7 +317,7 @@ impl<'data> ScriptWithExtensions<'data> {
             let scx_val = self.extensions.get(ext_idx as usize);
             let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
 
-            let default_sc_val = <Script as TrieValue>::DATA_GET_ERROR_VALUE;
+            let default_sc_val = <Script as TrieValue>::DEFAULT_ERROR_VALUE;
 
             scx_first_sc.unwrap_or(default_sc_val)
         } else if sc_with_ext.is_common() {
