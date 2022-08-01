@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! The collection of code that is needed for handling formatting operations for DateTimes.
-//! Central to this is the [`DateTimeFormatter`].
+//! Central to this is the [`TypedDateTimeFormatter`].
 
 use crate::{
     format::datetime,
@@ -161,7 +161,7 @@ impl TimeFormatter {
     }
 }
 
-pub(crate) struct DateFormatter {
+pub(crate) struct TypedDateFormatter {
     pub locale: DataLocale,
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -171,7 +171,7 @@ pub(crate) struct DateFormatter {
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
 
-impl DateFormatter {
+impl TypedDateFormatter {
     /// Constructor that takes a selected [`DataLocale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date values into the given locale.
     #[inline(never)]
@@ -241,7 +241,7 @@ impl DateFormatter {
         ))
     }
 
-    /// Creates a new [`DateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
+    /// Creates a new [`TypedDateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
         locale: DataLocale,
         generic_pattern: DataPayload<GenericPatternV1Marker>,
@@ -314,9 +314,9 @@ impl DateFormatter {
     }
 }
 
-/// This is the internal "raw" version of [crate::DateTimeFormatter], i.e. a version of DateTimeFormatter
-/// without the generic parameter. The actual implementation of [crate::DateTimeFormatter] should live here.
-pub(crate) struct DateTimeFormatter {
+/// This is the internal "raw" version of [crate::TypedDateTimeFormatter], i.e. a version of TypedDateTimeFormatter
+/// without the generic parameter. The actual implementation of [crate::TypedDateTimeFormatter] should live here.
+pub(crate) struct TypedDateTimeFormatter {
     pub locale: DataLocale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
@@ -326,12 +326,12 @@ pub(crate) struct DateTimeFormatter {
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
 
-impl DateTimeFormatter {
-    /// Constructor that takes previously constructed [`TimeFormatter`] and [`DateFormatter`] instances and builds a
-    /// new [`DateTimeFormatter`] instance from them.
+impl TypedDateTimeFormatter {
+    /// Constructor that takes previously constructed [`TimeFormatter`] and [`TypedDateFormatter`] instances and builds a
+    /// new [`TypedDateTimeFormatter`] instance from them.
     #[inline(never)]
     pub fn try_from_date_and_time(
-        date: DateFormatter,
+        date: TypedDateFormatter,
         time: TimeFormatter,
     ) -> Result<Self, DateTimeFormatterError> {
         let generic_pattern = &date.generic_pattern;
@@ -445,7 +445,7 @@ impl DateTimeFormatter {
         ))
     }
 
-    /// Creates a new [`DateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
+    /// Creates a new [`TypedDateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
         locale: DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -519,7 +519,7 @@ impl DateTimeFormatter {
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the
-    /// options that were provided to the [`DateTimeFormatter`].
+    /// options that were provided to the [`TypedDateTimeFormatter`].
     pub fn resolve_components(&self) -> components::Bag {
         components::Bag::from(&self.patterns.get().0)
     }

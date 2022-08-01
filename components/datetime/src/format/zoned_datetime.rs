@@ -19,7 +19,7 @@ use super::datetime;
 
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub struct FormattedZonedDateTime<'l> {
-    pub(crate) zoned_datetime_format: &'l raw::ZonedDateTimeFormatter,
+    pub(crate) zoned_datetime_format: &'l raw::TypedZonedDateTimeFormatter,
     pub(crate) datetime: ExtractedDateTimeInput,
     pub(crate) time_zone: ExtractedTimeZoneInput,
 }
@@ -51,7 +51,7 @@ impl<'l> fmt::Display for FormattedZonedDateTime<'l> {
 }
 
 pub(crate) fn write_pattern<D, Z, W>(
-    zoned_datetime_format: &raw::ZonedDateTimeFormatter,
+    zoned_datetime_format: &raw::TypedZonedDateTimeFormatter,
     datetime: &D,
     time_zone: &Z,
     w: &mut W,
@@ -101,7 +101,7 @@ fn write_field<D, Z, W>(
     pattern: &runtime::Pattern,
     field: fields::Field,
     next_item: Option<&PatternItem>,
-    zoned_datetime_format: &raw::ZonedDateTimeFormatter,
+    zoned_datetime_format: &raw::TypedZonedDateTimeFormatter,
     loc_datetime: &impl LocalizedDateTimeInput<D>,
     time_zone: &Z,
     w: &mut W,

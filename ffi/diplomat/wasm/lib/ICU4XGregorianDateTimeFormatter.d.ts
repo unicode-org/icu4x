@@ -9,9 +9,9 @@ import { ICU4XTimeLength } from "./ICU4XTimeLength";
 
 /**
 
- * An ICU4X DateFormatter object capable of formatting a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} as a string, using the Gregorian Calendar.
+ * An ICU4X TypedDateFormatter object capable of formatting a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} as a string, using the Gregorian Calendar.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html Rust documentation} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html Rust documentation} for more information.
  */
 export class ICU4XGregorianDateTimeFormatter {
 
@@ -19,7 +19,7 @@ export class ICU4XGregorianDateTimeFormatter {
 
    * Creates a new {@link ICU4XGregorianDateFormatter `ICU4XGregorianDateFormatter`} from locale data.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, date_length: ICU4XDateLength, time_length: ICU4XTimeLength, time_preferences: ICU4XHourCyclePreference): ICU4XGregorianDateTimeFormatter | never;
@@ -28,7 +28,7 @@ export class ICU4XGregorianDateTimeFormatter {
 
    * Formats a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} to a string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.format_to_write Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_datetime(value: ICU4XGregorianDateTime): string | never;

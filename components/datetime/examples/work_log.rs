@@ -11,7 +11,7 @@ icu_benchmark_macros::static_setup!();
 
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::mock::parse_gregorian_from_str;
-use icu_datetime::{options::length, DateTimeFormatter};
+use icu_datetime::{options::length, TypedDateTimeFormatter};
 use icu_locid::locale;
 
 const DATES_ISO: &[&str] = &[
@@ -54,9 +54,12 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     options.date = Some(length::Date::Medium);
     options.time = Some(length::Time::Short);
 
-    let dtf =
-        DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options.into())
-            .expect("Failed to create DateTimeFormatter instance.");
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
+        &provider,
+        &locale!("en").into(),
+        &options.into(),
+    )
+    .expect("Failed to create TypedDateTimeFormatter instance.");
     {
         print("\n====== Work Log (en) example ============", None);
 

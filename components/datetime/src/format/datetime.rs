@@ -25,7 +25,7 @@ use icu_provider::DataPayload;
 use writeable::Writeable;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
-/// an output from [`DateTimeFormatter`](crate::DateTimeFormatter).
+/// an output from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
 ///
 /// The structure contains all the information needed to display formatted value,
 /// and it will also contain additional methods allowing the user to introspect
@@ -35,12 +35,12 @@ use writeable::Writeable;
 ///
 /// ```no_run
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::DateTimeFormatter;
+/// use icu::datetime::TypedDateTimeFormatter;
 /// use icu::locid::locale;
 /// # let provider = icu_testdata::get_provider();
 /// # let options = icu::datetime::DateTimeFormatterOptions::default();
-/// let dtf = DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options)
-///     .expect("Failed to create DateTimeFormatter instance.");
+/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options)
+///     .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -514,13 +514,13 @@ mod tests {
         use icu::calendar::japanese::{Japanese, JapaneseEraStyle};
         use icu::calendar::DateTime;
         use icu::datetime::options::length;
-        use icu::datetime::DateTimeFormatter;
+        use icu::datetime::TypedDateTimeFormatter;
 
         let provider = icu_testdata::get_provider();
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
         let options =
             length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
-        let dtf = DateTimeFormatter::<Japanese>::try_new(&provider, &locale.into(), &options)
+        let dtf = TypedDateTimeFormatter::<Japanese>::try_new(&provider, &locale.into(), &options)
             .expect("DateTimeFormat construction succeeds");
 
         let japanext =

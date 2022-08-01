@@ -20,7 +20,6 @@ use icu_calendar::{
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
-    any::AnyDateTimeFormatter,
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
     provider::{
@@ -31,8 +30,8 @@ use icu_datetime::{
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
-    CldrCalendar, DateFormatter, DateTimeFormatter, DateTimeFormatterOptions, TimeFormatter,
-    ZonedDateTimeFormatter,
+    CldrCalendar, DateTimeFormatter, DateTimeFormatterOptions, TimeFormatter, TypedDateFormatter,
+    TypedDateTimeFormatter, TypedZonedDateTimeFormatter,
 };
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
@@ -194,26 +193,22 @@ fn assert_fixture_element<A, D>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = DateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options).unwrap();
+    let dtf =
+        TypedDateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
 
-    let any_dtf =
-        AnyDateTimeFormatter::try_new_unstable(provider, &locale.into(), options).unwrap();
+    let any_dtf = DateTimeFormatter::try_new_unstable(provider, &locale.into(), options).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
-    assert_eq!(
-        result, output_value,
-        "(AnyDateTimeFormatter) {}",
-        description
-    );
+    assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
 
     let result = any_dtf.format_to_string(&iso_any_input).unwrap();
 
     assert_eq!(
         result, output_value,
-        "(AnyDateTimeFormatter iso conversion) {}",
+        "(DateTimeFormatter iso conversion) {}",
         description
     );
 
@@ -231,9 +226,12 @@ fn assert_fixture_element<A, D>(
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
-            let df =
-                DateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
-                    .unwrap();
+            let df = TypedDateFormatter::<A::Calendar>::try_new(
+                provider,
+                &locale.into(),
+                bag.date.unwrap(),
+            )
+            .unwrap();
             let tf = TimeFormatter::try_new(
                 provider,
                 &locale.into(),
@@ -242,7 +240,7 @@ fn assert_fixture_element<A, D>(
             )
             .unwrap();
 
-            let dtf = DateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
+            let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             let result = dtf.format_to_string(input_value);
 
             assert_eq!(result, output_value, "{}", description);
@@ -259,9 +257,12 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
-            let df =
-                DateFormatter::<A::Calendar>::try_new(provider, &locale.into(), bag.date.unwrap())
-                    .unwrap();
+            let df = TypedDateFormatter::<A::Calendar>::try_new(
+                provider,
+                &locale.into(),
+                bag.date.unwrap(),
+            )
+            .unwrap();
             let result = df.format_to_string(input_value);
 
             assert_eq!(result, output_value, "{}", description);
@@ -330,7 +331,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         };
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
-            let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
+            let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
                 &locale.into(),
                 &provider,
                 &provider,
@@ -444,7 +445,7 @@ fn test_dayperiod_patterns() {
                                 data: decimal_data.clone().wrap_into_any_payload(),
                             },
                         ]);
-                        let dtf = DateTimeFormatter::<Gregorian>::try_new(
+                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &local_provider.as_downcasting(),
                             &data_locale,
                             &format_options,
@@ -642,7 +643,7 @@ fn test_time_zone_patterns() {
                 ]);
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
-                    let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
+                    let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
                         &data_locale,
                         &local_provider.as_downcasting(),
                         &zone_provider,
@@ -761,7 +762,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
 
     let provider = icu_testdata::get_provider();
     let result =
-        DateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options);
+        TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options);
 
     assert!(result.is_err());
 }
