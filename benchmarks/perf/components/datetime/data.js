@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659331718292,
+  "lastUpdate": 1659343549457,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -55175,6 +55175,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6156,
             "range": "± 58",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "480669bc0a888be9672076fad79efbaa2c00f9bf",
+          "message": "Use ndarray 0.15 instead of a commit hash (#2299)\n\n* Use ndarray 0.15 instead of a commit hash\r\n\r\nAs of this patch, the latest release version of ndarray 0.15 is 0.15.6.\r\n\r\n* Explicit specify we need ndarray >= 0.15.5",
+          "timestamp": "2022-08-01T01:33:23-07:00",
+          "tree_id": "025ccda7c4d3e74b384faba7a48e1be0de2713e9",
+          "url": "https://github.com/unicode-org/icu4x/commit/480669bc0a888be9672076fad79efbaa2c00f9bf"
+        },
+        "date": 1659343514721,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 95477,
+            "range": "± 1155",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 807420,
+            "range": "± 1034",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 168198,
+            "range": "± 754",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 74402,
+            "range": "± 212",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 81726,
+            "range": "± 663",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 95010,
+            "range": "± 125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 89360,
+            "range": "± 217",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 156059,
+            "range": "± 293",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 166772,
+            "range": "± 227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 167740,
+            "range": "± 324",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 178112,
+            "range": "± 553",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4493,
+            "range": "± 20",
             "unit": "ns/iter"
           }
         ]
