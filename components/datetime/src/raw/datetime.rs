@@ -111,7 +111,7 @@ impl TimeFormatter {
     /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: IsoTimeInput,
     {
@@ -265,7 +265,7 @@ impl TypedDateFormatter {
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: DateTimeInput,
     {

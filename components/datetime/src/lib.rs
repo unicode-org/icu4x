@@ -115,7 +115,7 @@ mod zoned_datetime;
 
 mod any;
 
-pub use any::{DateTimeFormatter, ZonedDateTimeFormatter};
+pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
 pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeFormatterError;

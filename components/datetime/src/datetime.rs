@@ -135,7 +135,7 @@ impl TimeFormatter {
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: IsoTimeInput,
     {
@@ -298,7 +298,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: DateTimeInput<Calendar = C>,
     {
