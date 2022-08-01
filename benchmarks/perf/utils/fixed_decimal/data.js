@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659331627055,
+  "lastUpdate": 1659343484628,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41309,6 +41309,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 71,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "480669bc0a888be9672076fad79efbaa2c00f9bf",
+          "message": "Use ndarray 0.15 instead of a commit hash (#2299)\n\n* Use ndarray 0.15 instead of a commit hash\r\n\r\nAs of this patch, the latest release version of ndarray 0.15 is 0.15.6.\r\n\r\n* Explicit specify we need ndarray >= 0.15.5",
+          "timestamp": "2022-08-01T01:33:23-07:00",
+          "tree_id": "025ccda7c4d3e74b384faba7a48e1be0de2713e9",
+          "url": "https://github.com/unicode-org/icu4x/commit/480669bc0a888be9672076fad79efbaa2c00f9bf"
+        },
+        "date": 1659343449263,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117823,
+            "range": "± 8164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23669,
+            "range": "± 1369",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 69367,
+            "range": "± 4713",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 188,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 92,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 81,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
