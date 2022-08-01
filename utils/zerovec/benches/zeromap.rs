@@ -27,12 +27,12 @@ const DATA: [(&str, &str); 16] = [
     ("zh", "Chinese"),
 ];
 
-const POSTCARD: [u8; 282] = [
-    102, 16, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0, 7, 0, 0, 0, 10, 0, 0, 0, 12, 0, 0, 0, 14,
+const POSTCARD: [u8; 284] = [
+    103, 16, 0, 0, 0, 4, 0, 0, 0, 0, 2, 0, 0, 0, 4, 0, 0, 0, 7, 0, 0, 0, 10, 0, 0, 0, 12, 0, 0, 0, 14,
     0, 0, 0, 16, 0, 0, 0, 18, 0, 0, 0, 20, 0, 0, 0, 22, 0, 0, 0, 24, 0, 0, 0, 26, 0, 0, 0, 28, 0,
     0, 0, 30, 0, 0, 0, 32, 0, 0, 0, 97, 114, 98, 110, 99, 99, 112, 99, 104, 114, 101, 108, 101,
     110, 101, 111, 101, 115, 102, 114, 105, 117, 106, 97, 114, 117, 115, 114, 116, 104, 116, 114,
-    122, 104, 177, 1, 16, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 12, 0, 0, 0, 18, 0, 0, 0, 26, 0, 0, 0,
+    122, 104, 178, 1, 16, 0, 0, 0, 4, 0, 0, 0, 0, 6, 0, 0, 0, 12, 0, 0, 0, 18, 0, 0, 0, 26, 0, 0, 0,
     31, 0, 0, 0, 38, 0, 0, 0, 47, 0, 0, 0, 54, 0, 0, 0, 60, 0, 0, 0, 69, 0, 0, 0, 77, 0, 0, 0, 84,
     0, 0, 0, 91, 0, 0, 0, 95, 0, 0, 0, 102, 0, 0, 0, 65, 114, 97, 98, 105, 99, 66, 97, 110, 103,
     108, 97, 67, 104, 97, 107, 109, 97, 67, 104, 101, 114, 111, 107, 101, 101, 71, 114, 101, 101,
@@ -70,7 +70,9 @@ fn generate_hashmap() {
     println!("{:?}", buf);
 }
 
-#[cfg(feature = "generate")]
+/// Run this function to dump the large zeromap and hashmap to the file system.
+/// Generating the large zeromap may take a while.
+#[allow(dead_code)]
 fn generate_test_data() {
     let zeromap = build_zeromap(true);
     let zeromap_bytes = postcard::to_stdvec(&zeromap).unwrap();
@@ -82,8 +84,10 @@ fn generate_test_data() {
 }
 
 fn overview_bench(c: &mut Criterion) {
-    // Uncomment the following line to re-generate the binary data.
+    // Un-comment the following lines to re-generate the map data
     // generate();
+    // generate_hashmap();
+    // generate_test_data();
 
     bench_deserialize(c);
     bench_deserialize_large(c);
@@ -91,9 +95,6 @@ fn overview_bench(c: &mut Criterion) {
     bench_lookup_large(c);
 
     bench_hashmap(c);
-
-    #[cfg(feature = "generate")]
-    generate_test_data();
 }
 
 fn build_zeromap(large: bool) -> ZeroMap<'static, str, str> {
@@ -101,6 +102,7 @@ fn build_zeromap(large: bool) -> ZeroMap<'static, str, str> {
     for (key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
+                print!(".");
                 map.insert(&format!("{}{}", key, n), value);
             }
         } else {
