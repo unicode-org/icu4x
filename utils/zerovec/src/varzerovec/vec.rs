@@ -11,7 +11,7 @@ use core::ops::Deref;
 
 use super::*;
 
-/// A zero-copy vector for variable-width types.
+/// A zero-copy, byte-aligned vector for variable-width types.
 ///
 /// `VarZeroVec<T>` is designed as a drop-in replacement for `Vec<T>` in situations where it is
 /// desirable to borrow data from an unaligned byte slice, such as zero-copy deserialization, and
@@ -35,6 +35,20 @@ use super::*;
 ///
 /// `VarZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from
 /// owned data (and then mutated!) but can also borrow from some buffer.
+///
+/// # Bytes and Equality
+///
+/// Two [`VarZeroVec`]s are equal if and only if their bytes are equal, as described in the trait
+/// [`VarULE`]. However, we do not guarantee stability of byte equality or serialization format
+/// across major SemVer releases.
+///
+/// To compare a [`Vec<T>`] to a [`VarZeroVec<T>`], it is generally recommended to use
+/// [`Iterator::eq`], since it is somewhat expensive at runtime to convert from a [`Vec<T>`] to a
+/// [`VarZeroVec<T>`] or vice-versa.
+///
+/// Prior to zerovec reaching 1.0, the precise byte representation of [`VarZeroVec`] is still
+/// under consideration, with different options along the space-time spectrum. See
+/// [#1410](https://github.com/unicode-org/icu4x/issues/1410).
 ///
 /// # Example
 ///
