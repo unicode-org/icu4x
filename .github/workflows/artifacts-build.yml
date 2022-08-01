@@ -73,3 +73,86 @@ jobs:
         echo "::group::📖 Docs Preview"
         echo "http://${{ env.GCP_BUCKET_ID }}.storage.googleapis.com/gha/${{ github.sha }}/docs/icu/index.html"
         echo "::endgroup::"
+
+  webpack:
+    name: WASM Demo
+    needs: credentials
+    runs-on: "ubuntu-latest"
+    env:
+      GCP_PROJECT_ID: "dev-infra-273822"
+      GCP_BUCKET_ID: "icu4x-pr-artifacts"
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+
+    - name: Install prerequisites for wasm build
+      run: |
+        rustup toolchain list
+        rustup toolchain install nightly-2022-04-05
+        rustup component add --toolchain nightly-2022-04-05 rust-src
+
+    - name: Authenticate to Google Cloud
+      uses: google-github-actions/setup-gcloud@v0.2
+      with:
+        project_id: ${{ env.GCP_PROJECT_ID }}
+        service_account_key: ${{ secrets.ICU4X_GCP_SA_KEY }}
+        export_default_credentials: true
+
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+
+    - name: Run Webpack
+      uses: actions-rs/cargo@v1
+      with:
+        command: make
+        args: diplomat-build-webpack-demo
+
+    - name: Put index.html in dist for temp URL
+      run: |
+        cp ffi/diplomat/wasm/wasm-demo/index.html ffi/diplomat/wasm/wasm-demo/dist/index.html
+        printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/wasm/wasm-demo/dist/index.js
+        echo "url: https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/index.html" ${{ github.sha }}
+
+    - name: Upload Webpack bundle to Google Cloud Storage
+      run: |
+        # gsutil cors set ffi/diplomat/wasm/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
+        gsutil -m cp -r ffi/diplomat/wasm/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
+
+    # - name: Store index.html
+    #   run: |
+    #     cp ffi/diplomat/wasm/wasm-demo/index.html /tmp/wasm-demo-index.html
+
+    # - name: Checkout gh-pages
+    #   uses: actions/checkout@v2
+    #   with:
+    #     ref: gh-pages
+
+    # - name: Retrieve index.html
+    #   run: |
+    #     rm -rf wasm-demo-app
+    #     mkdir wasm-demo-app
+    #     printf "const gcs=document.createElement('script');gcs.setAttribute('src','https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/bundle.js');document.body.appendChild(gcs);" ${{ github.sha }} > wasm-demo-app/index.js
+    #     cp /tmp/wasm-demo-index.html wasm-demo-app/index.html
+    #     git diff-index --quiet HEAD || git commit -m "add wasm demo for ${{ github.sha }}"
+    #     git push
