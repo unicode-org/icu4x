@@ -95,12 +95,12 @@ impl DotType {
     }
 }
 
-// The datatype stored in the codepoint trie for casemapping.
+/// The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider))]
-pub struct CaseMappingData(u16);
+pub struct CaseMappingData(pub u16);
 
 impl CaseMappingData {
     // Sequences of case-ignorable characters are skipped when determining
