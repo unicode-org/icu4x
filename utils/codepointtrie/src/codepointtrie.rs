@@ -188,7 +188,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
-        error_value: T,
     ) -> Result<CodePointTrie<'trie, T>, Error> {
         // Validation invariants are not needed here when constructing a new
         // `CodePointTrie` because:
@@ -202,6 +201,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // - The `ZeroVec` serializer stores the length of the array along with the
         //   ZeroVec data, meaning that a deserializer would also see that length info.
 
+        let error_value = data.last().unwrap_or(T::DATA_GET_ERROR_VALUE);
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
             index,
@@ -391,11 +391,15 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         P: TrieValue,
     {
         let converted_data = self.data.try_into_converted()?;
+        let error_ule = self.error_value.to_unaligned();
+        let slice = &[error_ule];
+        let error_vec = ZeroVec::<T>::Borrowed(slice);
+        let error_converted = error_vec.try_into_converted::<P>()?;
         Ok(CodePointTrie {
             header: self.header,
             index: self.index,
             data: converted_data,
-            error_value: self.error_value,
+            error_value: error_converted.get(0).unwrap_or(P::DATA_GET_ERROR_VALUE),
         })
     }
 
@@ -850,12 +854,13 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 }
 
 #[cfg(feature = "databake")]
-impl<'trie, T: TrieValue> databake::Bake for CodePointTrie<'trie, T> {
+impl<'trie, T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'trie, T> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         let header = self.header.bake(env);
         let index = self.index.bake(env);
         let data = self.data.bake(env);
-        databake::quote! { ::icu_codepointtrie::CodePointTrie::from_parts(#header, #index, #data) }
+        let error_value = self.error_value.bake(env);
+        databake::quote! { ::icu_codepointtrie::CodePointTrie::from_parts(#header, #index, #data, #error_value) }
     }
 }
 
@@ -891,6 +896,7 @@ where
             header: self.header,
             index: self.index.clone(),
             data: self.data.clone(),
+            error_value: self.error_value
         }
     }
 }
@@ -1130,6 +1136,7 @@ mod tests {
                 },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+                0u32,
             ),
             icu_codepointtrie,
             [zerovec],
