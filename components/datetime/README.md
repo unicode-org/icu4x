@@ -20,7 +20,7 @@ The "Typed" vs untyped formatter distinction is to help with this. For example, 
 will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
 APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
 the calendar at runtime, you can use [`DateTimeFormatter`] with the calendar specified in the locale, and use it with
-[`DateTime`](icu_calendar::DateTime)[`<AnyCalendar>`](icu_calendar::AnyCalendar). These formatters still require dates associated
+[`DateTime`](icu_calendar::DateTime)[`<AnyCalendar>`](icu_calendar::any_calendar::AnyCalendar). These formatters still require dates associated
 with the appropriate calendar (though they will convert ISO dates to the calendar if provided), they just do not force the
 programmer to pick the calendar at compile time.
 
