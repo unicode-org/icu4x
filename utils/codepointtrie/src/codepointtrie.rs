@@ -328,11 +328,11 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     #[inline]
     pub fn get(&self, code_point: u32) -> T {
-        // If we cannot read from the data array, then return the associated constant
-        // DEFAULT_ERROR_VALUE for the instance type for T: TrieValue.
+        // If we cannot read from the data array, then return the sentinel value
+        // self.error_value() for the instance type for T: TrieValue.
         self.get_ule(code_point)
             .map(|t| T::from_unaligned(*t))
-            .unwrap_or(T::DEFAULT_ERROR_VALUE)
+            .unwrap_or(self.error_value())
     }
 
     /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
@@ -478,8 +478,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let mut prev_i3_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
         let mut prev_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
         let mut c: u32 = start;
-        let mut trie_value: T = T::DEFAULT_ERROR_VALUE;
-        let mut value: T = T::DEFAULT_ERROR_VALUE;
+        let mut trie_value: T = self.error_value();
+        let mut value: T = self.error_value();
         let mut have_value: bool = false;
 
         loop {
@@ -791,7 +791,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
         let init_range = Some(CodePointMapRange {
             range: RangeInclusive::new(u32::MAX, u32::MAX),
-            value: T::DEFAULT_ERROR_VALUE,
+            value: self.error_value(),
         });
         CodePointMapRangeIterator::<T> {
             cpt: self,
@@ -850,6 +850,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     pub fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         let value_ranges = self.get_ranges_for_value(value);
         CodePointInversionList::from_iter(value_ranges)
+    }
+
+    /// Returns the value used as an error value for this trie
+    #[inline]
+    pub fn error_value(&self) -> T {
+        self.error_value
     }
 }
 
