@@ -11,6 +11,7 @@ use icu_provider::{yoke, zerofrom};
 pub use crate::exceptions::CaseMappingExceptions;
 pub use crate::internals::CaseMappingInternals;
 pub use crate::internals::CaseMappingUnfoldData;
+pub use crate::internals::CaseMappingData;
 
 #[icu_provider::data_struct(CaseMappingV1Marker = "props/casemap@1")]
 #[derive(Debug, PartialEq, Clone)]
