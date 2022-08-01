@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659386593865,
+  "lastUpdate": 1659396130260,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41489,6 +41489,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 104,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "582e328cac4c74648e177a360025414b7cbe51cb",
+          "message": "Remove KeyError and rename get() to get_2d() (#2279)",
+          "timestamp": "2022-08-01T16:09:34-07:00",
+          "tree_id": "5069df1c750f09b8b5ae9cbac3be4f85acae7ab8",
+          "url": "https://github.com/unicode-org/icu4x/commit/582e328cac4c74648e177a360025414b7cbe51cb"
+        },
+        "date": 1659396087360,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 143555,
+            "range": "± 2040",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 29517,
+            "range": "± 467",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 83802,
+            "range": "± 1271",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 234,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 110,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 101,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
