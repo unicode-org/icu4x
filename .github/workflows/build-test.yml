@@ -903,10 +903,10 @@ jobs:
       if: steps.npm-cache.outputs.cache-hit != 'true'
       # Note: if package.json and package-lock.json are out of sync then
       # 'npm ci' will fail. Locally execute 'npm install' in directory
-      # 'ffi/diplomat/wasm' to generate a new package-lock.json file and
+      # 'ffi/diplomat/wasm/icu4x' to generate a new package-lock.json file and
       # merge it into the repository.
       run: |
-        cd ffi/diplomat/wasm
+        cd ffi/diplomat/wasm/icu4x
         npm ci
         if [ $? -ne 0 ]
         then
@@ -919,8 +919,8 @@ jobs:
 
     - name: Set path to wasm-opt and wabt binaries
       run: |
-        echo "$PWD/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-        echo "$PWD/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+        echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+        echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wabt/bin" >> $GITHUB_PATH
 
     - name: Install prerequisites for wasm build
       run: |
