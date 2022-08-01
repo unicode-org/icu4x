@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659284617346,
+  "lastUpdate": 1659331627055,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41248,6 +41248,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da01290f983d041870c2f581c6d66118e697c9e0",
+          "message": "Update APIs for CodePoint(Set|Map)Data return value wrapper structs (#2277)",
+          "timestamp": "2022-08-01T05:14:57Z",
+          "tree_id": "1369562cbf42ea9e4ebbeacc0c7a1617a7b456c5",
+          "url": "https://github.com/unicode-org/icu4x/commit/da01290f983d041870c2f581c6d66118e697c9e0"
+        },
+        "date": 1659331587769,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105103,
+            "range": "± 511",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21268,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 64459,
+            "range": "± 650",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 172,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
             "range": "± 0",
             "unit": "ns/iter"
           }
