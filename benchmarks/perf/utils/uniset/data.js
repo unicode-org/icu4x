@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659343379322,
+  "lastUpdate": 1659374871388,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40564,6 +40564,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fa0b332c02a55701b4c271eebbde67ac64283fed",
+          "message": "DateTimeFormat renames (#2298)",
+          "timestamp": "2022-08-01T17:18:12Z",
+          "tree_id": "8881b2dd7a67efe594c9bea7b51c065d6fafe2f2",
+          "url": "https://github.com/unicode-org/icu4x/commit/fa0b332c02a55701b4c271eebbde67ac64283fed"
+        },
+        "date": 1659374830650,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 59288920,
+            "range": "± 1509148",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           },
