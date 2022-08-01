@@ -411,18 +411,6 @@ exec --fail-on-error npm install
 exec --fail-on-error npm run build
 '''
 
-[tasks.diplomat-build-webpack-demo]
-description = "Webpack the demo app using WASM bindings"
-category = "ICU4X Development"
-dependencies = ["wasm-copy-to-diplomat"]
-script_runner = "@duckscript"
-script = '''
-cd ffi/diplomat/wasm/wasm-demo
-mkdir dist
-exec --fail-on-error npm install
-exec --fail-on-error npm run build
-'''
-
 [tasks.wasm-clean]
 description = "Clean up WASM build artifacts"
 category = "ICU4X WASM"
