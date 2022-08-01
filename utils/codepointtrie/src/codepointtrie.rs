@@ -334,7 +334,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // self.error_value() for the instance type for T: TrieValue.
         self.get_ule(code_point)
             .map(|t| T::from_unaligned(*t))
-            .unwrap_or(self.error_value
+            .unwrap_or(self.error_value)
     }
 
     /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
