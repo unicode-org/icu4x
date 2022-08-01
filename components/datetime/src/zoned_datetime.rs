@@ -28,7 +28,7 @@ use crate::{
 
 /// The composition of [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
 ///
-/// [`TypedDateTimeFormatter`] is a formatter capable of formatting
+/// [`TypedZonedDateTimeFormatter`] is a formatter capable of formatting
 /// date/times with time zones from a calendar selected at compile time. For the difference between this
 /// and [`DateTimeFormatter`](crate::DateTimeFormatter), please read the [crate root docs][crate].
 ///

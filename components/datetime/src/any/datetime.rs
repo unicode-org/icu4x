@@ -28,7 +28,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::DataLocale;
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting
-/// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`],
+/// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter),
 /// please read the [crate root docs][crate].
 ///
 /// When constructed, it uses data from the [data provider], selected locale and provided options to
