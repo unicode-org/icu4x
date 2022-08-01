@@ -396,7 +396,7 @@ rm -r ./wasm/icu4x/docs
 mkdir ./wasm/icu4x/lib
 mkdir ./wasm/icu4x/docs
 
-exec --fail-on-error diplomat-tool js ./wasm/lib/ --docs ./wasm/docs --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
+exec --fail-on-error diplomat-tool js ./wasm/icu4x/lib/ --docs ./wasm/icu4x/docs --docs-base-urls=*:https://unicode-org.github.io/icu4x-docs/doc/
 '''
 
 [tasks.diplomat-build-webpack-demo]
