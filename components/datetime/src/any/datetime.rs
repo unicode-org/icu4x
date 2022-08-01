@@ -27,8 +27,9 @@ use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::DataLocale;
 
-/// [`DateTimeFormatter`] is a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) capable of formatting
-/// dates from any calendar, selected at runtime.
+/// [`DateTimeFormatter`] is a formatter capable of formatting
+/// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`],
+/// please read the [crate root docs][crate].
 ///
 /// When constructed, it uses data from the [data provider], selected locale and provided options to
 /// collect all data necessary to format any dates into that locale.

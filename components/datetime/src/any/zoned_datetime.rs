@@ -26,8 +26,9 @@ use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 
-/// [`ZonedDateTimeFormatter`] is a [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter) capable of formatting
-/// dates from any calendar, selected at runtime.
+/// [`ZonedDateTimeFormatter`] is a formatter capable of formatting
+/// date/times with timezones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`],
+/// please read the [crate root docs][crate].
 ///
 /// This is equivalently the composition of
 /// [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).

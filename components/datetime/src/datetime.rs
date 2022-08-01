@@ -198,15 +198,17 @@ impl TimeFormatter {
     }
 }
 
-/// [`TypedDateFormatter`] is a structure of the [`icu_datetime`] component that provides date formatting only.
-/// When constructed, it uses data from the [data provider], selected locale and provided preferences to
-/// collect all data necessary to format any date into that locale.
+/// [`TypedDateFormatter`] is a formatter capable of formatting
+/// dates from a calendar selected at compile time. For the difference between this
+/// and [`DateFormatter`](crate::DateFormatter), please read the [crate root docs][crate].
+///
+/// When constructed, it uses data from the [data provider], selected locale and provided options to
+/// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`TypedDateFormatter`], and then fast formatting of [`DateTimeInput`] data using the instance.
+/// heavy construction of [`TypedDateFormatter`], and then fast formatting of [`DateInput`] data using the instance.
 ///
 /// [`icu_datetime`]: crate
-/// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateFormatter
 ///
 /// # Examples
 ///
@@ -359,12 +361,15 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     }
 }
 
-/// [`TypedDateTimeFormatter`] is the main structure of the [`icu_datetime`] component.
+/// [`TypedDateTimeFormatter`] is a formatter capable of formatting
+/// date/times from a calendar selected at compile time. For the difference between this
+///  and [`DateTimeFormatter`](crate::DateTimeFormatter), please read the [crate root docs][crate].
+///
 /// When constructed, it uses data from the [data provider], selected locale and provided options to
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`TypedDateTimeFormatter`], and then fast formatting of [`DateTimeInput`] data using the instance.
+/// heavy construction of [`TypedDateTimeFormatter`], and then fast formatting of [`DateInput`] data using the instance.
 ///
 /// [`icu_datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateTimeFormatter
