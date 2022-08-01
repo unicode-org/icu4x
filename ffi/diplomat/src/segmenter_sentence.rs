@@ -10,9 +10,10 @@ pub mod ffi {
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
+    use icu_segmenter::provider::SentenceBreakDataV1Marker;
     use icu_segmenter::{
-        SentenceBreakDataV1Marker, SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16,
-        SentenceBreakIteratorUtf8, SentenceBreakSegmenter,
+        SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8,
+        SentenceBreakSegmenter,
     };
 
     #[diplomat::opaque]

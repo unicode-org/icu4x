@@ -14,11 +14,12 @@ pub mod ffi {
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
-    use icu_segmenter::LineBreakDataV1Marker;
-    use icu_segmenter::LineBreakSegmenter;
-    use icu_segmenter::LstmDataV1Marker;
-    use icu_segmenter::UCharDictionaryBreakDataV1Marker;
-    use icu_segmenter::{LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8};
+    use icu_segmenter::provider::{
+        LineBreakDataV1Marker, LstmDataV1Marker, UCharDictionaryBreakDataV1Marker,
+    };
+    use icu_segmenter::{
+        LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakSegmenter,
+    };
 
     #[diplomat::opaque]
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.

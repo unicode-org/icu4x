@@ -205,12 +205,12 @@ impl AnyProvider for BakedDataProvider {
         const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY
                 .get_hash();
-        const LSTMDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_segmenter::LstmDataV1Marker::KEY.get_hash();
         const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.get_hash();
         const LINEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::LineBreakDataV1Marker::KEY.get_hash();
+        const LSTMDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_segmenter::provider::LstmDataV1Marker::KEY.get_hash();
         const SENTENCEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY.get_hash();
         const UCHARDICTIONARYBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
@@ -527,13 +527,13 @@ impl AnyProvider for BakedDataProvider {
                 LOCALEFALLBACKPARENTSV1MARKER => fallback::parents_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                LSTMDATAV1MARKER => segmenter::lstm_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .map(AnyPayload::from_static_ref),
                 GRAPHEMECLUSTERBREAKDATAV1MARKER => segmenter::grapheme_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 LINEBREAKDATAV1MARKER => segmenter::line_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                LSTMDATAV1MARKER => segmenter::lstm_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 SENTENCEBREAKDATAV1MARKER => segmenter::sentence_v1::DATA

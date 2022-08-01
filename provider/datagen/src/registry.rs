@@ -22,7 +22,7 @@ use icu_timezone::provider::*;
 #[cfg(feature = "experimental")]
 use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
-use icu_segmenter::*;
+use icu_segmenter::provider::*;
 
 macro_rules! registry {
     ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {

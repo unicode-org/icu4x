@@ -7,7 +7,7 @@
 use icu_locid::locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_segmenter::*;
+use icu_segmenter::provider::*;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
