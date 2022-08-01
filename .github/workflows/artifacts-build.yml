@@ -132,22 +132,50 @@ jobs:
       run: |
         cp ffi/diplomat/wasm/wasm-demo/index.html ffi/diplomat/wasm/wasm-demo/dist/index.html
         printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/wasm/wasm-demo/dist/index.js
-        printf "url: https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/index.html" ${{ github.sha }}
 
     - name: Upload Webpack bundle to Google Cloud Storage
       run: |
         # gsutil cors set ffi/diplomat/wasm/cors-config-file.json gs://${{ env.GCP_BUCKET_ID }}
         gsutil -m cp -r ffi/diplomat/wasm/wasm-demo/dist/ gs://${{ env.GCP_BUCKET_ID }}/gha/${{ github.sha }}/wasm-demo
 
+    - name: "⭐⭐⭐ Links to Uploaded Artifacts ⭐⭐⭐"
+      run: |
+        echo "::group::Wasm Demo Preview"
+        echo "https://storage.googleapis.com/icu4x-pr-artifacts/gha/${{ github.sha }}/wasm-demo/index.html"
+        echo "::endgroup::"
+
+    #   TODO(qnnokabayashi): This was my attempt to get it to copy the HTML to
+    #     the `gh-pages` branch. As of 8/1/2022, idea is that
+    #     `ffi/diplomat/wasm/wasm-demo/index.html` contains the structure for
+    #     the demo. It needs to call into the Webpacked JavaScript. When testing
+    #     locally, this content is in `ffi/diplomat/wasm/wasm-demo/dist/`, but
+    #     when deployed, it lives in Google Cloud Storage. But we don't want to
+    #     be editing this arbitrarily complex HTML file in CI. The solution was
+    #     to have it call a very simple `index.js` file which modifies the HTML
+    #     and tells it where to get the script from. Locally, this lives next to
+    #     `index.html` at `ffi/diplomat/wasm/wasm-demo/index.js`, and contains
+    #     the following:
+    #       ```js
+    #       const gcs = document.createElement('script');
+    #       gcs.setAttribute('src', './dist/bundle.js');
+    #       document.body.appendChild(gcs);
+    #       ```
+    #     The plan was to rewrite this file in CI to point into GCS instead of
+    #     `./dist/bundle.js`, and then commit and push the original `index.html`
+    #     and this new `index.js` to the `gh-pages` branch. That way, when a
+    #     browser visited the Github page, `index.html` would read `index.js`,
+    #     which would then point the browser to get `bundle.js` from GCS.
+    #     
+    #     This was my attempt to make that work, but I couldn't quite figure out
+    #     how to push to `gh-pages`.
+    #     
     # - name: Store index.html
     #   run: |
     #     cp ffi/diplomat/wasm/wasm-demo/index.html /tmp/wasm-demo-index.html
-
     # - name: Checkout gh-pages
     #   uses: actions/checkout@v2
     #   with:
     #     ref: gh-pages
-
     # - name: Retrieve index.html
     #   run: |
     #     rm -rf wasm-demo-app
