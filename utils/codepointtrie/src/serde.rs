@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use serde::{Serialize, Serializer, Deserialize, Deserializer};
-use crate::codepointtrie::{CodePointTrieHeader, CodePointTrie, TrieValue};
-use zerovec::ZeroVec;
+use crate::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieValue};
+use serde::{Deserialize, Deserializer, Serialize, Serializer};
 use zerofrom::ZeroFrom;
+use zerovec::ZeroVec;
 
 #[derive(Serialize, Deserialize)]
 pub struct CodePointTrieSerde<'trie, T: TrieValue> {
@@ -44,7 +44,7 @@ where
             header: de.header,
             index: de.index,
             data: de.data,
-            error_value
+            error_value,
         })
     }
 }

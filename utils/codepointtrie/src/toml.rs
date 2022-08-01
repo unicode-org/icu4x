@@ -116,10 +116,6 @@ impl<T: TrieValue> TryFrom<&CodePointTrieToml> for CodePointTrie<'static, T> {
         let data = data.map_err(|_| Error::FromDeserialized {
             reason: "Could not parse data array to typed array",
         })?;
-        CodePointTrie::<T>::try_new(
-            header,
-            index,
-            data,
-        )
+        CodePointTrie::<T>::try_new(header, index, data)
     }
 }

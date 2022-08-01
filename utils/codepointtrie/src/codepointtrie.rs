@@ -895,7 +895,7 @@ where
             header: self.header,
             index: self.index.clone(),
             data: self.data.clone(),
-            error_value: self.error_value
+            error_value: self.error_value,
         }
     }
 }
