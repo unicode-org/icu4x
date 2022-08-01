@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659386010154,
+  "lastUpdate": 1659395486475,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22433,6 +22433,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/58334ea0b5e61898854d54a60fb3adb4a88c4f07"
         },
         "date": 1659385973682,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "582e328cac4c74648e177a360025414b7cbe51cb",
+          "message": "Remove KeyError and rename get() to get_2d() (#2279)",
+          "timestamp": "2022-08-01T16:09:34-07:00",
+          "tree_id": "5069df1c750f09b8b5ae9cbac3be4f85acae7ab8",
+          "url": "https://github.com/unicode-org/icu4x/commit/582e328cac4c74648e177a360025414b7cbe51cb"
+        },
+        "date": 1659395446878,
         "tool": "ndjson",
         "benches": [
           {
