@@ -12,19 +12,19 @@ const SAMPLE_STRING_LATIN1: &str = "Declaration loremips umdolo loremipsompi";
 const SAMPLE_STRING_MIXED: &str = "Dèclaråcion ЗАГАЛЬНА 世界人权宣言 𑄟𑄚𑄬𑄭𑄃𑄇𑄴𑄇𑄥𑄧𑄁𑄢𑄴";
 
 fn get_trie_small() -> CodePointTrie<'static, u8> {
-    CodePointTrie::try_new(
+    CodePointTrie::try_new_with_error_at_end(
         tries::gc_small::HEADER,
         tries::gc_small::INDEX.as_zerovec(),
-        tries::gc_small::DATA.as_zerovec(),
+        tries::gc_small::DATA.as_zerovec().into_owned(),
     )
     .unwrap()
 }
 
 fn get_trie_fast() -> CodePointTrie<'static, u8> {
-    CodePointTrie::try_new(
+    CodePointTrie::try_new_with_error_at_end(
         tries::gc_fast::HEADER,
         tries::gc_fast::INDEX.as_zerovec(),
-        tries::gc_fast::DATA.as_zerovec(),
+        tries::gc_fast::DATA.as_zerovec().into_owned(),
     )
     .unwrap()
 }

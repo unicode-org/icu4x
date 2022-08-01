@@ -219,7 +219,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// Utility function for working with the TOML format where the error is at the
     /// end of the data vector.
     ///
-    /// Operates on owned `data` arrays and will panic if the array has less than one element
+    /// Operates on owned `data` arrays and will panic if the array has less than one element.
+    ///
+    /// Technically this function could take `ZeroVec<'trie, T>` for `data` since it will
+    /// convert to owned anyway, but there's
+    /// a nice benefit to signalling to the user that the type will be converted to owned
+    /// so they shouldn't bother making a nice borrow.
     #[doc(hidden)] // only for tests and internal ICU4X datagen APIs
     pub fn try_new_with_error_at_end(
         header: CodePointTrieHeader,
