@@ -385,7 +385,7 @@ impl<'data> CaseMappingInternals<'data> {
             .iter()
             .map(|&i| CaseMappingData(i).with_updated_exception(&idx_map))
             .collect::<ZeroVec<_>>();
-        let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
+        let trie = CodePointTrie::try_new_with_error_at_end(trie_header, trie_index, trie_data)?;
 
         let result = Self {
             trie,

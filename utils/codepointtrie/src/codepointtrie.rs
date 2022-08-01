@@ -107,13 +107,16 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
 // serde impls in crate::serde
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 pub struct CodePointTrie<'trie, T: TrieValue> {
     pub(crate) header: CodePointTrieHeader,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub(crate) index: ZeroVec<'trie, u16>,
+    #[cfg_attr(feature = "serde", serde(borrow))]
     pub(crate) data: ZeroVec<'trie, T>,
-    // serde impl skips this field
-    #[zerofrom(clone)] // TrieValue is Copy, this allows us to avoid
+    // TrieValue is Copy, this allows us to avoid
     // a T: ZeroFrom bound
+    #[zerofrom(clone)]
     pub(crate) error_value: T,
 }
 
@@ -190,6 +193,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
+        error_value: T,
     ) -> Result<CodePointTrie<'trie, T>, Error> {
         // Validation invariants are not needed here when constructing a new
         // `CodePointTrie` because:
@@ -203,7 +207,40 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // - The `ZeroVec` serializer stores the length of the array along with the
         //   ZeroVec data, meaning that a deserializer would also see that length info.
 
-        let error_value = data.last().unwrap_or(T::DEFAULT_ERROR_VALUE);
+        let trie: CodePointTrie<'trie, T> = CodePointTrie {
+            header,
+            index,
+            data,
+            error_value,
+        };
+        Ok(trie)
+    }
+
+    /// Utility function for working with the TOML format where the error is at the
+    /// end of the data vector.
+    ///
+    /// Operates on owned `data` arrays and will panic if the array has less than one element
+    #[doc(hidden)] // only for tests and internal ICU4X datagen APIs
+    pub fn try_new_with_error_at_end(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        mut data: ZeroVec<'static, T>,
+    ) -> Result<CodePointTrie<'trie, T>, Error> {
+        // Validation invariants are not needed here when constructing a new
+        // `CodePointTrie` because:
+        //
+        // - Rust includes the size of a slice (or Vec or similar), which allows it
+        //   to prevent lookups at out-of-bounds indices, whereas in C++, it is the
+        //   programmer's responsibility to keep track of length info.
+        // - For lookups into collections, Rust guarantees that a fallback value will
+        //   be returned in the case of `.get()` encountering a lookup error, via
+        //   the `Option` type.
+        // - The `ZeroVec` serializer stores the length of the array along with the
+        //   ZeroVec data, meaning that a deserializer would also see that length info.
+
+        let error_value = data.last().expect("data must have at least one element");
+        data.to_mut().pop();
+
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
             index,

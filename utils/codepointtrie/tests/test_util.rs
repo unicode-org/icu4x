@@ -241,9 +241,9 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
 
     match (test_struct.data_8, test_struct.data_16, test_struct.data_32) {
         (Some(data_8), _, _) => {
-            let data = ZeroVec::from_slice_or_alloc(&data_8);
+            let data = ZeroVec::alloc_from_slice(&data_8);
             let trie_result: Result<CodePointTrie<u8>, Error> =
-                CodePointTrie::try_new(trie_header, index, data);
+                CodePointTrie::try_new_with_error_at_end(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
             assert_eq!(
                 test_struct.value_width_enum_val,
@@ -256,9 +256,9 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         }
 
         (_, Some(data_16), _) => {
-            let data = ZeroVec::from_slice_or_alloc(&data_16);
+            let data = ZeroVec::alloc_from_slice(&data_16);
             let trie_result: Result<CodePointTrie<u16>, Error> =
-                CodePointTrie::try_new(trie_header, index, data);
+                CodePointTrie::try_new_with_error_at_end(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
             assert_eq!(
                 test_struct.value_width_enum_val,
@@ -271,9 +271,9 @@ pub fn run_deserialize_test_from_test_data(test_file_path: &str) {
         }
 
         (_, _, Some(data_32)) => {
-            let data = ZeroVec::from_slice_or_alloc(&data_32);
+            let data = ZeroVec::alloc_from_slice(&data_32);
             let trie_result: Result<CodePointTrie<u32>, Error> =
-                CodePointTrie::try_new(trie_header, index, data);
+                CodePointTrie::try_new_with_error_at_end(trie_header, index, data);
             assert!(trie_result.is_ok(), "Could not construct trie");
             assert_eq!(
                 test_struct.value_width_enum_val,
