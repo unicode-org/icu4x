@@ -226,6 +226,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// a nice benefit to signalling to the user that the type will be converted to owned
     /// so they shouldn't bother making a nice borrow.
     #[doc(hidden)] // only for tests and internal ICU4X datagen APIs
+    #[allow(clippy::expect_used)] // hidden internal api
     pub fn try_new_with_error_at_end(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
