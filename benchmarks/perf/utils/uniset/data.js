@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659386437463,
+  "lastUpdate": 1659395971119,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40661,6 +40661,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44388035,
             "range": "± 99291",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "582e328cac4c74648e177a360025414b7cbe51cb",
+          "message": "Remove KeyError and rename get() to get_2d() (#2279)",
+          "timestamp": "2022-08-01T16:09:34-07:00",
+          "tree_id": "5069df1c750f09b8b5ae9cbac3be4f85acae7ab8",
+          "url": "https://github.com/unicode-org/icu4x/commit/582e328cac4c74648e177a360025414b7cbe51cb"
+        },
+        "date": 1659395932237,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 58186390,
+            "range": "± 839295",
             "unit": "ns/iter"
           },
           {
