@@ -132,7 +132,7 @@ jobs:
       run: |
         cp ffi/diplomat/wasm/wasm-demo/index.html ffi/diplomat/wasm/wasm-demo/dist/index.html
         printf "const gcs=document.createElement('script');gcs.setAttribute('src','./bundle.js');document.body.appendChild(gcs);" > ffi/diplomat/wasm/wasm-demo/dist/index.js
-        echo "url: https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/index.html" ${{ github.sha }}
+        printf "url: https://storage.googleapis.com/icu4x-pr-artifacts/gha/%s/wasm-demo/index.html" ${{ github.sha }}
 
     - name: Upload Webpack bundle to Google Cloud Storage
       run: |
