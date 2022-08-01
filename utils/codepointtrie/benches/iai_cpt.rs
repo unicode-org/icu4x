@@ -16,7 +16,7 @@ fn get_trie_small() -> CodePointTrie<'static, u8> {
         tries::gc_small::HEADER,
         tries::gc_small::INDEX.as_zerovec(),
         tries::gc_small::DATA.as_zerovec(),
-        0
+        0,
     )
     .unwrap()
 }
@@ -26,7 +26,7 @@ fn get_trie_fast() -> CodePointTrie<'static, u8> {
         tries::gc_fast::HEADER,
         tries::gc_fast::INDEX.as_zerovec(),
         tries::gc_fast::DATA.as_zerovec(),
-        0
+        0,
     )
     .unwrap()
 }
