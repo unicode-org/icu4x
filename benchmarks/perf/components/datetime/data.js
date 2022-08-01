@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659375089844,
+  "lastUpdate": 1659386583524,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -55367,6 +55367,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4617,
             "range": "± 31",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "58334ea0b5e61898854d54a60fb3adb4a88c4f07",
+          "message": "Provider's data should be in icu_segementer::provider. (#2300)\n\n- Don't re-export provider's data to icu_segementer\r\n- Move LSTM provider to icu_segmenter::provider",
+          "timestamp": "2022-08-01T20:30:38Z",
+          "tree_id": "398ba32816dca40bad097963faae396096bd6dae",
+          "url": "https://github.com/unicode-org/icu4x/commit/58334ea0b5e61898854d54a60fb3adb4a88c4f07"
+        },
+        "date": 1659386548033,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 87285,
+            "range": "± 4801",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 882387,
+            "range": "± 60992",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 173807,
+            "range": "± 7883",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 76769,
+            "range": "± 4002",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 85220,
+            "range": "± 5086",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 87140,
+            "range": "± 4043",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 93611,
+            "range": "± 4534",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 163761,
+            "range": "± 11307",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 174072,
+            "range": "± 8859",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 187668,
+            "range": "± 11100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 187254,
+            "range": "± 13335",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4668,
+            "range": "± 261",
             "unit": "ns/iter"
           }
         ]
