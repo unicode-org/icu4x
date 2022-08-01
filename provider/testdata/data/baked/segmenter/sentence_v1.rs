@@ -947,7 +947,7 @@ static UND: &DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
                     9u8, 0u8, 9u8, 9u8, 9u8, 0u8, 9u8, 9u8, 9u8, 9u8, 9u8, 0u8, 9u8, 9u8, 9u8, 9u8,
                     9u8, 8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 8u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                     0u8, 14u8, 14u8, 14u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 5u8, 0u8, 0u8, 0u8,
-                    0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
+                    0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 ])
             },
             0u8,
