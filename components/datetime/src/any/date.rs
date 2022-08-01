@@ -61,7 +61,7 @@ use icu_provider::DataLocale;
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct DateFormatter(pub(crate) raw::TypedDateFormatter, AnyCalendar);
+pub struct DateFormatter(pub(crate) raw::TypedDateFormatter, pub(crate) AnyCalendar);
 
 impl DateFormatter {
     /// Construct a new [`DateFormatter`] from a data provider that implements
