@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659331004358,
+  "lastUpdate": 1659342931308,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22343,6 +22343,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/da01290f983d041870c2f581c6d66118e697c9e0"
         },
         "date": 1659330968406,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "480669bc0a888be9672076fad79efbaa2c00f9bf",
+          "message": "Use ndarray 0.15 instead of a commit hash (#2299)\n\n* Use ndarray 0.15 instead of a commit hash\r\n\r\nAs of this patch, the latest release version of ndarray 0.15 is 0.15.6.\r\n\r\n* Explicit specify we need ndarray >= 0.15.5",
+          "timestamp": "2022-08-01T01:33:23-07:00",
+          "tree_id": "025ccda7c4d3e74b384faba7a48e1be0de2713e9",
+          "url": "https://github.com/unicode-org/icu4x/commit/480669bc0a888be9672076fad79efbaa2c00f9bf"
+        },
+        "date": 1659342887202,
         "tool": "ndjson",
         "benches": [
           {
