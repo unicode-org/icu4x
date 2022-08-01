@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659284672505,
+  "lastUpdate": 1659331718292,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -55079,6 +55079,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5110,
             "range": "± 32",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da01290f983d041870c2f581c6d66118e697c9e0",
+          "message": "Update APIs for CodePoint(Set|Map)Data return value wrapper structs (#2277)",
+          "timestamp": "2022-08-01T05:14:57Z",
+          "tree_id": "1369562cbf42ea9e4ebbeacc0c7a1617a7b456c5",
+          "url": "https://github.com/unicode-org/icu4x/commit/da01290f983d041870c2f581c6d66118e697c9e0"
+        },
+        "date": 1659331673754,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 113026,
+            "range": "± 1266",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1080838,
+            "range": "± 16640",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 237855,
+            "range": "± 13749",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_write",
+            "value": 100420,
+            "range": "± 1331",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/DateTimeFormatter/format_to_string",
+            "value": 109665,
+            "range": "± 1231",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 113497,
+            "range": "± 1077",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 123076,
+            "range": "± 1013",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_write",
+            "value": 212678,
+            "range": "± 1678",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/ZonedDateTimeFormatter/format_to_string",
+            "value": 227284,
+            "range": "± 2310",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 224882,
+            "range": "± 2819",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 240845,
+            "range": "± 3231",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6156,
+            "range": "± 58",
             "unit": "ns/iter"
           }
         ]
