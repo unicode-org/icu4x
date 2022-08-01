@@ -378,7 +378,7 @@ dependencies = [
 ]
 script_runner = "@duckscript"
 script = '''
-cd ./ffi/diplomat/wasm
+cd ./ffi/diplomat/wasm/icu4x
 exec --fail-on-error npm ci
 exec --fail-on-error npm test
 '''
