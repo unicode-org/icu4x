@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659374999960,
+  "lastUpdate": 1659386593865,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41428,6 +41428,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 71,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "58334ea0b5e61898854d54a60fb3adb4a88c4f07",
+          "message": "Provider's data should be in icu_segementer::provider. (#2300)\n\n- Don't re-export provider's data to icu_segementer\r\n- Move LSTM provider to icu_segmenter::provider",
+          "timestamp": "2022-08-01T20:30:38Z",
+          "tree_id": "398ba32816dca40bad097963faae396096bd6dae",
+          "url": "https://github.com/unicode-org/icu4x/commit/58334ea0b5e61898854d54a60fb3adb4a88c4f07"
+        },
+        "date": 1659386549591,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 147898,
+            "range": "± 1092",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 30499,
+            "range": "± 249",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 86230,
+            "range": "± 1656",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 241,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 114,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 104,
             "range": "± 0",
             "unit": "ns/iter"
           }
