@@ -16,10 +16,10 @@ use crate::provider::{
     },
     week_data::WeekDataV1Marker,
 };
-use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
+use crate::{input::DateInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::JapaneseErasV1Marker;
-use icu_calendar::{types::Time, DateTime};
+use icu_calendar::Date;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::DataLocale;
@@ -38,7 +38,7 @@ use icu_provider::DataLocale;
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
+/// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
 /// use icu::datetime::{options::length, DateFormatter};
 /// use icu::locid::Locale;
 /// use std::str::FromStr;
@@ -47,14 +47,14 @@ use icu_provider::DataLocale;
 ///
 /// let length = length::Date::Medium;
 ///
-/// let dtf = DateFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), length)
+/// let df = DateFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), length)
 ///     .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-///     .expect("Failed to construct DateTime.");
-/// let any_datetime = datetime.to_any();
+/// let date = Date::new_gregorian_date(2020, 9, 1)
+///     .expect("Failed to construct Date.");
+/// let any_date = date.to_any();
 ///
-/// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+/// let value = df.format_to_string(&any_date).expect("calendars should match");
 /// assert_eq!(value, "Sep 1, 2020");
 /// ```
 ///
@@ -100,7 +100,7 @@ impl DateFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
+    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
     /// use icu::datetime::{options::length, DateFormatter};
     /// use icu::locid::Locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
@@ -111,14 +111,14 @@ impl DateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
+    /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
+    /// let datetime = Date::new_gregorian_date(2020, 9, 1)
+    ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = df.format_to_string(&any_datetime).expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020");
     /// ```
     #[inline]
@@ -145,7 +145,7 @@ impl DateFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
+    /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
     /// use icu::datetime::{options::length, DateFormatter};
     /// use icu::locid::Locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
@@ -156,14 +156,14 @@ impl DateFormatter {
     /// let length = length::Date::Medium;
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = DateFormatter::try_new_unstable(&provider, &locale.into(), length)
+    /// let df = DateFormatter::try_new_unstable(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
+    /// let datetime = Date::new_gregorian_date(2020, 9, 1)
+    ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = df.format_to_string(&any_datetime).expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020");
     /// ```
     #[inline(never)]
@@ -208,7 +208,7 @@ impl DateFormatter {
             calendar,
         ))
     }
-    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// Takes a [`DateInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
@@ -220,7 +220,7 @@ impl DateFormatter {
         value: &T,
     ) -> Result<FormattedDateTime<'l>, DateTimeFormatterError>
     where
-        T: DateTimeInput<Calendar = AnyCalendar>,
+        T: DateInput<Calendar = AnyCalendar>,
     {
         if let Some(converted) = self.convert_if_necessary(value)? {
             Ok(self.0.format(&converted))
@@ -230,7 +230,7 @@ impl DateFormatter {
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`DateInput`] implementer and populates the buffer with a formatted value.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
@@ -239,7 +239,7 @@ impl DateFormatter {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+        value: &impl DateInput<Calendar = AnyCalendar>,
     ) -> Result<(), DateTimeFormatterError> {
         if let Some(converted) = self.convert_if_necessary(value)? {
             self.0.format_to_write(w, &converted)?;
@@ -249,7 +249,7 @@ impl DateFormatter {
         Ok(())
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateInput`] implementer and returns it formatted as a string.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
@@ -257,7 +257,7 @@ impl DateFormatter {
     #[inline]
     pub fn format_to_string(
         &self,
-        value: &impl DateTimeInput<Calendar = AnyCalendar>,
+        value: &impl DateInput<Calendar = AnyCalendar>,
     ) -> Result<String, DateTimeFormatterError> {
         if let Some(converted) = self.convert_if_necessary(value)? {
             Ok(self.0.format_to_string(&converted))
@@ -272,8 +272,8 @@ impl DateFormatter {
     /// if the date is compatible with the current calendar and doesn't need conversion
     fn convert_if_necessary<'a>(
         &'a self,
-        value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<Option<DateTime<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatterError> {
+        value: &impl DateInput<Calendar = AnyCalendar>,
+    ) -> Result<Option<Date<icu_calendar::Ref<'a, AnyCalendar>>>, DateTimeFormatterError> {
         let this_calendar = self.1.kind();
         let date_calendar = value.any_calendar_kind();
 
@@ -284,15 +284,8 @@ impl DateFormatter {
                     date_calendar,
                 ));
             }
-            let date = value.to_iso();
-            let time = Time::new(
-                value.hour().unwrap_or_default(),
-                value.minute().unwrap_or_default(),
-                value.second().unwrap_or_default(),
-                value.nanosecond().unwrap_or_default(),
-            );
-            let datetime = DateTime::new(date, time).to_any();
-            let converted = self.1.convert_any_datetime(&datetime);
+            let date = value.to_iso().to_any();
+            let converted = self.1.convert_any_date(&date);
             Ok(Some(converted))
         } else {
             Ok(None)

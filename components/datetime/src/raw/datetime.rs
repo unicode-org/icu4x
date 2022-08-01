@@ -7,7 +7,7 @@
 
 use crate::{
     format::datetime,
-    input::{DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
+    input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
     options::components,
     options::{length, preferences, DateTimeFormatterOptions},
     pattern::runtime::PatternPlurals,
@@ -262,18 +262,18 @@ impl TypedDateFormatter {
         }
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// Takes a [`DateInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
-        T: DateTimeInput,
+        T: DateInput,
     {
         FormattedDateTime {
             patterns: &self.patterns,
             date_symbols: self.symbols.as_ref().map(|s| s.get()),
             time_symbols: None,
-            datetime: ExtractedDateTimeInput::extract_from(value),
+            datetime: ExtractedDateTimeInput::extract_from_date(value),
             week_data: None,
             locale: &self.locale,
             ordinal_rules: None,
@@ -282,18 +282,19 @@ impl TypedDateFormatter {
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`DateInput`] implementer and populates the buffer with a formatted value.
     #[inline(never)]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput,
+        value: &impl DateInput,
     ) -> core::fmt::Result {
+        let extracted = ExtractedDateTimeInput::extract_from_date(value);
         datetime::write_pattern_plurals(
             &self.patterns.get().0,
             self.symbols.as_ref().map(|s| s.get()),
             None,
-            value,
+            &extracted,
             None,
             None,
             &self.fixed_decimal_format,
@@ -303,9 +304,9 @@ impl TypedDateFormatter {
         .map_err(|_| core::fmt::Error)
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateInput`] implementer and returns it formatted as a string.
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
+    pub fn format_to_string(&self, value: &impl DateInput) -> String {
         let mut s = String::new();
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.format_to_write(&mut s, value)

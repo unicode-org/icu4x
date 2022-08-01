@@ -172,6 +172,18 @@ impl ExtractedDateTimeInput {
         }
     }
     /// Construct given an instance of a [`DateTimeInput`].
+    pub(crate) fn extract_from_date<T: DateInput>(input: &T) -> Self {
+        Self {
+            year: input.year(),
+            month: input.month(),
+            day_of_month: input.day_of_month(),
+            iso_weekday: input.iso_weekday(),
+            day_of_year_info: input.day_of_year_info(),
+            any_calendar_kind: input.any_calendar_kind(),
+            ..Default::default()
+        }
+    }
+    /// Construct given an instance of a [`DateTimeInput`].
     pub(crate) fn extract_from_time<T: IsoTimeInput>(input: &T) -> Self {
         Self {
             hour: input.hour(),

@@ -21,8 +21,8 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
-    calendar, input::DateTimeInput, input::IsoTimeInput, CldrCalendar, DateTimeFormatterError,
-    FormattedDateTime,
+    calendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput, CldrCalendar,
+    DateTimeFormatterError, FormattedDateTime,
 };
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
@@ -211,19 +211,19 @@ impl TimeFormatter {
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::{options::length::Date, TypedDateFormatter};
+/// use icu::calendar::{Date, Gregorian};
+/// use icu::datetime::{options::length, TypedDateFormatter};
 /// use icu::locid::locale;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), Date::Full)
+/// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), length::Date::Full)
 ///     .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-///     .expect("Failed to construct DateTime.");
+/// let date = Date::new_gregorian_date(2020, 9, 1)
+///     .expect("Failed to construct Date.");
 ///
-/// assert_eq!(df.format_to_string(&datetime), "Tuesday, September 1, 2020");
+/// assert_eq!(df.format_to_string(&date), "Tuesday, September 1, 2020");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -239,12 +239,12 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
+    /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), Date::Full)
+    /// TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), length::Date::Full)
     ///     .unwrap();
     /// ```
     ///
@@ -280,18 +280,18 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
+    /// use icu::calendar::{Date, Gregorian};
+    /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Full)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Full)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
+    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    ///     .expect("Failed to construct Date.");
     ///
-    /// assert_writeable_eq!(df.format(&datetime), "Tuesday, September 1, 2020");
+    /// assert_writeable_eq!(df.format(&date), "Tuesday, September 1, 2020");
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
@@ -300,7 +300,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     #[inline]
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
-        T: DateTimeInput<Calendar = C>,
+        T: DateInput<Calendar = C>,
     {
         self.0.format(value)
     }
@@ -311,18 +311,18 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
+    /// use icu::calendar::{Date, Gregorian};
+    /// use icu::datetime::{options::length, TypedDateFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Short)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Short)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
+    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    ///     .expect("Failed to construct Date.");
     ///
     /// let mut buffer = String::new();
-    /// df.format_to_write(&mut buffer, &datetime)
+    /// df.format_to_write(&mut buffer, &date)
     ///     .expect("Failed to write to a buffer.");
     ///
     /// assert_eq!(buffer, "9/1/20");
@@ -331,7 +331,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput<Calendar = C>,
+        value: &impl DateInput<Calendar = C>,
     ) -> core::fmt::Result {
         self.0.format_to_write(w, value)
     }
@@ -341,20 +341,20 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
+    /// use icu::calendar::{Date, Gregorian};
+    /// use icu::datetime::{options::length, TypedDateFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Short)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Short)
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
+    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    ///     .expect("Failed to construct Date.");
     ///
-    /// assert_eq!(df.format_to_string(&datetime), "9/1/20");
+    /// assert_eq!(df.format_to_string(&date), "9/1/20");
     /// ```
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
+    pub fn format_to_string(&self, value: &impl DateInput<Calendar = C>) -> String {
         self.0.format_to_string(value)
     }
 }
