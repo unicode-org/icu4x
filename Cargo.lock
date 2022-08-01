@@ -2221,8 +2221,9 @@ checksum = "546c37ac5d9e56f55e73b677106873d9d9f5190605e41a856503623648488cae"
 
 [[package]]
 name = "ndarray"
-version = "0.15.4"
-source = "git+https://github.com/rust-ndarray/ndarray?rev=31244100631382bb8ee30721872a928bfdf07f44#31244100631382bb8ee30721872a928bfdf07f44"
+version = "0.15.6"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "adb12d4e967ec485a5f71c6311fe28158e9d6f4bc4a447b474184d0f91a8fa32"
 dependencies = [
  "matrixmultiply",
  "num-complex",
