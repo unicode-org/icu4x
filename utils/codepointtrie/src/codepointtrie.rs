@@ -42,7 +42,7 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     ///
     /// In most cases, the error value is read from the last element of the `data` array,
     /// this value is used for empty codepointtrie arrays
-    const DEFAULT_ERROR_VALUE: Self;
+
     /// Error type when converting from a u32 to this TrieValue.
     type TryFromU32Error: Display;
     /// A parsing function that is primarily motivated by deserialization contexts.
@@ -52,7 +52,6 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
 }
 
 impl TrieValue for u8 {
-    const DEFAULT_ERROR_VALUE: u8 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
@@ -60,7 +59,6 @@ impl TrieValue for u8 {
 }
 
 impl TrieValue for u16 {
-    const DEFAULT_ERROR_VALUE: u16 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
@@ -68,7 +66,6 @@ impl TrieValue for u16 {
 }
 
 impl TrieValue for u32 {
-    const DEFAULT_ERROR_VALUE: u32 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Ok(i)
@@ -76,7 +73,6 @@ impl TrieValue for u32 {
 }
 
 impl TrieValue for char {
-    const DEFAULT_ERROR_VALUE: char = '\0';
     type TryFromU32Error = core::char::CharTryFromError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         char::try_from(i)
@@ -440,11 +436,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let slice = &[error_ule];
         let error_vec = ZeroVec::<T>::Borrowed(slice);
         let error_converted = error_vec.try_into_converted::<P>()?;
+        #[allow(clippy::expect_used)] // this expect can't fail
         Ok(CodePointTrie {
             header: self.header,
             index: self.index,
             data: converted_data,
-            error_value: error_converted.get(0).unwrap_or(P::DEFAULT_ERROR_VALUE),
+            error_value: error_converted.get(0).expect("1-element vector must work"),
         })
     }
 
