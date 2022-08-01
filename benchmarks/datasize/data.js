@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659374427432,
+  "lastUpdate": 1659386010154,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22403,6 +22403,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fa0b332c02a55701b4c271eebbde67ac64283fed"
         },
         "date": 1659374380741,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "58334ea0b5e61898854d54a60fb3adb4a88c4f07",
+          "message": "Provider's data should be in icu_segementer::provider. (#2300)\n\n- Don't re-export provider's data to icu_segementer\r\n- Move LSTM provider to icu_segmenter::provider",
+          "timestamp": "2022-08-01T20:30:38Z",
+          "tree_id": "398ba32816dca40bad097963faae396096bd6dae",
+          "url": "https://github.com/unicode-org/icu4x/commit/58334ea0b5e61898854d54a60fb3adb4a88c4f07"
+        },
+        "date": 1659385973682,
         "tool": "ndjson",
         "benches": [
           {
