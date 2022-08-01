@@ -95,7 +95,8 @@ dependencies = [
 description = "Run all tests for the CI 'tidy' job"
 category = "CI"
 dependencies = [
-    "license-header-check",
+    # Temporarily disabled during license upgrade
+    # "license-header-check",
     "generated-readme-check",
     "license-file-check",
 ]
