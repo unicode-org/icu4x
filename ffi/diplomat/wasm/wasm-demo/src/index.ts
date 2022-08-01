@@ -4,7 +4,7 @@ const locale = ICU4XLocale.create_bn();
 
 const data_provider = ICU4XDataProvider.create_test();
 
-const fdf = ICU4XFixedDecimalFormatter.try_new(locale, data_provider, ICU4XFixedDecimalGroupingStrategy.Auto);
+const fdf = ICU4XFixedDecimalFormatter.try_new(data_provider, locale, ICU4XFixedDecimalGroupingStrategy.Auto);
 
 export function format(n: number): string {
     if (n > 2147483647 || n < -2147483648 || n % 1 !== 0) {
