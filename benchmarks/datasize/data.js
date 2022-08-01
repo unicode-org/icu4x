@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659284025963,
+  "lastUpdate": 1659331004358,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22313,6 +22313,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/87313194fb06a53934176357055917c921364c4e"
         },
         "date": 1659283976752,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "da01290f983d041870c2f581c6d66118e697c9e0",
+          "message": "Update APIs for CodePoint(Set|Map)Data return value wrapper structs (#2277)",
+          "timestamp": "2022-08-01T05:14:57Z",
+          "tree_id": "1369562cbf42ea9e4ebbeacc0c7a1617a7b456c5",
+          "url": "https://github.com/unicode-org/icu4x/commit/da01290f983d041870c2f581c6d66118e697c9e0"
+        },
+        "date": 1659330968406,
         "tool": "ndjson",
         "benches": [
           {
