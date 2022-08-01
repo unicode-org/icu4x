@@ -10,7 +10,8 @@
 //! Read more about data providers: [`icu_provider`]
 
 use crate::script::ScriptWithExtensions;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use core::ops::RangeInclusive;
+use icu_codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 use zerofrom::ZeroFrom;
@@ -78,10 +79,18 @@ impl<'data> PropertyCodePointSetV1<'data> {
             Self::InversionList(ref l) => l.contains(ch),
         }
     }
+
     #[inline]
     pub(crate) fn contains_u32(&self, ch: u32) -> bool {
         match *self {
             Self::InversionList(ref l) => l.contains_u32(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges(),
         }
     }
 
@@ -91,9 +100,19 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn to_code_point_inversion_list(&'_ self) -> CodePointInversionList<'_> {
+    pub(crate) fn as_code_point_inversion_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionList<'data>> {
         match *self {
-            Self::InversionList(ref l) => ZeroFrom::zero_from(l),
+            Self::InversionList(ref l) => Some(l),
+            // any other backing data structure that cannot return a CPInvList in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
+        match *self {
+            Self::InversionList(ref t) => ZeroFrom::zero_from(t),
         }
     }
 }
@@ -115,8 +134,23 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 
     #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges(),
+        }
+    }
+
+    #[inline]
     pub(crate) fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
         Self::CodePointTrie(trie)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_trie(&self) -> Option<&CodePointTrie<'data, T>> {
+        match *self {
+            Self::CodePointTrie(ref t) => Some(t),
+            // any other backing data structure that cannot return a CPT in O(1) time should return None
+        }
     }
 
     #[inline]
