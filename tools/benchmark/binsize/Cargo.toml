@@ -7,7 +7,7 @@ name = "icu_benchmark_binsize"
 version = "0.1.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
-license-file = "LICENSE"
+license = "Unicode-DFS-2016"
 
 [dependencies]
 cargo_metadata = "0.13"
