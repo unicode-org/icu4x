@@ -104,15 +104,14 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+// serde impls in crate::serde
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
-    header: CodePointTrieHeader,
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    index: ZeroVec<'trie, u16>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    data: ZeroVec<'trie, T>,
-    error_value: T,
+    pub(crate) header: CodePointTrieHeader,
+    pub(crate) index: ZeroVec<'trie, u16>,
+    pub(crate) data: ZeroVec<'trie, T>,
+    // serde impl skips this field
+    pub(crate) error_value: T,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
