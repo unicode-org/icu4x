@@ -112,6 +112,8 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
     pub(crate) index: ZeroVec<'trie, u16>,
     pub(crate) data: ZeroVec<'trie, T>,
     // serde impl skips this field
+    #[zerofrom(clone)] // TrieValue is Copy, this allows us to avoid 
+                       // a T: ZeroFrom bound
     pub(crate) error_value: T,
 }
 
