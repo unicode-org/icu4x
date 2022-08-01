@@ -85,7 +85,6 @@ jobs:
     - name: Checkout gh-pages
       uses: actions/checkout@v2
       with:
-        repository: unicode-org/icu4x
         ref: gh-pages
 
     - name: Retrieve index.html
