@@ -6,13 +6,13 @@
 //!
 //! ```rust
 //! use icu::calendar::{types::Era, Date, DateTime};
-//! use icu::calendar::japanese::{Japanese, JapaneseEraStyle};
+//! use icu::calendar::japanese::Japanese;
 //! use tinystr::tinystr;
 //!
 //! // `icu_testdata::get_provider` contains information specifying era dates.
 //! // Production code should probably use its own data provider
 //! let provider = icu_testdata::get_provider();
-//! let japanese_calendar = Japanese::try_new(&provider, JapaneseEraStyle::Modern).expect("Cannot load japanese data");
+//! let japanese_calendar = Japanese::try_new(&provider).expect("Cannot load japanese data");
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date(1970, 1, 2)
@@ -349,7 +349,7 @@ impl Date<Japanese> {
     ///
     /// ```rust
     /// use icu::calendar::{types, Date, Ref};
-    /// use icu::calendar::japanese::{Japanese};
+    /// use icu::calendar::japanese::Japanese;
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
@@ -414,11 +414,11 @@ impl Date<Japanext> {
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
-    /// let date = Date::new_japanese_date(era, 14, 1, 2, japanext_calendar)
+    /// let date = Date::new_japanext_date(era, 7, 1, 2, japanext_calendar)
     ///     .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().era, era);
-    /// assert_eq!(date.year().number, 14);
+    /// assert_eq!(date.year().number, 7);
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     /// ```
@@ -444,12 +444,12 @@ impl DateTime<Japanese> {
     /// 
     /// ```rust
     /// use icu::calendar::{types, DateTime};
-    /// use icu::calendar::japanese::{Japanese, JapaneseEraStyle};
+    /// use icu::calendar::japanese::Japanese;
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let japanese_calendar = Japanese::try_new(&provider, JapaneseEraStyle::Modern).expect("Cannot load japanese data");
+    /// let japanese_calendar = Japanese::try_new(&provider).expect("Cannot load japanese data");
     ///
     /// let era = types::Era(tinystr!(16, "heisei"));
     ///
@@ -491,7 +491,7 @@ impl DateTime<Japanext> {
     ///
     /// ```rust
     /// use icu::calendar::{types, DateTime};
-    /// use icu::calendar::japanese::{Japanext};
+    /// use icu::calendar::japanese::Japanext;
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
@@ -500,11 +500,11 @@ impl DateTime<Japanext> {
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
-    /// let datetime = DateTime::new_japanese_datetime(era, 14, 1, 2, 13, 1, 0, japanext_calendar)
+    /// let datetime = DateTime::new_japanext_datetime(era, 7, 1, 2, 13, 1, 0, japanext_calendar)
     ///     .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(datetime.date.year().era, era);
-    /// assert_eq!(datetime.date.year().number, 14);
+    /// assert_eq!(datetime.date.year().number, 7);
     /// assert_eq!(datetime.date.month().ordinal, 1);
     /// assert_eq!(datetime.date.day_of_month().0, 2);
     /// assert_eq!(datetime.time.hour.number(), 13);
@@ -514,7 +514,7 @@ impl DateTime<Japanext> {
     #[allow(clippy::too_many_arguments)] // it's more convenient to have this many arguments
                                          // if people wish to construct this by parts they can use
                                          // Date::new_japanese_date() + DateTime::new(date, time)
-    pub fn new_japanese_datetime<A: AsCalendar<Calendar = Japanese>>(
+    pub fn new_japanext_datetime<A: AsCalendar<Calendar = Japanext>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -525,7 +525,7 @@ impl DateTime<Japanext> {
         japanext_calendar: A,
     ) -> Result<DateTime<A>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_japanese_date(era, year, month, day, japanext_calendar)?,
+            date: Date::new_japanext_date(era, year, month, day, japanext_calendar)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
