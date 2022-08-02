@@ -31,7 +31,7 @@ diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f
 
 diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_fromstr(const char* v_data, size_t v_len);
 
-bool ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
+void ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
 
 void ICU4XFixedDecimal_set_sign(ICU4XFixedDecimal* self, ICU4XFixedDecimalSign sign);
 

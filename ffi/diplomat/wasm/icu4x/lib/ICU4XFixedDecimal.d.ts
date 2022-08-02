@@ -59,7 +59,7 @@ export class ICU4XFixedDecimal {
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10 Rust documentation} for more information.
    */
-  multiply_pow10(power: i16): boolean;
+  multiply_pow10(power: i16): void;
 
   /**
 

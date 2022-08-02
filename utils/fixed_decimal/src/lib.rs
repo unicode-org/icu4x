@@ -14,8 +14,7 @@
 //! use fixed_decimal::FixedDecimal;
 //!
 //! let dec = FixedDecimal::from(250)
-//!     .multiplied_pow10(-2)
-//!     .expect("Bounds are small");
+//!     .multiplied_pow10(-2);
 //! assert_eq!("2.50", format!("{}", dec));
 //!
 //! #[derive(Debug, PartialEq)]
@@ -78,10 +77,8 @@ pub enum Error {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// let mut dec1 = FixedDecimal::from(123);
-    /// assert_eq!(
-    ///     Error::Limit,
-    ///     dec1.multiply_pow10(core::i16::MAX).unwrap_err()
-    /// );
+    /// dec1.multiply_pow10(core::i16::MAX);
+    /// assert!(dec1.is_zero());
     /// ```
     #[displaydoc("Magnitude or number of digits exceeded")]
     Limit,

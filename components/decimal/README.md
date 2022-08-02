@@ -41,8 +41,7 @@ let fdf = FixedDecimalFormatter::try_new(&provider, &Locale::UND.into(), Default
     .expect("Data should load successfully");
 
 let fixed_decimal = FixedDecimal::from(200050)
-    .multiplied_pow10(-2)
-    .expect("Operation is fully in range");
+    .multiplied_pow10(-2);
 
 assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
 ```

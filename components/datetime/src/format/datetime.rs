@@ -379,9 +379,7 @@ where
                     };
 
                     // We store fractional seconds as nanoseconds, convert to seconds.
-                    fraction
-                        .multiply_pow10(-9)
-                        .map_err(|_| Error::FixedDecimal)?;
+                    fraction.multiply_pow10(-9);
 
                     seconds
                         .concatenate_right(fraction)

@@ -372,13 +372,24 @@ impl FixedDecimal {
         self.digits.is_empty()
     }
 
+    /// Clears all the fields and sets the number to zero.
+    fn clear(&mut self) {
+        self.upper_magnitude = 0;
+        self.lower_magnitude = 0;
+        self.magnitude = 0;
+        self.digits.clear();
+        self.sign = Sign::None;
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
     /// Shift the digits by a power of 10, modifying self.
     ///
     /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
     /// before the decimal separator) visible.
     ///
-    /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
-    /// digits should fit in an i16.
+    /// NOTE: if the operation causes overflow, the number will be set to zero.
     ///
     /// # Examples
     ///
@@ -388,28 +399,40 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.multiply_pow10(3).expect("Bounds are small");
+    /// dec.multiply_pow10(3);
     /// assert_eq!("42000", dec.to_string());
     /// ```
-    pub fn multiply_pow10(&mut self, delta: i16) -> Result<(), Error> {
+    pub fn multiply_pow10(&mut self, delta: i16) {
         match delta.cmp(&0) {
             Ordering::Greater => {
-                self.upper_magnitude = self
-                    .upper_magnitude
-                    .checked_add(delta)
-                    .ok_or(Error::Limit)?;
-                // If we get here, then the magnitude change is in-bounds.
-                let lower_magnitude = self.lower_magnitude + delta;
-                self.lower_magnitude = cmp::min(0, lower_magnitude);
+                let upper_magnitude = self.upper_magnitude.checked_add(delta);
+                match upper_magnitude {
+                    Some(upper_magnitude) => {
+                        self.upper_magnitude = upper_magnitude;
+                        // If we get here, then the magnitude change is in-bounds.
+                        let lower_magnitude = self.lower_magnitude + delta;
+                        self.lower_magnitude = cmp::min(0, lower_magnitude);
+                    }
+                    None => {
+                        // there is an overflow
+                        self.clear();
+                    }
+                }
             }
             Ordering::Less => {
-                self.lower_magnitude = self
-                    .lower_magnitude
-                    .checked_add(delta)
-                    .ok_or(Error::Limit)?;
-                // If we get here, then the magnitude change is in-bounds.
-                let upper_magnitude = self.upper_magnitude + delta;
-                self.upper_magnitude = cmp::max(0, upper_magnitude);
+                let lower_magnitude = self.lower_magnitude.checked_add(delta);
+                match lower_magnitude {
+                    Some(lower_magnitude) => {
+                        self.lower_magnitude = lower_magnitude;
+                        // If we get here, then the magnitude change is in-bounds.
+                        let upper_magnitude = self.upper_magnitude + delta;
+                        self.upper_magnitude = cmp::max(0, upper_magnitude);
+                    }
+                    None => {
+                        // there is an overflow
+                        self.clear();
+                    }
+                }
             }
             Ordering::Equal => {}
         };
@@ -418,7 +441,6 @@ impl FixedDecimal {
         }
         #[cfg(debug_assertions)]
         self.check_invariants();
-        Ok(())
     }
 
     /// Shift the digits by a power of 10, consuming self and returning a new object if successful.
@@ -426,8 +448,7 @@ impl FixedDecimal {
     /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
     /// before the decimal separator) visible.
     ///
-    /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
-    /// digits should fit in an i16.
+    /// NOTE: if the operation causes overflow, the returned number will be zero.
     ///
     /// # Examples
     ///
@@ -435,15 +456,12 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(42)
-    ///     .multiplied_pow10(3)
-    ///     .expect("Bounds are small");
+    ///     .multiplied_pow10(3);
     /// assert_eq!("42000", dec.to_string());
     /// ```
-    pub fn multiplied_pow10(mut self, delta: i16) -> Result<Self, Error> {
-        match self.multiply_pow10(delta) {
-            Ok(()) => Ok(self),
-            Err(err) => Err(err),
-        }
+    pub fn multiplied_pow10(mut self, delta: i16) -> Self {
+        self.multiply_pow10(delta);
+        self
     }
 
     /// Returns the sign.
@@ -567,7 +585,6 @@ impl FixedDecimal {
     ///
     /// let dec = FixedDecimal::from(123400)
     ///     .multiplied_pow10(-4)
-    ///     .expect("in-bounds")
     ///     .padded_start(4);
     /// assert_eq!("0012.3400", dec.to_string());
     ///
@@ -587,7 +604,6 @@ impl FixedDecimal {
     ///
     /// let mut dec = FixedDecimal::from(123400)
     ///     .multiplied_pow10(-4)
-    ///     .expect("in-bounds")
     ///     .padded_start(4);
     /// assert_eq!("0012.3400", dec.to_string());
     ///
@@ -600,8 +616,7 @@ impl FixedDecimal {
     /// ```
     /// # use fixed_decimal::FixedDecimal;
     /// let mut dec = FixedDecimal::from(22)
-    ///     .multiplied_pow10(-4)
-    ///     .expect("in-bounds");
+    ///     .multiplied_pow10(-4);
     /// assert_eq!("0.0022", dec.to_string());
     ///
     /// dec.trim_start();
@@ -622,7 +637,6 @@ impl FixedDecimal {
     ///
     /// let dec = FixedDecimal::from(123400)
     ///     .multiplied_pow10(-4)
-    ///     .expect("in-bounds")
     ///     .padded_start(4);
     /// assert_eq!("0012.3400", dec.to_string());
     ///
@@ -642,7 +656,6 @@ impl FixedDecimal {
     ///
     /// let mut dec = FixedDecimal::from(123400)
     ///     .multiplied_pow10(-4)
-    ///     .expect("in-bounds")
     ///     .padded_start(4);
     /// assert_eq!("0012.3400", dec.to_string());
     ///
@@ -743,7 +756,7 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3).expect("in-bounds");
+    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
     /// assert_eq!("4235.970", dec.to_string());
     ///
     /// assert_eq!("04235.970", dec.clone().with_max_position(5).to_string());
@@ -775,7 +788,7 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3).expect("in-bounds");
+    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
     /// assert_eq!("4235.970", dec.to_string());
     ///
     /// dec.set_max_position(5);
@@ -1555,8 +1568,7 @@ impl FixedDecimal {
     ///
     /// let integer = FixedDecimal::from(123);
     /// let fraction = FixedDecimal::from(456)
-    ///     .multiplied_pow10(-3)
-    ///     .expect("in-range");
+    ///     .multiplied_pow10(-3);
     ///
     /// let result =  integer.concatenated_right(fraction).expect("nonoverlapping");
     ///
@@ -1584,8 +1596,7 @@ impl FixedDecimal {
     ///
     /// let mut integer = FixedDecimal::from(123);
     /// let fraction = FixedDecimal::from(456)
-    ///     .multiplied_pow10(-3)
-    ///     .expect("nonoverlapping");
+    ///     .multiplied_pow10(-3);
     ///
     /// integer.concatenate_right(fraction);
     ///
@@ -1712,8 +1723,7 @@ impl writeable::Writeable for FixedDecimal {
     /// use writeable::Writeable;
     ///
     /// let dec = FixedDecimal::from(-5000)
-    ///     .multiplied_pow10(-2)
-    ///     .expect("Bounds are small");
+    ///     .multiplied_pow10(-2);
     /// let result = dec.write_to_string();
     /// assert_eq!(LengthHint::exact(6), dec.write_len());
     /// ```
@@ -1912,7 +1922,7 @@ impl FromStr for FixedDecimal {
                 pow += (digit - b'0') as i16;
             }
 
-            dec.multiply_pow10(pos_neg * pow)?;
+            dec.multiply_pow10(pos_neg * pow);
 
             // Clean up magnitude after multiplication
             if dec.magnitude > 0 {
@@ -2339,7 +2349,7 @@ fn test_basic() {
     for cas in &cases {
         let mut dec: FixedDecimal = cas.input.into();
         // println!("{}", cas.input + 0.01);
-        dec.multiply_pow10(cas.delta).unwrap();
+        dec.multiply_pow10(cas.delta);
         writeable::assert_writeable_eq!(dec, cas.expected, "{:?}", cas);
     }
 }
@@ -2521,12 +2531,13 @@ fn test_ui128_limits() {
 fn test_upper_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.upper_magnitude, 4);
-    dec.multiply_pow10(32763).unwrap();
+    dec.multiply_pow10(32763);
     assert_eq!(dec.upper_magnitude, core::i16::MAX);
     assert_eq!(dec.nonzero_magnitude_left(), core::i16::MAX);
     let dec_backup = dec.clone();
-    assert_eq!(Error::Limit, dec.multiply_pow10(1).unwrap_err());
-    assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+    dec.multiply_pow10(1);
+    assert!(dec.is_zero());
+    assert_ne!(dec, dec_backup, "Value should be unchanged on failure");
 
     // Checking from_str for dec (which is valid)
     let dec_roundtrip = FixedDecimal::from_str(&dec.to_string()).unwrap();
@@ -2537,12 +2548,13 @@ fn test_upper_magnitude_bounds() {
 fn test_lower_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.lower_magnitude, 0);
-    dec.multiply_pow10(-32768).unwrap();
+    dec.multiply_pow10(-32768);
     assert_eq!(dec.lower_magnitude, core::i16::MIN);
     assert_eq!(dec.nonzero_magnitude_right(), core::i16::MIN);
     let dec_backup = dec.clone();
-    assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
-    assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+    dec.multiply_pow10(-1);
+    assert!(dec.is_zero());
+    assert_ne!(dec, dec_backup);
 
     // Checking from_str for dec (which is valid)
     let dec_roundtrip = FixedDecimal::from_str(&dec.to_string()).unwrap();
@@ -3122,9 +3134,7 @@ fn test_rounding() {
     assert_eq!("-0.0", dec.to_string());
 
     // Test Truncate Right
-    let mut dec = FixedDecimal::from(4235970)
-        .multiplied_pow10(-3)
-        .expect("in-bounds");
+    let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     dec.trunc(-5);
@@ -3158,9 +3168,7 @@ fn test_rounding() {
     assert_eq!("0.0", dec.to_string());
 
     // Test trunced
-    let dec = FixedDecimal::from(4235970)
-        .multiplied_pow10(-3)
-        .expect("in-bounds");
+    let dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
     assert_eq!("4235.97000", dec.clone().trunced(-5).to_string());

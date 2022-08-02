@@ -73,7 +73,7 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.multiply_pow10) for more information.
    */
-  bool multiply_pow10(int16_t power);
+  void multiply_pow10(int16_t power);
 
   /**
    * Set the sign of the [`ICU4XFixedDecimal`].
@@ -171,8 +171,8 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
   }
   return diplomat_result_out_value;
 }
-inline bool ICU4XFixedDecimal::multiply_pow10(int16_t power) {
-  return capi::ICU4XFixedDecimal_multiply_pow10(this->inner.get(), power);
+inline void ICU4XFixedDecimal::multiply_pow10(int16_t power) {
+  capi::ICU4XFixedDecimal_multiply_pow10(this->inner.get(), power);
 }
 inline void ICU4XFixedDecimal::set_sign(ICU4XFixedDecimalSign sign) {
   capi::ICU4XFixedDecimal_set_sign(this->inner.get(), static_cast<capi::ICU4XFixedDecimalSign>(sign));
