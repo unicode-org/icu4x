@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659475462437,
+  "lastUpdate": 1659475732159,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22733,6 +22733,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/45f380df3043abb9fd5a7ff9612ff3a66d24cec3"
         },
         "date": 1659475425185,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030037,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "2cbf99153ff4642caa364170e5daea12c4ae7f9b",
+          "message": "Use DataLocale in Collator (#2296)",
+          "timestamp": "2022-08-02T14:26:58-07:00",
+          "tree_id": "399aab6871dbe329649cdf577641055a1b48ed83",
+          "url": "https://github.com/unicode-org/icu4x/commit/2cbf99153ff4642caa364170e5daea12c4ae7f9b"
+        },
+        "date": 1659475692131,
         "tool": "ndjson",
         "benches": [
           {
