@@ -3,11 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! The collection of code that is needed for handling formatting operations for DateTimes.
-//! Central to this is the [`TypedDateTimeFormatter`].
+//! Central to this is the [`DateTimeFormatter`].
 
 use crate::{
     format::datetime,
-    input::{DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
+    input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
     options::components,
     options::{length, preferences, DateTimeFormatterOptions},
     pattern::runtime::PatternPlurals,
@@ -111,7 +111,7 @@ impl TimeFormatter {
     /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: IsoTimeInput,
     {
@@ -161,7 +161,7 @@ impl TimeFormatter {
     }
 }
 
-pub(crate) struct TypedDateFormatter {
+pub(crate) struct DateFormatter {
     pub locale: DataLocale,
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -171,7 +171,7 @@ pub(crate) struct TypedDateFormatter {
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
 
-impl TypedDateFormatter {
+impl DateFormatter {
     /// Constructor that takes a selected [`DataLocale`], reference to a [`DataProvider`] and
     /// a list of options, then collects all data necessary to format date values into the given locale.
     #[inline(never)]
@@ -241,7 +241,7 @@ impl TypedDateFormatter {
         ))
     }
 
-    /// Creates a new [`TypedDateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
+    /// Creates a new [`DateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
         locale: DataLocale,
         generic_pattern: DataPayload<GenericPatternV1Marker>,
@@ -262,18 +262,18 @@ impl TypedDateFormatter {
         }
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// Takes a [`DateInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
-        T: DateTimeInput,
+        T: DateInput,
     {
         FormattedDateTime {
             patterns: &self.patterns,
             date_symbols: self.symbols.as_ref().map(|s| s.get()),
             time_symbols: None,
-            datetime: ExtractedDateTimeInput::extract_from(value),
+            datetime: ExtractedDateTimeInput::extract_from_date(value),
             week_data: None,
             locale: &self.locale,
             ordinal_rules: None,
@@ -282,18 +282,19 @@ impl TypedDateFormatter {
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`DateInput`] implementer and populates the buffer with a formatted value.
     #[inline(never)]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput,
+        value: &impl DateInput,
     ) -> core::fmt::Result {
+        let extracted = ExtractedDateTimeInput::extract_from_date(value);
         datetime::write_pattern_plurals(
             &self.patterns.get().0,
             self.symbols.as_ref().map(|s| s.get()),
             None,
-            value,
+            &extracted,
             None,
             None,
             &self.fixed_decimal_format,
@@ -303,9 +304,9 @@ impl TypedDateFormatter {
         .map_err(|_| core::fmt::Error)
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateInput`] implementer and returns it formatted as a string.
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
+    pub fn format_to_string(&self, value: &impl DateInput) -> String {
         let mut s = String::new();
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.format_to_write(&mut s, value)
@@ -314,9 +315,9 @@ impl TypedDateFormatter {
     }
 }
 
-/// This is the internal "raw" version of [crate::TypedDateTimeFormatter], i.e. a version of TypedDateTimeFormatter
-/// without the generic parameter. The actual implementation of [crate::TypedDateTimeFormatter] should live here.
-pub(crate) struct TypedDateTimeFormatter {
+/// This is the internal "raw" version of [crate::DateTimeFormatter], i.e. a version of DateTimeFormatter
+/// without the generic parameter. The actual implementation of [crate::DateTimeFormatter] should live here.
+pub(crate) struct DateTimeFormatter {
     pub locale: DataLocale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
@@ -326,12 +327,12 @@ pub(crate) struct TypedDateTimeFormatter {
     pub fixed_decimal_format: FixedDecimalFormatter,
 }
 
-impl TypedDateTimeFormatter {
-    /// Constructor that takes previously constructed [`TimeFormatter`] and [`TypedDateFormatter`] instances and builds a
-    /// new [`TypedDateTimeFormatter`] instance from them.
+impl DateTimeFormatter {
+    /// Constructor that takes previously constructed [`TimeFormatter`] and [`DateFormatter`] instances and builds a
+    /// new [`DateTimeFormatter`] instance from them.
     #[inline(never)]
     pub fn try_from_date_and_time(
-        date: TypedDateFormatter,
+        date: DateFormatter,
         time: TimeFormatter,
     ) -> Result<Self, DateTimeFormatterError> {
         let generic_pattern = &date.generic_pattern;
@@ -445,7 +446,7 @@ impl TypedDateTimeFormatter {
         ))
     }
 
-    /// Creates a new [`TypedDateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
+    /// Creates a new [`DateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
         locale: DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
@@ -519,7 +520,7 @@ impl TypedDateTimeFormatter {
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the
-    /// options that were provided to the [`TypedDateTimeFormatter`].
+    /// options that were provided to the [`DateTimeFormatter`].
     pub fn resolve_components(&self) -> components::Bag {
         components::Bag::from(&self.patterns.get().0)
     }

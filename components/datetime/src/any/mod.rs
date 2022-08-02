@@ -5,8 +5,10 @@
 //! This module contains the untyped [`AnyCalendar`](icu_calendar::any_calendar::AnyCalendar)-based
 //! `TypedDateTimeFormatter` APIs that are capable of formatting dates from any calendar
 
+mod date;
 mod datetime;
 mod zoned_datetime;
 
+pub use date::DateFormatter;
 pub use datetime::DateTimeFormatter;
 pub use zoned_datetime::ZonedDateTimeFormatter;
