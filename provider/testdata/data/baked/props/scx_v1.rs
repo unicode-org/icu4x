@@ -1895,6 +1895,7 @@ static UND: &DataStruct = &::icu_properties::provider::ScriptWithExtensionsPrope
                     103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8,
                 ])
             },
+            ::icu_properties::script::ScriptWithExt(103u16),
         ),
         extensions: unsafe {
             ::zerovec::VarZeroVec::from_bytes_unchecked(&[

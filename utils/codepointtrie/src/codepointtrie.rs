@@ -40,8 +40,9 @@ pub enum TrieType {
 pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
     /// Last-resort fallback value to return if we cannot read data from the trie.
     ///
-    /// In most cases, the error value is read from the last element of the `data` array.
-    const DATA_GET_ERROR_VALUE: Self;
+    /// In most cases, the error value is read from the last element of the `data` array,
+    /// this value is used for empty codepointtrie arrays
+
     /// Error type when converting from a u32 to this TrieValue.
     type TryFromU32Error: Display;
     /// A parsing function that is primarily motivated by deserialization contexts.
@@ -51,7 +52,6 @@ pub trait TrieValue: Copy + Eq + PartialEq + zerovec::ule::AsULE + 'static {
 }
 
 impl TrieValue for u8 {
-    const DATA_GET_ERROR_VALUE: u8 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
@@ -59,7 +59,6 @@ impl TrieValue for u8 {
 }
 
 impl TrieValue for u16 {
-    const DATA_GET_ERROR_VALUE: u16 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Self::try_from(i)
@@ -67,7 +66,6 @@ impl TrieValue for u16 {
 }
 
 impl TrieValue for u32 {
-    const DATA_GET_ERROR_VALUE: u32 = 0;
     type TryFromU32Error = TryFromIntError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         Ok(i)
@@ -75,7 +73,6 @@ impl TrieValue for u32 {
 }
 
 impl TrieValue for char {
-    const DATA_GET_ERROR_VALUE: char = '\0';
     type TryFromU32Error = core::char::CharTryFromError;
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
         char::try_from(i)
@@ -104,14 +101,16 @@ fn maybe_filter_value<T: TrieValue>(value: T, trie_null_value: T, null_value: T)
 /// For more information:
 /// - [ICU Site design doc](http://site.icu-project.org/design/struct/utrie)
 /// - [ICU User Guide section on Properties lookup](https://unicode-org.github.io/icu/userguide/strings/properties.html#lookup)
-#[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
+// serde impls in crate::serde
 #[derive(Debug, Eq, PartialEq, Yokeable, ZeroFrom)]
 pub struct CodePointTrie<'trie, T: TrieValue> {
-    header: CodePointTrieHeader,
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    index: ZeroVec<'trie, u16>,
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    data: ZeroVec<'trie, T>,
+    pub(crate) header: CodePointTrieHeader,
+    pub(crate) index: ZeroVec<'trie, u16>,
+    pub(crate) data: ZeroVec<'trie, T>,
+    // serde impl skips this field
+    #[zerofrom(clone)] // TrieValue is Copy, this allows us to avoid
+    // a T: ZeroFrom bound
+    pub(crate) error_value: T,
 }
 
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
@@ -171,11 +170,13 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
         data: ZeroVec<'trie, T>,
+        error_value: T,
     ) -> Self {
         Self {
             header,
             index,
             data,
+            error_value,
         }
     }
 
@@ -198,10 +199,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // - The `ZeroVec` serializer stores the length of the array along with the
         //   ZeroVec data, meaning that a deserializer would also see that length info.
 
+        let error_value = data.last().ok_or(Error::EmptyDataVector)?;
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
             index,
             data,
+            error_value,
         };
         Ok(trie)
     }
@@ -323,11 +326,11 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// ```
     #[inline]
     pub fn get(&self, code_point: u32) -> T {
-        // If we cannot read from the data array, then return the associated constant
-        // DATA_GET_ERROR_VALUE for the instance type for T: TrieValue.
+        // If we cannot read from the data array, then return the sentinel value
+        // self.error_value() for the instance type for T: TrieValue.
         self.get_ule(code_point)
             .map(|t| T::from_unaligned(*t))
-            .unwrap_or(T::DATA_GET_ERROR_VALUE)
+            .unwrap_or(self.error_value)
     }
 
     /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
@@ -386,10 +389,18 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         P: TrieValue,
     {
         let converted_data = self.data.try_into_converted()?;
+        let error_ule = self.error_value.to_unaligned();
+        let slice = &[error_ule];
+        let error_vec = ZeroVec::<T>::Borrowed(slice);
+        let error_converted = error_vec.try_into_converted::<P>()?;
+        #[allow(clippy::expect_used)] // we know this cannot fail
         Ok(CodePointTrie {
             header: self.header,
             index: self.index,
             data: converted_data,
+            error_value: error_converted
+                .get(0)
+                .expect("vector known to have one element"),
         })
     }
 
@@ -468,8 +479,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let mut prev_i3_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
         let mut prev_block: u32 = u32::MAX; // using u32::MAX (instead of -1 as an i32 in ICU)
         let mut c: u32 = start;
-        let mut trie_value: T = T::DATA_GET_ERROR_VALUE;
-        let mut value: T = T::DATA_GET_ERROR_VALUE;
+        let mut trie_value: T = self.error_value();
+        let mut value: T = self.error_value();
         let mut have_value: bool = false;
 
         loop {
@@ -781,7 +792,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
         let init_range = Some(CodePointMapRange {
             range: RangeInclusive::new(u32::MAX, u32::MAX),
-            value: T::DATA_GET_ERROR_VALUE,
+            value: self.error_value(),
         });
         CodePointMapRangeIterator::<T> {
             cpt: self,
@@ -841,15 +852,22 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let value_ranges = self.get_ranges_for_value(value);
         CodePointInversionList::from_iter(value_ranges)
     }
+
+    /// Returns the value used as an error value for this trie
+    #[inline]
+    pub fn error_value(&self) -> T {
+        self.error_value
+    }
 }
 
 #[cfg(feature = "databake")]
-impl<'trie, T: TrieValue> databake::Bake for CodePointTrie<'trie, T> {
+impl<'trie, T: TrieValue + databake::Bake> databake::Bake for CodePointTrie<'trie, T> {
     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
         let header = self.header.bake(env);
         let index = self.index.bake(env);
         let data = self.data.bake(env);
-        databake::quote! { ::icu_codepointtrie::CodePointTrie::from_parts(#header, #index, #data) }
+        let error_value = self.error_value.bake(env);
+        databake::quote! { ::icu_codepointtrie::CodePointTrie::from_parts(#header, #index, #data, #error_value) }
     }
 }
 
@@ -885,6 +903,7 @@ where
             header: self.header,
             index: self.index.clone(),
             data: self.data.clone(),
+            error_value: self.error_value,
         }
     }
 }
@@ -1124,6 +1143,7 @@ mod tests {
                 },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
+                0u32,
             ),
             icu_codepointtrie,
             [zerovec],

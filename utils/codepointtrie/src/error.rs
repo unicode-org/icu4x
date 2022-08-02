@@ -9,4 +9,6 @@ use displaydoc::Display;
 pub enum Error {
     #[displaydoc("Could not construct CodePointTrie from deserialized values: {reason}")]
     FromDeserialized { reason: &'static str },
+    #[displaydoc("CodePointTrie must be constructed from data vector with at least one element")]
+    EmptyDataVector,
 }
