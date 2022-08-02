@@ -6,7 +6,7 @@ use crate::error::DateTimeFormatterError;
 use alloc::string::ToString;
 use core::any;
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
+    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese, japanese::Japanext,
     Gregorian,
 };
 use icu_locid::extensions::unicode::Value;
@@ -43,9 +43,10 @@ impl CldrCalendar for Buddhist {
 
 impl CldrCalendar for Japanese {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanese");
-    fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("japanese") || *value == value!("japanext")
-    }
+}
+
+impl CldrCalendar for Japanext {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanext");
 }
 
 impl CldrCalendar for Coptic {
