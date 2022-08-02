@@ -15,8 +15,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_codepointtrie::CodePointTrie;
-//! use icu_codepointtrie::TrieType;
+//! use icu_collections::codepointtrie::CodePointTrie;
+//! use icu_collections::codepointtrie::TrieType;
 //! use icu_codepointtrie_builder::CodePointTrieBuilder;
 //! use icu_codepointtrie_builder::CodePointTrieBuilderData;
 //!
@@ -59,10 +59,10 @@
 #![allow(clippy::panic)]
 #![allow(clippy::expect_used)]
 
-use icu_codepointtrie::toml::CodePointTrieToml;
-use icu_codepointtrie::CodePointTrie;
-use icu_codepointtrie::TrieType;
-use icu_codepointtrie::TrieValue;
+use icu_collections::codepointtrie::toml::CodePointTrieToml;
+use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::TrieType;
+use icu_collections::codepointtrie::TrieValue;
 use std::convert::TryInto;
 
 mod wasm;

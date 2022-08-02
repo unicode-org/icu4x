@@ -191,10 +191,10 @@ pub(crate) enum IcuTrieType {
 }
 
 impl IcuTrieType {
-    pub(crate) fn to_internal(self) -> icu_codepointtrie::TrieType {
+    pub(crate) fn to_internal(self) -> icu_collections::codepointtrie::TrieType {
         match self {
-            IcuTrieType::Fast => icu_codepointtrie::TrieType::Fast,
-            IcuTrieType::Small => icu_codepointtrie::TrieType::Small,
+            IcuTrieType::Fast => icu_collections::codepointtrie::TrieType::Fast,
+            IcuTrieType::Small => icu_collections::codepointtrie::TrieType::Small,
         }
     }
 }

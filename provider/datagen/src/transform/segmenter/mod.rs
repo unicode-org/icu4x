@@ -4,7 +4,7 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-use icu_codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
 use icu_locid::{langid, locale};
 use icu_properties::{
