@@ -36,6 +36,9 @@ use super::*;
 /// `VarZeroVec<T>` behaves much like [`Cow`](alloc::borrow::Cow), where it can be constructed from
 /// owned data (and then mutated!) but can also borrow from some buffer.
 ///
+/// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
+/// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index32`].
+///
 /// # Example
 ///
 /// ```rust

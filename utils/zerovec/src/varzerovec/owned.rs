@@ -26,6 +26,9 @@ use super::components::METADATA_WIDTH;
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
 /// [`VarZeroVec`] and [`VarZeroSlice`].
+///
+/// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
+/// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index32`].
 pub struct VarZeroVecOwned<T: ?Sized, F = Index32> {
     marker: PhantomData<(Box<T>, F)>,
     // safety invariant: must parse into a valid VarZeroVecComponents
@@ -168,9 +171,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// ## Safety
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
     unsafe fn index_data(&self, index: usize) -> &F::RawBytes {
-        &F::RawBytes::from_byte_slice_unchecked(
-            &self.entire_slice[Self::index_range(index)],
-        )[0]
+        &F::RawBytes::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])[0]
     }
 
     /// Return the mutable slice representing the given `index`.
@@ -198,8 +199,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
         let indices = F::rawbytes_from_byte_slice_unchecked_mut(
-            &mut self.entire_slice
-                [LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * len],
+            &mut self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH
+                ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * len],
         );
         for idx in &mut indices[starting_index..] {
             let mut new_idx = F::rawbytes_to_usize(*idx);

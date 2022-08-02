@@ -21,7 +21,9 @@ pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 /// This trait allows switching between different possible internal
 /// representations of VarZeroVec.
 ///
-/// Currently this crate supports two formats: [`Index16`] and [`Index32`].
+/// Currently this crate supports two formats: [`Index16`] and [`Index32`],
+/// with [`Index32`] being the default for all [`VarZeroVec`](super::VarZeroVec)
+/// types unless explicitly specified otherwise.
 ///
 /// Do not implement this trait, its internals may be changed in the future,
 /// and all of its associated items are hidden from the docs.
