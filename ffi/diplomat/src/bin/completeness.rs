@@ -4,6 +4,42 @@ use std::collections::{BTreeSet, HashSet};
 use std::fs::File;
 use std::path::PathBuf;
 
+fn main() {
+    let doc_types = ["icu", "fixed_decimal"]
+        .into_iter()
+        .flat_map(collect_public_types)
+        .map(|(path, typ)| ast::RustLink {
+            path: ast::Path {
+                elements: path
+                    .into_iter()
+                    .map(|s| ast::Ident::try_from(s).expect("item path is valid"))
+                    .collect(),
+            },
+            typ,
+        })
+        .filter(|rl| {
+            ![
+                ast::DocType::EnumVariant,
+                ast::DocType::Mod,
+                ast::DocType::Trait,
+            ]
+            .contains(&rl.typ)
+        })
+        .collect::<BTreeSet<_>>();
+
+    let diplomat_types = ast::File::from(&syn_inline_mod::parse_and_inline_modules(
+        &PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/src/lib.rs")),
+    ))
+    .all_rust_links()
+    .into_iter()
+    .cloned()
+    .collect::<BTreeSet<_>>();
+
+    doc_types
+        .difference(&diplomat_types)
+        .for_each(|item| println!("{item}"));
+}
+
 lazy_static::lazy_static! {
     static ref IGNORED_TRAITS: HashSet<&'static str> = [
         "Any",
@@ -300,33 +336,4 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
     );
 
     types.into_iter()
-}
-
-fn main() {
-    let doc_types = ["icu"]
-        .into_iter()
-        .flat_map(collect_public_types)
-        .map(|(path, typ)| ast::RustLink {
-            path: ast::Path {
-                elements: path
-                    .into_iter()
-                    .map(|s| ast::Ident::try_from(s).expect("item path is valid"))
-                    .collect(),
-            },
-            typ,
-        })
-        .filter(|rl| ![ast::DocType::EnumVariant, ast::DocType::Mod].contains(&rl.typ))
-        .collect::<BTreeSet<_>>();
-
-    let diplomat_types = ast::File::from(&syn_inline_mod::parse_and_inline_modules(
-        &PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/src/lib.rs")),
-    ))
-    .all_rust_links()
-    .into_iter()
-    .cloned()
-    .collect::<BTreeSet<_>>();
-
-    doc_types
-        .difference(&diplomat_types)
-        .for_each(|item| println!("{item}"));
 }
