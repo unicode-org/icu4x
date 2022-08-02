@@ -82,9 +82,10 @@ impl<'data> BlobSchemaV1<'data> {
 /// https://github.com/unicode-org/icu4x/issues/2310 tracks being able to do this with derive(ULE)
 #[zerovec::make_varule(Index32U8)]
 #[zerovec::skip_derive(ZeroMapKV)]
-#[derive(Eq, PartialEq, Ord, PartialOrd)]
-#[cfg_attr(feature = "export", derive(serde::Serialize, serde::Deserialize))]
-#[cfg_attr(feature = "export", zerovec::derive(Serialize, Deserialize))]
+#[derive(Eq, PartialEq, Ord, PartialOrd, serde::Deserialize)]
+#[zerovec::derive(Deserialize)]
+#[cfg_attr(feature = "export", derive(serde::Serialize))]
+#[cfg_attr(feature = "export", zerovec::derive(Serialize))]
 pub(crate) struct Index32U8Borrowed<'a>(
     #[cfg_attr(feature = "export", serde(borrow))] pub &'a [u8],
 );
