@@ -11,6 +11,7 @@ use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::sync::Mutex;
 use writeable::Writeable;
+use zerovec::vecs::Index32;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap2d;
 
@@ -99,7 +100,7 @@ impl DataExporter for BlobExporter<'_> {
             .collect::<ZeroMap2d<_, _, _>>();
 
         // Convert the sorted list to a VarZeroVec
-        let vzv: VarZeroVec<[u8]> = {
+        let vzv: VarZeroVec<[u8], Index32> = {
             let buffers: Vec<Vec<u8>> = sorted.into_iter().map(|(blob, _)| blob).collect();
             buffers.as_slice().into()
         };

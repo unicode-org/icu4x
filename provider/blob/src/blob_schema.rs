@@ -4,6 +4,7 @@
 
 use icu_provider::prelude::*;
 use zerovec::maps::ZeroMap2dBorrowed;
+use zerovec::vecs::Index32;
 use zerovec::VarZeroSlice;
 
 /// A versioned Serde schema for ICU4X data blobs.
@@ -26,7 +27,7 @@ pub struct BlobSchemaV1<'data> {
     pub keys: ZeroMap2dBorrowed<'data, DataKeyHash, [u8], usize>,
     /// Vector of buffers
     #[serde(borrow)]
-    pub buffers: &'data VarZeroSlice<[u8]>,
+    pub buffers: &'data VarZeroSlice<[u8], Index32>,
 }
 
 impl Default for BlobSchemaV1<'_> {
