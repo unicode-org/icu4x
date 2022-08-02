@@ -32,4 +32,37 @@ denylist = ["bench"]
 all-features = true
 
 [dependencies]
-icu_codepointtrie = { path = "codepointtrie", features = ["serde"] }
+icu_uniset = { version = "0.5.0", path = "../../utils/uniset" }
+yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
+zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"] }
+zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["yoke"] }
+
+serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
+databake = { version = "0.1.0", path = "../../utils/databake", features = ["derive"], optional = true }
+
+[dev-dependencies]
+postcard = { version = "1.0.0-alpha.4", features = ["alloc"] }
+toml = "0.5"
+serde = { version = "1.0", features = ["derive"] }
+criterion = "0.3.4"
+iai = "0.1.1"
+icu = { path = "../icu", default-features = false }
+
+[lib]
+bench = false  # This option is required for Benchmark CI
+path = "src/lib.rs"
+
+[features]
+default = []
+serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde"]
+bench = []
+databake = ["dep:databake", "zerovec/databake"]
+
+# [[bench]]
+# name = "codepointtrie"
+# harness = false
+# 
+# [[bench]]
+# name = "iai_cpt"
+# harness = false
+# required-features = ["bench"]

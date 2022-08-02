@@ -27,3 +27,5 @@
 
 #[doc(inline)]
 pub use icu_codepointtrie as codepointtrie;
+
+mod codepointtrie;
