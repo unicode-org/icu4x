@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659438805496,
+  "lastUpdate": 1659473597338,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41908,6 +41908,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 75,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3ba9978eb84c2de830399f70e2fcc2306d18e5e",
+          "message": "Make Japanext its own calendar type (#2311)",
+          "timestamp": "2022-08-02T13:41:20-07:00",
+          "tree_id": "19dbefe698bb4881b96741e73fda0bd981cf0386",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3ba9978eb84c2de830399f70e2fcc2306d18e5e"
+        },
+        "date": 1659473563978,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100807,
+            "range": "± 818",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20962,
+            "range": "± 172",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 55367,
+            "range": "± 324",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 176,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 65,
             "range": "± 0",
             "unit": "ns/iter"
           }
