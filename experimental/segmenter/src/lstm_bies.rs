@@ -25,6 +25,8 @@ pub struct Lstm<'l> {
     mat8: Array2<f32>,
     mat9: Array1<f32>,
     grapheme: Option<&'l GraphemeClusterSegmenter>,
+    hunits: usize,
+    backward_hunits: usize,
 }
 
 impl<'l> Lstm<'l> {
@@ -56,8 +58,9 @@ impl<'l> Lstm<'l> {
         let mat7 = data.get().mat7.as_ndarray1()?;
         let mat8 = data.get().mat8.as_ndarray2()?;
         let mat9 = data.get().mat9.as_ndarray1()?;
-        let embedd_dim = mat1.shape()[1];
-        let hunits = mat3.shape()[0];
+        let embedd_dim = *mat1.shape().get(1).ok_or(Error::DimensionMismatch)?;
+        let hunits = *mat3.shape().get(0).ok_or(Error::DimensionMismatch)?;
+        let backward_hunits = *mat6.shape().get(0).ok_or(Error::DimensionMismatch)?;
         if mat2.shape() != [embedd_dim, 4 * hunits]
             || mat3.shape() != [hunits, 4 * hunits]
             || mat4.shape() != [4 * hunits]
@@ -85,6 +88,8 @@ impl<'l> Lstm<'l> {
             } else {
                 grapheme
             },
+            hunits,
+            backward_hunits,
         })
     }
 
@@ -126,10 +131,10 @@ impl<'l> Lstm<'l> {
         warr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
         uarr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 2]>>,
         barr: ArrayBase<ViewRepr<&f32>, Dim<[usize; 1]>>,
+        hunits: usize,
     ) -> (Array1<f32>, Array1<f32>) {
         // i, f, and o respectively stand for input, forget, and output gates
         let s_t = x_t.dot(&warr) + h_tm1.dot(&uarr) + barr;
-        let hunits = uarr.shape()[0];
         let i = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![..hunits]));
         let f = math_helper::sigmoid_arr1(s_t.slice(ndarray::s![hunits..2 * hunits]));
         let _c = math_helper::tanh_arr1(s_t.slice(ndarray::s![2 * hunits..3 * hunits]));
@@ -169,7 +174,7 @@ impl<'l> Lstm<'l> {
         let input_seq_len = input_seq.len();
 
         // hunits is the number of hidden unints in each LSTM cell
-        let hunits = self.mat3.shape()[0];
+        let hunits = self.hunits;
         // Forward LSTM
         let mut c_fw = Array1::<f32>::zeros(hunits);
         let mut h_fw = Array1::<f32>::zeros(hunits);
@@ -183,6 +188,7 @@ impl<'l> Lstm<'l> {
                 self.mat2.view(),
                 self.mat3.view(),
                 self.mat4.view(),
+                hunits,
             );
             h_fw = new_h;
             c_fw = new_c;
@@ -202,6 +208,7 @@ impl<'l> Lstm<'l> {
                 self.mat5.view(),
                 self.mat6.view(),
                 self.mat7.view(),
+                self.backward_hunits,
             );
             h_bw = new_h;
             c_bw = new_c;

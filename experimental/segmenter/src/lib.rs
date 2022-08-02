@@ -74,7 +74,7 @@
 #![cfg_attr(
     not(test),
     deny(
-        // TODO(#2325): clippy::indexing_slicing,
+        clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
