@@ -89,8 +89,8 @@ pub mod ffi {
 
         /// Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::multiply_pow10, FnInStruct)]
-        pub fn multiply_pow10(&mut self, power: i16) -> bool {
-            self.0.multiply_pow10(power).is_ok()
+        pub fn multiply_pow10(&mut self, power: i16) {
+            self.0.multiply_pow10(power)
         }
 
         /// Set the sign of the [`ICU4XFixedDecimal`].

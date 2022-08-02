@@ -22,7 +22,7 @@
 //! use writeable::Writeable;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let fdf = FixedDecimalFormatter::try_new(&provider, &locale!("bn").into(), Default::default())
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &locale!("bn").into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
@@ -41,12 +41,11 @@
 //! use writeable::Writeable;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let fdf = FixedDecimalFormatter::try_new(&provider, &Locale::UND.into(), Default::default())
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &Locale::UND.into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050)
-//!     .multiplied_pow10(-2)
-//!     .expect("Operation is fully in range");
+//!     .multiplied_pow10(-2);
 //!
 //! assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
 //! ```
@@ -63,7 +62,7 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //! let locale = "th-u-nu-thai".parse::<Locale>().unwrap();
-//! let fdf = FixedDecimalFormatter::try_new(&provider, &locale.into(), Default::default())
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
@@ -123,7 +122,7 @@ pub struct FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    pub fn try_new<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
@@ -136,6 +135,11 @@ impl FixedDecimalFormatter {
             .take_payload()?;
         Ok(Self { options, symbols })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        options: options::FixedDecimalFormatterOptions,
+        error: FixedDecimalFormatterError
+    );
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {

@@ -41,7 +41,7 @@
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html>`__ for more information.
 
 
-    .. cpp:function:: bool multiply_pow10(int16_t power)
+    .. cpp:function:: void multiply_pow10(int16_t power)
 
         Multiply the :cpp:class:`ICU4XFixedDecimal` by a given power of ten.
 

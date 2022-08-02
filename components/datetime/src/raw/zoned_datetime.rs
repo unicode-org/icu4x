@@ -115,9 +115,12 @@ impl ZonedDateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            &locale,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
             locale,

@@ -96,7 +96,7 @@ fn to_string_benches(c: &mut Criterion) {
     use writeable::Writeable;
 
     let objects = [
-        FixedDecimal::from(2250).multiplied_pow10(-2).unwrap(),
+        FixedDecimal::from(2250).multiplied_pow10(-2),
         FixedDecimal::from(908070605040302010u128),
     ];
 

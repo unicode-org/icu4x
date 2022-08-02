@@ -4,7 +4,7 @@
 
 use crate::transform::cldr::cldr_serde;
 use icu_calendar::provider::*;
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value, langid, Locale};
+use icu_locid::langid;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
@@ -17,9 +17,11 @@ use zerovec::ZeroVec;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 
-impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        let japanext = req.locale.get_unicode_ext(&key!("ca")) == Some(value!("japanext"));
+impl crate::DatagenProvider {
+    fn load_japanese_eras(
+        &self,
+        japanext: bool,
+    ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
@@ -115,6 +117,22 @@ impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
     }
 }
 
+impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+        self.load_japanese_eras(false)
+    }
+}
+
+impl DataProvider<JapanextErasV1Marker> for crate::DatagenProvider {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<JapanextErasV1Marker>, DataError> {
+        let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
+        Ok(DataResponse {
+            metadata,
+            payload: payload.map(|p| p.cast()),
+        })
+    }
+}
+
 /// See https://docs.google.com/document/d/1vMVhMHgCYRyx2gmwEfKRyXWDg_lrQadd8iMVU9uPK1o/edit?usp=chrome_omnibox&ouid=111665445991279316689
 /// for the era identifier spec
 fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
@@ -166,10 +184,13 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 
 impl IterableDataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![
-            DataLocale::from(Locale::from_str("und-u-ca-japanese").unwrap()),
-            DataLocale::from(Locale::from_str("und-u-ca-japanext").unwrap()),
-        ])
+        Ok(vec![Default::default()])
+    }
+}
+
+impl IterableDataProvider<JapanextErasV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![Default::default()])
     }
 }
 

@@ -81,9 +81,12 @@ impl TimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            data_provider,
+            &locale,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -226,9 +229,12 @@ impl DateFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            data_provider,
+            &locale,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -431,9 +437,12 @@ impl DateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(data_provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            data_provider,
+            &locale,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
