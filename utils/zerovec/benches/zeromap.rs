@@ -6,6 +6,8 @@ use std::{collections::HashMap, fs};
 
 use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
+use zerovec::maps::ZeroMapKV;
+use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};
 use zerovec::ZeroMap;
 
 const DATA: [(&str, &str); 16] = [
@@ -96,15 +98,15 @@ fn overview_bench(c: &mut Criterion) {
     generate_test_data();
 }
 
-fn build_zeromap(large: bool) -> ZeroMap<'static, str, str> {
-    let mut map: ZeroMap<str, str> = ZeroMap::new();
+fn build_zeromap(large: bool) -> ZeroMap<'static, Index32Str, Index32Str> {
+    let mut map: ZeroMap<Index32Str, Index32Str> = ZeroMap::new();
     for (key, value) in DATA.iter() {
         if large {
             for n in 0..8192 {
-                map.insert(&format!("{}{}", key, n), value);
+                map.insert(indexify(&format!("{}{}", key, n)), indexify(value));
             }
         } else {
-            map.insert(key, value);
+            map.insert(indexify(key), indexify(value));
         }
     }
     map
@@ -113,8 +115,9 @@ fn build_zeromap(large: bool) -> ZeroMap<'static, str, str> {
 fn bench_deserialize(c: &mut Criterion) {
     c.bench_function("zeromap/deserialize/small", |b| {
         b.iter(|| {
-            let map: ZeroMap<str, str> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
-            assert_eq!(map.get("iu"), Some("Inuktitut"));
+            let map: ZeroMap<Index32Str, Index32Str> =
+                postcard::from_bytes(black_box(&POSTCARD)).unwrap();
+            assert_eq!(map.get(indexify("iu")).map(|x| &x.0), Some("Inuktitut"));
         })
     });
 }
@@ -123,29 +126,36 @@ fn bench_deserialize_large(c: &mut Criterion) {
     let buf = read_large_zeromap_postcard_bytes();
     c.bench_function("zeromap/deserialize/large", |b| {
         b.iter(|| {
-            let map: ZeroMap<str, str> = postcard::from_bytes(black_box(&buf)).unwrap();
-            assert_eq!(map.get("iu3333"), Some("Inuktitut"));
+            let map: ZeroMap<Index32Str, Index32Str> =
+                postcard::from_bytes(black_box(&buf)).unwrap();
+            assert_eq!(map.get(indexify("iu3333")).map(|x| &x.0), Some("Inuktitut"));
         })
     });
 }
 
 fn bench_lookup(c: &mut Criterion) {
-    let map: ZeroMap<str, str> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
+    let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
     c.bench_function("zeromap/lookup/small", |b| {
         b.iter(|| {
-            assert_eq!(map.get(black_box("iu")), Some("Inuktitut"));
-            assert_eq!(map.get(black_box("zz")), None);
+            assert_eq!(
+                map.get(black_box(indexify("iu"))).map(|x| &x.0),
+                Some("Inuktitut")
+            );
+            assert_eq!(map.get(black_box(indexify("zz"))).map(|x| &x.0), None);
         });
     });
 }
 
 fn bench_lookup_large(c: &mut Criterion) {
     let buf = read_large_zeromap_postcard_bytes();
-    let map: ZeroMap<str, str> = postcard::from_bytes(&buf).unwrap();
+    let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
     c.bench_function("zeromap/lookup/large", |b| {
         b.iter(|| {
-            assert_eq!(map.get(black_box("iu3333")), Some("Inuktitut"));
-            assert_eq!(map.get(black_box("zz")), None);
+            assert_eq!(
+                map.get(black_box(indexify("iu3333"))).map(|x| &x.0),
+                Some("Inuktitut")
+            );
+            assert_eq!(map.get(black_box(indexify("zz"))).map(|x| &x.0), None);
         });
     });
 }
@@ -233,3 +243,30 @@ fn read_large_hashmap_postcard_bytes() -> Vec<u8> {
 
 criterion_group!(benches, overview_bench);
 criterion_main!(benches);
+
+/// This type lets us use a u32-index-format VarZeroVec with the ZeroMap.
+///
+/// Eventually we will have a FormatSelector type that lets us do `ZeroMap<FormatSelector<K, Index32>, V>`
+/// (https://github.com/unicode-org/icu4x/issues/2312)
+///
+/// ,  isn't actually important; it's just more convenient to use make_varule to get the
+/// full suite of traits instead of `#[derive(VarULE)]`. (With `#[derive(VarULE)]` we would have to manually
+/// define a Serialize implementation, and that would be gnarly)
+/// https://github.com/unicode-org/icu4x/issues/2310 tracks being able to do this with derive(ULE)
+#[zerovec::make_varule(Index32Str)]
+#[zerovec::skip_derive(ZeroMapKV)]
+#[derive(Eq, PartialEq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
+#[zerovec::derive(Serialize, Deserialize)]
+pub(crate) struct Index32StrBorrowed<'a>(#[serde(borrow)] pub &'a str);
+
+impl<'a> ZeroMapKV<'a> for Index32Str {
+    type Container = VarZeroVec<'a, Index32Str, Index32>;
+    type Slice = VarZeroSlice<Index32Str, Index32>;
+    type GetType = Index32Str;
+    type OwnedType = Box<Index32Str>;
+}
+
+#[inline]
+fn indexify(s: &str) -> &Index32Str {
+    unsafe { ::core::mem::transmute(s) }
+}
