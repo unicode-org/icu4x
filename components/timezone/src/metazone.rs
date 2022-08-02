@@ -45,11 +45,7 @@ impl MetaZoneCalculator {
         Ok(Self { metazone_period })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: TimeZoneError
-    );
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: TimeZoneError);
 
     /// Calculate metazone id from timezone id and local datetime.
     ///
