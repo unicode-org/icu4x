@@ -101,6 +101,34 @@ impl Japanese {
             .take_payload()?;
         Ok(Self { eras })
     }
+
+    fn japanese_date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+        debug_name: &'static str
+    ) -> Result<JapaneseDateInner, DateTimeError> {
+        let month = crate::calendar_arithmetic::ordinal_solar_month_from_code(month_code);
+        let month = if let Some(month) = month {
+            month
+        } else {
+            return Err(DateTimeError::UnknownMonthCode(
+                month_code.0,
+                debug_name,
+            ));
+        };
+
+        if month > 12 {
+            return Err(DateTimeError::UnknownMonthCode(
+                month_code.0,
+                debug_name,
+            ));
+        }
+
+        self.new_japanese_date_inner(era, year, month, day)
+    }
 }
 
 impl Japanext {
@@ -120,6 +148,7 @@ impl Japanext {
 
 impl Calendar for Japanese {
     type DateInner = JapaneseDateInner;
+
     fn date_from_codes(
         &self,
         era: types::Era,
@@ -127,25 +156,9 @@ impl Calendar for Japanese {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateTimeError> {
-        let month = crate::calendar_arithmetic::ordinal_solar_month_from_code(month_code);
-        let month = if let Some(month) = month {
-            month
-        } else {
-            return Err(DateTimeError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
-        };
-
-        if month > 12 {
-            return Err(DateTimeError::UnknownMonthCode(
-                month_code.0,
-                self.debug_name(),
-            ));
-        }
-
-        self.new_japanese_date_inner(era, year, month, day)
+        self.japanese_date_from_codes(era, year, month_code, day, self.debug_name())
     }
+
     fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
         let (adjusted_year, era) = self.adjusted_year_for(iso.inner());
         JapaneseDateInner {
@@ -250,7 +263,7 @@ impl Calendar for Japanext {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateTimeError> {
-        Japanese::date_from_codes(&self.0, era, year, month_code, day)
+        self.0.japanese_date_from_codes(era, year, month_code, day, self.debug_name())
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
