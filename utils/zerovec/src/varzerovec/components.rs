@@ -27,6 +27,7 @@ pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 ///
 /// Do not implement this trait, its internals may be changed in the future,
 /// and all of its associated items are hidden from the docs.
+#[allow(clippy::missing_safety_doc)] // no safety section for you, don't implement this trait period
 pub unsafe trait VarZeroVecFormat: 'static + Sized {
     #[doc(hidden)]
     const INDEX_WIDTH: usize;
@@ -232,7 +233,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
-            len: len,
+            len,
             indices: indices_bytes,
             things,
             entire_slice: slice,
@@ -509,6 +510,7 @@ where
         // VZV expects data offsets to be stored relative to the first data block
         let idx = dat_offset - first_dat_offset;
         assert!(idx <= MAX_INDEX);
+        #[allow(clippy::indexing_slicing)] // this function is explicitly panicky
         idx_slice.copy_from_slice(&idx.to_le_bytes()[..F::INDEX_WIDTH]);
 
         let dat_limit = dat_offset + element_len;
