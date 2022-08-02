@@ -435,6 +435,12 @@ impl Date<Japanext> {
             .new_japanese_date_inner(era, year, month, day)?;
         Ok(Date::from_raw(inner, japanext_calendar))
     }
+
+    /// For testing era fallback in icu_datetime
+    #[doc(hidden)]
+    pub fn into_japanese_date(self) -> Date<Japanese> {
+        Date::from_raw(self.inner, self.calendar.0)
+    }
 }
 
 impl DateTime<Japanese> {

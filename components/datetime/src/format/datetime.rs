@@ -510,26 +510,24 @@ mod tests {
     #[cfg(feature = "serde")]
     fn test_mixed_calendar_eras() {
         use icu::calendar::japanese::Japanext;
-        use icu::calendar::DateTime;
+        use icu::calendar::Date;
         use icu::datetime::options::length;
-        use icu::datetime::DateTimeFormatter;
+        use icu::datetime::DateFormatter;
 
         let provider = icu_testdata::get_provider();
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let options =
-            length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
-        let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), &options)
+        let dtf = DateFormatter::try_new_unstable(&provider, &locale.into(), length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
         let japanext =
-            Japanext::try_new(&provider).expect("Cannot load japanese data");
-        let datetime = DateTime::new_gregorian_datetime(1800, 9, 1, 12, 34, 28)
-            .expect("Failed to construct DateTime.");
-        let datetime = datetime.to_calendar(japanext).to_any();
+            Japanext::try_new(&provider).expect("Cannot load japanext data");
+        let date = Date::new_gregorian_date(1800, 9, 1)
+            .expect("Failed to construct Date.");
+        let date = date.to_calendar(japanext).into_japanese_date().to_any();
 
-        let result = dtf.format_to_string(&datetime).unwrap();
+        let result = dtf.format_to_string(&date).unwrap();
 
-        assert_eq!(result, "Sep 1, 12 kansei-1789, 12:34 PM")
+        assert_eq!(result, "Sep 1, 12 kansei-1789")
     }
 
     #[test]
