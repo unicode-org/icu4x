@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659412484410,
+  "lastUpdate": 1659413858549,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41788,6 +41788,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9dd86f9940ce7dec43c1e2417a003b656739a099",
+          "message": "Document encoding choices over FFI (#2291)",
+          "timestamp": "2022-08-01T21:06:13-07:00",
+          "tree_id": "b4abc6b272d21fccceeb9a3df059863f964f8d81",
+          "url": "https://github.com/unicode-org/icu4x/commit/9dd86f9940ce7dec43c1e2417a003b656739a099"
+        },
+        "date": 1659413821335,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123871,
+            "range": "± 382",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25482,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71675,
+            "range": "± 180",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 86,
             "range": "± 0",
             "unit": "ns/iter"
           }
