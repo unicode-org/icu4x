@@ -31,34 +31,43 @@
 //!
 //! All nontrivial data providers can fit into one of two classes.
 //!
-//! 1. Type 1: Those whose data originates as structured Rust objects
-//! 2. Type 2: Those whose data originates as unstructured `[u8]` buffers
+//! 1. [`AnyProvider`]: Those whose data originates as structured Rust objects
+//! 2. [`BufferProvider`]: Those whose data originates as unstructured `[u8]` buffers
 //!
-//! ### Type 1 Providers
+//! ### AnyProvider
 //!
-//! Type 1 providers generally implement [`AnyProvider`], which returns structured data cast into
-//! `dyn Any` trait objects. Users can call [`as_downcasting()`] to get an object implementing
-//! [`DataProvider`] by downcasting the trait objects.
+//! These providers are able to return structured data cast into `dyn Any` trait objects. Users
+//! can call [`as_downcasting()`] to get an object implementing [`DataProvider`] by downcasting
+//! the trait objects.
 //!
-//! Examples of Type 1 providers:
+//! Examples of AnyProviders:
 //!
 //! - [`CldrJsonDataProvider`] reads structured data from CLDR JSON source files and returns
 //!   structured Rust objects.
 //! - [`AnyPayloadProvider`] wraps a specific data struct and returns it.
 //! - The `BakedDataProvider` which encodes structured data directly in Rust source
 //!
-//! ### Type 2 Providers
+//! ### BufferProvider
 //!
-//! Type 2 providers generally implement [`BufferProvider`], which returns unstructured data
-//! typically represented as [`serde`]-serialized buffers. Users can call [`as_deserializing()`]
-//! to get an object implementing [`DataProvider`] by invoking Serde Deserialize.
+//! These providers are able to return unstructured data typically represented as
+//! [`serde`]-serialized buffers. Users can call [`as_deserializing()`] to get an object
+//! implementing [`DataProvider`] by invoking Serde Deserialize.
 //!
-//! Examples of Type 2 providers:
+//! Examples of BufferProviders:
 //!
 //! - [`FsDataProvider`] reads individual buffers from the filesystem.
 //! - [`BlobDataProvider`] reads buffers from a large in-memory blob.
+//! 
+//! ## ICU4X Constructor Signatures
+//! 
+//! 
 //!
-//! ### Testing Provider
+//! ## Provider Adapters
+//!
+//! ICU4X offers several built-in modules to combine providers in interesting ways.
+//! These can be found in the [`icu_provider_adapters`] crate.
+//!
+//! ## Testing Provider
 //!
 //! This crate also contains a concrete provider for testing purposes:
 //!
@@ -66,11 +75,6 @@
 //!
 //! If you need a testing provider that contains the actual resource keys used by ICU4X features,
 //! see the [`icu_testdata`] crate.
-//!
-//! ## Provider Adapters
-//!
-//! ICU4X offers several built-in modules to combine providers in interesting ways.
-//! These can be found in the [`icu_provider_adapters`] crate.
 //!
 //! ## Types and Lifetimes
 //!

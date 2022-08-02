@@ -123,7 +123,7 @@ pub struct FixedDecimalFormatter {
 
 impl FixedDecimalFormatter {
     /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
-    pub fn try_new<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         data_provider: &D,
         locale: &DataLocale,
         options: options::FixedDecimalFormatterOptions,
@@ -136,6 +136,11 @@ impl FixedDecimalFormatter {
             .take_payload()?;
         Ok(Self { options, symbols })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        options: options::FixedDecimalFormatterOptions,
+        error: FixedDecimalFormatterError
+    );
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {
