@@ -409,7 +409,7 @@ impl Date<JapaneseExtended> {
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
-    /// let date = Date::new_japanext_date(era, 7, 1, 2, japanext_calendar)
+    /// let date = Date::new_japanese_extended_date(era, 7, 1, 2, japanext_calendar)
     ///     .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().era, era);
@@ -417,7 +417,7 @@ impl Date<JapaneseExtended> {
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     /// ```
-    pub fn new_japanext_date<A: AsCalendar<Calendar = JapaneseExtended>>(
+    pub fn new_japanese_extended_date<A: AsCalendar<Calendar = JapaneseExtended>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -501,7 +501,7 @@ impl DateTime<JapaneseExtended> {
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
-    /// let datetime = DateTime::new_japanext_datetime(era, 7, 1, 2, 13, 1, 0, japanext_calendar)
+    /// let datetime = DateTime::new_japanese_extended_datetime(era, 7, 1, 2, 13, 1, 0, japanext_calendar)
     ///     .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(datetime.date.year().era, era);
@@ -515,7 +515,7 @@ impl DateTime<JapaneseExtended> {
     #[allow(clippy::too_many_arguments)] // it's more convenient to have this many arguments
                                          // if people wish to construct this by parts they can use
                                          // Date::new_japanese_date() + DateTime::new(date, time)
-    pub fn new_japanext_datetime<A: AsCalendar<Calendar = JapaneseExtended>>(
+    pub fn new_japanese_extended_datetime<A: AsCalendar<Calendar = JapaneseExtended>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -526,7 +526,7 @@ impl DateTime<JapaneseExtended> {
         japanext_calendar: A,
     ) -> Result<DateTime<A>, DateTimeError> {
         Ok(DateTime {
-            date: Date::new_japanext_date(era, year, month, day, japanext_calendar)?,
+            date: Date::new_japanese_extended_date(era, year, month, day, japanext_calendar)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
     }
@@ -746,12 +746,13 @@ mod tests {
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date = Date::new_japanext_date(era, year, month, day, calendar).unwrap_or_else(|e| {
-            panic!(
-                "Failed to construct date with {:?}, {}, {}, {}: {}",
-                era, year, month, day, e
-            )
-        });
+        let date = Date::new_japanese_extended_date(era, year, month, day, calendar)
+            .unwrap_or_else(|e| {
+                panic!(
+                    "Failed to construct date with {:?}, {}, {}, {}: {}",
+                    era, year, month, day, e
+                )
+            });
         let iso = date.to_iso();
         let reconstructed = Date::new_from_iso(iso, calendar);
         assert_eq!(
@@ -773,20 +774,21 @@ mod tests {
         let era = types::Era(era.parse().expect("era must parse"));
         let era2 = types::Era(era2.parse().expect("era must parse"));
 
-        let expected =
-            Date::new_japanext_date(era2, year2, month, day, calendar).unwrap_or_else(|e| {
+        let expected = Date::new_japanese_extended_date(era2, year2, month, day, calendar)
+            .unwrap_or_else(|e| {
                 panic!(
                     "Failed to construct expectation date with {:?}, {}, {}, {}: {}",
                     era2, year2, month, day, e
                 )
             });
 
-        let date = Date::new_japanext_date(era, year, month, day, calendar).unwrap_or_else(|e| {
-            panic!(
-                "Failed to construct date with {:?}, {}, {}, {}: {}",
-                era, year, month, day, e
-            )
-        });
+        let date = Date::new_japanese_extended_date(era, year, month, day, calendar)
+            .unwrap_or_else(|e| {
+                panic!(
+                    "Failed to construct date with {:?}, {}, {}, {}: {}",
+                    era, year, month, day, e
+                )
+            });
         let iso = date.to_iso();
         let reconstructed = Date::new_from_iso(iso, calendar);
         assert_eq!(
@@ -823,7 +825,7 @@ mod tests {
     ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
-        let date = Date::new_japanext_date(era, year, month, day, calendar);
+        let date = Date::new_japanese_extended_date(era, year, month, day, calendar);
         assert_eq!(
             date,
             Err(error),
