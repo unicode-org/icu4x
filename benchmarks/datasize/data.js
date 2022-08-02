@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659402072310,
+  "lastUpdate": 1659411847823,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22553,6 +22553,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3293dd40924a6eb271ca16e10440b816a5807ac3"
         },
         "date": 1659402025531,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "acc48dc55e93ceec32e0f2835811e615a02635af",
+          "message": "Allow CodePointTrie to determine error_value at runtime from data (#2301)",
+          "timestamp": "2022-08-02T03:42:13Z",
+          "tree_id": "2d08462a7a150168725c543079ca0144db9ce958",
+          "url": "https://github.com/unicode-org/icu4x/commit/acc48dc55e93ceec32e0f2835811e615a02635af"
+        },
+        "date": 1659411808003,
         "tool": "ndjson",
         "benches": [
           {
