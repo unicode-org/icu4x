@@ -25,7 +25,8 @@
 )]
 #![warn(missing_docs)]
 
-#[doc(inline)]
-pub use icu_codepointtrie as codepointtrie;
 
-mod codepointtrie;
+extern crate alloc;
+
+
+pub mod codepointtrie;

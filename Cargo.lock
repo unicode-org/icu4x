@@ -1510,6 +1510,7 @@ version = "0.6.0"
 dependencies = [
  "criterion",
  "databake",
+ "displaydoc",
  "iai",
  "icu",
  "icu_uniset",

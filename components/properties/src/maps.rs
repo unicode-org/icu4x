@@ -17,7 +17,7 @@ use crate::sets::CodePointSetData;
 #[cfg(doc)]
 use crate::*;
 use core::marker::PhantomData;
-use icu_codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
+use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 
 /// A wrapper around code point map data. It is returned by APIs that return Unicode
