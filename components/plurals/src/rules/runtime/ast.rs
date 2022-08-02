@@ -564,7 +564,7 @@ mod test {
         let vzv = VarZeroVec::<_>::from(relations.as_slice());
         assert_eq!(
             vzv.as_bytes(),
-            &[1, 0, 0, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]
+            &[1, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]
         );
     }
 }
