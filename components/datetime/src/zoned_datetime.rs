@@ -7,6 +7,7 @@ use core::marker::PhantomData;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
+use icu_calendar::provider::JapaneseErasV1Marker;
 
 use crate::{
     calendar,
@@ -58,9 +59,6 @@ use crate::{
 /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
 ///     &locale!("en").into(),
 ///     &provider,
-///     &provider,
-///     &provider,
-///     &provider,
 ///     &options.into(),
 ///     &TimeZoneFormatterOptions::default(),
 /// )
@@ -91,11 +89,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// let options = DateTimeFormatterOptions::default();
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+    ///     &provider,
     ///     &locale!("en").into(),
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
     ///     &options,
     ///     &TimeZoneFormatterOptions::default(),
     /// );
@@ -105,32 +100,29 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<DP, ZP, PP, DEP>(
+    pub fn try_new<P>(
+        provider: &P,
         locale: &DataLocale,
-        date_provider: &DP,
-        zone_provider: &ZP,
-        plural_provider: &PP,
-        decimal_provider: &DEP,
-        date_time_format_options: &DateTimeFormatterOptions,
-        time_zone_format_options: &TimeZoneFormatterOptions,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        DP: DataProvider<DateSymbolsV1Marker>
+        P: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<DateLengthsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
-            + ?Sized,
-        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
             + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
-        PP: DataProvider<OrdinalV1Marker> + ?Sized,
-        DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
@@ -139,11 +131,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
+                provider,
                 locale,
-                date_provider,
-                zone_provider,
-                plural_provider,
-                decimal_provider,
                 date_time_format_options,
                 time_zone_format_options,
             )?,
@@ -165,11 +154,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+    ///     &provider,
     ///     &locale.into(),
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
     ///     &options,
     ///     &TimeZoneFormatterOptions::default(),
     /// )
@@ -209,11 +195,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+    ///     &provider,
     ///     &locale.into(),
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
     ///     &options.into(),
     ///     &TimeZoneFormatterOptions::default(),
     /// )
@@ -251,11 +234,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::DateTimeFormatterOptions::default();
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+    ///     &provider,
     ///     &locale.into(),
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
     ///     &options.into(),
     ///     &TimeZoneFormatterOptions::default(),
     /// )
