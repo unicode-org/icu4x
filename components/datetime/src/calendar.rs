@@ -6,8 +6,8 @@ use crate::error::DateTimeFormatterError;
 use alloc::string::ToString;
 use core::any;
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese, japanese::Japanext,
-    Gregorian,
+    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
+    japanese::Japanext, Gregorian,
 };
 use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions_unicode_key as key;

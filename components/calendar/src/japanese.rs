@@ -108,23 +108,17 @@ impl Japanese {
         year: i32,
         month_code: types::MonthCode,
         day: u8,
-        debug_name: &'static str
+        debug_name: &'static str,
     ) -> Result<JapaneseDateInner, DateTimeError> {
         let month = crate::calendar_arithmetic::ordinal_solar_month_from_code(month_code);
         let month = if let Some(month) = month {
             month
         } else {
-            return Err(DateTimeError::UnknownMonthCode(
-                month_code.0,
-                debug_name,
-            ));
+            return Err(DateTimeError::UnknownMonthCode(month_code.0, debug_name));
         };
 
         if month > 12 {
-            return Err(DateTimeError::UnknownMonthCode(
-                month_code.0,
-                debug_name,
-            ));
+            return Err(DateTimeError::UnknownMonthCode(month_code.0, debug_name));
         }
 
         self.new_japanese_date_inner(era, year, month, day)
@@ -263,7 +257,8 @@ impl Calendar for Japanext {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateTimeError> {
-        self.0.japanese_date_from_codes(era, year, month_code, day, self.debug_name())
+        self.0
+            .japanese_date_from_codes(era, year, month_code, day, self.debug_name())
     }
 
     fn date_from_iso(&self, iso: Date<Iso>) -> JapaneseDateInner {
@@ -447,7 +442,7 @@ impl DateTime<Japanese> {
     /// Construct a new Japanese datetime from integers.
     ///
     /// Years are specified in the era provided.
-    /// 
+    ///
     /// ```rust
     /// use icu::calendar::{types, DateTime};
     /// use icu::calendar::japanese::Japanese;
@@ -742,7 +737,13 @@ mod tests {
         )
     }
 
-    fn single_test_roundtrip_ext(calendar: Ref<Japanext>, era: &str, year: i32, month: u8, day: u8) {
+    fn single_test_roundtrip_ext(
+        calendar: Ref<Japanext>,
+        era: &str,
+        year: i32,
+        month: u8,
+        day: u8,
+    ) {
         let era = types::Era(era.parse().expect("era must parse"));
 
         let date = Date::new_japanext_date(era, year, month, day, calendar).unwrap_or_else(|e| {

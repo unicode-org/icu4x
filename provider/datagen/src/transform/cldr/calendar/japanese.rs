@@ -184,17 +184,13 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
 
 impl IterableDataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![
-            Default::default()
-        ])
+        Ok(vec![Default::default()])
     }
 }
 
 impl IterableDataProvider<JapanextErasV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-        Ok(vec![
-            Default::default()
-        ])
+        Ok(vec![Default::default()])
     }
 }
 
