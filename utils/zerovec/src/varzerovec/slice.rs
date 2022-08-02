@@ -75,7 +75,7 @@ use core::ops::Range;
 // safety invariant: The slice MUST be one which parses to
 // a valid VarZeroVecComponents<T>
 #[repr(transparent)]
-pub struct VarZeroSlice<T: ?Sized, F = Index32> {
+pub struct VarZeroSlice<T: ?Sized, F = Index16> {
     marker: PhantomData<(F, T)>,
     /// The original slice this was constructed from
     entire_slice: [u8],
