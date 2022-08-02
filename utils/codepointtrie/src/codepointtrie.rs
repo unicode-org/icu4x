@@ -214,18 +214,13 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// Utility function for working with the TOML format where the error is at the
     /// end of the data vector.
     ///
-    /// Operates on owned `data` arrays and will panic if the array has less than one element.
-    ///
-    /// Technically this function could take `ZeroVec<'trie, T>` for `data` since it will
-    /// convert to owned anyway, but there's
-    /// a nice benefit to signalling to the user that the type will be converted to owned
-    /// so they shouldn't bother making a nice borrow.
+    /// Will panic if the array has less than one element.
     #[doc(hidden)] // only for tests and internal ICU4X datagen APIs
     #[allow(clippy::expect_used)] // hidden internal api
     pub fn try_new_with_error_at_end(
         header: CodePointTrieHeader,
         index: ZeroVec<'trie, u16>,
-        mut data: ZeroVec<'static, T>,
+        data: ZeroVec<'trie, T>,
     ) -> Result<CodePointTrie<'trie, T>, Error> {
         // Validation invariants are not needed here when constructing a new
         // `CodePointTrie` because:
@@ -240,7 +235,6 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         //   ZeroVec data, meaning that a deserializer would also see that length info.
 
         let error_value = data.last().expect("data must have at least one element");
-        data.to_mut().pop();
 
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
