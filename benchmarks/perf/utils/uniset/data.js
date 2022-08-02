@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659397190409,
+  "lastUpdate": 1659399087215,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -40769,6 +40769,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 58002010,
             "range": "± 862330",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0f0df9bfe13e15bc36a845b20ad15018abc6ce83",
+          "message": "DateFormatter cleanups (#2304)\n\n* Add (Any)DateFormatter\r\n\r\n* Allow DateInputs in DateFormatter\r\n\r\n* Add try_from_date_and_time\r\n\r\n* fixup raw::TypedFoo -> raw::Foo\r\n\r\n* Allow Time as IsoTimeInput\r\n\r\n* Improved docs",
+          "timestamp": "2022-08-02T00:01:04Z",
+          "tree_id": "4f815b3bf3ea6184a43912539a2bfaa0756c4e69",
+          "url": "https://github.com/unicode-org/icu4x/commit/0f0df9bfe13e15bc36a845b20ad15018abc6ce83"
+        },
+        "date": 1659399050079,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44241510,
+            "range": "± 59510",
             "unit": "ns/iter"
           },
           {
