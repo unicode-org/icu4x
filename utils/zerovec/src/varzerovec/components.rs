@@ -18,10 +18,6 @@ pub(super) const METADATA_WIDTH: usize = 0;
 pub(super) const MAX_LENGTH: usize = u32::MAX as usize;
 pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 
-fn usizeify<F: VarZeroVecFormat>(x: RawBytesULE<F::INDEX_WIDTH>) -> usize {
-    x.as_unsigned_int() as usize
-}
-
 /// This trait allows switching between different possible internal
 /// representations of VarZeroVec.
 ///
@@ -32,6 +28,20 @@ fn usizeify<F: VarZeroVecFormat>(x: RawBytesULE<F::INDEX_WIDTH>) -> usize {
 pub unsafe trait VarZeroVecFormat: 'static + Sized {
     #[doc(hidden)]
     const INDEX_WIDTH: usize;
+    /// This is always `RawBytesULE<Self::INDEX_WIDTH>` however
+    /// Rust does not currently support using associated constants in const
+    /// generics
+    #[doc(hidden)]
+    type RawBytes: ULE;
+
+    // various conversions because RawBytes is an associated constant now
+    #[doc(hidden)]
+    fn usizeify(raw: Self::RawBytes) -> usize;
+    #[doc(hidden)]
+    fn unusizeify(u: usize) -> Self::RawBytes;
+
+    #[doc(hidden)]
+    fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes];
 }
 
 /// This is a [`VarZeroVecFormat`] that stores u16s in the index array.
@@ -47,11 +57,31 @@ pub struct Index16;
 pub struct Index32;
 
 unsafe impl VarZeroVecFormat for Index16 {
-    const INDEX_WIDTH: usize = 4;
+    const INDEX_WIDTH: usize = 2;
+    type RawBytes = RawBytesULE<2>;
+    fn usizeify(raw: Self::RawBytes) -> usize {
+        raw.as_unsigned_int() as usize
+    }
+    fn unusizeify(u: usize) -> Self::RawBytes {
+        (u as u16).to_unaligned()
+    }
+    fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes] {
+        Self::RawBytes::from_byte_slice_unchecked_mut(bytes)
+    }
 }
 
 unsafe impl VarZeroVecFormat for Index32 {
-    const INDEX_WIDTH: usize = 8;
+    const INDEX_WIDTH: usize = 4;
+    type RawBytes = RawBytesULE<4>;
+    fn usizeify(raw: Self::RawBytes) -> usize {
+        raw.as_unsigned_int() as usize
+    }
+    fn unusizeify(u: usize) -> Self::RawBytes {
+        (u as u32).to_unaligned()
+    }
+    fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes] {
+        Self::RawBytes::from_byte_slice_unchecked_mut(bytes)
+    }
 }
 
 /// A more parsed version of `VarZeroSlice`. This type is where most of the VarZeroVec
@@ -150,7 +180,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
-            len,
+            len: len as u32,
             indices: indices_bytes,
             things,
             entire_slice: slice,
@@ -194,7 +224,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
-            len,
+            len: len,
             indices: indices_bytes,
             things,
             entire_slice: slice,
@@ -240,11 +270,11 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
     unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
-        let start = usizeify(*self.indices_slice().get_unchecked(idx));
+        let start = F::usizeify(*self.indices_slice().get_unchecked(idx));
         let end = if idx + 1 == self.len() {
             self.things.len()
         } else {
-            usizeify(*self.indices_slice().get_unchecked(idx + 1))
+            F::usizeify(*self.indices_slice().get_unchecked(idx + 1))
         };
         debug_assert!(start <= end);
         start..end
@@ -277,11 +307,13 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ZeroVecError>> {
         self.indices_slice()
             .iter()
-            .map(|i| i.as_unsigned_int() as usize)
+            .copied()
+            .map(F::usizeify)
             .zip(
                 self.indices_slice()
                     .iter()
-                    .map(|i| i.as_unsigned_int() as usize)
+                    .copied()
+                    .map(F::usizeify)
                     .skip(1)
                     .chain(core::iter::once(self.things.len())),
             )
@@ -298,11 +330,13 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     pub fn iter(self) -> impl Iterator<Item = &'a T> {
         self.indices_slice()
             .iter()
-            .map(|i| i.as_unsigned_int() as usize)
+            .copied()
+            .map(F::usizeify)
             .zip(
                 self.indices_slice()
                     .iter()
-                    .map(|i| i.as_unsigned_int() as usize)
+                    .copied()
+                    .map(F::usizeify)
                     .skip(1)
                     .chain(core::iter::once(self.things.len())),
             )
@@ -315,8 +349,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     }
 
     #[inline]
-    fn indices_slice(&self) -> &'a [RawBytesULE<F::INDEX_WIDTH>] {
-        unsafe { RawBytesULE::<F::INDEX_WIDTH>::from_byte_slice_unchecked(self.indices) }
+    fn indices_slice(&self) -> &'a [F::RawBytes] {
+        unsafe { F::RawBytes::from_byte_slice_unchecked(self.indices) }
     }
 
     // Dump a debuggable representation of this type
@@ -325,7 +359,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         let indices = self
             .indices_slice()
             .iter()
-            .map(|i| i.as_unsigned_int())
+            .copied()
+            .map(F::usizeify)
             .collect::<Vec<_>>();
         format!("VarZeroVecComponents {{ indices: {:?} }}", indices)
     }
@@ -380,7 +415,7 @@ where
     fn binary_search_impl(
         &self,
         mut predicate: impl FnMut(&T) -> Ordering,
-        indices_slice: &[RawBytesULE<F::INDEX_WIDTH>],
+        indices_slice: &[F::RawBytes],
     ) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
         // code is known to the State of California to cause cancer.
