@@ -548,7 +548,8 @@ mod tests {
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&provider, &locale, Default::default()).unwrap();
+            FixedDecimalFormatter::try_new_unstable(&provider, &locale, Default::default())
+                .unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &Locale::UND.into());
@@ -581,7 +582,7 @@ mod tests {
         let provider = icu_testdata::get_provider();
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        let fixed_decimal_format = FixedDecimalFormatter::try_new(
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
             &provider,
             &icu_locid::locale!("en").into(),
             fixed_decimal_format_options,
