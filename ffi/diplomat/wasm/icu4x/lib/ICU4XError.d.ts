@@ -67,7 +67,13 @@ export enum ICU4XError {
 
    * The locale or subtag string failed to parse
    */
-  LocaleParserError = 'LocaleParserError',
+  LocaleParserLanguageError = 'LocaleParserLanguageError',
+  /**
+   */
+  LocaleParserSubtagError = 'LocaleParserSubtagError',
+  /**
+   */
+  LocaleParserExtensionError = 'LocaleParserExtensionError',
   /**
 
    * Attempted to construct an invalid data struct
