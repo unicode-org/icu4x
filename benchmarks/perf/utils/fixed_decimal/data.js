@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659397359877,
+  "lastUpdate": 1659399245547,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41591,6 +41591,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 85957,
             "range": "± 184",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 241,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 114,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 104,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0f0df9bfe13e15bc36a845b20ad15018abc6ce83",
+          "message": "DateFormatter cleanups (#2304)\n\n* Add (Any)DateFormatter\r\n\r\n* Allow DateInputs in DateFormatter\r\n\r\n* Add try_from_date_and_time\r\n\r\n* fixup raw::TypedFoo -> raw::Foo\r\n\r\n* Allow Time as IsoTimeInput\r\n\r\n* Improved docs",
+          "timestamp": "2022-08-02T00:01:04Z",
+          "tree_id": "4f815b3bf3ea6184a43912539a2bfaa0756c4e69",
+          "url": "https://github.com/unicode-org/icu4x/commit/0f0df9bfe13e15bc36a845b20ad15018abc6ce83"
+        },
+        "date": 1659399199549,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 147714,
+            "range": "± 5372",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 30346,
+            "range": "± 164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 86107,
+            "range": "± 153",
             "unit": "ns/iter"
           },
           {
