@@ -36,9 +36,9 @@ pub unsafe trait VarZeroVecFormat: 'static + Sized {
 
     // various conversions because RawBytes is an associated constant now
     #[doc(hidden)]
-    fn usizeify(raw: Self::RawBytes) -> usize;
+    fn rawbytes_to_usize(raw: Self::RawBytes) -> usize;
     #[doc(hidden)]
-    fn unusizeify(u: usize) -> Self::RawBytes;
+    fn usize_to_rawbytes(u: usize) -> Self::RawBytes;
 
     #[doc(hidden)]
     fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes];
@@ -59,10 +59,10 @@ pub struct Index32;
 unsafe impl VarZeroVecFormat for Index16 {
     const INDEX_WIDTH: usize = 2;
     type RawBytes = RawBytesULE<2>;
-    fn usizeify(raw: Self::RawBytes) -> usize {
+    fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
         raw.as_unsigned_int() as usize
     }
-    fn unusizeify(u: usize) -> Self::RawBytes {
+    fn usize_to_rawbytes(u: usize) -> Self::RawBytes {
         (u as u16).to_unaligned()
     }
     fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes] {
@@ -73,10 +73,10 @@ unsafe impl VarZeroVecFormat for Index16 {
 unsafe impl VarZeroVecFormat for Index32 {
     const INDEX_WIDTH: usize = 4;
     type RawBytes = RawBytesULE<4>;
-    fn usizeify(raw: Self::RawBytes) -> usize {
+    fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
         raw.as_unsigned_int() as usize
     }
-    fn unusizeify(u: usize) -> Self::RawBytes {
+    fn usize_to_rawbytes(u: usize) -> Self::RawBytes {
         (u as u32).to_unaligned()
     }
     fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes] {
@@ -270,11 +270,11 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `idx` must be in bounds (`idx < self.len()`)
     #[inline]
     unsafe fn get_things_range(self, idx: usize) -> Range<usize> {
-        let start = F::usizeify(*self.indices_slice().get_unchecked(idx));
+        let start = F::rawbytes_to_usize(*self.indices_slice().get_unchecked(idx));
         let end = if idx + 1 == self.len() {
             self.things.len()
         } else {
-            F::usizeify(*self.indices_slice().get_unchecked(idx + 1))
+            F::rawbytes_to_usize(*self.indices_slice().get_unchecked(idx + 1))
         };
         debug_assert!(start <= end);
         start..end
@@ -308,12 +308,12 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         self.indices_slice()
             .iter()
             .copied()
-            .map(F::usizeify)
+            .map(F::rawbytes_to_usize)
             .zip(
                 self.indices_slice()
                     .iter()
                     .copied()
-                    .map(F::usizeify)
+                    .map(F::rawbytes_to_usize)
                     .skip(1)
                     .chain(core::iter::once(self.things.len())),
             )
@@ -331,12 +331,12 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         self.indices_slice()
             .iter()
             .copied()
-            .map(F::usizeify)
+            .map(F::rawbytes_to_usize)
             .zip(
                 self.indices_slice()
                     .iter()
                     .copied()
-                    .map(F::usizeify)
+                    .map(F::rawbytes_to_usize)
                     .skip(1)
                     .chain(core::iter::once(self.things.len())),
             )
@@ -360,7 +360,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             .indices_slice()
             .iter()
             .copied()
-            .map(F::usizeify)
+            .map(F::rawbytes_to_usize)
             .collect::<Vec<_>>();
         format!("VarZeroVecComponents {{ indices: {:?} }}", indices)
     }

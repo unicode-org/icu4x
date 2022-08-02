@@ -127,7 +127,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         let out = if idx == len {
             self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - (F::INDEX_WIDTH * len)
         } else {
-            F::usizeify(*self.index_data(idx))
+            F::rawbytes_to_usize(*self.index_data(idx))
         };
         debug_assert!(
             out + LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH <= self.entire_slice.len()
@@ -202,13 +202,13 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
                 [LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * len],
         );
         for idx in &mut indices[starting_index..] {
-            let mut new_idx = F::usizeify(*idx);
+            let mut new_idx = F::rawbytes_to_usize(*idx);
             if amount > 0 {
                 new_idx = new_idx.checked_add(amount.try_into().unwrap()).unwrap();
             } else {
                 new_idx = new_idx.checked_sub((-amount).try_into().unwrap()).unwrap();
             }
-            *idx = F::unusizeify(new_idx);
+            *idx = F::usize_to_rawbytes(new_idx);
         }
     }
 
@@ -324,7 +324,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
                     // Move data before the element forward by 4 to make space for a new index.
                     shift_bytes(index_range.start..prev_element_p.start, index_range.end);
 
-                    *self.index_data_mut(index) = F::unusizeify(prev_element.start);
+                    *self.index_data_mut(index) = F::usize_to_rawbytes(prev_element.start);
                     self.set_len(len + 1);
                     index + 1
                 }
@@ -397,13 +397,13 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             )
         };
         for idx in indices {
-            if F::usizeify(*idx) > data_len {
+            if F::rawbytes_to_usize(*idx) > data_len {
                 // Indices must not point past the data segment.
                 return false;
             }
         }
         for window in indices.windows(2) {
-            if F::usizeify(window[0]) > F::usizeify(window[1]) {
+            if F::rawbytes_to_usize(window[0]) > F::rawbytes_to_usize(window[1]) {
                 // Indices must be in non-decreasing order.
                 return false;
             }
