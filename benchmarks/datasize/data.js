@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659396798328,
+  "lastUpdate": 1659398640099,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22493,6 +22493,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/11cee99e9ccae335ed0d073809e14134c62c3409"
         },
         "date": 1659396762011,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0f0df9bfe13e15bc36a845b20ad15018abc6ce83",
+          "message": "DateFormatter cleanups (#2304)\n\n* Add (Any)DateFormatter\r\n\r\n* Allow DateInputs in DateFormatter\r\n\r\n* Add try_from_date_and_time\r\n\r\n* fixup raw::TypedFoo -> raw::Foo\r\n\r\n* Allow Time as IsoTimeInput\r\n\r\n* Improved docs",
+          "timestamp": "2022-08-02T00:01:04Z",
+          "tree_id": "4f815b3bf3ea6184a43912539a2bfaa0756c4e69",
+          "url": "https://github.com/unicode-org/icu4x/commit/0f0df9bfe13e15bc36a845b20ad15018abc6ce83"
+        },
+        "date": 1659398598809,
         "tool": "ndjson",
         "benches": [
           {
