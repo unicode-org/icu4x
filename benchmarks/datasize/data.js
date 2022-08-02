@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659473038093,
+  "lastUpdate": 1659475462437,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22703,6 +22703,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bebc548ce9f09a6b2639c39dcc40284acfc6cfc8"
         },
         "date": 1659472995178,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030037,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "45f380df3043abb9fd5a7ff9612ff3a66d24cec3",
+          "message": "Update constructors of ZonedDateTimeFormatter and TimeZoneFormatter (#2305)",
+          "timestamp": "2022-08-02T14:22:31-07:00",
+          "tree_id": "d3aeb6d416de9f8498ee6b8b6d222e7603dade8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/45f380df3043abb9fd5a7ff9612ff3a66d24cec3"
+        },
+        "date": 1659475425185,
         "tool": "ndjson",
         "benches": [
           {
