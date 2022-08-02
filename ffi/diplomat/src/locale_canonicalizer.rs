@@ -5,7 +5,7 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
 

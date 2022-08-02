@@ -12,7 +12,7 @@ members = [
     "components/icu",
     "components/icu4x",
     "components/list",
-    "components/locale_canonicalizer",
+    "components/locid_transform",
     "components/locid",
     "components/normalizer",
     "components/plurals",

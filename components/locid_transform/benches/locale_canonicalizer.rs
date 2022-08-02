@@ -5,8 +5,8 @@
 mod helpers;
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_locale_canonicalizer::LocaleCanonicalizer;
 use icu_locid::Locale;
+use icu_locid_transform::LocaleCanonicalizer;
 
 fn canonicalize_bench(c: &mut Criterion) {
     let provider = icu_testdata::get_provider();
