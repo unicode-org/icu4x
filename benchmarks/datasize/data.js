@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659438223319,
+  "lastUpdate": 1659472990653,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22648,6 +22648,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e3ba9978eb84c2de830399f70e2fcc2306d18e5e",
+          "message": "Make Japanext its own calendar type (#2311)",
+          "timestamp": "2022-08-02T13:41:20-07:00",
+          "tree_id": "19dbefe698bb4881b96741e73fda0bd981cf0386",
+          "url": "https://github.com/unicode-org/icu4x/commit/e3ba9978eb84c2de830399f70e2fcc2306d18e5e"
+        },
+        "date": 1659472951193,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030037,
             "unit": "bytes",
             "biggerIsBetter": false
           }
