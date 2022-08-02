@@ -4,10 +4,10 @@
 
 use alloc::string::String;
 use core::marker::PhantomData;
+use icu_calendar::provider::JapaneseErasV1Marker;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
-use icu_calendar::provider::JapaneseErasV1Marker;
 
 use crate::{
     calendar,

@@ -227,12 +227,7 @@ impl ZonedDateTimeFormatter {
         P: AnyProvider,
     {
         let downcasting = data_provider.as_downcasting();
-        Self::try_new_unstable(
-            &downcasting,
-            locale,
-            options,
-            time_zone_format_options,
-        )
+        Self::try_new_unstable(&downcasting, locale, options, time_zone_format_options)
     }
 
     /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
@@ -286,12 +281,7 @@ impl ZonedDateTimeFormatter {
         P: BufferProvider,
     {
         let deserializing = data_provider.as_deserializing();
-        Self::try_new_unstable(
-            &deserializing,
-            locale,
-            options,
-            time_zone_format_options,
-        )
+        Self::try_new_unstable(&deserializing, locale, options, time_zone_format_options)
     }
 
     /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns an instance of a [`FormattedZonedDateTime`]

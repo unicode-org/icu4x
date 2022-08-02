@@ -47,13 +47,10 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+            &provider,
             &locale.into(),
-            &provider,
-            &provider,
-            &provider,
-            &provider,
-            &DateTimeFormatterOptions::default(),
-            &TimeZoneFormatterOptions::default(),
+            DateTimeFormatterOptions::default(),
+            TimeZoneFormatterOptions::default(),
         )
         .expect("Failed to create TypedDateTimeFormatter.");
         let (today_date, today_tz) =

@@ -17,7 +17,11 @@ use icu_calendar::{
     provider::JapaneseErasV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
 };
-use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id, TimeZoneFormatsV1Marker, MetaZoneSpecificNamesShortV1Marker, MetaZoneSpecificNamesLongV1Marker, MetaZoneGenericNamesShortV1Marker, MetaZoneGenericNamesLongV1Marker, ExemplarCitiesV1Marker};
+use icu_datetime::provider::time_zones::{
+    ExemplarCitiesV1Marker, MetaZoneGenericNamesLongV1Marker, MetaZoneGenericNamesShortV1Marker,
+    MetaZoneId, MetaZoneSpecificNamesLongV1Marker, MetaZoneSpecificNamesShortV1Marker,
+    TimeZoneBcp47Id, TimeZoneFormatsV1Marker,
+};
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
@@ -660,7 +664,9 @@ fn test_time_zone_patterns() {
                     },
                     AnyPayloadProvider {
                         key: MetaZoneSpecificNamesShortV1Marker::KEY,
-                        data: meta_zone_specific_short_data.clone().wrap_into_any_payload(),
+                        data: meta_zone_specific_short_data
+                            .clone()
+                            .wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
                         key: MetaZoneSpecificNamesLongV1Marker::KEY,
