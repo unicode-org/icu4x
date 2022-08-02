@@ -49,7 +49,7 @@ pub enum CanonicalizationResult {
 /// # Examples
 ///
 /// ```
-/// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+/// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
 /// use icu_locid::Locale;
 ///
 /// let provider = icu_testdata::get_provider();
@@ -66,7 +66,7 @@ pub enum CanonicalizationResult {
 /// ```
 ///
 /// ```
-/// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+/// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
 /// use icu_locid::Locale;
 ///
 /// let provider = icu_testdata::get_provider();
@@ -82,7 +82,7 @@ pub enum CanonicalizationResult {
 /// ```
 ///
 /// ```
-/// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+/// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
 /// use icu_locid::Locale;
 ///
 /// let provider = icu_testdata::get_provider();
@@ -333,7 +333,7 @@ impl LocaleCanonicalizer {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    /// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
@@ -582,7 +582,7 @@ impl LocaleCanonicalizer {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    /// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
@@ -675,7 +675,7 @@ impl LocaleCanonicalizer {
     /// # Examples
     ///
     /// ```
-    /// use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+    /// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
