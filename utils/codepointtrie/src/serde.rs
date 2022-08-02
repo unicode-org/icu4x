@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::codepointtrie::{CodePointTrie, CodePointTrieHeader, TrieValue};
-use serde::{Deserialize, Deserializer, Serialize, Serializer};
+use serde::{de::Error, Deserialize, Deserializer, Serialize, Serializer};
 use zerofrom::ZeroFrom;
 use zerovec::ZeroVec;
 
@@ -39,7 +39,9 @@ where
         D: Deserializer<'de>,
     {
         let de = CodePointTrieSerde::deserialize(deserializer)?;
-        let error_value = de.data.last().unwrap_or(T::DEFAULT_ERROR_VALUE);
+        let error_value = de.data.last().ok_or_else(|| {
+            D::Error::custom("CodePointTrie vector must have at least one element")
+        })?;
         Ok(CodePointTrie {
             header: de.header,
             index: de.index,

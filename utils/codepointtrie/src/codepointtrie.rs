@@ -203,7 +203,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         // - The `ZeroVec` serializer stores the length of the array along with the
         //   ZeroVec data, meaning that a deserializer would also see that length info.
 
-        let error_value = data.last().unwrap_or(T::DEFAULT_ERROR_VALUE);
+        let error_value = data.last().ok_or(Error::EmptyDataVector)?;
         let trie: CodePointTrie<'trie, T> = CodePointTrie {
             header,
             index,
@@ -397,11 +397,14 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         let slice = &[error_ule];
         let error_vec = ZeroVec::<T>::Borrowed(slice);
         let error_converted = error_vec.try_into_converted::<P>()?;
+        #[allow(clippy::expect_used)] // we know this cannot fail
         Ok(CodePointTrie {
             header: self.header,
             index: self.index,
             data: converted_data,
-            error_value: error_converted.get(0).unwrap_or(P::DEFAULT_ERROR_VALUE),
+            error_value: error_converted
+                .get(0)
+                .expect("vector known to have one element"),
         })
     }
 
