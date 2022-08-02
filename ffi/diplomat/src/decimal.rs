@@ -88,7 +88,7 @@ pub mod ffi {
             };
             let mut options = FixedDecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy;
-            FixedDecimalFormatter::try_new(provider, locale, options)
+            FixedDecimalFormatter::try_new_unstable(provider, locale, options)
                 .map(|fdf| Box::new(ICU4XFixedDecimalFormatter(fdf)))
                 .map_err(Into::into)
                 .into()

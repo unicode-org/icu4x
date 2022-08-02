@@ -21,7 +21,7 @@ use crate::provider::{
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_calendar::provider::{JapaneseErasV1Marker, JapanextErasV1Marker};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
@@ -57,10 +57,10 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
 /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
-///     &locale!("en").into(),
 ///     &provider,
-///     &options.into(),
-///     &TimeZoneFormatterOptions::default(),
+///     &locale!("en").into(),
+///     options.into(),
+///     TimeZoneFormatterOptions::default(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
@@ -103,14 +103,10 @@ impl ZonedDateTimeFormatter {
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
+    ///     &provider,
     ///     &locale.into(),
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
-    ///     &provider,
-    ///     &options,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     options,
+    ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
     /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
@@ -123,34 +119,30 @@ impl ZonedDateTimeFormatter {
     /// [data provider]: icu_provider
     #[inline]
     #[allow(clippy::too_many_arguments)]
-    pub fn try_new_unstable<DP, ZP, PP, DEP, CEP>(
+    pub fn try_new_unstable<P>(
+        provider: &P,
         locale: &DataLocale,
-        date_provider: &DP,
-        zone_provider: &ZP,
-        plural_provider: &PP,
-        decimal_provider: &DEP,
-        calendar_provider: &CEP,
-        date_time_format_options: &DateTimeFormatterOptions,
-        time_zone_format_options: &TimeZoneFormatterOptions,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        DP: DataProvider<DateSymbolsV1Marker>
+        P: DataProvider<DateSymbolsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<DateLengthsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
-            + ?Sized,
-        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
             + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapanextErasV1Marker>
             + ?Sized,
-        PP: DataProvider<OrdinalV1Marker> + ?Sized,
-        DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
-        CEP: DataProvider<JapaneseErasV1Marker> + ?Sized,
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
@@ -169,15 +161,12 @@ impl ZonedDateTimeFormatter {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
 
-        let calendar = AnyCalendar::try_new_unstable(kind, calendar_provider)?;
+        let calendar = AnyCalendar::try_new_unstable(kind, provider)?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
+                provider,
                 locale,
-                date_provider,
-                zone_provider,
-                plural_provider,
-                decimal_provider,
                 date_time_format_options,
                 time_zone_format_options,
             )?,
@@ -216,10 +205,10 @@ impl ZonedDateTimeFormatter {
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
-    ///     &locale.into(),
     ///     &provider,
-    ///     &options,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale.into(),
+    ///     options,
+    ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
     /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
@@ -230,25 +219,16 @@ impl ZonedDateTimeFormatter {
     /// ```
     #[inline]
     pub fn try_new_with_any_provider<P>(
-        locale: &DataLocale,
         data_provider: &P,
-        options: &DateTimeFormatterOptions,
-        time_zone_format_options: &TimeZoneFormatterOptions,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: AnyProvider,
     {
         let downcasting = data_provider.as_downcasting();
-        Self::try_new_unstable(
-            locale,
-            &downcasting,
-            &downcasting,
-            &downcasting,
-            &downcasting,
-            &downcasting,
-            options,
-            time_zone_format_options,
-        )
+        Self::try_new_unstable(&downcasting, locale, options, time_zone_format_options)
     }
 
     /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
@@ -278,10 +258,10 @@ impl ZonedDateTimeFormatter {
     /// let locale = Locale::from_str("en").unwrap();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
-    ///     &locale.into(),
     ///     &provider,
-    ///     &options,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale.into(),
+    ///     options,
+    ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
     /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
@@ -293,25 +273,16 @@ impl ZonedDateTimeFormatter {
     #[inline]
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider<P>(
-        locale: &DataLocale,
         data_provider: &P,
-        options: &DateTimeFormatterOptions,
-        time_zone_format_options: &TimeZoneFormatterOptions,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: BufferProvider,
     {
         let deserializing = data_provider.as_deserializing();
-        Self::try_new_unstable(
-            locale,
-            &deserializing,
-            &deserializing,
-            &deserializing,
-            &deserializing,
-            &deserializing,
-            options,
-            time_zone_format_options,
-        )
+        Self::try_new_unstable(&deserializing, locale, options, time_zone_format_options)
     }
 
     /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns an instance of a [`FormattedZonedDateTime`]

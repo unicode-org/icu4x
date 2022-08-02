@@ -13,11 +13,15 @@ use icu_calendar::{
     coptic::Coptic,
     ethiopic::{Ethiopic, EthiopicEraStyle},
     indian::Indian,
-    japanese::{Japanese, JapaneseEraStyle},
-    provider::JapaneseErasV1Marker,
+    japanese::{Japanese, Japanext},
+    provider::{JapaneseErasV1Marker, JapanextErasV1Marker},
     AsCalendar, DateTime, Gregorian, Iso,
 };
-use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use icu_datetime::provider::time_zones::{
+    ExemplarCitiesV1Marker, MetaZoneGenericNamesLongV1Marker, MetaZoneGenericNamesShortV1Marker,
+    MetaZoneId, MetaZoneSpecificNamesLongV1Marker, MetaZoneSpecificNamesShortV1Marker,
+    TimeZoneBcp47Id, TimeZoneFormatsV1Marker,
+};
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
@@ -60,10 +64,8 @@ fn test_fixture(fixture_name: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let japanese = Japanese::try_new(&provider, JapaneseEraStyle::Modern)
-            .expect("Cannot load japanese data");
-        let japanext =
-            Japanese::try_new(&provider, JapaneseEraStyle::All).expect("Cannot load japanese data");
+        let japanese = Japanese::try_new(&provider).expect("Cannot load japanese data");
+        let japanext = Japanext::try_new(&provider).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
@@ -189,7 +191,8 @@ fn assert_fixture_element<A, D>(
         + DataProvider<DecimalSymbolsV1Marker>
         + DataProvider<OrdinalV1Marker>
         + DataProvider<WeekDataV1Marker>
-        + DataProvider<JapaneseErasV1Marker>,
+        + DataProvider<JapaneseErasV1Marker>
+        + DataProvider<JapanextErasV1Marker>,
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
@@ -332,13 +335,10 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
             let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+                &provider,
                 &locale.into(),
-                &provider,
-                &provider,
-                &provider,
-                &provider,
-                &options,
-                &TimeZoneFormatterOptions::default(),
+                options.clone(),
+                TimeZoneFormatterOptions::default(),
             )
             .unwrap();
             let result = dtf.format_to_string(&input_date, &time_zone);
@@ -474,7 +474,7 @@ fn test_time_zone_format_configs() {
     let zone_provider = icu_testdata::get_provider();
 
     for test in get_time_zone_tests("time_zones").unwrap().0 {
-        let langid: LanguageIdentifier = test.locale.parse().unwrap();
+        let data_locale: DataLocale = test.locale.parse::<LanguageIdentifier>().unwrap().into();
         let mut config = test.config;
         let (_, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
@@ -490,10 +490,10 @@ fn test_time_zone_format_configs() {
             for &config_input in configs {
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let tzf = TimeZoneFormatter::try_from_config(
-                        langid.clone(),
-                        config_input.into(),
                         &zone_provider,
-                        &fallback_format.into(),
+                        &data_locale,
+                        config_input.into(),
+                        fallback_format.into(),
                     )
                     .unwrap();
                     let mut buffer = String::new();
@@ -507,7 +507,7 @@ fn test_time_zone_format_configs() {
                     config: `{:?}`,\n\
                     fallback: `{:?}`\n
                     ",
-                        langid,
+                        data_locale,
                         test.datetime,
                         config_input,
                         fallback_format
@@ -531,10 +531,10 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         Some(TimeVariant::daylight()),
     );
     let tzf = TimeZoneFormatter::try_from_config(
-        langid,
-        TimeZoneFormatterConfig::LocalizedGMT,
         &zone_provider,
-        &TimeZoneFormatterOptions::default(),
+        &langid.into(),
+        TimeZoneFormatterConfig::LocalizedGMT,
+        TimeZoneFormatterOptions::default(),
     )
     .unwrap();
     let mut buffer = String::new();
@@ -553,10 +553,10 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         Some(tinystr!(8, "daylight")),
     );
     let tzf = TimeZoneFormatter::try_from_config(
-        langid,
-        TimeZoneFormatterConfig::LocalizedGMT,
         &zone_provider,
-        &TimeZoneFormatterOptions::default(),
+        &langid.into(),
+        TimeZoneFormatterConfig::LocalizedGMT,
+        TimeZoneFormatterOptions::default(),
     )
     .unwrap();
     let mut buffer = String::new();
@@ -568,7 +568,6 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
 fn test_time_zone_patterns() {
     let date_provider = icu_testdata::get_provider();
     let decimal_provider = icu_testdata::get_provider();
-    let plural_provider = icu_testdata::get_provider();
     let zone_provider = icu_testdata::get_provider();
     let format_options = DateTimeFormatterOptions::default();
 
@@ -600,6 +599,20 @@ fn test_time_zone_patterns() {
             date_provider.load(req).unwrap().take_payload().unwrap();
         let week_data: DataPayload<WeekDataV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
+        let decimal_data: DataPayload<DecimalSymbolsV1Marker> =
+            decimal_provider.load(req).unwrap().take_payload().unwrap();
+        let time_zone_formats_data: DataPayload<TimeZoneFormatsV1Marker> =
+            zone_provider.load(req).unwrap().take_payload().unwrap();
+        let meta_zone_specific_short_data: DataPayload<MetaZoneSpecificNamesShortV1Marker> =
+            zone_provider.load(req).unwrap().take_payload().unwrap();
+        let meta_zone_specific_long_data: DataPayload<MetaZoneSpecificNamesLongV1Marker> =
+            zone_provider.load(req).unwrap().take_payload().unwrap();
+        let meta_zone_generic_short_data: DataPayload<MetaZoneGenericNamesShortV1Marker> =
+            zone_provider.load(req).unwrap().take_payload().unwrap();
+        let meta_zone_generic_long_data: DataPayload<MetaZoneGenericNamesLongV1Marker> =
+            zone_provider.load(req).unwrap().take_payload().unwrap();
+        let exemplar_cities_data: DataPayload<ExemplarCitiesV1Marker> =
+            zone_provider.load(req).unwrap().take_payload().unwrap();
 
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -640,17 +653,44 @@ fn test_time_zone_patterns() {
                         key: WeekDataV1Marker::KEY,
                         data: week_data.clone().wrap_into_any_payload(),
                     },
+                    AnyPayloadProvider {
+                        key: DecimalSymbolsV1Marker::KEY,
+                        data: decimal_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: TimeZoneFormatsV1Marker::KEY,
+                        data: time_zone_formats_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: MetaZoneSpecificNamesShortV1Marker::KEY,
+                        data: meta_zone_specific_short_data
+                            .clone()
+                            .wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: MetaZoneSpecificNamesLongV1Marker::KEY,
+                        data: meta_zone_specific_long_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: MetaZoneGenericNamesShortV1Marker::KEY,
+                        data: meta_zone_generic_short_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: MetaZoneGenericNamesLongV1Marker::KEY,
+                        data: meta_zone_generic_long_data.clone().wrap_into_any_payload(),
+                    },
+                    AnyPayloadProvider {
+                        key: ExemplarCitiesV1Marker::KEY,
+                        data: exemplar_cities_data.clone().wrap_into_any_payload(),
+                    },
                 ]);
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
                     let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-                        &data_locale,
                         &local_provider.as_downcasting(),
-                        &zone_provider,
-                        &plural_provider,
-                        &decimal_provider,
-                        &format_options,
-                        &fallback_format.into(),
+                        &data_locale,
+                        format_options.clone(),
+                        fallback_format.into(),
                     )
                     .unwrap();
 

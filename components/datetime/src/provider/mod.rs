@@ -9,7 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-/// Data providers for the Gregorian Calendar.
+/// Data providers for calendar-specific symbols and patterns.
 pub mod calendar;
 
 /// Data providers for time zones.

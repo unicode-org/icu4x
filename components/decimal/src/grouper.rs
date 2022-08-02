@@ -165,7 +165,7 @@ fn test_grouper() {
                 grouping_strategy: cas.strategy,
                 ..Default::default()
             };
-            let fdf = FixedDecimalFormatter::try_new(
+            let fdf = FixedDecimalFormatter::try_new_unstable(
                 &provider.as_downcasting(),
                 &LanguageIdentifier::UND.into(),
                 options,

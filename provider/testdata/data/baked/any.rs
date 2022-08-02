@@ -3,6 +3,8 @@ impl AnyProvider for BakedDataProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         const JAPANESEERASV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_calendar::provider::JapaneseErasV1Marker::KEY.get_hash();
+        const JAPANEXTERASV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_calendar::provider::JapanextErasV1Marker::KEY.get_hash();
         const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
         const COLLATIONDATAV1MARKER: ::icu_provider::DataKeyHash =
@@ -221,7 +223,10 @@ impl AnyProvider for BakedDataProvider {
             ::icu_timezone::provider::MetaZonePeriodV1Marker::KEY.get_hash();
         Ok(AnyResponse {
             payload: Some(match key.get_hash() {
-                JAPANESEERASV1MARKER => calendar::japanese_v1_u_ca::DATA
+                JAPANESEERASV1MARKER => calendar::japanese_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                JAPANEXTERASV1MARKER => calendar::japanext_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 CASEMAPPINGV1MARKER => props::casemap_v1::DATA
