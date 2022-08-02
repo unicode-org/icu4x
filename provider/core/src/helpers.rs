@@ -191,13 +191,13 @@ fn test_hash_word_32() {
 #[macro_export]
 macro_rules! gen_any_buffer_constructors {
     (options: $options_ty:path, error: $error_ty:path) => {
-        #[doc = concat!("Create a new instance using an [`AnyProvider`](icu_provider::AnyProvider).\n\nFor details, see [`Self::try_new_unstable`].")]
+        #[doc = concat!("Create a new instance using an [`AnyProvider`](icu_provider::AnyProvider).\n\nSee also: [`Self::try_new_unstable`]")]
         pub fn try_new_with_any_provider(provider: &impl $crate::AnyProvider, locale: &$crate::DataLocale, options: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDowncastingAnyProvider;
             Self::try_new_unstable(&provider.as_downcasting(), locale, options)
         }
         #[cfg(feature = "serde")]
-        #[doc = concat!("Create a new instance using a [`BufferProvider`](icu_provider::BufferProvider). Enabled with the `\"serde\"` feature.\n\nFor details, see [`Self::try_new_unstable`].")]
+        #[doc = concat!("Create a new instance using a [`BufferProvider`](icu_provider::BufferProvider). Enabled with the `\"serde\"` feature.\n\nSee also: [`Self::try_new_unstable`]")]
         pub fn try_new_with_buffer_provider(provider: &impl $crate::BufferProvider, locale: &$crate::DataLocale, options: $options_ty) -> Result<Self, $error_ty> {
             use $crate::AsDeserializingBufferProvider;
             Self::try_new_unstable(&provider.as_deserializing(), locale, options)
