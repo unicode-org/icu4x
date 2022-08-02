@@ -4,9 +4,9 @@
 
 //! Custom error type(s) for the parent module.
 
-use displaydoc::Display;
 #[cfg(doc)]
 use crate::codepointtrie::CodePointTrie;
+use displaydoc::Display;
 
 /// A custom error type for [`CodePointTrie`].
 #[derive(Copy, Clone, Display, Debug, PartialEq)]
