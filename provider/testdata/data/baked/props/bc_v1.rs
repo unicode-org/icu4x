@@ -665,7 +665,7 @@ static UND: &DataStruct = &::icu_properties::provider::PropertyCodePointMapV1::C
                 1u8, 2u8, 2u8, 2u8, 2u8, 2u8, 2u8, 2u8, 2u8, 2u8, 2u8, 2u8, 10u8, 10u8, 10u8, 10u8,
                 10u8, 10u8, 10u8, 10u8, 10u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 10u8, 10u8, 10u8,
                 10u8, 10u8, 0u8, 0u8, 0u8, 10u8, 10u8, 10u8, 10u8, 10u8, 0u8, 0u8, 0u8, 0u8, 0u8,
-                0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 18u8, 18u8, 18u8, 18u8, 18u8,
+                0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 18u8, 18u8, 18u8, 18u8, 18u8, 0u8,
             ])
         },
         ::icu_properties::BidiClass(0u8),

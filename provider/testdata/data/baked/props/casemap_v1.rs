@@ -1273,7 +1273,7 @@ static UND: &DataStruct = &::icu_casemapping::provider::CaseMappingV1 {
                     68u8, 0u8, 68u8, 0u8, 68u8, 0u8, 68u8, 0u8, 68u8, 0u8, 100u8, 0u8, 4u8, 0u8,
                     0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8,
                     2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 2u8, 0u8, 0u8, 0u8, 0u8, 0u8,
-                    0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
+                    0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 ])
             },
             ::icu_casemapping::provider::CaseMappingData(0u16),

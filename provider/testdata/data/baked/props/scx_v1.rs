@@ -1892,7 +1892,7 @@ static UND: &DataStruct = &::icu_properties::provider::ScriptWithExtensionsPrope
                     103u8, 0u8, 17u8, 0u8, 17u8, 0u8, 17u8, 0u8, 17u8, 0u8, 17u8, 0u8, 17u8, 0u8,
                     17u8, 0u8, 17u8, 0u8, 17u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8,
                     0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8,
-                    103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8,
+                    103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8,
                 ])
             },
             ::icu_properties::script::ScriptWithExt(103u16),

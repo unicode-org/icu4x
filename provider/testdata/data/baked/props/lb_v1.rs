@@ -1025,7 +1025,7 @@ static UND: &DataStruct = &::icu_properties::provider::PropertyCodePointMapV1::C
                 40u8, 14u8, 14u8, 14u8, 14u8, 14u8, 40u8, 40u8, 14u8, 40u8, 40u8, 14u8, 40u8, 14u8,
                 14u8, 14u8, 14u8, 40u8, 40u8, 40u8, 40u8, 40u8, 40u8, 40u8, 40u8, 40u8, 40u8, 40u8,
                 40u8, 40u8, 14u8, 14u8, 14u8, 14u8, 14u8, 14u8, 14u8, 14u8, 14u8, 14u8, 14u8, 14u8,
-                14u8, 14u8, 0u8, 0u8, 0u8, 0u8,
+                14u8, 14u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             ])
         },
         ::icu_properties::LineBreak(0u8),
