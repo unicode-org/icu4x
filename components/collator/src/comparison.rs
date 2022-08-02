@@ -99,7 +99,7 @@ impl Collator {
             // variant if it matches the default should become
             // unnecessary.
             let original_locale = locale;
-            let mut filtered_locale: DataLocale = original_locale.clone();
+            let mut filtered_locale = alloc::borrow::Cow::Borrowed(locale);
 
             let key = icu_locid::extensions_unicode_key!("co");
             if let Some(variant) = original_locale.get_unicode_ext(&key) {
@@ -111,7 +111,7 @@ impl Collator {
                     || (zh && variant == value!("pinyin"))
                     || (sv && variant == value!("reformed")))
                 {
-                    filtered_locale.set_unicode_ext(key, variant);
+                    filtered_locale.to_mut().set_unicode_ext(key, variant);
                 }
             }
             filtered_locale

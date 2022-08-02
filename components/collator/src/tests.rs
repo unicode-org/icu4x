@@ -179,24 +179,23 @@ fn test_de() {
         Ordering::Greater,
     ];
 
-    //        let locale: Locale = langid!("de").into();
-    let locale: Locale = Locale::default(); // German uses the root collation
-
     let mut options = CollatorOptions::new();
     options.set_strength(Some(Strength::Primary));
 
     let data_provider = icu_testdata::get_provider();
     {
+        // Note: German uses the root collation
         let collator: Collator =
-            Collator::try_new(&data_provider, &(&locale).into(), options).unwrap();
+            Collator::try_new(&data_provider, &Default::default(), options).unwrap();
         check_expectations(&collator, &left, &right, &expect_primary);
     }
 
     options.set_strength(Some(Strength::Tertiary));
 
     {
+        // Note: German uses the root collation
         let collator: Collator =
-            Collator::try_new(&data_provider, &locale.into(), options).unwrap();
+            Collator::try_new(&data_provider, &Default::default(), options).unwrap();
         check_expectations(&collator, &left, &right, &expect_tertiary);
     }
 }
@@ -365,24 +364,24 @@ fn test_en() {
         Ordering::Less, // 49
     ];
 
-    //        let locale: Locale = langid!("en").into();
-    let locale: Locale = Locale::default(); // English uses the root collation
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
     options.set_strength(Some(Strength::Tertiary));
 
     {
+        // Note: English uses the root collation
         let collator: Collator =
-            Collator::try_new(&data_provider, &(&locale).into(), options).unwrap();
+            Collator::try_new(&data_provider, &Default::default(), options).unwrap();
         check_expectations(&collator, &left[..38], &right[..38], &expectations[..38]);
     }
 
     options.set_strength(Some(Strength::Primary));
 
     {
+        // Note: English uses the root collation
         let collator: Collator =
-            Collator::try_new(&data_provider, &(&locale).into(), options).unwrap();
+            Collator::try_new(&data_provider, &Default::default(), options).unwrap();
         check_expectations(
             &collator,
             &left[38..43],
@@ -394,8 +393,9 @@ fn test_en() {
     options.set_strength(Some(Strength::Secondary));
 
     {
+        // Note: English uses the root collation
         let collator: Collator =
-            Collator::try_new(&data_provider, &locale.into(), options).unwrap();
+            Collator::try_new(&data_provider, &Default::default(), options).unwrap();
         check_expectations(&collator, &left[43..], &right[43..], &expectations[43..]);
     }
 }
