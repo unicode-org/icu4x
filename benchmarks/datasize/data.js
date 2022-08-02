@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659413302507,
+  "lastUpdate": 1659438223319,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22613,6 +22613,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9dd86f9940ce7dec43c1e2417a003b656739a099"
         },
         "date": 1659413258157,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1d4c6a146fb6fc88efb341a20cb06dc0dc2d42fd",
+          "message": "Make multiply_pow10 be infallible (#2285)\n\nMake multiply_pow10 be infallible",
+          "timestamp": "2022-08-02T13:01:52+02:00",
+          "tree_id": "2f7beb758c85c35cc6472578125f3a1b697cc49f",
+          "url": "https://github.com/unicode-org/icu4x/commit/1d4c6a146fb6fc88efb341a20cb06dc0dc2d42fd"
+        },
+        "date": 1659438184511,
         "tool": "ndjson",
         "benches": [
           {
