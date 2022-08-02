@@ -51,9 +51,9 @@ impl AnyProvider for BakedDataProvider {
         const UNITLISTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_list::provider::UnitListV1Marker::KEY.get_hash();
         const ALIASESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_locale_canonicalizer::provider::AliasesV1Marker::KEY.get_hash();
+            ::icu_locid_transform::provider::AliasesV1Marker::KEY.get_hash();
         const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY.get_hash();
+            ::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.get_hash();
         const CANONICALCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY.get_hash();
         const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
