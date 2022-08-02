@@ -86,7 +86,7 @@ lazy_static = "1"
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
-simple_logger = { version = "1.12", optional = true }
+simple_logger = { version = "1.12", optional = true, default-features = false }
 
 [dev-dependencies]
 dhat = "0.3.0"
