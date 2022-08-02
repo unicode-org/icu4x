@@ -54,7 +54,7 @@ getrandom = { version = "0.2", features = ["js"] }
 std = ["icu_locid/std", "icu_provider/std", "fixed_decimal/std"]
 default = []
 bench = ["serde"]
-serde = ["dep:serde"]
+serde = ["dep:serde", "icu_provider/serde"]
 datagen = ["serde", "databake"]
 
 [[bench]]

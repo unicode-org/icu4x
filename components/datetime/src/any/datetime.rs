@@ -4,7 +4,7 @@
 
 use crate::{
     options::{components, DateTimeFormatterOptions},
-    raw,
+    raw, DateFormatter, TimeFormatter,
 };
 use alloc::string::String;
 
@@ -21,14 +21,15 @@ use crate::provider::{
 };
 use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_calendar::provider::{JapaneseErasV1Marker, JapanextErasV1Marker};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::DataLocale;
 
-/// [`DateTimeFormatter`] is a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) capable of formatting
-/// dates from any calendar, selected at runtime.
+/// [`DateTimeFormatter`] is a formatter capable of formatting
+/// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter),
+/// please read the [crate root docs][crate].
 ///
 /// When constructed, it uses data from the [data provider], selected locale and provided options to
 /// collect all data necessary to format any dates into that locale.
@@ -41,7 +42,7 @@ use icu_provider::DataLocale;
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
+/// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::Locale;
 /// use std::str::FromStr;
@@ -64,7 +65,7 @@ use icu_provider::DataLocale;
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct DateTimeFormatter(pub(crate) raw::TypedDateTimeFormatter, AnyCalendar);
+pub struct DateTimeFormatter(pub(crate) raw::DateTimeFormatter, AnyCalendar);
 
 impl DateTimeFormatter {
     /// Construct a new [`DateTimeFormatter`] from a data provider that implements
@@ -103,7 +104,7 @@ impl DateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
@@ -148,7 +149,7 @@ impl DateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{any_calendar::AnyCalendar, DateTime, Gregorian};
+    /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
@@ -185,6 +186,7 @@ impl DateTimeFormatter {
             + DataProvider<WeekDataV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapanextErasV1Marker>
             + ?Sized,
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
@@ -207,10 +209,62 @@ impl DateTimeFormatter {
         let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
 
         Ok(Self(
-            raw::TypedDateTimeFormatter::try_new(data_provider, locale, options)?,
+            raw::DateTimeFormatter::try_new(data_provider, locale, options)?,
             calendar,
         ))
     }
+
+    /// Constructor that takes a [`TimeFormatter`] and [`DateFormatter`] and combines them into a [`DateTimeFormatter`].
+    /// Prefer using one of the other constructors if possible.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::datetime::{options::length, DateTimeFormatter, DateFormatter, TimeFormatter};
+    /// use icu::locid::{locale, Locale};
+    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
+    /// use std::str::FromStr;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let length = length::Date::Medium;
+    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    ///
+    /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
+    ///     .expect("Failed to create TypedDateFormatter instance.");
+    ///
+    /// let tf = TimeFormatter::try_new(
+    ///     &provider,
+    ///     &locale!("en").into(),
+    ///     length::Time::Short,
+    ///     None,
+    /// )
+    /// .expect("Failed to create TimeFormatter instance.");
+    ///
+    /// let dtf = DateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
+    /// ```
+    ///
+    /// [data provider]: icu_provider
+    #[inline]
+    pub fn try_from_date_and_time(
+        date: DateFormatter,
+        time: TimeFormatter,
+    ) -> Result<Self, DateTimeFormatterError>
+where {
+        Ok(Self(
+            raw::DateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
+            date.1,
+        ))
+    }
+
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     ///

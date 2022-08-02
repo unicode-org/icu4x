@@ -22,9 +22,21 @@ impl DataProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedDataP
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *calendar::japanese_v1_u_ca::DATA
+                *calendar::japanese_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::JapaneseErasV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_calendar::provider::JapanextErasV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::JapanextErasV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *calendar::japanext_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::JapanextErasV1Marker::KEY, req))?,
             ))),
         })
     }

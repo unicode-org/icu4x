@@ -21,8 +21,8 @@ use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 
 use crate::{
-    calendar, input::DateTimeInput, input::IsoTimeInput, CldrCalendar, DateTimeFormatterError,
-    FormattedDateTime,
+    calendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput, CldrCalendar,
+    DateTimeFormatterError, FormattedDateTime,
 };
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
@@ -135,7 +135,7 @@ impl TimeFormatter {
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: IsoTimeInput,
     {
@@ -198,38 +198,40 @@ impl TimeFormatter {
     }
 }
 
-/// [`TypedDateFormatter`] is a structure of the [`icu_datetime`] component that provides date formatting only.
-/// When constructed, it uses data from the [data provider], selected locale and provided preferences to
-/// collect all data necessary to format any date into that locale.
+/// [`TypedDateFormatter`] is a formatter capable of formatting
+/// dates from a calendar selected at compile time. For the difference between this
+/// and [`DateFormatter`](crate::DateFormatter), please read the [crate root docs][crate].
+///
+/// When constructed, it uses data from the [data provider], selected locale and provided options to
+/// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`TypedDateFormatter`], and then fast formatting of [`DateTimeInput`] data using the instance.
+/// heavy construction of [`TypedDateFormatter`], and then fast formatting of [`DateInput`] data using the instance.
 ///
 /// [`icu_datetime`]: crate
-/// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateFormatter
 ///
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::{options::length::Date, TypedDateFormatter};
+/// use icu::calendar::{Date, Gregorian};
+/// use icu::datetime::{options::length, TypedDateFormatter};
 /// use icu::locid::locale;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), Date::Full)
+/// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), length::Date::Full)
 ///     .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-///     .expect("Failed to construct DateTime.");
+/// let date = Date::new_gregorian_date(2020, 9, 1)
+///     .expect("Failed to construct Date.");
 ///
-/// assert_eq!(df.format_to_string(&datetime), "Tuesday, September 1, 2020");
+/// assert_eq!(df.format_to_string(&date), "Tuesday, September 1, 2020");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct TypedDateFormatter<C>(pub(super) raw::TypedDateFormatter, PhantomData<C>);
+pub struct TypedDateFormatter<C>(pub(super) raw::DateFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// Constructor that takes a selected locale, reference to a [data provider] and
@@ -239,12 +241,12 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
+    /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), Date::Full)
+    /// TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), length::Date::Full)
     ///     .unwrap();
     /// ```
     ///
@@ -269,7 +271,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
-            raw::TypedDateFormatter::try_new(data_provider, locale, length)?,
+            raw::DateFormatter::try_new(data_provider, locale, length)?,
             PhantomData,
         ))
     }
@@ -280,27 +282,27 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
+    /// use icu::calendar::{Date, Gregorian};
+    /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Full)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Full)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
+    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    ///     .expect("Failed to construct Date.");
     ///
-    /// assert_writeable_eq!(df.format(&datetime), "Tuesday, September 1, 2020");
+    /// assert_writeable_eq!(df.format(&date), "Tuesday, September 1, 2020");
     /// ```
     ///
     /// At the moment, there's little value in using that over one of the other `format` methods,
     /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
     /// about formatted date and so on.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
-        T: DateTimeInput<Calendar = C>,
+        T: DateInput<Calendar = C>,
     {
         self.0.format(value)
     }
@@ -311,18 +313,18 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
+    /// use icu::calendar::{Date, Gregorian};
+    /// use icu::datetime::{options::length, TypedDateFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Short)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Short)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
+    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    ///     .expect("Failed to construct Date.");
     ///
     /// let mut buffer = String::new();
-    /// df.format_to_write(&mut buffer, &datetime)
+    /// df.format_to_write(&mut buffer, &date)
     ///     .expect("Failed to write to a buffer.");
     ///
     /// assert_eq!(buffer, "9/1/20");
@@ -331,7 +333,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput<Calendar = C>,
+        value: &impl DateInput<Calendar = C>,
     ) -> core::fmt::Result {
         self.0.format_to_write(w, value)
     }
@@ -341,30 +343,33 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::{options::length::Date, TypedDateFormatter};
+    /// use icu::calendar::{Date, Gregorian};
+    /// use icu::datetime::{options::length, TypedDateFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), Date::Short)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Short)
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
+    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    ///     .expect("Failed to construct Date.");
     ///
-    /// assert_eq!(df.format_to_string(&datetime), "9/1/20");
+    /// assert_eq!(df.format_to_string(&date), "9/1/20");
     /// ```
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
+    pub fn format_to_string(&self, value: &impl DateInput<Calendar = C>) -> String {
         self.0.format_to_string(value)
     }
 }
 
-/// [`TypedDateTimeFormatter`] is the main structure of the [`icu_datetime`] component.
+/// [`TypedDateTimeFormatter`] is a formatter capable of formatting
+/// date/times from a calendar selected at compile time. For the difference between this
+///  and [`DateTimeFormatter`](crate::DateTimeFormatter), please read the [crate root docs][crate].
+///
 /// When constructed, it uses data from the [data provider], selected locale and provided options to
 /// collect all data necessary to format any dates into that locale.
 ///
 /// For that reason, one should think of the process of formatting a date in two steps - first, a computational
-/// heavy construction of [`TypedDateTimeFormatter`], and then fast formatting of [`DateTimeInput`] data using the instance.
+/// heavy construction of [`TypedDateTimeFormatter`], and then fast formatting of [`DateInput`] data using the instance.
 ///
 /// [`icu_datetime`]: crate
 /// [`TypedDateTimeFormatter`]: crate::datetime::TypedDateTimeFormatter
@@ -399,7 +404,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
-pub struct TypedDateTimeFormatter<C>(pub(super) raw::TypedDateTimeFormatter, PhantomData<C>);
+pub struct TypedDateTimeFormatter<C>(pub(super) raw::DateTimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     /// Constructor that takes a [`TimeFormatter`] and [`TypedDateFormatter`] and combines them into a [`TypedDateTimeFormatter`].
@@ -440,7 +445,7 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     ) -> Result<Self, DateTimeFormatterError>
 where {
         Ok(Self(
-            raw::TypedDateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
+            raw::DateTimeFormatter::try_from_date_and_time(date.0, time.0)?,
             PhantomData,
         ))
     }
@@ -491,7 +496,7 @@ where {
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
-            raw::TypedDateTimeFormatter::try_new(data_provider, locale, options)?,
+            raw::DateTimeFormatter::try_new(data_provider, locale, options)?,
             PhantomData,
         ))
     }

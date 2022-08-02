@@ -56,6 +56,9 @@ pub mod planes;
 #[cfg(feature = "serde")]
 pub mod toml;
 
+#[cfg(feature = "serde")]
+mod serde;
+
 pub use codepointtrie::CodePointMapRange;
 pub use codepointtrie::CodePointMapRangeIterator;
 pub use codepointtrie::CodePointTrie;

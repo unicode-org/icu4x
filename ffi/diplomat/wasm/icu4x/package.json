@@ -1,8 +1,8 @@
 {
-  "name": "icu4x-wasm",
+  "name": "icu4x",
   "version": "0.0.1",
   "description": "ICU4X JavaScript bindings via WebAssembly",
-  "main": "wasm.mjs",
+  "main": "lib/index.js",
   "type": "module",
   "directories": {
     "doc": "docs",

@@ -28,6 +28,10 @@ use crate::{
 
 /// The composition of [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
 ///
+/// [`TypedZonedDateTimeFormatter`] is a formatter capable of formatting
+/// date/times with time zones from a calendar selected at compile time. For the difference between this
+/// and [`DateTimeFormatter`](crate::DateTimeFormatter), please read the [crate root docs][crate].
+///
 /// [`TypedZonedDateTimeFormatter`] uses data from the [data provider]s, the selected locale, and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
 ///
@@ -67,7 +71,7 @@ use crate::{
 ///
 /// let value = zdtf.format_to_string(&datetime, &time_zone);
 /// ```
-pub struct TypedZonedDateTimeFormatter<C>(raw::TypedZonedDateTimeFormatter, PhantomData<C>);
+pub struct TypedZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>);
 
 impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// Constructor that takes a selected locale, a reference to a [data provider] for
@@ -134,7 +138,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
 
         calendar::potentially_fixup_calendar::<C>(&mut locale)?;
         Ok(Self(
-            raw::TypedZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new(
                 locale,
                 date_provider,
                 zone_provider,

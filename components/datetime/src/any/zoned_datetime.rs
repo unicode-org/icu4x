@@ -21,13 +21,14 @@ use crate::provider::{
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_calendar::provider::{JapaneseErasV1Marker, JapanextErasV1Marker};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 
-/// [`ZonedDateTimeFormatter`] is a [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter) capable of formatting
-/// dates from any calendar, selected at runtime.
+/// [`ZonedDateTimeFormatter`] is a formatter capable of formatting
+/// date/times with timezones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter),
+/// please read the [crate root docs][crate].
 ///
 /// This is equivalently the composition of
 /// [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
@@ -73,7 +74,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
-pub struct ZonedDateTimeFormatter(raw::TypedZonedDateTimeFormatter, AnyCalendar);
+pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedDateTimeFormatter {
     /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
@@ -149,7 +150,7 @@ impl ZonedDateTimeFormatter {
             + ?Sized,
         PP: DataProvider<OrdinalV1Marker> + ?Sized,
         DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
-        CEP: DataProvider<JapaneseErasV1Marker> + ?Sized,
+        CEP: DataProvider<JapaneseErasV1Marker> + DataProvider<JapanextErasV1Marker> + ?Sized,
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
@@ -171,7 +172,7 @@ impl ZonedDateTimeFormatter {
         let calendar = AnyCalendar::try_new_unstable(kind, calendar_provider)?;
 
         Ok(Self(
-            raw::TypedZonedDateTimeFormatter::try_new(
+            raw::ZonedDateTimeFormatter::try_new(
                 locale,
                 date_provider,
                 zone_provider,

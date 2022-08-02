@@ -8,7 +8,7 @@
 use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
-use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
+use icu_calendar::{arithmetic::week_of, types::Time, AsCalendar, Date, DateTime, Iso};
 use icu_provider::DataLocale;
 use icu_timezone::{CustomTimeZone, GmtOffset, TimeVariant};
 
@@ -169,6 +169,18 @@ impl ExtractedDateTimeInput {
             minute: input.minute(),
             second: input.second(),
             nanosecond: input.nanosecond(),
+        }
+    }
+    /// Construct given an instance of a [`DateTimeInput`].
+    pub(crate) fn extract_from_date<T: DateInput>(input: &T) -> Self {
+        Self {
+            year: input.year(),
+            month: input.month(),
+            day_of_month: input.day_of_month(),
+            iso_weekday: input.iso_weekday(),
+            day_of_year_info: input.day_of_year_info(),
+            any_calendar_kind: input.any_calendar_kind(),
+            ..Default::default()
         }
     }
     /// Construct given an instance of a [`DateTimeInput`].
@@ -490,5 +502,20 @@ impl TimeZoneInput for CustomTimeZone {
 
     fn time_variant(&self) -> Option<TimeVariant> {
         self.time_variant
+    }
+}
+
+impl IsoTimeInput for Time {
+    fn hour(&self) -> Option<IsoHour> {
+        Some(self.hour)
+    }
+    fn minute(&self) -> Option<IsoMinute> {
+        Some(self.minute)
+    }
+    fn second(&self) -> Option<IsoSecond> {
+        Some(self.second)
+    }
+    fn nanosecond(&self) -> Option<NanoSecond> {
+        Some(self.nanosecond)
     }
 }
