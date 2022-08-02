@@ -30,6 +30,8 @@ pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 pub unsafe trait VarZeroVecFormat: 'static + Sized {
     #[doc(hidden)]
     const INDEX_WIDTH: usize;
+    #[doc(hidden)]
+    const MAX_VALUE: u32;
     /// This is always `RawBytesULE<Self::INDEX_WIDTH>` however
     /// Rust does not currently support using associated constants in const
     /// generics
@@ -60,6 +62,7 @@ pub struct Index32;
 
 unsafe impl VarZeroVecFormat for Index16 {
     const INDEX_WIDTH: usize = 2;
+    const MAX_VALUE: u32 = u16::MAX as u32;
     type RawBytes = RawBytesULE<2>;
     fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
         raw.as_unsigned_int() as usize
@@ -74,6 +77,7 @@ unsafe impl VarZeroVecFormat for Index16 {
 
 unsafe impl VarZeroVecFormat for Index32 {
     const INDEX_WIDTH: usize = 4;
+    const MAX_VALUE: u32 = u32::MAX as u32;
     type RawBytes = RawBytesULE<4>;
     fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
         raw.as_unsigned_int() as usize
@@ -539,5 +543,11 @@ where
         .fold(Some(0u32), |s, v| {
             s.and_then(|s| v.and_then(|v| s.checked_add(v)))
         })?;
-    idx_len.checked_add(data_len)
+    let ret = idx_len.checked_add(data_len);
+    if let Some(r) = ret {
+        if r >= F::MAX_VALUE {
+            return None;
+        }
+    }
+    ret
 }

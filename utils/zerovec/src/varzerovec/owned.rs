@@ -12,6 +12,7 @@ use super::*;
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
+use core::any;
 use core::convert::TryInto;
 use core::marker::PhantomData;
 use core::ops::Deref;
@@ -238,7 +239,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     ///
     /// ## Safety
     /// - `index` must be a valid index, or, if `shift_type == ShiftType::Insert`, `index == self.len()` is allowed.
-    /// - `new_size` musn't result in the data segment growing larger than `u32::MAX`.
+    /// - `new_size` musn't result in the data segment growing larger than `F::MAX_VALUE`.
     unsafe fn shift(&mut self, index: usize, new_size: usize, shift_type: ShiftType) -> &mut [u8] {
         // The format of the encoded data is:
         //  - four bytes of "len"
@@ -272,9 +273,10 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             new_size as i64 - (prev_element.end - prev_element.start) as i64 + index_shift;
         let new_slice_len = slice_len.wrapping_add(shift as usize);
         if shift > 0 {
-            if new_slice_len > u32::MAX as usize {
+            if new_slice_len > F::MAX_VALUE as usize {
                 panic!(
-                    "Attempted to grow VarZeroVec to an encoded size that does not fit within a u32"
+                    "Attempted to grow VarZeroVec to an encoded size that does not fit within the length size used by {}",
+                    any::type_name::<F>()
                 );
             }
             self.entire_slice.reserve(shift as usize);
