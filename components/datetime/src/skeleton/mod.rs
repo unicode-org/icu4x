@@ -25,7 +25,7 @@ mod test {
         options::components,
         pattern::runtime,
         provider::calendar::{
-            DatePatternsV1Marker, DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, SkeletonV1,
+            DateLengthsV1Marker, DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, SkeletonV1,
         },
     };
     use core::convert::TryFrom;
@@ -38,7 +38,7 @@ mod test {
     };
 
     fn get_data_payload() -> (
-        DataPayload<DatePatternsV1Marker>,
+        DataPayload<DateLengthsV1Marker>,
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
         let provider = icu_testdata::get_provider();

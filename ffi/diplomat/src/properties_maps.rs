@@ -43,7 +43,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn get(&self, cp: char) -> u16 {
-            self.0.get(cp).0
+            self.0.as_borrowed().get(cp).0
         }
     }
 }

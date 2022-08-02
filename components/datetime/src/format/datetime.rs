@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date::{
-    DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, LocalizedDateTimeInput,
-};
 use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
+use crate::input::{
+    DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, LocalizedDateTimeInput,
+};
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
     PatternItem,
@@ -25,7 +25,7 @@ use icu_provider::DataPayload;
 use writeable::Writeable;
 
 /// [`FormattedDateTime`] is a intermediate structure which can be retrieved as
-/// an output from [`DateTimeFormatter`](crate::DateTimeFormatter).
+/// an output from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
 ///
 /// The structure contains all the information needed to display formatted value,
 /// and it will also contain additional methods allowing the user to introspect
@@ -35,12 +35,12 @@ use writeable::Writeable;
 ///
 /// ```no_run
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::datetime::DateTimeFormatter;
+/// use icu::datetime::TypedDateTimeFormatter;
 /// use icu::locid::locale;
 /// # let provider = icu_testdata::get_provider();
 /// # let options = icu::datetime::DateTimeFormatterOptions::default();
-/// let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options)
-///     .expect("Failed to create DateTimeFormatter instance.");
+/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options)
+///     .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -98,24 +98,24 @@ where
     match length {
         FieldLength::One => {}
         FieldLength::TwoDigit => {
-            num.pad_left(2);
-            num.truncate_left(2);
+            num.pad_start(2);
+            num.set_max_position(2);
         }
         FieldLength::Abbreviated => {
-            num.pad_left(3);
+            num.pad_start(3);
         }
         FieldLength::Wide => {
-            num.pad_left(4);
+            num.pad_start(4);
         }
         FieldLength::Narrow => {
-            num.pad_left(5);
+            num.pad_start(5);
         }
         FieldLength::Six => {
-            num.pad_left(6);
+            num.pad_start(6);
         }
         FieldLength::Fixed(p) => {
-            num.pad_left(p as i16);
-            num.truncate_left(p as i16);
+            num.pad_start(p as i16);
+            num.set_max_position(p as i16);
         }
     }
 
@@ -208,7 +208,7 @@ where
             let era = datetime
                 .datetime()
                 .year()
-                .ok_or(Error::MissingInputField)?
+                .ok_or(Error::MissingInputField(Some("year")))?
                 .era;
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = date_symbols
@@ -224,7 +224,7 @@ where
                     datetime
                         .datetime()
                         .year()
-                        .ok_or(Error::MissingInputField)?
+                        .ok_or(Error::MissingInputField(Some("year")))?
                         .number,
                 ),
                 field.length,
@@ -244,7 +244,7 @@ where
                     datetime
                         .datetime()
                         .month()
-                        .ok_or(Error::MissingInputField)?
+                        .ok_or(Error::MissingInputField(Some("month")))?
                         .ordinal,
                 ),
                 field.length,
@@ -259,7 +259,7 @@ where
                         datetime
                             .datetime()
                             .month()
-                            .ok_or(Error::MissingInputField)?
+                            .ok_or(Error::MissingInputField(Some("month")))?
                             .code,
                     )?;
                 w.write_str(symbol)?
@@ -283,7 +283,7 @@ where
             let dow = datetime
                 .datetime()
                 .iso_weekday()
-                .ok_or(Error::MissingInputField)?;
+                .ok_or(Error::MissingInputField(Some("iso_weekday")))?;
             #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = date_symbols
                 .expect("Expect date symbols to be present")
@@ -298,7 +298,7 @@ where
                     datetime
                         .datetime()
                         .day_of_month()
-                        .ok_or(Error::MissingInputField)?
+                        .ok_or(Error::MissingInputField(Some("day_of_month")))?
                         .0
                 }
                 fields::Day::DayOfWeekInMonth => datetime.day_of_week_in_month()?.0,
@@ -307,8 +307,12 @@ where
             field.length,
         )?,
         FieldSymbol::Hour(hour) => {
-            let h =
-                usize::from(datetime.datetime().hour().ok_or(Error::MissingInputField)?) as isize;
+            let h = usize::from(
+                datetime
+                    .datetime()
+                    .hour()
+                    .ok_or(Error::MissingInputField(Some("hour")))?,
+            ) as isize;
             let value = match hour {
                 fields::Hour::H11 => h % 12,
                 fields::Hour::H12 => {
@@ -342,7 +346,7 @@ where
                 datetime
                     .datetime()
                     .minute()
-                    .ok_or(Error::MissingInputField)?,
+                    .ok_or(Error::MissingInputField(Some("minute")))?,
             )),
             field.length,
         )?,
@@ -351,7 +355,7 @@ where
                 datetime
                     .datetime()
                     .second()
-                    .ok_or(Error::MissingInputField)?,
+                    .ok_or(Error::MissingInputField(Some("second")))?,
             ));
             if let Some(PatternItem::Field(next_field)) = next_item {
                 if let FieldSymbol::Second(Second::FractionalSecond) = next_field.symbol {
@@ -359,7 +363,7 @@ where
                         datetime
                             .datetime()
                             .nanosecond()
-                            .ok_or(Error::MissingInputField)?,
+                            .ok_or(Error::MissingInputField(Some("nanosecond")))?,
                     ));
 
                     // We only support fixed field length for fractional seconds.
@@ -375,14 +379,12 @@ where
                     };
 
                     // We store fractional seconds as nanoseconds, convert to seconds.
-                    fraction
-                        .multiply_pow10(-9)
-                        .map_err(|_| Error::FixedDecimal)?;
+                    fraction.multiply_pow10(-9);
 
                     seconds
                         .concatenate_right(fraction)
                         .map_err(|_| Error::FixedDecimal)?;
-                    seconds.pad_right(-(precision as i16));
+                    seconds.pad_end(-(precision as i16));
                 }
             }
             format_number(w, fixed_decimal_format, seconds, field.length)?
@@ -400,7 +402,10 @@ where
                 .get_symbol_for_day_period(
                     period,
                     field.length,
-                    datetime.datetime().hour().ok_or(Error::MissingInputField)?,
+                    datetime
+                        .datetime()
+                        .hour()
+                        .ok_or(Error::MissingInputField(Some("hour")))?,
                     pattern.time_granularity.is_top_of_hour(
                         datetime.datetime().minute().map(u8::from).unwrap_or(0),
                         datetime.datetime().second().map(u8::from).unwrap_or(0),
@@ -507,13 +512,13 @@ mod tests {
         use icu::calendar::japanese::{Japanese, JapaneseEraStyle};
         use icu::calendar::DateTime;
         use icu::datetime::options::length;
-        use icu::datetime::DateTimeFormatter;
+        use icu::datetime::TypedDateTimeFormatter;
 
         let provider = icu_testdata::get_provider();
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
         let options =
             length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
-        let dtf = DateTimeFormatter::<Japanese>::try_new(&locale.into(), &provider, &options)
+        let dtf = TypedDateTimeFormatter::<Japanese>::try_new(&provider, &locale.into(), &options)
             .expect("DateTimeFormat construction succeeds");
 
         let japanext =
@@ -546,7 +551,7 @@ mod tests {
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
         let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, &provider, Default::default()).unwrap();
+            FixedDecimalFormatter::try_new(&provider, &locale, Default::default()).unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &Locale::UND.into());
@@ -580,8 +585,8 @@ mod tests {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormatter::try_new(
-            &icu_locid::locale!("en").into(),
             &provider,
+            &icu_locid::locale!("en").into(),
             fixed_decimal_format_options,
         )
         .unwrap();

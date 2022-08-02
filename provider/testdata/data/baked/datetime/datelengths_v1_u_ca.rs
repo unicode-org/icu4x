@@ -1,5 +1,5 @@
 // @generated
-type DataStruct = < :: icu_datetime :: provider :: calendar :: DatePatternsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu_datetime :: provider :: calendar :: DateLengthsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar-EG-u-ca-buddhist", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),

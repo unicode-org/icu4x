@@ -35,7 +35,8 @@
 //!
 //! let data = maps::get_general_category(&provider).expect("The data should be valid");
 //! let gc = data.as_borrowed();
-//! let line_sep = gc.get_set_for_value(GeneralCategory::LineSeparator);
+//! let line_sep_data = gc.get_set_for_value(GeneralCategory::LineSeparator);
+//! let line_sep = line_sep_data.as_borrowed();
 //!
 //! assert!(line_sep.contains_u32(0x2028));
 //! assert!(!line_sep.contains_u32(0x2029));
@@ -71,7 +72,8 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]

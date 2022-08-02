@@ -10,8 +10,10 @@ pub mod ffi {
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
-    use icu_segmenter::{
+    use icu_segmenter::provider::{
         LstmDataV1Marker, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
+    };
+    use icu_segmenter::{
         WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordBreakSegmenter,
     };
 

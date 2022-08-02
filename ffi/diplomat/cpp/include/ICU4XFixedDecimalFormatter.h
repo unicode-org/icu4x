@@ -14,8 +14,8 @@ typedef struct ICU4XFixedDecimalFormatter ICU4XFixedDecimalFormatter;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "ICU4XLocale.h"
 #include "ICU4XDataProvider.h"
+#include "ICU4XLocale.h"
 #include "ICU4XFixedDecimalGroupingStrategy.h"
 #include "diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError.h"
 #include "ICU4XDataStruct.h"
@@ -26,7 +26,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError ICU4XFixedDecimalFormatter_try_new(const ICU4XLocale* locale, const ICU4XDataProvider* provider, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError ICU4XFixedDecimalFormatter_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 
 diplomat_result_box_ICU4XFixedDecimalFormatter_ICU4XError ICU4XFixedDecimalFormatter_try_new_from_decimal_symbols_v1(const ICU4XDataStruct* data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 

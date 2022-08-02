@@ -11,6 +11,7 @@ use icu_datetime::provider::time_zones::*;
 use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use icu_timezone::provider::*;
 use std::collections::HashMap;
 
 mod convert;
@@ -82,14 +83,15 @@ macro_rules! impl_data_provider {
                         // MetaZonePeriodV1 does not require localized time zone data
                         Ok(vec![Default::default()])
                     } else {
-                        Ok(self
-                            .source
-                            .cldr()?
-                            .dates("gregorian")
-                            .list_langs()?
-                            .map(DataLocale::from)
-                            .collect())
-                    }
+
+                    Ok(self
+                        .source
+                        .cldr()?
+                        .dates("gregorian")
+                        .list_langs()?
+                        .map(DataLocale::from)
+                        .collect())
+}
                 }
             }
         )+
@@ -109,6 +111,7 @@ impl_data_provider!(
 
 #[cfg(test)]
 mod tests {
+    use icu_timezone::TimeVariant;
     use tinystr::tinystr;
 
     use super::*;
@@ -184,7 +187,7 @@ mod tests {
             specific_names_long
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "aucw")), &tinystr!(8, "standard"))
+                .get_2d(&MetaZoneId(tinystr!(4, "aucw")), &TimeVariant::standard())
                 .unwrap()
         );
         assert_eq!(
@@ -192,9 +195,9 @@ mod tests {
             specific_names_long
                 .get()
                 .overrides
-                .get(
+                .get_2d(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
-                    &tinystr!(8, "standard")
+                    &TimeVariant::standard()
                 )
                 .unwrap()
         );
@@ -237,7 +240,7 @@ mod tests {
             specific_names_short
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "ampa")), &tinystr!(8, "daylight"))
+                .get_2d(&MetaZoneId(tinystr!(4, "ampa")), &TimeVariant::daylight())
                 .unwrap()
         );
         assert_eq!(
@@ -245,9 +248,9 @@ mod tests {
             specific_names_short
                 .get()
                 .overrides
-                .get(
+                .get_2d(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
-                    &tinystr!(8, "standard")
+                    &TimeVariant::standard()
                 )
                 .unwrap()
         );
@@ -265,7 +268,7 @@ mod tests {
             metazone_period
                 .get()
                 .0
-                .get_copied(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)
+                .get_copied_2d(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)
                 .unwrap()
         );
     }

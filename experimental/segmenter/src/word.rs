@@ -13,8 +13,6 @@ use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
-#[cfg(feature = "lstm")]
-use crate::LstmDataV1Marker;
 
 /// Word break iterator for an `str` (a UTF-8 string).
 pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;

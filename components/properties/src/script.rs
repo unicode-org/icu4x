@@ -12,7 +12,7 @@ use crate::provider::*;
 use crate::props::ScriptULE;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 #[cfg(feature = "serde")]
@@ -36,6 +36,8 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 /// into the `extensions` structure.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::script))]
 #[repr(transparent)]
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -317,7 +319,7 @@ impl<'data> ScriptWithExtensions<'data> {
             let scx_val = self.extensions.get(ext_idx as usize);
             let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
 
-            let default_sc_val = <Script as TrieValue>::DATA_GET_ERROR_VALUE;
+            let default_sc_val = Script::Unknown;
 
             scx_first_sc.unwrap_or(default_sc_val)
         } else if sc_with_ext.is_common() {

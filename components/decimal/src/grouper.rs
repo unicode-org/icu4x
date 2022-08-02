@@ -154,9 +154,7 @@ fn test_grouper() {
     ];
     for cas in &cases {
         for i in 0..4 {
-            let dec = FixedDecimal::from(1)
-                .multiplied_pow10((i as i16) + 3)
-                .unwrap();
+            let dec = FixedDecimal::from(1).multiplied_pow10((i as i16) + 3);
             let provider = AnyPayloadProvider::new_owned::<DecimalSymbolsV1Marker>(
                 crate::provider::DecimalSymbolsV1 {
                     grouping_sizes: cas.sizes,
@@ -168,8 +166,8 @@ fn test_grouper() {
                 ..Default::default()
             };
             let fdf = FixedDecimalFormatter::try_new(
-                &LanguageIdentifier::UND.into(),
                 &provider.as_downcasting(),
+                &LanguageIdentifier::UND.into(),
                 options,
             )
             .unwrap();

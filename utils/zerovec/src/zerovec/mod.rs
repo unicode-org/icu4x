@@ -257,7 +257,9 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(bytes);
+        // n.b. be careful here, this might hit https://github.com/rust-lang/rust/issues/99923
+        let data = bytes.as_ptr();
+        let mut metadata = bytes.len();
         metadata /= core::mem::size_of::<T::ULE>();
         Self::Borrowed(core::mem::transmute((data, metadata)))
     }

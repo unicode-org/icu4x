@@ -37,7 +37,7 @@
 //! # Example
 //!
 //! ```
-//! use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormatter};
+//! use icu::datetime::{mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter};
 //! use icu::locid::locale;
 //!
 //! let provider = icu_testdata::get_provider();
@@ -45,8 +45,8 @@
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 //!
-//! let dtf = DateTimeFormatter::try_new(&locale!("en").into(), &provider, &options)
-//!     .expect("Failed to create DateTimeFormatter instance.");
+//! let dtf = TypedDateTimeFormatter::try_new(&provider, &locale!("en").into(), &options)
+//!     .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
 //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 //!
@@ -95,7 +95,10 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -133,3 +136,7 @@ pub use icu_properties as properties;
 #[cfg(feature = "experimental")]
 #[doc(inline)]
 pub use icu_segmenter as segmenter;
+
+#[cfg(feature = "experimental")]
+#[doc(inline)]
+pub use icu_timezone as timezone;

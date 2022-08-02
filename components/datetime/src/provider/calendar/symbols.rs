@@ -35,11 +35,7 @@ pub struct DateSymbolsV1<'data> {
     pub eras: Eras<'data>,
 }
 
-#[icu_provider::data_struct(marker(
-    TimeSymbolsV1Marker,
-    "datetime/timesymbols@1",
-    extension_key = "ca"
-))]
+#[icu_provider::data_struct(marker(TimeSymbolsV1Marker, "datetime/timesymbols@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",

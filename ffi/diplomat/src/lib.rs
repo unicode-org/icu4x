@@ -10,7 +10,8 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        // Exhaustiveness and Debug is not required for Diplomat types
     )
 )]
 #![allow(clippy::upper_case_acronyms)]

@@ -90,7 +90,6 @@ impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
         // to catch such cases. It is relatively rare for a new era to be added, and in those cases the integrity check can
         // be disabled when generating new data.
         if japanext && env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
                 .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
 

@@ -39,7 +39,10 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        // TODO(#1668): enable clippy::exhaustive_structs,
+        // TODO(#1668): enable clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 
@@ -52,6 +55,9 @@ pub mod planes;
 
 #[cfg(feature = "serde")]
 pub mod toml;
+
+#[cfg(feature = "serde")]
+mod serde;
 
 pub use codepointtrie::CodePointMapRange;
 pub use codepointtrie::CodePointMapRangeIterator;

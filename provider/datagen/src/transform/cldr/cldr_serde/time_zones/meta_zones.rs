@@ -40,7 +40,6 @@ pub struct MetaZoneForPeriod {
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
-#[allow(clippy::enum_variant_names)]
 pub enum MetaLocationOrSubRegion {
     Location(Vec<MetaZoneForPeriod>),
     SubRegion(HashMap<String, Vec<MetaZoneForPeriod>>),
@@ -48,7 +47,6 @@ pub enum MetaLocationOrSubRegion {
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
-#[allow(clippy::enum_variant_names)]
 pub enum ZonePeriod {
     Region(Vec<MetaZoneForPeriod>),
     LocationOrSubRegion(HashMap<String, MetaLocationOrSubRegion>),

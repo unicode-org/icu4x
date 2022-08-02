@@ -28,7 +28,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     let provider = icu_testdata::get_provider();
 
-    let fdf = FixedDecimalFormatter::try_new(&locale!("bn").into(), &provider, Default::default())
+    let fdf = FixedDecimalFormatter::try_new(&provider, &locale!("bn").into(), Default::default())
         .expect("Failed to create FixedDecimalFormatter instance.");
 
     for line in LINES_REMOVED_ADDED.iter() {

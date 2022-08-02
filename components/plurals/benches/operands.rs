@@ -29,9 +29,7 @@ fn operands(c: &mut Criterion) {
                     .expect("Failed to parse a number into an operands.");
             }
             for s in &data.fixed_decimals {
-                let f: FixedDecimal = FixedDecimal::from(s.value)
-                    .multiplied_pow10(s.exponent)
-                    .unwrap();
+                let f: FixedDecimal = FixedDecimal::from(s.value).multiplied_pow10(s.exponent);
                 let _: PluralOperands = PluralOperands::from(black_box(&f));
             }
         })
@@ -108,9 +106,7 @@ fn operands(c: &mut Criterion) {
         c.bench_function("plurals/operands/create/from_fixed_decimal", |b| {
             b.iter(|| {
                 for s in &data.fixed_decimals {
-                    let f: FixedDecimal = FixedDecimal::from(s.value)
-                        .multiplied_pow10(s.exponent)
-                        .unwrap();
+                    let f: FixedDecimal = FixedDecimal::from(s.value).multiplied_pow10(s.exponent);
                     let _: PluralOperands = PluralOperands::from(black_box(&f));
                 }
             });
@@ -118,9 +114,9 @@ fn operands(c: &mut Criterion) {
 
         {
             let samples = [
-                FixedDecimal::from(1).multiplied_pow10(0).unwrap(),
-                FixedDecimal::from(123450).multiplied_pow10(-4).unwrap(),
-                FixedDecimal::from(2500).multiplied_pow10(-2).unwrap(),
+                FixedDecimal::from(1_i128).multiplied_pow10(0),
+                FixedDecimal::from(123450_i128).multiplied_pow10(-4),
+                FixedDecimal::from(2500_i128).multiplied_pow10(-2),
             ];
             let mut group = c.benchmark_group("plurals/operands/create/from_fixed_decimal/samples");
             for s in samples.iter() {
