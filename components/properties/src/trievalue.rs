@@ -14,6 +14,7 @@ use icu_codepointtrie::TrieValue;
 use core::convert::TryFrom;
 
 impl TrieValue for CanonicalCombiningClass {
+    const DEFAULT_ERROR_VALUE: CanonicalCombiningClass = CanonicalCombiningClass::NotReordered;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -22,6 +23,7 @@ impl TrieValue for CanonicalCombiningClass {
 }
 
 impl TrieValue for BidiClass {
+    const DEFAULT_ERROR_VALUE: BidiClass = BidiClass::OtherNeutral;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -30,6 +32,7 @@ impl TrieValue for BidiClass {
 }
 
 impl TrieValue for GeneralCategory {
+    const DEFAULT_ERROR_VALUE: GeneralCategory = GeneralCategory::Unassigned;
     type TryFromU32Error = &'static str;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -40,6 +43,7 @@ impl TrieValue for GeneralCategory {
 }
 
 impl TrieValue for Script {
+    const DEFAULT_ERROR_VALUE: Script = Script::Unknown;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -48,6 +52,7 @@ impl TrieValue for Script {
 }
 
 impl TrieValue for ScriptWithExt {
+    const DEFAULT_ERROR_VALUE: ScriptWithExt = ScriptWithExt::Unknown;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -56,6 +61,7 @@ impl TrieValue for ScriptWithExt {
 }
 
 impl TrieValue for EastAsianWidth {
+    const DEFAULT_ERROR_VALUE: EastAsianWidth = EastAsianWidth::Neutral;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -64,6 +70,7 @@ impl TrieValue for EastAsianWidth {
 }
 
 impl TrieValue for LineBreak {
+    const DEFAULT_ERROR_VALUE: LineBreak = LineBreak::Unknown;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -72,6 +79,7 @@ impl TrieValue for LineBreak {
 }
 
 impl TrieValue for GraphemeClusterBreak {
+    const DEFAULT_ERROR_VALUE: GraphemeClusterBreak = GraphemeClusterBreak::Other;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -80,6 +88,7 @@ impl TrieValue for GraphemeClusterBreak {
 }
 
 impl TrieValue for WordBreak {
+    const DEFAULT_ERROR_VALUE: WordBreak = WordBreak::Other;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -88,6 +97,7 @@ impl TrieValue for WordBreak {
 }
 
 impl TrieValue for SentenceBreak {
+    const DEFAULT_ERROR_VALUE: SentenceBreak = SentenceBreak::Other;
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {

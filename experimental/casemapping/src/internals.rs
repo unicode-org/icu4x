@@ -238,6 +238,7 @@ impl AsULE for CaseMappingData {
 }
 
 impl TrieValue for CaseMappingData {
+    const DEFAULT_ERROR_VALUE: CaseMappingData = CaseMappingData(0);
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
@@ -384,7 +385,7 @@ impl<'data> CaseMappingInternals<'data> {
             .iter()
             .map(|&i| CaseMappingData(i).with_updated_exception(&idx_map))
             .collect::<ZeroVec<_>>();
-        let trie = CodePointTrie::try_new_with_error_at_end(trie_header, trie_index, trie_data)?;
+        let trie = CodePointTrie::try_new(trie_header, trie_index, trie_data)?;
 
         let result = Self {
             trie,
