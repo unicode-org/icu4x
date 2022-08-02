@@ -14,7 +14,7 @@ pub enum Error {
     #[displaydoc("Could not construct CodePointTrie from deserialized values: {reason}")]
     FromDeserialized {
         /// Reason for inability to deserialize values.
-        reason: &'static str 
+        reason: &'static str,
     },
     /// CodePointTrie must be constructed from data vector with at least one element
     #[displaydoc("CodePointTrie must be constructed from data vector with at least one element")]
