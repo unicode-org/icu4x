@@ -37,7 +37,7 @@ pub struct EraStartDate {
 
 #[icu_provider::data_struct(
     marker(JapaneseErasV1Marker, "calendar/japanese@1"),
-    marker(JapanextErasV1Marker, "calendar/japanext@1")
+    marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1")
 )]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(

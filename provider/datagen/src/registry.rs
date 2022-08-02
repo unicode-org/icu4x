@@ -126,7 +126,7 @@ registry!(
     IdStartV1Marker,
     IdsTrinaryOperatorV1Marker,
     JapaneseErasV1Marker,
-    JapanextErasV1Marker,
+    JapaneseExtendedErasV1Marker,
     JoinControlV1Marker,
     LikelySubtagsV1Marker,
     LineBreakV1Marker,

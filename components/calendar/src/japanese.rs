@@ -78,7 +78,7 @@ pub struct Japanese {
 
 /// The Japanese Calendar with historical eras
 #[derive(Clone, Debug, Default)]
-pub struct Japanext(Japanese);
+pub struct JapaneseExtended(Japanese);
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 /// The inner date type used for representing Date<Japanese>
@@ -125,9 +125,9 @@ impl Japanese {
     }
 }
 
-impl Japanext {
+impl JapaneseExtended {
     /// Creates a new [`Japanese`] from locale data using all eras (including pre-meiji).
-    pub fn try_new<D: DataProvider<provider::JapanextErasV1Marker> + ?Sized>(
+    pub fn try_new<D: DataProvider<provider::JapaneseExtendedErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, DataError> {
         let eras = data_provider
@@ -247,7 +247,7 @@ impl Calendar for Japanese {
     }
 }
 
-impl Calendar for Japanext {
+impl Calendar for JapaneseExtended {
     type DateInner = JapaneseDateInner;
 
     fn date_from_codes(
@@ -329,7 +329,7 @@ impl Calendar for Japanext {
     }
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
-        Some(AnyCalendarKind::Japanext)
+        Some(AnyCalendarKind::JapaneseExtended)
     }
 }
 
@@ -387,7 +387,7 @@ impl Date<Japanese> {
     }
 }
 
-impl Date<Japanext> {
+impl Date<JapaneseExtended> {
     /// Construct a new Japanese Date with all eras.
     ///
     /// Years are specified in the era provided, and must be in range for Japanese
@@ -398,12 +398,12 @@ impl Date<Japanext> {
     ///
     /// ```rust
     /// use icu::calendar::{types, Date, Ref};
-    /// use icu::calendar::japanese::{Japanext};
+    /// use icu::calendar::japanese::{JapaneseExtended};
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let japanext_calendar = Japanext::try_new(&provider).expect("Cannot load japanese data");
+    /// let japanext_calendar = JapaneseExtended::try_new(&provider).expect("Cannot load japanese data");
     /// // for easy sharing
     /// let japanext_calendar = Ref(&japanext_calendar);
     ///
@@ -417,7 +417,7 @@ impl Date<Japanext> {
     /// assert_eq!(date.month().ordinal, 1);
     /// assert_eq!(date.day_of_month().0, 2);
     /// ```
-    pub fn new_japanext_date<A: AsCalendar<Calendar = Japanext>>(
+    pub fn new_japanext_date<A: AsCalendar<Calendar = JapaneseExtended>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -485,19 +485,19 @@ impl DateTime<Japanese> {
     }
 }
 
-impl DateTime<Japanext> {
+impl DateTime<JapaneseExtended> {
     /// Construct a new Japanese datetime from integers with all eras.
     ///
     /// Years are specified in the era provided.
     ///
     /// ```rust
     /// use icu::calendar::{types, DateTime};
-    /// use icu::calendar::japanese::Japanext;
+    /// use icu::calendar::japanese::JapaneseExtended;
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let japanext_calendar = Japanext::try_new(&provider).expect("Cannot load japanese data");
+    /// let japanext_calendar = JapaneseExtended::try_new(&provider).expect("Cannot load japanese data");
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
@@ -515,7 +515,7 @@ impl DateTime<Japanext> {
     #[allow(clippy::too_many_arguments)] // it's more convenient to have this many arguments
                                          // if people wish to construct this by parts they can use
                                          // Date::new_japanese_date() + DateTime::new(date, time)
-    pub fn new_japanext_datetime<A: AsCalendar<Calendar = Japanext>>(
+    pub fn new_japanext_datetime<A: AsCalendar<Calendar = JapaneseExtended>>(
         era: types::Era,
         year: i32,
         month: u8,
@@ -738,7 +738,7 @@ mod tests {
     }
 
     fn single_test_roundtrip_ext(
-        calendar: Ref<Japanext>,
+        calendar: Ref<JapaneseExtended>,
         era: &str,
         year: i32,
         month: u8,
@@ -762,7 +762,7 @@ mod tests {
 
     // test that the Gregorian eras roundtrip to Japanese ones
     fn single_test_gregorian_roundtrip_ext(
-        calendar: Ref<Japanext>,
+        calendar: Ref<JapaneseExtended>,
         era: &str,
         year: i32,
         month: u8,
@@ -814,7 +814,7 @@ mod tests {
     }
 
     fn single_test_error_ext(
-        calendar: Ref<Japanext>,
+        calendar: Ref<JapaneseExtended>,
         era: &str,
         year: i32,
         month: u8,
@@ -835,7 +835,7 @@ mod tests {
     fn test_japanese() {
         let provider = icu_testdata::get_provider();
         let calendar = Japanese::try_new(&provider).expect("Cannot load japanese data");
-        let calendar_ext = Japanext::try_new(&provider).expect("Cannot load japanese data");
+        let calendar_ext = JapaneseExtended::try_new(&provider).expect("Cannot load japanese data");
         let calendar = Ref(&calendar);
         let calendar_ext = Ref(&calendar_ext);
 

@@ -7,7 +7,7 @@ use alloc::string::ToString;
 use core::any;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
-    japanese::Japanext, Gregorian,
+    japanese::JapaneseExtended, Gregorian,
 };
 use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions_unicode_key as key;
@@ -45,7 +45,7 @@ impl CldrCalendar for Japanese {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanese");
 }
 
-impl CldrCalendar for Japanext {
+impl CldrCalendar for JapaneseExtended {
     const DEFAULT_BCP_47_IDENTIFIER: Value = value!("japanext");
 }
 

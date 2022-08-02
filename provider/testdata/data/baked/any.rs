@@ -4,7 +4,7 @@ impl AnyProvider for BakedDataProvider {
         const JAPANESEERASV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_calendar::provider::JapaneseErasV1Marker::KEY.get_hash();
         const JAPANEXTERASV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_calendar::provider::JapanextErasV1Marker::KEY.get_hash();
+            ::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY.get_hash();
         const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
         const COLLATIONDATAV1MARKER: ::icu_provider::DataKeyHash =

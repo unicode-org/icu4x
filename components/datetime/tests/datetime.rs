@@ -13,8 +13,8 @@ use icu_calendar::{
     coptic::Coptic,
     ethiopic::{Ethiopic, EthiopicEraStyle},
     indian::Indian,
-    japanese::{Japanese, Japanext},
-    provider::{JapaneseErasV1Marker, JapanextErasV1Marker},
+    japanese::{Japanese, JapaneseExtended},
+    provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker},
     AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
@@ -65,7 +65,7 @@ fn test_fixture(fixture_name: &str) {
         .0
     {
         let japanese = Japanese::try_new(&provider).expect("Cannot load japanese data");
-        let japanext = Japanext::try_new(&provider).expect("Cannot load japanese data");
+        let japanext = JapaneseExtended::try_new(&provider).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
@@ -109,7 +109,7 @@ fn test_fixture(fixture_name: &str) {
                         &options,
                         &description,
                     ),
-                    AnyCalendarKind::Japanext => assert_fixture_element(
+                    AnyCalendarKind::JapaneseExtended => assert_fixture_element(
                         &locale,
                         &input_japanext,
                         &input_iso,
@@ -192,7 +192,7 @@ fn assert_fixture_element<A, D>(
         + DataProvider<OrdinalV1Marker>
         + DataProvider<WeekDataV1Marker>
         + DataProvider<JapaneseErasV1Marker>
-        + DataProvider<JapanextErasV1Marker>,
+        + DataProvider<JapaneseExtendedErasV1Marker>,
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();

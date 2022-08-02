@@ -21,7 +21,7 @@ use crate::provider::{
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::{JapaneseErasV1Marker, JapanextErasV1Marker};
+use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
@@ -141,7 +141,7 @@ impl ZonedDateTimeFormatter {
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
-            + DataProvider<JapanextErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
