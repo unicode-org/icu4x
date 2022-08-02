@@ -4,7 +4,7 @@
 
 //! Sample data for [`CodePointTrie`] that returns the code point's plane number.
 
-use crate::codepointtrie::codepointtrie::*;
+use crate::codepointtrie::cptrie::*;
 use crate::codepointtrie::error::Error;
 use zerovec::ZeroVec;
 

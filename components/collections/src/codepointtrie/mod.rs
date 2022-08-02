@@ -31,7 +31,7 @@
 
 extern crate alloc;
 
-mod codepointtrie;
+mod cptrie;
 pub mod error;
 mod impl_const;
 pub mod planes;
@@ -42,9 +42,9 @@ pub mod toml;
 #[cfg(feature = "serde")]
 mod serde;
 
-pub use codepointtrie::CodePointMapRange;
-pub use codepointtrie::CodePointMapRangeIterator;
-pub use codepointtrie::CodePointTrie;
-pub use codepointtrie::CodePointTrieHeader;
-pub use codepointtrie::TrieType;
-pub use codepointtrie::TrieValue;
+pub use cptrie::CodePointMapRange;
+pub use cptrie::CodePointMapRangeIterator;
+pub use cptrie::CodePointTrie;
+pub use cptrie::CodePointTrieHeader;
+pub use cptrie::TrieType;
+pub use cptrie::TrieValue;
