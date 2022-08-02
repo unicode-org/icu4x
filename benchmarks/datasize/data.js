@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659411847823,
+  "lastUpdate": 1659413302507,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22583,6 +22583,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/acc48dc55e93ceec32e0f2835811e615a02635af"
         },
         "date": 1659411808003,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 4030057,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9dd86f9940ce7dec43c1e2417a003b656739a099",
+          "message": "Document encoding choices over FFI (#2291)",
+          "timestamp": "2022-08-01T21:06:13-07:00",
+          "tree_id": "b4abc6b272d21fccceeb9a3df059863f964f8d81",
+          "url": "https://github.com/unicode-org/icu4x/commit/9dd86f9940ce7dec43c1e2417a003b656739a099"
+        },
+        "date": 1659413258157,
         "tool": "ndjson",
         "benches": [
           {
