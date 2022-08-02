@@ -15,11 +15,10 @@ use core::ops::Range;
 // Also used by owned.rs
 pub(super) const LENGTH_WIDTH: usize = 4;
 pub(super) const METADATA_WIDTH: usize = 0;
-pub(super) const INDEX_WIDTH: usize = 4;
 pub(super) const MAX_LENGTH: usize = u32::MAX as usize;
 pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 
-fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
+fn usizeify<F: VarZeroVecFormat>(x: RawBytesULE<F::INDEX_WIDTH>) -> usize {
     x.as_unsigned_int() as usize
 }
 
@@ -143,11 +142,11 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         let indices_bytes = slice
             .get(
                 LENGTH_WIDTH + METADATA_WIDTH
-                    ..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize),
+                    ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
             )
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
         let things = slice
-            .get(INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
+            .get(F::INDEX_WIDTH * (len as usize) + LENGTH_WIDTH + METADATA_WIDTH..)
             .ok_or(ZeroVecError::VarZeroVecFormatError)?;
 
         let borrowed = VarZeroVecComponents {
@@ -189,10 +188,10 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         let len = len_ule.get_unchecked(0).as_unsigned_int();
         let indices_bytes = slice.get_unchecked(
             LENGTH_WIDTH + METADATA_WIDTH
-                ..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize),
+                ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize),
         );
         let things =
-            slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * (len as usize)..);
+            slice.get_unchecked(LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * (len as usize)..);
 
         VarZeroVecComponents {
             len,
@@ -316,8 +315,8 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     }
 
     #[inline]
-    fn indices_slice(&self) -> &'a [RawBytesULE<INDEX_WIDTH>] {
-        unsafe { RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(self.indices) }
+    fn indices_slice(&self) -> &'a [RawBytesULE<F::INDEX_WIDTH>] {
+        unsafe { RawBytesULE::<F::INDEX_WIDTH>::from_byte_slice_unchecked(self.indices) }
     }
 
     // Dump a debuggable representation of this type
@@ -381,7 +380,7 @@ where
     fn binary_search_impl(
         &self,
         mut predicate: impl FnMut(&T) -> Ordering,
-        indices_slice: &[RawBytesULE<INDEX_WIDTH>],
+        indices_slice: &[RawBytesULE<F::INDEX_WIDTH>],
     ) -> Result<usize, usize> {
         // This code is an absolute atrocity. This code is not a place of honor. This
         // code is known to the State of California to cause cancer.
@@ -409,9 +408,9 @@ where
         // only searching a subslice of it.
         let zero_index = self.indices.as_ptr() as *const _ as usize;
         indices_slice.binary_search_by(|probe: &_| {
-            // `self.indices` is a vec of unaligned INDEX_WIDTH values, so we divide by INDEX_WIDTH
+            // `self.indices` is a vec of unaligned F::INDEX_WIDTH values, so we divide by F::INDEX_WIDTH
             // to get the actual index
-            let index = (probe as *const _ as usize - zero_index) / INDEX_WIDTH;
+            let index = (probe as *const _ as usize - zero_index) / F::INDEX_WIDTH;
             // safety: we know this is in bounds
             let actual_probe = unsafe { self.get_unchecked(index) };
             predicate(actual_probe)
@@ -454,20 +453,20 @@ where
     // idx_offset = offset from the start of the buffer for the next index
     let mut idx_offset: usize = LENGTH_WIDTH + METADATA_WIDTH;
     // first_dat_offset = offset from the start of the buffer of the first data block
-    let first_dat_offset: usize = idx_offset + elements.len() * INDEX_WIDTH;
+    let first_dat_offset: usize = idx_offset + elements.len() * F::INDEX_WIDTH;
     // dat_offset = offset from the start of the buffer of the next data block
     let mut dat_offset: usize = first_dat_offset;
 
     for element in elements.iter() {
         let element_len = element.encode_var_ule_len();
 
-        let idx_limit = idx_offset + INDEX_WIDTH;
+        let idx_limit = idx_offset + F::INDEX_WIDTH;
         #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
         let idx_slice = &mut output[idx_offset..idx_limit];
         // VZV expects data offsets to be stored relative to the first data block
         let idx = dat_offset - first_dat_offset;
         assert!(idx <= MAX_INDEX);
-        idx_slice.copy_from_slice(&idx.to_le_bytes()[..INDEX_WIDTH]);
+        idx_slice.copy_from_slice(&idx.to_le_bytes()[..F::INDEX_WIDTH]);
 
         let dat_limit = dat_offset + element_len;
         #[allow(clippy::indexing_slicing)] // Function contract allows panicky behavior
@@ -481,7 +480,7 @@ where
 
     debug_assert_eq!(
         idx_offset,
-        LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * elements.len()
+        LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * elements.len()
     );
     assert_eq!(dat_offset, output.len());
 }
@@ -494,7 +493,7 @@ where
 {
     let idx_len: u32 = u32::try_from(elements.len())
         .ok()?
-        .checked_mul(INDEX_WIDTH as u32)?
+        .checked_mul(F::INDEX_WIDTH as u32)?
         .checked_add(LENGTH_WIDTH as u32)?
         .checked_add(METADATA_WIDTH as u32)?;
     let data_len: u32 = elements

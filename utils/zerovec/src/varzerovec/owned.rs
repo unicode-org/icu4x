@@ -18,7 +18,6 @@ use core::ops::Deref;
 use core::ops::Range;
 use core::{fmt, ptr, slice};
 
-use super::components::INDEX_WIDTH;
 use super::components::LENGTH_WIDTH;
 use super::components::MAX_INDEX;
 use super::components::MAX_LENGTH;
@@ -106,7 +105,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     pub(crate) fn with_capacity(capacity: usize) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: Vec::with_capacity(capacity * (INDEX_WIDTH + 4)),
+            entire_slice: Vec::with_capacity(capacity * (F::INDEX_WIDTH + 4)),
         }
     }
 
@@ -114,7 +113,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// elements. Since `T` can take up an arbitrary size this will
     /// just allocate enough space for 4-byte Ts
     pub(crate) fn reserve(&mut self, capacity: usize) {
-        self.entire_slice.reserve(capacity * (INDEX_WIDTH + 4))
+        self.entire_slice.reserve(capacity * (F::INDEX_WIDTH + 4))
     }
 
     /// Get the position of a specific element in the data segment.
@@ -126,12 +125,12 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     unsafe fn element_position_unchecked(&self, idx: usize) -> usize {
         let len = self.len();
         let out = if idx == len {
-            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - (INDEX_WIDTH * len)
+            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - (F::INDEX_WIDTH * len)
         } else {
             self.index_data(idx).as_unsigned_int() as usize
         };
         debug_assert!(
-            out + LENGTH_WIDTH + METADATA_WIDTH + len * INDEX_WIDTH <= self.entire_slice.len()
+            out + LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH <= self.entire_slice.len()
         );
         out
     }
@@ -160,16 +159,16 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     }
 
     fn index_range(index: usize) -> Range<usize> {
-        let pos = LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * index;
-        pos..pos + INDEX_WIDTH
+        let pos = LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * index;
+        pos..pos + F::INDEX_WIDTH
     }
 
     /// Return the slice representing the given `index`.
     ///
     /// ## Safety
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
-    unsafe fn index_data(&self, index: usize) -> &RawBytesULE<INDEX_WIDTH> {
-        &RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(
+    unsafe fn index_data(&self, index: usize) -> &RawBytesULE<F::INDEX_WIDTH> {
+        &RawBytesULE::<F::INDEX_WIDTH>::from_byte_slice_unchecked(
             &self.entire_slice[Self::index_range(index)],
         )[0]
     }
@@ -179,16 +178,16 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// ## Safety
     /// The index must be valid. self.as_encoded_bytes() must have allocated space
     /// for this index, but need not have its length appropriately set.
-    unsafe fn index_data_mut(&mut self, index: usize) -> &mut RawBytesULE<INDEX_WIDTH> {
+    unsafe fn index_data_mut(&mut self, index: usize) -> &mut RawBytesULE<F::INDEX_WIDTH> {
         let ptr = self.entire_slice.as_mut_ptr();
         let range = Self::index_range(index);
 
         // Doing this instead of just `get_unchecked_mut()` because it's unclear
         // if `get_unchecked_mut()` can be called out of bounds on a slice even
         // if we know the buffer is larger.
-        let data = slice::from_raw_parts_mut(ptr.add(range.start), INDEX_WIDTH);
+        let data = slice::from_raw_parts_mut(ptr.add(range.start), F::INDEX_WIDTH);
 
-        &mut RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked_mut(data)[0]
+        &mut RawBytesULE::<F::INDEX_WIDTH>::from_byte_slice_unchecked_mut(data)[0]
     }
 
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
@@ -198,9 +197,9 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// The length of the slice must be correctly set.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
-        let indices = RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked_mut(
+        let indices = RawBytesULE::<F::INDEX_WIDTH>::from_byte_slice_unchecked_mut(
             &mut self.entire_slice
-                [LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * len],
+                [LENGTH_WIDTH + METADATA_WIDTH..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * len],
         );
         for idx in &mut indices[starting_index..] {
             let mut new_idx = idx.as_unsigned_int();
@@ -263,9 +262,9 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
         // How much shifting must be done in bytes due to removal/insertion of an index.
         let index_shift: i64 = match shift_type {
-            ShiftType::Insert => INDEX_WIDTH as i64,
+            ShiftType::Insert => F::INDEX_WIDTH as i64,
             ShiftType::Replace => 0,
-            ShiftType::Remove => -(INDEX_WIDTH as i64),
+            ShiftType::Remove => -(F::INDEX_WIDTH as i64),
         };
         // The total shift in byte size of the owned slice.
         let shift: i64 =
@@ -287,7 +286,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             let slice_range = self.entire_slice.as_mut_ptr_range();
             let data_start = slice_range
                 .start
-                .add(LENGTH_WIDTH + METADATA_WIDTH + len * INDEX_WIDTH);
+                .add(LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH);
             let prev_element_p =
                 data_start.add(prev_element.start)..data_start.add(prev_element.end);
 
@@ -298,8 +297,8 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             let index_range = {
                 let index_start = slice_range
                     .start
-                    .add(LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH * index);
-                index_start..index_start.add(INDEX_WIDTH)
+                    .add(LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * index);
+                index_start..index_start.add(F::INDEX_WIDTH)
             };
 
             unsafe fn shift_bytes(block: Range<*const u8>, to: *mut u8) {
@@ -349,7 +348,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         // Return a mut slice to the new element data.
         let element_pos = LENGTH_WIDTH
             + METADATA_WIDTH
-            + self.len() * INDEX_WIDTH
+            + self.len() * F::INDEX_WIDTH
             + self.element_position_unchecked(index);
         &mut self.entire_slice[element_pos..element_pos + new_size as usize]
     }
@@ -379,12 +378,12 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
             // An empty vec must have an empty slice: there is only a single valid byte representation.
             return false;
         }
-        if slice_len < LENGTH_WIDTH + METADATA_WIDTH + len as usize * INDEX_WIDTH {
+        if slice_len < LENGTH_WIDTH + METADATA_WIDTH + len as usize * F::INDEX_WIDTH {
             // Not enough room for the indices.
             return false;
         }
         let data_len =
-            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - len as usize * INDEX_WIDTH;
+            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - len as usize * F::INDEX_WIDTH;
         if data_len > MAX_INDEX {
             // The data segment is too long.
             return false;
@@ -392,9 +391,9 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
 
         // Test index validity.
         let indices = unsafe {
-            RawBytesULE::<INDEX_WIDTH>::from_byte_slice_unchecked(
+            RawBytesULE::<F::INDEX_WIDTH>::from_byte_slice_unchecked(
                 &self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH
-                    ..LENGTH_WIDTH + METADATA_WIDTH + len as usize * INDEX_WIDTH],
+                    ..LENGTH_WIDTH + METADATA_WIDTH + len as usize * F::INDEX_WIDTH],
             )
         };
         for idx in indices {
@@ -430,7 +429,7 @@ impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
         let value_len = element.encode_var_ule_len();
 
         if len == 0 {
-            let header_len = LENGTH_WIDTH + METADATA_WIDTH + INDEX_WIDTH;
+            let header_len = LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH;
             let cap = header_len + value_len;
             self.entire_slice.resize(cap, 0);
             self.entire_slice[0] = 1; // set length
