@@ -44,7 +44,7 @@ where
     Ok(())
 }
 
-/// [`TimeZoneFormatter`] uses data from the [data provider], the selected [`Locale`], and the provided
+/// [`TimeZoneFormatter`] uses data from the [data provider], the selected locale, and the provided
 /// [`TimeZoneFormatterConfig`] to collect all data necessary to format time zones into that locale.
 ///
 /// The various time-zone configs specified in UTS-35 require different sets of data for
