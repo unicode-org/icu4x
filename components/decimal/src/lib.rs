@@ -22,7 +22,7 @@
 //! use writeable::Writeable;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let fdf = FixedDecimalFormatter::try_new(&provider, &locale!("bn").into(), Default::default())
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &locale!("bn").into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
@@ -41,7 +41,7 @@
 //! use writeable::Writeable;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let fdf = FixedDecimalFormatter::try_new(&provider, &Locale::UND.into(), Default::default())
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &Locale::UND.into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050)
@@ -63,7 +63,7 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //! let locale = "th-u-nu-thai".parse::<Locale>().unwrap();
-//! let fdf = FixedDecimalFormatter::try_new(&provider, &locale.into(), Default::default())
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
