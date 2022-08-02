@@ -11,6 +11,7 @@ use icu_provider::prelude::*;
 use std::collections::HashMap;
 use std::sync::Mutex;
 use writeable::Writeable;
+use zerovec::ule::VarULE;
 use zerovec::vecs::Index32;
 use zerovec::VarZeroVec;
 use zerovec::ZeroMap2d;
@@ -93,9 +94,14 @@ impl DataExporter for BlobExporter<'_> {
             .resources
             .get_mut()
             .expect("poison")
-            .drain(..)
+            .iter()
             .map(|(hash, locale, old_id)| {
-                (hash, locale, remap.get(&old_id).expect("in-bound index"))
+                (
+                    hash,
+                    Index32U8::parse_byte_slice(&locale)
+                        .expect("[u8] to IndexU32U8 should never fail"),
+                    remap.get(&old_id).expect("in-bound index"),
+                )
             })
             .collect::<ZeroMap2d<_, _, _>>();
 
