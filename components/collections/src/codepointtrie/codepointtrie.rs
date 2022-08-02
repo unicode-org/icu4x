@@ -908,12 +908,19 @@ where
     }
 }
 
+/// Represents a range of consecutive code points sharing the same value in a
+/// code point map. The start and end of the interval is represented as a 
+/// `RangeInclusive<u32>`, and the value is represented as a [`TrieValue`].
 #[derive(PartialEq, Eq, Debug, Clone)]
 pub struct CodePointMapRange<T: TrieValue> {
+    /// Range of code points from start to end (inclusive).
     pub range: RangeInclusive<u32>,
+    /// Trie value associated with this range.
     pub value: T,
 }
 
+/// A custom [`Iterator`] type specifically for a code point trie that returns
+/// [`CodePointMapRange`]s.
 pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
     cpt: &'a CodePointTrie<'a, T>,
     // Initialize `range` to Some(CodePointMapRange{ start: u32::MAX, end: u32::MAX, value: 0}).
