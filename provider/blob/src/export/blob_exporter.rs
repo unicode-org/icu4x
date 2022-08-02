@@ -98,9 +98,9 @@ impl DataExporter for BlobExporter<'_> {
             .map(|(hash, locale, old_id)| {
                 (
                     hash,
-                    Index32U8::parse_byte_slice(&locale)
+                    Index32U8::parse_byte_slice(locale)
                         .expect("[u8] to IndexU32U8 should never fail"),
-                    remap.get(&old_id).expect("in-bound index"),
+                    remap.get(old_id).expect("in-bound index"),
                 )
             })
             .collect::<ZeroMap2d<_, _, _>>();

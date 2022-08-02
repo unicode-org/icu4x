@@ -2,10 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use alloc::boxed::Box;
 use icu_provider::prelude::*;
 use zerovec::maps::{ZeroMap2dBorrowed, ZeroMapKV};
 use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};
-
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Deserialize)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
@@ -81,6 +81,7 @@ impl<'data> BlobSchemaV1<'data> {
 /// define a Serialize implementation, and that would be gnarly)
 /// https://github.com/unicode-org/icu4x/issues/2310 tracks being able to do this with derive(ULE)
 #[zerovec::make_varule(Index32U8)]
+#[allow(clippy::indexing_slicing)] // generated code
 #[zerovec::skip_derive(ZeroMapKV)]
 #[derive(Eq, PartialEq, Ord, PartialOrd, serde::Deserialize)]
 #[zerovec::derive(Deserialize)]
