@@ -1,3 +1,7 @@
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
 use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum, Type};
 use std::collections::{BTreeSet, HashSet};
@@ -180,7 +184,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             _ => unreachable!(),
                         }
                     }
-                    recurse(item, &external_crate, types, path, true, None);
+                    recurse(item, external_crate, types, path, true, None);
                 } else {
                     unreachable!("id should be in either index or paths")
                 }
@@ -328,7 +332,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
     recurse(
         &krate.index[&krate.root],
-        &krate,
+        krate,
         &mut types,
         Vec::new(),
         false,

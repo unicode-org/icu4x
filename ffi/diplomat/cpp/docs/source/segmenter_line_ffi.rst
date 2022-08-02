@@ -24,7 +24,7 @@
 
 .. cpp:struct:: ICU4XLineBreakOptions
 
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakOptions.html>`__ for more information.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakOptions.html>`__ for more information.
 
 
     .. cpp:member:: ICU4XLineBreakRule line_break_rule
@@ -35,7 +35,7 @@
 
 .. cpp:enum-struct:: ICU4XLineBreakRule
 
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.LineBreakRule.html>`__ for more information.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/enum.LineBreakRule.html>`__ for more information.
 
 
     .. cpp:enumerator:: Loose
@@ -50,28 +50,28 @@
 
     An ICU4X line-break segmenter, capable of finding breakpoints in strings.
 
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html>`__ for more information.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider)
 
         Construct a :cpp:class:`ICU4XLineBreakSegmenter` with default options.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options)
 
         Construct a :cpp:class:`ICU4XLineBreakSegmenter` with custom options.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options>`__ for more information.
 
 
     .. cpp:function:: ICU4XLineBreakIteratorUtf8 segment_utf8(const std::string_view input) const
 
         Segments a UTF-8 string.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_str>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_str>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
@@ -80,7 +80,7 @@
 
         Segments a UTF-16 string.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_utf16>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_utf16>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
@@ -89,14 +89,14 @@
 
         Segments a Latin-1 string.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_latin1>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_latin1>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
 
 .. cpp:enum-struct:: ICU4XWordBreakRule
 
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/enum.WordBreakRule.html>`__ for more information.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/enum.WordBreakRule.html>`__ for more information.
 
 
     .. cpp:enumerator:: Normal
