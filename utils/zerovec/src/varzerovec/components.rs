@@ -30,7 +30,7 @@ fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
 ///
 /// Do not implement this trait, its internals may be changed in the future,
 /// and all of its associated items are hidden from the docs.
-pub unsafe trait VarZeroVecFormat {
+pub unsafe trait VarZeroVecFormat: 'static + Sized {
     #[doc(hidden)]
     const INDEX_WIDTH: usize;
 }
@@ -64,7 +64,7 @@ unsafe impl VarZeroVecFormat for Index32 {
 /// exist.
 ///
 /// See [`VarZeroVecComponents::parse_byte_slice()`] for information on the internal invariants involved
-pub struct VarZeroVecComponents<'a, T: ?Sized> {
+pub struct VarZeroVecComponents<'a, T: ?Sized, F> {
     /// The number of elements
     len: u32,
     /// The list of indices into the `things` slice
@@ -73,13 +73,13 @@ pub struct VarZeroVecComponents<'a, T: ?Sized> {
     things: &'a [u8],
     /// The original slice this was constructed from
     entire_slice: &'a [u8],
-    marker: PhantomData<&'a T>,
+    marker: PhantomData<(&'a T, F)>,
 }
 
 // #[derive()] won't work here since we do not want it to be
 // bound on T: Copy
-impl<'a, T: ?Sized> Copy for VarZeroVecComponents<'a, T> {}
-impl<'a, T: ?Sized> Clone for VarZeroVecComponents<'a, T> {
+impl<'a, T: ?Sized, F> Copy for VarZeroVecComponents<'a, T, F> {}
+impl<'a, T: ?Sized, F> Clone for VarZeroVecComponents<'a, T, F> {
     fn clone(&self) -> Self {
         VarZeroVecComponents {
             len: self.len,
@@ -91,14 +91,14 @@ impl<'a, T: ?Sized> Clone for VarZeroVecComponents<'a, T> {
     }
 }
 
-impl<'a, T: VarULE + ?Sized> Default for VarZeroVecComponents<'a, T> {
+impl<'a, T: VarULE + ?Sized, F> Default for VarZeroVecComponents<'a, T, F> {
     #[inline]
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
+impl<'a, T: VarULE + ?Sized, F> VarZeroVecComponents<'a, T, F> {
     #[inline]
     pub fn new() -> Self {
         Self {
@@ -109,7 +109,8 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
             marker: PhantomData,
         }
     }
-
+}
+impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F> {
     /// Construct a new VarZeroVecComponents, checking invariants about the overall buffer size:
     ///
     /// - There must be either zero or at least four bytes (if four, this is the "length" parsed as a usize)
@@ -331,11 +332,12 @@ impl<'a, T: VarULE + ?Sized> VarZeroVecComponents<'a, T> {
     }
 }
 
-impl<'a, T> VarZeroVecComponents<'a, T>
+impl<'a, T, F> VarZeroVecComponents<'a, T, F>
 where
     T: VarULE,
     T: ?Sized,
     T: Ord,
+    F: VarZeroVecFormat,
 {
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given element. For more information, see
     /// the primitive function [`binary_search`](slice::binary_search).
@@ -353,10 +355,11 @@ where
     }
 }
 
-impl<'a, T> VarZeroVecComponents<'a, T>
+impl<'a, T, F> VarZeroVecComponents<'a, T, F>
 where
     T: VarULE,
     T: ?Sized,
+    F: VarZeroVecFormat,
 {
     /// Binary searches a sorted `VarZeroVecComponents<T>` for the given predicate. For more information, see
     /// the primitive function [`binary_search_by`](slice::binary_search_by).
@@ -417,15 +420,16 @@ where
 }
 
 /// Collects the bytes for a VarZeroSlice into a Vec.
-pub fn get_serializable_bytes<T, A>(elements: &[A]) -> Option<Vec<u8>>
+pub fn get_serializable_bytes<T, A, F>(elements: &[A]) -> Option<Vec<u8>>
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
 {
-    let len = compute_serializable_len(elements)?;
+    let len = compute_serializable_len::<T, A, F>(elements)?;
     debug_assert!(len >= LENGTH_WIDTH as u32);
     let mut output: Vec<u8> = alloc::vec![0; len as usize];
-    write_serializable_bytes(elements, &mut output);
+    write_serializable_bytes::<T, A, F>(elements, &mut output);
     Some(output)
 }
 
@@ -436,10 +440,11 @@ where
 /// # Panics
 ///
 /// Panics if the buffer is not exactly the correct length.
-pub fn write_serializable_bytes<T, A>(elements: &[A], output: &mut [u8])
+pub fn write_serializable_bytes<T, A, F>(elements: &[A], output: &mut [u8])
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
 {
     assert!(elements.len() <= MAX_LENGTH);
     let num_elements_bytes = elements.len().to_le_bytes();
@@ -481,10 +486,11 @@ where
     assert_eq!(dat_offset, output.len());
 }
 
-pub fn compute_serializable_len<T, A>(elements: &[A]) -> Option<u32>
+pub fn compute_serializable_len<T, A, F>(elements: &[A]) -> Option<u32>
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
 {
     let idx_len: u32 = u32::try_from(elements.len())
         .ok()?

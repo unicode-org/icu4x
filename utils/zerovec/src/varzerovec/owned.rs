@@ -27,13 +27,13 @@ use super::components::METADATA_WIDTH;
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
 /// [`VarZeroVec`] and [`VarZeroSlice`].
-pub struct VarZeroVecOwned<T: ?Sized> {
-    marker: PhantomData<Box<T>>,
+pub struct VarZeroVecOwned<T: ?Sized, F = Index32> {
+    marker: PhantomData<(Box<T>, F)>,
     // safety invariant: must parse into a valid VarZeroVecComponents
     entire_slice: Vec<u8>,
 }
 
-impl<T: ?Sized> Clone for VarZeroVecOwned<T> {
+impl<T: ?Sized, F> Clone for VarZeroVecOwned<T, F> {
     fn clone(&self) -> Self {
         VarZeroVecOwned {
             marker: self.marker,
@@ -50,14 +50,14 @@ enum ShiftType {
     Remove,
 }
 
-impl<T: VarULE + ?Sized> Deref for VarZeroVecOwned<T> {
-    type Target = VarZeroSlice<T>;
-    fn deref(&self) -> &VarZeroSlice<T> {
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Deref for VarZeroVecOwned<T, F> {
+    type Target = VarZeroSlice<T, F>;
+    fn deref(&self) -> &VarZeroSlice<T, F> {
         self.as_slice()
     }
 }
 
-impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
+impl<T: VarULE + ?Sized, F> VarZeroVecOwned<T, F> {
     /// Construct an empty VarZeroVecOwned
     pub fn new() -> Self {
         Self {
@@ -65,9 +65,11 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             entire_slice: Vec::new(),
         }
     }
+}
 
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// Construct a VarZeroVecOwned from a [`VarZeroSlice`] by cloning the internal data
-    pub fn from_slice(slice: &VarZeroSlice<T>) -> Self {
+    pub fn from_slice(slice: &VarZeroSlice<T, F>) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: slice.as_bytes().into(),
@@ -82,7 +84,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         Ok(Self {
             marker: PhantomData,
             // TODO(#1410): Rethink length errors in VZV.
-            entire_slice: components::get_serializable_bytes(elements).ok_or(
+            entire_slice: components::get_serializable_bytes::<T, A, F>(elements).ok_or(
                 "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u32 in size",
             )?,
@@ -90,7 +92,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
-    pub fn as_slice(&self) -> &VarZeroSlice<T> {
+    pub fn as_slice(&self) -> &VarZeroSlice<T, F> {
         let slice: &[u8] = &*self.entire_slice;
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
@@ -215,7 +217,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// If you wish to repeatedly call methods on this [`VarZeroVecOwned`],
     /// it is more efficient to perform this conversion first
-    pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
+    pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T, F> {
         self.as_slice().into()
     }
 
@@ -482,7 +484,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 }
 
-impl<T: VarULE + ?Sized> fmt::Debug for VarZeroVecOwned<T>
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> fmt::Debug for VarZeroVecOwned<T, F>
 where
     T: fmt::Debug,
 {
@@ -491,17 +493,18 @@ where
     }
 }
 
-impl<T: VarULE + ?Sized> Default for VarZeroVecOwned<T> {
+impl<T: VarULE + ?Sized, F> Default for VarZeroVecOwned<T, F> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T, A> PartialEq<&'_ [A]> for VarZeroVecOwned<T>
+impl<T, A, F> PartialEq<&'_ [A]> for VarZeroVecOwned<T, F>
 where
     T: VarULE + ?Sized,
     T: PartialEq,
     A: AsRef<T>,
+    F: VarZeroVecFormat,
 {
     #[inline]
     fn eq(&self, other: &&[A]) -> bool {
@@ -509,8 +512,10 @@ where
     }
 }
 
-impl<'a, T: ?Sized + VarULE> From<&'a VarZeroSlice<T>> for VarZeroVecOwned<T> {
-    fn from(other: &'a VarZeroSlice<T>) -> Self {
+impl<'a, T: ?Sized + VarULE, F: VarZeroVecFormat> From<&'a VarZeroSlice<T, F>>
+    for VarZeroVecOwned<T, F>
+{
+    fn from(other: &'a VarZeroSlice<T, F>) -> Self {
         Self::from_slice(other)
     }
 }

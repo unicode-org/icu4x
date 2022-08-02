@@ -125,7 +125,7 @@ use super::*;
 /// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 ///
 /// [`ule`]: crate::ule
-pub enum VarZeroVec<'a, T: ?Sized> {
+pub enum VarZeroVec<'a, T: ?Sized, F = Index32> {
     /// An allocated VarZeroVec, allowing for mutations.
     ///
     /// # Examples
@@ -138,7 +138,7 @@ pub enum VarZeroVec<'a, T: ?Sized> {
     /// vzv.make_mut().push("bar");
     /// assert!(matches!(vzv, VarZeroVec::Owned(_)));
     /// ```
-    Owned(VarZeroVecOwned<T>),
+    Owned(VarZeroVecOwned<T, F>),
     /// A borrowed VarZeroVec, requiring no allocations.
     ///
     /// If a mutating operation is invoked on VarZeroVec, the Borrowed is converted to Owned.
@@ -156,10 +156,10 @@ pub enum VarZeroVec<'a, T: ?Sized> {
     /// let vzv: VarZeroVec<str> = VarZeroVec::parse_byte_slice(bytes).unwrap();
     /// assert!(matches!(vzv, VarZeroVec::Borrowed(_)));
     /// ```
-    Borrowed(&'a VarZeroSlice<T>),
+    Borrowed(&'a VarZeroSlice<T, F>),
 }
 
-impl<'a, T: ?Sized> Clone for VarZeroVec<'a, T> {
+impl<'a, T: ?Sized, F> Clone for VarZeroVec<'a, T, F> {
     fn clone(&self) -> Self {
         match *self {
             VarZeroVec::Owned(ref o) => o.clone().into(),
@@ -168,7 +168,7 @@ impl<'a, T: ?Sized> Clone for VarZeroVec<'a, T> {
     }
 }
 
-impl<T: VarULE + ?Sized> fmt::Debug for VarZeroVec<'_, T>
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> fmt::Debug for VarZeroVec<'_, T, F>
 where
     T: fmt::Debug,
 {
@@ -177,22 +177,24 @@ where
     }
 }
 
-impl<'a, T: ?Sized> From<VarZeroVecOwned<T>> for VarZeroVec<'a, T> {
+impl<'a, T: ?Sized, F> From<VarZeroVecOwned<T, F>> for VarZeroVec<'a, T, F> {
     #[inline]
-    fn from(other: VarZeroVecOwned<T>) -> Self {
+    fn from(other: VarZeroVecOwned<T, F>) -> Self {
         VarZeroVec::Owned(other)
     }
 }
 
-impl<'a, T: ?Sized> From<&'a VarZeroSlice<T>> for VarZeroVec<'a, T> {
-    fn from(other: &'a VarZeroSlice<T>) -> Self {
+impl<'a, T: ?Sized, F> From<&'a VarZeroSlice<T, F>> for VarZeroVec<'a, T, F> {
+    fn from(other: &'a VarZeroSlice<T, F>) -> Self {
         VarZeroVec::Borrowed(other)
     }
 }
 
-impl<'a, T: ?Sized + VarULE> From<VarZeroVec<'a, T>> for VarZeroVecOwned<T> {
+impl<'a, T: ?Sized + VarULE, F: VarZeroVecFormat> From<VarZeroVec<'a, T, F>>
+    for VarZeroVecOwned<T, F>
+{
     #[inline]
-    fn from(other: VarZeroVec<'a, T>) -> Self {
+    fn from(other: VarZeroVec<'a, T, F>) -> Self {
         match other {
             VarZeroVec::Owned(o) => o,
             VarZeroVec::Borrowed(b) => b.into(),
@@ -207,14 +209,14 @@ impl<T: VarULE + ?Sized> Default for VarZeroVec<'_, T> {
     }
 }
 
-impl<T: VarULE + ?Sized> Deref for VarZeroVec<'_, T> {
-    type Target = VarZeroSlice<T>;
-    fn deref(&self) -> &VarZeroSlice<T> {
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Deref for VarZeroVec<'_, T, F> {
+    type Target = VarZeroSlice<T, F>;
+    fn deref(&self) -> &VarZeroSlice<T, F> {
         self.as_slice()
     }
 }
 
-impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
+impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVec<'a, T, F> {
     /// Creates a new, empty `VarZeroVec<T>`.
     ///
     /// # Examples
@@ -251,7 +253,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// # Ok::<(), ZeroVecError>(())
     /// ```
     pub fn parse_byte_slice(slice: &'a [u8]) -> Result<Self, ZeroVecError> {
-        let borrowed = VarZeroSlice::<T>::parse_byte_slice(slice)?;
+        let borrowed = VarZeroSlice::<T, F>::parse_byte_slice(slice)?;
 
         Ok(VarZeroVec::Borrowed(borrowed))
     }
@@ -292,7 +294,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     //
     // This function is crate-public for now since we don't yet want to stabilize
     // the internal implementation details
-    pub fn make_mut(&mut self) -> &mut VarZeroVecOwned<T> {
+    pub fn make_mut(&mut self) -> &mut VarZeroVecOwned<T, F> {
         match self {
             VarZeroVec::Owned(ref mut vec) => vec,
             VarZeroVec::Borrowed(slice) => {
@@ -321,7 +323,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     /// let owned = vec.into_owned();
     /// # Ok::<(), ZeroVecError>(())
     /// ```
-    pub fn into_owned(mut self) -> VarZeroVec<'static, T> {
+    pub fn into_owned(mut self) -> VarZeroVec<'static, T, F> {
         self.make_mut();
         match self {
             VarZeroVec::Owned(vec) => vec.into(),
@@ -330,7 +332,7 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
     }
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
-    pub fn as_slice(&self) -> &VarZeroSlice<T> {
+    pub fn as_slice(&self) -> &VarZeroSlice<T, F> {
         match *self {
             VarZeroVec::Owned(ref owned) => &**owned,
             VarZeroVec::Borrowed(b) => b,
@@ -378,15 +380,16 @@ impl<'a, T: VarULE + ?Sized> VarZeroVec<'a, T> {
 
     #[cfg(feature = "bench")]
     #[doc(hidden)]
-    pub fn as_components<'b>(&'b self) -> VarZeroVecComponents<'b, T> {
+    pub fn as_components<'b>(&'b self) -> VarZeroVecComponents<'b, T, F> {
         self.as_slice().as_components()
     }
 }
 
-impl<A, T> From<&Vec<A>> for VarZeroVec<'static, T>
+impl<A, T, F> From<&Vec<A>> for VarZeroVec<'static, T, F>
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
@@ -395,10 +398,11 @@ where
     }
 }
 
-impl<A, T> From<&[A]> for VarZeroVec<'static, T>
+impl<A, T, F> From<&[A]> for VarZeroVec<'static, T, F>
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
@@ -407,10 +411,11 @@ where
     }
 }
 
-impl<A, T, const N: usize> From<&[A; N]> for VarZeroVec<'static, T>
+impl<A, T, F, const N: usize> From<&[A; N]> for VarZeroVec<'static, T, F>
 where
     T: VarULE + ?Sized,
     A: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
@@ -419,33 +424,36 @@ where
     }
 }
 
-impl<'a, 'b, T> PartialEq<VarZeroVec<'b, T>> for VarZeroVec<'a, T>
+impl<'a, 'b, T, F> PartialEq<VarZeroVec<'b, T, F>> for VarZeroVec<'a, T, F>
 where
     T: VarULE,
     T: ?Sized,
     T: PartialEq,
+    F: VarZeroVecFormat,
 {
     #[inline]
-    fn eq(&self, other: &VarZeroVec<'b, T>) -> bool {
+    fn eq(&self, other: &VarZeroVec<'b, T, F>) -> bool {
         // VarULE has an API guarantee that this is equivalent
         // to `T::VarULE::eq()`
         self.as_bytes().eq(other.as_bytes())
     }
 }
 
-impl<'a, T> Eq for VarZeroVec<'a, T>
+impl<'a, T, F> Eq for VarZeroVec<'a, T, F>
 where
     T: VarULE,
     T: ?Sized,
     T: Eq,
+    F: VarZeroVecFormat,
 {
 }
 
-impl<T, A> PartialEq<&'_ [A]> for VarZeroVec<'_, T>
+impl<T, A, F> PartialEq<&'_ [A]> for VarZeroVec<'_, T, F>
 where
     T: VarULE + ?Sized,
     T: PartialEq,
     A: AsRef<T>,
+    F: VarZeroVecFormat,
 {
     #[inline]
     fn eq(&self, other: &&[A]) -> bool {
@@ -453,11 +461,12 @@ where
     }
 }
 
-impl<T, A, const N: usize> PartialEq<[A; N]> for VarZeroVec<'_, T>
+impl<T, A, F, const N: usize> PartialEq<[A; N]> for VarZeroVec<'_, T, F>
 where
     T: VarULE + ?Sized,
     T: PartialEq,
     A: AsRef<T>,
+    F: VarZeroVecFormat,
 {
     #[inline]
     fn eq(&self, other: &[A; N]) -> bool {
@@ -465,13 +474,13 @@ where
     }
 }
 
-impl<'a, T: VarULE + ?Sized + PartialOrd> PartialOrd for VarZeroVec<'a, T> {
+impl<'a, T: VarULE + ?Sized + PartialOrd, F: VarZeroVecFormat> PartialOrd for VarZeroVec<'a, T, F> {
     fn partial_cmp(&self, other: &Self) -> Option<Ordering> {
         self.iter().partial_cmp(other.iter())
     }
 }
 
-impl<'a, T: VarULE + ?Sized + Ord> Ord for VarZeroVec<'a, T> {
+impl<'a, T: VarULE + ?Sized + Ord, F: VarZeroVecFormat> Ord for VarZeroVec<'a, T, F> {
     fn cmp(&self, other: &Self) -> Ordering {
         self.iter().cmp(other.iter())
     }
