@@ -238,7 +238,6 @@ impl AsULE for CaseMappingData {
 }
 
 impl TrieValue for CaseMappingData {
-    const DEFAULT_ERROR_VALUE: CaseMappingData = CaseMappingData(0);
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {
