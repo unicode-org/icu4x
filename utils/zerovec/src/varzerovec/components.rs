@@ -23,6 +23,38 @@ fn usizeify(x: RawBytesULE<INDEX_WIDTH>) -> usize {
     x.as_unsigned_int() as usize
 }
 
+/// This trait allows switching between different possible internal
+/// representations of VarZeroVec.
+///
+/// Currently this crate supports two formats: [`Index16`] and [`Index32`].
+///
+/// Do not implement this trait, its internals may be changed in the future,
+/// and all of its associated items are hidden from the docs.
+pub unsafe trait VarZeroVecFormat {
+    #[doc(hidden)]
+    const INDEX_WIDTH: usize;
+}
+
+/// This is a [`VarZeroVecFormat`] that stores u16s in the index array.
+/// Will have a smaller data size, but it's more likely for larger arrays
+/// to be unrepresentable (and error on construction)
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Index16;
+
+/// This is a [`VarZeroVecFormat`] that stores u32s in the index array.
+/// Will have a larger data size, but will support large arrays without
+/// problems.
+#[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+pub struct Index32;
+
+unsafe impl VarZeroVecFormat for Index16 {
+    const INDEX_WIDTH: usize = 4;
+}
+
+unsafe impl VarZeroVecFormat for Index32 {
+    const INDEX_WIDTH: usize = 8;
+}
+
 /// A more parsed version of `VarZeroSlice`. This type is where most of the VarZeroVec
 /// internal representation code lies.
 ///
