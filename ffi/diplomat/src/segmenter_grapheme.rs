@@ -10,10 +10,10 @@ pub mod ffi {
     use core::convert::TryFrom;
     use diplomat_runtime::DiplomatResult;
     use icu_provider::DataProvider;
+    use icu_segmenter::provider::GraphemeClusterBreakDataV1Marker;
     use icu_segmenter::{
-        GraphemeClusterBreakDataV1Marker, GraphemeClusterBreakIteratorLatin1,
-        GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8,
-        GraphemeClusterBreakSegmenter,
+        GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
+        GraphemeClusterBreakIteratorUtf8, GraphemeClusterBreakSegmenter,
     };
 
     #[diplomat::opaque]

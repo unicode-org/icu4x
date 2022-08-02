@@ -18,10 +18,10 @@ export class ICU4XPluralRules {
     }
   }
 
-  static try_new_cardinal(arg_locale, arg_provider) {
+  static try_new_cardinal(arg_provider, arg_locale) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XPluralRules_try_new_cardinal(diplomat_receive_buffer, arg_locale.underlying, arg_provider.underlying);
+      wasm.ICU4XPluralRules_try_new_cardinal(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XPluralRules(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -35,10 +35,10 @@ export class ICU4XPluralRules {
     })();
   }
 
-  static try_new_ordinal(arg_locale, arg_provider) {
+  static try_new_ordinal(arg_provider, arg_locale) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XPluralRules_try_new_ordinal(diplomat_receive_buffer, arg_locale.underlying, arg_provider.underlying);
+      wasm.ICU4XPluralRules_try_new_ordinal(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XPluralRules(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

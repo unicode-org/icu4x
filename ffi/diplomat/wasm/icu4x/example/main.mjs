@@ -9,5 +9,5 @@ const dataProvider = ICU4XDataProvider.create_test();
 
 const locale = ICU4XLocale.create("bn");
 
-const fdf = ICU4XFixedDecimalFormatter.try_new(locale, dataProvider, "Auto");
+const fdf = ICU4XFixedDecimalFormatter.try_new(dataProvider, locale, "Auto");
 console.log(fdf.format(decimal));

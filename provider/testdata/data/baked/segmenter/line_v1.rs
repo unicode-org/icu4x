@@ -1128,6 +1128,7 @@ static UND: &DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
                     21u8, 21u8, 21u8, 21u8, 21u8, 21u8, 21u8, 21u8, 21u8, 45u8, 45u8, 0u8, 0u8,
                 ])
             },
+            0u8,
         ),
     ),
     break_state_table: ::icu_segmenter::provider::RuleBreakStateTable(unsafe {

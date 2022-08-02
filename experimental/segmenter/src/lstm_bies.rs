@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::lstm_error::Error;
-use crate::lstm_structs::LstmDataV1Marker;
 use crate::math_helper;
+use crate::provider::LstmDataV1Marker;
 use alloc::string::{String, ToString};
 use alloc::vec::Vec;
 use core::str;

@@ -1,29 +1,30 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
-import { ICU4XDateLength_js_to_rust, ICU4XDateLength_rust_to_js } from "./ICU4XDateLength.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
+import { ICU4XHourCyclePreference_js_to_rust, ICU4XHourCyclePreference_rust_to_js } from "./ICU4XHourCyclePreference.js"
+import { ICU4XTimeLength_js_to_rust, ICU4XTimeLength_rust_to_js } from "./ICU4XTimeLength.js"
 
-const ICU4XGregorianDateFormatter_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XGregorianDateFormatter_destroy(underlying);
+const ICU4XTimeFormatter_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XTimeFormatter_destroy(underlying);
 });
 
-export class ICU4XGregorianDateFormatter {
+export class ICU4XTimeFormatter {
   #lifetimeEdges = [];
   constructor(underlying, owned, edges) {
     this.underlying = underlying;
     this.#lifetimeEdges.push(...edges);
     if (owned) {
-      ICU4XGregorianDateFormatter_box_destroy_registry.register(this, underlying);
+      ICU4XTimeFormatter_box_destroy_registry.register(this, underlying);
     }
   }
 
-  static try_new(arg_locale, arg_provider, arg_length) {
+  static try_new(arg_provider, arg_locale, arg_length, arg_preferences) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XGregorianDateFormatter_try_new(diplomat_receive_buffer, arg_locale.underlying, arg_provider.underlying, ICU4XDateLength_js_to_rust[arg_length]);
+      wasm.ICU4XTimeFormatter_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XTimeLength_js_to_rust[arg_length], ICU4XHourCyclePreference_js_to_rust[arg_preferences]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
-        const ok_value = new ICU4XGregorianDateFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        const ok_value = new ICU4XTimeFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
@@ -34,11 +35,11 @@ export class ICU4XGregorianDateFormatter {
     })();
   }
 
-  format_datetime(arg_value) {
+  format_gregorian_datetime(arg_value) {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XGregorianDateFormatter_format_datetime(diplomat_receive_buffer, this.underlying, arg_value.underlying, writeable);
+        wasm.ICU4XTimeFormatter_format_gregorian_datetime(diplomat_receive_buffer, this.underlying, arg_value.underlying, writeable);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

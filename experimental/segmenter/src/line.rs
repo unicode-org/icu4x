@@ -7,8 +7,6 @@ use crate::indices::*;
 use crate::language::*;
 use crate::provider::*;
 use crate::symbols::*;
-#[cfg(feature = "lstm")]
-use crate::LstmDataV1Marker;
 
 use alloc::string::String;
 use alloc::vec;

@@ -18,11 +18,14 @@ use crate::error::PropertiesError;
 use crate::provider::*;
 use crate::*;
 use core::iter::FromIterator;
+use core::ops::RangeInclusive;
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 
-/// A wrapper around code point set data, returned by property getters for
-/// unicode sets.
+/// A wrapper around code point set data. It is returned by APIs that return Unicode
+/// property data in a set-like form, ex: a set of code points sharing the same
+/// value for a Unicode property. Access its data via the borrowed version,
+/// [`CodePointSetDataBorrowed`].
 pub struct CodePointSetData {
     data: DataPayload<ErasedSetlikeMarker>,
 }
@@ -36,53 +39,9 @@ impl DataMarker for ErasedSetlikeMarker {
 }
 
 impl CodePointSetData {
-    /// Check if the set contains a character
+    /// Construct a borrowed version of this type that can be queried.
     ///
-    /// If calling multiple times, consider calling [`Self::as_borrowed()`]
-    /// first
-    ///
-    /// ```rust
-    /// use icu_properties::sets;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    /// let alphabetic =
-    ///     sets::get_alphabetic(&provider)
-    ///         .expect("The data should be valid");
-    ///
-    /// assert!(!alphabetic.contains('3'));
-    /// assert!(!alphabetic.contains('੩'));  // U+0A69 GURMUKHI DIGIT THREE
-    /// assert!(alphabetic.contains('A'));
-    /// assert!(alphabetic.contains('Ä'));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
-    /// ```
-    #[inline]
-    pub fn contains(&self, ch: char) -> bool {
-        self.data.get().contains(ch)
-    }
-
-    /// Check if the set contains a character as a UTF32 code unit
-    ///
-    /// If calling multiple times, consider calling [`Self::as_borrowed()`]
-    /// first
-    ///
-    /// ```rust
-    /// use icu_properties::sets;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    /// let alphabetic =
-    ///     sets::get_alphabetic(&provider)
-    ///         .expect("The data should be valid");
-    ///
-    /// assert!(!alphabetic.contains_u32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
-    /// assert!(alphabetic.contains_u32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
-    /// ```
-    #[inline]
-    pub fn contains_u32(&self, ch: u32) -> bool {
-        self.data.get().contains_u32(ch)
-    }
-
-    /// Construct a borrowed version of this type that can be queried
-    ///
-    /// This avoids a potential small cost per [`Self::contains()`] call by consolidating it
+    /// This avoids a potential small underlying cost per API call (ex: `contains()`) by consolidating it
     /// up front.
     ///
     /// ```rust
@@ -122,6 +81,19 @@ impl CodePointSetData {
         CodePointSetData::from_data(DataPayload::<ErasedSetlikeMarker>::from_owned(set))
     }
 
+    /// Convert this type to a [`CodePointInversionList`] as a borrowed value.
+    ///
+    /// The data backing this is extensible and supports multiple implementations.
+    /// Currently it is always [`CodePointInversionList`]; however in the future more backends may be
+    /// added, and users may select which at data generation time.
+    ///
+    /// This method returns an `Option` in order to return `None` when the backing data provider
+    /// cannot return a [`CodePointInversionList`], or cannot do so within the expected constant time
+    /// constraint.
+    pub fn as_code_point_inversion_list(&self) -> Option<&CodePointInversionList<'_>> {
+        self.data.get().as_code_point_inversion_list()
+    }
+
     /// Convert this type to a [`CodePointInversionList`], borrowing if possible,
     /// otherwise allocating a new [`CodePointInversionList`].
     ///
@@ -129,10 +101,9 @@ impl CodePointSetData {
     /// Currently it is always [`CodePointInversionList`]; however in the future more backends may be
     /// added, and users may select which at data generation time.
     ///
-    /// If using this function it is preferable to stick to [`CodePointInversionList`] representations
-    /// in the data, however exceptions can be made if the performance hit is considered to
-    /// be okay.
-    pub fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
+    /// The performance of the conversion to this specific return type will vary
+    /// depending on the data structure that is backing `self`.
+    pub fn to_code_point_invesion_list(&self) -> CodePointInversionList<'_> {
         self.data.get().to_code_point_inversion_list()
     }
 }
@@ -183,6 +154,33 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     #[inline]
     pub fn contains_u32(&self, ch: u32) -> bool {
         self.set.contains_u32(ch)
+    }
+
+    // Yields an [`Iterator`] returning the ranges of the code points that are
+    /// included in the [`CodePointSetData`]
+    ///
+    /// Ranges are returned as [`RangeInclusive`], which is inclusive of its
+    /// `end` bound value. An end-inclusive behavior matches the ICU4C/J
+    /// behavior of ranges, ex: `UnicodeSet::contains(UChar32 start, UChar32 end)`.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_properties::sets;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    /// let data =
+    ///     sets::get_alphabetic(&provider)
+    ///         .expect("The data should be valid");
+    /// let alphabetic = data.as_borrowed();
+    /// let mut ranges = alphabetic.iter_ranges();
+    ///
+    /// assert_eq!(Some(0x0041..=0x005A), ranges.next());  // 'A'..'Z'
+    /// assert_eq!(Some(0x0061..=0x007A), ranges.next());  // 'a'..'z'
+    /// ```
+    #[inline]
+    pub fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.set.iter_ranges()
     }
 }
 
@@ -1700,8 +1698,8 @@ pub fn get_for_general_category_group(
     enum_val: GeneralCategoryGroup,
 ) -> Result<CodePointSetData, PropertiesError> {
     let gc_map_payload = maps::get_general_category(provider)?;
-    let trie = gc_map_payload.to_code_point_trie();
-    let matching_gc_ranges = trie
+    let gc_map = gc_map_payload.as_borrowed();
+    let matching_gc_ranges = gc_map
         .iter_ranges()
         .filter(|cpm_range| (1 << cpm_range.value as u32) & enum_val.0 != 0)
         .map(|cpm_range| cpm_range.range);
@@ -1718,8 +1716,10 @@ mod tests {
         use icu::properties::GeneralCategoryGroup;
 
         let provider = icu_testdata::get_provider();
-        let digits = sets::get_for_general_category_group(&provider, GeneralCategoryGroup::Number)
-            .expect("The data should be valid");
+        let digits_data =
+            sets::get_for_general_category_group(&provider, GeneralCategoryGroup::Number)
+                .expect("The data should be valid");
+        let digits = digits_data.as_borrowed();
 
         assert!(digits.contains('5'));
         assert!(digits.contains('\u{0665}')); // U+0665 ARABIC-INDIC DIGIT FIVE
@@ -1735,7 +1735,8 @@ mod tests {
 
         let provider = icu_testdata::get_provider();
         let data = maps::get_script(&provider).expect("The data should be valid");
-        let thai = data.get_set_for_value(Script::Thai);
+        let thai_data = data.as_borrowed().get_set_for_value(Script::Thai);
+        let thai = thai_data.as_borrowed();
 
         assert!(thai.contains('\u{0e01}')); // U+0E01 THAI CHARACTER KO KAI
         assert!(thai.contains('\u{0e50}')); // U+0E50 THAI DIGIT ZERO
@@ -1755,17 +1756,20 @@ mod tests {
         let test_group = |category: GeneralCategoryGroup, subcategories: &[GeneralCategory]| {
             let category_set = sets::get_for_general_category_group(&provider, category)
                 .expect("The data should be valid");
-            let category_set = category_set.to_code_point_inversion_list();
+            let category_set = category_set
+                .as_code_point_inversion_list()
+                .expect("The data should be valid");
 
             let data = maps::get_general_category(&provider).expect("The data should be valid");
             let gc = data.as_borrowed();
 
             let mut builder = CodePointInversionListBuilder::new();
             for subcategory in subcategories {
-                builder.add_set(
-                    &gc.get_set_for_value(*subcategory)
-                        .to_code_point_inversion_list(),
-                );
+                let gc_set_data = &gc.get_set_for_value(*subcategory);
+                let gc_set = gc_set_data.as_borrowed();
+                for range in gc_set.iter_ranges() {
+                    builder.add_range_u32(&range);
+                }
             }
             let combined_set = builder.build();
             println!("{:?} {:?}", category, subcategories);
@@ -1850,7 +1854,8 @@ mod tests {
         let provider = icu_testdata::get_provider();
         let data = maps::get_general_category(&provider).expect("The data should be valid");
         let gc = data.as_borrowed();
-        let surrogates = gc.get_set_for_value(GeneralCategory::Surrogate);
+        let surrogates_data = gc.get_set_for_value(GeneralCategory::Surrogate);
+        let surrogates = surrogates_data.as_borrowed();
 
         assert!(surrogates.contains_u32(0xd800));
         assert!(surrogates.contains_u32(0xd900));

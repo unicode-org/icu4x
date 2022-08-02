@@ -9,6 +9,7 @@
 use icu_provider::{yoke, zerofrom};
 
 pub use crate::exceptions::CaseMappingExceptions;
+pub use crate::internals::CaseMappingData;
 pub use crate::internals::CaseMappingInternals;
 pub use crate::internals::CaseMappingUnfoldData;
 

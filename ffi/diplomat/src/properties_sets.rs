@@ -33,7 +33,7 @@ pub mod ffi {
         /// Checks whether the code point is in the set.
         #[diplomat::rust_link(icu_uniset::CodePointSet::contains, FnInStruct)]
         pub fn contains(&self, cp: char) -> bool {
-            self.0.contains(cp)
+            self.0.as_borrowed().contains(cp)
         }
     }
 }

@@ -14,8 +14,8 @@ typedef struct ICU4XPluralRules ICU4XPluralRules;
 #ifdef __cplusplus
 } // namespace capi
 #endif
-#include "ICU4XLocale.h"
 #include "ICU4XDataProvider.h"
+#include "ICU4XLocale.h"
 #include "diplomat_result_box_ICU4XPluralRules_ICU4XError.h"
 #include "ICU4XPluralOperands.h"
 #include "ICU4XPluralCategory.h"
@@ -25,9 +25,9 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_try_new_cardinal(const ICU4XLocale* locale, const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_try_new_cardinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_try_new_ordinal(const ICU4XLocale* locale, const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_try_new_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
 ICU4XPluralCategory ICU4XPluralRules_select(const ICU4XPluralRules* self, ICU4XPluralOperands op);
 

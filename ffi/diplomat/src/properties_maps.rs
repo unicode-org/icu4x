@@ -40,7 +40,7 @@ pub mod ffi {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu_codepointtrie::codepointtrie::CodePointTrie::get_u32, FnInStruct)]
         pub fn get(&self, cp: char) -> u16 {
-            self.0.get(cp).0
+            self.0.as_borrowed().get(cp).0
         }
     }
 }

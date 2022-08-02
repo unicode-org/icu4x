@@ -3,11 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 import test from 'ava';
+import * as path from 'path';
+import * as url from 'url';
 import { promises as fsPromises } from 'fs';
 
 import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../lib/index.js"
 
-import { TESTDATA_POSTCARD_PATH } from "../paths.mjs"
+const TOP_DIR = path.resolve(path.join(path.dirname(url.fileURLToPath(import.meta.url)), "../../../../.."));
+const TESTDATA_POSTCARD_PATH = path.resolve(path.join(TOP_DIR, "provider/testdata/data/testdata.postcard"));
 
 test("use create_from_byte_slice to format a simple decimal", async t => {
   const locale = ICU4XLocale.create("bn");
@@ -15,7 +18,7 @@ test("use create_from_byte_slice to format a simple decimal", async t => {
   const bytes = new Uint8Array(nodeBuffer.buffer, nodeBuffer.byteOffset, nodeBuffer.length);
   const provider = ICU4XDataProvider.create_from_byte_slice(bytes);
 
-  const format = ICU4XFixedDecimalFormatter.try_new(locale, provider, "Auto");
+  const format = ICU4XFixedDecimalFormatter.try_new(provider, locale, "Auto");
 
   const decimal = ICU4XFixedDecimal.create(1234);
   decimal.multiply_pow10(-2);
