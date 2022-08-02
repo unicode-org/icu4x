@@ -18,7 +18,6 @@ use crate::{
     pattern::{PatternError, PatternItem},
     provider::{self, calendar::patterns::PatternPluralsFromPatternsV1Marker},
 };
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -66,10 +65,10 @@ where
 /// let provider = icu_testdata::get_provider();
 ///
 /// let tzf = TimeZoneFormatter::try_from_config(
-///     locale!("en"),
-///     TimeZoneFormatterConfig::GenericNonLocationLong,
 ///     &provider,
-///     &TimeZoneFormatterOptions::default(),
+///     &locale!("en").into(),
+///     TimeZoneFormatterConfig::GenericNonLocationLong,
+///     TimeZoneFormatterOptions::default(),
 /// )
 /// .expect("Failed to create TimeZoneFormatter");
 ///
@@ -351,10 +350,10 @@ impl TimeZoneFormatter {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormatter::try_from_config(
-    ///     locale!("en"),
-    ///     TimeZoneFormatterConfig::LocalizedGMT,
     ///     &provider,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale!("en").into(),
+    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    ///     TimeZoneFormatterOptions::default(),
     /// );
     ///
     /// assert!(tzf.is_ok());
@@ -607,10 +606,10 @@ impl TimeZoneFormatter {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormatter::try_from_config(
-    ///     locale!("en"),
-    ///     TimeZoneFormatterConfig::LocalizedGMT,
     ///     &provider,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale!("en").into(),
+    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
@@ -641,10 +640,10 @@ impl TimeZoneFormatter {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormatter::try_from_config(
-    ///     locale!("en"),
-    ///     TimeZoneFormatterConfig::LocalizedGMT,
     ///     &provider,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale!("en").into(),
+    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
@@ -676,10 +675,10 @@ impl TimeZoneFormatter {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let tzf = TimeZoneFormatter::try_from_config(
-    ///     locale!("en"),
-    ///     TimeZoneFormatterConfig::LocalizedGMT,
     ///     &provider,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale!("en").into(),
+    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///

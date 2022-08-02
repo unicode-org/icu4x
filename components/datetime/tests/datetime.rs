@@ -565,7 +565,6 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
 fn test_time_zone_patterns() {
     let date_provider = icu_testdata::get_provider();
     let decimal_provider = icu_testdata::get_provider();
-    let plural_provider = icu_testdata::get_provider();
     let zone_provider = icu_testdata::get_provider();
     let format_options = DateTimeFormatterOptions::default();
 

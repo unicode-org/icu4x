@@ -57,10 +57,10 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
 /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
-///     &locale!("en").into(),
 ///     &provider,
-///     &options.into(),
-///     &TimeZoneFormatterOptions::default(),
+///     &locale!("en").into(),
+///     options.into(),
+///     TimeZoneFormatterOptions::default(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
@@ -105,8 +105,8 @@ impl ZonedDateTimeFormatter {
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
     ///     &provider,
     ///     &locale.into(),
-    ///     &options,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     options,
+    ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
     /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
@@ -206,8 +206,8 @@ impl ZonedDateTimeFormatter {
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
     ///     &provider,
     ///     &locale.into(),
-    ///     &options,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     options,
+    ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
     /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
@@ -264,8 +264,8 @@ impl ZonedDateTimeFormatter {
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
     ///     &provider,
     ///     &locale.into(),
-    ///     &options,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     options,
+    ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
     /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")

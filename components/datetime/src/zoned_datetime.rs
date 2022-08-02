@@ -57,10 +57,10 @@ use crate::{
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
-///     &locale!("en").into(),
 ///     &provider,
-///     &options.into(),
-///     &TimeZoneFormatterOptions::default(),
+///     &locale!("en").into(),
+///     options.into(),
+///     TimeZoneFormatterOptions::default(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
@@ -91,8 +91,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     &provider,
     ///     &locale!("en").into(),
-    ///     &options,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     options,
+    ///     TimeZoneFormatterOptions::default(),
     /// );
     ///
     /// assert_eq!(zdtf.is_ok(), true);
@@ -156,8 +156,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     &provider,
     ///     &locale.into(),
-    ///     &options,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     options,
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
@@ -197,8 +197,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     &provider,
     ///     &locale.into(),
-    ///     &options.into(),
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     options.into(),
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
@@ -236,8 +236,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
     ///     &provider,
     ///     &locale.into(),
-    ///     &options.into(),
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     options.into(),
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///

@@ -11,7 +11,6 @@ use icu_decimal::{
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
-use icu_calendar::provider::JapaneseErasV1Marker;
 
 use crate::{
     format::{
