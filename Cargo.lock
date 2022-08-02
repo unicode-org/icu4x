@@ -735,9 +735,9 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "git+https://github.com/robertbastian/diplomat?rev=6945dd5b9c76814b48d2573888b05985c2b57eb6#6945dd5b9c76814b48d2573888b05985c2b57eb6"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa#be4f3aa9da018b05296f0d3b1777e1f3806054fa"
 dependencies = [
- "diplomat_core 0.3.0 (git+https://github.com/robertbastian/diplomat?rev=6945dd5b9c76814b48d2573888b05985c2b57eb6)",
+ "diplomat_core",
  "proc-macro2",
  "quote",
  "syn",
@@ -746,26 +746,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "git+https://github.com/robertbastian/diplomat?rev=6945dd5b9c76814b48d2573888b05985c2b57eb6#6945dd5b9c76814b48d2573888b05985c2b57eb6"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa#be4f3aa9da018b05296f0d3b1777e1f3806054fa"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/robertbastian/diplomat?rev=6945dd5b9c76814b48d2573888b05985c2b57eb6#6945dd5b9c76814b48d2573888b05985c2b57eb6"
-dependencies = [
- "impls",
- "lazy_static",
- "proc-macro2",
- "quote",
- "rustdoc-types",
- "serde",
- "syn",
-]
-
-[[package]]
-name = "diplomat_core"
-version = "0.3.0"
-source = "git+https://github.com/robertbastian/diplomat?rev=8f045a049dd47ed8211396254eb6b618af394b43#8f045a049dd47ed8211396254eb6b618af394b43"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa#be4f3aa9da018b05296f0d3b1777e1f3806054fa"
 dependencies = [
  "impls",
  "lazy_static",
@@ -1381,7 +1367,7 @@ version = "0.6.0"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
- "diplomat_core 0.3.0 (git+https://github.com/robertbastian/diplomat?rev=8f045a049dd47ed8211396254eb6b618af394b43)",
+ "diplomat_core",
  "elsa",
  "fixed_decimal",
  "icu_calendar",

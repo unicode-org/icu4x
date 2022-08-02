@@ -67,15 +67,15 @@ writeable = { version = "0.4", path = "../../utils/writeable/" }
 # Run `cargo make diplomat-install` to get the right diplomat binary installed
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Since this crate is published, Diplomat must be published preceding a new ICU4X release but may use git versions in between
-diplomat = { git = "https://github.com/robertbastian/diplomat", rev = "6945dd5b9c76814b48d2573888b05985c2b57eb6" }
-diplomat-runtime = { git = "https://github.com/robertbastian/diplomat", rev = "6945dd5b9c76814b48d2573888b05985c2b57eb6" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "be4f3aa9da018b05296f0d3b1777e1f3806054fa" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "be4f3aa9da018b05296f0d3b1777e1f3806054fa" }
 icu_testdata = { version = "0.6", path = "../../provider/testdata", optional = true }
 
 # completeness feature
 syn-inline-mod = { version =  "0.4.0", optional = true }
 serde_json = { version =  "1", optional = true }
 rustdoc-types = { version =  "0.11", optional = true }
-diplomat_core = { git = "https://github.com/robertbastian/diplomat", rev = "8f045a049dd47ed8211396254eb6b618af394b43", optional = true }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "be4f3aa9da018b05296f0d3b1777e1f3806054fa", optional = true }
 lazy_static = { version =  "1", optional = true }
 elsa = { version = "1", optional = true }
 
