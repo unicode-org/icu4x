@@ -27,7 +27,7 @@ use core::ops::Range;
 /// using `VarZeroVec<ZeroSlice<T>>`.
 ///
 /// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
-/// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index32`].
+/// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index16`].
 ///
 /// This type can be nested within itself to allow for multi-level nested `Vec`s, for
 /// example the following code constructs the conceptual zero-copy equivalent of `Vec<Vec<Vec<str>>>`

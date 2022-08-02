@@ -22,7 +22,7 @@ pub(super) const MAX_INDEX: usize = u32::MAX as usize;
 /// representations of VarZeroVec.
 ///
 /// Currently this crate supports two formats: [`Index16`] and [`Index32`],
-/// with [`Index32`] being the default for all [`VarZeroVec`](super::VarZeroVec)
+/// with [`Index16`] being the default for all [`VarZeroVec`](super::VarZeroVec)
 /// types unless explicitly specified otherwise.
 ///
 /// Do not implement this trait, its internals may be changed in the future,
@@ -51,6 +51,8 @@ pub unsafe trait VarZeroVecFormat: 'static + Sized {
 /// This is a [`VarZeroVecFormat`] that stores u16s in the index array.
 /// Will have a smaller data size, but it's more likely for larger arrays
 /// to be unrepresentable (and error on construction)
+///
+/// This is the default index size used by all [`VarZeroVec`](super::VarZeroVec) tyoes.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
 pub struct Index16;
 

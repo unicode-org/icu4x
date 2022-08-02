@@ -572,7 +572,8 @@ impl<'a> UnsizedFieldKind<'a> {
             that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec";
         static PATH_TYPE_GENERICS_ERROR: &str =
             "Can only automatically detect corresponding VarULE types for path \
-            types with at most one lifetime and at most one generic parameter";
+            types with at most one lifetime and at most one generic parameter. VarZeroVecFormat
+            types are not currently supported";
         match *ty {
             Type::Reference(ref tyref) => OwnULETy::new(&tyref.elem, "reference").map(UnsizedFieldKind::Ref),
             Type::Path(ref typath) => {

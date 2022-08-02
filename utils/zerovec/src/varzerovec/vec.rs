@@ -37,7 +37,7 @@ use super::*;
 /// owned data (and then mutated!) but can also borrow from some buffer.
 ///
 /// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
-/// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index32`].
+/// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index16`].
 ///
 /// # Example
 ///
