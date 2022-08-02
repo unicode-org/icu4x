@@ -28,11 +28,11 @@ impl MetaZoneCalculator {
     /// use icu::timezone::MetaZoneCalculator;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::try_new(&provider);
+    /// let mzc = MetaZoneCalculator::try_new_unstable(&provider);
     ///
     /// assert!(mzc.is_ok());
     /// ```
-    pub fn try_new<P>(zone_provider: &P) -> Result<Self, TimeZoneError>
+    pub fn try_new_unstable<P>(zone_provider: &P) -> Result<Self, TimeZoneError>
     where
         P: DataProvider<MetaZonePeriodV1Marker> + ?Sized,
     {
@@ -44,6 +44,12 @@ impl MetaZoneCalculator {
             .take_payload()?;
         Ok(Self { metazone_period })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: TimeZoneError
+    );
 
     /// Calculate metazone id from timezone id and local datetime.
     ///
@@ -57,7 +63,7 @@ impl MetaZoneCalculator {
     /// use tinystr::tinystr;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::try_new(&provider).expect("data exists");
+    /// let mzc = MetaZoneCalculator::try_new_with_buffer_provider(&provider).expect("data exists");
     ///
     /// assert_eq!(
     ///     mzc.compute_metazone_from_timezone(
