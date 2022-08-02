@@ -697,8 +697,8 @@ list/unit@1, sr-Latn, 23B, 9f356d88882361be7071e606a8da6e17eb303ca35566691d2b265
 list/unit@1, th, 30B, 44cb8e5cadcc1f5ac9d64dc7ea92e44f2dc32c8d6b4921e54a3a45338691317a
 list/unit@1, tr, 16B, 2a71e93514df9751b59cea6d7e7f451374276dfed53d1bdb131994636853d109
 list/unit@1, und, 17B, 5b9f632a33abd67185c088f662de58929ec350487d7855e8a78ee9eb4209ee70
-locale_canonicalizer/aliases@1, und, 8988B, 3e2ad76382e532d7c87771c78bd75e1e4c4abbbc5f436e7e1091fae157391bd4
-locale_canonicalizer/likelysubtags@1, und, 18793B, c4c5a1819d8e3ca8f1cabdd3548b6e1ba311586a0f7e1c50c90d93bc97263eae
+locid_transform/aliases@1, und, 8988B, 3e2ad76382e532d7c87771c78bd75e1e4c4abbbc5f436e7e1091fae157391bd4
+locid_transform/likelysubtags@1, und, 18793B, c4c5a1819d8e3ca8f1cabdd3548b6e1ba311586a0f7e1c50c90d93bc97263eae
 normalizer/comp@1, und, 5092B, bb6312f594d6d73110877a3b4fe8717849fa852d2d7ad2a0be07f3518cc848bc
 normalizer/decomp@1, und, 4155B, 6e407fdf0c526c7d9f0173e542fd09f4bfe7f3007e88d5072eb9d6d0a9a17f86
 normalizer/nfc@1, und, 2774B, d474db9534ae48140b777502f2f2bdb8398257e40b4117153bcd2dbb05bbe2d0

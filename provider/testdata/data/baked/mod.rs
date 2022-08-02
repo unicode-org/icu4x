@@ -6,7 +6,7 @@ mod datetime;
 mod decimal;
 mod fallback;
 mod list;
-mod locale_canonicalizer;
+mod locid_transform;
 mod normalizer;
 mod plurals;
 mod props;
@@ -320,7 +320,7 @@ impl DataProvider<::icu_locid_transform::provider::AliasesV1Marker> for BakedDat
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *locale_canonicalizer::aliases_v1::DATA
+                *locid_transform::aliases_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::AliasesV1Marker::KEY, req))?,
             ))),
@@ -332,7 +332,7 @@ impl DataProvider<::icu_locid_transform::provider::LikelySubtagsV1Marker> for Ba
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *locale_canonicalizer::likelysubtags_v1::DATA
+                *locid_transform::likelysubtags_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY, req))?,
             ))),

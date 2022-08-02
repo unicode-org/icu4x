@@ -299,10 +299,10 @@ impl AnyProvider for BakedDataProvider {
                 UNITLISTV1MARKER => list::unit_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                ALIASESV1MARKER => locale_canonicalizer::aliases_v1::DATA
+                ALIASESV1MARKER => locid_transform::aliases_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                LIKELYSUBTAGSV1MARKER => locale_canonicalizer::likelysubtags_v1::DATA
+                LIKELYSUBTAGSV1MARKER => locid_transform::likelysubtags_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 CANONICALCOMPOSITIONPASSTHROUGHV1MARKER => normalizer::nfc_v1::DATA
