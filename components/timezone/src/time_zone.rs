@@ -70,7 +70,7 @@ impl CustomTimeZone {
     /// use tinystr::tinystr;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::try_new(&provider).expect("data exists");
+    /// let mzc = MetaZoneCalculator::try_new_with_buffer_provider(&provider).expect("data exists");
     /// let mut tz = CustomTimeZone::new(
     ///     /* gmt_offset */ Some("+11".parse().expect("Failed to parse a GMT offset.")),
     ///     /* time_zone_id */ Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
