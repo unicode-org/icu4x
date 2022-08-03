@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659490693098,
+  "lastUpdate": 1659492208921,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42329,6 +42329,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 76,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "094d52683e066da43f4b7445d8bce44455f7d202",
+          "message": "Merge `CodePointTrie` into `components/collections` (#2294)",
+          "timestamp": "2022-08-03T01:51:47Z",
+          "tree_id": "39910f9c36779efb6c08f33d1ce6426433c161d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/094d52683e066da43f4b7445d8bce44455f7d202"
+        },
+        "date": 1659492168131,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108323,
+            "range": "± 1642",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22762,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66875,
+            "range": "± 580",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 168,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 75,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
