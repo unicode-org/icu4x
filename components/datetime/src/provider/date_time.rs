@@ -11,9 +11,9 @@ use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
 use crate::provider::calendar::{
     patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
-    DateLengthsV1Marker, DateSkeletonPatternsV1Marker, TimeLengthsV1Marker,
+    DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, TimeLengthsV1Marker,
 };
-use crate::provider::calendar::{DatePatternsV1, TimeLengthsV1};
+use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
 use crate::skeleton;
 use icu_calendar::types::{Era, MonthCode};
 use icu_provider::prelude::*;
@@ -69,7 +69,7 @@ where
     Ok(data)
 }
 
-fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> PatternPlurals {
+fn pattern_for_date_length_inner(data: DateLengthsV1, length: length::Date) -> PatternPlurals {
     let pattern = match length {
         length::Date::Full => data.date.full,
         length::Date::Long => data.date.long,
@@ -98,49 +98,23 @@ where
     }))
 }
 
-fn date_patterns_data_payload<D>(
-    data_provider: &D,
-    locale: &DataLocale,
-) -> Result<DataPayload<DateLengthsV1Marker>>
-where
-    D: DataProvider<DateLengthsV1Marker> + ?Sized,
-{
-    let data = data_provider
-        .load(DataRequest {
-            locale,
-            metadata: Default::default(),
-        })?
-        .take_payload()?;
-    Ok(data)
-}
-
 /// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
-pub(crate) fn pattern_for_date_length<D>(
-    data_provider: &D,
-    locale: &DataLocale,
+pub(crate) fn pattern_for_date_length(
     length: length::Date,
-) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
-where
-    D: DataProvider<DateLengthsV1Marker> + ?Sized,
-{
-    let patterns_data = date_patterns_data_payload(data_provider, locale)?;
-    Ok(patterns_data.map_project(|data, _| {
+    patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+) -> DataPayload<PatternPluralsFromPatternsV1Marker> {
+    patterns_data.map_project(|data, _| {
         let pattern = pattern_for_date_length_inner(data, length);
         pattern.into()
-    }))
+    })
 }
 
 /// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
-pub(crate) fn generic_pattern_for_date_length<D>(
-    data_provider: &D,
-    locale: &DataLocale,
+pub(crate) fn generic_pattern_for_date_length(
     length: length::Date,
-) -> Result<DataPayload<GenericPatternV1Marker>>
-where
-    D: DataProvider<DateLengthsV1Marker> + ?Sized,
-{
-    let patterns_data = date_patterns_data_payload(data_provider, locale)?;
-    Ok(patterns_data.map_project(|data, _| {
+    patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+) -> DataPayload<GenericPatternV1Marker> {
+    patterns_data.map_project(|data, _| {
         let pattern = match length {
             length::Date::Full => data.length_combinations.full,
             length::Date::Long => data.length_combinations.long,
@@ -149,37 +123,29 @@ where
         };
 
         pattern.into()
-    }))
+    })
 }
 
+#[derive(Clone)]
 pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
+    date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
     locale: &'a DataLocale,
-}
-
-// Manual impls needed since `derive(Copy)` inserts
-// a `D: Copy` bound
-impl<D: ?Sized> Copy for PatternSelector<'_, D> {}
-impl<D: ?Sized> Clone for PatternSelector<'_, D> {
-    fn clone(&self) -> Self {
-        *self
-    }
 }
 
 impl<D> PatternSelector<'_, D>
 where
-    D: DataProvider<DateLengthsV1Marker>
-        + DataProvider<TimeLengthsV1Marker>
-        + DataProvider<DateSkeletonPatternsV1Marker>
-        + ?Sized,
+    D: DataProvider<TimeLengthsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker> + ?Sized,
 {
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
+        date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         locale: &'a DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
             data_provider,
+            date_patterns_data,
             locale,
         };
         match options {
@@ -203,9 +169,10 @@ where
                 time_length,
                 length.preferences,
             ),
-            (Some(date_length), None) => {
-                pattern_for_date_length(self.data_provider, self.locale, date_length)
-            }
+            (Some(date_length), None) => Ok(pattern_for_date_length(
+                date_length,
+                self.date_patterns_data,
+            )),
             (Some(date_length), Some(time_length)) => {
                 self.pattern_for_datetime_length(date_length, time_length, length.preferences)
             }
@@ -222,8 +189,7 @@ where
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let time_patterns_data = time_patterns_data_payload(self.data_provider, self.locale)?;
 
-        let date_patterns_data = date_patterns_data_payload(self.data_provider, self.locale)?;
-        date_patterns_data.try_map_project(|data, _| {
+        self.date_patterns_data.try_map_project(|data, _| {
             // TODO (#1131) - We may be able to remove the clone here.
             let date = pattern_for_date_length_inner(data.clone(), date_length)
                 .expect_pattern("Lengths are single patterns");
@@ -252,12 +218,11 @@ where
         components: &components::Bag,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let skeletons_data = self.skeleton_data_payload()?;
-        let patterns_data = date_patterns_data_payload(self.data_provider, self.locale)?;
         // Not all skeletons are currently supported.
         let requested_fields = components.to_vec_fields();
         let patterns = match skeleton::create_best_pattern_for_fields(
             skeletons_data.get(),
-            &patterns_data.get().length_combinations,
+            &self.date_patterns_data.get().length_combinations,
             &requested_fields,
             components,
             false, // Prefer the requested fields over the matched pattern.
@@ -272,7 +237,7 @@ where
         )))
     }
 
-    fn skeleton_data_payload(self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
+    fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
         let data = self
             .data_provider
             .load(DataRequest {

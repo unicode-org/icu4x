@@ -123,8 +123,11 @@ impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl DataProvider<JapanextErasV1Marker> for crate::DatagenProvider {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<JapanextErasV1Marker>, DataError> {
+impl DataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        _req: DataRequest,
+    ) -> Result<DataResponse<JapaneseExtendedErasV1Marker>, DataError> {
         let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
         Ok(DataResponse {
             metadata,
@@ -188,7 +191,7 @@ impl IterableDataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
     }
 }
 
-impl IterableDataProvider<JapanextErasV1Marker> for crate::DatagenProvider {
+impl IterableDataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

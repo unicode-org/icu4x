@@ -11,7 +11,8 @@ fn test_plural_rules() {
     let provider = icu_testdata::get_provider();
 
     let pr =
-        PluralRules::try_new(&provider, &locale!("en").into(), PluralRuleType::Cardinal).unwrap();
+        PluralRules::try_new_unstable(&provider, &locale!("en").into(), PluralRuleType::Cardinal)
+            .unwrap();
 
     assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 }
@@ -35,7 +36,8 @@ fn test_plural_rules_missing() {
     // Use get_postcard_provider to skip vertical fallback
     let provider = icu_testdata::get_postcard_provider();
 
-    let pr = PluralRules::try_new(&provider, &locale!("xx").into(), PluralRuleType::Cardinal);
+    let pr =
+        PluralRules::try_new_unstable(&provider, &locale!("xx").into(), PluralRuleType::Cardinal);
 
     assert!(pr.is_err());
 }
