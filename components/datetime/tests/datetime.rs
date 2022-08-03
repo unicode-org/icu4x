@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![cfg(feature = "serde")]
+#![cfg(feature = "disable")]
 
 mod fixtures;
 mod patterns;
