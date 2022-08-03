@@ -531,7 +531,7 @@ mod tests {
     #[test]
     #[cfg(feature = "serde")]
     fn test_basic() {
-        use crate::provider::calendar::{DateSymbolsV1Marker, TimeSymbolsV1Marker};
+        use crate::provider::calendar::{GregorianDateSymbolsV1Marker, TimeSymbolsV1Marker};
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
@@ -541,7 +541,7 @@ mod tests {
             locale: &locale,
             metadata: Default::default(),
         };
-        let date_data: DataPayload<DateSymbolsV1Marker> =
+        let date_data: DataPayload<GregorianDateSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         let time_data: DataPayload<TimeSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();

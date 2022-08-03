@@ -27,10 +27,7 @@ use icu_datetime::{
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
     provider::{
-        calendar::{
-            DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimeLengthsV1Marker, TimeSymbolsV1Marker,
-        },
+        calendar::*,
         week_data::WeekDataV1Marker,
     },
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
@@ -183,9 +180,9 @@ fn assert_fixture_element<A, D>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
-    D: DataProvider<DateSymbolsV1Marker>
+    D: DataProvider<GregorianDateSymbolsV1Marker>
         + DataProvider<TimeSymbolsV1Marker>
-        + DataProvider<DateLengthsV1Marker>
+        + DataProvider<GregorianDateLengthsV1Marker>
         + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + DataProvider<DecimalSymbolsV1Marker>
@@ -377,7 +374,7 @@ fn test_dayperiod_patterns() {
             locale: &data_locale,
             metadata: Default::default(),
         };
-        let mut date_patterns_data: DataPayload<DateLengthsV1Marker> =
+        let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -387,7 +384,7 @@ fn test_dayperiod_patterns() {
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let date_symbols_data: DataPayload<DateSymbolsV1Marker> =
+        let date_symbols_data: DataPayload<GregorianDateSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         let time_symbols_data: DataPayload<TimeSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
@@ -417,7 +414,7 @@ fn test_dayperiod_patterns() {
                         });
                         let local_provider = MultiForkByKeyProvider::new(vec![
                             AnyPayloadProvider {
-                                key: DateSymbolsV1Marker::KEY,
+                                key: GregorianDateSymbolsV1Marker::KEY,
                                 data: date_symbols_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
@@ -429,7 +426,7 @@ fn test_dayperiod_patterns() {
                                 data: skeleton_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
-                                key: DateLengthsV1Marker::KEY,
+                                key: GregorianDateLengthsV1Marker::KEY,
                                 data: date_patterns_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
@@ -589,13 +586,13 @@ fn test_time_zone_patterns() {
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         time_zone.time_variant = config.time_variant.take().map(TimeVariant);
 
-        let mut date_patterns_data: DataPayload<DateLengthsV1Marker> =
+        let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
-        let symbols_data: DataPayload<DateSymbolsV1Marker> =
+        let symbols_data: DataPayload<GregorianDateSymbolsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let week_data: DataPayload<WeekDataV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
@@ -634,7 +631,7 @@ fn test_time_zone_patterns() {
                 });
                 let local_provider = MultiForkByKeyProvider::new(vec![
                     AnyPayloadProvider {
-                        key: DateSymbolsV1Marker::KEY,
+                        key: GregorianDateSymbolsV1Marker::KEY,
                         data: symbols_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
@@ -642,7 +639,7 @@ fn test_time_zone_patterns() {
                         data: skeleton_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
-                        key: DateLengthsV1Marker::KEY,
+                        key: GregorianDateLengthsV1Marker::KEY,
                         data: date_patterns_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
