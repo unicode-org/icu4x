@@ -38,7 +38,7 @@ use yoke::*;
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_blob(blob).expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::try_new_from_blob(blob).expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider

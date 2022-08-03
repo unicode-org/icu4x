@@ -30,7 +30,7 @@ use serde::de::Deserialize;
 ///     "/tests/data/hello_world.postcard"
 /// ));
 ///
-/// let provider = StaticDataProvider::new_from_static_blob(&HELLO_WORLD_BLOB)
+/// let provider = StaticDataProvider::try_new_from_static_blob(&HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
