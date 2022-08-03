@@ -65,7 +65,7 @@ impl CodePointSetData {
     }
     /// Construct a new one from loaded data
     ///
-    /// Typically it is preferable to use getters like [`get_ascii_hex_digit()`] instead
+    /// Typically it is preferable to use getters like [`load_ascii_hex_digit()`] instead
     pub fn from_data<M>(data: DataPayload<M>) -> Self
     where
         M: DataMarker<Yokeable = PropertyCodePointSetV1<'static>>,
@@ -941,7 +941,7 @@ make_set_property! {
     keyed_data_marker: IdContinueV1Marker;
     func:
     /// Characters that can come after the first character in an identifier. If using NFKC to
-    /// fold differences between characters, use [`get_xid_continue`] instead.  See
+    /// fold differences between characters, use [`load_xid_continue`] instead.  See
     /// [`Unicode Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for
     /// more details.
     ///
@@ -999,7 +999,7 @@ make_set_property! {
     keyed_data_marker: IdStartV1Marker;
     func:
     /// Characters that can begin an identifier. If using NFKC to fold differences between
-    /// characters, use [`get_xid_start`] instead.  See [`Unicode Standard Annex
+    /// characters, use [`load_xid_start`] instead.  See [`Unicode Standard Annex
     /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
     ///
     /// # Example
