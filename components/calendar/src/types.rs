@@ -103,7 +103,7 @@ impl From<TinyStr4> for MonthCode {
     }
 }
 impl FromStr for MonthCode {
-    type Err = <TinyStr16 as FromStr>::Err;
+    type Err = <TinyStr4 as FromStr>::Err;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         s.parse().map(Self)
     }
