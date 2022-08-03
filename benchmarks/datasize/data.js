@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659509968989,
+  "lastUpdate": 1659542552210,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23008,6 +23008,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 3950050,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "08b8eb0257e99867a2f649c633cb6418e079df03",
+          "message": "Make calendars work with static data slicing and update PluralRules constructors (#2318)\n\n- Also renames Japanext to JapaneseExtended",
+          "timestamp": "2022-08-03T09:00:31-07:00",
+          "tree_id": "b57eb82c2b21daf45880ccb97f741b1278375495",
+          "url": "https://github.com/unicode-org/icu4x/commit/08b8eb0257e99867a2f649c633cb6418e079df03"
+        },
+        "date": 1659542511968,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3946612,
             "unit": "bytes",
             "biggerIsBetter": false
           }
