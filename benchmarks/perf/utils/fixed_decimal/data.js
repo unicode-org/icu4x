@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659561497260,
+  "lastUpdate": 1659565706793,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42868,6 +42868,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2f4d6629438fb40de1147d3df05dc8856e7da3e",
+          "message": "Some more examples for AnyCalendar / formatting stuff (#2322)\n\n* Improve AnyCalendar APIs\r\n\r\n* Add DTF example\r\n\r\n* add anycalendar example\r\n\r\n* fix test\r\n\r\n* fix\r\n\r\n* fix after ctor changes\r\n\r\n* Update components/calendar/src/types.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update components/calendar/src/types.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* comment\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-08-03T22:16:57Z",
+          "tree_id": "7bbaf6c4e8c1294300c334a6a3ae46ecc5af9e0e",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2f4d6629438fb40de1147d3df05dc8856e7da3e"
+        },
+        "date": 1659565665714,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108342,
+            "range": "± 537",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22807,
+            "range": "± 114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 67168,
+            "range": "± 749",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 167,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
             "range": "± 0",
             "unit": "ns/iter"
           }
