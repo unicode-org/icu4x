@@ -10,8 +10,8 @@ use core::{
 };
 
 use super::CodePointSetError;
-use crate::utils::deconstruct_range;
-use crate::{CodePointInversionList, CodePointInversionListBuilder};
+use crate::uniset::utils::deconstruct_range;
+use crate::uniset::{CodePointInversionList, CodePointInversionListBuilder};
 use zerovec::ZeroVec;
 
 fn try_from_range<'data, 'r>(
@@ -89,7 +89,7 @@ impl FromIterator<RangeInclusive<u32>> for CodePointInversionList<'_> {
 #[cfg(test)]
 mod tests {
     use super::*;
-    use crate::CodePointInversionList;
+    use crate::uniset::CodePointInversionList;
     use core::{char, convert::TryFrom};
 
     #[test]

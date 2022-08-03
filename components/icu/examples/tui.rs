@@ -14,7 +14,7 @@ use icu::datetime::{
 };
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
-use icu_uniset::CodePointInversionListBuilder;
+use icu_collections::uniset::CodePointInversionListBuilder;
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {

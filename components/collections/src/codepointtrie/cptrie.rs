@@ -5,12 +5,12 @@
 use crate::codepointtrie::error::Error;
 use crate::codepointtrie::impl_const::*;
 
+use crate::uniset::CodePointInversionList;
 use core::convert::TryFrom;
 use core::fmt::Display;
 use core::iter::FromIterator;
 use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
-use icu_uniset::CodePointInversionList;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
 use zerovec::ZeroVec;

@@ -10,7 +10,7 @@
 //! ICU4X [`CodePointTrie`](crate::codepointtrie::CodePointTrie) provides a read-only view of CodePointTrie data that is exported
 //! from ICU4C. Detailed information about the design of the data structure can be found in the documentation
 //! for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
-//! 
+//!
 //! ICU4X [`CodePointInversionList`](`crate::uniset::CodePointInversionList`) provides necessary functionality for highly efficient querying of sets of Unicode characters.
 //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 //!

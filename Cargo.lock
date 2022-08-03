@@ -1463,6 +1463,7 @@ dependencies = [
  "icu",
  "postcard",
  "serde",
+ "serde_json",
  "toml",
  "yoke",
  "zerofrom",

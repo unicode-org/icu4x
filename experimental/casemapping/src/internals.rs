@@ -7,9 +7,9 @@ use core::num::TryFromIntError;
 #[cfg(feature = "datagen")]
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
+use icu_collections::uniset::CodePointInversionListBuilder;
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
-use icu_uniset::CodePointInversionListBuilder;
 #[cfg(feature = "datagen")]
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE};

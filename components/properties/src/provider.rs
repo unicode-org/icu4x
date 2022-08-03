@@ -12,8 +12,8 @@
 use crate::script::ScriptWithExtensions;
 use core::ops::RangeInclusive;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
+use icu_collections::uniset::CodePointInversionList;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointInversionList;
 use zerofrom::ZeroFrom;
 
 /// A set of characters with a particular property.
