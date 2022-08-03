@@ -630,7 +630,7 @@ jobs:
           - components/locid
           - components/plurals
           - components/datetime
-          - utils/uniset
+          - components/collections
           - utils/fixed_decimal
 
 

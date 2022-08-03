@@ -59,16 +59,19 @@ serde = ["dep:serde", "zerovec/serde"]
 bench = []
 databake = ["dep:databake", "zerovec/databake"]
 
-# [[bench]]
-# name = "codepointtrie"
-# harness = false
-# 
-# [[bench]]
-# name = "iai_cpt"
-# harness = false
-# required-features = ["bench"]
-#
-# [[bench]]
-# name = "inv_list"
-# harness = false
+[[bench]]
+name = "codepointtrie"
+harness = false
+path = "src/codepointtrie/benches/codepointtrie.rs"
+ 
+[[bench]]
+name = "iai_cpt"
+harness = false
+required-features = ["bench"]
+path = "src/codepointtrie/benches/iai_cpt.rs"
+
+[[bench]]
+name = "inv_list"
+harness = false
+path = "src/codepointinvlist/benches/inv_list.rs"
 
