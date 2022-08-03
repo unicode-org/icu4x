@@ -6,11 +6,12 @@ use icu_locid::locale;
 use icu_provider::{hello_world::*, prelude::*};
 
 fn main() {
-    let dp = icu_provider_blob::StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/tests/data/hello_world.postcard"
-    )))
-    .unwrap();
+    let dp =
+        icu_provider_blob::StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/tests/data/hello_world.postcard"
+        )))
+        .unwrap();
 
     let hello: DataPayload<HelloWorldV1Marker> = dp
         .load(DataRequest {

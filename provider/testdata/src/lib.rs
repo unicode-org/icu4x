@@ -115,7 +115,7 @@ pub fn get_json_provider() -> FsDataProvider {
 pub fn get_postcard_provider() -> StaticDataProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
+    StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/data/testdata.postcard"
     )))
@@ -128,7 +128,7 @@ pub fn get_postcard_provider() -> StaticDataProvider {
 pub fn get_smaller_postcard_provider() -> StaticDataProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    StaticDataProvider::new_from_static_blob(include_bytes!(concat!(
+    StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/data/decimal-bn-en.postcard"
     )))
