@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659560927580,
+  "lastUpdate": 1659565126374,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23123,6 +23123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9dafa6bb171b4d17e8163c3c72665a1a720c6737"
         },
         "date": 1659560885873,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3946612,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2f4d6629438fb40de1147d3df05dc8856e7da3e",
+          "message": "Some more examples for AnyCalendar / formatting stuff (#2322)\n\n* Improve AnyCalendar APIs\r\n\r\n* Add DTF example\r\n\r\n* add anycalendar example\r\n\r\n* fix test\r\n\r\n* fix\r\n\r\n* fix after ctor changes\r\n\r\n* Update components/calendar/src/types.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update components/calendar/src/types.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* comment\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-08-03T22:16:57Z",
+          "tree_id": "7bbaf6c4e8c1294300c334a6a3ae46ecc5af9e0e",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2f4d6629438fb40de1147d3df05dc8856e7da3e"
+        },
+        "date": 1659565088400,
         "tool": "ndjson",
         "benches": [
           {
