@@ -58,8 +58,9 @@ fn test_fixture(fixture_name: &str) {
         .expect("Unable to get fixture.")
         .0
     {
-        let japanese = Japanese::try_new(&provider).expect("Cannot load japanese data");
-        let japanext = JapaneseExtended::try_new(&provider).expect("Cannot load japanese data");
+        let japanese = Japanese::try_new_unstable(&provider).expect("Cannot load japanese data");
+        let japanext =
+            JapaneseExtended::try_new_unstable(&provider).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);

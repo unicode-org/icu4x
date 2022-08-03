@@ -72,7 +72,7 @@ pub struct Collator {
 
 impl Collator {
     /// Instantiates a collator for a given locale with the given options
-    pub fn try_new<D>(
+    pub fn try_new_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         options: CollatorOptions,
@@ -231,6 +231,12 @@ impl Collator {
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: CollatorOptions,
+        error: CollatorError
+    );
 
     /// Compare potentially-invalid UTF-16 slices. Unpaired surrogates
     /// are compared as if each one was a REPLACEMENT CHARACTER.
