@@ -363,10 +363,10 @@ fn test_keys_from_file() {
         )
         .unwrap(),
         vec![
-            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
-            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
             icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
@@ -383,10 +383,10 @@ fn test_keys_from_bin() {
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),
         vec![
-            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
-            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
