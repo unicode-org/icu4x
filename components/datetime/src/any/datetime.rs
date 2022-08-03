@@ -57,6 +57,53 @@ use icu_provider::DataLocale;
 /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
+/// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu_calendar::DateTime) with [`AnyCalendar`]
+/// to have a date in a runtime-selected calendar:
+///
+/// ```
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, types::Time};
+/// use icu::datetime::{options::length, DateTimeFormatter};
+/// use icu::locid::Locale;
+/// # use std::str::FromStr;
+/// # use std::rc::Rc;
+/// # use std::convert::TryInto;
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
+///
+/// let calendar = AnyCalendar::try_new_with_buffer_provider(&provider, (&locale).try_into().unwrap())
+///                    .expect("constructing AnyCalendar failed");
+/// let calendar = Rc::new(calendar); // Avoid cloning it
+///
+///
+/// // manually construct a datetime in this calendar
+/// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
+/// // construct from era code, year, month code, day, time, and a calendar
+/// // This is March 28, 15 Heisei
+/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+///                                                manual_time, calendar.clone())
+///                     .expect("Failed to construct DateTime manually");
+///
+///
+/// // construct another datetime by converting from ISO
+/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct ISO DateTime.");
+/// let iso_converted = iso_datetime.to_calendar(calendar);
+///
+///
+/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+///
+/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), &options.into())
+///     .expect("Failed to create TypedDateTimeFormatter instance.");
+///
+/// let manual_value = dtf.format_to_string(&manual_datetime).expect("calendars should match");
+/// assert_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
+///
+/// let converted_value = dtf.format_to_string(&iso_converted).expect("calendars should match");
+/// assert_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
+/// ```
+///
 /// This model replicates that of `ICU` and `ECMA402`.
 ///
 /// [data provider]: icu_provider
@@ -201,7 +248,7 @@ impl DateTimeFormatter {
         let mut locale_with_cal = locale.clone();
 
         // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Some(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
+        let kind = if let Ok(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
             kind
         } else {
             locale_with_cal.set_unicode_ext(key!("ca"), value!("gregory"));

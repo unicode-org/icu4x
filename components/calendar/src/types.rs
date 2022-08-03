@@ -17,6 +17,19 @@ use zerovec::ule::AsULE;
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
 
+impl From<TinyStr16> for Era {
+    fn from(x: TinyStr16) -> Self {
+        Self(x)
+    }
+}
+
+impl FromStr for Era {
+    type Err = <TinyStr16 as FromStr>::Err;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s.parse().map(Self)
+    }
+}
+
 /// Representation of a formattable year.
 ///
 /// More fields may be added in the future, for things like
@@ -83,6 +96,19 @@ impl fmt::Display for MonthCode {
         write!(f, "{}", self.0)
     }
 }
+
+impl From<TinyStr4> for MonthCode {
+    fn from(x: TinyStr4) -> Self {
+        Self(x)
+    }
+}
+impl FromStr for MonthCode {
+    type Err = <TinyStr4 as FromStr>::Err;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s.parse().map(Self)
+    }
+}
+
 /// Representation of a formattable month.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable

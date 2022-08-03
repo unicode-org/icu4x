@@ -14,14 +14,16 @@ use crate::japanese::{Japanese, JapaneseExtended};
 use crate::{
     types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
 };
+use alloc::string::ToString;
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
     Locale,
 };
-
 use icu_provider::prelude::*;
+use tinystr::tinystr;
 
+use core::convert::TryFrom;
 use core::fmt;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
@@ -34,6 +36,46 @@ use core::fmt;
 ///
 /// [`Date`](crate::Date) can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
+///
+/// There are many ways of constructing an AnyCalendar'd date:
+/// ```
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, japanese::Japanese, types::Time};
+/// use icu::locid::Locale;
+/// # use std::str::FromStr;
+/// # use std::rc::Rc;
+/// # use std::convert::TryInto;
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
+///
+/// let calendar = AnyCalendar::try_new_with_buffer_provider(&provider, (&locale).try_into().unwrap())
+///                    .expect("constructing AnyCalendar failed");
+/// let calendar = Rc::new(calendar); // Avoid cloning it each time
+///                                   // If everything is a local reference, you may use icu_calendar::Ref instead.
+///
+///
+/// // manually construct a datetime in this calendar
+/// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
+/// // construct from era code, year, month code, day, time, and a calendar
+/// // This is March 28, 15 Heisei
+/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+///                                                manual_time, calendar.clone())
+///                     .expect("Failed to construct DateTime manually");
+///
+///
+/// // construct another datetime by converting from ISO
+/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct ISO DateTime.");
+/// let iso_converted = iso_datetime.to_calendar(calendar);
+///
+/// // Construct a datetime in the appropriate typed calendar and convert
+/// let japanese_calendar = Japanese::try_new_with_buffer_provider(&provider).unwrap();
+/// let japanese_datetime = DateTime::new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
+///                                                         12, 33, 12, japanese_calendar).unwrap();
+/// // This is a DateTime<AnyCalendar>
+/// let any_japanese_datetime = japanese_datetime.to_any();
+/// ```
 #[non_exhaustive]
 pub enum AnyCalendar {
     Gregorian(Gregorian),
@@ -516,8 +558,8 @@ impl AnyCalendarKind {
         })
     }
 
-    pub fn from_bcp47(x: &Value) -> Option<Self> {
-        Some(if *x == value!("gregory") {
+    pub fn from_bcp47(x: &Value) -> Result<Self, DateTimeError> {
+        Ok(if *x == value!("gregory") {
             AnyCalendarKind::Gregorian
         } else if *x == value!("buddhist") {
             AnyCalendarKind::Buddhist
@@ -536,7 +578,10 @@ impl AnyCalendarKind {
         } else if *x == value!("ethioaa") {
             AnyCalendarKind::Ethioaa
         } else {
-            return None;
+            let mut string = x.to_string();
+            string.truncate(16);
+            let tiny = string.parse().unwrap_or(tinystr!(16, "unknown"));
+            return Err(DateTimeError::UnknownAnyCalendarKind(tiny));
         })
     }
 
@@ -554,20 +599,34 @@ impl AnyCalendarKind {
         }
     }
 
-    pub fn from_locale(l: &Locale) -> Option<Self> {
+    pub fn from_locale(l: &Locale) -> Result<Self, DateTimeError> {
         l.extensions
             .unicode
             .keywords
             .get(&key!("ca"))
+            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
+                16,
+                "(unspecified)"
+            )))
             .and_then(Self::from_bcp47)
     }
 
-    pub fn from_data_locale(l: &DataLocale) -> Option<Self> {
+    pub fn from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
         l.get_unicode_ext(&key!("ca"))
+            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
+                16,
+                "(unspecified)"
+            )))
             .and_then(|v| Self::from_bcp47(&v))
     }
 }
 
+impl TryFrom<&'_ Locale> for AnyCalendarKind {
+    type Error = DateTimeError;
+    fn try_from(l: &'_ Locale) -> Result<Self, DateTimeError> {
+        Self::from_locale(l)
+    }
+}
 impl fmt::Display for AnyCalendarKind {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Debug::fmt(self, f)
