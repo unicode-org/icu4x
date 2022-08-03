@@ -18,7 +18,7 @@ fn test_categories() {
         helpers::read_fixture(path).expect("Failed to read a fixture");
 
     for test in test_set {
-        let pr = PluralRules::try_new(
+        let pr = PluralRules::try_new_unstable(
             &provider,
             &LanguageIdentifier::from_str(&test.langid).unwrap().into(),
             test.plural_type.into(),

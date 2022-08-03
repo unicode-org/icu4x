@@ -96,7 +96,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(provider, &locale)?)
+            Some(PluralRules::try_new_ordinal_unstable(provider, &locale)?)
         } else {
             None
         };

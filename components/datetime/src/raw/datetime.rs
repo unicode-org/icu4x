@@ -214,7 +214,10 @@ impl DateFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(data_provider, &locale)?)
+            Some(PluralRules::try_new_ordinal_unstable(
+                data_provider,
+                &locale,
+            )?)
         } else {
             None
         };
@@ -420,7 +423,10 @@ impl DateTimeFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(data_provider, &locale)?)
+            Some(PluralRules::try_new_ordinal_unstable(
+                data_provider,
+                &locale,
+            )?)
         } else {
             None
         };
