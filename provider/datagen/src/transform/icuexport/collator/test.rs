@@ -17,7 +17,8 @@ struct TestCase<'a> {
 }
 
 fn check_expectations(locale: &DataLocale, options: CollatorOptions, cases: &[TestCase<'_>]) {
-    let collator = Collator::try_new(&DatagenProvider::for_test(), locale, options).unwrap();
+    let collator =
+        Collator::try_new_unstable(&DatagenProvider::for_test(), locale, options).unwrap();
     for cas in cases {
         let TestCase {
             left,
@@ -143,20 +144,23 @@ fn test_nb_nn_no() {
 
     // Test "no" macro language without fallback (should equal expected)
     let collator =
-        Collator::try_new(&provider, &locale!("no").into(), CollatorOptions::new()).unwrap();
+        Collator::try_new_unstable(&provider, &locale!("no").into(), CollatorOptions::new())
+            .unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
 
     // Test "und" without fallback (should NOT equal expected)
     let collator =
-        Collator::try_new(&provider, &locale!("und").into(), CollatorOptions::new()).unwrap();
+        Collator::try_new_unstable(&provider, &locale!("und").into(), CollatorOptions::new())
+            .unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_ne!(strs, expected);
 
     // Test "nb" without fallback (should fail to load)
-    if Collator::try_new(&provider, &locale!("nb").into(), CollatorOptions::new()).is_ok() {
+    if Collator::try_new_unstable(&provider, &locale!("nb").into(), CollatorOptions::new()).is_ok()
+    {
         panic!("Should fail to create 'nb' without fallback enabled")
     }
 
@@ -165,21 +169,24 @@ fn test_nb_nn_no() {
 
     // Test "no" macro language WITH fallback (should equal expected)
     let collator =
-        Collator::try_new(&provider, &locale!("no").into(), CollatorOptions::new()).unwrap();
+        Collator::try_new_unstable(&provider, &locale!("no").into(), CollatorOptions::new())
+            .unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
 
     // Now "nb" should work
     let collator =
-        Collator::try_new(&provider, &locale!("nb").into(), CollatorOptions::new()).unwrap();
+        Collator::try_new_unstable(&provider, &locale!("nb").into(), CollatorOptions::new())
+            .unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
 
     // And "nn" should work, too
     let collator =
-        Collator::try_new(&provider, &locale!("nn").into(), CollatorOptions::new()).unwrap();
+        Collator::try_new_unstable(&provider, &locale!("nn").into(), CollatorOptions::new())
+            .unwrap();
     let mut strs = input.clone();
     strs.sort_by(|a, b| collator.compare(a, b));
     assert_eq!(strs, expected);
