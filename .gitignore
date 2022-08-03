@@ -38,3 +38,5 @@ provider/testdata/data/postcard/*
 **/_debug/
 
 .venv
+
+*~

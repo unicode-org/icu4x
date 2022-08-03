@@ -7,10 +7,7 @@
 
 use crate::{
     options::{components, length, preferences, DateTimeFormatterOptions},
-    provider::calendar::{
-        DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-        TimeLengthsV1Marker, TimeSymbolsV1Marker,
-    },
+    provider::calendar::{DateSkeletonPatternsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker},
     provider::week_data::WeekDataV1Marker,
     raw,
 };
@@ -258,8 +255,8 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
+        D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -267,11 +264,17 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
-        let mut locale = locale.clone();
+        let mut locale_with_cal = locale.clone();
 
-        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
+        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
         Ok(Self(
-            raw::DateFormatter::try_new(data_provider, locale, length)?,
+            raw::DateFormatter::try_new(
+                data_provider,
+                calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
+                locale_with_cal,
+                length,
+            )?,
             PhantomData,
         ))
     }
@@ -480,9 +483,9 @@ where {
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
+        D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
@@ -492,11 +495,17 @@ where {
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
-        let mut locale = locale.clone();
+        let mut locale_with_cal = locale.clone();
 
-        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
+        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
         Ok(Self(
-            raw::DateTimeFormatter::try_new(data_provider, locale, options)?,
+            raw::DateTimeFormatter::try_new(
+                data_provider,
+                calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
+                locale_with_cal,
+                options,
+            )?,
             PhantomData,
         ))
     }

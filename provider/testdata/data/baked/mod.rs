@@ -6,7 +6,7 @@ mod datetime;
 mod decimal;
 mod fallback;
 mod list;
-mod locale_canonicalizer;
+mod locid_transform;
 mod normalizer;
 mod plurals;
 mod props;
@@ -29,14 +29,14 @@ impl DataProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedDataP
         })
     }
 }
-impl DataProvider<::icu_calendar::provider::JapanextErasV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::JapanextErasV1Marker>, DataError> {
+impl DataProvider<::icu_calendar::provider::JapaneseExtendedErasV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::JapaneseExtendedErasV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *calendar::japanext_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::JapanextErasV1Marker::KEY, req))?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY, req))?,
             ))),
         })
     }
@@ -125,14 +125,54 @@ impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker> f
         })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::DateLengthsV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::DateLengthsV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::datelengths_v1_u_ca::DATA
+                *datetime::buddhist::datelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::DateLengthsV1Marker::KEY, req))?,
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::buddhist::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::CopticDateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::CopticDateLengthsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::coptic::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::CopticDateLengthsV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::coptic::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY, req))?,
             ))),
         })
     }
@@ -151,14 +191,138 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Mark
         })
     }
 }
-impl DataProvider<::icu_datetime::provider::calendar::DateSymbolsV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::DateSymbolsV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::datesymbols_v1_u_ca::DATA
+                *datetime::ethiopic::datelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY, req))?,
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::ethiopic::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::gregory::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::gregory::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::IndianDateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::IndianDateLengthsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::indian::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::IndianDateLengthsV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::indian::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::japanese::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::japanese::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::japanext::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::japanext::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker::KEY, req)
+                    })?,
             ))),
         })
     }
@@ -327,26 +491,26 @@ impl DataProvider<::icu_list::provider::UnitListV1Marker> for BakedDataProvider 
         })
     }
 }
-impl DataProvider<::icu_locale_canonicalizer::provider::AliasesV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locale_canonicalizer::provider::AliasesV1Marker>, DataError> {
+impl DataProvider<::icu_locid_transform::provider::AliasesV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locid_transform::provider::AliasesV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *locale_canonicalizer::aliases_v1::DATA
+                *locid_transform::aliases_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locale_canonicalizer::provider::AliasesV1Marker::KEY, req))?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::AliasesV1Marker::KEY, req))?,
             ))),
         })
     }
 }
-impl DataProvider<::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker>, DataError> {
+impl DataProvider<::icu_locid_transform::provider::LikelySubtagsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locid_transform::provider::LikelySubtagsV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *locale_canonicalizer::likelysubtags_v1::DATA
+                *locid_transform::likelysubtags_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY, req))?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY, req))?,
             ))),
         })
     }

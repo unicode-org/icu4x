@@ -50,7 +50,7 @@ icu_calendar = { version = "0.6", path = "../../components/calendar"}
 icu_collections = { version = "0.6.0", path = "../../components/collections"}
 icu_datetime = { version = "0.6", path = "../../components/datetime/", features = ["serde"] }
 icu_decimal = { version = "0.6", path = "../../components/decimal/", features = ["serde"] }
-icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", features = ["serde"] }
+icu_locid_transform = { version = "0.6", path = "../../components/locid_transform", features = ["serde"] }
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["serde"] }
 icu_plurals = { version = "0.6", path = "../../components/plurals/", features = ["serde"] }
 icu_properties = { version = "0.6", path = "../../components/properties/", features = ["serde", "bidi"] }

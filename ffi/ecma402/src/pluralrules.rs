@@ -269,7 +269,7 @@ impl PluralRules {
     {
         let rule_type = internal::to_icu4x_type(&opts.in_type);
 
-        let rep = ipr::PluralRules::try_new(&crate::DataLocale::from_ecma_locale(l), provider, rule_type)?;
+        let rep = ipr::PluralRules::try_new_unstable(&crate::DataLocale::from_ecma_locale(l), provider, rule_type)?;
         Ok(Self { opts, rep })
     }
 }
@@ -324,7 +324,7 @@ mod testing {
         ];
         for (i, test) in tests.into_iter().enumerate() {
             let plr =
-                super::PluralRules::try_new(crate::Locale::FromLocale(test.locale), test.opts)?;
+                super::PluralRules::try_new_unstable(crate::Locale::FromLocale(test.locale), test.opts)?;
             assert_eq!(
                 test.numbers
                     .iter()

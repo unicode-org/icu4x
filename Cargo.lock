@@ -1294,8 +1294,8 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_list",
- "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -1363,8 +1363,8 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
- "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_transform",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1494,8 +1494,8 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_list",
- "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -1609,21 +1609,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locale_canonicalizer"
-version = "0.6.0"
-dependencies = [
- "criterion",
- "databake",
- "icu_locid",
- "icu_provider",
- "icu_testdata",
- "serde",
- "serde_json",
- "tinystr 0.6.0",
- "zerovec",
-]
-
-[[package]]
 name = "icu_locid"
 version = "0.6.0"
 dependencies = [
@@ -1639,6 +1624,21 @@ dependencies = [
  "serde_json",
  "tinystr 0.6.0",
  "writeable",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_locid_transform"
+version = "0.6.0"
+dependencies = [
+ "criterion",
+ "databake",
+ "icu_locid",
+ "icu_provider",
+ "icu_testdata",
+ "serde",
+ "serde_json",
+ "tinystr 0.6.0",
  "zerovec",
 ]
 
@@ -1832,8 +1832,8 @@ dependencies = [
  "icu_datetime",
  "icu_decimal",
  "icu_list",
- "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",

@@ -13,8 +13,8 @@ use icu_calendar::{
     coptic::Coptic,
     ethiopic::{Ethiopic, EthiopicEraStyle},
     indian::Indian,
-    japanese::{Japanese, Japanext},
-    provider::{JapaneseErasV1Marker, JapanextErasV1Marker},
+    japanese::{Japanese, JapaneseExtended},
+    provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker},
     AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
@@ -26,13 +26,7 @@ use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
-    provider::{
-        calendar::{
-            DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimeLengthsV1Marker, TimeSymbolsV1Marker,
-        },
-        week_data::WeekDataV1Marker,
-    },
+    provider::{calendar::*, week_data::WeekDataV1Marker},
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
     CldrCalendar, DateTimeFormatter, DateTimeFormatterOptions, TimeFormatter, TypedDateFormatter,
     TypedDateTimeFormatter, TypedZonedDateTimeFormatter,
@@ -65,7 +59,7 @@ fn test_fixture(fixture_name: &str) {
         .0
     {
         let japanese = Japanese::try_new(&provider).expect("Cannot load japanese data");
-        let japanext = Japanext::try_new(&provider).expect("Cannot load japanese data");
+        let japanext = JapaneseExtended::try_new(&provider).expect("Cannot load japanese data");
         let options = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
@@ -109,7 +103,7 @@ fn test_fixture(fixture_name: &str) {
                         &options,
                         &description,
                     ),
-                    AnyCalendarKind::Japanext => assert_fixture_element(
+                    AnyCalendarKind::JapaneseExtended => assert_fixture_element(
                         &locale,
                         &input_japanext,
                         &input_iso,
@@ -183,16 +177,31 @@ fn assert_fixture_element<A, D>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
-    D: DataProvider<DateSymbolsV1Marker>
-        + DataProvider<TimeSymbolsV1Marker>
-        + DataProvider<DateLengthsV1Marker>
+    D: DataProvider<TimeSymbolsV1Marker>
         + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + DataProvider<DecimalSymbolsV1Marker>
+        + DataProvider<GregorianDateLengthsV1Marker>
+        + DataProvider<BuddhistDateLengthsV1Marker>
+        + DataProvider<JapaneseDateLengthsV1Marker>
+        + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+        + DataProvider<CopticDateLengthsV1Marker>
+        + DataProvider<IndianDateLengthsV1Marker>
+        + DataProvider<EthiopicDateLengthsV1Marker>
+        + DataProvider<GregorianDateSymbolsV1Marker>
+        + DataProvider<BuddhistDateSymbolsV1Marker>
+        + DataProvider<JapaneseDateSymbolsV1Marker>
+        + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+        + DataProvider<CopticDateSymbolsV1Marker>
+        + DataProvider<IndianDateSymbolsV1Marker>
+        + DataProvider<EthiopicDateSymbolsV1Marker>
+        // Note: all CldrCalendar markers are covered above, but the compiler doesn't know that
+        + DataProvider<<<A as AsCalendar>::Calendar as CldrCalendar>::DateLengthsV1Marker>
+        + DataProvider<<<A as AsCalendar>::Calendar as CldrCalendar>::DateSymbolsV1Marker>
         + DataProvider<OrdinalV1Marker>
         + DataProvider<WeekDataV1Marker>
         + DataProvider<JapaneseErasV1Marker>
-        + DataProvider<JapanextErasV1Marker>,
+        + DataProvider<JapaneseExtendedErasV1Marker>,
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
@@ -377,7 +386,7 @@ fn test_dayperiod_patterns() {
             locale: &data_locale,
             metadata: Default::default(),
         };
-        let mut date_patterns_data: DataPayload<DateLengthsV1Marker> =
+        let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
@@ -387,7 +396,7 @@ fn test_dayperiod_patterns() {
         date_patterns_data.with_mut(|data| {
             data.length_combinations.long = "{0}".parse().unwrap();
         });
-        let date_symbols_data: DataPayload<DateSymbolsV1Marker> =
+        let date_symbols_data: DataPayload<GregorianDateSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         let time_symbols_data: DataPayload<TimeSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
@@ -417,7 +426,7 @@ fn test_dayperiod_patterns() {
                         });
                         let local_provider = MultiForkByKeyProvider::new(vec![
                             AnyPayloadProvider {
-                                key: DateSymbolsV1Marker::KEY,
+                                key: GregorianDateSymbolsV1Marker::KEY,
                                 data: date_symbols_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
@@ -429,7 +438,7 @@ fn test_dayperiod_patterns() {
                                 data: skeleton_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
-                                key: DateLengthsV1Marker::KEY,
+                                key: GregorianDateLengthsV1Marker::KEY,
                                 data: date_patterns_data.clone().wrap_into_any_payload(),
                             },
                             AnyPayloadProvider {
@@ -589,13 +598,13 @@ fn test_time_zone_patterns() {
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         time_zone.time_variant = config.time_variant.take().map(TimeVariant);
 
-        let mut date_patterns_data: DataPayload<DateLengthsV1Marker> =
+        let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
-        let symbols_data: DataPayload<DateSymbolsV1Marker> =
+        let symbols_data: DataPayload<GregorianDateSymbolsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let week_data: DataPayload<WeekDataV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
@@ -634,7 +643,7 @@ fn test_time_zone_patterns() {
                 });
                 let local_provider = MultiForkByKeyProvider::new(vec![
                     AnyPayloadProvider {
-                        key: DateSymbolsV1Marker::KEY,
+                        key: GregorianDateSymbolsV1Marker::KEY,
                         data: symbols_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
@@ -642,7 +651,7 @@ fn test_time_zone_patterns() {
                         data: skeleton_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
-                        key: DateLengthsV1Marker::KEY,
+                        key: GregorianDateLengthsV1Marker::KEY,
                         data: date_patterns_data.clone().wrap_into_any_payload(),
                     },
                     AnyPayloadProvider {
