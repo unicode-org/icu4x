@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659499813675,
+  "lastUpdate": 1659510460063,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41633,6 +41633,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 58138522,
             "range": "± 861116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "005bbd8b9ebc5d05bf1af3dff5001e1499c64371",
+          "message": "Move codepointtrie_builder to be a subdir of components/collections (#2323)",
+          "timestamp": "2022-08-02T23:57:39-07:00",
+          "tree_id": "c6861aedd579ddc5e5bb147a8a1f156e06272645",
+          "url": "https://github.com/unicode-org/icu4x/commit/005bbd8b9ebc5d05bf1af3dff5001e1499c64371"
+        },
+        "date": 1659510419146,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44156665,
+            "range": "± 3304185",
             "unit": "ns/iter"
           },
           {
