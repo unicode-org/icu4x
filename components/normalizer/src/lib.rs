@@ -1278,7 +1278,7 @@ pub struct DecomposingNormalizer {
 
 impl DecomposingNormalizer {
     /// NFD constructor.
-    pub fn try_new_nfd<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -1311,8 +1311,19 @@ impl DecomposingNormalizer {
         })
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError,
+        functions: [
+            try_new_nfd_unstable,
+            try_new_nfd_with_any_provider,
+            try_new_nfd_with_buffer_provider
+        ]
+    );
+
     /// NFKD constructor.
-    pub fn try_new_nfkd<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfkd_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -1359,6 +1370,17 @@ impl DecomposingNormalizer {
         })
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError,
+        functions: [
+            try_new_nfkd_unstable,
+            try_new_nfkd_with_any_provider,
+            try_new_nfkd_with_buffer_provider
+        ]
+    );
+
     /// UTS 46 decomposed constructor (testing only)
     ///
     /// This is a special building block normalization for IDNA. It is the decomposed counterpart of
@@ -1379,7 +1401,7 @@ impl DecomposingNormalizer {
     ///
     /// Deliberately private and not available outside the crate.
     #[cfg(any(test, feature = "experimental"))]
-    fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
+    fn try_new_uts46_decomposed_without_ignored_and_disallowed_unstable<D>(
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
@@ -1428,6 +1450,17 @@ impl DecomposingNormalizer {
         })
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError,
+        functions: [
+            try_new_uts46_decomposed_without_ignored_and_disallowed_unstable,
+            try_new_uts46_decomposed_without_ignored_and_disallowed_with_any_provider,
+            try_new_uts46_decomposed_without_ignored_and_disallowed_with_buffer_provider
+        ]
+    );
+
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
     pub fn normalize_iter<I: Iterator<Item = char>>(&self, iter: I) -> Decomposition<I> {
@@ -1454,7 +1487,7 @@ pub struct ComposingNormalizer {
 
 impl ComposingNormalizer {
     /// NFC constructor.
-    pub fn try_new_nfc<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -1480,8 +1513,19 @@ impl ComposingNormalizer {
         })
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError,
+        functions: [
+            try_new_nfc_unstable,
+            try_new_nfc_with_any_provider,
+            try_new_nfc_with_buffer_provider
+        ]
+    );
+
     /// NFKC constructor.
-    pub fn try_new_nfkc<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_nfkc_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CompatibilityDecompositionSupplementV1Marker>
@@ -1510,6 +1554,17 @@ impl ComposingNormalizer {
         })
     }
 
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError,
+        functions: [
+            try_new_nfkc_unstable,
+            try_new_nfkc_with_any_provider,
+            try_new_nfkc_with_buffer_provider
+        ]
+    );
+
     /// UTS 46 constructor
     ///
     /// This is a special building block normalization for IDNA that implements parts of the Map
@@ -1534,7 +1589,7 @@ impl ComposingNormalizer {
     /// NOTE: This method remains experimental until suitability of this feature as part of
     /// IDNA processing has been demonstrated.
     #[cfg(any(test, feature = "experimental"))]
-    pub fn try_new_uts46_without_ignored_and_disallowed<D>(
+    pub fn try_new_uts46_without_ignored_and_disallowed_unstable<D>(
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
@@ -1549,7 +1604,7 @@ impl ComposingNormalizer {
             + ?Sized,
     {
         let decomposing_normalizer =
-            DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed(
+            DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed_unstable(
                 data_provider,
             )?;
 
@@ -1567,6 +1622,17 @@ impl ComposingNormalizer {
             ),
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError,
+        functions: [
+            try_new_uts46_decomposed_without_ignored_and_disallowed_unstable,
+            try_new_uts46_decomposed_without_ignored_and_disallowed_with_any_provider,
+            try_new_uts46_decomposed_without_ignored_and_disallowed_with_buffer_provider
+        ]
+    );
 
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
@@ -1616,7 +1682,7 @@ impl CanonicalComposition {
     ///
     /// ```
     /// let data_provider = icu_testdata::get_provider();
-    /// let comp = icu_normalizer::CanonicalComposition::try_new(&data_provider).unwrap();
+    /// let comp = icu_normalizer::CanonicalComposition::try_new_with_buffer_provider(&data_provider).unwrap();
     ///
     /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
     /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
@@ -1639,7 +1705,7 @@ impl CanonicalComposition {
     }
 
     /// Construct from data provider.
-    pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalCompositionsV1Marker> + ?Sized,
     {
@@ -1649,6 +1715,12 @@ impl CanonicalComposition {
             canonical_compositions,
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError
+    );
 }
 
 /// The outcome of non-recursive canonical decomposition of a character.
@@ -1867,7 +1939,7 @@ impl CanonicalDecomposition {
     }
 
     /// Construct from data provider.
-    pub fn try_new<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
     where
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
@@ -1898,6 +1970,12 @@ impl CanonicalDecomposition {
             non_recursive,
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: skip,
+        options: skip,
+        error: NormalizerError
+    );
 }
 
 #[cfg(all(test, feature = "serde"))]
