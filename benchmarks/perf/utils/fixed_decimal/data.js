@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659498999317,
+  "lastUpdate": 1659499063735,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42448,6 +42448,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 73,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cwcornelius@gmail.com",
+            "name": "Craig Cornelius",
+            "username": "sven-oly"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "87e6bb771d3ebd32f93f4dd70767c99ee8e58312",
+          "message": "Rename icu_locale_canonicalizer to icu_locid_transform (#2320)\n\nCo-authored-by: Craig Cornelius <ccornelius@google.com>\r\nCo-authored-by: Elango Cheran <elango@unicode.org>",
+          "timestamp": "2022-08-02T20:45:39-07:00",
+          "tree_id": "9d550b31d913196f96e005008cbd8f10da1bdfc1",
+          "url": "https://github.com/unicode-org/icu4x/commit/87e6bb771d3ebd32f93f4dd70767c99ee8e58312"
+        },
+        "date": 1659499029476,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115154,
+            "range": "± 412",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23904,
+            "range": "± 97",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62647,
+            "range": "± 336",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 65,
             "range": "± 0",
             "unit": "ns/iter"
           }
