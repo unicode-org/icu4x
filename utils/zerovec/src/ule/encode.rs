@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ule::*;
+use crate::varzerovec::VarZeroVecFormat;
 use crate::{VarZeroSlice, VarZeroVec, ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
 use alloc::string::String;
@@ -197,10 +198,11 @@ where
     }
 }
 
-unsafe impl<T, E> EncodeAsVarULE<VarZeroSlice<T>> for &'_ [E]
+unsafe impl<T, E, F> EncodeAsVarULE<VarZeroSlice<T, F>> for &'_ [E]
 where
     T: VarULE + ?Sized,
     E: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
 {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
         // unnecessary if the other two are implemented
@@ -210,18 +212,19 @@ where
     #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.i
     fn encode_var_ule_len(&self) -> usize {
         // TODO(#1410): Rethink length errors in VZV.
-        crate::varzerovec::components::compute_serializable_len(self).unwrap() as usize
+        crate::varzerovec::components::compute_serializable_len::<T, E, F>(self).unwrap() as usize
     }
 
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        crate::varzerovec::components::write_serializable_bytes(self, dst)
+        crate::varzerovec::components::write_serializable_bytes::<T, E, F>(self, dst)
     }
 }
 
-unsafe impl<T, E> EncodeAsVarULE<VarZeroSlice<T>> for Vec<E>
+unsafe impl<T, E, F> EncodeAsVarULE<VarZeroSlice<T, F>> for Vec<E>
 where
     T: VarULE + ?Sized,
     E: EncodeAsVarULE<T>,
+    F: VarZeroVecFormat,
 {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
         // unnecessary if the other two are implemented
@@ -230,18 +233,19 @@ where
 
     #[inline]
     fn encode_var_ule_len(&self) -> usize {
-        self.as_slice().encode_var_ule_len()
+        <_ as EncodeAsVarULE<VarZeroSlice<T, F>>>::encode_var_ule_len(&self.as_slice())
     }
 
     #[inline]
     fn encode_var_ule_write(&self, dst: &mut [u8]) {
-        self.as_slice().encode_var_ule_write(dst)
+        <_ as EncodeAsVarULE<VarZeroSlice<T, F>>>::encode_var_ule_write(&self.as_slice(), dst)
     }
 }
 
-unsafe impl<T> EncodeAsVarULE<VarZeroSlice<T>> for VarZeroVec<'_, T>
+unsafe impl<T, F> EncodeAsVarULE<VarZeroSlice<T, F>> for VarZeroVec<'_, T, F>
 where
     T: VarULE + ?Sized,
+    F: VarZeroVecFormat,
 {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
         // unnecessary if the other two are implemented

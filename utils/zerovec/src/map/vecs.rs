@@ -4,7 +4,7 @@
 
 use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
-use crate::vecs::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
+use crate::vecs::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned, VarZeroVecFormat};
 use crate::{VarZeroSlice, VarZeroVec};
 use crate::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
@@ -329,16 +329,17 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<T> for VarZeroVec<'a, T>
+impl<'a, T, F> ZeroVecLike<T> for VarZeroVec<'a, T, F>
 where
     T: VarULE,
     T: ?Sized,
+    F: VarZeroVecFormat,
 {
     type GetType = T;
-    type SliceVariant = VarZeroSlice<T>;
+    type SliceVariant = VarZeroSlice<T, F>;
 
     fn zvl_new_borrowed() -> &'static Self::SliceVariant {
-        VarZeroSlice::<T>::new_empty()
+        VarZeroSlice::<T, F>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -369,7 +370,7 @@ where
         self.len()
     }
 
-    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T> {
+    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T, F> {
         self.as_slice()
     }
 
@@ -379,16 +380,17 @@ where
     }
 }
 
-impl<T> ZeroVecLike<T> for VarZeroSlice<T>
+impl<T, F> ZeroVecLike<T> for VarZeroSlice<T, F>
 where
     T: VarULE,
     T: ?Sized,
+    F: VarZeroVecFormat,
 {
     type GetType = T;
-    type SliceVariant = VarZeroSlice<T>;
+    type SliceVariant = VarZeroSlice<T, F>;
 
     fn zvl_new_borrowed() -> &'static Self::SliceVariant {
-        VarZeroSlice::<T>::new_empty()
+        VarZeroSlice::<T, F>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -419,7 +421,7 @@ where
         self.len()
     }
 
-    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T> {
+    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T, F> {
         self
     }
 
@@ -429,10 +431,11 @@ where
     }
 }
 
-impl<'a, T> MutableZeroVecLike<'a, T> for VarZeroVec<'a, T>
+impl<'a, T, F> MutableZeroVecLike<'a, T> for VarZeroVec<'a, T, F>
 where
     T: VarULE,
     T: ?Sized,
+    F: VarZeroVecFormat,
 {
     type OwnedType = Box<T>;
     fn zvl_insert(&mut self, index: usize, value: &T) {
@@ -474,10 +477,10 @@ where
         o
     }
 
-    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
+    fn zvl_from_borrowed(b: &'a VarZeroSlice<T, F>) -> Self {
         b.as_varzerovec()
     }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T, F>> {
         if let VarZeroVec::Borrowed(b) = *self {
             Some(b)
         } else {
