@@ -39,9 +39,9 @@ pub mod ffi {
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
-            let locale = &locale.0.as_ref().into();
+            let locale = locale.to_datalocale();
             let provider = provider.0.as_deserializing();
-            PluralRules::try_new_cardinal(&provider, locale)
+            PluralRules::try_new_cardinal(&provider, &locale)
                 .map(|r| Box::new(ICU4XPluralRules(r)))
                 .map_err(Into::into)
                 .into()
@@ -54,9 +54,9 @@ pub mod ffi {
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
-            let locale = &locale.0.as_ref().into();
+            let locale = locale.to_datalocale();
             let provider = provider.0.as_deserializing();
-            PluralRules::try_new_ordinal(&provider, locale)
+            PluralRules::try_new_ordinal(&provider, &locale)
                 .map(|r| Box::new(ICU4XPluralRules(r)))
                 .map_err(Into::into)
                 .into()

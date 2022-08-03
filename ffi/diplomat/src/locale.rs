@@ -198,3 +198,10 @@ pub mod ffi {
         }
     }
 }
+
+
+impl ffi::ICU4XLocale {
+    pub fn to_datalocale(&self) -> icu_provider::prelude::DataLocale {
+        (&self.0).into()
+    }
+}
