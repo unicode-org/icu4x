@@ -1300,7 +1300,7 @@ impl DecomposingNormalizer {
             return Err(NormalizerError::FutureExtension);
         }
 
-        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::load_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
             decompositions,
@@ -1346,7 +1346,7 @@ impl DecomposingNormalizer {
             return Err(NormalizerError::FutureExtension);
         }
 
-        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::load_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
             decompositions,
@@ -1415,7 +1415,7 @@ impl DecomposingNormalizer {
             return Err(NormalizerError::FutureExtension);
         }
 
-        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::load_canonical_combining_class(data_provider)?;
 
         Ok(DecomposingNormalizer {
             decompositions,

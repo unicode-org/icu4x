@@ -509,7 +509,7 @@ mod tests {
     #[test]
     #[cfg(feature = "serde")]
     fn test_mixed_calendar_eras() {
-        use icu::calendar::japanese::Japanext;
+        use icu::calendar::japanese::JapaneseExtended;
         use icu::calendar::Date;
         use icu::datetime::options::length;
         use icu::datetime::DateFormatter;
@@ -519,7 +519,8 @@ mod tests {
         let dtf = DateFormatter::try_new_unstable(&provider, &locale.into(), length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
-        let japanext = Japanext::try_new(&provider).expect("Cannot load japanext data");
+        let japanext =
+            JapaneseExtended::try_new_unstable(&provider).expect("Cannot load japanext data");
         let date = Date::new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
         let date = date.to_calendar(japanext).into_japanese_date().to_any();
 
@@ -531,7 +532,7 @@ mod tests {
     #[test]
     #[cfg(feature = "serde")]
     fn test_basic() {
-        use crate::provider::calendar::{DateSymbolsV1Marker, TimeSymbolsV1Marker};
+        use crate::provider::calendar::{GregorianDateSymbolsV1Marker, TimeSymbolsV1Marker};
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
@@ -541,7 +542,7 @@ mod tests {
             locale: &locale,
             metadata: Default::default(),
         };
-        let date_data: DataPayload<DateSymbolsV1Marker> =
+        let date_data: DataPayload<GregorianDateSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         let time_data: DataPayload<TimeSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();

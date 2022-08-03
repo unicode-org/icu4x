@@ -24,7 +24,7 @@ use crate::{
     provider::{
         self,
         calendar::{
-            DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker,
             TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
@@ -50,14 +50,14 @@ impl ZonedDateTimeFormatter {
     #[inline(never)]
     pub fn try_new<P>(
         provider: &P,
+        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        P: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
+        P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -77,6 +77,7 @@ impl ZonedDateTimeFormatter {
 
         let patterns = provider::date_time::PatternSelector::for_options(
             provider,
+            patterns_data,
             &locale,
             &date_time_format_options,
         )?;
@@ -95,13 +96,13 @@ impl ZonedDateTimeFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(provider, &locale)?)
+            Some(PluralRules::try_new_ordinal_unstable(provider, &locale)?)
         } else {
             None
         };
 
         let date_symbols_data = if required.date_symbols_data {
-            Some(provider.load(req)?.take_payload()?)
+            Some(symbols_data_fn()?)
         } else {
             None
         };

@@ -137,6 +137,7 @@ impl FixedDecimalFormatter {
     }
 
     icu_provider::gen_any_buffer_constructors!(
+        locale: include,
         options: options::FixedDecimalFormatterOptions,
         error: FixedDecimalFormatterError
     );

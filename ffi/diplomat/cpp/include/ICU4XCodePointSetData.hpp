@@ -35,7 +35,7 @@ class ICU4XCodePointSetData {
   /**
    * Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.get_ascii_hex_digit.html) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/sets/fn.load_ascii_hex_digit.html) for more information.
    */
   static diplomat::result<ICU4XCodePointSetData, ICU4XError> try_get_ascii_hex_digit(const ICU4XDataProvider& provider);
 

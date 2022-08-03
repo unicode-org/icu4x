@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{options::DateTimeFormatterOptions, raw};
+use crate::{calendar, options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
 use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
@@ -10,18 +10,11 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 use icu_provider::prelude::*;
 
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
-use crate::provider::{
-    self,
-    calendar::{
-        DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-        TimeLengthsV1Marker, TimeSymbolsV1Marker,
-    },
-    week_data::WeekDataV1Marker,
-};
+use crate::provider::{self, calendar::*, week_data::WeekDataV1Marker};
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::{JapaneseErasV1Marker, JapanextErasV1Marker};
+use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
@@ -126,9 +119,7 @@ impl ZonedDateTimeFormatter {
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        P: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
+        P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -140,33 +131,49 @@ impl ZonedDateTimeFormatter {
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<GregorianDateLengthsV1Marker>
+            + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<JapaneseDateLengthsV1Marker>
+            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+            + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<GregorianDateSymbolsV1Marker>
+            + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<JapaneseDateSymbolsV1Marker>
+            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+            + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<EthiopicDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
-            + DataProvider<JapanextErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
-        let mut locale = locale.clone();
+        let mut locale_with_cal = locale.clone();
 
         // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Some(kind) = AnyCalendarKind::from_data_locale(&locale) {
+        let kind = if let Some(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
             kind
         } else {
-            locale.set_unicode_ext(key!("ca"), value!("gregory"));
+            locale_with_cal.set_unicode_ext(key!("ca"), value!("gregory"));
             AnyCalendarKind::Gregorian
         };
 
         // We share data under ethiopic
         if kind == AnyCalendarKind::Ethioaa {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+            locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
 
-        let calendar = AnyCalendar::try_new_unstable(kind, provider)?;
+        let calendar = AnyCalendar::try_new_unstable(provider, kind)?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
                 provider,
-                locale,
+                calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                locale_with_cal,
                 date_time_format_options,
                 time_zone_format_options,
             )?,

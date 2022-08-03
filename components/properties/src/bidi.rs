@@ -22,7 +22,7 @@
 //! // Create an adapter to provide the data to `BidiInfo`.
 //! let provider = icu_testdata::get_provider();
 //!
-//! let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+//! let data = maps::load_bidi_class(&provider).expect("The data should be valid");
 //! let bc = data.as_borrowed();
 //!
 //! let adapter = BidiClassAdapter::new(bc);
@@ -64,7 +64,7 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+/// let data = maps::load_bidi_class(&provider).expect("The data should be valid");
 ///
 /// let adapter = BidiClassAdapter::new(data.as_borrowed());
 /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
@@ -95,7 +95,7 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+    /// let data = maps::load_bidi_class(&provider).expect("The data should be valid");
     ///
     /// let adapter = BidiClassAdapter::new(data.as_borrowed());
     /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);

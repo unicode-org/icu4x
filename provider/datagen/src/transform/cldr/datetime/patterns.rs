@@ -91,7 +91,7 @@ impl From<&cldr_serde::ca::DateTimeFormats> for patterns::GenericLengthPatternsV
     }
 }
 
-impl From<&cldr_serde::ca::Dates> for DatePatternsV1<'_> {
+impl From<&cldr_serde::ca::Dates> for DateLengthsV1<'_> {
     fn from(other: &cldr_serde::ca::Dates) -> Self {
         let length_combinations_v1 =
             patterns::GenericLengthPatternsV1::from(&other.datetime_formats);
