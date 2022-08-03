@@ -35,6 +35,45 @@ use core::fmt;
 ///
 /// [`Date`](crate::Date) can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
+///
+/// There are many ways of constructing an AnyCalendar'd date:
+/// ```
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, japanese::Japanese, types::Time};
+/// use icu::locid::Locale;
+/// # use std::str::FromStr;
+/// # use std::rc::Rc;
+/// # use std::convert::TryInto;
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
+///
+/// let calendar = AnyCalendar::try_new_with_buffer_provider((&locale).try_into().unwrap(), &provider)
+///                    .expect("constructing AnyCalendar failed");
+/// let calendar = Rc::new(calendar); // Avoid cloning it
+///
+///
+/// // manually construct a datetime in this calendar
+/// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
+/// // construct from era code, year, month code, day, time, and a calendar
+/// // This is March 28, 15 Heisei
+/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+///                                                manual_time, calendar.clone())
+///                     .expect("Failed to construct DateTime manually");
+///
+///
+/// // construct another datetime by converting from ISO
+/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct ISO DateTime.");
+/// let iso_converted = iso_datetime.to_calendar(calendar);
+///
+/// // Construct a datetime in the appropriate typed calendar and convert
+/// let japanese_calendar = Japanese::try_new(&provider).unwrap();
+/// let japanese_datetime = DateTime::new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
+///                                                         12, 33, 12, japanese_calendar).unwrap();
+/// // This is a DateTime<AnyCalendar>
+/// let any_japanese_datetime = japanese_datetime.to_any();
+/// ```
 #[non_exhaustive]
 pub enum AnyCalendar {
     Gregorian(Gregorian),
