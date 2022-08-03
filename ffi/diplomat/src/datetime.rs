@@ -51,7 +51,7 @@ pub mod ffi {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
 
-            let locale = &locale.0.as_ref().into();
+            let locale = locale.to_datalocale();
             let length = match length {
                 ICU4XTimeLength::Full => length::Time::Full,
                 ICU4XTimeLength::Long => length::Time::Long,
@@ -74,7 +74,7 @@ pub mod ffi {
                 ICU4XHourCyclePreference::None => None,
             };
 
-            TimeFormatter::try_new(&provider, locale, length, preferences)
+            TimeFormatter::try_new(&provider, &locale, length, preferences)
                 .map(|tf| Box::new(ICU4XTimeFormatter(tf)))
                 .map_err(Into::into)
                 .into()
@@ -122,7 +122,7 @@ pub mod ffi {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
 
-            let locale = &locale.0.as_ref().into();
+            let locale = locale.to_datalocale();
             let length = match length {
                 ICU4XDateLength::Full => length::Date::Full,
                 ICU4XDateLength::Long => length::Date::Long,
@@ -130,7 +130,7 @@ pub mod ffi {
                 ICU4XDateLength::Short => length::Date::Short,
             };
 
-            TypedDateFormatter::try_new(&provider, locale, length)
+            TypedDateFormatter::try_new(&provider, &locale, length)
                 .map(|df| Box::new(ICU4XGregorianDateFormatter(df)))
                 .map_err(Into::into)
                 .into()
@@ -173,7 +173,7 @@ pub mod ffi {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
 
-            let locale = &locale.0.as_ref().into();
+            let locale = locale.to_datalocale();
             let date_length = match date_length {
                 ICU4XDateLength::Full => length::Date::Full,
                 ICU4XDateLength::Long => length::Date::Long,
@@ -204,7 +204,7 @@ pub mod ffi {
                 ICU4XHourCyclePreference::None => None,
             };
 
-            TypedDateTimeFormatter::try_new(&provider, locale, &options.into())
+            TypedDateTimeFormatter::try_new(&provider, &locale, &options.into())
                 .map(|dtf| Box::new(ICU4XGregorianDateTimeFormatter(dtf)))
                 .map_err(Into::into)
                 .into()
