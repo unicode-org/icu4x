@@ -41,7 +41,7 @@ type UnvalidatedLanguageIdentifierPair = StrStrPairVarULE;
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
     zerovec::derive(Serialize),
-    databake(path = icu_locale_canonicalizer::provider),
+    databake(path = icu_locid_transform::provider),
 )]
 /// A pair of strings with a EncodeAsVarULE implementation.
 pub struct StrStrPair<'a>(
@@ -49,12 +49,12 @@ pub struct StrStrPair<'a>(
     #[cfg_attr(feature = "serde", serde(borrow))] pub Cow<'a, str>,
 );
 
-#[icu_provider::data_struct(AliasesV1Marker = "locale_canonicalizer/aliases@1")]
+#[icu_provider::data_struct(AliasesV1Marker = "locid_transform/aliases@1")]
 #[derive(PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale_canonicalizer::provider),
+    databake(path = icu_locid_transform::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
@@ -114,12 +114,12 @@ pub struct AliasesV1<'data> {
     pub subdivision: ZeroMap<'data, UnvalidatedSubdivision, UnvalidatedSubdivision>,
 }
 
-#[icu_provider::data_struct(LikelySubtagsV1Marker = "locale_canonicalizer/likelysubtags@1")]
+#[icu_provider::data_struct(LikelySubtagsV1Marker = "locid_transform/likelysubtags@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_locale_canonicalizer::provider),
+    databake(path = icu_locid_transform::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 /// This likely subtags data is used for the minimize and maximize operations.

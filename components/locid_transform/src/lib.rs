@@ -4,7 +4,7 @@
 
 //! Canonicalization of locale identifiers based on [`CLDR`] data.
 //!
-//! This module is published as its own crate ([`icu_locale_canonicalizer`](https://docs.rs/icu_locale_canonicalizer/latest/icu_locale_canonicalizer/))
+//! This module is published as its own crate ([`icu_locid_transform`](https://docs.rs/icu_locid_transform/latest/icu_locid_transform/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! It currently supports locale canonicalization based upon the canonicalization
@@ -22,7 +22,7 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+//! use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
 //! use icu_locid::Locale;
 //!
 //! let provider = icu_testdata::get_provider();
@@ -39,7 +39,7 @@
 //! ```
 //!
 //! ```
-//! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+//! use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
 //! use icu_locid::Locale;
 //!
 //! let provider = icu_testdata::get_provider();
@@ -55,7 +55,7 @@
 //! ```
 //!
 //! ```
-//! use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+//! use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
 //! use icu_locid::Locale;
 //!
 //! let provider = icu_testdata::get_provider();

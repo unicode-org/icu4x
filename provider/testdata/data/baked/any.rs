@@ -53,9 +53,9 @@ impl AnyProvider for BakedDataProvider {
         const UNITLISTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_list::provider::UnitListV1Marker::KEY.get_hash();
         const ALIASESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_locale_canonicalizer::provider::AliasesV1Marker::KEY.get_hash();
+            ::icu_locid_transform::provider::AliasesV1Marker::KEY.get_hash();
         const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY.get_hash();
+            ::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.get_hash();
         const CANONICALCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY.get_hash();
         const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
@@ -304,10 +304,10 @@ impl AnyProvider for BakedDataProvider {
                 UNITLISTV1MARKER => list::unit_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                ALIASESV1MARKER => locale_canonicalizer::aliases_v1::DATA
+                ALIASESV1MARKER => locid_transform::aliases_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                LIKELYSUBTAGSV1MARKER => locale_canonicalizer::likelysubtags_v1::DATA
+                LIKELYSUBTAGSV1MARKER => locid_transform::likelysubtags_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 CANONICALCOMPOSITIONPASSTHROUGHV1MARKER => normalizer::nfc_v1::DATA

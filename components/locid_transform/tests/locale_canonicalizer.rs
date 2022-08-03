@@ -5,8 +5,8 @@
 mod fixtures;
 mod helpers;
 
-use icu_locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
 use icu_locid::Locale;
+use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
 
 #[test]
 fn test_maximize() {
