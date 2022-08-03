@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #![cfg(feature = "serde")]
-#![cfg(feature = "disable")]
 
 mod fixtures;
 mod patterns;
@@ -27,10 +26,7 @@ use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
     mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
-    provider::{
-        calendar::*,
-        week_data::WeekDataV1Marker,
-    },
+    provider::{calendar::*, week_data::WeekDataV1Marker},
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
     CldrCalendar, DateTimeFormatter, DateTimeFormatterOptions, TimeFormatter, TypedDateFormatter,
     TypedDateTimeFormatter, TypedZonedDateTimeFormatter,
@@ -181,12 +177,27 @@ fn assert_fixture_element<A, D>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
-    D: DataProvider<GregorianDateSymbolsV1Marker>
-        + DataProvider<TimeSymbolsV1Marker>
-        + DataProvider<GregorianDateLengthsV1Marker>
+    D: DataProvider<TimeSymbolsV1Marker>
         + DataProvider<TimeLengthsV1Marker>
         + DataProvider<DateSkeletonPatternsV1Marker>
         + DataProvider<DecimalSymbolsV1Marker>
+        + DataProvider<GregorianDateLengthsV1Marker>
+        + DataProvider<BuddhistDateLengthsV1Marker>
+        + DataProvider<JapaneseDateLengthsV1Marker>
+        + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+        + DataProvider<CopticDateLengthsV1Marker>
+        + DataProvider<IndianDateLengthsV1Marker>
+        + DataProvider<EthiopicDateLengthsV1Marker>
+        + DataProvider<GregorianDateSymbolsV1Marker>
+        + DataProvider<BuddhistDateSymbolsV1Marker>
+        + DataProvider<JapaneseDateSymbolsV1Marker>
+        + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+        + DataProvider<CopticDateSymbolsV1Marker>
+        + DataProvider<IndianDateSymbolsV1Marker>
+        + DataProvider<EthiopicDateSymbolsV1Marker>
+        // Note: all CldrCalendar markers are covered above, but the compiler doesn't know that
+        + DataProvider<<<A as AsCalendar>::Calendar as CldrCalendar>::DateLengthsV1Marker>
+        + DataProvider<<<A as AsCalendar>::Calendar as CldrCalendar>::DateSymbolsV1Marker>
         + DataProvider<OrdinalV1Marker>
         + DataProvider<WeekDataV1Marker>
         + DataProvider<JapaneseErasV1Marker>

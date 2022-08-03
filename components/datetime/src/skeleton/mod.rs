@@ -25,7 +25,8 @@ mod test {
         options::components,
         pattern::runtime,
         provider::calendar::{
-            GregorianDateLengthsV1Marker, DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, SkeletonV1,
+            DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker,
+            SkeletonV1,
         },
     };
     use core::convert::TryFrom;
