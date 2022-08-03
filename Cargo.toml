@@ -7,6 +7,8 @@ resolver = "2"
 members = [
     "components/calendar",
     "components/collator",
+    "components/collections",
+    "components/collections/src/codepointtrie/builder",
     "components/datetime",
     "components/decimal",
     "components/icu",
@@ -38,8 +40,6 @@ members = [
     "tools/benchmark/macros",
     "tools/benchmark/memory",
     "tools/benchmark/binsize",
-    "utils/codepointtrie",
-    "utils/codepointtrie/builder",
     "utils/deduplicating_array",
     "utils/fixed_decimal",
     "utils/litemap",

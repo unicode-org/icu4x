@@ -9,7 +9,7 @@ use crate::{
 };
 use core::convert::TryInto;
 use core::num::TryFromIntError;
-use icu_codepointtrie::TrieValue;
+use icu_collections::codepointtrie::TrieValue;
 
 use core::convert::TryFrom;
 

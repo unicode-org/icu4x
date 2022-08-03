@@ -74,7 +74,7 @@
 //!     strs: VarZeroVec::from(&["hello", "world"]),
 //! };
 //! let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 71);
+//! assert_eq!(bincode_bytes.len(), 67);
 //!
 //! let deserialized: DataStruct =
 //!     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
@@ -148,7 +148,7 @@
 //!
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 176);
+//! assert_eq!(bincode_bytes.len(), 168);
 //!
 //! let deserialized: Data = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
@@ -288,7 +288,7 @@ pub mod vecs {
     #[doc(no_inline)]
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
-    pub use crate::varzerovec::VarZeroVecOwned;
+    pub use crate::varzerovec::{Index16, Index32, VarZeroVecFormat, VarZeroVecOwned};
 
     pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 }

@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_codepointtrie` is a utility crate of the [`ICU4X`] project.
-//!
-//! This component provides a data structure for an time-efficient lookup of values
+//! This module provides a data structure for an time-efficient lookup of values
 //! associated to code points.
 //!
 //! It is an implementation of the existing [ICU4C UCPTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/ucptrie_8h.html)
@@ -21,7 +19,7 @@
 //! ## Querying a `CodePointTrie`
 //!
 //! ```
-//! use icu_codepointtrie::planes;
+//! use icu_collections::codepointtrie::planes;
 //! let trie = planes::get_planes_trie();
 //!
 //! assert_eq!(0, trie.get(0x41)); // 'A' as u32
@@ -31,24 +29,9 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(test), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        // TODO(#1668): enable clippy::exhaustive_structs,
-        // TODO(#1668): enable clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
-    )
-)]
-
 extern crate alloc;
 
-mod codepointtrie;
+mod cptrie;
 pub mod error;
 mod impl_const;
 pub mod planes;
@@ -59,9 +42,9 @@ pub mod toml;
 #[cfg(feature = "serde")]
 mod serde;
 
-pub use codepointtrie::CodePointMapRange;
-pub use codepointtrie::CodePointMapRangeIterator;
-pub use codepointtrie::CodePointTrie;
-pub use codepointtrie::CodePointTrieHeader;
-pub use codepointtrie::TrieType;
-pub use codepointtrie::TrieValue;
+pub use cptrie::CodePointMapRange;
+pub use cptrie::CodePointMapRangeIterator;
+pub use cptrie::CodePointTrie;
+pub use cptrie::CodePointTrieHeader;
+pub use cptrie::TrieType;
+pub use cptrie::TrieValue;

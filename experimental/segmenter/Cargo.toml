@@ -29,7 +29,7 @@ skip_optional_dependencies = true
 
 [dependencies]
 icu_char16trie = { version = "0.1", path = "../char16trie" }
-icu_codepointtrie = { path = "../../utils/codepointtrie" }
+icu_collections = { path = "../../components/collections" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 serde_json = { version = "1.0", default-features = false, features = ["alloc"] }
@@ -60,6 +60,6 @@ required-features = ["lstm"]
 [features]
 default = []
 lstm = ["ndarray", "num-traits", "serde"]
-serde = ["dep:serde", "zerovec/serde", "icu_codepointtrie/serde"]
-datagen = ["serde", "databake", "zerovec/databake", "icu_codepointtrie/databake"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
+datagen = ["serde", "databake", "zerovec/databake", "icu_collections/databake"]
 lstm-grapheme = ["lstm", "unicode-segmentation"]

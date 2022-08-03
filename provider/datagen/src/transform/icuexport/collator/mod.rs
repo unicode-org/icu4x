@@ -5,8 +5,8 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-use icu_codepointtrie::CodePointTrie;
 use icu_collator::provider::*;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_locid::extensions::unicode::Value;
 use icu_locid::extensions_unicode_key as key;
 use icu_locid::subtags_language as language;

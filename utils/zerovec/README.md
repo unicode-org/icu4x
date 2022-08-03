@@ -71,7 +71,7 @@ let data = DataStruct {
     strs: VarZeroVec::from(&["hello", "world"]),
 };
 let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
-assert_eq!(bincode_bytes.len(), 71);
+assert_eq!(bincode_bytes.len(), 67);
 
 let deserialized: DataStruct =
     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
@@ -143,7 +143,7 @@ let data = Data { important_dates, important_people, birthdays_to_people };
 
 let bincode_bytes = bincode::serialize(&data)
     .expect("Serialization should be successful");
-assert_eq!(bincode_bytes.len(), 176);
+assert_eq!(bincode_bytes.len(), 168);
 
 let deserialized: Data = bincode::deserialize(&bincode_bytes)
     .expect("Deserialization should be successful");

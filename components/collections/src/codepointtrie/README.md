@@ -19,7 +19,7 @@ for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
 ### Querying a `CodePointTrie`
 
 ```rust
-use icu_codepointtrie::planes;
+use icu_collections::codepointtrie::planes;
 let trie = planes::get_planes_trie();
 
 assert_eq!(0, trie.get(0x41)); // 'A' as u32

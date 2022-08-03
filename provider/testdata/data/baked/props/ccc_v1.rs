@@ -3,14 +3,14 @@ type DataStruct = < :: icu_properties :: provider :: CanonicalCombiningClassV1Ma
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_properties::provider::PropertyCodePointMapV1::CodePointTrie(
-    ::icu_codepointtrie::CodePointTrie::from_parts(
-        ::icu_codepointtrie::CodePointTrieHeader {
+    ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 125440u32,
             shifted12_high_start: 31u16,
             index3_null_offset: 336u16,
             data_null_offset: 0u32,
             null_value: 0u32,
-            trie_type: ::icu_codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[

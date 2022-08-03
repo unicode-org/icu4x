@@ -34,7 +34,7 @@ all-features = true
 [dependencies]
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
-icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie" }
+icu_collections = { version = "0.6", path = "../../components/collections" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec" }
@@ -60,6 +60,6 @@ bench = false  # This option is required for Benchmark CI
 
 [features]
 default = []
-serde = ["dep:serde", "icu_codepointtrie/serde", "zerovec/serde", "icu_uniset/serde", "icu_properties/serde", "icu_char16trie/serde"]
-datagen = ["serde", "databake", "icu_codepointtrie/databake", "zerovec/databake", "icu_uniset/databake", "icu_properties/databake", "icu_char16trie/databake"]
+serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_uniset/serde", "icu_properties/serde", "icu_char16trie/serde"]
+datagen = ["serde", "databake", "icu_collections/databake", "zerovec/databake", "icu_uniset/databake", "icu_properties/databake", "icu_char16trie/databake"]
 experimental = []
