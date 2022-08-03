@@ -24,7 +24,7 @@ impl From<TinyStr16> for Era {
 }
 
 impl FromStr for Era {
-    type Err = <TinyStr4 as FromStr>::Err;
+    type Err = <TinyStr16 as FromStr>::Err;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         s.parse().map(Self)
     }
