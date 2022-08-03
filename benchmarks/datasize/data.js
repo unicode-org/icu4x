@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659490108954,
+  "lastUpdate": 1659491644533,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22853,6 +22853,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/fcd45e739c0c9e9ebd950cc38783688344db4e59"
         },
         "date": 1659490068458,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3950050,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "andrewpkq@gmail.com",
+            "name": "andrewpollack",
+            "username": "andrewpollack"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "094d52683e066da43f4b7445d8bce44455f7d202",
+          "message": "Merge `CodePointTrie` into `components/collections` (#2294)",
+          "timestamp": "2022-08-03T01:51:47Z",
+          "tree_id": "39910f9c36779efb6c08f33d1ce6426433c161d8",
+          "url": "https://github.com/unicode-org/icu4x/commit/094d52683e066da43f4b7445d8bce44455f7d202"
+        },
+        "date": 1659491596655,
         "tool": "ndjson",
         "benches": [
           {
