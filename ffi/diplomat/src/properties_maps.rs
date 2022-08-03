@@ -25,13 +25,13 @@ pub mod ffi {
 
     impl ICU4XCodePointMapData16 {
         /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
-        #[diplomat::rust_link(icu_properties::maps::get_script, Fn)]
+        #[diplomat::rust_link(icu_properties::maps::load_script, Fn)]
         pub fn try_get_script(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData16>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            maps::get_script(&provider)
+            maps::load_script(&provider)
                 .map(|data| Box::new(ICU4XCodePointMapData16(data)))
                 .map_err(Into::into)
                 .into()

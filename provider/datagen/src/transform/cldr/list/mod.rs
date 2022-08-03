@@ -82,7 +82,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
         let non_hebrew = StringMatcher::new(&format!(
             "[^{}]",
-            icu_properties::maps::get_script(selff)
+            icu_properties::maps::load_script(selff)
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                     .with_display_context(&e))?
                 .as_borrowed()

@@ -185,7 +185,7 @@ impl Collator {
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
 
-        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::load_canonical_combining_class(data_provider)?;
 
         let mut altered_defaults = CollatorOptions::new();
 

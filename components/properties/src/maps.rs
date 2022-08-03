@@ -51,7 +51,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let data =
-    ///     maps::get_general_category(&provider)
+    ///     maps::load_general_category(&provider)
     ///         .expect("The data should be valid");
     ///
     /// let gc = data.as_borrowed();
@@ -128,7 +128,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let data =
-    ///     maps::get_general_category(&provider)
+    ///     maps::load_general_category(&provider)
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
@@ -150,7 +150,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let data =
-    ///     maps::get_general_category(&provider)
+    ///     maps::load_general_category(&provider)
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
@@ -172,7 +172,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let data =
-    ///     maps::get_general_category(&provider)
+    ///     maps::load_general_category(&provider)
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
@@ -264,7 +264,7 @@ make_map_property! {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let data =
-    ///     maps::get_general_category(&provider)
+    ///     maps::load_general_category(&provider)
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
@@ -272,7 +272,7 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_general_category();
+    pub fn load_general_category();
 }
 
 make_map_property! {
@@ -292,7 +292,7 @@ make_map_property! {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let data =
-    ///     maps::get_bidi_class(&provider)
+    ///     maps::load_bidi_class(&provider)
     ///         .expect("The data should be valid");
     /// let bc = data.as_borrowed();
     /// assert_eq!(bc.get('y'), BidiClass::LeftToRight);  // U+0079
@@ -300,7 +300,7 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_bidi_class();
+    pub fn load_bidi_class();
 }
 
 make_map_property! {
@@ -320,7 +320,7 @@ make_map_property! {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let data =
-    ///     maps::get_script(&provider)
+    ///     maps::load_script(&provider)
     ///         .expect("The data should be valid");
     /// let script = data.as_borrowed();
     /// assert_eq!(script.get('木'), Script::Han);  // U+6728
@@ -328,7 +328,7 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_script();
+    pub fn load_script();
 }
 
 make_map_property! {
@@ -346,7 +346,7 @@ make_map_property! {
     /// use icu::properties::{maps, EastAsianWidth};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_east_asian_width(&provider).expect("The data should be valid!");
+    /// let data = maps::load_east_asian_width(&provider).expect("The data should be valid!");
     /// let eaw = data.as_borrowed();;
     ///
     /// assert_eq!(eaw.get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
@@ -354,7 +354,7 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_east_asian_width();
+    pub fn load_east_asian_width();
 }
 
 make_map_property! {
@@ -372,7 +372,7 @@ make_map_property! {
     /// use icu::properties::{maps, LineBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_line_break(&provider).expect("The data should be valid!");
+    /// let data = maps::load_line_break(&provider).expect("The data should be valid!");
     /// let lb = data.as_borrowed();
     ///
     /// assert_eq!(lb.get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
@@ -380,7 +380,7 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_line_break();
+    pub fn load_line_break();
 }
 
 make_map_property! {
@@ -398,7 +398,7 @@ make_map_property! {
     /// use icu::properties::{maps, GraphemeClusterBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_grapheme_cluster_break(&provider).expect("The data should be valid!");
+    /// let data = maps::load_grapheme_cluster_break(&provider).expect("The data should be valid!");
     /// let gcb = data.as_borrowed();
     ///
     /// assert_eq!(gcb.get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
@@ -406,7 +406,7 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_grapheme_cluster_break();
+    pub fn load_grapheme_cluster_break();
 }
 
 make_map_property! {
@@ -424,7 +424,7 @@ make_map_property! {
     /// use icu::properties::{maps, WordBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_word_break(&provider).expect("The data should be valid!");
+    /// let data = maps::load_word_break(&provider).expect("The data should be valid!");
     /// let wb = data.as_borrowed();
     ///
     /// assert_eq!(wb.get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
@@ -432,7 +432,7 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_word_break();
+    pub fn load_word_break();
 }
 
 make_map_property! {
@@ -450,7 +450,7 @@ make_map_property! {
     /// use icu::properties::{maps, SentenceBreak};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_sentence_break(&provider).expect("The data should be valid!");
+    /// let data = maps::load_sentence_break(&provider).expect("The data should be valid!");
     /// let sb = data.as_borrowed();;
     ///
     /// assert_eq!(sb.get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
@@ -458,7 +458,7 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_sentence_break();
+    pub fn load_sentence_break();
 }
 
 make_map_property! {
@@ -476,7 +476,7 @@ make_map_property! {
     /// use icu::properties::{maps, CanonicalCombiningClass};
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_canonical_combining_class(&provider).expect("The data should be valid!");
+    /// let data = maps::load_canonical_combining_class(&provider).expect("The data should be valid!");
     /// let sb = data.as_borrowed();;
     ///
     /// assert_eq!(sb.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
@@ -484,5 +484,5 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
-    pub fn get_canonical_combining_class();
+    pub fn load_canonical_combining_class();
 }

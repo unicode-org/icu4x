@@ -25,7 +25,7 @@
 //!
 //! // A binary property as a `CodePointSetData`
 //!
-//! let data = sets::get_emoji(&provider).expect("The data should be valid");
+//! let data = sets::load_emoji(&provider).expect("The data should be valid");
 //! let emoji = data.as_borrowed();
 //!
 //! assert!(emoji.contains('🎃')); // U+1F383 JACK-O-LANTERN
@@ -33,7 +33,7 @@
 //!
 //! // An individual enumerated property value as a `CodePointSetData`
 //!
-//! let data = maps::get_general_category(&provider).expect("The data should be valid");
+//! let data = maps::load_general_category(&provider).expect("The data should be valid");
 //! let gc = data.as_borrowed();
 //! let line_sep_data = gc.get_set_for_value(GeneralCategory::LineSeparator);
 //! let line_sep = line_sep_data.as_borrowed();
@@ -49,7 +49,7 @@
 //!
 //! let provider = icu_testdata::get_provider();
 //!
-//! let map = maps::get_script(&provider).expect("The data should be valid");
+//! let map = maps::load_script(&provider).expect("The data should be valid");
 //! let script = map.as_borrowed();
 //!
 //! assert_eq!(script.get('🎃'), Script::Common); // U+1F383 JACK-O-LANTERN
