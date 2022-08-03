@@ -301,8 +301,8 @@ impl_data_provider!(
 mod test {
     use super::*;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
-    use icu_plurals::PluralCategory;
     use icu_locid::locale;
+    use icu_plurals::PluralCategory;
 
     #[test]
     fn test_basic_patterns() {

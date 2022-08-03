@@ -346,7 +346,12 @@ pub fn datagen(
 #[test]
 fn test_keys() {
     assert_eq!(
-        keys(&["list/and@1", "datetime/gregory/datelengths@1", "datetime/skeletons@1[u-ca]", "trash",]),
+        keys(&[
+            "list/and@1",
+            "datetime/gregory/datelengths@1",
+            "datetime/skeletons@1[u-ca]",
+            "trash",
+        ]),
         vec![
             icu_list::provider::AndListV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
