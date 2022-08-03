@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659510562851,
+  "lastUpdate": 1659543201016,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42629,6 +42629,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 73,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "08b8eb0257e99867a2f649c633cb6418e079df03",
+          "message": "Make calendars work with static data slicing and update PluralRules constructors (#2318)\n\n- Also renames Japanext to JapaneseExtended",
+          "timestamp": "2022-08-03T09:00:31-07:00",
+          "tree_id": "b57eb82c2b21daf45880ccb97f741b1278375495",
+          "url": "https://github.com/unicode-org/icu4x/commit/08b8eb0257e99867a2f649c633cb6418e079df03"
+        },
+        "date": 1659543151675,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 124365,
+            "range": "± 5298",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25745,
+            "range": "± 961",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71556,
+            "range": "± 6171",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 210,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 81,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
