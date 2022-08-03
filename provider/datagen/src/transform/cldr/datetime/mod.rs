@@ -302,13 +302,14 @@ mod test {
     use super::*;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
     use icu_plurals::PluralCategory;
+    use icu_locid::locale;
 
     #[test]
     fn test_basic_patterns() {
         let provider = crate::DatagenProvider::for_test();
 
-        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DateLengthsV1Marker> = provider
+        let locale: Locale = locale!("cs");
+        let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
@@ -324,8 +325,8 @@ mod test {
     fn test_with_numbering_system() {
         let provider = crate::DatagenProvider::for_test();
 
-        let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DateLengthsV1Marker> = provider
+        let locale: Locale = locale!("haw");
+        let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
@@ -389,8 +390,8 @@ mod test {
         use tinystr::tinystr;
         let provider = crate::DatagenProvider::for_test();
 
-        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
+        let locale: Locale = locale!("cs");
+        let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
@@ -420,8 +421,8 @@ mod test {
     fn unalias_contexts() {
         let provider = crate::DatagenProvider::for_test();
 
-        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
+        let locale: Locale = locale!("cs");
+        let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
