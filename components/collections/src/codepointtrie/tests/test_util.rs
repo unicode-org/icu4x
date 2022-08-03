@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_codepointtrie::error::Error;
-use icu_codepointtrie::*;
+use icu_collections::codepointtrie::error::Error;
+use icu_collections::codepointtrie::*;
 
 use core::convert::TryFrom;
 #[cfg(feature = "serde")]

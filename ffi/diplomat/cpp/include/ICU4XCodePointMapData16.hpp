@@ -42,7 +42,7 @@ class ICU4XCodePointMapData16 {
   /**
    * Gets the value for a code point.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_collections/codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
    */
   uint16_t get(char32_t cp) const;
   inline const capi::ICU4XCodePointMapData16* AsFFI() const { return this->inner.get(); }

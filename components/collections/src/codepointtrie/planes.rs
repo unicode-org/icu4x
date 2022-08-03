@@ -2,8 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::codepointtrie::*;
-use crate::error::Error;
+//! Sample data for [`CodePointTrie`] that returns the code point's plane number.
+
+use crate::codepointtrie::cptrie::*;
+use crate::codepointtrie::error::Error;
 use zerovec::ZeroVec;
 
 const INDEX_ARRAY_AS_BYTES: &[u8] = &[

@@ -13,8 +13,8 @@ shipped as a WebAssembly module and then JIT-compiled at runtime. For more conte
 ## Examples
 
 ```rust
-use icu_codepointtrie::CodePointTrie;
-use icu_codepointtrie::TrieType;
+use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::TrieType;
 use icu_codepointtrie_builder::CodePointTrieBuilder;
 use icu_codepointtrie_builder::CodePointTrieBuilderData;
 

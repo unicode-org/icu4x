@@ -8,7 +8,7 @@
 //! Data structs for the collator
 
 use icu_char16trie::char16trie::Char16TrieIterator;
-use icu_codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;

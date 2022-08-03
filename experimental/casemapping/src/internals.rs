@@ -5,8 +5,8 @@
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
 #[cfg(feature = "datagen")]
-use icu_codepointtrie::CodePointTrieHeader;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_collections::codepointtrie::CodePointTrieHeader;
+use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
 use icu_uniset::CodePointInversionListBuilder;

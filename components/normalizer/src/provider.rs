@@ -5,7 +5,7 @@
 //! Data structs for the normalizer
 
 use icu_char16trie::char16trie::Char16Trie;
-use icu_codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 

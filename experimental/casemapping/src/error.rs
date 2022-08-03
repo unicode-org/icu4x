@@ -4,7 +4,7 @@
 
 use core::char::DecodeUtf16Error;
 use displaydoc::Display;
-use icu_codepointtrie::error::Error as CodePointTrieError;
+use icu_collections::codepointtrie::error::Error as CodePointTrieError;
 
 /// A list of possible errors for the [`CaseMapping`](crate::CaseMapping) struct
 #[derive(Clone, Display, Debug, PartialEq)]

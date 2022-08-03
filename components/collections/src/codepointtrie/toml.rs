@@ -4,11 +4,11 @@
 
 //! Utilities for reading CodePointTrie data from TOML files.
 
-use crate::error::Error;
-use crate::CodePointTrie;
-use crate::CodePointTrieHeader;
-use crate::TrieType;
-use crate::TrieValue;
+use crate::codepointtrie::error::Error;
+use crate::codepointtrie::CodePointTrie;
+use crate::codepointtrie::CodePointTrieHeader;
+use crate::codepointtrie::TrieType;
+use crate::codepointtrie::TrieValue;
 use alloc::string::String;
 use alloc::vec::Vec;
 use core::convert::TryFrom;
@@ -57,8 +57,11 @@ pub struct CodePointTrieToml {
 /// to other types as appropriate.
 #[allow(clippy::exhaustive_enums)] // based on a stable serialized form
 pub enum CodePointDataSlice<'a> {
+    /// A serialized CodePointTrie data array 8-bit values.
     U8(&'a [u8]),
+    /// A serialized CodePointTrie data array 16-bit values.
     U16(&'a [u16]),
+    /// A serialized CodePointTrie data array 32-bit values.
     U32(&'a [u32]),
 }
 

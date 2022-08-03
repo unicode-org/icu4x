@@ -290,7 +290,7 @@ icu_datagen = { version = "0.6", path = "../datagen", features = ["experimental"
 icu_locid = { version = "0.6", path = "../../components/locid", optional = true }
 log = { version = "0.4", optional = true }
 reqwest = { version = "0.11", features = ["stream"], optional = true }
-simple_logger = { version = "1.12", optional = true }
+simple_logger = { version = "1.12", optional = true, default-features = false }
 tokio = { version = "1.13", features = ["rt-multi-thread", "macros", "fs"], optional = true }
 zip = { version = "0.6.2", optional = true }
 
@@ -315,7 +315,7 @@ icu_properties = { version = "0.6", path = "../../components/properties", option
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true, features = ["lstm"] }
 icu_timezone = { version = "0.6", path = "../../components/timezone", optional = true }
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", optional = true }
-icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", optional = true }
+icu_collections = { version = "0.6", path = "../../components/collections", optional = true }
 icu_uniset = { version = "0.5", path = "../../utils/uniset", optional = true }
 litemap = { version = "0.4", path = "../../utils/litemap", optional = true, default-features = false }
 tinystr = { version = "0.6", path = "../../utils/tinystr", optional = true }
@@ -359,7 +359,7 @@ baked = [
     "icu_segmenter",
     "icu_timezone",
     "icu_char16trie",
-    "icu_codepointtrie",
+    "icu_collections",
     "icu_uniset",
     "litemap",
     "tinystr",

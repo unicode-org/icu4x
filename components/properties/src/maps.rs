@@ -17,7 +17,7 @@ use crate::sets::CodePointSetData;
 #[cfg(doc)]
 use crate::*;
 use core::marker::PhantomData;
-use icu_codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
+use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 
 /// A wrapper around code point map data. It is returned by APIs that return Unicode
@@ -46,7 +46,7 @@ impl<T: TrieValue> CodePointMapData<T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -123,7 +123,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -145,7 +145,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -167,7 +167,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -195,8 +195,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// ```
     /// use core::ops::RangeInclusive;
     /// use icu::properties::maps::CodePointMapData;
-    /// use icu_codepointtrie::CodePointMapRange;
-    /// use icu_codepointtrie::planes;
+    /// use icu_collections::codepointtrie::CodePointMapRange;
+    /// use icu_collections::codepointtrie::planes;
     ///
     /// let planes_trie = planes::get_planes_trie();
     /// let cp_map_data = CodePointMapData::from_code_point_trie(planes_trie);
@@ -259,7 +259,7 @@ make_map_property! {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -271,7 +271,7 @@ make_map_property! {
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_general_category();
 }
 
@@ -287,7 +287,7 @@ make_map_property! {
     ///
     /// ```
     /// use icu::properties::{maps, BidiClass};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -299,7 +299,7 @@ make_map_property! {
     /// assert_eq!(bc.get('ع'), BidiClass::ArabicLetter);  // U+0639
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_bidi_class();
 }
 
@@ -315,7 +315,7 @@ make_map_property! {
     ///
     /// ```
     /// use icu::properties::{maps, Script};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
@@ -327,7 +327,7 @@ make_map_property! {
     /// assert_eq!(script.get('🎃'), Script::Common);  // U+1F383 JACK-O-LANTERN
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_script();
 }
 
@@ -353,7 +353,7 @@ make_map_property! {
     /// assert_eq!(eaw.get('ア'), EastAsianWidth::Wide); //U+30A2: Katakana Letter A
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_east_asian_width();
 }
 
@@ -379,7 +379,7 @@ make_map_property! {
     /// assert_eq!(lb.get('ぁ'), LineBreak::ConditionalJapaneseStarter); //U+3041: Hiragana Letter Small A
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_line_break();
 }
 
@@ -405,7 +405,7 @@ make_map_property! {
     /// assert_eq!(gcb.get('ำ'), GraphemeClusterBreak::SpacingMark); //U+0E33: Thai Character Sara Am
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_grapheme_cluster_break();
 }
 
@@ -431,7 +431,7 @@ make_map_property! {
     /// assert_eq!(wb.get('，'), WordBreak::MidNum); // U+FF0C: Fullwidth Comma
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_word_break();
 }
 
@@ -457,7 +457,7 @@ make_map_property! {
     /// assert_eq!(sb.get(','), SentenceBreak::SContinue); // U+002C: Comma
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_sentence_break();
 }
 
@@ -483,6 +483,6 @@ make_map_property! {
     /// assert_eq!(sb.get_u32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     pub fn get_canonical_combining_class();
 }

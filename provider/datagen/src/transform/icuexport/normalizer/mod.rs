@@ -6,7 +6,7 @@
 //! exported from ICU.
 
 use icu_char16trie::char16trie::Char16Trie;
-use icu_codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
 use icu_normalizer::u24::U24;
 use icu_provider::datagen::IterableDataProvider;
