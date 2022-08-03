@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659491644533,
+  "lastUpdate": 1659498419557,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22883,6 +22883,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/094d52683e066da43f4b7445d8bce44455f7d202"
         },
         "date": 1659491596655,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3950050,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7f8ac3052fb9b2703ba664c9174a71894b9ad9ad",
+          "message": "Migrate icu_timezones constructors (#2316)",
+          "timestamp": "2022-08-02T20:44:50-07:00",
+          "tree_id": "e810383270b5620d9fd4b1abe88fe7c97102e864",
+          "url": "https://github.com/unicode-org/icu4x/commit/7f8ac3052fb9b2703ba664c9174a71894b9ad9ad"
+        },
+        "date": 1659498373979,
         "tool": "ndjson",
         "benches": [
           {
