@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659483177535,
+  "lastUpdate": 1659487580163,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42202,6 +42202,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/write_to/908070605040302010",
             "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ea44204db20bbf285b5408fa20e8f1e87125b009",
+          "message": "Hide icu_segmenter's symbols module from doc (#2317)",
+          "timestamp": "2022-08-02T17:35:01-07:00",
+          "tree_id": "4ea7c20efe22ef5adf09b97fefb67e104f1a2dae",
+          "url": "https://github.com/unicode-org/icu4x/commit/ea44204db20bbf285b5408fa20e8f1e87125b009"
+        },
+        "date": 1659487542849,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115183,
+            "range": "± 391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23966,
+            "range": "± 141",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63184,
+            "range": "± 738",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
             "range": "± 0",
             "unit": "ns/iter"
           },
