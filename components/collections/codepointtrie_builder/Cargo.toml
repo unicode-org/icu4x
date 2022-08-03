@@ -24,7 +24,7 @@ include = [
 ]
 
 [dependencies]
-icu_collections = { path = "../../..", features = ["serde"] }
+icu_collections = { path = "..", features = ["serde"] }
 lazy_static = { version = "1.4.0" }
 toml = "0.5"
 
