@@ -118,12 +118,12 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -133,12 +133,12 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -148,12 +148,12 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -256,13 +256,13 @@ static BN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 166u8, 184u8, 224u8, 166u8,
-                        190u8, 224u8, 166u8, 178u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 166u8, 184u8, 224u8, 166u8, 190u8,
+                        224u8, 166u8, 178u8,
                     ])
                 },
             )
@@ -272,13 +272,13 @@ static BN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 166u8, 184u8, 224u8, 166u8,
-                        190u8, 224u8, 166u8, 178u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 166u8, 184u8, 224u8, 166u8, 190u8,
+                        224u8, 166u8, 178u8,
                     ])
                 },
             )
@@ -288,13 +288,13 @@ static BN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 166u8, 184u8, 224u8, 166u8,
-                        190u8, 224u8, 166u8, 178u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 166u8, 184u8, 224u8, 166u8, 190u8,
+                        224u8, 166u8, 178u8,
                     ])
                 },
             )
@@ -397,13 +397,13 @@ static CCP: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 240u8, 145u8, 132u8, 165u8, 240u8,
-                        145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 180u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 240u8, 145u8, 132u8, 165u8, 240u8, 145u8,
+                        132u8, 163u8, 240u8, 145u8, 132u8, 180u8,
                     ])
                 },
             )
@@ -413,13 +413,13 @@ static CCP: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 240u8, 145u8, 132u8, 165u8, 240u8,
-                        145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 180u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 240u8, 145u8, 132u8, 165u8, 240u8, 145u8,
+                        132u8, 163u8, 240u8, 145u8, 132u8, 180u8,
                     ])
                 },
             )
@@ -429,13 +429,13 @@ static CCP: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 240u8, 145u8, 132u8, 165u8, 240u8,
-                        145u8, 132u8, 163u8, 240u8, 145u8, 132u8, 180u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 240u8, 145u8, 132u8, 165u8, 240u8, 145u8,
+                        132u8, 163u8, 240u8, 145u8, 132u8, 180u8,
                     ])
                 },
             )
@@ -538,12 +538,12 @@ static EN_EN_001_EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateS
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -553,12 +553,12 @@ static EN_EN_001_EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateS
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -568,12 +568,12 @@ static EN_EN_001_EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateS
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -676,12 +676,12 @@ static ES: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -691,12 +691,12 @@ static ES: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -706,12 +706,12 @@ static ES: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -814,12 +814,12 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -829,12 +829,12 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -844,12 +844,12 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -952,12 +952,12 @@ static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -967,12 +967,12 @@ static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -982,12 +982,12 @@ static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -1090,13 +1090,13 @@ static FR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 195u8, 168u8, 114u8, 101u8, 32u8,
-                        83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 195u8, 168u8, 114u8, 101u8, 32u8, 83u8, 97u8,
+                        107u8, 97u8,
                     ])
                 },
             )
@@ -1106,12 +1106,12 @@ static FR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -1121,12 +1121,12 @@ static FR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -1229,13 +1229,12 @@ static JA: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8,
-                        171u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8, 171u8,
                     ])
                 },
             )
@@ -1245,13 +1244,12 @@ static JA: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8,
-                        171u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8, 171u8,
                     ])
                 },
             )
@@ -1261,13 +1259,12 @@ static JA: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8,
-                        171u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 227u8, 130u8, 181u8, 227u8, 130u8, 171u8,
                     ])
                 },
             )
@@ -1370,13 +1367,13 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 176u8, 208u8,
-                        186u8, 208u8, 176u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 176u8, 208u8, 186u8,
+                        208u8, 176u8,
                     ])
                 },
             )
@@ -1386,13 +1383,13 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 176u8, 208u8,
-                        186u8, 208u8, 176u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 176u8, 208u8, 186u8,
+                        208u8, 176u8,
                     ])
                 },
             )
@@ -1402,13 +1399,13 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 176u8, 208u8,
-                        186u8, 208u8, 176u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 176u8, 208u8, 186u8,
+                        208u8, 176u8,
                     ])
                 },
             )
@@ -1511,12 +1508,12 @@ static SR_LATN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 65u8, 75u8, 65u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 65u8, 75u8, 65u8,
                     ])
                 },
             )
@@ -1526,12 +1523,12 @@ static SR_LATN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 65u8, 75u8, 65u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 65u8, 75u8, 65u8,
                     ])
                 },
             )
@@ -1541,12 +1538,12 @@ static SR_LATN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 65u8, 75u8, 65u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 65u8, 75u8, 65u8,
                     ])
                 },
             )
@@ -1649,13 +1646,13 @@ static SR_SR_CYRL: &DataStruct = &::icu_datetime::provider::calendar::DateSymbol
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 144u8, 208u8,
-                        154u8, 208u8, 144u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 144u8, 208u8, 154u8,
+                        208u8, 144u8,
                     ])
                 },
             )
@@ -1665,13 +1662,13 @@ static SR_SR_CYRL: &DataStruct = &::icu_datetime::provider::calendar::DateSymbol
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 144u8, 208u8,
-                        154u8, 208u8, 144u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 144u8, 208u8, 154u8,
+                        208u8, 144u8,
                     ])
                 },
             )
@@ -1681,13 +1678,13 @@ static SR_SR_CYRL: &DataStruct = &::icu_datetime::provider::calendar::DateSymbol
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 144u8, 208u8,
-                        154u8, 208u8, 144u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 208u8, 161u8, 208u8, 144u8, 208u8, 154u8,
+                        208u8, 144u8,
                     ])
                 },
             )
@@ -1790,13 +1787,13 @@ static TH: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 184u8, 161u8, 46u8, 224u8,
-                        184u8, 168u8, 46u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 184u8, 161u8, 46u8, 224u8, 184u8,
+                        168u8, 46u8,
                     ])
                 },
             )
@@ -1806,13 +1803,13 @@ static TH: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 184u8, 161u8, 46u8, 224u8,
-                        184u8, 168u8, 46u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 184u8, 161u8, 46u8, 224u8, 184u8,
+                        168u8, 46u8,
                     ])
                 },
             )
@@ -1822,13 +1819,13 @@ static TH: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 184u8, 161u8, 46u8, 224u8,
-                        184u8, 168u8, 46u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 224u8, 184u8, 161u8, 46u8, 224u8, 184u8,
+                        168u8, 46u8,
                     ])
                 },
             )
@@ -1931,12 +1928,12 @@ static TR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -1946,12 +1943,12 @@ static TR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -1961,12 +1958,12 @@ static TR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -2069,12 +2066,12 @@ static UND: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -2084,12 +2081,12 @@ static UND: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
@@ -2099,12 +2096,12 @@ static UND: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
             ::zerovec::ZeroMap::from_parts_unchecked(
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 115u8, 97u8, 107u8, 97u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 83u8, 97u8, 107u8, 97u8,
                     ])
                 },
             )
