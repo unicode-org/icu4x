@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659498444205,
+  "lastUpdate": 1659499392008,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22943,6 +22943,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/87e6bb771d3ebd32f93f4dd70767c99ee8e58312"
         },
         "date": 1659498408268,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3950050,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c59b29a135ba097586a549ed98061257bd573380",
+          "message": "Fix fallback in FFI (#2321)\n\n* Fixup as_ref\r\n\r\n* update test\r\n\r\n* fmt",
+          "timestamp": "2022-08-03T04:00:48Z",
+          "tree_id": "4d5807e872a1608a03f92e46c951728a8d2565e6",
+          "url": "https://github.com/unicode-org/icu4x/commit/c59b29a135ba097586a549ed98061257bd573380"
+        },
+        "date": 1659499344548,
         "tool": "ndjson",
         "benches": [
           {
