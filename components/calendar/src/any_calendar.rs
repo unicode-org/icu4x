@@ -316,8 +316,8 @@ impl AnyCalendar {
     ///
     /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
     pub fn try_new_with_any_provider<P>(
-        kind: AnyCalendarKind,
         provider: &P,
+        kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
     where
         P: AnyProvider + ?Sized,
@@ -326,13 +326,11 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Japanese => {
-                let p = provider.as_downcasting();
-                AnyCalendar::Japanese(Japanese::try_new(&p)?)
+                AnyCalendar::Japanese(Japanese::try_new_with_any_provider(provider)?)
             }
-            AnyCalendarKind::JapaneseExtended => {
-                let p = provider.as_downcasting();
-                AnyCalendar::JapaneseExtended(JapaneseExtended::try_new(&p)?)
-            }
+            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
+                JapaneseExtended::try_new_with_any_provider(provider)?,
+            ),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
@@ -354,8 +352,8 @@ impl AnyCalendar {
     /// This needs the `"serde"` feature to be enabled to be used
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider<P>(
-        kind: AnyCalendarKind,
         provider: &P,
+        kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
     where
         P: BufferProvider + ?Sized,
@@ -364,13 +362,11 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Japanese => {
-                let p = provider.as_deserializing();
-                AnyCalendar::Japanese(Japanese::try_new(&p)?)
+                AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
             }
-            AnyCalendarKind::JapaneseExtended => {
-                let p = provider.as_deserializing();
-                AnyCalendar::JapaneseExtended(JapaneseExtended::try_new(&p)?)
-            }
+            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
+                JapaneseExtended::try_new_with_buffer_provider(provider)?,
+            ),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
@@ -388,7 +384,7 @@ impl AnyCalendar {
     /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
     ///
     /// For calendars that need data, will attempt to load the appropriate data from the source
-    pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
@@ -397,9 +393,11 @@ impl AnyCalendar {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
-            AnyCalendarKind::Japanese => AnyCalendar::Japanese(Japanese::try_new(provider)?),
+            AnyCalendarKind::Japanese => {
+                AnyCalendar::Japanese(Japanese::try_new_unstable(provider)?)
+            }
             AnyCalendarKind::JapaneseExtended => {
-                AnyCalendar::JapaneseExtended(JapaneseExtended::try_new(provider)?)
+                AnyCalendar::JapaneseExtended(JapaneseExtended::try_new_unstable(provider)?)
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
@@ -774,26 +772,26 @@ mod tests {
         let provider = icu_testdata::get_provider();
 
         let buddhist =
-            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Buddhist, &provider)
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Buddhist)
                 .expect("Calendar construction must succeed");
-        let coptic = AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Coptic, &provider)
+        let coptic = AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Coptic)
             .expect("Calendar construction must succeed");
         let ethiopic =
-            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Ethiopic, &provider)
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethiopic)
                 .expect("Calendar construction must succeed");
         let ethioaa =
-            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Ethioaa, &provider)
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethioaa)
                 .expect("Calendar construction must succeed");
         let gregorian =
-            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Gregorian, &provider)
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Gregorian)
                 .expect("Calendar construction must succeed");
-        let indian = AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Indian, &provider)
+        let indian = AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Indian)
             .expect("Calendar construction must succeed");
         let japanese =
-            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::Japanese, &provider)
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Japanese)
                 .expect("Calendar construction must succeed");
         let japanext =
-            AnyCalendar::try_new_with_buffer_provider(AnyCalendarKind::JapaneseExtended, &provider)
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::JapaneseExtended)
                 .expect("Calendar construction must succeed");
         let buddhist = Ref(&buddhist);
         let coptic = Ref(&coptic);

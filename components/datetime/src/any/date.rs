@@ -209,7 +209,7 @@ impl DateFormatter {
             locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
 
-        let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
+        let calendar = AnyCalendar::try_new_unstable(data_provider, kind)?;
 
         Ok(Self(
             raw::DateFormatter::try_new(

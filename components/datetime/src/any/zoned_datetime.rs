@@ -166,7 +166,7 @@ impl ZonedDateTimeFormatter {
             locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
 
-        let calendar = AnyCalendar::try_new_unstable(kind, provider)?;
+        let calendar = AnyCalendar::try_new_unstable(provider, kind)?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
