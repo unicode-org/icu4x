@@ -51,7 +51,8 @@ use core::fmt;
 ///
 /// let calendar = AnyCalendar::try_new_with_buffer_provider(&provider, (&locale).try_into().unwrap())
 ///                    .expect("constructing AnyCalendar failed");
-/// let calendar = Rc::new(calendar); // Avoid cloning it
+/// let calendar = Rc::new(calendar); // Avoid cloning it each time
+///                                   // If everything is a local reference, you may use icu_calendar::Ref instead.
 ///
 ///
 /// // manually construct a datetime in this calendar
