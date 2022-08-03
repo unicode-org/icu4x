@@ -83,7 +83,7 @@ use core::char::REPLACEMENT_CHARACTER;
 use icu_char16trie::char16trie::Char16Trie;
 use icu_char16trie::char16trie::Char16TrieIterator;
 use icu_char16trie::char16trie::TrieResult;
-use icu_codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::maps::{CodePointMapData, CodePointMapDataBorrowed};
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;

@@ -3,14 +3,14 @@ type DataStruct = < :: icu_normalizer :: provider :: NonRecursiveDecompositionSu
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1 {
-    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
-        ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 119296u32,
             shifted12_high_start: 30u16,
             index3_null_offset: 15u16,
             data_null_offset: 0u32,
             null_value: 0u32,
-            trie_type: ::icu_codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[

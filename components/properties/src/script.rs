@@ -12,7 +12,7 @@ use crate::provider::*;
 use crate::props::ScriptULE;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
-use icu_codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
 use icu_uniset::CodePointInversionList;
 #[cfg(feature = "serde")]

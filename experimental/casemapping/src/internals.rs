@@ -5,8 +5,8 @@
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
 #[cfg(feature = "datagen")]
-use icu_codepointtrie::CodePointTrieHeader;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_collections::codepointtrie::CodePointTrieHeader;
+use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
 use icu_uniset::CodePointInversionListBuilder;
@@ -100,7 +100,9 @@ impl DotType {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider))]
-pub struct CaseMappingData(pub u16);
+// field is doc(hidden) so that databake can work, though it's unclear if
+// this field has invariants
+pub struct CaseMappingData(#[doc(hidden)] pub u16);
 
 impl CaseMappingData {
     // Sequences of case-ignorable characters are skipped when determining

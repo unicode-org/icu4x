@@ -409,17 +409,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
 
 [[package]]
-name = "colored"
-version = "1.9.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "f4ffc801dacf156c5854b9df4f425a626539c3a6ef7893cc0c5084a23f0b6c59"
-dependencies = [
- "atty",
- "lazy_static",
- "winapi",
-]
-
-[[package]]
 name = "combine"
 version = "4.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1301,11 +1290,12 @@ version = "0.6.0"
 dependencies = [
  "icu_calendar",
  "icu_collator",
+ "icu_collections",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
- "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -1370,11 +1360,11 @@ dependencies = [
  "diplomat-runtime",
  "fixed_decimal",
  "icu_calendar",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_datetime",
  "icu_decimal",
- "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_transform",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1410,7 +1400,7 @@ version = "0.1.0"
 dependencies = [
  "databake",
  "displaydoc",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_locid",
  "icu_provider",
  "icu_uniset",
@@ -1431,27 +1421,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_codepointtrie"
-version = "0.4.0"
-dependencies = [
- "criterion",
- "databake",
- "displaydoc",
- "iai",
- "icu_uniset",
- "postcard",
- "serde",
- "toml",
- "yoke",
- "zerofrom",
- "zerovec",
-]
-
-[[package]]
 name = "icu_codepointtrie_builder"
 version = "0.3.3"
 dependencies = [
- "icu_codepointtrie",
+ "icu_collections",
  "lazy_static",
  "toml",
  "wasmer",
@@ -1467,7 +1440,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_char16trie",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_locid",
  "icu_normalizer",
  "icu_properties",
@@ -1478,6 +1451,24 @@ dependencies = [
  "smallvec",
  "utf16_iter",
  "utf8_iter",
+ "zerofrom",
+ "zerovec",
+]
+
+[[package]]
+name = "icu_collections"
+version = "0.6.0"
+dependencies = [
+ "criterion",
+ "databake",
+ "displaydoc",
+ "iai",
+ "icu",
+ "icu_uniset",
+ "postcard",
+ "serde",
+ "toml",
+ "yoke",
  "zerofrom",
  "zerovec",
 ]
@@ -1497,14 +1488,14 @@ dependencies = [
  "icu_calendar",
  "icu_casemapping",
  "icu_char16trie",
- "icu_codepointtrie",
  "icu_codepointtrie_builder",
  "icu_collator",
+ "icu_collections",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
- "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -1618,21 +1609,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_locale_canonicalizer"
-version = "0.6.0"
-dependencies = [
- "criterion",
- "databake",
- "icu_locid",
- "icu_provider",
- "icu_testdata",
- "serde",
- "serde_json",
- "tinystr 0.6.0",
- "zerovec",
-]
-
-[[package]]
 name = "icu_locid"
 version = "0.6.0"
 dependencies = [
@@ -1652,6 +1628,21 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_locid_transform"
+version = "0.6.0"
+dependencies = [
+ "criterion",
+ "databake",
+ "icu_locid",
+ "icu_provider",
+ "icu_testdata",
+ "serde",
+ "serde_json",
+ "tinystr 0.6.0",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_normalizer"
 version = "0.6.0"
 dependencies = [
@@ -1661,7 +1652,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu_char16trie",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_properties",
  "icu_provider",
  "icu_testdata",
@@ -1709,7 +1700,7 @@ dependencies = [
  "databake",
  "displaydoc",
  "icu",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_provider",
  "icu_testdata",
  "icu_uniset",
@@ -1809,7 +1800,7 @@ dependencies = [
  "criterion",
  "databake",
  "icu_char16trie",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1835,14 +1826,14 @@ dependencies = [
  "icu_calendar",
  "icu_casemapping",
  "icu_char16trie",
- "icu_codepointtrie",
  "icu_collator",
+ "icu_collections",
  "icu_datagen",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
- "icu_locale_canonicalizer",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -3083,8 +3074,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7de33c687404ec3045d4a0d437580455257c0436f858d702f244e7d652f9f07"
 dependencies = [
  "atty",
- "chrono",
- "colored",
  "log",
  "winapi",
 ]

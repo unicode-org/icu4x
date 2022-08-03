@@ -20,7 +20,7 @@
 
 use core::char::REPLACEMENT_CHARACTER;
 use icu_char16trie::char16trie::TrieResult;
-use icu_codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_normalizer::u24::EMPTY_U24;

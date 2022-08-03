@@ -39,7 +39,7 @@ icu_collator = { version = "0.6", path = "../../components/collator", features =
 icu_datetime = { version = "0.6", path = "../../components/datetime", features = ["datagen"] }
 icu_decimal = { version = "0.6", path = "../../components/decimal", features = ["datagen"] }
 icu_list = { version = "0.6", path = "../../components/list", features = ["datagen"]}
-icu_locale_canonicalizer = { version = "0.6", path = "../../components/locale_canonicalizer", features = ["datagen"] }
+icu_locid_transform = { version = "0.6", path = "../../components/locid_transform", features = ["datagen"] }
 icu_normalizer = { version = "0.6", path = "../../components/normalizer", features = ["datagen"] }
 icu_plurals = { version = "0.6", path = "../../components/plurals", features = ["datagen"] }
 icu_properties = { version = "0.6", path = "../../components/properties", features = ["datagen"]}
@@ -59,8 +59,8 @@ icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", features = ["serde"] }
-icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie", features = ["serde"] }
-icu_codepointtrie_builder = { path = "../../utils/codepointtrie/builder" }
+icu_collections = { version = "0.6", path = "../../components/collections", features = ["serde"] }
+icu_codepointtrie_builder = { path = "../../components/collections/src/codepointtrie/builder" }
 icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
 icu_uniset = { version = "0.5", path = "../../utils/uniset", features = ["serde"] }
 itertools = "0.10"
@@ -86,7 +86,7 @@ lazy_static = "1"
 # Dependencies for "bin" feature
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
-simple_logger = { version = "1.12", optional = true }
+simple_logger = { version = "1.12", optional = true, default-features = false }
 
 [dev-dependencies]
 dhat = "0.3.0"

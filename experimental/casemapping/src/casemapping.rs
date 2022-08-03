@@ -9,7 +9,7 @@ use crate::internals::*;
 use crate::provider::CaseMappingV1;
 use crate::provider::CaseMappingV1Marker;
 #[cfg(feature = "datagen")]
-use icu_codepointtrie::CodePointTrieHeader;
+use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_locid::Locale;
 use icu_provider::prelude::*;
 

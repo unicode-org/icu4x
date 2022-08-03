@@ -24,7 +24,7 @@ export class ICU4XCodePointMapData16 {
 
    * Gets the value for a code point.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32 Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_collections/codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32 Rust documentation} for more information.
    */
   get(cp: char): u16;
 }

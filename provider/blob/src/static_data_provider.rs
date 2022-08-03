@@ -110,7 +110,7 @@ impl BufferProvider for StaticDataProvider {
             .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
                 cursor
-                    .get1_copied_by(|bytes| req.locale.strict_cmp(bytes).reverse())
+                    .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
                     .ok_or(DataErrorKind::MissingLocale)
             })
             .map_err(|kind| kind.with_req(key, req))?;

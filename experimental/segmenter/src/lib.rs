@@ -153,6 +153,9 @@ mod sentence;
 mod word;
 
 pub mod provider;
+
+// icu_datagen uses symbols, but we don't want to expose this implementation detail to the users.
+#[doc(hidden)]
 pub mod symbols;
 
 // Use the LSTM when the feature is enabled.

@@ -11,7 +11,7 @@ use icu_datetime::provider::time_zones::*;
 use icu_datetime::provider::week_data::*;
 use icu_decimal::provider::*;
 use icu_list::provider::*;
-use icu_locale_canonicalizer::provider::*;
+use icu_locid_transform::provider::*;
 use icu_normalizer::provider::*;
 use icu_plurals::provider::*;
 use icu_properties::provider::*;
