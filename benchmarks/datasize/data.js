@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659551453063,
+  "lastUpdate": 1659560927580,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23093,6 +23093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/415beb501f6eeeaedc90ea620905256a5a876413"
         },
         "date": 1659551414716,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3946612,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9dafa6bb171b4d17e8163c3c72665a1a720c6737",
+          "message": "Fix up icu_properties constructors (#2329)",
+          "timestamp": "2022-08-03T14:06:42-07:00",
+          "tree_id": "bec0d80e90c9d7f1b492c74aca90ca667b508b30",
+          "url": "https://github.com/unicode-org/icu4x/commit/9dafa6bb171b4d17e8163c3c72665a1a720c6737"
+        },
+        "date": 1659560885873,
         "tool": "ndjson",
         "benches": [
           {
