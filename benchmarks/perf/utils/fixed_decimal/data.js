@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659552157479,
+  "lastUpdate": 1659561497260,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42802,6 +42802,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/write_to/908070605040302010",
             "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9dafa6bb171b4d17e8163c3c72665a1a720c6737",
+          "message": "Fix up icu_properties constructors (#2329)",
+          "timestamp": "2022-08-03T14:06:42-07:00",
+          "tree_id": "bec0d80e90c9d7f1b492c74aca90ca667b508b30",
+          "url": "https://github.com/unicode-org/icu4x/commit/9dafa6bb171b4d17e8163c3c72665a1a720c6737"
+        },
+        "date": 1659561458659,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115287,
+            "range": "± 2841",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23774,
+            "range": "± 172",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62653,
+            "range": "± 294",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
             "range": "± 0",
             "unit": "ns/iter"
           },
