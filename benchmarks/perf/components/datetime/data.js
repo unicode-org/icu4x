@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659510610575,
+  "lastUpdate": 1659543226812,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -57287,6 +57287,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4631,
             "range": "± 23",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "08b8eb0257e99867a2f649c633cb6418e079df03",
+          "message": "Make calendars work with static data slicing and update PluralRules constructors (#2318)\n\n- Also renames Japanext to JapaneseExtended",
+          "timestamp": "2022-08-03T09:00:31-07:00",
+          "tree_id": "b57eb82c2b21daf45880ccb97f741b1278375495",
+          "url": "https://github.com/unicode-org/icu4x/commit/08b8eb0257e99867a2f649c633cb6418e079df03"
+        },
+        "date": 1659543183012,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 111209,
+            "range": "± 4530",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 1010811,
+            "range": "± 65361",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 224864,
+            "range": "± 11198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 101046,
+            "range": "± 3902",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 108408,
+            "range": "± 4271",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 110064,
+            "range": "± 4345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 117836,
+            "range": "± 3555",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 212447,
+            "range": "± 5938",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 225481,
+            "range": "± 6018",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 223258,
+            "range": "± 6782",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 236278,
+            "range": "± 7208",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5663,
+            "range": "± 180",
             "unit": "ns/iter"
           }
         ]
