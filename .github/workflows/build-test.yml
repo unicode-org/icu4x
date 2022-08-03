@@ -630,7 +630,7 @@ jobs:
           - components/locid
           - components/plurals
           - components/datetime
-          - utils/uniset
+          - components/collections
           - utils/fixed_decimal
 
 
@@ -752,7 +752,7 @@ jobs:
               icu_locid/filter_langids
               icu_plurals/unread_emails
               icu_plurals/elevator_floors
-              icu_uniset/unicode_bmp_blocks_selector
+              icu_collections/unicode_bmp_blocks_selector
               fixed_decimal/permyriad
               writeable/writeable_message
               litemap/language_names_lite_map

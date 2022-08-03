@@ -12,9 +12,9 @@ use crate::provider::*;
 use crate::props::ScriptULE;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
+use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointInversionList;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};

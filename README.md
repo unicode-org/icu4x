@@ -84,7 +84,7 @@ ICU4X will provide an ECMA-402-compatible API surface in the target client-side 
 The [performance benchmarks](docs/process/benchmarking.md) are all run on Ubuntu, and are broken out by component.
 
 * [locid](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/locid)
-* [uniset](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/utils/uniset)
+* [collections](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/collections)
 * [fixed_decimal](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/utils/fixed_decimal)
 * [plurals](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/plurals)
 * [datetime](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/datetime)

@@ -16,7 +16,7 @@
 
 icu_benchmark_macros::static_setup!();
 
-use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
+use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 
 fn get_basic_latin_block() -> CodePointInversionList<'static> {
     let mut builder = CodePointInversionListBuilder::new();

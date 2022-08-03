@@ -4,12 +4,12 @@
 
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 #[cfg(feature = "datagen")]
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
-use icu_uniset::CodePointInversionListBuilder;
 #[cfg(feature = "datagen")]
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE};

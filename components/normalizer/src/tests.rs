@@ -433,7 +433,7 @@ fn test_conformance() {
 // Commented out, because we don't currently have a way to force a no-op set for testing.
 // #[test]
 // fn test_hangul() {
-//     use icu_uniset::{CodePointSet, CodePointSetBuilder};
+//     use icu_collections::codepointinvlist::{CodePointSet, CodePointSetBuilder};
 //     use zerofrom::ZeroFrom;
 //     let builder = CodePointSetBuilder::new();
 //     let set: CodePointSet = builder.build();

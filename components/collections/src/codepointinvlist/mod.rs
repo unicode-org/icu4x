@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_uniset` is a utility crate of the [`ICU4X`] project.
-//!
-//! This API provides necessary functionality for highly efficient querying of sets of Unicode characters.
+//! This module provides necessary functionality for highly efficient querying of sets of Unicode characters.
 //!
 //! It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 //!
@@ -21,7 +19,7 @@
 //! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```
-//! use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
+//! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
 //! builder.add_range(&('A'..'Z'));
@@ -35,7 +33,7 @@
 //! Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 //!
 //! ```
-//! use icu_uniset::{CodePointInversionList, CodePointInversionListBuilder};
+//! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
 //! builder.add_range(&('A'..'Z'));
@@ -48,20 +46,6 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-// https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(any(test, feature = "std")), no_std)]
-#![cfg_attr(
-    not(test),
-    deny(
-        clippy::indexing_slicing,
-        clippy::unwrap_used,
-        clippy::expect_used,
-        clippy::panic,
-        clippy::exhaustive_structs,
-        // TODO(#1668): enable clippy::exhaustive_enums,
-        // TODO(#2266): enable missing_debug_implementations,
-    )
-)]
 #![warn(missing_docs)]
 
 extern crate alloc;
@@ -69,15 +53,15 @@ extern crate alloc;
 #[macro_use]
 mod builder;
 mod conversions;
-mod uniset;
+mod cpinvlist;
 mod utils;
 
 use alloc::vec::Vec;
 
 pub use builder::CodePointInversionListBuilder;
 pub use conversions::*;
+pub use cpinvlist::CodePointInversionList;
 use displaydoc::Display;
-pub use uniset::CodePointInversionList;
 pub use utils::*;
 
 /// Custom Errors for [`CodePointInversionList`].

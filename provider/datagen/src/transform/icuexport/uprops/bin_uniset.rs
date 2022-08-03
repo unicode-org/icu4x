@@ -3,10 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceData;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointInversionListBuilder;
 
 fn get_binary<'a>(
     source: &'a SourceData,
@@ -132,9 +132,9 @@ expand!(
 
 #[test]
 fn test_basic() {
+    use icu_collections::codepointinvlist::CodePointInversionList;
     use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
-    use icu_uniset::CodePointInversionList;
 
     let provider = crate::DatagenProvider::for_test();
 

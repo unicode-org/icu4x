@@ -1302,7 +1302,6 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
- "icu_uniset",
 ]
 
 [[package]]
@@ -1403,7 +1402,6 @@ dependencies = [
  "icu_collections",
  "icu_locid",
  "icu_provider",
- "icu_uniset",
  "serde",
  "yoke",
  "zerovec",
@@ -1446,7 +1444,6 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_testdata",
- "icu_uniset",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -1464,9 +1461,10 @@ dependencies = [
  "displaydoc",
  "iai",
  "icu",
- "icu_uniset",
+ "icu_benchmark_macros",
  "postcard",
  "serde",
+ "serde_json",
  "toml",
  "yoke",
  "zerofrom",
@@ -1506,7 +1504,6 @@ dependencies = [
  "icu_segmenter",
  "icu_testdata",
  "icu_timezone",
- "icu_uniset",
  "itertools",
  "lazy_static",
  "log",
@@ -1656,7 +1653,6 @@ dependencies = [
  "icu_properties",
  "icu_provider",
  "icu_testdata",
- "icu_uniset",
  "serde",
  "smallvec",
  "utf16_iter",
@@ -1703,7 +1699,6 @@ dependencies = [
  "icu_collections",
  "icu_provider",
  "icu_testdata",
- "icu_uniset",
  "serde",
  "unicode-bidi",
  "zerovec",
@@ -1843,7 +1838,6 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_timezone",
- "icu_uniset",
  "litemap",
  "log",
  "reqwest",
@@ -1870,23 +1864,6 @@ dependencies = [
  "icu_testdata",
  "serde",
  "tinystr 0.6.0",
- "zerovec",
-]
-
-[[package]]
-name = "icu_uniset"
-version = "0.5.0"
-dependencies = [
- "criterion",
- "databake",
- "displaydoc",
- "icu_benchmark_macros",
- "postcard",
- "serde",
- "serde_json",
- "tinystr 0.6.0",
- "yoke",
- "zerofrom",
  "zerovec",
 ]
 
