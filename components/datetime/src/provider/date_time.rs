@@ -149,7 +149,8 @@ where
             locale,
         };
         match options {
-            DateTimeFormatterOptions::Length(bag) => selector.pattern_for_length_bag(bag),
+            DateTimeFormatterOptions::Length(bag) => selector
+                .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
             DateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
         }
     }
@@ -158,23 +159,21 @@ where
     fn pattern_for_length_bag(
         self,
         length: &length::Bag,
+        preferences: Option<preferences::Bag>,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         match (length.date, length.time) {
             (None, None) => Ok(DataPayload::from_owned(PatternPluralsV1(
                 PatternPlurals::default(),
             ))),
-            (None, Some(time_length)) => pattern_for_time_length(
-                self.data_provider,
-                self.locale,
-                time_length,
-                length.preferences,
-            ),
+            (None, Some(time_length)) => {
+                pattern_for_time_length(self.data_provider, self.locale, time_length, preferences)
+            }
             (Some(date_length), None) => Ok(pattern_for_date_length(
                 date_length,
                 self.date_patterns_data,
             )),
             (Some(date_length), Some(time_length)) => {
-                self.pattern_for_datetime_length(date_length, time_length, length.preferences)
+                self.pattern_for_datetime_length(date_length, time_length, preferences)
             }
         }
     }

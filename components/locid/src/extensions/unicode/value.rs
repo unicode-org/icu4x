@@ -89,6 +89,11 @@ impl Value {
     }
 
     #[doc(hidden)]
+    pub const fn as_single_subtag(&self) -> Option<&TinyAsciiStr<8>> {
+        self.0.single()
+    }
+
+    #[doc(hidden)]
     pub const fn from_tinystr(subtag: Option<TinyAsciiStr<8>>) -> Self {
         match subtag {
             None => Self(ShortVec::new()),

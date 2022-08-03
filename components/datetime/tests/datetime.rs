@@ -249,7 +249,6 @@ fn assert_fixture_element<A, D>(
                 provider,
                 &locale.into(),
                 bag.time.unwrap(),
-                bag.preferences,
             )
             .unwrap();
 
@@ -296,7 +295,6 @@ fn assert_fixture_element<A, D>(
                 provider,
                 &locale.into(),
                 bag.time.unwrap(),
-                bag.preferences,
             )
             .unwrap();
 

@@ -27,6 +27,11 @@ use crate::fields;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
+use icu_locid::extensions_unicode_key as key;
+use icu_provider::DataLocale;
+use tinystr::tinystr;
+use tinystr::TinyAsciiStr;
+
 /// Stores user preferences which may affect the result of date and time formatting.
 ///
 /// # Examples
@@ -53,6 +58,25 @@ impl Bag {
         Self {
             hour_cycle: Some(h),
         }
+    }
+
+    /// Construct a [`Bag`] from a given [`DataLocale`]
+    pub fn from_data_locale(data_locale: &DataLocale) -> Self {
+        const H11: TinyAsciiStr<8> = tinystr!(8, "h11");
+        const H12: TinyAsciiStr<8> = tinystr!(8, "h12");
+        const H23: TinyAsciiStr<8> = tinystr!(8, "h23");
+        const H24: TinyAsciiStr<8> = tinystr!(8, "h24");
+        let hour_cycle = match data_locale
+            .get_unicode_ext(&key!("hc"))
+            .and_then(|v| v.as_single_subtag().copied())
+        {
+            Some(H11) => Some(HourCycle::H11),
+            Some(H12) => Some(HourCycle::H12),
+            Some(H23) => Some(HourCycle::H23),
+            Some(H24) => Some(HourCycle::H24),
+            _ => None,
+        };
+        Self { hour_cycle }
     }
 }
 

@@ -41,7 +41,6 @@
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
-use super::preferences;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -80,8 +79,6 @@ pub struct Bag {
     pub date: Option<Date>,
     /// Configure the time part of the datetime.
     pub time: Option<Time>,
-    /// Configure the preferences for the datetime, such as the hour cycle.
-    pub preferences: Option<preferences::Bag>,
 }
 
 impl Default for Bag {
@@ -90,7 +87,6 @@ impl Default for Bag {
         Self {
             date: Some(Date::Long),
             time: Some(Time::Long),
-            preferences: None,
         }
     }
 }
@@ -103,34 +99,30 @@ impl Bag {
         Self {
             date: None,
             time: None,
-            preferences: None,
         }
     }
 
-    /// Constructs a Bag given a date and time field (preferences set to None)
+    /// Constructs a Bag given a date and time field
     pub fn from_date_time_style(date: Date, time: Time) -> Self {
         Self {
             date: Some(date),
             time: Some(time),
-            preferences: None,
         }
     }
 
-    /// Constructs a Bag given a date field (preferences and time set to None)
+    /// Constructs a Bag given a date field (time set to None)
     pub fn from_date_style(date: Date) -> Self {
         Self {
             date: Some(date),
             time: None,
-            preferences: None,
         }
     }
 
-    /// Constructs a Bag given a time field (preferences and date set to None)
+    /// Constructs a Bag given a time field (date set to None)
     pub fn from_time_style(time: Time) -> Self {
         Self {
             date: None,
             time: Some(time),
-            preferences: None,
         }
     }
 }
