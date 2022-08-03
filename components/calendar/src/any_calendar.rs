@@ -19,9 +19,10 @@ use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
     Locale,
 };
-
 use icu_provider::prelude::*;
+use tinystr::tinystr;
 
+use core::convert::TryFrom;
 use core::fmt;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
@@ -513,8 +514,8 @@ impl AnyCalendarKind {
         })
     }
 
-    pub fn from_bcp47(x: &Value) -> Option<Self> {
-        Some(if *x == value!("gregory") {
+    pub fn from_bcp47(x: &Value) -> Result<Self, DateTimeError> {
+        Ok(if *x == value!("gregory") {
             AnyCalendarKind::Gregorian
         } else if *x == value!("buddhist") {
             AnyCalendarKind::Buddhist
@@ -533,7 +534,10 @@ impl AnyCalendarKind {
         } else if *x == value!("ethioaa") {
             AnyCalendarKind::Ethioaa
         } else {
-            return None;
+            let mut string = x.to_string();
+            string.truncate(16);
+            let tiny = string.parse().unwrap_or(tinystr!(16, "unknown"));
+            return Err(DateTimeError::UnknownAnyCalendarKind(tiny));
         })
     }
 
@@ -551,20 +555,34 @@ impl AnyCalendarKind {
         }
     }
 
-    pub fn from_locale(l: &Locale) -> Option<Self> {
+    pub fn from_locale(l: &Locale) -> Result<Self, DateTimeError> {
         l.extensions
             .unicode
             .keywords
             .get(&key!("ca"))
+            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
+                16,
+                "(unspecified)"
+            )))
             .and_then(Self::from_bcp47)
     }
 
-    pub fn from_data_locale(l: &DataLocale) -> Option<Self> {
+    pub fn from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
         l.get_unicode_ext(&key!("ca"))
+            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
+                16,
+                "(unspecified)"
+            )))
             .and_then(|v| Self::from_bcp47(&v))
     }
 }
 
+impl TryFrom<&'_ Locale> for AnyCalendarKind {
+    type Error = DateTimeError;
+    fn try_from(l: &'_ Locale) -> Result<Self, DateTimeError> {
+        Self::from_locale(l)
+    }
+}
 impl fmt::Display for AnyCalendarKind {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Debug::fmt(self, f)

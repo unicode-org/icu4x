@@ -191,7 +191,7 @@ impl DateFormatter {
         let mut locale = locale.clone();
 
         // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Some(kind) = AnyCalendarKind::from_data_locale(&locale) {
+        let kind = if let Ok(kind) = AnyCalendarKind::from_data_locale(&locale) {
             kind
         } else {
             locale.set_unicode_ext(key!("ca"), value!("gregory"));

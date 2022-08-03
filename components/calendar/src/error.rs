@@ -43,6 +43,8 @@ pub enum DateTimeError {
     UnknownMonthCode(TinyStr4, &'static str),
     #[displaydoc("No value for {0}")]
     MissingInput(&'static str),
+    #[displaydoc("AnyCalendar does not support calendar {0}")]
+    UnknownAnyCalendarKind(TinyStr16),
 }
 
 impl From<core::num::ParseIntError> for DateTimeError {
