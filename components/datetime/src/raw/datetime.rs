@@ -12,10 +12,10 @@ use crate::{
     options::{length, preferences, DateTimeFormatterOptions},
     pattern::runtime::PatternPlurals,
     provider,
-    provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{
-        patterns::GenericPatternV1Marker, DateLengthsV1Marker, DateSkeletonPatternsV1Marker,
-        DateSymbolsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker,
+        patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
+        DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker,
+        TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
     DateTimeFormatterError, FormattedDateTime,
@@ -168,7 +168,7 @@ pub(crate) struct DateFormatter {
     pub locale: DataLocale,
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+    pub symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
     pub week_data: Option<DataPayload<WeekDataV1Marker>>,
     pub ordinal_rules: Option<PluralRules>,
     pub fixed_decimal_format: FixedDecimalFormatter,
@@ -180,13 +180,13 @@ impl DateFormatter {
     #[inline(never)]
     pub fn try_new<D>(
         data_provider: &D,
+        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
-            + DataProvider<DecimalSymbolsV1Marker>
+        D: DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
@@ -194,11 +194,10 @@ impl DateFormatter {
         if locale.get_unicode_ext(&key!("ca")) == Some(value!("ethioaa")) {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
-        let patterns =
-            provider::date_time::pattern_for_date_length(data_provider, &locale, length)?;
+        let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
 
         let generic_pattern =
-            provider::date_time::generic_pattern_for_date_length(data_provider, &locale, length)?;
+            provider::date_time::generic_pattern_for_date_length(length, patterns_data);
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
@@ -221,7 +220,7 @@ impl DateFormatter {
         };
 
         let symbols_data = if required.date_symbols_data {
-            Some(data_provider.load(req)?.take_payload()?)
+            Some(symbols_data_fn()?)
         } else {
             None
         };
@@ -252,7 +251,7 @@ impl DateFormatter {
         locale: DataLocale,
         generic_pattern: DataPayload<GenericPatternV1Marker>,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-        symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+        symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,
         fixed_decimal_format: FixedDecimalFormatter,
@@ -326,7 +325,7 @@ impl DateFormatter {
 pub(crate) struct DateTimeFormatter {
     pub locale: DataLocale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+    pub date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
     pub time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
     pub week_data: Option<DataPayload<WeekDataV1Marker>>,
     pub ordinal_rules: Option<PluralRules>,
@@ -381,13 +380,13 @@ impl DateTimeFormatter {
     #[inline(never)]
     pub fn try_new<D>(
         data_provider: &D,
+        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
+        D: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
@@ -399,8 +398,12 @@ impl DateTimeFormatter {
         if cal == Some(value!("ethioaa")) {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
-        let patterns =
-            provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
+        let patterns = provider::date_time::PatternSelector::for_options(
+            data_provider,
+            patterns_data,
+            &locale,
+            options,
+        )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
@@ -423,7 +426,7 @@ impl DateTimeFormatter {
         };
 
         let date_symbols_data = if required.date_symbols_data {
-            Some(data_provider.load(req)?.take_payload()?)
+            Some(symbols_data_fn()?)
         } else {
             None
         };
@@ -459,7 +462,7 @@ impl DateTimeFormatter {
     pub fn new(
         locale: DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-        date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+        date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
         time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,

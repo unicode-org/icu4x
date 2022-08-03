@@ -16,10 +16,7 @@ use crate::{
     options::DateTimeFormatterOptions,
     provider::{
         self,
-        calendar::{
-            DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-            TimeLengthsV1Marker, TimeSymbolsV1Marker,
-        },
+        calendar::{DateSkeletonPatternsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker},
         week_data::WeekDataV1Marker,
     },
     raw,
@@ -107,9 +104,9 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        P: DataProvider<DateSymbolsV1Marker>
+        P: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -126,13 +123,15 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
-        let mut locale = locale.clone();
+        let mut locale_with_cal = locale.clone();
 
-        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
+        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
                 provider,
-                locale,
+                calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                locale_with_cal,
                 date_time_format_options,
                 time_zone_format_options,
             )?,
