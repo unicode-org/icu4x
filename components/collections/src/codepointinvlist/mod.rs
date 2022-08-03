@@ -19,7 +19,7 @@
 //! the [`CodePointInversionListBuilder`], or from the Properties API.
 //!
 //! ```
-//! use icu_collections::uniset::{CodePointInversionList, CodePointInversionListBuilder};
+//! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
 //! builder.add_range(&('A'..'Z'));
@@ -33,7 +33,7 @@
 //! Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 //!
 //! ```
-//! use icu_collections::uniset::{CodePointInversionList, CodePointInversionListBuilder};
+//! use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 //!
 //! let mut builder = CodePointInversionListBuilder::new();
 //! builder.add_range(&('A'..'Z'));
@@ -53,15 +53,15 @@ extern crate alloc;
 #[macro_use]
 mod builder;
 mod conversions;
-mod uniset;
+mod cpinvlist;
 mod utils;
 
 use alloc::vec::Vec;
 
 pub use builder::CodePointInversionListBuilder;
 pub use conversions::*;
+pub use cpinvlist::CodePointInversionList;
 use displaydoc::Display;
-pub use uniset::CodePointInversionList;
 pub use utils::*;
 
 /// Custom Errors for [`CodePointInversionList`].

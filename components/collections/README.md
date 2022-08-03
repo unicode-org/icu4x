@@ -5,9 +5,12 @@ Collections of API for use in ICU.
 This module is published as its own crate ([`icu_collections`](https://docs.rs/icu_collections/latest/icu_collections/))
 and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
-ICU4X [`CodePointTrie`](crate::codepointtrie::CodePointTrie) is designed to provide a read-only view of CodePointTrie data that is exported
+ICU4X [`CodePointTrie`](crate::codepointtrie::CodePointTrie) provides a read-only view of CodePointTrie data that is exported
 from ICU4C. Detailed information about the design of the data structure can be found in the documentation
 for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
+
+ICU4X [`CodePointInversionList`](`crate::codepointinvlist::CodePointInversionList`) provides necessary functionality for highly efficient querying of sets of Unicode characters.
+It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
 
 ## More Information

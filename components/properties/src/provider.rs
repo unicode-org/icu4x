@@ -11,8 +11,8 @@
 
 use crate::script::ScriptWithExtensions;
 use core::ops::RangeInclusive;
+use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
-use icu_collections::uniset::CodePointInversionList;
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
 

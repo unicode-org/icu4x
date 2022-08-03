@@ -5,7 +5,7 @@
 use crate::codepointtrie::error::Error;
 use crate::codepointtrie::impl_const::*;
 
-use crate::uniset::CodePointInversionList;
+use crate::codepointinvlist::CodePointInversionList;
 use core::convert::TryFrom;
 use core::fmt::Display;
 use core::iter::FromIterator;

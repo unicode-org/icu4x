@@ -19,7 +19,7 @@ use crate::provider::*;
 use crate::*;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
-use icu_collections::uniset::CodePointInversionList;
+use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_provider::prelude::*;
 
 /// A wrapper around code point set data. It is returned by APIs that return Unicode
@@ -1749,7 +1749,7 @@ mod tests {
     fn test_gc_groupings() {
         use icu::properties::{maps, sets};
         use icu::properties::{GeneralCategory, GeneralCategoryGroup};
-        use icu_collections::uniset::CodePointInversionListBuilder;
+        use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 
         let provider = icu_testdata::get_provider();
 

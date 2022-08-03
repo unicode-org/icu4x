@@ -4,10 +4,10 @@
 
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 #[cfg(feature = "datagen")]
 use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
-use icu_collections::uniset::CodePointInversionListBuilder;
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
 #[cfg(feature = "datagen")]

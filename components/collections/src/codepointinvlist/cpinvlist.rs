@@ -11,7 +11,7 @@ use zerofrom::ZeroFrom;
 use zerovec::{ule::AsULE, ZeroSlice, ZeroVec};
 
 use super::CodePointSetError;
-use crate::uniset::utils::{deconstruct_range, is_valid_zv};
+use crate::codepointinvlist::utils::{deconstruct_range, is_valid_zv};
 
 /// Represents the end code point of the Basic Multilingual Plane range, starting from code point 0, inclusive
 const BMP_MAX: u32 = 0xFFFF;
@@ -69,7 +69,7 @@ impl databake::Bake for CodePointInversionList<'_> {
         // Safe because our parts are safe.
         databake::quote! { unsafe {
             #[allow(unused_unsafe)]
-            ::icu_collections::uniset::CodePointInversionList::from_parts_unchecked(#inv_list, #size)
+            ::icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(#inv_list, #size)
         }}
     }
 }
@@ -98,8 +98,8 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
-    /// use icu_collections::uniset::CodePointSetError;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointSetError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
     /// let inv_list: ZeroVec<u32> = ZeroVec::from_slice_or_alloc(&valid);
@@ -147,8 +147,8 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
-    /// use icu_collections::uniset::CodePointSetError;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointSetError;
     /// use zerovec::ZeroVec;
     /// let valid = [0x0, 0x10000];
     /// let result = CodePointInversionList::from_inversion_list_slice(&valid);
@@ -175,8 +175,8 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
-    /// use icu_collections::uniset::CodePointSetError;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointSetError;
     /// use zerovec::ZeroVec;
     ///
     /// use std::vec::Vec;
@@ -219,7 +219,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use zerovec::ZeroVec;
     ///
     /// let expected = vec![0x0, (char::MAX as u32) + 1];
@@ -243,7 +243,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use zerovec::ZeroVec;
     ///
     /// const BMP_MAX: u32 = 0xFFFF;
@@ -274,7 +274,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x44, 0x45, 0x46];
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// let mut ex_iter_chars = example.iter_chars();
@@ -303,7 +303,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Example
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x44, 0x45, 0x46];
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// let mut example_iter_ranges = example.iter_ranges();
@@ -379,7 +379,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains('A'));
@@ -402,7 +402,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains_u32(0x41));
@@ -421,7 +421,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert!(example.contains_range(&('A'..'C')));
@@ -440,7 +440,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// use std::char;
     /// let check = char::from_u32(0xD7FE).unwrap()..char::from_u32(0xE001).unwrap();
     /// let example_list = [0xD7FE, 0xD7FF, 0xE000, 0xE001];
@@ -473,7 +473,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x46, 0x55, 0x5B]; // A - E, U - Z
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// let a_to_d = CodePointInversionList::from_inversion_list_slice(&[0x41, 0x45]).unwrap();
@@ -513,7 +513,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x44]; // {A, B, C}
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert_eq!(example.span("CABXYZ", true), 3);
@@ -534,7 +534,7 @@ impl<'data> CodePointInversionList<'data> {
     /// # Examples
     ///
     /// ```
-    /// use icu_collections::uniset::CodePointInversionList;
+    /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x44]; // {A, B, C}
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
     /// assert_eq!(example.span_back("XYZCAB", true), 3);
@@ -834,7 +834,7 @@ mod tests {
             CodePointInversionList<'static>,
             const: unsafe {
                 #[allow(unused_unsafe)]
-                crate::uniset::CodePointInversionList::from_parts_unchecked(
+                crate::codepointinvlist::CodePointInversionList::from_parts_unchecked(
                     unsafe {
                         ::zerovec::ZeroVec::from_bytes_unchecked(&[
                             48u8, 0u8, 0u8, 0u8, 58u8, 0u8, 0u8, 0u8, 65u8, 0u8, 0u8, 0u8, 71u8,

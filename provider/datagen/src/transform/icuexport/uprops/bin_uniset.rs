@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceData;
-use icu_collections::uniset::CodePointInversionListBuilder;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -132,7 +132,7 @@ expand!(
 
 #[test]
 fn test_basic() {
-    use icu_collections::uniset::CodePointInversionList;
+    use icu_collections::codepointinvlist::CodePointInversionList;
     use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
 

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use criterion::{criterion_group, criterion_main, Criterion};
-use icu_collections::uniset::CodePointInversionList;
+use icu_collections::codepointinvlist::CodePointInversionList;
 use std::char;
 
 fn uniset_bench(c: &mut Criterion) {

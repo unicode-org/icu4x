@@ -19,7 +19,7 @@ represented by [inversion lists](http://userguide.icu-project.org/strings/proper
 the [`CodePointInversionListBuilder`], or from the Properties API.
 
 ```rust
-use icu_collections::uniset::{CodePointInversionList, CodePointInversionListBuilder};
+use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 
 let mut builder = CodePointInversionListBuilder::new();
 builder.add_range(&('A'..'Z'));
@@ -33,7 +33,7 @@ assert!(set.contains('A'));
 Currently, you can check if a character/range of characters exists in the [`CodePointInversionList`], or iterate through the characters.
 
 ```rust
-use icu_collections::uniset::{CodePointInversionList, CodePointInversionListBuilder};
+use icu_collections::codepointinvlist::{CodePointInversionList, CodePointInversionListBuilder};
 
 let mut builder = CodePointInversionListBuilder::new();
 builder.add_range(&('A'..'Z'));
