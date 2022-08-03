@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659561369041,
+  "lastUpdate": 1659565573610,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41903,6 +41903,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44242165,
             "range": "± 66144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2f4d6629438fb40de1147d3df05dc8856e7da3e",
+          "message": "Some more examples for AnyCalendar / formatting stuff (#2322)\n\n* Improve AnyCalendar APIs\r\n\r\n* Add DTF example\r\n\r\n* add anycalendar example\r\n\r\n* fix test\r\n\r\n* fix\r\n\r\n* fix after ctor changes\r\n\r\n* Update components/calendar/src/types.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update components/calendar/src/types.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* comment\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-08-03T22:16:57Z",
+          "tree_id": "7bbaf6c4e8c1294300c334a6a3ae46ecc5af9e0e",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2f4d6629438fb40de1147d3df05dc8856e7da3e"
+        },
+        "date": 1659565531623,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 58199224,
+            "range": "± 969842",
             "unit": "ns/iter"
           },
           {
