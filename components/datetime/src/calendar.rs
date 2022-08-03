@@ -118,7 +118,7 @@ where
 {
     let payload = provider
         .load(DataRequest {
-            locale: locale,
+            locale,
             metadata: Default::default(),
         })?
         .take_payload()?;
@@ -135,7 +135,7 @@ where
 {
     let payload = provider
         .load(DataRequest {
-            locale: locale,
+            locale,
             metadata: Default::default(),
         })?
         .take_payload()?;
