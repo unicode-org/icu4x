@@ -35,7 +35,7 @@ class ICU4XCodePointMapData16 {
   /**
    * Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.load_script.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData16, ICU4XError> try_get_script(const ICU4XDataProvider& provider);
 
