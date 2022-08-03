@@ -62,14 +62,14 @@
 
         FFI version of ``PluralRules::try_new_cardinal()``.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new_unstable>`__ for more information.
 
 
     .. js:staticfunction:: try_new_ordinal(provider, locale)
 
         FFI version of ``PluralRules::try_new_ordinal()``.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new_unstable>`__ for more information.
 
 
     .. js:function:: select(op)
