@@ -67,3 +67,8 @@ databake = ["dep:databake", "zerovec/databake"]
 # name = "iai_cpt"
 # harness = false
 # required-features = ["bench"]
+#
+# [[bench]]
+# name = "inv_list"
+# harness = false
+
