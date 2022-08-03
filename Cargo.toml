@@ -8,7 +8,7 @@ members = [
     "components/calendar",
     "components/collator",
     "components/collections",
-    "components/collections/src/codepointtrie/builder",
+    "components/collections/codepointtrie_builder",
     "components/datetime",
     "components/decimal",
     "components/icu",
