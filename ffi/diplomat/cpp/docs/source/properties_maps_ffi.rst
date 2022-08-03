@@ -12,7 +12,7 @@
 
         Gets a map for Unicode property Script from a :cpp:class:`ICU4XDataProvider`.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.load_script.html>`__ for more information.
 
 
     .. cpp:function:: uint16_t get(char32_t cp) const

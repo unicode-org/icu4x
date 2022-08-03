@@ -52,6 +52,6 @@ path = "src/lib.rs"
 [features]
 std = ["icu_provider/std"]
 default = []
-serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde", "icu_collections/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "databake", "zerovec/databake", "icu_uniset/databake", "icu_collections/databake"]
 bidi = [ "dep:unicode-bidi" ]

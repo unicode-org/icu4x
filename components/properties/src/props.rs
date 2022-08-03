@@ -331,7 +331,7 @@ impl GeneralCategoryGroup {
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_general_category(&provider).expect("The data should be valid");
+    /// let data = maps::load_general_category(&provider).expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
     /// assert_eq!(gc.get('A'), GeneralCategory::UppercaseLetter);

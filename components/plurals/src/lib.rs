@@ -366,7 +366,7 @@ impl PluralRules {
         options: skip,
         error: PluralRulesError,
         functions: [
-            try_new_cardinal_unstable,
+            Self::try_new_cardinal_unstable,
             try_new_cardinal_with_any_provider,
             try_new_cardinal_with_buffer_provider
         ]
@@ -423,7 +423,7 @@ impl PluralRules {
         options: skip,
         error: PluralRulesError,
         functions: [
-            try_new_ordinal_unstable,
+            Self::try_new_ordinal_unstable,
             try_new_ordinal_with_any_provider,
             try_new_ordinal_with_buffer_provider
         ]
