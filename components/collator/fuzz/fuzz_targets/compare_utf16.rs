@@ -45,7 +45,7 @@ fn compare_icu4x(
     let locale: Locale = locale_str.parse().unwrap();
     let data_provider = icu_testdata::get_provider();
 
-    let collator: Collator = Collator::try_new(locale, &data_provider, options).unwrap();
+    let collator: Collator = Collator::try_new_unstable(locale, &data_provider, options).unwrap();
     collator.compare_utf16(left, right)
 }
 
