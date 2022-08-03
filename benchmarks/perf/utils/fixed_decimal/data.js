@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659566334376,
+  "lastUpdate": 1659570152851,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42989,6 +42989,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 88,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "77e5f339eeb9988971a92eb55786e621d7eeef0f",
+          "message": "Fix up blob provider constructors (WIP) (#2330)\n\n* Fix up blob provider constructors (WIP)\r\n\r\n* Update new_from_... to try_new_from... in provider\r\n\r\nCo-authored-by: Craig Cornelius <ccornelius@google.com>",
+          "timestamp": "2022-08-03T23:30:13Z",
+          "tree_id": "a951ec443d5f9d7be558b8fda3af8640553f74e1",
+          "url": "https://github.com/unicode-org/icu4x/commit/77e5f339eeb9988971a92eb55786e621d7eeef0f"
+        },
+        "date": 1659570104026,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 120296,
+            "range": "± 4140",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25245,
+            "range": "± 754",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68863,
+            "range": "± 3459",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 204,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 79,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 88,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
