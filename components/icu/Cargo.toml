@@ -44,7 +44,6 @@ icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", defaul
 
 [dev-dependencies]
 icu_testdata = { version = "0.6", path = "../../provider/testdata" }
-icu_uniset = { version = "0.5", path = "../../utils/uniset" }
 
 [features]
 default = []

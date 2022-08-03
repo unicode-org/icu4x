@@ -316,7 +316,6 @@ icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", option
 icu_timezone = { version = "0.6", path = "../../components/timezone", optional = true }
 icu_char16trie = { version = "0.1", path = "../../experimental/char16trie", optional = true }
 icu_collections = { version = "0.6", path = "../../components/collections", optional = true }
-icu_uniset = { version = "0.5", path = "../../utils/uniset", optional = true }
 litemap = { version = "0.4", path = "../../utils/litemap", optional = true, default-features = false }
 tinystr = { version = "0.6", path = "../../utils/tinystr", optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", optional = true }
@@ -360,7 +359,6 @@ baked = [
     "icu_timezone",
     "icu_char16trie",
     "icu_collections",
-    "icu_uniset",
     "litemap",
     "tinystr",
     "zerovec",

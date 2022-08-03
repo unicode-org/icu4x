@@ -33,7 +33,6 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_uniset = { version = "0.5.0", path = "../../utils/uniset" }
 yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"] }
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["yoke"] }
@@ -55,7 +54,7 @@ path = "src/lib.rs"
 
 [features]
 default = []
-serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde"]
+serde = ["dep:serde", "zerovec/serde"]
 bench = []
 databake = ["dep:databake", "zerovec/databake"]
 

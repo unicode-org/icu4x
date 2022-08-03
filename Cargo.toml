@@ -46,7 +46,6 @@ members = [
     "utils/pattern",
     "utils/tinystr",
     "utils/tzif",
-    "utils/uniset",
     "utils/writeable",
     "utils/yoke",
     "utils/yoke/derive",

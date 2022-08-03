@@ -35,7 +35,6 @@ all-features = true
 displaydoc = { version = "0.2.3", default-features = false }
 icu_collections = { version = "0.6", path = "../../components/collections"}
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
-icu_uniset = { version = "0.5", path = "../../utils/uniset"}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["derive"] }
 unicode-bidi = { version = "0.3.8", optional = true, default-features = false }
@@ -52,6 +51,6 @@ path = "src/lib.rs"
 [features]
 std = ["icu_provider/std"]
 default = []
-serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde", "icu_collections/serde"]
-datagen = ["serde", "databake", "zerovec/databake", "icu_uniset/databake", "icu_collections/databake"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde"]
+datagen = ["serde", "databake", "zerovec/databake", "icu_collections/databake"]
 bidi = [ "dep:unicode-bidi" ]
