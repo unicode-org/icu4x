@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659499392008,
+  "lastUpdate": 1659509968989,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -22973,6 +22973,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c59b29a135ba097586a549ed98061257bd573380"
         },
         "date": 1659499344548,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3950050,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "005bbd8b9ebc5d05bf1af3dff5001e1499c64371",
+          "message": "Move codepointtrie_builder to be a subdir of components/collections (#2323)",
+          "timestamp": "2022-08-02T23:57:39-07:00",
+          "tree_id": "c6861aedd579ddc5e5bb147a8a1f156e06272645",
+          "url": "https://github.com/unicode-org/icu4x/commit/005bbd8b9ebc5d05bf1af3dff5001e1499c64371"
+        },
+        "date": 1659509930858,
         "tool": "ndjson",
         "benches": [
           {
