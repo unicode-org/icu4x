@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659499054799,
+  "lastUpdate": 1659499123758,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -56999,6 +56999,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5420,
             "range": "± 310",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cwcornelius@gmail.com",
+            "name": "Craig Cornelius",
+            "username": "sven-oly"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "87e6bb771d3ebd32f93f4dd70767c99ee8e58312",
+          "message": "Rename icu_locale_canonicalizer to icu_locid_transform (#2320)\n\nCo-authored-by: Craig Cornelius <ccornelius@google.com>\r\nCo-authored-by: Elango Cheran <elango@unicode.org>",
+          "timestamp": "2022-08-02T20:45:39-07:00",
+          "tree_id": "9d550b31d913196f96e005008cbd8f10da1bdfc1",
+          "url": "https://github.com/unicode-org/icu4x/commit/87e6bb771d3ebd32f93f4dd70767c99ee8e58312"
+        },
+        "date": 1659499085539,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 96646,
+            "range": "± 228",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 922971,
+            "range": "± 1059",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 193185,
+            "range": "± 447",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 88298,
+            "range": "± 314",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 95841,
+            "range": "± 365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 97391,
+            "range": "± 382",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 103840,
+            "range": "± 144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 183803,
+            "range": "± 703",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 197117,
+            "range": "± 218",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 193267,
+            "range": "± 494",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 206272,
+            "range": "± 559",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5075,
+            "range": "± 50",
             "unit": "ns/iter"
           }
         ]
