@@ -519,7 +519,8 @@ mod tests {
         let dtf = DateFormatter::try_new_unstable(&provider, &locale.into(), length::Date::Medium)
             .expect("DateTimeFormat construction succeeds");
 
-        let japanext = JapaneseExtended::try_new(&provider).expect("Cannot load japanext data");
+        let japanext =
+            JapaneseExtended::try_new_unstable(&provider).expect("Cannot load japanext data");
         let date = Date::new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
         let date = date.to_calendar(japanext).into_japanese_date().to_any();
 
