@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659550229379,
+  "lastUpdate": 1659552036940,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41795,6 +41795,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 59016274,
             "range": "± 3280633",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "415beb501f6eeeaedc90ea620905256a5a876413",
+          "message": "Fix up icu_collator constructors (#2327)",
+          "timestamp": "2022-08-03T11:28:59-07:00",
+          "tree_id": "fc3a62fc40b13b9e2bbe9bf21aa3eaa6573977de",
+          "url": "https://github.com/unicode-org/icu4x/commit/415beb501f6eeeaedc90ea620905256a5a876413"
+        },
+        "date": 1659551998685,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 44598060,
+            "range": "± 84134",
             "unit": "ns/iter"
           },
           {
