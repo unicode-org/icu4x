@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659498948959,
+  "lastUpdate": 1659499813675,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -41579,6 +41579,60 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 44451612,
             "range": "± 251277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c59b29a135ba097586a549ed98061257bd573380",
+          "message": "Fix fallback in FFI (#2321)\n\n* Fixup as_ref\r\n\r\n* update test\r\n\r\n* fmt",
+          "timestamp": "2022-08-03T04:00:48Z",
+          "tree_id": "4d5807e872a1608a03f92e46c951728a8d2565e6",
+          "url": "https://github.com/unicode-org/icu4x/commit/c59b29a135ba097586a549ed98061257bd573380"
+        },
+        "date": 1659499773942,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "uniset/overview",
+            "value": 58138522,
+            "range": "± 861116",
             "unit": "ns/iter"
           },
           {
