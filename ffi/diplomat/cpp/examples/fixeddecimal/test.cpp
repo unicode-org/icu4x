@@ -109,5 +109,17 @@ int main() {
         return 1;
     }
 
+    locale = ICU4XLocale::create("th-u-nu-thai").value();
+    std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
+    fdf = ICU4XFixedDecimalFormatter::try_new(
+        dp, locale, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
+
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).ok().value();
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted value is " << out << std::endl;
+    if (out != "๑๒๓,๔๕๖.๘๙๐๑") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
     return 0;
 }
