@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659499063735,
+  "lastUpdate": 1659499956220,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -42508,6 +42508,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c59b29a135ba097586a549ed98061257bd573380",
+          "message": "Fix fallback in FFI (#2321)\n\n* Fixup as_ref\r\n\r\n* update test\r\n\r\n* fmt",
+          "timestamp": "2022-08-03T04:00:48Z",
+          "tree_id": "4d5807e872a1608a03f92e46c951728a8d2565e6",
+          "url": "https://github.com/unicode-org/icu4x/commit/c59b29a135ba097586a549ed98061257bd573380"
+        },
+        "date": 1659499917772,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115429,
+            "range": "± 477",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24084,
+            "range": "± 187",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62441,
+            "range": "± 596",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
             "range": "± 0",
             "unit": "ns/iter"
           }
