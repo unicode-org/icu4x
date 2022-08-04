@@ -16,9 +16,9 @@
 //! # use icu_locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_and(
-//!     &locale!("es").into(),
+//! let list_formatter = ListFormatter::try_new_and_with_buffer_provider(
 //!     &icu_testdata::get_provider(),
+//!     &locale!("es").into(),
 //!     ListStyle::Wide,
 //! )
 //! .expect("Data should load successfully");
@@ -42,9 +42,9 @@
 //! # use icu_locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_or(
-//!     &locale!("th").into(),
+//! let list_formatter = ListFormatter::try_new_or_with_buffer_provider(
 //!     &icu_testdata::get_provider(),
+//!     &locale!("th").into(),
 //!     ListStyle::Short,
 //! )
 //! .expect("Data should load successfully");
@@ -63,9 +63,9 @@
 //! # use icu_locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_unit(
-//!     &locale!("en").into(),
+//! let list_formatter = ListFormatter::try_new_unit_with_buffer_provider(
 //!     &icu_testdata::get_provider(),
+//!     &locale!("en").into(),
 //!     ListStyle::Wide,
 //! )
 //! .expect("Data should load successfully");

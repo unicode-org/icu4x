@@ -16,12 +16,12 @@ pub struct ListFormatter {
 }
 
 macro_rules! constructor {
-    ($name: ident, $marker: ty, $doc: literal) => {
+    ($name: ident, $name_any: ident, $name_buffer: ident, $marker: ty, $doc: literal) => {
         #[doc = concat!("Creates a new [`ListFormatter`] that produces a ", $doc, "-type list.\n\nSee the [CLDR spec]",
             "(https://unicode.org/reports/tr35/tr35-general.html#ListPatterns) for an explanation of the different types.")]
         pub fn $name<D: DataProvider<$marker> + ?Sized>(
-            locale: &DataLocale,
             data_provider: &D,
+            locale: &DataLocale,
             style: ListStyle,
         ) -> Result<Self, DataError> {
             let data = data_provider
@@ -32,13 +32,41 @@ macro_rules! constructor {
                 .take_payload()?.cast();
             Ok(Self { data, style })
         }
+        icu_provider::gen_any_buffer_constructors!(
+            locale: include,
+            style: ListStyle,
+            error: DataError,
+            functions: [
+                Self::$name,
+                $name_any,
+                $name_buffer
+            ]
+        );
     };
 }
 
 impl ListFormatter {
-    constructor!(try_new_and, AndListV1Marker, "and");
-    constructor!(try_new_or, OrListV1Marker, "or");
-    constructor!(try_new_unit, UnitListV1Marker, "unit");
+    constructor!(
+        try_new_and_unstable,
+        try_new_and_with_any_provider,
+        try_new_and_with_buffer_provider,
+        AndListV1Marker,
+        "and"
+    );
+    constructor!(
+        try_new_or_unstable,
+        try_new_or_with_any_provider,
+        try_new_or_with_buffer_provider,
+        OrListV1Marker,
+        "or"
+    );
+    constructor!(
+        try_new_unit_unstable,
+        try_new_unit_with_any_provider,
+        try_new_unit_with_buffer_provider,
+        UnitListV1Marker,
+        "unit"
+    );
 
     /// Returns a [`Writeable`] composed of the input [`Writeable`]s and the language-dependent
     /// formatting. The first layer of parts contains [`parts::ELEMENT`] for input
@@ -46,8 +74,8 @@ impl ListFormatter {
     pub fn format<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a>(
         &'a self,
         values: I,
-    ) -> List<'a, W, I> {
-        List {
+    ) -> FormattedList<'a, W, I> {
+        FormattedList {
             formatter: self,
             values,
         }
@@ -58,13 +86,13 @@ impl ListFormatter {
 pub mod parts {
     use writeable::Part;
 
-    /// The [`Part`] used by [`List`](super::List) to mark the part of the string that is an element.
+    /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is an element.
     pub const ELEMENT: Part = Part {
         category: "list",
         value: "element",
     };
 
-    /// The [`Part`] used by [`List`](super::List) to mark the part of the string that is a list literal,
+    /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is a list literal,
     /// such as ", " or " and ".
     pub const LITERAL: Part = Part {
         category: "list",
@@ -74,12 +102,14 @@ pub mod parts {
 
 /// The [`Writeable`] implementation that is returned by [`ListFormatter::format`]. See
 /// the [`writeable`] crate for how to consume this.
-pub struct List<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
+pub struct FormattedList<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> {
     formatter: &'a ListFormatter,
     values: I,
 }
 
-impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable for List<'a, W, I> {
+impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
+    for FormattedList<'a, W, I>
+{
     fn write_to_parts<V: PartsWrite + ?Sized>(&self, sink: &mut V) -> fmt::Result {
         macro_rules! literal {
             ($lit:ident) => {
