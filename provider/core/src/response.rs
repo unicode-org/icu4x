@@ -133,8 +133,8 @@ pub struct RcWrap<T: ?Sized>(
     #[cfg(feature = "sync")] alloc::sync::Arc<T>,
 );
 
-impl core::ops::Deref for RcWrap<[u8]> {
-    type Target = [u8];
+impl<T: ?Sized> core::ops::Deref for RcWrap<T> {
+    type Target = T;
     fn deref(&self) -> &Self::Target {
         self.0.deref()
     }
@@ -150,7 +150,7 @@ impl<T: ?Sized> Clone for RcWrap<T> {
 unsafe impl<T: ?Sized> CloneableCart for RcWrap<T> {}
 
 // Safe because both Rc and Arc are StableDeref
-unsafe impl stable_deref_trait::StableDeref for RcWrap<[u8]> {}
+unsafe impl<T: ?Sized> stable_deref_trait::StableDeref for RcWrap<T> {}
 
 impl From<alloc::vec::Vec<u8>> for RcWrap<[u8]> {
     fn from(other: alloc::vec::Vec<u8>) -> Self {
