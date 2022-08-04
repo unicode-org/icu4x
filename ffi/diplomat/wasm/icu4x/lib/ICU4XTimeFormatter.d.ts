@@ -2,7 +2,6 @@ import { FFIError } from "./diplomat-runtime"
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XGregorianDateTime } from "./ICU4XGregorianDateTime";
-import { ICU4XHourCyclePreference } from "./ICU4XHourCyclePreference";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XTimeLength } from "./ICU4XTimeLength";
 
@@ -21,7 +20,7 @@ export class ICU4XTimeFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XTimeLength, preferences: ICU4XHourCyclePreference): ICU4XTimeFormatter | never;
+  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XTimeLength): ICU4XTimeFormatter | never;
 
   /**
 
