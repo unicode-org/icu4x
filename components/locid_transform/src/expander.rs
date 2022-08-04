@@ -4,13 +4,9 @@
 
 use crate::provider::*;
 
-
-
 use core::mem;
 use icu_locid::subtags::{Language, Region, Script};
-use icu_locid::{
-    LanguageIdentifier,
-};
+use icu_locid::LanguageIdentifier;
 use icu_provider::prelude::*;
 
 use crate::TransformResult;
@@ -102,16 +98,10 @@ impl LocaleExpander {
         let likely_subtags: DataPayload<LikelySubtagsV1Marker> =
             provider.load(Default::default())?.take_payload()?;
 
-        Ok(LocaleExpander {
-            likely_subtags,
-        })
+        Ok(LocaleExpander { likely_subtags })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError
-    );
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     /// The maximize method potentially updates a passed in locale in place
     /// depending up the results of running the 'Add Likely Subtags' algorithm

@@ -15,7 +15,7 @@ class ICU4XDataProvider;
 class ICU4XLocaleCanonicalizer;
 #include "ICU4XError.hpp"
 class ICU4XLocale;
-#include "ICU4XCanonicalizationResult.hpp"
+#include "ICU4XTransformResult.hpp"
 
 /**
  * A destruction policy for using ICU4XLocaleCanonicalizer with std::unique_ptr.
@@ -46,21 +46,7 @@ class ICU4XLocaleCanonicalizer {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
    */
-  ICU4XCanonicalizationResult canonicalize(ICU4XLocale& locale) const;
-
-  /**
-   * FFI version of `LocaleCanonicalizer::maximize()`.
-   * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.maximize) for more information.
-   */
-  ICU4XCanonicalizationResult maximize(ICU4XLocale& locale) const;
-
-  /**
-   * FFI version of `LocaleCanonicalizer::minimize()`.
-   * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.minimize) for more information.
-   */
-  ICU4XCanonicalizationResult minimize(ICU4XLocale& locale) const;
+  ICU4XTransformResult canonicalize(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleCanonicalizer* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocaleCanonicalizer* AsFFIMut() { return this->inner.get(); }
   inline ICU4XLocaleCanonicalizer(capi::ICU4XLocaleCanonicalizer* i) : inner(i) {}
@@ -84,13 +70,7 @@ inline diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> ICU4XLocaleCanonic
   }
   return diplomat_result_out_value;
 }
-inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::canonicalize(ICU4XLocale& locale) const {
-  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_canonicalize(this->inner.get(), locale.AsFFIMut()));
-}
-inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::maximize(ICU4XLocale& locale) const {
-  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_maximize(this->inner.get(), locale.AsFFIMut()));
-}
-inline ICU4XCanonicalizationResult ICU4XLocaleCanonicalizer::minimize(ICU4XLocale& locale) const {
-  return static_cast<ICU4XCanonicalizationResult>(capi::ICU4XLocaleCanonicalizer_minimize(this->inner.get(), locale.AsFFIMut()));
+inline ICU4XTransformResult ICU4XLocaleCanonicalizer::canonicalize(ICU4XLocale& locale) const {
+  return static_cast<ICU4XTransformResult>(capi::ICU4XLocaleCanonicalizer_canonicalize(this->inner.get(), locale.AsFFIMut()));
 }
 #endif

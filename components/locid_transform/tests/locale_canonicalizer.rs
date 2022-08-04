@@ -6,7 +6,7 @@ mod fixtures;
 mod helpers;
 
 use icu_locid::Locale;
-use icu_locid_transform::{TransformResult, LocaleCanonicalizer, LocaleExpander};
+use icu_locid_transform::{LocaleCanonicalizer, LocaleExpander, TransformResult};
 
 #[test]
 fn test_maximize() {

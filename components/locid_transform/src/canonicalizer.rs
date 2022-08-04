@@ -9,6 +9,8 @@ use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
 
+use crate::LocaleExpander;
+use crate::TransformResult;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
     extensions::unicode::Key,
@@ -17,8 +19,6 @@ use icu_locid::{
 };
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyAsciiStr};
-use crate::LocaleExpander;
-use crate::TransformResult;
 
 /// The LocaleCanonicalizer provides methods to canonicalize Locales and
 /// LanguageIdentifiers based upon [`CLDR`] data.
@@ -237,11 +237,7 @@ impl LocaleCanonicalizer {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: DataError
-    );
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
@@ -370,9 +366,7 @@ impl LocaleCanonicalizer {
                     }
                 }
 
-                if uts35_check_language_rules(locale, &self.aliases)
-                    == TransformResult::Modified
-                {
+                if uts35_check_language_rules(locale, &self.aliases) == TransformResult::Modified {
                     result = TransformResult::Modified;
                     continue;
                 }
@@ -409,15 +403,16 @@ impl LocaleCanonicalizer {
                             variants: Variants::default(),
                         };
 
-                        locale.id.region =
-                            Some(match (self.expander.maximize(&mut maximized), maximized.region) {
+                        locale.id.region = Some(
+                            match (self.expander.maximize(&mut maximized), maximized.region) {
                                 (TransformResult::Modified, Some(candidate))
                                     if regions.iter().any(|x| x == candidate) =>
                                 {
                                     candidate
                                 }
                                 _ => default_region,
-                            });
+                            },
+                        );
                         result = TransformResult::Modified;
                         continue;
                     }
