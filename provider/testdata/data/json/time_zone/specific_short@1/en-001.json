@@ -1,12 +1,12 @@
 {
   "defaults": {
     "mgmt": {
-      "standard": "GMT"
+      "st": "GMT"
     }
   },
   "overrides": {
     "utc": {
-      "standard": "UTC"
+      "st": "UTC"
     }
   }
 }

@@ -1,579 +1,579 @@
 {
   "defaults": {
     "acre": {
-      "daylight": "Acre Summer Time",
-      "standard": "Acre Standard Time"
+      "dt": "Acre Summer Time",
+      "st": "Acre Standard Time"
     },
     "afce": {
-      "standard": "Central Africa Time"
+      "st": "Central Africa Time"
     },
     "afea": {
-      "standard": "East Africa Time"
+      "st": "East Africa Time"
     },
     "afgh": {
-      "standard": "Afghanistan Time"
+      "st": "Afghanistan Time"
     },
     "afso": {
-      "standard": "South Africa Standard Time"
+      "st": "South Africa Standard Time"
     },
     "afwe": {
-      "daylight": "West Africa Summer Time",
-      "standard": "West Africa Standard Time"
+      "dt": "West Africa Summer Time",
+      "st": "West Africa Standard Time"
     },
     "alam": {
-      "daylight": "Almaty Summer Time",
-      "standard": "Almaty Standard Time"
+      "dt": "Almaty Summer Time",
+      "st": "Almaty Standard Time"
     },
     "alas": {
-      "daylight": "Alaska Daylight Time",
-      "standard": "Alaska Standard Time"
+      "dt": "Alaska Daylight Time",
+      "st": "Alaska Standard Time"
     },
     "amaz": {
-      "daylight": "Amazon Summer Time",
-      "standard": "Amazon Standard Time"
+      "dt": "Amazon Summer Time",
+      "st": "Amazon Standard Time"
     },
     "amce": {
-      "daylight": "Central Daylight Time",
-      "standard": "Central Standard Time"
+      "dt": "Central Daylight Time",
+      "st": "Central Standard Time"
     },
     "amea": {
-      "daylight": "Eastern Daylight Time",
-      "standard": "Eastern Standard Time"
+      "dt": "Eastern Daylight Time",
+      "st": "Eastern Standard Time"
     },
     "ammo": {
-      "daylight": "Mountain Daylight Time",
-      "standard": "Mountain Standard Time"
+      "dt": "Mountain Daylight Time",
+      "st": "Mountain Standard Time"
     },
     "ampa": {
-      "daylight": "Pacific Daylight Time",
-      "standard": "Pacific Standard Time"
+      "dt": "Pacific Daylight Time",
+      "st": "Pacific Standard Time"
     },
     "anad": {
-      "daylight": "Anadyr Summer Time",
-      "standard": "Anadyr Standard Time"
+      "dt": "Anadyr Summer Time",
+      "st": "Anadyr Standard Time"
     },
     "apia": {
-      "daylight": "Apia Daylight Time",
-      "standard": "Apia Standard Time"
+      "dt": "Apia Daylight Time",
+      "st": "Apia Standard Time"
     },
     "aqta": {
-      "daylight": "Aqtau Summer Time",
-      "standard": "Aqtau Standard Time"
+      "dt": "Aqtau Summer Time",
+      "st": "Aqtau Standard Time"
     },
     "aqto": {
-      "daylight": "Aqtobe Summer Time",
-      "standard": "Aqtobe Standard Time"
+      "dt": "Aqtobe Summer Time",
+      "st": "Aqtobe Standard Time"
     },
     "arab": {
-      "daylight": "Arabian Daylight Time",
-      "standard": "Arabian Standard Time"
+      "dt": "Arabian Daylight Time",
+      "st": "Arabian Standard Time"
     },
     "arge": {
-      "daylight": "Argentina Summer Time",
-      "standard": "Argentina Standard Time"
+      "dt": "Argentina Summer Time",
+      "st": "Argentina Standard Time"
     },
     "arme": {
-      "daylight": "Armenia Summer Time",
-      "standard": "Armenia Standard Time"
+      "dt": "Armenia Summer Time",
+      "st": "Armenia Standard Time"
     },
     "arwe": {
-      "daylight": "Western Argentina Summer Time",
-      "standard": "Western Argentina Standard Time"
+      "dt": "Western Argentina Summer Time",
+      "st": "Western Argentina Standard Time"
     },
     "atla": {
-      "daylight": "Atlantic Daylight Time",
-      "standard": "Atlantic Standard Time"
+      "dt": "Atlantic Daylight Time",
+      "st": "Atlantic Standard Time"
     },
     "auce": {
-      "daylight": "Australian Central Daylight Time",
-      "standard": "Australian Central Standard Time"
+      "dt": "Australian Central Daylight Time",
+      "st": "Australian Central Standard Time"
     },
     "aucw": {
-      "daylight": "Australian Central Western Daylight Time",
-      "standard": "Australian Central Western Standard Time"
+      "dt": "Australian Central Western Daylight Time",
+      "st": "Australian Central Western Standard Time"
     },
     "auea": {
-      "daylight": "Australian Eastern Daylight Time",
-      "standard": "Australian Eastern Standard Time"
+      "dt": "Australian Eastern Daylight Time",
+      "st": "Australian Eastern Standard Time"
     },
     "auwe": {
-      "daylight": "Australian Western Daylight Time",
-      "standard": "Australian Western Standard Time"
+      "dt": "Australian Western Daylight Time",
+      "st": "Australian Western Standard Time"
     },
     "azer": {
-      "daylight": "Azerbaijan Summer Time",
-      "standard": "Azerbaijan Standard Time"
+      "dt": "Azerbaijan Summer Time",
+      "st": "Azerbaijan Standard Time"
     },
     "azor": {
-      "daylight": "Azores Summer Time",
-      "standard": "Azores Standard Time"
+      "dt": "Azores Summer Time",
+      "st": "Azores Standard Time"
     },
     "bang": {
-      "daylight": "Bangladesh Summer Time",
-      "standard": "Bangladesh Standard Time"
+      "dt": "Bangladesh Summer Time",
+      "st": "Bangladesh Standard Time"
     },
     "bhut": {
-      "standard": "Bhutan Time"
+      "st": "Bhutan Time"
     },
     "boli": {
-      "standard": "Bolivia Time"
+      "st": "Bolivia Time"
     },
     "bras": {
-      "daylight": "Brasilia Summer Time",
-      "standard": "Brasilia Standard Time"
+      "dt": "Brasilia Summer Time",
+      "st": "Brasilia Standard Time"
     },
     "brun": {
-      "standard": "Brunei Darussalam Time"
+      "st": "Brunei Darussalam Time"
     },
     "case": {
-      "standard": "Casey Time"
+      "st": "Casey Time"
     },
     "cave": {
-      "daylight": "Cape Verde Summer Time",
-      "standard": "Cape Verde Standard Time"
+      "dt": "Cape Verde Summer Time",
+      "st": "Cape Verde Standard Time"
     },
     "cham": {
-      "standard": "Chamorro Standard Time"
+      "st": "Chamorro Standard Time"
     },
     "chat": {
-      "daylight": "Chatham Daylight Time",
-      "standard": "Chatham Standard Time"
+      "dt": "Chatham Daylight Time",
+      "st": "Chatham Standard Time"
     },
     "chil": {
-      "daylight": "Chile Summer Time",
-      "standard": "Chile Standard Time"
+      "dt": "Chile Summer Time",
+      "st": "Chile Standard Time"
     },
     "chin": {
-      "daylight": "China Daylight Time",
-      "standard": "China Standard Time"
+      "dt": "China Daylight Time",
+      "st": "China Standard Time"
     },
     "choi": {
-      "daylight": "Choibalsan Summer Time",
-      "standard": "Choibalsan Standard Time"
+      "dt": "Choibalsan Summer Time",
+      "st": "Choibalsan Standard Time"
     },
     "chri": {
-      "standard": "Christmas Island Time"
+      "st": "Christmas Island Time"
     },
     "coco": {
-      "standard": "Cocos Islands Time"
+      "st": "Cocos Islands Time"
     },
     "colo": {
-      "daylight": "Colombia Summer Time",
-      "standard": "Colombia Standard Time"
+      "dt": "Colombia Summer Time",
+      "st": "Colombia Standard Time"
     },
     "cook": {
-      "daylight": "Cook Islands Half Summer Time",
-      "standard": "Cook Islands Standard Time"
+      "dt": "Cook Islands Half Summer Time",
+      "st": "Cook Islands Standard Time"
     },
     "cuba": {
-      "daylight": "Cuba Daylight Time",
-      "standard": "Cuba Standard Time"
+      "dt": "Cuba Daylight Time",
+      "st": "Cuba Standard Time"
     },
     "davi": {
-      "standard": "Davis Time"
+      "st": "Davis Time"
     },
     "dumo": {
-      "standard": "Dumont-d’Urville Time"
+      "st": "Dumont-d’Urville Time"
     },
     "east": {
-      "daylight": "Easter Island Summer Time",
-      "standard": "Easter Island Standard Time"
+      "dt": "Easter Island Summer Time",
+      "st": "Easter Island Standard Time"
     },
     "eati": {
-      "standard": "East Timor Time"
+      "st": "East Timor Time"
     },
     "ecua": {
-      "standard": "Ecuador Time"
+      "st": "Ecuador Time"
     },
     "euce": {
-      "daylight": "Central European Summer Time",
-      "standard": "Central European Standard Time"
+      "dt": "Central European Summer Time",
+      "st": "Central European Standard Time"
     },
     "euea": {
-      "daylight": "Eastern European Summer Time",
-      "standard": "Eastern European Standard Time"
+      "dt": "Eastern European Summer Time",
+      "st": "Eastern European Standard Time"
     },
     "eufe": {
-      "standard": "Further-eastern European Time"
+      "st": "Further-eastern European Time"
     },
     "euwe": {
-      "daylight": "Western European Summer Time",
-      "standard": "Western European Standard Time"
+      "dt": "Western European Summer Time",
+      "st": "Western European Standard Time"
     },
     "falk": {
-      "daylight": "Falkland Islands Summer Time",
-      "standard": "Falkland Islands Standard Time"
+      "dt": "Falkland Islands Summer Time",
+      "st": "Falkland Islands Standard Time"
     },
     "fiji": {
-      "daylight": "Fiji Summer Time",
-      "standard": "Fiji Standard Time"
+      "dt": "Fiji Summer Time",
+      "st": "Fiji Standard Time"
     },
     "frgu": {
-      "standard": "French Guiana Time"
+      "st": "French Guiana Time"
     },
     "frso": {
-      "standard": "French Southern & Antarctic Time"
+      "st": "French Southern & Antarctic Time"
     },
     "gala": {
-      "standard": "Galapagos Time"
+      "st": "Galapagos Time"
     },
     "gamb": {
-      "standard": "Gambier Time"
+      "st": "Gambier Time"
     },
     "geor": {
-      "daylight": "Georgia Summer Time",
-      "standard": "Georgia Standard Time"
+      "dt": "Georgia Summer Time",
+      "st": "Georgia Standard Time"
     },
     "giis": {
-      "standard": "Gilbert Islands Time"
+      "st": "Gilbert Islands Time"
     },
     "grea": {
-      "daylight": "East Greenland Summer Time",
-      "standard": "East Greenland Standard Time"
+      "dt": "East Greenland Summer Time",
+      "st": "East Greenland Standard Time"
     },
     "grwe": {
-      "daylight": "West Greenland Summer Time",
-      "standard": "West Greenland Standard Time"
+      "dt": "West Greenland Summer Time",
+      "st": "West Greenland Standard Time"
     },
     "guam": {
-      "standard": "Guam Standard Time"
+      "st": "Guam Standard Time"
     },
     "gulf": {
-      "standard": "Gulf Standard Time"
+      "st": "Gulf Standard Time"
     },
     "guya": {
-      "standard": "Guyana Time"
+      "st": "Guyana Time"
     },
     "haal": {
-      "daylight": "Hawaii-Aleutian Daylight Time",
-      "standard": "Hawaii-Aleutian Standard Time"
+      "dt": "Hawaii-Aleutian Daylight Time",
+      "st": "Hawaii-Aleutian Standard Time"
     },
     "hoko": {
-      "daylight": "Hong Kong Summer Time",
-      "standard": "Hong Kong Standard Time"
+      "dt": "Hong Kong Summer Time",
+      "st": "Hong Kong Standard Time"
     },
     "hovd": {
-      "daylight": "Hovd Summer Time",
-      "standard": "Hovd Standard Time"
+      "dt": "Hovd Summer Time",
+      "st": "Hovd Standard Time"
     },
     "ince": {
-      "standard": "Central Indonesia Time"
+      "st": "Central Indonesia Time"
     },
     "indi": {
-      "standard": "India Standard Time"
+      "st": "India Standard Time"
     },
     "indo": {
-      "standard": "Indochina Time"
+      "st": "Indochina Time"
     },
     "inea": {
-      "standard": "Eastern Indonesia Time"
+      "st": "Eastern Indonesia Time"
     },
     "inoc": {
-      "standard": "Indian Ocean Time"
+      "st": "Indian Ocean Time"
     },
     "inwe": {
-      "standard": "Western Indonesia Time"
+      "st": "Western Indonesia Time"
     },
     "iran": {
-      "daylight": "Iran Daylight Time",
-      "standard": "Iran Standard Time"
+      "dt": "Iran Daylight Time",
+      "st": "Iran Standard Time"
     },
     "irku": {
-      "daylight": "Irkutsk Summer Time",
-      "standard": "Irkutsk Standard Time"
+      "dt": "Irkutsk Summer Time",
+      "st": "Irkutsk Standard Time"
     },
     "isra": {
-      "daylight": "Israel Daylight Time",
-      "standard": "Israel Standard Time"
+      "dt": "Israel Daylight Time",
+      "st": "Israel Standard Time"
     },
     "japa": {
-      "daylight": "Japan Daylight Time",
-      "standard": "Japan Standard Time"
+      "dt": "Japan Daylight Time",
+      "st": "Japan Standard Time"
     },
     "kaea": {
-      "standard": "East Kazakhstan Time"
+      "st": "East Kazakhstan Time"
     },
     "kamc": {
-      "daylight": "Petropavlovsk-Kamchatski Summer Time",
-      "standard": "Petropavlovsk-Kamchatski Standard Time"
+      "dt": "Petropavlovsk-Kamchatski Summer Time",
+      "st": "Petropavlovsk-Kamchatski Standard Time"
     },
     "kawe": {
-      "standard": "West Kazakhstan Time"
+      "st": "West Kazakhstan Time"
     },
     "kore": {
-      "daylight": "Korean Daylight Time",
-      "standard": "Korean Standard Time"
+      "dt": "Korean Daylight Time",
+      "st": "Korean Standard Time"
     },
     "kosr": {
-      "standard": "Kosrae Time"
+      "st": "Kosrae Time"
     },
     "kras": {
-      "daylight": "Krasnoyarsk Summer Time",
-      "standard": "Krasnoyarsk Standard Time"
+      "dt": "Krasnoyarsk Summer Time",
+      "st": "Krasnoyarsk Standard Time"
     },
     "kyrg": {
-      "standard": "Kyrgyzstan Time"
+      "st": "Kyrgyzstan Time"
     },
     "lank": {
-      "standard": "Lanka Time"
+      "st": "Lanka Time"
     },
     "liis": {
-      "standard": "Line Islands Time"
+      "st": "Line Islands Time"
     },
     "loho": {
-      "daylight": "Lord Howe Daylight Time",
-      "standard": "Lord Howe Standard Time"
+      "dt": "Lord Howe Daylight Time",
+      "st": "Lord Howe Standard Time"
     },
     "maca": {
-      "daylight": "Macao Summer Time",
-      "standard": "Macao Standard Time"
+      "dt": "Macao Summer Time",
+      "st": "Macao Standard Time"
     },
     "macq": {
-      "standard": "Macquarie Island Time"
+      "st": "Macquarie Island Time"
     },
     "maga": {
-      "daylight": "Magadan Summer Time",
-      "standard": "Magadan Standard Time"
+      "dt": "Magadan Summer Time",
+      "st": "Magadan Standard Time"
     },
     "mais": {
-      "standard": "Marshall Islands Time"
+      "st": "Marshall Islands Time"
     },
     "mala": {
-      "standard": "Malaysia Time"
+      "st": "Malaysia Time"
     },
     "mald": {
-      "standard": "Maldives Time"
+      "st": "Maldives Time"
     },
     "marq": {
-      "standard": "Marquesas Time"
+      "st": "Marquesas Time"
     },
     "maur": {
-      "daylight": "Mauritius Summer Time",
-      "standard": "Mauritius Standard Time"
+      "dt": "Mauritius Summer Time",
+      "st": "Mauritius Standard Time"
     },
     "maws": {
-      "standard": "Mawson Time"
+      "st": "Mawson Time"
     },
     "meno": {
-      "daylight": "Northwest Mexico Daylight Time",
-      "standard": "Northwest Mexico Standard Time"
+      "dt": "Northwest Mexico Daylight Time",
+      "st": "Northwest Mexico Standard Time"
     },
     "mepa": {
-      "daylight": "Mexican Pacific Daylight Time",
-      "standard": "Mexican Pacific Standard Time"
+      "dt": "Mexican Pacific Daylight Time",
+      "st": "Mexican Pacific Standard Time"
     },
     "mgmt": {
-      "standard": "Greenwich Mean Time"
+      "st": "Greenwich Mean Time"
     },
     "mong": {
-      "daylight": "Ulaanbaatar Summer Time",
-      "standard": "Ulaanbaatar Standard Time"
+      "dt": "Ulaanbaatar Summer Time",
+      "st": "Ulaanbaatar Standard Time"
     },
     "mosc": {
-      "daylight": "Moscow Summer Time",
-      "standard": "Moscow Standard Time"
+      "dt": "Moscow Summer Time",
+      "st": "Moscow Standard Time"
     },
     "myan": {
-      "standard": "Myanmar Time"
+      "st": "Myanmar Time"
     },
     "naur": {
-      "standard": "Nauru Time"
+      "st": "Nauru Time"
     },
     "neca": {
-      "daylight": "New Caledonia Summer Time",
-      "standard": "New Caledonia Standard Time"
+      "dt": "New Caledonia Summer Time",
+      "st": "New Caledonia Standard Time"
     },
     "nepa": {
-      "standard": "Nepal Time"
+      "st": "Nepal Time"
     },
     "newf": {
-      "daylight": "Newfoundland Daylight Time",
-      "standard": "Newfoundland Standard Time"
+      "dt": "Newfoundland Daylight Time",
+      "st": "Newfoundland Standard Time"
     },
     "neze": {
-      "daylight": "New Zealand Daylight Time",
-      "standard": "New Zealand Standard Time"
+      "dt": "New Zealand Daylight Time",
+      "st": "New Zealand Standard Time"
     },
     "niue": {
-      "standard": "Niue Time"
+      "st": "Niue Time"
     },
     "noma": {
-      "standard": "North Mariana Islands Time"
+      "st": "North Mariana Islands Time"
     },
     "norf": {
-      "daylight": "Norfolk Island Daylight Time",
-      "standard": "Norfolk Island Standard Time"
+      "dt": "Norfolk Island Daylight Time",
+      "st": "Norfolk Island Standard Time"
     },
     "noro": {
-      "daylight": "Fernando de Noronha Summer Time",
-      "standard": "Fernando de Noronha Standard Time"
+      "dt": "Fernando de Noronha Summer Time",
+      "st": "Fernando de Noronha Standard Time"
     },
     "novo": {
-      "daylight": "Novosibirsk Summer Time",
-      "standard": "Novosibirsk Standard Time"
+      "dt": "Novosibirsk Summer Time",
+      "st": "Novosibirsk Standard Time"
     },
     "omsk": {
-      "daylight": "Omsk Summer Time",
-      "standard": "Omsk Standard Time"
+      "dt": "Omsk Summer Time",
+      "st": "Omsk Standard Time"
     },
     "paki": {
-      "daylight": "Pakistan Summer Time",
-      "standard": "Pakistan Standard Time"
+      "dt": "Pakistan Summer Time",
+      "st": "Pakistan Standard Time"
     },
     "pala": {
-      "standard": "Palau Time"
+      "st": "Palau Time"
     },
     "pang": {
-      "standard": "Papua New Guinea Time"
+      "st": "Papua New Guinea Time"
     },
     "para": {
-      "daylight": "Paraguay Summer Time",
-      "standard": "Paraguay Standard Time"
+      "dt": "Paraguay Summer Time",
+      "st": "Paraguay Standard Time"
     },
     "peru": {
-      "daylight": "Peru Summer Time",
-      "standard": "Peru Standard Time"
+      "dt": "Peru Summer Time",
+      "st": "Peru Standard Time"
     },
     "phil": {
-      "daylight": "Philippine Summer Time",
-      "standard": "Philippine Standard Time"
+      "dt": "Philippine Summer Time",
+      "st": "Philippine Standard Time"
     },
     "phis": {
-      "standard": "Phoenix Islands Time"
+      "st": "Phoenix Islands Time"
     },
     "pimi": {
-      "daylight": "St Pierre & Miquelon Daylight Time",
-      "standard": "St Pierre & Miquelon Standard Time"
+      "dt": "St Pierre & Miquelon Daylight Time",
+      "st": "St Pierre & Miquelon Standard Time"
     },
     "pitc": {
-      "standard": "Pitcairn Time"
+      "st": "Pitcairn Time"
     },
     "pona": {
-      "standard": "Ponape Time"
+      "st": "Ponape Time"
     },
     "pyon": {
-      "standard": "Pyongyang Time"
+      "st": "Pyongyang Time"
     },
     "qyzy": {
-      "daylight": "Qyzylorda Summer Time",
-      "standard": "Qyzylorda Standard Time"
+      "dt": "Qyzylorda Summer Time",
+      "st": "Qyzylorda Standard Time"
     },
     "reun": {
-      "standard": "Réunion Time"
+      "st": "Réunion Time"
     },
     "roth": {
-      "standard": "Rothera Time"
+      "st": "Rothera Time"
     },
     "sakh": {
-      "daylight": "Sakhalin Summer Time",
-      "standard": "Sakhalin Standard Time"
+      "dt": "Sakhalin Summer Time",
+      "st": "Sakhalin Standard Time"
     },
     "sama": {
-      "daylight": "Samara Summer Time",
-      "standard": "Samara Standard Time"
+      "dt": "Samara Summer Time",
+      "st": "Samara Standard Time"
     },
     "samo": {
-      "daylight": "Samoa Daylight Time",
-      "standard": "Samoa Standard Time"
+      "dt": "Samoa Daylight Time",
+      "st": "Samoa Standard Time"
     },
     "seyc": {
-      "standard": "Seychelles Time"
+      "st": "Seychelles Time"
     },
     "sing": {
-      "standard": "Singapore Standard Time"
+      "st": "Singapore Standard Time"
     },
     "soge": {
-      "standard": "South Georgia Time"
+      "st": "South Georgia Time"
     },
     "solo": {
-      "standard": "Solomon Islands Time"
+      "st": "Solomon Islands Time"
     },
     "suri": {
-      "standard": "Suriname Time"
+      "st": "Suriname Time"
     },
     "syow": {
-      "standard": "Syowa Time"
+      "st": "Syowa Time"
     },
     "tahi": {
-      "standard": "Tahiti Time"
+      "st": "Tahiti Time"
     },
     "taip": {
-      "daylight": "Taipei Daylight Time",
-      "standard": "Taipei Standard Time"
+      "dt": "Taipei Daylight Time",
+      "st": "Taipei Standard Time"
     },
     "taji": {
-      "standard": "Tajikistan Time"
+      "st": "Tajikistan Time"
     },
     "toke": {
-      "standard": "Tokelau Time"
+      "st": "Tokelau Time"
     },
     "tong": {
-      "daylight": "Tonga Summer Time",
-      "standard": "Tonga Standard Time"
+      "dt": "Tonga Summer Time",
+      "st": "Tonga Standard Time"
     },
     "truk": {
-      "standard": "Chuuk Time"
+      "st": "Chuuk Time"
     },
     "turk": {
-      "daylight": "Turkmenistan Summer Time",
-      "standard": "Turkmenistan Standard Time"
+      "dt": "Turkmenistan Summer Time",
+      "st": "Turkmenistan Standard Time"
     },
     "tuva": {
-      "standard": "Tuvalu Time"
+      "st": "Tuvalu Time"
     },
     "urug": {
-      "daylight": "Uruguay Summer Time",
-      "standard": "Uruguay Standard Time"
+      "dt": "Uruguay Summer Time",
+      "st": "Uruguay Standard Time"
     },
     "uzbe": {
-      "daylight": "Uzbekistan Summer Time",
-      "standard": "Uzbekistan Standard Time"
+      "dt": "Uzbekistan Summer Time",
+      "st": "Uzbekistan Standard Time"
     },
     "vanu": {
-      "daylight": "Vanuatu Summer Time",
-      "standard": "Vanuatu Standard Time"
+      "dt": "Vanuatu Summer Time",
+      "st": "Vanuatu Standard Time"
     },
     "vene": {
-      "standard": "Venezuela Time"
+      "st": "Venezuela Time"
     },
     "vlad": {
-      "daylight": "Vladivostok Summer Time",
-      "standard": "Vladivostok Standard Time"
+      "dt": "Vladivostok Summer Time",
+      "st": "Vladivostok Standard Time"
     },
     "volg": {
-      "daylight": "Volgograd Summer Time",
-      "standard": "Volgograd Standard Time"
+      "dt": "Volgograd Summer Time",
+      "st": "Volgograd Standard Time"
     },
     "vost": {
-      "standard": "Vostok Time"
+      "st": "Vostok Time"
     },
     "wake": {
-      "standard": "Wake Island Time"
+      "st": "Wake Island Time"
     },
     "wall": {
-      "standard": "Wallis & Futuna Time"
+      "st": "Wallis & Futuna Time"
     },
     "yaku": {
-      "daylight": "Yakutsk Summer Time",
-      "standard": "Yakutsk Standard Time"
+      "dt": "Yakutsk Summer Time",
+      "st": "Yakutsk Standard Time"
     },
     "yeka": {
-      "daylight": "Yekaterinburg Summer Time",
-      "standard": "Yekaterinburg Standard Time"
+      "dt": "Yekaterinburg Summer Time",
+      "st": "Yekaterinburg Standard Time"
     },
     "yuko": {
-      "standard": "Yukon Time"
+      "st": "Yukon Time"
     }
   },
   "overrides": {
     "gblon": {
-      "daylight": "British Summer Time"
+      "dt": "British Summer Time"
     },
     "iedub": {
-      "daylight": "Irish Standard Time"
+      "dt": "Irish Standard Time"
     },
     "utc": {
-      "standard": "Coordinated Universal Time"
+      "st": "Coordinated Universal Time"
     }
   }
 }
