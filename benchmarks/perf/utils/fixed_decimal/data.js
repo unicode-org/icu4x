@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659655537413,
+  "lastUpdate": 1659656904643,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -43522,6 +43522,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/write_to/908070605040302010",
             "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "507f606ebd4e04e269cb4e4066456d394425b264",
+          "message": "Change export of CodePointTrieError (#2341)",
+          "timestamp": "2022-08-04T16:35:52-07:00",
+          "tree_id": "70436103a10634108d1731444fb8c1a3f63515ec",
+          "url": "https://github.com/unicode-org/icu4x/commit/507f606ebd4e04e269cb4e4066456d394425b264"
+        },
+        "date": 1659656865398,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115391,
+            "range": "± 1167",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24001,
+            "range": "± 143",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62322,
+            "range": "± 633",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
             "range": "± 0",
             "unit": "ns/iter"
           },
