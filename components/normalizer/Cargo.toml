@@ -5,7 +5,7 @@
 [package]
 name = "icu_normalizer"
 description = "API for normalizing text into Unicode Normalization Forms"
-version = "0.6.0"
+version = "1.0.0-beta1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
@@ -34,11 +34,11 @@ all-features = true
 [dependencies]
 smallvec = "1.6"
 displaydoc = { version = "0.2.3", default-features = false }
-icu_collections = { version = "0.6", path = "../../components/collections" }
-icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
+icu_collections = { version = "1.0.0-beta1", path = "../../components/collections" }
+icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.8", path = "../../utils/zerovec" }
-icu_properties = { version = "0.6", path = "../../components/properties" }
+icu_properties = { version = "1.0.0-beta1", path = "../../components/properties" }
 utf8_iter = "1.0"
 utf16_iter = "1.0"
 write16 = "1.0"
@@ -46,7 +46,7 @@ databake = { version = "0.1.0", path = "../../utils/databake", optional = true, 
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 
 [dev-dependencies]
-icu_testdata = { version = "0.6", path = "../../provider/testdata" }
+icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata" }
 atoi = "1.0.0"
 arraystring = "0.3.0"
 arrayvec = "0.7.2"

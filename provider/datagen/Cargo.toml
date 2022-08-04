@@ -5,7 +5,7 @@
 [package]
 name = "icu_datagen"
 description = "Generate data for ICU4X DataProvider"
-version = "0.6.0"
+version = "1.0.0-beta1"
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 readme = "README.md"
@@ -34,33 +34,33 @@ all-features = true
 [dependencies]
 
 # ICU components
-icu_calendar = { version = "0.6", path = "../../components/calendar", features = ["datagen"] }
-icu_collator = { version = "0.6", path = "../../components/collator", features = ["datagen"] }
-icu_datetime = { version = "0.6", path = "../../components/datetime", features = ["datagen"] }
-icu_decimal = { version = "0.6", path = "../../components/decimal", features = ["datagen"] }
-icu_list = { version = "0.6", path = "../../components/list", features = ["datagen"]}
-icu_locid_transform = { version = "0.6", path = "../../components/locid_transform", features = ["datagen"] }
-icu_normalizer = { version = "0.6", path = "../../components/normalizer", features = ["datagen"] }
-icu_plurals = { version = "0.6", path = "../../components/plurals", features = ["datagen"] }
-icu_properties = { version = "0.6", path = "../../components/properties", features = ["datagen"]}
-icu_timezone = { version = "0.6", path = "../../components/timezone", features = ["datagen"] }
+icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar", features = ["datagen"] }
+icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", features = ["datagen"] }
+icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", features = ["datagen"] }
+icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal", features = ["datagen"] }
+icu_list = { version = "1.0.0-beta1", path = "../../components/list", features = ["datagen"]}
+icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_transform", features = ["datagen"] }
+icu_normalizer = { version = "1.0.0-beta1", path = "../../components/normalizer", features = ["datagen"] }
+icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals", features = ["datagen"] }
+icu_properties = { version = "1.0.0-beta1", path = "../../components/properties", features = ["datagen"]}
+icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone", features = ["datagen"] }
 
 # (experimental)
-icu_casemapping = { version = "0.1", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
-icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", features = ["datagen", "lstm"], optional = true }
+icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
+icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", features = ["datagen", "lstm"], optional = true }
 
 # ICU provider infrastructure
-icu_provider = { version = "0.6", path = "../core", features = ["std", "log_error_context", "datagen"]}
-icu_provider_adapters = { version = "0.6", path = "../adapters", features = ["datagen"] }
-icu_provider_blob = { version = "0.6", path = "../blob", features = ["export"] }
-icu_provider_fs = { version = "0.6", path = "../fs", features = ["export"] }
+icu_provider = { version = "1.0.0-beta1", path = "../core", features = ["std", "log_error_context", "datagen"]}
+icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters", features = ["datagen"] }
+icu_provider_blob = { version = "1.0.0-beta1", path = "../blob", features = ["export"] }
+icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", features = ["export"] }
 
 # Other
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
-icu_collections = { version = "0.6", path = "../../components/collections", features = ["serde"] }
+icu_collections = { version = "1.0.0-beta1", path = "../../components/collections", features = ["serde"] }
 icu_codepointtrie_builder = { path = "../../components/collections/codepointtrie_builder" }
-icu_locid = { version = "0.6", path = "../../components/locid", features = ["std"]}
+icu_locid = { version = "1.0.0-beta1", path = "../../components/locid", features = ["std"]}
 itertools = "0.10"
 log = "0.4"
 rayon = "1.5"
