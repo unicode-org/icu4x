@@ -1401,7 +1401,7 @@ impl DecomposingNormalizer {
     ///
     /// Deliberately private and not available outside the crate.
     #[cfg(any(test, feature = "experimental"))]
-    fn try_new_uts46_decomposed_without_ignored_and_disallowed_unstable<D>(
+    fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
@@ -1449,18 +1449,6 @@ impl DecomposingNormalizer {
             ccc,
         })
     }
-
-    #[cfg(any(test, feature = "experimental"))]
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: NormalizerError,
-        functions: [
-            Self::try_new_uts46_decomposed_without_ignored_and_disallowed_unstable,
-            try_new_uts46_decomposed_without_ignored_and_disallowed_with_any_provider,
-            try_new_uts46_decomposed_without_ignored_and_disallowed_with_buffer_provider
-        ]
-    );
 
     /// Wraps a delegate iterator into a decomposing iterator
     /// adapter by using the data already held by this normalizer.
@@ -1605,7 +1593,7 @@ impl ComposingNormalizer {
             + ?Sized,
     {
         let decomposing_normalizer =
-            DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed_unstable(
+            DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed(
                 data_provider,
             )?;
 
