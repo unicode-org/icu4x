@@ -8,12 +8,13 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_calendar::Gregorian;
     use icu_datetime::{
-        options::length, TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter,
+        options::length, DateTimeFormatter, TimeFormatter, TypedDateFormatter,
+        TypedDateTimeFormatter,
     };
 
     use crate::{
-        calendar::ffi::ICU4XGregorianDateTime, errors::ffi::ICU4XError, locale::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider,
+        calendar::ffi::ICU4XDateTime, calendar::ffi::ICU4XGregorianDateTime,
+        errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
     };
 
     #[diplomat::opaque]
@@ -174,6 +175,64 @@ pub mod ffi {
         pub fn format_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &value.0)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
+    }
+
+    #[diplomat::opaque]
+    /// An ICU4X DateFormatter object capable of formatting a [`ICU4XDateTime`] as a string,
+    /// using the Gregorian Calendar.
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
+    pub struct ICU4XDateTimeFormatter(pub DateTimeFormatter);
+
+    impl ICU4XDateTimeFormatter {
+        /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new_unstable, FnInStruct)]
+        pub fn try_new(
+            provider: &ICU4XDataProvider,
+            locale: &ICU4XLocale,
+            date_length: ICU4XDateLength,
+            time_length: ICU4XTimeLength,
+        ) -> DiplomatResult<Box<ICU4XDateTimeFormatter>, ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+
+            let locale = locale.to_datalocale();
+            let date_length = match date_length {
+                ICU4XDateLength::Full => length::Date::Full,
+                ICU4XDateLength::Long => length::Date::Long,
+                ICU4XDateLength::Medium => length::Date::Medium,
+                ICU4XDateLength::Short => length::Date::Short,
+            };
+            let time_length = match time_length {
+                ICU4XTimeLength::Full => length::Time::Full,
+                ICU4XTimeLength::Long => length::Time::Long,
+                ICU4XTimeLength::Medium => length::Time::Medium,
+                ICU4XTimeLength::Short => length::Time::Short,
+            };
+
+            let options = length::Bag::from_date_time_style(date_length, time_length);
+
+            DateTimeFormatter::try_new_unstable(&provider, &locale, options.into())
+                .map(|dtf| Box::new(ICU4XDateTimeFormatter(dtf)))
+                .map_err(Into::into)
+                .into()
+        }
+
+        /// Formats a [`ICU4XGregorianDateTime`] to a string.
+        #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::format_to_write, FnInStruct)]
+        pub fn format_datetime(
+            &self,
+            value: &ICU4XDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             #[allow(unused_variables)]
