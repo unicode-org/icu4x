@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659569541860,
+  "lastUpdate": 1659591658880,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23213,6 +23213,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/77e5f339eeb9988971a92eb55786e621d7eeef0f"
         },
         "date": 1659569496236,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3946612,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a2560fe59a15dd284fe8a3fc5abc7e219bfdfcb",
+          "message": "Remove HourCycle from the public Lengths API (#2331)",
+          "timestamp": "2022-08-03T22:39:04-07:00",
+          "tree_id": "ce406a0224313b6a6b632c93c303eaf4cbdb45a1",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a2560fe59a15dd284fe8a3fc5abc7e219bfdfcb"
+        },
+        "date": 1659591619922,
         "tool": "ndjson",
         "benches": [
           {
