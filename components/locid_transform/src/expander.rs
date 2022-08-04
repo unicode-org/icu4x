@@ -54,6 +54,9 @@ use crate::TransformResult;
 /// assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
 /// assert_eq!(locale.to_string(), "zh");
 /// ```
+///
+/// [`CLDR`]: http://cldr.unicode.org/
+/// [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 pub struct LocaleExpander {
     likely_subtags: DataPayload<LikelySubtagsV1Marker>,
 }

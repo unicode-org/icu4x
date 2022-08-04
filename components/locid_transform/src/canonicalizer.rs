@@ -47,7 +47,6 @@ use tinystr::{tinystr, TinyAsciiStr};
 ///
 /// [`ICU4X`]: ../icu/index.html
 /// [`CLDR`]: http://cldr.unicode.org/
-/// [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 /// [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
 pub struct LocaleCanonicalizer {
     /// Data to support canonicalization.
