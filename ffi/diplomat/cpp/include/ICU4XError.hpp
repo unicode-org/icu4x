@@ -55,7 +55,9 @@ enum struct ICU4XError {
   /**
    * The locale or subtag string failed to parse
    */
-  LocaleParserError = 513,
+  LocaleParserLanguageError = 513,
+  LocaleParserSubtagError = 514,
+  LocaleParserExtensionError = 515,
 
   /**
    * Attempted to construct an invalid data struct

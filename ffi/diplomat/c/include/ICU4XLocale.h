@@ -14,13 +14,14 @@ typedef struct ICU4XLocale ICU4XLocale;
 #ifdef __cplusplus
 } // namespace capi
 #endif
+#include "diplomat_result_box_ICU4XLocale_ICU4XError.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
 #endif
 
-ICU4XLocale* ICU4XLocale_create(const char* name_data, size_t name_len);
+diplomat_result_box_ICU4XLocale_ICU4XError ICU4XLocale_create(const char* name_data, size_t name_len);
 
 ICU4XLocale* ICU4XLocale_create_en();
 
