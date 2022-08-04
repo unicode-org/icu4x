@@ -315,9 +315,9 @@ icu_properties = { version = "0.6", path = "../../components/properties", option
 icu_segmenter = { version = "0.6", path = "../../experimental/segmenter", optional = true, features = ["lstm"] }
 icu_timezone = { version = "0.6", path = "../../components/timezone", optional = true }
 icu_collections = { version = "0.6", path = "../../components/collections", optional = true }
-litemap = { version = "0.4", path = "../../utils/litemap", optional = true, default-features = false }
+litemap = { version = "0.5", path = "../../utils/litemap", optional = true, default-features = false }
 tinystr = { version = "0.6", path = "../../utils/tinystr", optional = true }
-zerovec = { version = "0.7", path = "../../utils/zerovec", optional = true }
+zerovec = { version = "0.8", path = "../../utils/zerovec", optional = true }
 
 [dev-dependencies]
 icu_plurals = { version = "0.6", path = "../../components/plurals" }

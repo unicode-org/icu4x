@@ -57,7 +57,7 @@ writeable = { version = "0.4", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
 yoke = { version = "0.6.0", path = "../../utils/yoke", features = ["derive"] }
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom", features = ["derive"] }
-zerovec = { version = "0.7.0", path = "../../utils/zerovec", features = ["derive"]}
+zerovec = { version = "0.8", path = "../../utils/zerovec", features = ["derive"]}
 stable_deref_trait = { version = "1.2.0", default-features = false }
 
 log = { version = "0.4", optional = true }
