@@ -89,6 +89,7 @@ where
     }
 }
 
+#[cfg(feature = "serde")]
 impl<P> LocaleFallbackProvider<P>
 where
     P: BufferProvider,

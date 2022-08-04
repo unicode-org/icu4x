@@ -86,13 +86,13 @@ impl ListFormatter {
 pub mod parts {
     use writeable::Part;
 
-    /// The [`Part`] used by [`FormattedList`](super::List) to mark the part of the string that is an element.
+    /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is an element.
     pub const ELEMENT: Part = Part {
         category: "list",
         value: "element",
     };
 
-    /// The [`Part`] used by [`FormattedList`](super::List) to mark the part of the string that is a list literal,
+    /// The [`Part`] used by [`FormattedList`](super::FormattedList) to mark the part of the string that is a list literal,
     /// such as ", " or " and ".
     pub const LITERAL: Part = Part {
         category: "list",
