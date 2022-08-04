@@ -86,7 +86,7 @@ pub struct TimeZoneFormatter {
 }
 
 /// A container contains all data payloads for CustomTimeZone.
-pub struct TimeZoneDataPayloads {
+pub(super) struct TimeZoneDataPayloads {
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
