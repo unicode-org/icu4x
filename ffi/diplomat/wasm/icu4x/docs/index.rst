@@ -13,7 +13,7 @@ Documentation
    errors_ffi
    fixed_decimal_ffi
    locale_ffi
-   locale_canonicalizer_ffi
+   locid_transform_ffi
    pluralrules_ffi
    properties_maps_ffi
    properties_sets_ffi

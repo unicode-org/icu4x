@@ -22,51 +22,51 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
+//! use icu_locid_transform::{TransformResult, LocaleCanonicalizer};
 //! use icu_locid::Locale;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+//! let lc = LocaleCanonicalizer::try_new_with_buffer_provider(&provider).expect("create failed");
 //!
 //! let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
 //!     .parse()
 //!     .expect("parse failed");
 //! assert_eq!(
 //!     lc.canonicalize(&mut locale),
-//!     CanonicalizationResult::Modified
+//!     TransformResult::Modified
 //! );
 //! assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
 //! ```
 //!
 //! ```
-//! use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
+//! use icu_locid_transform::{TransformResult, LocaleExpander};
 //! use icu_locid::Locale;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+//! let lc = LocaleExpander::try_new_with_buffer_provider(&provider).expect("create failed");
 //!
 //! let mut locale: Locale = "zh-CN".parse().expect("parse failed");
-//! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
+//! assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
 //! assert_eq!(locale.to_string(), "zh-Hans-CN");
 //!
 //! let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
-//! assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
+//! assert_eq!(lc.maximize(&mut locale), TransformResult::Unmodified);
 //! assert_eq!(locale.to_string(), "zh-Hant-TW");
 //! ```
 //!
 //! ```
-//! use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
+//! use icu_locid_transform::{TransformResult, LocaleExpander};
 //! use icu_locid::Locale;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+//! let lc = LocaleExpander::try_new_with_buffer_provider(&provider).expect("create failed");
 //!
 //! let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
-//! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
+//! assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
 //! assert_eq!(locale.to_string(), "zh");
 //!
 //! let mut locale: Locale = "zh".parse().expect("parse failed");
-//! assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
+//! assert_eq!(lc.minimize(&mut locale), TransformResult::Unmodified);
 //! assert_eq!(locale.to_string(), "zh");
 //! ```
 //!
@@ -93,7 +93,19 @@
 
 extern crate alloc;
 
-pub mod locale_canonicalizer;
+mod canonicalizer;
+mod expander;
 pub mod provider;
 
-pub use locale_canonicalizer::{CanonicalizationResult, LocaleCanonicalizer};
+pub use canonicalizer::LocaleCanonicalizer;
+pub use expander::LocaleExpander;
+
+/// Used to track the result of a transformation operation that potentially modifies its argument in place.
+#[derive(Debug, PartialEq)]
+#[allow(clippy::exhaustive_enums)] // this enum is stable
+pub enum TransformResult {
+    /// The canonicalization operation modified the locale.
+    Modified,
+    /// The canonicalization operation did not modify the locale.
+    Unmodified,
+}
