@@ -45,7 +45,7 @@ deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
 
 [dependencies]
-fixed_decimal = { version = "0.3", path = "../../utils/fixed_decimal", features = ["ryu"] }
+fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_calendar = { version = "0.6", path = "../../components/calendar"}
 icu_collections = { version = "0.6.0", path = "../../components/collections"}
 icu_datetime = { version = "0.6", path = "../../components/datetime/", features = ["serde"] }

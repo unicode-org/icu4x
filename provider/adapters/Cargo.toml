@@ -27,7 +27,7 @@ include = [
 icu_provider = { version = "0.6.0", path = "../core", features = ["macros"] }
 icu_locid = { version = "0.6.0", path = "../../components/locid", features = ["zerovec"] }
 yoke = { version = "0.6.0", path = "../../utils/yoke" }
-zerovec = { path = "../../utils/zerovec", features = ["yoke"] }
+zerovec = { version = "0.8", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 tinystr = { path = "../../utils/tinystr", features = ["zerovec"] }
