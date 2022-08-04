@@ -1,24 +1,22 @@
-# icu_char16trie [![crates.io](https://img.shields.io/crates/v/icu_char16trie)](https://crates.io/crates/icu_char16trie)
+# `Char16Trie`
 
-`icu_char16trie` is a utility crate of the [`ICU4X`] project.
-
-This component provides a data structure for a space-efficient and time-efficient lookup of
+This module provides a data structure for a space-efficient and time-efficient lookup of
 sequences of 16-bit units (commonly but not necessarily UTF-16 code units)
 which map to integer values.
 
 It is an implementation of the existing [ICU4C UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UCharsTrie.html)
 / [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
 
-### Architecture
+## Architecture
 
 ICU4X [`Char16Trie`](crate::char16trie::Char16Trie) is designed to provide a read-only view of UCharsTrie data that is exported from ICU4C.
 
-### Examples
+## Examples
 
-#### Querying a `Char16Trie`
+### Querying a `Char16Trie`
 
 ```rust
-use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+use icu_collections::char16trie::{Char16Trie, TrieResult};
 use zerovec::ZeroVec;
 
 // A Char16Trie containing the ASCII characters mapping 'a' to 1 and 'ab'

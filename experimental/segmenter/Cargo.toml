@@ -28,7 +28,6 @@ include = [
 skip_optional_dependencies = true
 
 [dependencies]
-icu_char16trie = { version = "0.1", path = "../char16trie" }
 icu_collections = { path = "../../components/collections" }
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }

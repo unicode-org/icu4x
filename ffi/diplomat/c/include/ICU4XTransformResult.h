@@ -1,5 +1,5 @@
-#ifndef ICU4XCanonicalizationResult_H
-#define ICU4XCanonicalizationResult_H
+#ifndef ICU4XTransformResult_H
+#define ICU4XTransformResult_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,10 +10,10 @@
 namespace capi {
 #endif
 
-typedef enum ICU4XCanonicalizationResult {
-  ICU4XCanonicalizationResult_Modified = 0,
-  ICU4XCanonicalizationResult_Unmodified = 1,
-} ICU4XCanonicalizationResult;
+typedef enum ICU4XTransformResult {
+  ICU4XTransformResult_Modified = 0,
+  ICU4XTransformResult_Unmodified = 1,
+} ICU4XTransformResult;
 #ifdef __cplusplus
 } // namespace capi
 #endif
@@ -22,7 +22,7 @@ namespace capi {
 extern "C" {
 #endif
 
-void ICU4XCanonicalizationResult_destroy(ICU4XCanonicalizationResult* self);
+void ICU4XTransformResult_destroy(ICU4XTransformResult* self);
 
 #ifdef __cplusplus
 } // extern "C"

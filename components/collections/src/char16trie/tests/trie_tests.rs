@@ -4,7 +4,7 @@
 
 mod test_util;
 
-use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+use icu_collections::char16trie::{Char16Trie, TrieResult};
 use zerovec::ZeroVec;
 
 #[test]
