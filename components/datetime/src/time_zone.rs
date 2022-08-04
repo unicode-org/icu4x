@@ -64,7 +64,7 @@ where
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let tzf = TimeZoneFormatter::try_from_config(
+/// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
 ///     &provider,
 ///     &locale!("en").into(),
 ///     TimeZoneFormatterConfig::GenericNonLocationLong,
@@ -86,7 +86,7 @@ pub struct TimeZoneFormatter {
 }
 
 /// A container contains all data payloads for CustomTimeZone.
-pub struct TimeZoneDataPayloads {
+pub(super) struct TimeZoneDataPayloads {
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
@@ -349,7 +349,7 @@ impl TimeZoneFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_from_config(
+    /// let tzf = TimeZoneFormatter::try_from_config_unstable(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterConfig::LocalizedGMT,
@@ -358,7 +358,7 @@ impl TimeZoneFormatter {
     ///
     /// assert!(tzf.is_ok());
     /// ```
-    pub fn try_from_config<ZP>(
+    pub fn try_from_config_unstable<ZP>(
         zone_provider: &ZP,
         locale: &DataLocale,
         config: TimeZoneFormatterConfig,
@@ -420,6 +420,18 @@ impl TimeZoneFormatter {
         }
         Ok(tz_format)
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        config: TimeZoneFormatterConfig,
+        options: TimeZoneFormatterOptions,
+        error: DateTimeFormatterError,
+        functions: [
+            Self::try_from_config_unstable,
+            try_from_config_with_any_provider,
+            try_from_config_with_buffer_provider
+        ]
+    );
 
     /// Load generic non location long format for timezone. For example, Pacific Time.
     pub fn load_generic_non_location_long<ZP>(
@@ -605,7 +617,7 @@ impl TimeZoneFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_from_config(
+    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterConfig::LocalizedGMT,
@@ -639,7 +651,7 @@ impl TimeZoneFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_from_config(
+    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterConfig::LocalizedGMT,
@@ -674,7 +686,7 @@ impl TimeZoneFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_from_config(
+    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterConfig::LocalizedGMT,

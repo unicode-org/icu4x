@@ -46,7 +46,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     print(format!("User: {}", user_name));
 
     {
-        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
             &provider,
             &locale.into(),
             DateTimeFormatterOptions::default(),
