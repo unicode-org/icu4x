@@ -3,6 +3,7 @@ export { ICU4XBidi } from './ICU4XBidi.js';
 export { ICU4XBidiDirection } from './ICU4XBidiDirection.js';
 export { ICU4XBidiInfo } from './ICU4XBidiInfo.js';
 export { ICU4XBidiParagraph } from './ICU4XBidiParagraph.js';
+export { ICU4XCalendar } from './ICU4XCalendar.js';
 export { ICU4XCanonicalizationResult } from './ICU4XCanonicalizationResult.js';
 export { ICU4XCodePointMapData16 } from './ICU4XCodePointMapData16.js';
 export { ICU4XCodePointMapData16Response } from './ICU4XCodePointMapData16Response.js';
@@ -11,6 +12,8 @@ export { ICU4XCreateDataProviderResult } from './ICU4XCreateDataProviderResult.j
 export { ICU4XDataProvider } from './ICU4XDataProvider.js';
 export { ICU4XDataStruct } from './ICU4XDataStruct.js';
 export { ICU4XDateLength } from './ICU4XDateLength.js';
+export { ICU4XDateTime } from './ICU4XDateTime.js';
+export { ICU4XDateTimeFormatter } from './ICU4XDateTimeFormatter.js';
 export { ICU4XError } from './ICU4XError.js';
 export { ICU4XFixedDecimal } from './ICU4XFixedDecimal.js';
 export { ICU4XFixedDecimalFormatter } from './ICU4XFixedDecimalFormatter.js';
