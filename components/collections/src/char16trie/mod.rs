@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_char16trie` is a utility crate of the [`ICU4X`] project.
-//!
-//! This component provides a data structure for a space-efficient and time-efficient lookup of
+//! This module provides a data structure for a space-efficient and time-efficient lookup of
 //! sequences of 16-bit units (commonly but not necessarily UTF-16 code units)
 //! which map to integer values.
 //!
@@ -38,7 +36,5 @@
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
-
-#![no_std]
 
 pub mod char16trie;
