@@ -9,7 +9,7 @@
 #include <array>
 
 int main() {
-    ICU4XLocale locale = ICU4XLocale::create("bn").value();
+    ICU4XLocale locale = ICU4XLocale::create_bn().value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::try_new(

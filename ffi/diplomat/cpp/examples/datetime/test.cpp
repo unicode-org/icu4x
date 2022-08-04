@@ -12,7 +12,7 @@
 #include <array>
 
 int main() {
-    ICU4XLocale locale = ICU4XLocale::create("es").value();
+    ICU4XLocale locale = ICU4XLocale::create("es").ok().value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
 
