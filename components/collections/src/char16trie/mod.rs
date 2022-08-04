@@ -37,4 +37,8 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-pub mod char16trie;
+mod char16trie;
+
+pub use char16trie::Char16Trie;
+pub use char16trie::Char16TrieIterator;
+pub use char16trie::TrieResult;
