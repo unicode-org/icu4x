@@ -165,7 +165,7 @@ fn test_nb_nn_no() {
     }
 
     // Enable locale fallback on the provider now
-    let provider = LocaleFallbackProvider::try_new(provider).unwrap();
+    let provider = LocaleFallbackProvider::try_new_unstable(provider).unwrap();
 
     // Test "no" macro language WITH fallback (should equal expected)
     let collator =

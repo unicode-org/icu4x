@@ -153,5 +153,5 @@ pub fn get_baked_provider() -> BakedDataProvider {
 pub fn get_provider() -> LocaleFallbackProvider<StaticDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new(get_postcard_provider()).unwrap()
+    LocaleFallbackProvider::try_new_unstable(get_postcard_provider()).unwrap()
 }

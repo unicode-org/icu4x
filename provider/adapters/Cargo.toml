@@ -39,5 +39,5 @@ icu_provider_fs = { path = "../fs" }
 
 [features]
 std = ["icu_locid/std"]
-serde = ["dep:serde", "zerovec/serde", "icu_locid/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
 datagen = ["std", "serde", "databake", "icu_provider/datagen", "icu_locid/databake", "zerovec/databake"]
