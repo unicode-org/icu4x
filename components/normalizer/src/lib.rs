@@ -1316,7 +1316,7 @@ impl DecomposingNormalizer {
         options: skip,
         error: NormalizerError,
         functions: [
-            try_new_nfd_unstable,
+            Self::try_new_nfd_unstable,
             try_new_nfd_with_any_provider,
             try_new_nfd_with_buffer_provider
         ]
@@ -1375,7 +1375,7 @@ impl DecomposingNormalizer {
         options: skip,
         error: NormalizerError,
         functions: [
-            try_new_nfkd_unstable,
+            Self::try_new_nfkd_unstable,
             try_new_nfkd_with_any_provider,
             try_new_nfkd_with_buffer_provider
         ]
@@ -1455,7 +1455,7 @@ impl DecomposingNormalizer {
         options: skip,
         error: NormalizerError,
         functions: [
-            try_new_uts46_decomposed_without_ignored_and_disallowed_unstable,
+            Self::try_new_uts46_decomposed_without_ignored_and_disallowed_unstable,
             try_new_uts46_decomposed_without_ignored_and_disallowed_with_any_provider,
             try_new_uts46_decomposed_without_ignored_and_disallowed_with_buffer_provider
         ]
@@ -1496,7 +1496,7 @@ impl ComposingNormalizer {
             + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decomposing_normalizer = DecomposingNormalizer::try_new_nfd(data_provider)?;
+        let decomposing_normalizer = DecomposingNormalizer::try_new_nfd_unstable(data_provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
@@ -1518,7 +1518,7 @@ impl ComposingNormalizer {
         options: skip,
         error: NormalizerError,
         functions: [
-            try_new_nfc_unstable,
+            Self::try_new_nfc_unstable,
             try_new_nfc_with_any_provider,
             try_new_nfc_with_buffer_provider
         ]
@@ -1536,7 +1536,7 @@ impl ComposingNormalizer {
             + DataProvider<icu_properties::provider::CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd(data_provider)?;
+        let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd_unstable(data_provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
@@ -1559,7 +1559,7 @@ impl ComposingNormalizer {
         options: skip,
         error: NormalizerError,
         functions: [
-            try_new_nfkc_unstable,
+            Self::try_new_nfkc_unstable,
             try_new_nfkc_with_any_provider,
             try_new_nfkc_with_buffer_provider
         ]
@@ -1628,9 +1628,9 @@ impl ComposingNormalizer {
         options: skip,
         error: NormalizerError,
         functions: [
-            try_new_uts46_decomposed_without_ignored_and_disallowed_unstable,
-            try_new_uts46_decomposed_without_ignored_and_disallowed_with_any_provider,
-            try_new_uts46_decomposed_without_ignored_and_disallowed_with_buffer_provider
+            Self::try_new_uts46_without_ignored_and_disallowed_unstable,
+            try_new_uts46_without_ignored_and_disallowed_with_any_provider,
+            try_new_uts46_without_ignored_and_disallowed_with_buffer_provider
         ]
     );
 
@@ -1753,7 +1753,7 @@ impl CanonicalDecomposition {
     /// ```
     ///     use icu_normalizer::Decomposed;
     ///     let data_provider = icu_testdata::get_provider();
-    ///     let decomp = icu_normalizer::CanonicalDecomposition::try_new(&data_provider).unwrap();
+    ///     let decomp = icu_normalizer::CanonicalDecomposition::try_new_with_buffer_provider(&data_provider).unwrap();
     ///
     ///     assert_eq!(decomp.decompose('e'), Decomposed::Default);
     ///     assert_eq!(
