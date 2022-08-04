@@ -24,7 +24,7 @@ use icu_locid_transform::{TransformResult, LocaleCanonicalizer};
 use icu_locid::Locale;
 
 let provider = icu_testdata::get_provider();
-let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+let lc = LocaleCanonicalizer::try_new_with_buffer_provider(&provider).expect("create failed");
 
 let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
     .parse()
@@ -37,11 +37,11 @@ assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
 ```
 
 ```rust
-use icu_locid_transform::{TransformResult, LocaleCanonicalizer};
+use icu_locid_transform::{TransformResult, LocaleExpander};
 use icu_locid::Locale;
 
 let provider = icu_testdata::get_provider();
-let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+let lc = LocaleExpander::try_new_with_buffer_provider(&provider).expect("create failed");
 
 let mut locale: Locale = "zh-CN".parse().expect("parse failed");
 assert_eq!(lc.maximize(&mut locale), TransformResult::Modified);
@@ -53,11 +53,11 @@ assert_eq!(locale.to_string(), "zh-Hant-TW");
 ```
 
 ```rust
-use icu_locid_transform::{TransformResult, LocaleCanonicalizer};
+use icu_locid_transform::{TransformResult, LocaleExpander};
 use icu_locid::Locale;
 
 let provider = icu_testdata::get_provider();
-let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+let lc = LocaleExpander::try_new_with_buffer_provider(&provider).expect("create failed");
 
 let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
 assert_eq!(lc.minimize(&mut locale), TransformResult::Modified);
