@@ -269,6 +269,7 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
+    #[allow(clippy::indexing_slicing)] // TODO(#1440) This potentially panics
     fn get(&self, pos: usize) -> u16 {
         // TODO(#1440) This potentially panics
         u16::from_unaligned(self.trie[pos])
