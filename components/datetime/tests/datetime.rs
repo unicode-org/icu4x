@@ -207,13 +207,18 @@ fn assert_fixture_element<A, D>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf =
-        TypedDateTimeFormatter::<A::Calendar>::try_new_unstable(provider, &locale.into(), options.clone()).unwrap();
+    let dtf = TypedDateTimeFormatter::<A::Calendar>::try_new_unstable(
+        provider,
+        &locale.into(),
+        options.clone(),
+    )
+    .unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
 
-    let any_dtf = DateTimeFormatter::try_new_unstable(provider, &locale.into(), options.clone()).unwrap();
+    let any_dtf =
+        DateTimeFormatter::try_new_unstable(provider, &locale.into(), options.clone()).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
@@ -246,7 +251,8 @@ fn assert_fixture_element<A, D>(
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new_unstable(provider, &locale.into(), bag.time.unwrap()).unwrap();
+            let tf = TimeFormatter::try_new_unstable(provider, &locale.into(), bag.time.unwrap())
+                .unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             let result = dtf.format_to_string(input_value);
@@ -287,7 +293,8 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_unstable(provider, &locale.into(), bag.time.unwrap()).unwrap();
+            let tf = TimeFormatter::try_new_unstable(provider, &locale.into(), bag.time.unwrap())
+                .unwrap();
 
             let result = tf.format_to_string(input_value);
 
@@ -800,8 +807,11 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     let options = DateTimeFormatterOptions::Length(length_bag);
 
     let provider = icu_testdata::get_provider();
-    let result =
-        TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&provider, &locale!("en").into(), options);
+    let result = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+        &provider,
+        &locale!("en").into(),
+        options,
+    );
 
     assert!(result.is_err());
 }

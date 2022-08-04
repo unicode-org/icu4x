@@ -32,7 +32,7 @@ pub mod ffi {
 
     impl ICU4XTimeFormatter {
         /// Creates a new [`ICU4XTimeFormatter`] from locale data.
-        #[diplomat::rust_link(icu::decimal::TypedDateFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::decimal::TypedDateFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -49,7 +49,7 @@ pub mod ffi {
                 ICU4XTimeLength::Short => length::Time::Short,
             };
 
-            TimeFormatter::try_new(&provider, &locale, length)
+            TimeFormatter::try_new_unstable(&provider, &locale, length)
                 .map(|tf| Box::new(ICU4XTimeFormatter(tf)))
                 .map_err(Into::into)
                 .into()
@@ -88,7 +88,7 @@ pub mod ffi {
 
     impl ICU4XGregorianDateFormatter {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
-        #[diplomat::rust_link(icu::decimal::TypedDateFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::decimal::TypedDateFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -105,7 +105,7 @@ pub mod ffi {
                 ICU4XDateLength::Short => length::Date::Short,
             };
 
-            TypedDateFormatter::try_new(&provider, &locale, length)
+            TypedDateFormatter::try_new_unstable(&provider, &locale, length)
                 .map(|df| Box::new(ICU4XGregorianDateFormatter(df)))
                 .map_err(Into::into)
                 .into()
@@ -137,7 +137,7 @@ pub mod ffi {
 
     impl ICU4XGregorianDateTimeFormatter {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -163,7 +163,7 @@ pub mod ffi {
 
             let options = length::Bag::from_date_time_style(date_length, time_length);
 
-            TypedDateTimeFormatter::try_new(&provider, &locale, &options.into())
+            TypedDateTimeFormatter::try_new_unstable(&provider, &locale, options.into())
                 .map(|dtf| Box::new(ICU4XGregorianDateTimeFormatter(dtf)))
                 .map_err(Into::into)
                 .into()
