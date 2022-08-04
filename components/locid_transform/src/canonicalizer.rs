@@ -8,7 +8,7 @@ use crate::provider::*;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
-use core::mem;
+
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
     extensions::unicode::Key,
@@ -410,7 +410,7 @@ impl LocaleCanonicalizer {
                         };
 
                         locale.id.region =
-                            Some(match (self.maximize(&mut maximized), maximized.region) {
+                            Some(match (self.expander.maximize(&mut maximized), maximized.region) {
                                 (TransformResult::Modified, Some(candidate))
                                     if regions.iter().any(|x| x == candidate) =>
                                 {
@@ -489,24 +489,6 @@ impl LocaleCanonicalizer {
         }
 
         result
-    }
-
-    /// The maximize method potentially updates a passed in locale in place
-    /// depending up the results of running the 'Add Likely Subtags' algorithm
-    /// from <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
-    ///
-    /// For more information, see [`LocaleExpander::minimize`].
-    fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
-        self.expander.maximize(langid)
-    }
-
-    /// This returns a new Locale that is the result of running the
-    /// 'Remove Likely Subtags' algorithm from
-    /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
-    ///
-    /// For more information, see [`LocaleExpander::minimize`].
-    fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> TransformResult {
-        self.expander.minimize(langid)
     }
 }
 

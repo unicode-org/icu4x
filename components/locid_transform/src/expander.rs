@@ -3,18 +3,16 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::provider::*;
-use alloc::vec;
-use alloc::vec::Vec;
-use core::cmp::Ordering;
+
+
+
 use core::mem;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
-    extensions::unicode::Key,
-    subtags::{Variant, Variants},
-    subtags_language as language, LanguageIdentifier, Locale,
+    LanguageIdentifier,
 };
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyAsciiStr};
+
 use crate::TransformResult;
 
 /// LocaleExpander supports the `minimize` and `maximize` likely subtags
