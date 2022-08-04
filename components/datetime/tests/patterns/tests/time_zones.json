@@ -4,7 +4,7 @@
     "config": {
       "time_zone_id": "uslax",
       "metazone_id": "ampa",
-      "time_variant": "daylight"
+      "time_variant": "dt"
     },
     "datetime": "2021-01-11T12:00:00.000-07:00",
     "expectations": [
@@ -170,7 +170,7 @@
     "config": {
       "time_zone_id": "gblon",
       "metazone_id": "mgmt",
-      "time_variant": "daylight"
+      "time_variant": "dt"
     },
     "datetime": "2021-01-11T12:00:00.000-07:00",
     "expectations": [
@@ -285,7 +285,7 @@
     "config": {
       "time_zone_id": "iedub",
       "metazone_id": "mgmt",
-      "time_variant": "daylight"
+      "time_variant": "dt"
     },
     "datetime": "2021-01-11T12:00:00.000-07:00",
     "expectations": [
