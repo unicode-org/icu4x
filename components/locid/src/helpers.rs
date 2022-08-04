@@ -43,6 +43,13 @@ impl<T> ShortVec<T> {
             ShortVec::Multi(v) => v.as_slice(),
         }
     }
+
+    pub const fn single(&self) -> Option<&T> {
+        match self {
+            ShortVec::Single(v) => Some(v),
+            _ => None,
+        }
+    }
 }
 
 impl<T> From<Vec<T>> for ShortVec<T> {

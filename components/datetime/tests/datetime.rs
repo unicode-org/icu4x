@@ -245,13 +245,7 @@ fn assert_fixture_element<A, D>(
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new(
-                provider,
-                &locale.into(),
-                bag.time.unwrap(),
-                bag.preferences,
-            )
-            .unwrap();
+            let tf = TimeFormatter::try_new(provider, &locale.into(), bag.time.unwrap()).unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             let result = dtf.format_to_string(input_value);
@@ -292,13 +286,7 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new(
-                provider,
-                &locale.into(),
-                bag.time.unwrap(),
-                bag.preferences,
-            )
-            .unwrap();
+            let tf = TimeFormatter::try_new(provider, &locale.into(), bag.time.unwrap()).unwrap();
 
             let result = tf.format_to_string(input_value);
 

@@ -23,7 +23,6 @@ export { ICU4XGraphemeClusterBreakSegmenter } from './ICU4XGraphemeClusterBreakS
 export { ICU4XGregorianDateFormatter } from './ICU4XGregorianDateFormatter.js';
 export { ICU4XGregorianDateTime } from './ICU4XGregorianDateTime.js';
 export { ICU4XGregorianDateTimeFormatter } from './ICU4XGregorianDateTimeFormatter.js';
-export { ICU4XHourCyclePreference } from './ICU4XHourCyclePreference.js';
 export { ICU4XLineBreakIteratorLatin1 } from './ICU4XLineBreakIteratorLatin1.js';
 export { ICU4XLineBreakIteratorUtf16 } from './ICU4XLineBreakIteratorUtf16.js';
 export { ICU4XLineBreakIteratorUtf8 } from './ICU4XLineBreakIteratorUtf8.js';

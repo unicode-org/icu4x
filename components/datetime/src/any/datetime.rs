@@ -298,7 +298,6 @@ impl DateTimeFormatter {
     ///     &provider,
     ///     &locale!("en").into(),
     ///     length::Time::Short,
-    ///     None,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
     ///

@@ -46,7 +46,6 @@ use crate::{
 ///     &provider,
 ///     &locale!("en").into(),
 ///     Time::Short,
-///     None,
 /// )
 /// .expect("Failed to create TimeFormatter instance.");
 ///
@@ -78,7 +77,6 @@ impl TimeFormatter {
     ///     &provider,
     ///     &locale!("en").into(),
     ///     Time::Short,
-    ///     None,
     /// )
     /// .unwrap();
     /// ```
@@ -89,7 +87,6 @@ impl TimeFormatter {
         data_provider: &D,
         locale: &DataLocale,
         length: length::Time,
-        preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<TimeLengthsV1Marker>
@@ -97,6 +94,7 @@ impl TimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
+        let preferences = Some(preferences::Bag::from_data_locale(locale));
         let locale = locale.clone();
 
         Ok(Self(raw::TimeFormatter::try_new(
@@ -119,7 +117,7 @@ impl TimeFormatter {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short, None)
+    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -150,7 +148,7 @@ impl TimeFormatter {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short, None)
+    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -181,7 +179,7 @@ impl TimeFormatter {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short, None)
+    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -427,7 +425,6 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     ///     &provider,
     ///     &locale!("en").into(),
     ///     length::Time::Short,
-    ///     None,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
     /// let df = TypedDateFormatter::<Gregorian>::try_new(

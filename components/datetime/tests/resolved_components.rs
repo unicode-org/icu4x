@@ -8,12 +8,16 @@ use icu_datetime::{
     DateTimeFormatterOptions, TypedDateTimeFormatter,
 };
 use icu_locid::locale;
+use icu_locid::Locale;
 
-fn assert_resolved_components(options: &DateTimeFormatterOptions, bag: &components::Bag) {
+fn assert_resolved_components(
+    options: &DateTimeFormatterOptions,
+    bag: &components::Bag,
+    locale: Locale,
+) {
     let provider = icu_testdata::get_provider();
-    let dtf =
-        TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), options)
-            .expect("Failed to create a TypedDateTimeFormatter.");
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), options)
+        .expect("Failed to create a TypedDateTimeFormatter.");
 
     assert_eq!(dtf.resolve_components(), *bag);
 }
@@ -29,6 +33,7 @@ fn test_length_date() {
     assert_resolved_components(
         &DateTimeFormatterOptions::Length(length_bag),
         &components_bag,
+        locale!("en"),
     );
 }
 
@@ -45,15 +50,13 @@ fn test_length_time() {
     assert_resolved_components(
         &DateTimeFormatterOptions::Length(length_bag),
         &components_bag,
+        "en-u-hc-h12".parse::<Locale>().unwrap(),
     );
 }
 
 #[test]
 fn test_length_time_preferences() {
-    let mut length_bag = length::Bag::from_time_style(length::Time::Medium);
-    length_bag.preferences = Some(preferences::Bag::from_hour_cycle(
-        preferences::HourCycle::H24,
-    ));
+    let length_bag = length::Bag::from_time_style(length::Time::Medium);
 
     let mut components_bag = components::Bag::default();
     components_bag.hour = Some(components::Numeric::TwoDigit);
@@ -66,6 +69,7 @@ fn test_length_time_preferences() {
     assert_resolved_components(
         &DateTimeFormatterOptions::Length(length_bag),
         &components_bag,
+        "en-u-hc-h24".parse::<Locale>().unwrap(),
     );
 }
 
@@ -91,5 +95,6 @@ fn test_components_bag() {
     assert_resolved_components(
         &DateTimeFormatterOptions::Components(input_bag),
         &output_bag,
+        "en-u-hc-h23".parse::<Locale>().unwrap(),
     );
 }

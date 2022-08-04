@@ -46,7 +46,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XHourCyclePreference time_preferences)
+    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
 
         Creates a new :cpp:class:`ICU4XGregorianDateFormatter` from locale data.
 
@@ -67,18 +67,6 @@
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.format_to_write>`__ for more information.
 
 
-.. cpp:enum-struct:: ICU4XHourCyclePreference
-
-    .. cpp:enumerator:: H24
-
-    .. cpp:enumerator:: H23
-
-    .. cpp:enumerator:: H12
-
-    .. cpp:enumerator:: H11
-
-    .. cpp:enumerator:: None
-
 .. cpp:class:: ICU4XTimeFormatter
 
     An ICU4X TimeFormatter object capable of formatting a :cpp:class:`ICU4XGregorianDateTime` as a string
@@ -86,7 +74,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length, ICU4XHourCyclePreference preferences)
+    .. cpp:function:: static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length)
 
         Creates a new :cpp:class:`ICU4XTimeFormatter` from locale data.
 
