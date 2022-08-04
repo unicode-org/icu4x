@@ -5,10 +5,15 @@
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
+    use alloc::sync::Arc;
+    use core::convert::TryInto;
     use diplomat_runtime::DiplomatResult;
+    use icu_calendar::AnyCalendar;
     use icu_calendar::{DateTime, Gregorian};
 
     use crate::errors::ffi::ICU4XError;
+    use crate::locale::ffi::ICU4XLocale;
+    use crate::provider::ffi::ICU4XDataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a Gregorian date and time.
@@ -28,6 +33,32 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XGregorianDateTime>, ICU4XError> {
             DateTime::new_gregorian_datetime(year, month, day, hour, minute, second)
                 .map(|dt| Box::new(ICU4XGregorianDateTime(dt)))
+                .map_err(Into::into)
+                .into()
+        }
+    }
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::calendar::AnyCalendar, Enum)]
+    pub struct ICU4XCalendar(pub Arc<AnyCalendar>);
+
+    impl ICU4XCalendar {
+        /// Creates a new [`ICU4XGregorianDateTime`] from the specified date and time.
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_unstable, FnInStruct)]
+        pub fn try_new(
+            provider: &ICU4XDataProvider,
+            locale: &ICU4XLocale,
+        ) -> DiplomatResult<Box<ICU4XCalendar>, ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+
+            let kind = match (&locale.0).try_into() {
+                Ok(k) => k,
+                Err(e) => return Err(ICU4XError::from(e)).into(),
+            };
+
+            AnyCalendar::try_new_unstable(&provider, kind)
+                .map(|df| Box::new(ICU4XCalendar(Arc::new(df))))
                 .map_err(Into::into)
                 .into()
         }
