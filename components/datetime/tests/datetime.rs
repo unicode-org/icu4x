@@ -208,7 +208,7 @@ fn assert_fixture_element<A, D>(
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
     let dtf =
-        TypedDateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options.clone()).unwrap();
+        TypedDateTimeFormatter::<A::Calendar>::try_new_unstable(provider, &locale.into(), options.clone()).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
@@ -240,13 +240,13 @@ fn assert_fixture_element<A, D>(
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new(
+            let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
                 provider,
                 &locale.into(),
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new(provider, &locale.into(), bag.time.unwrap()).unwrap();
+            let tf = TimeFormatter::try_new_unstable(provider, &locale.into(), bag.time.unwrap()).unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             let result = dtf.format_to_string(input_value);
@@ -265,7 +265,7 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new(
+            let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
                 provider,
                 &locale.into(),
                 bag.date.unwrap(),
@@ -287,7 +287,7 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new(provider, &locale.into(), bag.time.unwrap()).unwrap();
+            let tf = TimeFormatter::try_new_unstable(provider, &locale.into(), bag.time.unwrap()).unwrap();
 
             let result = tf.format_to_string(input_value);
 
@@ -333,7 +333,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         };
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
-            let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+            let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
                 &provider,
                 &locale.into(),
                 options.clone(),
@@ -444,7 +444,7 @@ fn test_dayperiod_patterns() {
                                 data: decimal_data.clone().wrap_into_any_payload(),
                             },
                         ]);
-                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
+                        let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
                             &local_provider.as_downcasting(),
                             &data_locale,
                             format_options.clone(),
@@ -685,7 +685,7 @@ fn test_time_zone_patterns() {
                 ]);
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
-                    let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+                    let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
                         &local_provider.as_downcasting(),
                         &data_locale,
                         format_options.clone(),
@@ -801,7 +801,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
 
     let provider = icu_testdata::get_provider();
     let result =
-        TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), options);
+        TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&provider, &locale!("en").into(), options);
 
     assert!(result.is_err());
 }

@@ -54,7 +54,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     options.date = Some(length::Date::Medium);
     options.time = Some(length::Time::Short);
 
-    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
         &provider,
         &locale!("en").into(),
         options.into(),

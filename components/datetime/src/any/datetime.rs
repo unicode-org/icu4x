@@ -294,7 +294,7 @@ impl DateTimeFormatter {
     /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let tf = TimeFormatter::try_new(
+    /// let tf = TimeFormatter::try_new_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     length::Time::Short,
