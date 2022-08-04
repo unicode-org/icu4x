@@ -12,6 +12,11 @@ for the [`CodePointTrie`](crate::codepointtrie::CodePointTrie) struct.
 ICU4X [`CodePointInversionList`](`crate::codepointinvlist::CodePointInversionList`) provides necessary functionality for highly efficient querying of sets of Unicode characters.
 It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
+ICU4X [`Char16Trie`](`crate::char16trie::Char16Trie`) provides a data structure for a space-efficient and time-efficient lookup of
+sequences of 16-bit units (commonly but not necessarily UTF-16 code units)
+which map to integer values.
+It is an implementation of the existing [ICU4C UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UCharsTrie.html)
+/ [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
 
 ## More Information
 

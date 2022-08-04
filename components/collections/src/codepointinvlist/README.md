@@ -1,8 +1,6 @@
-# icu_uniset [![crates.io](https://img.shields.io/crates/v/icu_uniset)](https://crates.io/crates/icu_uniset)
+# `CodePointInversionList`
 
-`icu_uniset` is a utility crate of the [`ICU4X`] project.
-
-This API provides necessary functionality for highly efficient querying of sets of Unicode characters.
+This module provides necessary functionality for highly efficient querying of sets of Unicode characters.
 
 It is an implementation of the existing [ICU4C UnicodeSet API](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UnicodeSet.html).
 
