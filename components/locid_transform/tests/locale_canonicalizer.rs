@@ -6,12 +6,12 @@ mod fixtures;
 mod helpers;
 
 use icu_locid::Locale;
-use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
+use icu_locid_transform::{TransformResult, LocaleCanonicalizer, LocaleExpander};
 
 #[test]
 fn test_maximize() {
     let provider = icu_testdata::get_provider();
-    let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    let lc = LocaleExpander::try_new_unstable(&provider).unwrap();
 
     let path = "./tests/fixtures/maximize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =
@@ -25,7 +25,7 @@ fn test_maximize() {
         let unmodified = locale.clone();
         let result = lc.maximize(&mut locale);
         assert_eq!(locale.to_string(), case.output);
-        if result == CanonicalizationResult::Modified {
+        if result == TransformResult::Modified {
             assert_ne!(locale, unmodified);
         } else {
             assert_eq!(locale, unmodified);
@@ -36,7 +36,7 @@ fn test_maximize() {
 #[test]
 fn test_minimize() {
     let provider = icu_testdata::get_provider();
-    let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    let lc = LocaleExpander::try_new_unstable(&provider).unwrap();
 
     let path = "./tests/fixtures/minimize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =
@@ -50,7 +50,7 @@ fn test_minimize() {
         let unmodified = locale.clone();
         let result = lc.minimize(&mut locale);
         assert_eq!(locale.to_string(), case.output);
-        if result == CanonicalizationResult::Modified {
+        if result == TransformResult::Modified {
             assert_ne!(locale, unmodified);
         } else {
             assert_eq!(locale, unmodified);
@@ -61,7 +61,7 @@ fn test_minimize() {
 #[test]
 fn test_canonicalize() {
     let provider = icu_testdata::get_provider();
-    let lc = LocaleCanonicalizer::new(&provider).unwrap();
+    let lc = LocaleCanonicalizer::try_new_unstable(&provider).unwrap();
 
     let path = "./tests/fixtures/canonicalize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =
@@ -75,7 +75,7 @@ fn test_canonicalize() {
         let unmodified = locale.clone();
         let result = lc.canonicalize(&mut locale);
         assert_eq!(locale.to_string(), case.output);
-        if result == CanonicalizationResult::Modified {
+        if result == TransformResult::Modified {
             assert_ne!(locale, unmodified);
         } else {
             assert_eq!(locale, unmodified);
