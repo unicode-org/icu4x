@@ -97,7 +97,7 @@ impl<'data> Char16Trie<'data> {
     }
 }
 
-/// This struct represents an iterator over a Char16Trie.
+/// This struct represents an iterator over a [`Char16Trie`].
 #[derive(Clone)]
 pub struct Char16TrieIterator<'a> {
     /// A reference to the Char16Trie data to iterate over.
@@ -109,6 +109,7 @@ pub struct Char16TrieIterator<'a> {
     remaining_match_length: Option<usize>,
 }
 
+/// An enum representing the return value from a lookup in [`Char16Trie`].
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TrieResult {
     /// The input unit(s) did not continue a matching string.
