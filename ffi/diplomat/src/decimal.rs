@@ -39,13 +39,13 @@ pub mod ffi {
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
         pub fn try_new(
-            locale: &ICU4XLocale,
             provider: &ICU4XDataProvider,
+            locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            Self::try_new_impl(locale, &provider, grouping_strategy)
+            Self::try_new_impl(&provider, locale, grouping_strategy)
         }
 
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from preconstructed locale data in the form of an [`ICU4XDataStruct`]
@@ -64,21 +64,21 @@ pub mod ffi {
                 data: data_struct.0.clone(),
             };
             Self::try_new_impl(
-                &ICU4XLocale(Locale::UND),
                 &provider.as_downcasting(),
+                &ICU4XLocale(Locale::UND),
                 grouping_strategy,
             )
         }
 
         fn try_new_impl<D>(
-            locale: &ICU4XLocale,
             provider: &D,
+            locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError>
         where
             D: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
         {
-            let locale = &locale.0.as_ref().into();
+            let locale = locale.to_datalocale();
 
             let grouping_strategy = match grouping_strategy {
                 ICU4XFixedDecimalGroupingStrategy::Auto => GroupingStrategy::Auto,
@@ -88,7 +88,7 @@ pub mod ffi {
             };
             let mut options = FixedDecimalFormatterOptions::default();
             options.grouping_strategy = grouping_strategy;
-            FixedDecimalFormatter::try_new(locale, provider, options)
+            FixedDecimalFormatter::try_new_unstable(provider, &locale, options)
                 .map(|fdf| Box::new(ICU4XFixedDecimalFormatter(fdf)))
                 .map_err(Into::into)
                 .into()

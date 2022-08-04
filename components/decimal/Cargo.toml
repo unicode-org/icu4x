@@ -9,7 +9,7 @@ version = "0.6.0"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -54,7 +54,7 @@ getrandom = { version = "0.2", features = ["js"] }
 std = ["icu_locid/std", "icu_provider/std", "fixed_decimal/std"]
 default = []
 bench = ["serde"]
-serde = ["dep:serde"]
+serde = ["dep:serde", "icu_provider/serde"]
 datagen = ["serde", "databake"]
 
 [[bench]]

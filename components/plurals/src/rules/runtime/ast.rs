@@ -561,10 +561,10 @@ mod test {
             range_list: ZeroVec::alloc_from_slice(&[rov]),
         };
         let relations = alloc::vec![relation];
-        let vzv = VarZeroVec::from(relations.as_slice());
+        let vzv = VarZeroVec::<_>::from(relations.as_slice());
         assert_eq!(
             vzv.as_bytes(),
-            &[1, 0, 0, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]
+            &[1, 0, 0, 0, 0, 0, 192, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0]
         );
     }
 }

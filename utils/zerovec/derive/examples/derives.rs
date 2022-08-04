@@ -135,7 +135,7 @@ fn test_varzerovec() {
 
     let relations = &[relation1, relation2];
 
-    let vzv = VarZeroVec::from(relations);
+    let vzv = VarZeroVec::<_>::from(relations);
 
     for (ule, stack) in vzv.iter().zip(relations.iter()) {
         assert_eq!(*stack, ule.as_relation());

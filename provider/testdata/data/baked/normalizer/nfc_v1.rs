@@ -4,14 +4,14 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_normalizer::provider::CompositionPassthroughV1 {
     first: 768u32,
-    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
-        ::icu_codepointtrie::CodePointTrieHeader {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 24576u32,
             shifted12_high_start: 6u16,
             index3_null_offset: 25u16,
             data_null_offset: 0u32,
             null_value: 0u32,
-            trie_type: ::icu_codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -202,5 +202,6 @@ static UND: &DataStruct = &::icu_normalizer::provider::CompositionPassthroughV1 
                 0u8,
             ])
         },
+        0u8,
     ),
 };

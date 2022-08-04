@@ -38,7 +38,7 @@ use yoke::*;
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_blob(blob).expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::try_new_from_blob(blob).expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider
@@ -61,7 +61,7 @@ pub struct BlobDataProvider {
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
-    pub fn new_from_blob<B: Into<RcWrap<[u8]>>>(blob: B) -> Result<Self, DataError> {
+    pub fn try_new_from_blob<B: Into<RcWrap[u8]>>(blob: B) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
             data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
@@ -95,7 +95,7 @@ impl BufferProvider for BlobDataProvider {
                         .ok_or(DataErrorKind::MissingDataKey)
                         .and_then(|cursor| {
                             cursor
-                                .get1_copied_by(|bytes| req.locale.strict_cmp(bytes).reverse())
+                                .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
                                 .ok_or(DataErrorKind::MissingLocale)
                         })
                         .map_err(|kind| kind.with_req(key, req))?;

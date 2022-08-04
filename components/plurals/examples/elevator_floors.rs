@@ -31,11 +31,11 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         print("\n====== Elevator Floor (en) example ============", None);
-        let pr = PluralRules::try_new_ordinal(&locale!("en").into(), &provider)
+        let pr = PluralRules::try_new_ordinal_unstable(&provider, &locale!("en").into())
             .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {
-            match pr.select(*value) {
+            match pr.category_for(*value) {
                 PluralCategory::One => print("You are on the {}st floor.", Some(*value)),
                 PluralCategory::Two => print("You are on the {}nd floor.", Some(*value)),
                 PluralCategory::Few => print("You are on the {}rd floor.", Some(*value)),

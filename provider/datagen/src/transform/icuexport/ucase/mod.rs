@@ -9,8 +9,8 @@
 
 use icu_casemapping::provider::{CaseMappingV1, CaseMappingV1Marker};
 use icu_casemapping::CaseMappingInternals;
-use icu_codepointtrie::toml::CodePointDataSlice;
-use icu_codepointtrie::CodePointTrieHeader;
+use icu_collections::codepointtrie::toml::CodePointDataSlice;
+use icu_collections::codepointtrie::CodePointTrieHeader;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
 

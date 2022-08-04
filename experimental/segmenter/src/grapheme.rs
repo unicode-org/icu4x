@@ -6,13 +6,14 @@ use alloc::vec::Vec;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
 
-use crate::complex::Dictionary;
+use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
-pub type GraphemeClusterBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, GraphemeClusterBreakType>;
+pub type GraphemeClusterBreakIteratorUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, GraphemeClusterBreakTypeUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 pub type GraphemeClusterBreakIteratorLatin1<'l, 's> =
@@ -27,6 +28,7 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
 pub struct GraphemeClusterBreakSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
     dictionary: Dictionary,
+    lstm: LstmPayloads,
 }
 
 impl GraphemeClusterBreakSegmenter {
@@ -36,21 +38,27 @@ impl GraphemeClusterBreakSegmenter {
     {
         let payload = provider.load(Default::default())?.take_payload()?;
         let dictionary = Dictionary::default();
+        let lstm = LstmPayloads::default();
         Ok(Self {
             payload,
             dictionary,
+            lstm,
         })
     }
 
     /// Create a grapheme cluster break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> GraphemeClusterBreakIterator<'l, 's> {
-        GraphemeClusterBreakIterator {
+    pub fn segment_str<'l, 's>(
+        &'l self,
+        input: &'s str,
+    ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
+        GraphemeClusterBreakIteratorUtf8 {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -66,6 +74,7 @@ impl GraphemeClusterBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -81,13 +90,14 @@ impl GraphemeClusterBreakSegmenter {
             result_cache: Vec::new(),
             data: self.payload.get(),
             dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 }
 
-pub struct GraphemeClusterBreakType;
+pub struct GraphemeClusterBreakTypeUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakType {
+impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -107,7 +117,7 @@ pub struct GraphemeClusterBreakTypeLatin1;
 
 impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
-    type CharType = u8; // TODO: Latin1Char
+    type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")

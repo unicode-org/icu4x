@@ -11,9 +11,9 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_and(
-    locale!("es"),
+let list_formatter = ListFormatter::try_new_and_with_buffer_provider(
     &icu_testdata::get_provider(),
+    &locale!("es").into(),
     ListStyle::Wide,
 )
 .expect("Data should load successfully");
@@ -34,9 +34,9 @@ assert_writeable_eq!(
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_or(
-    locale!("th"),
+let list_formatter = ListFormatter::try_new_or_with_buffer_provider(
     &icu_testdata::get_provider(),
+    &locale!("th").into(),
     ListStyle::Short,
 )
 .expect("Data should load successfully");
@@ -52,9 +52,9 @@ assert_writeable_eq!(
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_unit(
-    locale!("en"),
+let list_formatter = ListFormatter::try_new_unit_with_buffer_provider(
     &icu_testdata::get_provider(),
+    &locale!("en").into(),
     ListStyle::Wide,
 )
 .expect("Data should load successfully");

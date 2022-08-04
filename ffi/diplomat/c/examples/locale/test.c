@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XLocaleCanonicalizer.h"
+#include "../../include/ICU4XLocaleExpander.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -168,7 +169,7 @@ int main() {
 
     ICU4XLocale_destroy(locale);
 
-    // Create a LocaleCanonicalizer.
+    // Create a LocaleCanonicalizer and LocaleExpander.
     ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
     diplomat_result_box_ICU4XLocaleCanonicalizer_ICU4XError result2 = ICU4XLocaleCanonicalizer_create(provider);
     if (!result2.is_ok) {
@@ -176,11 +177,17 @@ int main() {
         return 1;
     }
     ICU4XLocaleCanonicalizer* lc = result2.ok;
+    diplomat_result_box_ICU4XLocaleExpander_ICU4XError result3 = ICU4XLocaleExpander_create(provider);
+    if (!result3.is_ok) {
+        printf("Could not construct Locale Canonicalizer");
+        return 1;
+    }
+    ICU4XLocaleExpander* le = result3.ok;
 
     // Test maximize.
     write = diplomat_simple_writeable(output, 40);
     locale = ICU4XLocale_create("und", 3);
-    ICU4XLocaleCanonicalizer_maximize(lc, locale);
+    ICU4XLocaleExpander_maximize(le, locale);
     result = ICU4XLocale_tostring(locale, &write);
     if (!result.is_ok) {
         return 1;
@@ -196,7 +203,7 @@ int main() {
     // Test minimize.
     write = diplomat_simple_writeable(output, 40);
     locale = ICU4XLocale_create("zh-Hant", 7);
-    ICU4XLocaleCanonicalizer_minimize(lc, locale);
+    ICU4XLocaleExpander_minimize(le, locale);
     result = ICU4XLocale_tostring(locale, &write);
     if (!result.is_ok) {
         return 1;
@@ -226,6 +233,7 @@ int main() {
     ICU4XLocale_destroy(locale);
 
     ICU4XLocaleCanonicalizer_destroy(lc);
+    ICU4XLocaleExpander_destroy(le);
 
     return 0;
 }

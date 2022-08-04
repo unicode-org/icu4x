@@ -21,4 +21,6 @@ pub use crate::{VarZeroSlice, VarZeroVec};
 #[doc(hidden)]
 pub use components::VarZeroVecComponents;
 
+pub use components::{Index16, Index32, VarZeroVecFormat};
+
 pub use owned::VarZeroVecOwned;

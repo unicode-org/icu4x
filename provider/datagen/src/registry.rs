@@ -11,17 +11,18 @@ use icu_datetime::provider::time_zones::*;
 use icu_datetime::provider::week_data::*;
 use icu_decimal::provider::*;
 use icu_list::provider::*;
-use icu_locale_canonicalizer::provider::*;
+use icu_locid_transform::provider::*;
 use icu_normalizer::provider::*;
 use icu_plurals::provider::*;
 use icu_properties::provider::*;
 use icu_provider::hello_world::HelloWorldV1Marker;
 use icu_provider_adapters::fallback::provider::*;
+use icu_timezone::provider::*;
 
 #[cfg(feature = "experimental")]
 use icu_casemapping::provider::*;
 #[cfg(feature = "experimental")]
-use icu_segmenter::*;
+use icu_segmenter::provider::*;
 
 macro_rules! registry {
     ($($marker:ident,)+ #[cfg(feature = "experimental")] { $($exp_marker:ident,)+ }) => {
@@ -69,6 +70,8 @@ registry!(
     BidiControlV1Marker,
     BidiMirroredV1Marker,
     BlankV1Marker,
+    BuddhistDateLengthsV1Marker,
+    BuddhistDateSymbolsV1Marker,
     CanonicalCombiningClassV1Marker,
     CanonicalCompositionPassthroughV1Marker,
     CanonicalCompositionsV1Marker,
@@ -93,10 +96,10 @@ registry!(
     CompatibilityCompositionPassthroughV1Marker,
     CompatibilityDecompositionSupplementV1Marker,
     CompatibilityDecompositionTablesV1Marker,
+    CopticDateLengthsV1Marker,
+    CopticDateSymbolsV1Marker,
     DashV1Marker,
-    DatePatternsV1Marker,
     DateSkeletonPatternsV1Marker,
-    DateSymbolsV1Marker,
     DecimalSymbolsV1Marker,
     DefaultIgnorableCodePointV1Marker,
     DeprecatedV1Marker,
@@ -107,6 +110,8 @@ registry!(
     EmojiModifierV1Marker,
     EmojiPresentationV1Marker,
     EmojiV1Marker,
+    EthiopicDateLengthsV1Marker,
+    EthiopicDateSymbolsV1Marker,
     ExemplarCitiesV1Marker,
     ExtendedPictographicV1Marker,
     ExtenderV1Marker,
@@ -117,6 +122,8 @@ registry!(
     GraphemeExtendV1Marker,
     GraphemeLinkV1Marker,
     GraphV1Marker,
+    GregorianDateLengthsV1Marker,
+    GregorianDateSymbolsV1Marker,
     HexDigitV1Marker,
     HyphenV1Marker,
     IdContinueV1Marker,
@@ -124,7 +131,14 @@ registry!(
     IdsBinaryOperatorV1Marker,
     IdStartV1Marker,
     IdsTrinaryOperatorV1Marker,
+    IndianDateLengthsV1Marker,
+    IndianDateSymbolsV1Marker,
+    JapaneseDateLengthsV1Marker,
+    JapaneseDateSymbolsV1Marker,
     JapaneseErasV1Marker,
+    JapaneseExtendedDateLengthsV1Marker,
+    JapaneseExtendedDateSymbolsV1Marker,
+    JapaneseExtendedErasV1Marker,
     JoinControlV1Marker,
     LikelySubtagsV1Marker,
     LineBreakV1Marker,
@@ -160,7 +174,7 @@ registry!(
     SentenceTerminalV1Marker,
     SoftDottedV1Marker,
     TerminalPunctuationV1Marker,
-    TimePatternsV1Marker,
+    TimeLengthsV1Marker,
     TimeSymbolsV1Marker,
     TimeZoneFormatsV1Marker,
     UnifiedIdeographV1Marker,

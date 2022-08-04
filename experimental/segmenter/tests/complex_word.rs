@@ -38,6 +38,7 @@ fn word_break_th() {
     );
 }
 
+#[ignore = "testdata doesn't have Burmese data"]
 #[test]
 fn word_break_my() {
     let provider = icu_testdata::get_provider();

@@ -11,10 +11,11 @@ use serde::{Deserialize, Serialize};
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
 /// See `UProperty` in ICU4C.
+#[allow(dead_code)] // Not currently used but seems like it could be useful
 #[derive(Clone, PartialEq, Debug)]
 #[non_exhaustive]
 #[repr(i32)]
-pub enum EnumeratedProperty {
+enum EnumeratedProperty {
     /// The Bidi_Class property.
     BidiClass = 0x1000,
     /// The Canonical_Combining_Class property.
@@ -48,6 +49,8 @@ pub enum EnumeratedProperty {
 /// For more information, see [Unicode Standard Annex #9](https://unicode.org/reports/tr41/tr41-28.html#UAX9).
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(BidiClassULE)]
@@ -113,6 +116,8 @@ impl BidiClass {
 /// It does not support grouped categories (eg `Letter`). For grouped categories, use [`GeneralCategoryGroup`].
 #[derive(Copy, Clone, PartialEq, Eq, Debug, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 #[zerovec::make_ule(GeneralCategoryULE)]
 #[repr(u8)]
@@ -324,10 +329,10 @@ impl GeneralCategoryGroup {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory, GeneralCategoryGroup};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_general_category(&provider).expect("The data should be valid");
+    /// let data = maps::load_general_category(&provider).expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
     /// assert_eq!(gc.get('A'), GeneralCategory::UppercaseLetter);
@@ -388,6 +393,8 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
 /// See `UScriptCode` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(ScriptULE)]
@@ -568,6 +575,8 @@ impl Script {
 /// The numeric value is compatible with `UEastAsianWidth` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(EastAsianWidthULE)]
@@ -592,6 +601,8 @@ impl EastAsianWidth {
 /// The numeric value is compatible with `ULineBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(LineBreakULE)]
@@ -654,6 +665,8 @@ impl LineBreak {
 /// The numeric value is compatible with `UGraphemeClusterBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 #[repr(transparent)]
 #[zerovec::make_ule(GraphemeClusterBreakULE)]
@@ -695,6 +708,8 @@ impl GraphemeClusterBreak {
 /// The numeric value is compatible with `UWordBreakValues` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(WordBreakULE)]
@@ -740,6 +755,8 @@ impl WordBreak {
 /// The numeric value is compatible with `USentenceBreak` in ICU4C.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(SentenceBreakULE)]
@@ -770,6 +787,8 @@ impl SentenceBreak {
 /// <https://www.unicode.org/reports/tr15/>.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties))]
 #[allow(clippy::exhaustive_structs)] // newtype
 #[repr(transparent)]
 #[zerovec::make_ule(CanonicalCombiningClassULE)]

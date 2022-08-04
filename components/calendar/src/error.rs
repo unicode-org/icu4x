@@ -32,9 +32,6 @@ pub enum DateTimeError {
         /// The minimum value
         min: isize,
     },
-    /// The time zone offset was invalid.
-    #[displaydoc("Failed to parse time-zone offset")]
-    InvalidTimeZoneOffset,
     /// Out of range
     // TODO(Manishearth) turn this into a proper variant
     OutOfRange,
@@ -46,6 +43,8 @@ pub enum DateTimeError {
     UnknownMonthCode(TinyStr4, &'static str),
     #[displaydoc("No value for {0}")]
     MissingInput(&'static str),
+    #[displaydoc("AnyCalendar does not support calendar {0}")]
+    UnknownAnyCalendarKind(TinyStr16),
 }
 
 impl From<core::num::ParseIntError> for DateTimeError {

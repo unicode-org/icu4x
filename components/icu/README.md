@@ -35,7 +35,7 @@ for a small set of locales.
 ## Example
 
 ```rust
-use icu::datetime::{mock::parse_gregorian_from_str, options::length, DateTimeFormatter};
+use icu::datetime::{mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter};
 use icu::locid::locale;
 
 let provider = icu_testdata::get_provider();
@@ -43,15 +43,15 @@ let provider = icu_testdata::get_provider();
 let options =
     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-let dtf = DateTimeFormatter::try_new(&locale!("en").into(), &provider, &options)
-    .expect("Failed to create DateTimeFormatter instance.");
+let dtf = TypedDateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("es").into(), options)
+    .expect("Failed to create TypedDateTimeFormatter instance.");
 
 let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 
 let formatted_date = dtf.format(&date);
 assert_eq!(
     formatted_date.to_string(),
-    "September 12, 2020 at 12:35:00 PM"
+    "12 de septiembre de 2020, 12:35:00"
 );
 ```
 

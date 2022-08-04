@@ -22,8 +22,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 locale.set_region(
                     self.likely_subtags
                         .ls2r
-                        .get(&language.into(), &script.into())
-                        .ok()
+                        .get_2d(&language.into(), &script.into())
                         .copied(),
                 );
             }
@@ -44,7 +43,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                     == self
                         .likely_subtags
                         .lr2s
-                        .get_copied(&language.into(), &region.into())
+                        .get_copied_2d(&language.into(), &region.into())
                         .unwrap_or(default_script)
                 {
                     locale.set_script(None);
@@ -115,10 +114,10 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         if locale.script().is_none() {
             if let Some(region) = locale.region() {
                 let language = locale.language();
-                if let Ok(script) = self
+                if let Some(script) = self
                     .likely_subtags
                     .lr2s
-                    .get_copied(&language.into(), &region.into())
+                    .get_copied_2d(&language.into(), &region.into())
                 {
                     locale.set_script(Some(script));
                     self.restore_extensions_variants(locale);
@@ -326,7 +325,7 @@ mod tests {
     fn test_fallback() {
         let fallbacker_no_data = LocaleFallbacker::new_without_data();
         let provider = icu_testdata::get_postcard_provider();
-        let fallbacker_with_data = LocaleFallbacker::try_new(&provider).unwrap();
+        let fallbacker_with_data = LocaleFallbacker::try_new_unstable(&provider).unwrap();
         for cas in TEST_CASES {
             for (priority, expected_chain) in [
                 (FallbackPriority::Language, cas.expected_language_chain),

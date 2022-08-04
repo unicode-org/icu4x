@@ -40,8 +40,6 @@ macro_rules! implement {
                 Ok(DataResponse {
                     metadata: Default::default(),
                     payload: Some(DataPayload::from_owned(PluralRulesV1::from(
-                        #[allow(clippy::unwrap_used)]
-                        // TODO(#1668) Clippy exceptions need docs or fixing.
                         self.get_rules_for(<$marker>::KEY)?
                             .0
                             .get(&req.locale.get_langid())
@@ -73,17 +71,15 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
     fn from(other: &cldr_serde::plurals::LocalePluralRules) -> Self {
         /// Removes samples from plural rule strings. Takes an owned [`String`] reference and
         /// returns a new [`String`] in a [`Cow::Owned`].
-        #[allow(clippy::ptr_arg)]
-        fn convert(s: &String) -> Rule<'static> {
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        fn convert(s: &str) -> Rule<'static> {
             s.parse().expect("Rule parsing failed.")
         }
         Self {
-            zero: other.zero.as_ref().map(convert),
-            one: other.one.as_ref().map(convert),
-            two: other.two.as_ref().map(convert),
-            few: other.few.as_ref().map(convert),
-            many: other.many.as_ref().map(convert),
+            zero: other.zero.as_deref().map(convert),
+            one: other.one.as_deref().map(convert),
+            two: other.two.as_deref().map(convert),
+            few: other.few.as_deref().map(convert),
+            many: other.many.as_deref().map(convert),
         }
     }
 }

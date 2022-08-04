@@ -3,14 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! [`DateTimeFormatterOptions`] is a bag of options which, together with [`Locale`],
-//! defines how dates will be formatted with a [`DateTimeFormatter`] instance.
+//! defines how dates will be formatted with a [`TypedDateTimeFormatter`] instance.
 //!
 //! Each variant of the bag is a combination of settings defining how to format
 //! the date, with an optional `Preferences` which represent user preferences and
 //! may alter how the selected pattern is formatted.
 //!
 //! [`Locale`]: icu_locid::Locale
-//! [`DateTimeFormatter`]: crate::DateTimeFormatter
+//! [`TypedDateTimeFormatter`]: crate::TypedDateTimeFormatter
 //!
 //! # Examples
 //!
@@ -27,7 +27,7 @@ pub mod components;
 pub mod length;
 pub mod preferences;
 /// A bag of options which, together with [`Locale`](icu_locid::Locale), defines how
-/// dates will be formatted with a [`DateTimeFormatter`](crate::DateTimeFormatter) instance.
+/// dates will be formatted with a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) instance.
 ///
 /// Each variant of the bag is a combination of settings defining how to format
 /// the date, with an optional `Preferences` which represent user preferences and

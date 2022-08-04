@@ -27,7 +27,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Bidi object, containing loaded bidi data
     #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter, Struct)]
-    // #[diplomat::rust_link(icu::properties::maps::get_bidi_class, Struct)]
+    // #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Struct)]
     pub struct ICU4XBidi(pub maps::CodePointMapData<BidiClass>);
 
     impl ICU4XBidi {
@@ -36,7 +36,7 @@ pub mod ffi {
         pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            maps::get_bidi_class(&provider)
+            maps::load_bidi_class(&provider)
                 .map(|bidi| Box::new(ICU4XBidi(bidi)))
                 .map_err(Into::into)
                 .into()

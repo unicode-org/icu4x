@@ -9,7 +9,7 @@
 //! # Examples
 //!
 //!```
-//! use icu_codepointtrie::CodePointTrie;
+//! use icu_collections::codepointtrie::CodePointTrie;
 //! use icu_properties::bidi::BidiClassAdapter;
 //! use icu_properties::{maps, BidiClass};
 //! use unicode_bidi::BidiClass as DataSourceBidiClass;
@@ -22,7 +22,7 @@
 //! // Create an adapter to provide the data to `BidiInfo`.
 //! let provider = icu_testdata::get_provider();
 //!
-//! let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+//! let data = maps::load_bidi_class(&provider).expect("The data should be valid");
 //! let bc = data.as_borrowed();
 //!
 //! let adapter = BidiClassAdapter::new(bc);
@@ -56,7 +56,7 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// # Example
 ///
 /// ```
-/// use icu_codepointtrie::CodePointTrie;
+/// use icu_collections::codepointtrie::CodePointTrie;
 /// use icu_properties::bidi::BidiClassAdapter;
 /// use icu_properties::{maps, BidiClass};
 /// use unicode_bidi::BidiClass as DataSourceBidiClass;
@@ -64,7 +64,7 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+/// let data = maps::load_bidi_class(&provider).expect("The data should be valid");
 ///
 /// let adapter = BidiClassAdapter::new(data.as_borrowed());
 /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
@@ -87,7 +87,7 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     /// # Example
     ///
     /// ```
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     /// use icu_properties::bidi::BidiClassAdapter;
     /// use icu_properties::{maps, BidiClass};
     /// use unicode_bidi::BidiClass as DataSourceBidiClass;
@@ -95,13 +95,13 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let data = maps::get_bidi_class(&provider).expect("The data should be valid");
+    /// let data = maps::load_bidi_class(&provider).expect("The data should be valid");
     ///
     /// let adapter = BidiClassAdapter::new(data.as_borrowed());
     /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
     /// ```
     ///
-    /// [`CodePointTrie`]: icu_codepointtrie::CodePointTrie
+    /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
     fn bidi_class(&self, c: char) -> DataSourceBidiClass {
         let bidi_class = self.data.get(c);
         match bidi_class {

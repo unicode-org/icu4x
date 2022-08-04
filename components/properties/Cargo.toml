@@ -10,7 +10,7 @@ authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -33,9 +33,8 @@ all-features = true
 
 [dependencies]
 displaydoc = { version = "0.2.3", default-features = false }
-icu_codepointtrie = { version = "0.4", path = "../../utils/codepointtrie"}
+icu_collections = { version = "0.6", path = "../../components/collections"}
 icu_provider = { version = "0.6", path = "../../provider/core", features = ["macros"] }
-icu_uniset = { version = "0.5", path = "../../utils/uniset"}
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 zerovec = { version = "0.7", path = "../../utils/zerovec", features = ["derive"] }
 unicode-bidi = { version = "0.3.8", optional = true, default-features = false }
@@ -52,6 +51,6 @@ path = "src/lib.rs"
 [features]
 std = ["icu_provider/std"]
 default = []
-serde = ["dep:serde", "zerovec/serde", "icu_uniset/serde", "icu_codepointtrie/serde"]
-datagen = ["serde", "databake", "zerovec/databake", "icu_uniset/databake", "icu_codepointtrie/databake"]
+serde = ["dep:serde", "zerovec/serde", "icu_collections/serde", "icu_provider/serde"]
+datagen = ["serde", "databake", "zerovec/databake", "icu_collections/databake"]
 bidi = [ "dep:unicode-bidi" ]

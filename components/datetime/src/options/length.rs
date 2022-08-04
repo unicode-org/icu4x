@@ -37,17 +37,16 @@
 //! let options: DateTimeFormatterOptions = length::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`DateTimeFormatter`](crate::DateTimeFormatter) is a subject to change over
+//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
 
-use super::preferences;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
 /// A structure to represent the set of lengths in which the [`DateTimeInput`] implementer should be formatted to.
 ///
-/// [`DateTimeInput`]: crate::date::DateTimeInput
+/// [`DateTimeInput`]: crate::input::DateTimeInput
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
@@ -80,8 +79,6 @@ pub struct Bag {
     pub date: Option<Date>,
     /// Configure the time part of the datetime.
     pub time: Option<Time>,
-    /// Configure the preferences for the datetime, such as the hour cycle.
-    pub preferences: Option<preferences::Bag>,
 }
 
 impl Default for Bag {
@@ -90,7 +87,6 @@ impl Default for Bag {
         Self {
             date: Some(Date::Long),
             time: Some(Time::Long),
-            preferences: None,
         }
     }
 }
@@ -103,41 +99,37 @@ impl Bag {
         Self {
             date: None,
             time: None,
-            preferences: None,
         }
     }
 
-    /// Constructs a Bag given a date and time field (preferences set to None)
+    /// Constructs a Bag given a date and time field
     pub fn from_date_time_style(date: Date, time: Time) -> Self {
         Self {
             date: Some(date),
             time: Some(time),
-            preferences: None,
         }
     }
 
-    /// Constructs a Bag given a date field (preferences and time set to None)
+    /// Constructs a Bag given a date field (time set to None)
     pub fn from_date_style(date: Date) -> Self {
         Self {
             date: Some(date),
             time: None,
-            preferences: None,
         }
     }
 
-    /// Constructs a Bag given a time field (preferences and date set to None)
+    /// Constructs a Bag given a time field (date set to None)
     pub fn from_time_style(time: Time) -> Self {
         Self {
             date: None,
             time: Some(time),
-            preferences: None,
         }
     }
 }
 /// Represents different lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
-/// [`DateTimeInput`]: crate::date::DateTimeInput
+/// [`DateTimeInput`]: crate::input::DateTimeInput
 ///
 /// # Examples
 ///
@@ -149,13 +141,13 @@ impl Bag {
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element dateFormats`].
 ///
-/// *Note*: The exact result returned from [`DateTimeFormatter`] is a subject to change over
+/// *Note*: The exact result returned from [`TypedDateTimeFormatter`] is a subject to change over
 /// time. Formatted result should be treated as opaque and displayed to the user as-is,
 /// and it is strongly recommended to never write tests that expect a particular formatted output.
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#dateFormats
-/// [`DateTimeFormatter`]: super::super::DateTimeFormatter
+/// [`TypedDateTimeFormatter`]: super::super::TypedDateTimeFormatter
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
@@ -209,7 +201,7 @@ pub enum Date {
 /// Represents different length lengths a [`DateTimeInput`] implementer can be formatted into.
 /// Each length has associated best pattern for it for a given locale.
 ///
-/// [`DateTimeInput`]: crate::date::DateTimeInput
+/// [`DateTimeInput`]: crate::input::DateTimeInput
 ///
 /// # Examples
 ///
@@ -221,13 +213,13 @@ pub enum Date {
 ///
 /// The available lengths correspond to [`UTS #35: Unicode LDML 4. Dates`], section 2.4 [`Element timeFormats`].
 ///
-/// *Note*: The exact result returned from [`DateTimeFormatter`] is a subject to change over
+/// *Note*: The exact result returned from [`TypedDateTimeFormatter`] is a subject to change over
 /// time. Formatted result should be treated as opaque and displayed to the user as-is,
 /// and it is strongly recommended to never write tests that expect a particular formatted output.
 ///
 /// [`UTS #35: Unicode LDML 4. Dates`]: https://unicode.org/reports/tr35/tr35-dates.html
 /// [`Element dateFormats`]: https://unicode.org/reports/tr35/tr35-dates.html#timeFormats
-/// [`DateTimeFormatter`]: super::super::DateTimeFormatter
+/// [`TypedDateTimeFormatter`]: super::super::TypedDateTimeFormatter
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]

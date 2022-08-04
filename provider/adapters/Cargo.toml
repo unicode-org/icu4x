@@ -10,7 +10,7 @@ authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -35,8 +35,9 @@ tinystr = { path = "../../utils/tinystr", features = ["zerovec"] }
 [dev-dependencies]
 icu_testdata = { path = "../testdata" }
 icu_provider = { version = "0.6.0", path = "../core", features = ["macros", "deserialize_json"] }
+icu_provider_fs = { path = "../fs" }
 
 [features]
 std = ["icu_locid/std"]
-serde = ["dep:serde", "zerovec/serde", "icu_locid/serde"]
+serde = ["dep:serde", "zerovec/serde", "icu_locid/serde", "icu_provider/serde"]
 datagen = ["std", "serde", "databake", "icu_provider/datagen", "icu_locid/databake", "zerovec/databake"]

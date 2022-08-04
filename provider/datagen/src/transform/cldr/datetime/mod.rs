@@ -34,22 +34,28 @@ lazy_static! {
 }
 
 macro_rules! impl_data_provider {
-    ($(($marker:ident, $expr:expr)),+) => {
+    ($(($marker:ident, $expr:expr, calendared = $calendared:expr)),+) => {
         $(
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(
                     &self,
                     req: DataRequest,
                 ) -> Result<DataResponse<$marker>, DataError> {
-                    if req.locale.is_empty() {
+                    if $calendared == "locale" && req.locale.is_empty() {
                         return Err(DataErrorKind::NeedsLocale.into_error());
                     }
 
                     let langid = req.locale.get_langid();
-                    let calendar = req
-                        .locale
-                        .get_unicode_ext(&key!("ca"))
-                        .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
+                    let calendar = if $calendared == "locale" {
+                        req
+                            .locale
+                            .get_unicode_ext(&key!("ca"))
+                            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?
+                    } else if $calendared == "false" {
+                        value!("gregory")
+                    } else {
+                        value!($calendared)
+                    };
 
                     let cldr_cal = SUPPORTED_CALS
                         .get(&calendar)
@@ -161,21 +167,41 @@ macro_rules! impl_data_provider {
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
                     let mut r = Vec::new();
-                    for (cal_value, cldr_cal) in &*SUPPORTED_CALS {
+                    if $calendared == "locale" {
+                        for (cal_value, cldr_cal) in &*SUPPORTED_CALS {
+                            r.extend(self
+                                        .source
+                                        .cldr()?
+                                        .dates(cldr_cal).list_langs()?
+                                .map(|lid| {
+                                    let mut locale: Locale = lid.into();
+                                    locale
+                                        .extensions
+                                        .unicode
+                                        .keywords
+                                        .set(key!("ca"), cal_value.clone());
+                                    DataLocale::from(locale)
+                                }));
+                        }
+                    } else {
+                        let calendar = if $calendared == "false" {
+                            value!("gregory")
+                        } else {
+                            value!($calendared)
+                        };
+                        let cldr_cal = SUPPORTED_CALS
+                            .get(&calendar)
+                            .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?;
                         r.extend(self
                                     .source
                                     .cldr()?
                                     .dates(cldr_cal).list_langs()?
-                            .map(|lid| {
-                                let mut locale: Locale = lid.into();
-                                locale
-                                    .extensions
-                                    .unicode
-                                    .keywords
-                                    .set(key!("ca"), cal_value.clone());
-                                DataLocale::from(locale)
-                            }));
+                                .map(|lid| {
+                                    let locale: Locale = lid.into();
+                                    DataLocale::from(locale)
+                                }));
                     }
+
                     Ok(r)
                 }
             }
@@ -184,29 +210,106 @@ macro_rules! impl_data_provider {
 }
 
 impl_data_provider!(
-    (DateSymbolsV1Marker, symbols::convert_dates),
-    (TimeSymbolsV1Marker, |dates, _| {
-        symbols::convert_times(dates)
-    }),
-    (DateSkeletonPatternsV1Marker, |dates, _| {
-        DateSkeletonPatternsV1::from(dates)
-    }),
-    (DatePatternsV1Marker, |dates, _| DatePatternsV1::from(dates)),
-    (TimePatternsV1Marker, |dates, _| TimePatternsV1::from(dates))
+    (
+        GregorianDateSymbolsV1Marker,
+        symbols::convert_dates,
+        calendared = "gregory"
+    ),
+    (
+        BuddhistDateSymbolsV1Marker,
+        symbols::convert_dates,
+        calendared = "buddhist"
+    ),
+    (
+        JapaneseDateSymbolsV1Marker,
+        symbols::convert_dates,
+        calendared = "japanese"
+    ),
+    (
+        JapaneseExtendedDateSymbolsV1Marker,
+        symbols::convert_dates,
+        calendared = "japanext"
+    ),
+    (
+        CopticDateSymbolsV1Marker,
+        symbols::convert_dates,
+        calendared = "coptic"
+    ),
+    (
+        IndianDateSymbolsV1Marker,
+        symbols::convert_dates,
+        calendared = "indian"
+    ),
+    (
+        EthiopicDateSymbolsV1Marker,
+        symbols::convert_dates,
+        calendared = "ethiopic"
+    ),
+    (
+        TimeSymbolsV1Marker,
+        |dates, _| { symbols::convert_times(dates) },
+        calendared = "false"
+    ),
+    (
+        DateSkeletonPatternsV1Marker,
+        |dates, _| { DateSkeletonPatternsV1::from(dates) },
+        calendared = "locale"
+    ),
+    (
+        GregorianDateLengthsV1Marker,
+        |dates, _| DateLengthsV1::from(dates),
+        calendared = "gregory"
+    ),
+    (
+        BuddhistDateLengthsV1Marker,
+        |dates, _| DateLengthsV1::from(dates),
+        calendared = "buddhist"
+    ),
+    (
+        JapaneseDateLengthsV1Marker,
+        |dates, _| DateLengthsV1::from(dates),
+        calendared = "japanese"
+    ),
+    (
+        JapaneseExtendedDateLengthsV1Marker,
+        |dates, _| DateLengthsV1::from(dates),
+        calendared = "japanext"
+    ),
+    (
+        CopticDateLengthsV1Marker,
+        |dates, _| DateLengthsV1::from(dates),
+        calendared = "coptic"
+    ),
+    (
+        IndianDateLengthsV1Marker,
+        |dates, _| DateLengthsV1::from(dates),
+        calendared = "indian"
+    ),
+    (
+        EthiopicDateLengthsV1Marker,
+        |dates, _| DateLengthsV1::from(dates),
+        calendared = "ethiopic"
+    ),
+    (
+        TimeLengthsV1Marker,
+        |dates, _| TimeLengthsV1::from(dates),
+        calendared = "false"
+    )
 );
 
 #[cfg(test)]
 mod test {
     use super::*;
     use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
+    use icu_locid::locale;
     use icu_plurals::PluralCategory;
 
     #[test]
     fn test_basic_patterns() {
         let provider = crate::DatagenProvider::for_test();
 
-        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DatePatternsV1Marker> = provider
+        let locale: Locale = locale!("cs");
+        let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
@@ -222,8 +325,8 @@ mod test {
     fn test_with_numbering_system() {
         let provider = crate::DatagenProvider::for_test();
 
-        let locale: Locale = "haw-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DatePatternsV1Marker> = provider
+        let locale: Locale = locale!("haw");
+        let cs_dates: DataPayload<GregorianDateLengthsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
@@ -287,8 +390,8 @@ mod test {
         use tinystr::tinystr;
         let provider = crate::DatagenProvider::for_test();
 
-        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
+        let locale: Locale = locale!("cs");
+        let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
@@ -318,8 +421,8 @@ mod test {
     fn unalias_contexts() {
         let provider = crate::DatagenProvider::for_test();
 
-        let locale: Locale = "cs-u-ca-gregory".parse().unwrap();
-        let cs_dates: DataPayload<DateSymbolsV1Marker> = provider
+        let locale: Locale = locale!("cs");
+        let cs_dates: DataPayload<GregorianDateSymbolsV1Marker> = provider
             .load(DataRequest {
                 locale: &locale.into(),
                 metadata: Default::default(),
