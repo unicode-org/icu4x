@@ -487,7 +487,7 @@ fn test_time_zone_format_configs() {
         {
             for &config_input in configs {
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
-                    let tzf = TimeZoneFormatter::try_from_config(
+                    let tzf = TimeZoneFormatter::try_from_config_unstable(
                         &zone_provider,
                         &data_locale,
                         config_input.into(),
@@ -528,7 +528,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         Some(MetaZoneId(tinystr!(4, "ampa"))),
         Some(TimeVariant::daylight()),
     );
-    let tzf = TimeZoneFormatter::try_from_config(
+    let tzf = TimeZoneFormatter::try_from_config_unstable(
         &zone_provider,
         &langid.into(),
         TimeZoneFormatterConfig::LocalizedGMT,
