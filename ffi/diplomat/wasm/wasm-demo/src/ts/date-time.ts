@@ -1,4 +1,4 @@
-import { ICU4XDataProvider, ICU4XDateLength, ICU4XGregorianDateTime, ICU4XGregorianDateTimeFormatter, ICU4XHourCyclePreference, ICU4XLocale, ICU4XTimeLength } from "icu4x";
+import { ICU4XDataProvider, ICU4XDateLength, ICU4XGregorianDateTime, ICU4XGregorianDateTimeFormatter, ICU4XLocale, ICU4XTimeLength } from "icu4x";
 import { Ok, Result, result, unwrap } from ".";
 
 class DateTimeDemo {
@@ -58,7 +58,6 @@ class DateTimeDemo {
             unwrap(this.#locale),
             this.#dateLength,
             this.#timeLength,
-            ICU4XHourCyclePreference.None,
         ));
         this.#render();
     }
