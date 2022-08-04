@@ -1450,6 +1450,7 @@ impl DecomposingNormalizer {
         })
     }
 
+    #[cfg(any(test, feature = "experimental"))]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,
@@ -1623,6 +1624,7 @@ impl ComposingNormalizer {
         })
     }
 
+    #[cfg(any(test, feature = "experimental"))]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,
@@ -1716,11 +1718,7 @@ impl CanonicalComposition {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: NormalizerError
-    );
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
 }
 
 /// The outcome of non-recursive canonical decomposition of a character.
@@ -1971,11 +1969,7 @@ impl CanonicalDecomposition {
         })
     }
 
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: NormalizerError
-    );
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
 }
 
 #[cfg(all(test, feature = "serde"))]
