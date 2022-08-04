@@ -18,7 +18,7 @@
 //! ### Querying a `Char16Trie`
 //!
 //! ```rust
-//! use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+//! use icu_collections::char16trie::{Char16Trie, TrieResult};
 //! use zerovec::ZeroVec;
 //!
 //! // A Char16Trie containing the ASCII characters mapping 'a' to 1 and 'ab'

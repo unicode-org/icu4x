@@ -5,7 +5,7 @@
 //! This module contains provider implementations backed by TOML files
 //! exported from ICU.
 
-use icu_char16trie::char16trie::Char16Trie;
+use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
 use icu_normalizer::u24::U24;

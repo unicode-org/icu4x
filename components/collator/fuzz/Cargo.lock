@@ -288,7 +288,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_char16trie"
+name = "icu_collections"
 version = "0.1.0"
 dependencies = [
  "serde",
@@ -312,7 +312,7 @@ name = "icu_collator"
 version = "0.6.0"
 dependencies = [
  "displaydoc",
- "icu_char16trie",
+ "icu_collections",
  "icu_codepointtrie",
  "icu_locid",
  "icu_normalizer",
