@@ -61,7 +61,7 @@ fn test_fixture(fixture_name: &str) {
         let japanese = Japanese::try_new_unstable(&provider).expect("Cannot load japanese data");
         let japanext =
             JapaneseExtended::try_new_unstable(&provider).expect("Cannot load japanese data");
-        let options = fixtures::get_options(&fx.input.options);
+        let options_base = fixtures::get_options(&fx.input.options);
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
@@ -83,6 +83,7 @@ fn test_fixture(fixture_name: &str) {
             None => format!("\n  file: {}.json\n", fixture_name),
         };
         for (locale, output_value) in fx.output.values.into_iter() {
+            let options = options_base.clone();
             let locale = Locale::from_str(&locale).expect("Expected parseable locale in fixture");
             if let Ok(kind) = AnyCalendarKind::from_locale(&locale) {
                 match kind {
@@ -92,7 +93,7 @@ fn test_fixture(fixture_name: &str) {
                         &input_iso,
                         &output_value,
                         &provider,
-                        &options,
+                        options,
                         &description,
                     ),
                     AnyCalendarKind::Japanese => assert_fixture_element(
@@ -101,7 +102,7 @@ fn test_fixture(fixture_name: &str) {
                         &input_iso,
                         &output_value,
                         &provider,
-                        &options,
+                        options,
                         &description,
                     ),
                     AnyCalendarKind::JapaneseExtended => assert_fixture_element(
@@ -110,7 +111,7 @@ fn test_fixture(fixture_name: &str) {
                         &input_iso,
                         &output_value,
                         &provider,
-                        &options,
+                        options,
                         &description,
                     ),
                     AnyCalendarKind::Coptic => assert_fixture_element(
@@ -119,7 +120,7 @@ fn test_fixture(fixture_name: &str) {
                         &input_iso,
                         &output_value,
                         &provider,
-                        &options,
+                        options,
                         &description,
                     ),
                     AnyCalendarKind::Indian => assert_fixture_element(
@@ -128,7 +129,7 @@ fn test_fixture(fixture_name: &str) {
                         &input_iso,
                         &output_value,
                         &provider,
-                        &options,
+                        options,
                         &description,
                     ),
                     AnyCalendarKind::Ethiopic => assert_fixture_element(
@@ -137,7 +138,7 @@ fn test_fixture(fixture_name: &str) {
                         &input_iso,
                         &output_value,
                         &provider,
-                        &options,
+                        options,
                         &description,
                     ),
                     AnyCalendarKind::Ethioaa => assert_fixture_element(
@@ -146,7 +147,7 @@ fn test_fixture(fixture_name: &str) {
                         &input_iso,
                         &output_value,
                         &provider,
-                        &options,
+                        options,
                         &description,
                     ),
                     _ => panic!("datetime test does not support locale {:?}", locale),
@@ -158,7 +159,7 @@ fn test_fixture(fixture_name: &str) {
                     &input_iso,
                     &output_value,
                     &provider,
-                    &options,
+                    options,
                     &description,
                 )
             }
@@ -172,7 +173,7 @@ fn assert_fixture_element<A, D>(
     input_iso: &DateTime<Iso>,
     output_value: &str,
     provider: &D,
-    options: &DateTimeFormatterOptions,
+    options: DateTimeFormatterOptions,
     description: &str,
 ) where
     A: AsCalendar,
@@ -207,12 +208,12 @@ fn assert_fixture_element<A, D>(
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
     let dtf =
-        TypedDateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options).unwrap();
+        TypedDateTimeFormatter::<A::Calendar>::try_new(provider, &locale.into(), options.clone()).unwrap();
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
 
-    let any_dtf = DateTimeFormatter::try_new_unstable(provider, &locale.into(), options).unwrap();
+    let any_dtf = DateTimeFormatter::try_new_unstable(provider, &locale.into(), options.clone()).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
@@ -446,7 +447,7 @@ fn test_dayperiod_patterns() {
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &local_provider.as_downcasting(),
                             &data_locale,
-                            &format_options,
+                            format_options.clone(),
                         )
                         .unwrap();
                         assert_eq!(
@@ -800,7 +801,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
 
     let provider = icu_testdata::get_provider();
     let result =
-        TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options);
+        TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), options);
 
     assert!(result.is_err());
 }

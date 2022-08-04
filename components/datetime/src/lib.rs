@@ -47,11 +47,11 @@
 //!
 //! // You can work with a formatter that can select the calendar at runtime:
 //! let locale = Locale::from_str("en-u-ca-gregory").unwrap();
-//! let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), &options)
+//! let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options)
 //!     .expect("Failed to create DateTimeFormatter instance.");
 //!
 //! // Or one that selects a calendar at compile time:
-//! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), &options)
+//! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), options)
 //!     .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
 //! let typed_date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
@@ -75,7 +75,7 @@
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
 //!
-//! let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), &options);
+//! let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), options);
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Length`] bag, but in the future,

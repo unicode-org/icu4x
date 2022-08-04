@@ -392,7 +392,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
 ///     &provider,
 ///     &locale!("en").into(),
-///     &options.into(),
+///     options.into(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
@@ -467,7 +467,7 @@ where {
     /// TypedDateTimeFormatter::<Gregorian>::try_new(
     ///     &provider,
     ///     &locale!("en").into(),
-    ///     &options.into(),
+    ///     options.into(),
     /// )
     /// .unwrap();
     /// ```
@@ -477,7 +477,7 @@ where {
     pub fn try_new<D>(
         data_provider: &D,
         locale: &DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
@@ -519,7 +519,7 @@ where {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), &options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -550,7 +550,7 @@ where {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), &options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -581,7 +581,7 @@ where {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), &options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -615,7 +615,7 @@ where {
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
     ///     &provider,
     ///     &locale!("en").into(),
-    ///     &options,
+    ///     options,
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///

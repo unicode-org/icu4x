@@ -46,7 +46,7 @@ use icu_provider::DataLocale;
 ///
 /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), &options.into())
+/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), options.into())
 ///     .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -92,9 +92,9 @@ use icu_provider::DataLocale;
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
 ///
-/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), &options.into())
+/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
 ///     .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let manual_value = dtf.format_to_string(&manual_datetime).expect("calendars should match");
@@ -124,7 +124,7 @@ impl DateTimeFormatter {
     pub fn try_new_with_any_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: AnyProvider,
@@ -157,7 +157,7 @@ impl DateTimeFormatter {
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), &options.into())
+    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -172,7 +172,7 @@ impl DateTimeFormatter {
     pub fn try_new_with_buffer_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: BufferProvider,
@@ -202,7 +202,7 @@ impl DateTimeFormatter {
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), &options.into())
+    /// let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -216,7 +216,7 @@ impl DateTimeFormatter {
     pub fn try_new_unstable<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
@@ -404,7 +404,7 @@ where {
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     ///     &provider,
     ///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
-    ///     &options
+    ///     options
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///

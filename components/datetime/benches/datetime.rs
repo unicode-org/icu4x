@@ -39,7 +39,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
-                            &options,
+                            options,
                         )
                         .expect("Failed to create TypedDateTimeFormatter.");
 
@@ -114,7 +114,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
-                            &options,
+                            options,
                         )
                         .unwrap();
 
@@ -144,7 +144,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
-                            &options,
+                            options,
                         )
                         .unwrap();
 
@@ -171,7 +171,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
-                            &options,
+                            options,
                         )
                         .unwrap();
 
@@ -202,7 +202,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
                             &provider,
                             &locale.into(),
-                            &options,
+                            options,
                         )
                         .unwrap();
 

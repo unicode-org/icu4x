@@ -57,7 +57,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
         &provider,
         &locale!("en").into(),
-        &options.into(),
+        options.into(),
     )
     .expect("Failed to create TypedDateTimeFormatter instance.");
     {
