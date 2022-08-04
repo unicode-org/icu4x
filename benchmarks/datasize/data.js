@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659630189431,
+  "lastUpdate": 1659642309903,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23333,6 +23333,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8e6289931a594401ca9ce0422d4386190ff5b98a"
         },
         "date": 1659630150828,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3946612,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1b72ec61eae0e7ca437b676ac06340dae06f7bc5",
+          "message": "Make private Normalizer constructor private again (#2335)",
+          "timestamp": "2022-08-04T14:43:14-05:00",
+          "tree_id": "f47aa8be835a0f5ef845529f2e4d786fd0596bdf",
+          "url": "https://github.com/unicode-org/icu4x/commit/1b72ec61eae0e7ca437b676ac06340dae06f7bc5"
+        },
+        "date": 1659642270149,
         "tool": "ndjson",
         "benches": [
           {
