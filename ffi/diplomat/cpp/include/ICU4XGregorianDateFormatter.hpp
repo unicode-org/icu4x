@@ -39,7 +39,7 @@ class ICU4XGregorianDateFormatter {
   /**
    * Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length);
 
