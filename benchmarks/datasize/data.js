@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659642309903,
+  "lastUpdate": 1659648658774,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23363,6 +23363,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1b72ec61eae0e7ca437b676ac06340dae06f7bc5"
         },
         "date": 1659642270149,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3946612,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f6ce805d5a6099ef1b61af2a7f3cf62ef02ce50",
+          "message": "Move experimental/char16trie to component/collections (#2336)",
+          "timestamp": "2022-08-04T14:29:04-07:00",
+          "tree_id": "6486181e2b64d8356935915aa019ca292621d15d",
+          "url": "https://github.com/unicode-org/icu4x/commit/5f6ce805d5a6099ef1b61af2a7f3cf62ef02ce50"
+        },
+        "date": 1659648618938,
         "tool": "ndjson",
         "benches": [
           {
