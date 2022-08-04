@@ -386,7 +386,7 @@ impl DateTimeFormatter {
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<TimeSymbolsV1Marker>
@@ -405,7 +405,7 @@ impl DateTimeFormatter {
             data_provider,
             patterns_data,
             &locale,
-            options,
+            &options,
         )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
