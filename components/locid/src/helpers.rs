@@ -47,7 +47,7 @@ impl<T> ShortVec<T> {
     pub const fn single(&self) -> Option<&T> {
         match self {
             ShortVec::Single(v) => Some(v),
-            _ => None
+            _ => None,
         }
     }
 }

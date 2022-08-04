@@ -10,11 +10,14 @@ use icu_datetime::{
 use icu_locid::locale;
 use icu_locid::Locale;
 
-fn assert_resolved_components(options: &DateTimeFormatterOptions, bag: &components::Bag, locale: Locale) {
+fn assert_resolved_components(
+    options: &DateTimeFormatterOptions,
+    bag: &components::Bag,
+    locale: Locale,
+) {
     let provider = icu_testdata::get_provider();
-    let dtf =
-        TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), options)
-            .expect("Failed to create a TypedDateTimeFormatter.");
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), options)
+        .expect("Failed to create a TypedDateTimeFormatter.");
 
     assert_eq!(dtf.resolve_components(), *bag);
 }
@@ -30,7 +33,7 @@ fn test_length_date() {
     assert_resolved_components(
         &DateTimeFormatterOptions::Length(length_bag),
         &components_bag,
-        locale!("en")
+        locale!("en"),
     );
 }
 
@@ -47,7 +50,7 @@ fn test_length_time() {
     assert_resolved_components(
         &DateTimeFormatterOptions::Length(length_bag),
         &components_bag,
-        "en-u-hc-h12".parse::<Locale>().unwrap()
+        "en-u-hc-h12".parse::<Locale>().unwrap(),
     );
 }
 
@@ -66,7 +69,7 @@ fn test_length_time_preferences() {
     assert_resolved_components(
         &DateTimeFormatterOptions::Length(length_bag),
         &components_bag,
-        "en-u-hc-h24".parse::<Locale>().unwrap()
+        "en-u-hc-h24".parse::<Locale>().unwrap(),
     );
 }
 
@@ -92,6 +95,6 @@ fn test_components_bag() {
     assert_resolved_components(
         &DateTimeFormatterOptions::Components(input_bag),
         &output_bag,
-        "en-u-hc-h23".parse::<Locale>().unwrap()
+        "en-u-hc-h23".parse::<Locale>().unwrap(),
     );
 }
