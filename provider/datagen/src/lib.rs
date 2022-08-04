@@ -105,6 +105,12 @@ impl DatagenProvider {
     }
 }
 
+impl AnyProvider for DatagenProvider {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.as_any_provider().load_any(key, req)
+    }
+}
+
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`DataKey`]s.
 ///
