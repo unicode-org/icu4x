@@ -31,7 +31,7 @@ use crate::helpers::result_is_err_missing_data_options;
 /// assert!(matches!(result, Err(_)));
 ///
 /// // But if we wrap the provider in a fallback provider...
-/// let provider = LocaleFallbackProvider::try_new(provider)
+/// let provider = LocaleFallbackProvider::try_new_with_buffer_provider(provider)
 ///     .expect("Fallback data present");
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
@@ -62,8 +62,44 @@ where
     ///
     /// If the data provider being wrapped does not contain fallback data, use
     /// [`LocaleFallbackProvider::new_with_fallbacker`].
-    pub fn try_new(provider: P) -> Result<Self, DataError> {
-        let fallbacker = LocaleFallbacker::try_new(&provider)?;
+    pub fn try_new_unstable(provider: P) -> Result<Self, DataError> {
+        let fallbacker = LocaleFallbacker::try_new_unstable(&provider)?;
+        Ok(Self {
+            inner: provider,
+            fallbacker,
+        })
+    }
+}
+
+impl<P> LocaleFallbackProvider<P>
+where
+    P: AnyProvider,
+{
+    /// Create a [`LocaleFallbackProvider`] by wrapping another data provider and then loading
+    /// fallback data from it.
+    ///
+    /// If the data provider being wrapped does not contain fallback data, use
+    /// [`LocaleFallbackProvider::new_with_fallbacker`].
+    pub fn try_new_with_any_provider(provider: P) -> Result<Self, DataError> {
+        let fallbacker = LocaleFallbacker::try_new_with_any_provider(&provider)?;
+        Ok(Self {
+            inner: provider,
+            fallbacker,
+        })
+    }
+}
+
+impl<P> LocaleFallbackProvider<P>
+where
+    P: BufferProvider,
+{
+    /// Create a [`LocaleFallbackProvider`] by wrapping another data provider and then loading
+    /// fallback data from it.
+    ///
+    /// If the data provider being wrapped does not contain fallback data, use
+    /// [`LocaleFallbackProvider::new_with_fallbacker`].
+    pub fn try_new_with_buffer_provider(provider: P) -> Result<Self, DataError> {
+        let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider)?;
         Ok(Self {
             inner: provider,
             fallbacker,
@@ -100,7 +136,7 @@ impl<P> LocaleFallbackProvider<P> {
     /// // `HelloWorldProvider` does not contain fallback data,
     /// // but we can fetch it from `icu_testdata`, and then
     /// // use it to create the fallbacking data provider.
-    /// let fallbacker = LocaleFallbacker::try_new(&icu_testdata::get_provider())
+    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&icu_testdata::get_provider())
     ///     .expect("Fallback data present");
     /// let provider =
     ///     LocaleFallbackProvider::new_with_fallbacker(provider, fallbacker);
