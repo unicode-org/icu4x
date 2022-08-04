@@ -22,6 +22,11 @@
                     display: none !important;
                 }
             }
+
+            .seg-delim {
+                color: red;
+                font-weight: bold;
+            }
         </style>
     </head>
     <body>
@@ -43,13 +48,13 @@
                     <div class="card card-body">
                         <ul class="nav nav-pills mb-3 flex-column" role="tablist">
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link active" id="pills-fdf-tab" data-bs-toggle="pill" data-bs-target="#pills-fdf" type="button" role="tab" aria-controls="pills-fdf" aria-selected="true">Fixed Decimal Formatting</button>
+                                <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-fdf" type="button" role="tab" aria-controls="pills-fdf" aria-selected="true">Fixed Decimal Formatting</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-dtf-tab" data-bs-toggle="pill" data-bs-target="#pills-dtf" type="button" role="tab" aria-controls="pills-dtf" aria-selected="false">Date Time Formatting</button>
+                                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-dtf" type="button" role="tab" aria-controls="pills-dtf" aria-selected="false">Date Time Formatting</button>
                             </li>
                             <li class="nav-item" role="presentation">
-                                <button class="nav-link" id="pills-seg-tab" data-bs-toggle="pill" data-bs-target="#pills-seg" type="button" role="tab" aria-controls="pills-seg" aria-selected="false">Segmenter</button>
+                                <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-seg" type="button" role="tab" aria-controls="pills-seg" aria-selected="false">Segmenter</button>
                             </li>
                         </ul>
 
@@ -62,13 +67,13 @@
             <div class="demo-tab-menu">
                 <ul class="nav nav-pills mb-3" role="tablist">
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link active" id="pills-fdf-tab" data-bs-toggle="pill" data-bs-target="#pills-fdf" type="button" role="tab" aria-controls="pills-fdf" aria-selected="true">Fixed Decimal Formatting</button>
+                        <button class="nav-link active" data-bs-toggle="pill" data-bs-target="#pills-fdf" type="button" role="tab" aria-controls="pills-fdf" aria-selected="true">Fixed Decimal Formatting</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-dtf-tab" data-bs-toggle="pill" data-bs-target="#pills-dtf" type="button" role="tab" aria-controls="pills-dtf" aria-selected="false">Date Time Formatting</button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-dtf" type="button" role="tab" aria-controls="pills-dtf" aria-selected="false">Date Time Formatting</button>
                     </li>
                     <li class="nav-item" role="presentation">
-                        <button class="nav-link" id="pills-seg-tab" data-bs-toggle="pill" data-bs-target="#pills-seg" type="button" role="tab" aria-controls="pills-seg" aria-selected="false">Segmenter</button>
+                        <button class="nav-link" data-bs-toggle="pill" data-bs-target="#pills-seg" type="button" role="tab" aria-controls="pills-seg" aria-selected="false">Segmenter</button>
                     </li>
                 </ul>
             </div>
@@ -186,7 +191,16 @@
                 </div>
                 <div class="tab-pane" id="pills-seg" role="tabpanel" aria-labelledby="pills-seg-tab" tabindex="0">
                     <div class="vstack gap-2">
-                        
+                        Enter a string
+                        <button id="seg-sample-japanese" type="button" class="btn btn-secondary">Sample Japanese</button>
+                        <button id="seg-sample-chinese" type="button" class="btn btn-secondary">Sample Chinese</button>
+                        <input type="text" id='seg-input' class="form-control" placeholder="全部の人間は"></input>
+                        <div class="card">
+                            <div class="card-header">Segmented</div>
+                            <div class="card-body">
+                                <p id="seg-segmented" class="card-text"></p>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
