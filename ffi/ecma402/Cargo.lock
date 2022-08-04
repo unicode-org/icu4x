@@ -1037,7 +1037,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_char16trie"
+name = "icu_collections"
 version = "0.1.0"
 dependencies = [
  "databake",
@@ -1076,7 +1076,7 @@ version = "0.6.0"
 dependencies = [
  "databake",
  "displaydoc",
- "icu_char16trie",
+ "icu_collections",
  "icu_codepointtrie",
  "icu_locid",
  "icu_normalizer",
@@ -1101,7 +1101,7 @@ dependencies = [
  "displaydoc",
  "elsa",
  "icu_calendar",
- "icu_char16trie",
+ "icu_collections",
  "icu_codepointtrie",
  "icu_codepointtrie_builder",
  "icu_collator",
@@ -1216,7 +1216,7 @@ version = "0.6.0"
 dependencies = [
  "databake",
  "displaydoc",
- "icu_char16trie",
+ "icu_collections",
  "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
