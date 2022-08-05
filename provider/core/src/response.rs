@@ -158,7 +158,7 @@ impl From<alloc::vec::Vec<u8>> for RcWrap<[u8]> {
     }
 }
 
-// Constructing from `Box<[T]>` copies the whole slice, so we might
+// Constructing from `Box<[u8]>` copies the whole slice, so we might
 // as well define this on a slice directly.
 impl From<&[u8]> for RcWrap<[u8]> {
     fn from(other: &[u8]) -> Self {
