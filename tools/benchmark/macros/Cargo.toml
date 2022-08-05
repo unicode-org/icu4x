@@ -6,7 +6,7 @@
 name = "icu_benchmark_macros"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
-version = "0.6.0"
+version = "0.7.0"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
 description = "Internal ICU4X benchmarking crate"

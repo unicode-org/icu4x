@@ -193,7 +193,7 @@ If you have ICU4X data on the file system in a JSON format, it can be loaded via
 ```toml
 [dependencies]
 icu = "0.6"
-icu_provider_fs = {version = "0.6" , features = ["deserialize_json"]}
+icu_provider_fs = {version = "1.0.0-beta1" , features = ["deserialize_json"]}
 ```
 
 ```rs
