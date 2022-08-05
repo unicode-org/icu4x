@@ -1,31 +1,55 @@
-import { ICU4XDataProvider, ICU4XDateLength, ICU4XGregorianDateTime, ICU4XGregorianDateTimeFormatter, ICU4XLocale, ICU4XTimeLength } from "icu4x";
+import { ICU4XDataProvider, ICU4XDateLength, ICU4XDateTime, ICU4XDateTimeFormatter, ICU4XLocale, ICU4XTimeLength, ICU4XCalendar } from "icu4x";
 import { Ok, Result, result, unwrap } from ".";
 
 class DateTimeDemo {
     #formattedDateTime: HTMLParagraphElement;
     #dataProvider: ICU4XDataProvider;
 
+    #localeStr: string;
+    #calendarStr: string;
+    #dateTimeStr: string;
     #locale: Result<ICU4XLocale>;
+    #calendar: Result<ICU4XCalendar>;
     #dateLength: ICU4XDateLength;
     #timeLength: ICU4XTimeLength;
 
-    #formatter: Result<ICU4XGregorianDateTimeFormatter>;
-    #dateTime: Result<ICU4XGregorianDateTime> | null;
+    #formatter: Result<ICU4XDateTimeFormatter>;
+    #dateTime: Result<ICU4XDateTime> | null;
 
     constructor(formattedDateTime: HTMLParagraphElement, dataProvider: ICU4XDataProvider) {
         this.#formattedDateTime = formattedDateTime;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(ICU4XLocale.create_en());
+        this.#locale = Ok(ICU4XLocale.create("en-u-ca-gregory"));
+        this.#calendar = Ok(ICU4XCalendar.try_new(dataProvider, unwrap(this.#locale)));
         this.#dateLength = ICU4XDateLength.Short;
         this.#timeLength = ICU4XTimeLength.Short;
         this.#dateTime = null;
+        this.#dateTimeStr = "";
+        this.#calendarStr = "gregory";
+        this.#localeStr = "en";
+        this.#updateFormatter();
+    }
+
+    setCalendar(calendar: string): void {
+        this.#calendarStr = calendar;
+        this.#updateLocaleAndCalendar();
         this.#updateFormatter();
     }
 
     setLocale(locid: string): void {
+        this.#localeStr = locid;
+        this.#updateLocaleAndCalendar();
+        this.#updateFormatter();
+    }
+
+    #updateLocaleAndCalendar(): void {
+        const locid = (this.#calendarStr == "from-locale") ?
+            this.#localeStr :
+            `${this.#localeStr}-u-ca-${this.#calendarStr}`;
         this.#locale = result(() => ICU4XLocale.create(locid));
-        this.#updateFormatter()
+        this.#calendar = result(() => ICU4XCalendar.try_new(this.#dataProvider, unwrap(this.#locale) ));
+        this.#updateDateTime();
     }
 
     setDateLength(dateLength: string): void {
@@ -39,21 +63,27 @@ class DateTimeDemo {
     }
 
     setDateTime(dateTime: string): void {
-        const date = new Date(dateTime);
+        this.#dateTimeStr = dateTime;
+        this.#updateDateTime();
+        this.#render()
+    }
 
-        this.#dateTime = result(() => ICU4XGregorianDateTime.try_new(
+    #updateDateTime(): void {
+        const date = new Date(this.#dateTimeStr);
+
+        this.#dateTime = result(() => ICU4XDateTime.try_new_from_iso_in_calendar(
             date.getFullYear(),
             date.getMonth() + 1,
             date.getDate(),
             date.getHours(),
             date.getMinutes(),
             date.getSeconds(),
+            unwrap(this.#calendar)
         ));
-        this.#render()
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => ICU4XGregorianDateTimeFormatter.try_new(
+        this.#formatter = result(() => ICU4XDateTimeFormatter.try_new(
             this.#dataProvider,
             unwrap(this.#locale),
             this.#dateLength,
@@ -98,6 +128,9 @@ export function setup(dataProvider: ICU4XDataProvider): void {
         if (btn?.value !== 'other') {
             btn.addEventListener('click', () => dateTimeDemo.setLocale(btn.value));
         }
+    }
+    for (let btn of document.querySelectorAll<HTMLSelectElement | null>('select[name="dtf-calendar"]')) {
+        btn.addEventListener('click', () => dateTimeDemo.setCalendar(btn.value));
     }
 
     for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-date-length"]')) {
