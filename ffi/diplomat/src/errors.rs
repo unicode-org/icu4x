@@ -78,7 +78,10 @@ pub mod ffi {
         DateTimeOverflowError = 0x7_01,
         DateTimeUnderflowError = 0x7_02,
         DateTimeOutOfRangeError = 0x7_03,
-        DateTimeMissingInputError = 0x7_04,
+        DateTimeUnknownEraError = 0x7_04,
+        DateTimeUnknownMonthCodeError = 0x7_05,
+        DateTimeMissingInputError = 0x7_06,
+        DateTimeUnknownAnyCalendarKindError = 0x7_07,
 
         // datetime format errors
         DateTimeFormatPatternError = 0x8_00,
@@ -147,7 +150,12 @@ impl From<DateTimeError> for ICU4XError {
             DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
             DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
             DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
+            DateTimeError::UnknownEra(..) => ICU4XError::DateTimeUnknownEraError,
+            DateTimeError::UnknownMonthCode(..) => ICU4XError::DateTimeUnknownMonthCodeError,
             DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
+            DateTimeError::UnknownAnyCalendarKind(_) => {
+                ICU4XError::DateTimeUnknownAnyCalendarKindError
+            }
             _ => ICU4XError::UnknownError,
         }
     }
