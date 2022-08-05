@@ -8,6 +8,7 @@ use fixed_decimal::Error as DecimalError;
 use icu_calendar::DateTimeError;
 use icu_datetime::DateTimeFormatterError;
 use icu_decimal::FixedDecimalFormatterError;
+use icu_locid::ParserError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
@@ -53,7 +54,9 @@ pub mod ffi {
         /// The subtag being requested was not set
         LocaleUndefinedSubtagError = 0x2_00,
         /// The locale or subtag string failed to parse
-        LocaleParserError = 0x2_01,
+        LocaleParserLanguageError = 0x2_01,
+        LocaleParserSubtagError = 0x2_02,
+        LocaleParserExtensionError = 0x2_03,
 
         // data struct errors
         /// Attempted to construct an invalid data struct
@@ -210,6 +213,17 @@ impl From<FixedDecimalFormatterError> for ICU4XError {
     fn from(e: FixedDecimalFormatterError) -> Self {
         match e {
             FixedDecimalFormatterError::Data(e) => e.into(),
+            _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
+impl From<ParserError> for ICU4XError {
+    fn from(e: ParserError) -> Self {
+        match e {
+            ParserError::InvalidLanguage => ICU4XError::LocaleParserLanguageError,
+            ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
+            ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
             _ => ICU4XError::UnknownError,
         }
     }

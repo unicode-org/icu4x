@@ -1,24 +1,24 @@
 {
   "defaults": {
     "euce": {
-      "daylight": "CEST",
-      "standard": "CET"
+      "dt": "CEST",
+      "st": "CET"
     },
     "euea": {
-      "daylight": "EEST",
-      "standard": "EET"
+      "dt": "EEST",
+      "st": "EET"
     },
     "euwe": {
-      "daylight": "WEST",
-      "standard": "WET"
+      "dt": "WEST",
+      "st": "WET"
     },
     "mgmt": {
-      "standard": "GMT"
+      "st": "GMT"
     }
   },
   "overrides": {
     "utc": {
-      "standard": "UTC"
+      "st": "UTC"
     }
   }
 }
