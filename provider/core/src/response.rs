@@ -152,6 +152,12 @@ unsafe impl<T: ?Sized> CloneableCart for RcWrap<T> {}
 // Safe because both Rc and Arc are StableDeref
 unsafe impl<T: ?Sized> stable_deref_trait::StableDeref for RcWrap<T> {}
 
+impl<T> From<T> for RcWrap<T> {
+    fn from(other: T) -> Self {
+        Self(other.into())
+    }
+}
+
 impl From<alloc::vec::Vec<u8>> for RcWrap<[u8]> {
     fn from(other: alloc::vec::Vec<u8>) -> Self {
         Self(other.into())
