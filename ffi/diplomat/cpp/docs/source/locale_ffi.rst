@@ -8,7 +8,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
 
 
-    .. cpp:function:: static std::optional<ICU4XLocale> create(const std::string_view name)
+    .. cpp:function:: static diplomat::result<ICU4XLocale, ICU4XError> create(const std::string_view name)
 
         Construct an :cpp:class:`ICU4XLocale` from an locale identifier.
 

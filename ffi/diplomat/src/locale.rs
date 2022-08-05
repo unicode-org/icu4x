@@ -22,10 +22,11 @@ pub mod ffi {
     impl ICU4XLocale {
         /// Construct an [`ICU4XLocale`] from an locale identifier.
         #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
-        pub fn create(name: &str) -> Option<Box<ICU4XLocale>> {
+        pub fn create(name: &str) -> DiplomatResult<Box<ICU4XLocale>, ICU4XError> {
             Locale::from_str(name)
-                .ok()
+                .map_err(ICU4XError::from)
                 .map(|l| Box::new(ICU4XLocale(l)))
+                .into()
         }
 
         /// Construct an [`ICU4XLocale`] for the English language.
@@ -70,18 +71,22 @@ pub mod ffi {
             bytes: &str,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
-            if let Ok(key) = Key::from_bytes(bytes.as_bytes()) {
-                if let Some(value) = self.0.extensions.unicode.keywords.get(&key) {
-                    #[allow(unused_variables)]
-                    let result = value.write_to(write).map_err(Into::into).into();
-                    write.flush();
-                    result
-                } else {
-                    Result::Err(ICU4XError::LocaleUndefinedSubtagError).into()
-                }
-            } else {
-                Result::Err(ICU4XError::LocaleParserError).into()
-            }
+            Key::from_bytes(bytes.as_bytes())
+                .map_err(ICU4XError::from)
+                .and_then(|key| {
+                    self.0
+                        .extensions
+                        .unicode
+                        .keywords
+                        .get(&key)
+                        .ok_or(ICU4XError::LocaleUndefinedSubtagError)
+                        .and_then(|value| {
+                            let result = value.write_to(write).map_err(ICU4XError::from);
+                            write.flush();
+                            result
+                        })
+                })
+                .into()
         }
 
         /// Write a string representation of [`ICU4XLocale`] language to `write`
@@ -114,7 +119,7 @@ pub mod ffi {
                     self.0.id.language = language;
                     Ok(())
                 }
-                Err(_) => Err(ICU4XError::LocaleParserError),
+                Err(e) => Err(e.into()),
             }
             .into()
         }
@@ -147,7 +152,7 @@ pub mod ffi {
                     self.0.id.region = Some(region);
                     Ok(())
                 }
-                Err(_) => Err(ICU4XError::LocaleParserError),
+                Err(e) => Err(e.into()),
             }
             .into()
         }
@@ -180,7 +185,7 @@ pub mod ffi {
                     self.0.id.script = Some(script);
                     Ok(())
                 }
-                Err(_) => Err(ICU4XError::LocaleParserError),
+                Err(e) => Err(e.into()),
             }
             .into()
         }

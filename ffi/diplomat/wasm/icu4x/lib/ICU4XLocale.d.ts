@@ -14,8 +14,9 @@ export class ICU4XLocale {
    * Construct an {@link ICU4XLocale `ICU4XLocale`} from an locale identifier.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes Rust documentation} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create(name: string): ICU4XLocale | undefined;
+  static create(name: string): ICU4XLocale | never;
 
   /**
 

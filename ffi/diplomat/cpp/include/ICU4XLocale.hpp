@@ -36,7 +36,7 @@ class ICU4XLocale {
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
-  static std::optional<ICU4XLocale> create(const std::string_view name);
+  static diplomat::result<ICU4XLocale, ICU4XError> create(const std::string_view name);
 
   /**
    * Construct an [`ICU4XLocale`] for the English language.
@@ -177,15 +177,15 @@ class ICU4XLocale {
 };
 
 
-inline std::optional<ICU4XLocale> ICU4XLocale::create(const std::string_view name) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XLocale_create(name.data(), name.size());
-  std::optional<ICU4XLocale> diplomat_optional_out_value;
-  if (diplomat_optional_raw_out_value != nullptr) {
-    diplomat_optional_out_value = ICU4XLocale(diplomat_optional_raw_out_value);
+inline diplomat::result<ICU4XLocale, ICU4XError> ICU4XLocale::create(const std::string_view name) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_create(name.data(), name.size());
+  diplomat::result<ICU4XLocale, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XLocale>(std::move(ICU4XLocale(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_optional_out_value = std::nullopt;
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
-  return diplomat_optional_out_value;
+  return diplomat_result_out_value;
 }
 inline ICU4XLocale ICU4XLocale::create_en() {
   return ICU4XLocale(capi::ICU4XLocale_create_en());
