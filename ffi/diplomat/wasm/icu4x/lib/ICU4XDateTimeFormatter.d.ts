@@ -1,0 +1,34 @@
+import { FFIError } from "./diplomat-runtime"
+import { ICU4XDataProvider } from "./ICU4XDataProvider";
+import { ICU4XDateLength } from "./ICU4XDateLength";
+import { ICU4XDateTime } from "./ICU4XDateTime";
+import { ICU4XError } from "./ICU4XError";
+import { ICU4XLocale } from "./ICU4XLocale";
+import { ICU4XTimeLength } from "./ICU4XTimeLength";
+
+/**
+
+ * An ICU4X DateFormatter object capable of formatting a {@link ICU4XDateTime `ICU4XDateTime`} as a string, using the Gregorian Calendar.
+
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html Rust documentation} for more information.
+ */
+export class ICU4XDateTimeFormatter {
+
+  /**
+
+   * Creates a new {@link ICU4XGregorianDateFormatter `ICU4XGregorianDateFormatter`} from locale data.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable Rust documentation} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, date_length: ICU4XDateLength, time_length: ICU4XTimeLength): ICU4XDateTimeFormatter | never;
+
+  /**
+
+   * Formats a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} to a string.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.format_to_write Rust documentation} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  format_datetime(value: ICU4XDateTime): string | never;
+}
