@@ -51,10 +51,14 @@
         The subtag being requested was not set
 
 
-    .. cpp:enumerator:: LocaleParserError
+    .. cpp:enumerator:: LocaleParserLanguageError
 
         The locale or subtag string failed to parse
 
+
+    .. cpp:enumerator:: LocaleParserSubtagError
+
+    .. cpp:enumerator:: LocaleParserExtensionError
 
     .. cpp:enumerator:: DataStructValidityError
 

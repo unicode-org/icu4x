@@ -77,13 +77,13 @@ impl CustomTimeZone {
     ///     /* metazone_id */ None,
     ///     /* time_variaint */ None,
     /// );
-    /// tz.try_set_metazone(
+    /// tz.maybe_set_metazone(
     ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     ///     &mzc,
     /// );
     /// assert_eq!(tz.metazone_id, Some(MetaZoneId(tinystr!(4, "guam"))));
     /// ```
-    pub fn try_set_metazone(
+    pub fn maybe_set_metazone(
         &mut self,
         local_datetime: &DateTime<Iso>,
         metazone_calculator: &MetaZoneCalculator,

@@ -2,9 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! `icu_char16trie` is a utility crate of the [`ICU4X`] project.
-//!
-//! This component provides a data structure for a space-efficient and time-efficient lookup of
+//! This module provides a data structure for a space-efficient and time-efficient lookup of
 //! sequences of 16-bit units (commonly but not necessarily UTF-16 code units)
 //! which map to integer values.
 //!
@@ -20,7 +18,7 @@
 //! ### Querying a `Char16Trie`
 //!
 //! ```rust
-//! use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+//! use icu_collections::char16trie::{Char16Trie, TrieResult};
 //! use zerovec::ZeroVec;
 //!
 //! // A Char16Trie containing the ASCII characters mapping 'a' to 1 and 'ab'
@@ -39,6 +37,8 @@
 //!
 //! [`ICU4X`]: ../icu/index.html
 
-#![no_std]
+mod trie;
 
-pub mod char16trie;
+pub use trie::Char16Trie;
+pub use trie::Char16TrieIterator;
+pub use trie::TrieResult;

@@ -8,7 +8,9 @@ use crate::provider::*;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::cmp::Ordering;
-use core::mem;
+
+use crate::LocaleExpander;
+use crate::TransformResult;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{
     extensions::unicode::Key,
@@ -18,94 +20,39 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyAsciiStr};
 
-/// Used to track the result of a canonicalization operation that potentially modifies its argument in place.
-#[derive(Debug, PartialEq)]
-#[allow(clippy::exhaustive_enums)] // this enum is stable
-pub enum CanonicalizationResult {
-    /// The canonicalization operation modified the locale.
-    Modified,
-    /// The canonicalization operation did not modify the locale.
-    Unmodified,
-}
-
-/// LocaleCanonicalizer implementation.
-///
 /// The LocaleCanonicalizer provides methods to canonicalize Locales and
 /// LanguageIdentifiers based upon [`CLDR`] data.
 ///
 /// It currently supports locale canonicalization based upon the canonicalization
 /// algorithm from [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`].
 ///
-/// It also supports the `minimize` and `maximize` likely subtags algorithms
-/// as described in [`UTS #35: Unicode LDML 3. Likely Subtags`].
-///
-/// The maximize method potentially updates a passed in locale in place
-/// depending up the results of running the 'Add Likely Subtags' algorithm
-/// from [`UTS #35: Unicode LDML 3. Likely Subtags`].
-///
-/// This minimize method returns a new Locale that is the result of running the
-/// 'Remove Likely Subtags' algorithm from [`UTS #35: Unicode LDML 3. Likely Subtags`].
-///
 /// # Examples
 ///
 /// ```
-/// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
+/// use icu_locid_transform::{TransformResult, LocaleCanonicalizer};
 /// use icu_locid::Locale;
 ///
 /// let provider = icu_testdata::get_provider();
-/// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+/// let lc = LocaleCanonicalizer::try_new_with_buffer_provider(&provider).expect("create failed");
 ///
 /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
 ///     .parse()
 ///     .expect("parse failed");
 /// assert_eq!(
 ///     lc.canonicalize(&mut locale),
-///     CanonicalizationResult::Modified
+///     TransformResult::Modified
 /// );
 /// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
 /// ```
 ///
-/// ```
-/// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
-/// use icu_locid::Locale;
-///
-/// let provider = icu_testdata::get_provider();
-/// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
-///
-/// let mut locale: Locale = "zh-CN".parse().expect("parse failed");
-/// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
-/// assert_eq!(locale.to_string(), "zh-Hans-CN");
-///
-/// let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
-/// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
-/// assert_eq!(locale.to_string(), "zh-Hant-TW");
-/// ```
-///
-/// ```
-/// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
-/// use icu_locid::Locale;
-///
-/// let provider = icu_testdata::get_provider();
-/// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
-///
-/// let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
-/// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
-/// assert_eq!(locale.to_string(), "zh");
-///
-/// let mut locale: Locale = "zh".parse().expect("parse failed");
-/// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
-/// assert_eq!(locale.to_string(), "zh");
-/// ```
-///
 /// [`ICU4X`]: ../icu/index.html
 /// [`CLDR`]: http://cldr.unicode.org/
-/// [`UTS #35: Unicode LDML 3. Likely Subtags`]: https://www.unicode.org/reports/tr35/#Likely_Subtags.
 /// [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`]: http://unicode.org/reports/tr35/#LocaleId_Canonicalization,
 pub struct LocaleCanonicalizer {
     /// Data to support canonicalization.
     aliases: DataPayload<AliasesV1Marker>,
-    /// Data to support likely subtags maximize and minimize.
-    likely_subtags: DataPayload<LikelySubtagsV1Marker>,
+    /// Likely subtags implementation for delegation.
+    expander: LocaleExpander,
     /// Extension keys that require canonicalization.
     extension_keys: Vec<Key>,
 }
@@ -227,7 +174,7 @@ fn uts35_replacement<'a, I>(
 fn uts35_check_language_rules(
     locale: &mut Locale,
     alias_data: &DataPayload<AliasesV1Marker>,
-) -> CanonicalizationResult {
+) -> TransformResult {
     if !locale.id.language.is_empty() {
         let lang: TinyAsciiStr<3> = locale.id.language.into();
         let replacement = if lang.len() == 2 {
@@ -241,43 +188,12 @@ fn uts35_check_language_rules(
                 uts35_replacement::<core::iter::Empty<&str>>(
                     locale, true, false, false, None, &langid,
                 );
-                return CanonicalizationResult::Modified;
+                return TransformResult::Modified;
             }
         }
     }
 
-    CanonicalizationResult::Unmodified
-}
-
-#[inline]
-fn update_langid(
-    language: Language,
-    script: Option<Script>,
-    region: Option<Region>,
-    langid: &mut LanguageIdentifier,
-) -> CanonicalizationResult {
-    let mut modified = false;
-
-    if langid.language.is_empty() && !language.is_empty() {
-        langid.language = language;
-        modified = true;
-    }
-
-    if langid.script.is_none() && script.is_some() {
-        langid.script = script;
-        modified = true;
-    }
-
-    if langid.region.is_none() && region.is_some() {
-        langid.region = region;
-        modified = true;
-    }
-
-    if modified {
-        CanonicalizationResult::Modified
-    } else {
-        CanonicalizationResult::Unmodified
-    }
+    TransformResult::Unmodified
 }
 
 fn is_iter_sorted<I, T>(mut iter: I) -> bool
@@ -298,7 +214,7 @@ where
 
 impl LocaleCanonicalizer {
     /// A constructor which takes a [`DataProvider`] and creates a [`LocaleCanonicalizer`].
-    pub fn new<P>(provider: &P) -> Result<LocaleCanonicalizer, DataError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<LocaleCanonicalizer, DataError>
     where
         P: DataProvider<AliasesV1Marker> + DataProvider<LikelySubtagsV1Marker> + ?Sized,
     {
@@ -311,15 +227,16 @@ impl LocaleCanonicalizer {
         let aliases: DataPayload<AliasesV1Marker> =
             provider.load(Default::default())?.take_payload()?;
 
-        let likely_subtags: DataPayload<LikelySubtagsV1Marker> =
-            provider.load(Default::default())?.take_payload()?;
+        let expander = LocaleExpander::try_new_unstable(provider)?;
 
         Ok(LocaleCanonicalizer {
             aliases,
-            likely_subtags,
+            expander,
             extension_keys,
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     /// The canonicalize method potentially updates a passed in locale in place
     /// depending up the results of running the canonicalization algorithm
@@ -333,23 +250,23 @@ impl LocaleCanonicalizer {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
+    /// use icu_locid_transform::{TransformResult, LocaleCanonicalizer};
     /// use icu_locid::Locale;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
+    /// let lc = LocaleCanonicalizer::try_new_with_buffer_provider(&provider).expect("create failed");
     ///
     /// let mut locale: Locale = "ja-Latn-fonipa-hepburn-heploc"
     ///     .parse()
     ///     .expect("parse failed");
     /// assert_eq!(
     ///     lc.canonicalize(&mut locale),
-    ///     CanonicalizationResult::Modified
+    ///     TransformResult::Modified
     /// );
     /// assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
     /// ```
-    pub fn canonicalize(&self, locale: &mut Locale) -> CanonicalizationResult {
-        let mut result = CanonicalizationResult::Unmodified;
+    pub fn canonicalize(&self, locale: &mut Locale) -> TransformResult {
+        let mut result = TransformResult::Unmodified;
 
         // This loops until we get a 'fixed point', where applying the rules do not
         // result in any more changes.
@@ -388,7 +305,7 @@ impl LocaleCanonicalizer {
                                         Some(raw_variants),
                                         &to,
                                     );
-                                    result = CanonicalizationResult::Modified;
+                                    result = TransformResult::Modified;
                                     continue 'outer;
                                 }
                             }
@@ -421,7 +338,7 @@ impl LocaleCanonicalizer {
                                     Some(from.variants.iter().map(Variant::as_str)),
                                     &to,
                                 );
-                                result = CanonicalizationResult::Modified;
+                                result = TransformResult::Modified;
                                 continue 'outer;
                             }
                         }
@@ -442,16 +359,14 @@ impl LocaleCanonicalizer {
                                 None,
                                 &sgn_lang.into(),
                             );
-                            result = CanonicalizationResult::Modified;
+                            result = TransformResult::Modified;
                             continue;
                         }
                     }
                 }
 
-                if uts35_check_language_rules(locale, &self.aliases)
-                    == CanonicalizationResult::Modified
-                {
-                    result = CanonicalizationResult::Modified;
+                if uts35_check_language_rules(locale, &self.aliases) == TransformResult::Modified {
+                    result = TransformResult::Modified;
                     continue;
                 }
             }
@@ -459,7 +374,7 @@ impl LocaleCanonicalizer {
             if let Some(script) = locale.id.script {
                 if let Some(&replacement) = self.aliases.get().script.get(&script.into()) {
                     locale.id.script = Some(replacement);
-                    result = CanonicalizationResult::Modified;
+                    result = TransformResult::Modified;
                     continue;
                 }
             }
@@ -473,7 +388,7 @@ impl LocaleCanonicalizer {
                 };
                 if let Some(&replacement) = replacement {
                     locale.id.region = Some(replacement);
-                    result = CanonicalizationResult::Modified;
+                    result = TransformResult::Modified;
                     continue;
                 }
 
@@ -487,16 +402,17 @@ impl LocaleCanonicalizer {
                             variants: Variants::default(),
                         };
 
-                        locale.id.region =
-                            Some(match (self.maximize(&mut maximized), maximized.region) {
-                                (CanonicalizationResult::Modified, Some(candidate))
+                        locale.id.region = Some(
+                            match (self.expander.maximize(&mut maximized), maximized.region) {
+                                (TransformResult::Modified, Some(candidate))
                                     if regions.iter().any(|x| x == candidate) =>
                                 {
                                     candidate
                                 }
                                 _ => default_region,
-                            });
-                        result = CanonicalizationResult::Modified;
+                            },
+                        );
+                        result = TransformResult::Modified;
                         continue;
                     }
                 }
@@ -520,7 +436,7 @@ impl LocaleCanonicalizer {
                     modified.sort();
                     modified.dedup();
                     locale.id.variants = Variants::from_vec_unchecked(modified);
-                    result = CanonicalizationResult::Modified;
+                    result = TransformResult::Modified;
                     continue;
                 }
             }
@@ -536,9 +452,9 @@ impl LocaleCanonicalizer {
             let mut matched = false;
             loop {
                 if uts35_check_language_rules(&mut tlang, &self.aliases)
-                    == CanonicalizationResult::Modified
+                    == TransformResult::Modified
                 {
-                    result = CanonicalizationResult::Modified;
+                    result = TransformResult::Modified;
                     matched = true;
                     continue;
                 }
@@ -559,7 +475,7 @@ impl LocaleCanonicalizer {
                     {
                         if let Ok(modified_value) = modified_value.parse() {
                             *value = modified_value;
-                            result = CanonicalizationResult::Modified;
+                            result = TransformResult::Modified;
                         }
                     }
                 }
@@ -567,224 +483,6 @@ impl LocaleCanonicalizer {
         }
 
         result
-    }
-
-    /// The maximize method potentially updates a passed in locale in place
-    /// depending up the results of running the 'Add Likely Subtags' algorithm
-    /// from <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
-    ///
-    /// If the result of running the algorithm would result in a new locale, the
-    /// locale argument is updated in place to match the result, and the method
-    /// returns [`CanonicalizationResult::Modified`]. Otherwise, the method
-    /// returns [`CanonicalizationResult::Unmodified`] and the locale argument is
-    /// unchanged.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
-    /// use icu_locid::Locale;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider).expect("create failed");
-    ///
-    /// let mut locale: Locale = "zh-CN".parse().expect("parse failed");
-    /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Modified);
-    /// assert_eq!(locale.to_string(), "zh-Hans-CN");
-    ///
-    /// let mut locale: Locale = "zh-Hant-TW".parse().expect("parse failed");
-    /// assert_eq!(lc.maximize(&mut locale), CanonicalizationResult::Unmodified);
-    /// assert_eq!(locale.to_string(), "zh-Hant-TW");
-    /// ```
-    pub fn maximize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
-        let langid = langid.as_mut();
-        let data = self.likely_subtags.get();
-
-        if !langid.language.is_empty() && langid.script.is_some() && langid.region.is_some() {
-            return CanonicalizationResult::Unmodified;
-        }
-
-        if !langid.language.is_empty() {
-            if let Some(region) = langid.region {
-                if let Some(script) = data
-                    .language_region
-                    .get(&(langid.language.into(), region.into()))
-                    .copied()
-                {
-                    return update_langid(Language::UND, Some(script), None, langid);
-                }
-            }
-            if let Some(script) = langid.script {
-                if let Some(region) = data
-                    .language_script
-                    .get(&(langid.language.into(), script.into()))
-                    .copied()
-                {
-                    return update_langid(Language::UND, None, Some(region), langid);
-                }
-            }
-            if let Some((script, region)) = data
-                .language
-                .get(&langid.language.into())
-                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
-            {
-                return update_langid(Language::UND, Some(script), Some(region), langid);
-            }
-        }
-        if let Some(script) = langid.script {
-            if let Some(region) = langid.region {
-                if let Some(language) = data
-                    .script_region
-                    .get(&(script.into(), region.into()))
-                    .copied()
-                {
-                    return update_langid(language, None, None, langid);
-                }
-            }
-            if let Some((language, region)) = data
-                .script
-                .get(&script.into())
-                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
-            {
-                return update_langid(language, None, Some(region), langid);
-            }
-        }
-        if let Some(region) = langid.region {
-            if let Some((language, script)) = data
-                .region
-                .get(&region.into())
-                .map(|u| zerovec::ule::AsULE::from_unaligned(*u))
-            {
-                return update_langid(language, Some(script), None, langid);
-            }
-        }
-
-        update_langid(data.und.0, Some(data.und.1), Some(data.und.2), langid)
-    }
-
-    /// This returns a new Locale that is the result of running the
-    /// 'Remove Likely Subtags' algorithm from
-    /// <https://www.unicode.org/reports/tr35/#Likely_Subtags>.
-    ///
-    /// If the result of running the algorithm would result in a new locale, the
-    /// locale argument is updated in place to match the result, and the method
-    /// returns [`CanonicalizationResult::Modified`]. Otherwise, the method
-    /// returns [`CanonicalizationResult::Unmodified`] and the locale argument is
-    /// unchanged.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locid_transform::{CanonicalizationResult, LocaleCanonicalizer};
-    /// use icu_locid::Locale;
-    ///
-    /// let provider = icu_testdata::get_provider();
-    /// let lc = LocaleCanonicalizer::new(&provider).expect("creation failed");
-    ///
-    /// let mut locale: Locale = "zh-Hans-CN".parse().expect("parse failed");
-    /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Modified);
-    /// assert_eq!(locale.to_string(), "zh");
-    ///
-    /// let mut locale: Locale = "zh".parse().expect("parse failed");
-    /// assert_eq!(lc.minimize(&mut locale), CanonicalizationResult::Unmodified);
-    /// assert_eq!(locale.to_string(), "zh");
-    /// ```
-    pub fn minimize<T: AsMut<LanguageIdentifier>>(&self, mut langid: T) -> CanonicalizationResult {
-        let langid = langid.as_mut();
-
-        let mut max = langid.clone();
-        self.maximize(&mut max);
-        let variants = mem::take(&mut max.variants);
-        max.variants.clear();
-        let mut trial = max.clone();
-
-        trial.script = None;
-        trial.region = None;
-        self.maximize(&mut trial);
-        if trial == max {
-            if langid.language != max.language || langid.script.is_some() || langid.region.is_some()
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script.is_some() {
-                    langid.script = None;
-                }
-                if langid.region.is_some() {
-                    langid.region = None;
-                }
-                langid.variants = variants;
-                return CanonicalizationResult::Modified;
-            } else {
-                return CanonicalizationResult::Unmodified;
-            }
-        }
-
-        trial.script = None;
-        trial.region = max.region;
-        self.maximize(&mut trial);
-        if trial == max {
-            if langid.language != max.language
-                || langid.script.is_some()
-                || langid.region != max.region
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script.is_some() {
-                    langid.script = None;
-                }
-                if langid.region != max.region {
-                    langid.region = max.region;
-                }
-                langid.variants = variants;
-                return CanonicalizationResult::Modified;
-            } else {
-                return CanonicalizationResult::Unmodified;
-            }
-        }
-
-        trial.script = max.script;
-        trial.region = None;
-        self.maximize(&mut trial);
-        if trial == max {
-            if langid.language != max.language
-                || langid.script != max.script
-                || langid.region.is_some()
-            {
-                if langid.language != max.language {
-                    langid.language = max.language
-                }
-                if langid.script != max.script {
-                    langid.script = max.script;
-                }
-                if langid.region.is_some() {
-                    langid.region = None;
-                }
-                langid.variants = variants;
-                return CanonicalizationResult::Modified;
-            } else {
-                return CanonicalizationResult::Unmodified;
-            }
-        }
-
-        if langid.language != max.language
-            || langid.script != max.script
-            || langid.region != max.region
-        {
-            if langid.language != max.language {
-                langid.language = max.language
-            }
-            if langid.script != max.script {
-                langid.script = max.script;
-            }
-            if langid.region != max.region {
-                langid.region = max.region;
-            }
-            CanonicalizationResult::Modified
-        } else {
-            CanonicalizationResult::Unmodified
-        }
     }
 }
 

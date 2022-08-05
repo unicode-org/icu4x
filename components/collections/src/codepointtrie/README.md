@@ -1,8 +1,6 @@
-# icu_codepointtrie [![crates.io](https://img.shields.io/crates/v/icu_codepointtrie)](https://crates.io/crates/icu_codepointtrie)
+# `CodePointTrie`
 
-`icu_codepointtrie` is a utility crate of the [`ICU4X`] project.
-
-This component provides a data structure for an time-efficient lookup of values
+This module provides a data structure for an time-efficient lookup of values
 associated to code points.
 
 It is an implementation of the existing [ICU4C UCPTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/ucptrie_8h.html)

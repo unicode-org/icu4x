@@ -1,7 +1,7 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
-import { ICU4XCanonicalizationResult_js_to_rust, ICU4XCanonicalizationResult_rust_to_js } from "./ICU4XCanonicalizationResult.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
+import { ICU4XTransformResult_js_to_rust, ICU4XTransformResult_rust_to_js } from "./ICU4XTransformResult.js"
 
 const ICU4XLocaleCanonicalizer_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XLocaleCanonicalizer_destroy(underlying);
@@ -35,14 +35,6 @@ export class ICU4XLocaleCanonicalizer {
   }
 
   canonicalize(arg_locale) {
-    return ICU4XCanonicalizationResult_rust_to_js[wasm.ICU4XLocaleCanonicalizer_canonicalize(this.underlying, arg_locale.underlying)];
-  }
-
-  maximize(arg_locale) {
-    return ICU4XCanonicalizationResult_rust_to_js[wasm.ICU4XLocaleCanonicalizer_maximize(this.underlying, arg_locale.underlying)];
-  }
-
-  minimize(arg_locale) {
-    return ICU4XCanonicalizationResult_rust_to_js[wasm.ICU4XLocaleCanonicalizer_minimize(this.underlying, arg_locale.underlying)];
+    return ICU4XTransformResult_rust_to_js[wasm.ICU4XLocaleCanonicalizer_canonicalize(this.underlying, arg_locale.underlying)];
   }
 }

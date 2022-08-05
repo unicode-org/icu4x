@@ -77,7 +77,7 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 /// - [ICU4C UCharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4c/classicu_1_1UCharsTrie.html)
 /// - [ICU4J CharsTrie](https://unicode-org.github.io/icu-docs/apidoc/released/icu4j/com/ibm/icu/util/CharsTrie.html) API.
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_char16trie::char16trie))]
+#[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_collections::char16trie))]
 #[derive(Clone, Debug, PartialEq, Eq, ZeroFrom)]
 pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.
@@ -97,7 +97,7 @@ impl<'data> Char16Trie<'data> {
     }
 }
 
-/// This struct represents an iterator over a Char16Trie.
+/// This struct represents an iterator over a [`Char16Trie`].
 #[derive(Clone)]
 pub struct Char16TrieIterator<'a> {
     /// A reference to the Char16Trie data to iterate over.
@@ -109,6 +109,7 @@ pub struct Char16TrieIterator<'a> {
     remaining_match_length: Option<usize>,
 }
 
+/// An enum representing the return value from a lookup in [`Char16Trie`].
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum TrieResult {
     /// The input unit(s) did not continue a matching string.
@@ -159,7 +160,7 @@ impl<'a> Char16TrieIterator<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+    /// use icu_collections::char16trie::{Char16Trie, TrieResult};
     /// use zerovec::ZeroVec;
     ///
     /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
@@ -192,7 +193,7 @@ impl<'a> Char16TrieIterator<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+    /// use icu_collections::char16trie::{Char16Trie, TrieResult};
     /// use zerovec::ZeroVec;
     ///
     /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
@@ -225,7 +226,7 @@ impl<'a> Char16TrieIterator<'a> {
     /// # Examples
     ///
     /// ```
-    /// use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+    /// use icu_collections::char16trie::{Char16Trie, TrieResult};
     /// use zerovec::ZeroVec;
     ///
     /// // A Char16Trie containing the ASCII characters 'a' and 'b'.
@@ -268,6 +269,7 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
+    #[allow(clippy::indexing_slicing)] // TODO(#1440) This potentially panics
     fn get(&self, pos: usize) -> u16 {
         // TODO(#1440) This potentially panics
         u16::from_unaligned(self.trie[pos])

@@ -50,7 +50,7 @@ fn test_uts46d_basic() {
     let data_provider = icu_testdata::get_provider();
 
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed_unstable(
+        DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed(
             &data_provider,
         )
         .unwrap();

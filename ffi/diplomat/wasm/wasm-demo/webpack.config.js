@@ -1,5 +1,5 @@
 export default {
-  entry: './src/app.ts',
+  entry: './src/ts/app.ts',
   module: {
     rules: [
       {
@@ -7,6 +7,30 @@ export default {
         use: 'ts-loader',
         exclude: /node_modules/,
       },
+      {
+        test: /\.(scss)$/,
+        use: [
+          {
+            loader: 'style-loader'
+          },
+          {
+            loader: 'css-loader'
+          },
+          {
+            loader: 'postcss-loader',
+            options: {
+              postcssOptions: {
+                plugins: () => [
+                  require('autoprefixer')
+                ]
+              }
+            }
+          },
+          {
+            loader: 'sass-loader'
+          }
+        ]
+      }
     ]
   },
   resolve: {
@@ -20,6 +44,11 @@ export default {
   output: {
     filename: 'bundle.js',
     path: new URL('dist', import.meta.url).pathname,
+  },
+  devServer: {
+    static: '.',
+    port: 8080,
+    hot: true,
   },
   experiments: {
     topLevelAwait: true,

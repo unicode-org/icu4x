@@ -4,7 +4,7 @@
 
 use crate::TimeZoneError;
 use core::str::FromStr;
-use tinystr::{tinystr, TinyStr8};
+use tinystr::{tinystr, TinyAsciiStr};
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
@@ -133,10 +133,10 @@ impl FromStr for GmtOffset {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct TimeVariant(pub TinyStr8);
+pub struct TimeVariant(pub TinyAsciiStr<2>);
 
 impl FromStr for TimeVariant {
-    type Err = <TinyStr8 as FromStr>::Err;
+    type Err = <TinyAsciiStr<2> as FromStr>::Err;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         input.parse().map(TimeVariant)
@@ -146,11 +146,11 @@ impl FromStr for TimeVariant {
 impl TimeVariant {
     /// Return the `"standard"` `TimeVariant`
     pub const fn standard() -> Self {
-        Self(tinystr!(8, "standard"))
+        Self(tinystr!(2, "st"))
     }
     /// Return the `"daylight"` `TimeVariant`
     pub const fn daylight() -> Self {
-        Self(tinystr!(8, "daylight"))
+        Self(tinystr!(2, "dt"))
     }
 }
 

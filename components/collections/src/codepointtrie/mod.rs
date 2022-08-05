@@ -32,7 +32,7 @@
 extern crate alloc;
 
 mod cptrie;
-pub mod error;
+mod error;
 mod impl_const;
 pub mod planes;
 
@@ -48,3 +48,4 @@ pub use cptrie::CodePointTrie;
 pub use cptrie::CodePointTrieHeader;
 pub use cptrie::TrieType;
 pub use cptrie::TrieValue;
+pub use error::Error as CodePointTrieError;

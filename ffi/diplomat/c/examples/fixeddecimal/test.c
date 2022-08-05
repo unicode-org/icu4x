@@ -7,7 +7,11 @@
 #include <stdio.h>
 
 int main() {
-    ICU4XLocale* locale = ICU4XLocale_create("bn", 2);
+    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create("bn", 2);
+    if (!locale_result.is_ok) {
+        return 1;
+    }
+    ICU4XLocale* locale = locale_result.ok;
     ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
 
     ICU4XFixedDecimal* decimal = ICU4XFixedDecimal_create(1000007);

@@ -728,7 +728,7 @@ fn test_length_fixtures() {
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
             metazone_id: Some(tinystr!(4, "ampa")),
-            time_variant: Some(tinystr!(8, "daylight")),
+            time_variant: Some(tinystr!(2, "dt")),
             ..TimeZoneConfig::default()
         },
     );

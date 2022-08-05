@@ -1,543 +1,543 @@
 {
   "defaults": {
     "afce": {
-      "standard": "Oras sa Gitnang Africa"
+      "st": "Oras sa Gitnang Africa"
     },
     "afea": {
-      "standard": "Oras sa Silangang Africa"
+      "st": "Oras sa Silangang Africa"
     },
     "afgh": {
-      "standard": "Oras sa Afghanistan"
+      "st": "Oras sa Afghanistan"
     },
     "afso": {
-      "standard": "Oras sa Timog Africa"
+      "st": "Oras sa Timog Africa"
     },
     "afwe": {
-      "daylight": "Oras sa Tag-init ng Kanlurang Africa",
-      "standard": "Standard na Oras sa Kanlurang Africa"
+      "dt": "Oras sa Tag-init ng Kanlurang Africa",
+      "st": "Standard na Oras sa Kanlurang Africa"
     },
     "alas": {
-      "daylight": "Daylight Time sa Alaska",
-      "standard": "Standard na Oras sa Alaska"
+      "dt": "Daylight Time sa Alaska",
+      "st": "Standard na Oras sa Alaska"
     },
     "amaz": {
-      "daylight": "Oras sa Tag-init ng Amazon",
-      "standard": "Standard na Oras sa Amazon"
+      "dt": "Oras sa Tag-init ng Amazon",
+      "st": "Standard na Oras sa Amazon"
     },
     "amce": {
-      "daylight": "Sentral na Daylight Time",
-      "standard": "Sentral na Standard na Oras"
+      "dt": "Sentral na Daylight Time",
+      "st": "Sentral na Standard na Oras"
     },
     "amea": {
-      "daylight": "Eastern Daylight Time",
-      "standard": "Eastern na Standard na Oras"
+      "dt": "Eastern Daylight Time",
+      "st": "Eastern na Standard na Oras"
     },
     "ammo": {
-      "daylight": "Daylight Time sa Bundok",
-      "standard": "Standard na Oras sa Bundok"
+      "dt": "Daylight Time sa Bundok",
+      "st": "Standard na Oras sa Bundok"
     },
     "ampa": {
-      "daylight": "Daylight Time sa Pasipiko",
-      "standard": "Standard na Oras sa Pasipiko"
+      "dt": "Daylight Time sa Pasipiko",
+      "st": "Standard na Oras sa Pasipiko"
     },
     "anad": {
-      "daylight": "Summer Time sa Anadyr",
-      "standard": "Standard Time sa Anadyr"
+      "dt": "Summer Time sa Anadyr",
+      "st": "Standard Time sa Anadyr"
     },
     "apia": {
-      "daylight": "Daylight Time sa Apia",
-      "standard": "Standard na Oras sa Apia"
+      "dt": "Daylight Time sa Apia",
+      "st": "Standard na Oras sa Apia"
     },
     "arab": {
-      "daylight": "Daylight Time sa Arabia",
-      "standard": "Standard na Oras sa Arabia"
+      "dt": "Daylight Time sa Arabia",
+      "st": "Standard na Oras sa Arabia"
     },
     "arge": {
-      "daylight": "Oras sa Tag-init ng Argentina",
-      "standard": "Standard na Oras sa Argentina"
+      "dt": "Oras sa Tag-init ng Argentina",
+      "st": "Standard na Oras sa Argentina"
     },
     "arme": {
-      "daylight": "Oras sa Tag-init ng Armenia",
-      "standard": "Standard na Oras sa Armenia"
+      "dt": "Oras sa Tag-init ng Armenia",
+      "st": "Standard na Oras sa Armenia"
     },
     "arwe": {
-      "daylight": "Oras sa Tag-init ng Kanlurang Argentina",
-      "standard": "Standard na Oras sa Kanlurang Argentina"
+      "dt": "Oras sa Tag-init ng Kanlurang Argentina",
+      "st": "Standard na Oras sa Kanlurang Argentina"
     },
     "atla": {
-      "daylight": "Daylight Time sa Atlantiko",
-      "standard": "Standard na Oras sa Atlantiko"
+      "dt": "Daylight Time sa Atlantiko",
+      "st": "Standard na Oras sa Atlantiko"
     },
     "auce": {
-      "daylight": "Daylight Time sa Gitnang Australya",
-      "standard": "Standard na Oras sa Gitnang Australya"
+      "dt": "Daylight Time sa Gitnang Australya",
+      "st": "Standard na Oras sa Gitnang Australya"
     },
     "aucw": {
-      "daylight": "Daylight Time sa Gitnang Kanlurang Australya",
-      "standard": "Standard Time ng Gitnang Kanluran ng Australya"
+      "dt": "Daylight Time sa Gitnang Kanlurang Australya",
+      "st": "Standard Time ng Gitnang Kanluran ng Australya"
     },
     "auea": {
-      "daylight": "Daylight Time sa Silangang Australya",
-      "standard": "Standard na Oras sa Silangang Australya"
+      "dt": "Daylight Time sa Silangang Australya",
+      "st": "Standard na Oras sa Silangang Australya"
     },
     "auwe": {
-      "daylight": "Daylight Time sa Kanlurang Australya",
-      "standard": "Standard na Oras sa Kanlurang Australya"
+      "dt": "Daylight Time sa Kanlurang Australya",
+      "st": "Standard na Oras sa Kanlurang Australya"
     },
     "azer": {
-      "daylight": "Oras sa Tag-init ng Azerbaijan",
-      "standard": "Standard na Oras sa Azerbaijan"
+      "dt": "Oras sa Tag-init ng Azerbaijan",
+      "st": "Standard na Oras sa Azerbaijan"
     },
     "azor": {
-      "daylight": "Oras sa Tag-init ng Azores",
-      "standard": "Standard na Oras sa Azores"
+      "dt": "Oras sa Tag-init ng Azores",
+      "st": "Standard na Oras sa Azores"
     },
     "bang": {
-      "daylight": "Oras sa Tag-init ng Bangladesh",
-      "standard": "Standard na Oras sa Bangladesh"
+      "dt": "Oras sa Tag-init ng Bangladesh",
+      "st": "Standard na Oras sa Bangladesh"
     },
     "bhut": {
-      "standard": "Oras sa Bhutan"
+      "st": "Oras sa Bhutan"
     },
     "boli": {
-      "standard": "Oras sa Bolivia"
+      "st": "Oras sa Bolivia"
     },
     "bras": {
-      "daylight": "Oras sa Tag-init ng Brasilia",
-      "standard": "Standard na Oras sa Brasilia"
+      "dt": "Oras sa Tag-init ng Brasilia",
+      "st": "Standard na Oras sa Brasilia"
     },
     "brun": {
-      "standard": "Oras sa Brunei Darussalam"
+      "st": "Oras sa Brunei Darussalam"
     },
     "cave": {
-      "daylight": "Oras sa Tag-init ng Cape Verde",
-      "standard": "Standard na Oras sa Cape Verde"
+      "dt": "Oras sa Tag-init ng Cape Verde",
+      "st": "Standard na Oras sa Cape Verde"
     },
     "cham": {
-      "standard": "Standard na Oras sa Chamorro"
+      "st": "Standard na Oras sa Chamorro"
     },
     "chat": {
-      "daylight": "Daylight Time sa Chatham",
-      "standard": "Standard na Oras sa Chatham"
+      "dt": "Daylight Time sa Chatham",
+      "st": "Standard na Oras sa Chatham"
     },
     "chil": {
-      "daylight": "Oras sa Tag-init ng Chile",
-      "standard": "Standard na Oras sa Chile"
+      "dt": "Oras sa Tag-init ng Chile",
+      "st": "Standard na Oras sa Chile"
     },
     "chin": {
-      "daylight": "Daylight Time sa China",
-      "standard": "Standard na Oras sa China"
+      "dt": "Daylight Time sa China",
+      "st": "Standard na Oras sa China"
     },
     "choi": {
-      "daylight": "Oras sa Tag-init ng Choibalsan",
-      "standard": "Standard na Oras sa Choibalsan"
+      "dt": "Oras sa Tag-init ng Choibalsan",
+      "st": "Standard na Oras sa Choibalsan"
     },
     "chri": {
-      "standard": "Oras sa Christmas Island"
+      "st": "Oras sa Christmas Island"
     },
     "coco": {
-      "standard": "Oras sa Cocos Islands"
+      "st": "Oras sa Cocos Islands"
     },
     "colo": {
-      "daylight": "Oras sa Tag-init ng Colombia",
-      "standard": "Standard na Oras sa Colombia"
+      "dt": "Oras sa Tag-init ng Colombia",
+      "st": "Standard na Oras sa Colombia"
     },
     "cook": {
-      "daylight": "Oras sa Kalahati ng Tag-init ng Cook Islands",
-      "standard": "Standard na Oras sa Cook Islands"
+      "dt": "Oras sa Kalahati ng Tag-init ng Cook Islands",
+      "st": "Standard na Oras sa Cook Islands"
     },
     "cuba": {
-      "daylight": "Daylight Time sa Cuba",
-      "standard": "Standard na Oras sa Cuba"
+      "dt": "Daylight Time sa Cuba",
+      "st": "Standard na Oras sa Cuba"
     },
     "davi": {
-      "standard": "Oras sa Davis"
+      "st": "Oras sa Davis"
     },
     "dumo": {
-      "standard": "Oras sa Dumont-d’Urville"
+      "st": "Oras sa Dumont-d’Urville"
     },
     "east": {
-      "daylight": "Oras sa Tag-init ng Easter Island",
-      "standard": "Standard na Oras sa Easter Island"
+      "dt": "Oras sa Tag-init ng Easter Island",
+      "st": "Standard na Oras sa Easter Island"
     },
     "eati": {
-      "standard": "Oras sa East Timor"
+      "st": "Oras sa East Timor"
     },
     "ecua": {
-      "standard": "Oras sa Ecuador"
+      "st": "Oras sa Ecuador"
     },
     "euce": {
-      "daylight": "Oras sa Tag-init ng Gitnang Europe",
-      "standard": "Standard na Oras sa Gitnang Europe"
+      "dt": "Oras sa Tag-init ng Gitnang Europe",
+      "st": "Standard na Oras sa Gitnang Europe"
     },
     "euea": {
-      "daylight": "Oras sa Tag-init ng Silangang Europe",
-      "standard": "Standard na Oras sa Silangang Europe"
+      "dt": "Oras sa Tag-init ng Silangang Europe",
+      "st": "Standard na Oras sa Silangang Europe"
     },
     "eufe": {
-      "standard": "Oras sa Pinaka-silangang Europe"
+      "st": "Oras sa Pinaka-silangang Europe"
     },
     "euwe": {
-      "daylight": "Oras sa Tag-init ng Kanlurang Europe",
-      "standard": "Standard na Oras sa Kanlurang Europe"
+      "dt": "Oras sa Tag-init ng Kanlurang Europe",
+      "st": "Standard na Oras sa Kanlurang Europe"
     },
     "falk": {
-      "daylight": "Oras sa Tag-init ng Falkland Islands",
-      "standard": "Standard na Oras sa Falkland Islands"
+      "dt": "Oras sa Tag-init ng Falkland Islands",
+      "st": "Standard na Oras sa Falkland Islands"
     },
     "fiji": {
-      "daylight": "Oras sa Tag-init ng Fiji",
-      "standard": "Standard na Oras sa Fiji"
+      "dt": "Oras sa Tag-init ng Fiji",
+      "st": "Standard na Oras sa Fiji"
     },
     "frgu": {
-      "standard": "Oras sa French Guiana"
+      "st": "Oras sa French Guiana"
     },
     "frso": {
-      "standard": "Oras sa Katimugang France at Antartiko"
+      "st": "Oras sa Katimugang France at Antartiko"
     },
     "gala": {
-      "standard": "Oras sa Galapagos"
+      "st": "Oras sa Galapagos"
     },
     "gamb": {
-      "standard": "Oras sa Gambier"
+      "st": "Oras sa Gambier"
     },
     "geor": {
-      "daylight": "Oras sa Tag-init ng Georgia",
-      "standard": "Standard na Oras sa Georgia"
+      "dt": "Oras sa Tag-init ng Georgia",
+      "st": "Standard na Oras sa Georgia"
     },
     "giis": {
-      "standard": "Oras sa Gilbert Islands"
+      "st": "Oras sa Gilbert Islands"
     },
     "grea": {
-      "daylight": "Oras sa Tag-init ng Silangang Greenland",
-      "standard": "Standard na Oras sa Silangang Greenland"
+      "dt": "Oras sa Tag-init ng Silangang Greenland",
+      "st": "Standard na Oras sa Silangang Greenland"
     },
     "grwe": {
-      "daylight": "Oras sa Tag-init ng Kanlurang Greenland",
-      "standard": "Standard na Oras sa Kanlurang Greenland"
+      "dt": "Oras sa Tag-init ng Kanlurang Greenland",
+      "st": "Standard na Oras sa Kanlurang Greenland"
     },
     "gulf": {
-      "standard": "Oras sa Gulf"
+      "st": "Oras sa Gulf"
     },
     "guya": {
-      "standard": "Oras sa Guyana"
+      "st": "Oras sa Guyana"
     },
     "haal": {
-      "daylight": "Oras sa Tag-init ng Hawaii-Aleutian",
-      "standard": "Standard na Oras sa Hawaii-Aleutian"
+      "dt": "Oras sa Tag-init ng Hawaii-Aleutian",
+      "st": "Standard na Oras sa Hawaii-Aleutian"
     },
     "hoko": {
-      "daylight": "Oras sa Tag-init ng Hong Kong",
-      "standard": "Standard na Oras sa Hong Kong"
+      "dt": "Oras sa Tag-init ng Hong Kong",
+      "st": "Standard na Oras sa Hong Kong"
     },
     "hovd": {
-      "daylight": "Oras sa Tag-init ng Hovd",
-      "standard": "Standard na Oras sa Hovd"
+      "dt": "Oras sa Tag-init ng Hovd",
+      "st": "Standard na Oras sa Hovd"
     },
     "ince": {
-      "standard": "Oras sa Gitnang Indonesia"
+      "st": "Oras sa Gitnang Indonesia"
     },
     "indi": {
-      "standard": "Standard na Oras sa India"
+      "st": "Standard na Oras sa India"
     },
     "indo": {
-      "standard": "Oras sa Indochina"
+      "st": "Oras sa Indochina"
     },
     "inea": {
-      "standard": "Oras sa Silangang Indonesia"
+      "st": "Oras sa Silangang Indonesia"
     },
     "inoc": {
-      "standard": "Oras sa Indian Ocean"
+      "st": "Oras sa Indian Ocean"
     },
     "inwe": {
-      "standard": "Oras sa Kanlurang Indonesia"
+      "st": "Oras sa Kanlurang Indonesia"
     },
     "iran": {
-      "daylight": "Daylight Time sa Iran",
-      "standard": "Standard na Oras sa Iran"
+      "dt": "Daylight Time sa Iran",
+      "st": "Standard na Oras sa Iran"
     },
     "irku": {
-      "daylight": "Oras sa Tag-init ng Irkutsk",
-      "standard": "Standard na Oras sa Irkutsk"
+      "dt": "Oras sa Tag-init ng Irkutsk",
+      "st": "Standard na Oras sa Irkutsk"
     },
     "isra": {
-      "daylight": "Daylight Time sa Israel",
-      "standard": "Standard na Oras sa Israel"
+      "dt": "Daylight Time sa Israel",
+      "st": "Standard na Oras sa Israel"
     },
     "japa": {
-      "daylight": "Daylight Time sa Japan",
-      "standard": "Standard na Oras sa Japan"
+      "dt": "Daylight Time sa Japan",
+      "st": "Standard na Oras sa Japan"
     },
     "kaea": {
-      "standard": "Oras sa Silangang Kazakhstan"
+      "st": "Oras sa Silangang Kazakhstan"
     },
     "kamc": {
-      "daylight": "Summer Time sa Petropavlovsk-Kamchatski",
-      "standard": "Standard Time sa Petropavlovsk-Kamchatski"
+      "dt": "Summer Time sa Petropavlovsk-Kamchatski",
+      "st": "Standard Time sa Petropavlovsk-Kamchatski"
     },
     "kawe": {
-      "standard": "Oras sa Kanlurang Kazakhstan"
+      "st": "Oras sa Kanlurang Kazakhstan"
     },
     "kore": {
-      "daylight": "Daylight Time sa Korea",
-      "standard": "Standard na Oras sa Korea"
+      "dt": "Daylight Time sa Korea",
+      "st": "Standard na Oras sa Korea"
     },
     "kosr": {
-      "standard": "Oras sa Kosrae"
+      "st": "Oras sa Kosrae"
     },
     "kras": {
-      "daylight": "Oras sa Tag-init ng Krasnoyarsk",
-      "standard": "Standard na Oras sa Krasnoyarsk"
+      "dt": "Oras sa Tag-init ng Krasnoyarsk",
+      "st": "Standard na Oras sa Krasnoyarsk"
     },
     "kyrg": {
-      "standard": "Oras sa Kyrgystan"
+      "st": "Oras sa Kyrgystan"
     },
     "liis": {
-      "standard": "Oras sa Line Islands"
+      "st": "Oras sa Line Islands"
     },
     "loho": {
-      "daylight": "Daylight Time sa Lorde Howe",
-      "standard": "Standard na Oras sa Lord Howe"
+      "dt": "Daylight Time sa Lorde Howe",
+      "st": "Standard na Oras sa Lord Howe"
     },
     "macq": {
-      "standard": "Oras sa Macquarie Island"
+      "st": "Oras sa Macquarie Island"
     },
     "maga": {
-      "daylight": "Oras sa Tag-init ng Magadan",
-      "standard": "Standard na Oras sa Magadan"
+      "dt": "Oras sa Tag-init ng Magadan",
+      "st": "Standard na Oras sa Magadan"
     },
     "mais": {
-      "standard": "Oras sa Marshall Islands"
+      "st": "Oras sa Marshall Islands"
     },
     "mala": {
-      "standard": "Oras sa Malaysia"
+      "st": "Oras sa Malaysia"
     },
     "mald": {
-      "standard": "Oras sa Maldives"
+      "st": "Oras sa Maldives"
     },
     "marq": {
-      "standard": "Oras sa Marquesas"
+      "st": "Oras sa Marquesas"
     },
     "maur": {
-      "daylight": "Oras sa Tag-init ng Mauritius",
-      "standard": "Standard na Oras sa Mauritius"
+      "dt": "Oras sa Tag-init ng Mauritius",
+      "st": "Standard na Oras sa Mauritius"
     },
     "maws": {
-      "standard": "Oras sa Mawson"
+      "st": "Oras sa Mawson"
     },
     "meno": {
-      "daylight": "Daylight Time sa Hilagang-kanlurang Mexico",
-      "standard": "Standard na Oras sa Hilagang-kanlurang Mexico"
+      "dt": "Daylight Time sa Hilagang-kanlurang Mexico",
+      "st": "Standard na Oras sa Hilagang-kanlurang Mexico"
     },
     "mepa": {
-      "daylight": "Daylight Time sa Pasipiko ng Mexico",
-      "standard": "Standard na Oras sa Pasipiko ng Mexico"
+      "dt": "Daylight Time sa Pasipiko ng Mexico",
+      "st": "Standard na Oras sa Pasipiko ng Mexico"
     },
     "mgmt": {
-      "standard": "Greenwich Mean Time"
+      "st": "Greenwich Mean Time"
     },
     "mong": {
-      "daylight": "Oras sa Tag-init ng Ulan Bator",
-      "standard": "Standard na Oras sa Ulan Bator"
+      "dt": "Oras sa Tag-init ng Ulan Bator",
+      "st": "Standard na Oras sa Ulan Bator"
     },
     "mosc": {
-      "daylight": "Oras sa Tag-init ng Moscow",
-      "standard": "Standard na Oras sa Moscow"
+      "dt": "Oras sa Tag-init ng Moscow",
+      "st": "Standard na Oras sa Moscow"
     },
     "myan": {
-      "standard": "Oras sa Myanmar"
+      "st": "Oras sa Myanmar"
     },
     "naur": {
-      "standard": "Oras sa Nauru"
+      "st": "Oras sa Nauru"
     },
     "neca": {
-      "daylight": "Oras sa Tag-init ng New Caledonia",
-      "standard": "Standard na Oras sa New Caledonia"
+      "dt": "Oras sa Tag-init ng New Caledonia",
+      "st": "Standard na Oras sa New Caledonia"
     },
     "nepa": {
-      "standard": "Oras sa Nepal"
+      "st": "Oras sa Nepal"
     },
     "newf": {
-      "daylight": "Daylight Time sa Newfoundland",
-      "standard": "Standard na Oras sa Newfoundland"
+      "dt": "Daylight Time sa Newfoundland",
+      "st": "Standard na Oras sa Newfoundland"
     },
     "neze": {
-      "daylight": "Daylight Time sa New Zealand",
-      "standard": "Standard na Oras sa New Zealand"
+      "dt": "Daylight Time sa New Zealand",
+      "st": "Standard na Oras sa New Zealand"
     },
     "niue": {
-      "standard": "Oras sa Niue"
+      "st": "Oras sa Niue"
     },
     "norf": {
-      "daylight": "Daylight Time sa Norfolk Island",
-      "standard": "Standard na Oras sa Norfolk Island"
+      "dt": "Daylight Time sa Norfolk Island",
+      "st": "Standard na Oras sa Norfolk Island"
     },
     "noro": {
-      "daylight": "Oras sa Tag-init ng Fernando de Noronha",
-      "standard": "Standard na Oras sa Fernando de Noronha"
+      "dt": "Oras sa Tag-init ng Fernando de Noronha",
+      "st": "Standard na Oras sa Fernando de Noronha"
     },
     "novo": {
-      "daylight": "Oras sa Tag-init ng Novosibirsk",
-      "standard": "Standard na Oras sa Novosibirsk"
+      "dt": "Oras sa Tag-init ng Novosibirsk",
+      "st": "Standard na Oras sa Novosibirsk"
     },
     "omsk": {
-      "daylight": "Oras sa Tag-init ng Omsk",
-      "standard": "Standard na Oras sa Omsk"
+      "dt": "Oras sa Tag-init ng Omsk",
+      "st": "Standard na Oras sa Omsk"
     },
     "paki": {
-      "daylight": "Oras sa Tag-init ng Pakistan",
-      "standard": "Standard na Oras sa Pakistan"
+      "dt": "Oras sa Tag-init ng Pakistan",
+      "st": "Standard na Oras sa Pakistan"
     },
     "pala": {
-      "standard": "Oras sa Palau"
+      "st": "Oras sa Palau"
     },
     "pang": {
-      "standard": "Oras sa Papua New Guinea"
+      "st": "Oras sa Papua New Guinea"
     },
     "para": {
-      "daylight": "Oras sa Tag-init ng Paraguay",
-      "standard": "Standard na Oras sa Paraguay"
+      "dt": "Oras sa Tag-init ng Paraguay",
+      "st": "Standard na Oras sa Paraguay"
     },
     "peru": {
-      "daylight": "Oras sa Tag-init ng Peru",
-      "standard": "Standard na Oras sa Peru"
+      "dt": "Oras sa Tag-init ng Peru",
+      "st": "Standard na Oras sa Peru"
     },
     "phil": {
-      "daylight": "Oras sa Tag-init ng Pilipinas",
-      "standard": "Standard na Oras sa Pilipinas"
+      "dt": "Oras sa Tag-init ng Pilipinas",
+      "st": "Standard na Oras sa Pilipinas"
     },
     "phis": {
-      "standard": "Oras sa Phoenix Islands"
+      "st": "Oras sa Phoenix Islands"
     },
     "pimi": {
-      "daylight": "Daylight Time sa Saint Pierre & Miquelon",
-      "standard": "Standard na Oras sa Saint Pierre & Miquelon"
+      "dt": "Daylight Time sa Saint Pierre & Miquelon",
+      "st": "Standard na Oras sa Saint Pierre & Miquelon"
     },
     "pitc": {
-      "standard": "Oras sa Pitcairn"
+      "st": "Oras sa Pitcairn"
     },
     "pona": {
-      "standard": "Oras sa Ponape"
+      "st": "Oras sa Ponape"
     },
     "pyon": {
-      "standard": "Oras sa Pyongyang"
+      "st": "Oras sa Pyongyang"
     },
     "reun": {
-      "standard": "Oras sa Reunion"
+      "st": "Oras sa Reunion"
     },
     "roth": {
-      "standard": "Oras sa Rothera"
+      "st": "Oras sa Rothera"
     },
     "sakh": {
-      "daylight": "Oras sa Tag-init ng Sakhalin",
-      "standard": "Standard na Oras sa Sakhalin"
+      "dt": "Oras sa Tag-init ng Sakhalin",
+      "st": "Standard na Oras sa Sakhalin"
     },
     "sama": {
-      "daylight": "Samara Daylight",
-      "standard": "Standard Time sa Samara"
+      "dt": "Samara Daylight",
+      "st": "Standard Time sa Samara"
     },
     "samo": {
-      "daylight": "Daylight Time sa Samoa",
-      "standard": "Standard na Oras sa Samoa"
+      "dt": "Daylight Time sa Samoa",
+      "st": "Standard na Oras sa Samoa"
     },
     "seyc": {
-      "standard": "Oras sa Seychelles"
+      "st": "Oras sa Seychelles"
     },
     "sing": {
-      "standard": "Standard na Oras sa Singapore"
+      "st": "Standard na Oras sa Singapore"
     },
     "soge": {
-      "standard": "Oras sa Timog Georgia"
+      "st": "Oras sa Timog Georgia"
     },
     "solo": {
-      "standard": "Oras sa Solomon Islands"
+      "st": "Oras sa Solomon Islands"
     },
     "suri": {
-      "standard": "Oras sa Suriname"
+      "st": "Oras sa Suriname"
     },
     "syow": {
-      "standard": "Oras sa Syowa"
+      "st": "Oras sa Syowa"
     },
     "tahi": {
-      "standard": "Oras sa Tahiti"
+      "st": "Oras sa Tahiti"
     },
     "taip": {
-      "daylight": "Daylight Time sa Taipei",
-      "standard": "Standard na Oras sa Taipei"
+      "dt": "Daylight Time sa Taipei",
+      "st": "Standard na Oras sa Taipei"
     },
     "taji": {
-      "standard": "Oras sa Tajikistan"
+      "st": "Oras sa Tajikistan"
     },
     "toke": {
-      "standard": "Oras sa Tokelau"
+      "st": "Oras sa Tokelau"
     },
     "tong": {
-      "daylight": "Oras sa Tag-init ng Tonga",
-      "standard": "Standard na Oras sa Tonga"
+      "dt": "Oras sa Tag-init ng Tonga",
+      "st": "Standard na Oras sa Tonga"
     },
     "truk": {
-      "standard": "Oras sa Chuuk"
+      "st": "Oras sa Chuuk"
     },
     "turk": {
-      "daylight": "Oras sa Tag-init ng Turkmenistan",
-      "standard": "Standard na Oras sa Turkmenistan"
+      "dt": "Oras sa Tag-init ng Turkmenistan",
+      "st": "Standard na Oras sa Turkmenistan"
     },
     "tuva": {
-      "standard": "Oras sa Tuvalu"
+      "st": "Oras sa Tuvalu"
     },
     "urug": {
-      "daylight": "Oras sa Tag-init ng Uruguay",
-      "standard": "Standard na Oras sa Uruguay"
+      "dt": "Oras sa Tag-init ng Uruguay",
+      "st": "Standard na Oras sa Uruguay"
     },
     "uzbe": {
-      "daylight": "Oras sa Tag-init ng Uzbekistan",
-      "standard": "Standard na Oras sa Uzbekistan"
+      "dt": "Oras sa Tag-init ng Uzbekistan",
+      "st": "Standard na Oras sa Uzbekistan"
     },
     "vanu": {
-      "daylight": "Oras sa Tag-init ng Vanuatu",
-      "standard": "Standard na Oras sa Vanuatu"
+      "dt": "Oras sa Tag-init ng Vanuatu",
+      "st": "Standard na Oras sa Vanuatu"
     },
     "vene": {
-      "standard": "Oras sa Venezuela"
+      "st": "Oras sa Venezuela"
     },
     "vlad": {
-      "daylight": "Oras sa Tag-init ng Vladivostok",
-      "standard": "Standard na Oras sa Vladivostok"
+      "dt": "Oras sa Tag-init ng Vladivostok",
+      "st": "Standard na Oras sa Vladivostok"
     },
     "volg": {
-      "daylight": "Oras sa Tag-init ng Volgograd",
-      "standard": "Standard na Oras sa Volgograd"
+      "dt": "Oras sa Tag-init ng Volgograd",
+      "st": "Standard na Oras sa Volgograd"
     },
     "vost": {
-      "standard": "Oras sa Vostok"
+      "st": "Oras sa Vostok"
     },
     "wake": {
-      "standard": "Oras sa Wake Island"
+      "st": "Oras sa Wake Island"
     },
     "wall": {
-      "standard": "Oras sa Wallis & Futuna"
+      "st": "Oras sa Wallis & Futuna"
     },
     "yaku": {
-      "daylight": "Oras sa Tag-init ng Yakutsk",
-      "standard": "Standard na Oras sa Yakutsk"
+      "dt": "Oras sa Tag-init ng Yakutsk",
+      "st": "Standard na Oras sa Yakutsk"
     },
     "yeka": {
-      "daylight": "Oras sa Tag-init ng Yekaterinburg",
-      "standard": "Standard na Oras sa Yekaterinburg"
+      "dt": "Oras sa Tag-init ng Yekaterinburg",
+      "st": "Standard na Oras sa Yekaterinburg"
     },
     "yuko": {
-      "standard": "Yukon Time"
+      "st": "Yukon Time"
     }
   },
   "overrides": {
     "gblon": {
-      "daylight": "Oras sa Tag-init ng Britain"
+      "dt": "Oras sa Tag-init ng Britain"
     },
     "iedub": {
-      "daylight": "Standard na Oras sa Ireland"
+      "dt": "Standard na Oras sa Ireland"
     },
     "utc": {
-      "standard": "Coordinated Universal Time"
+      "st": "Coordinated Universal Time"
     }
   }
 }
