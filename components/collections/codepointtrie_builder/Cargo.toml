@@ -20,11 +20,12 @@ include = [
     "tests/**/*",
     "Cargo.toml",
     "LICENSE",
-    "README.md"
+    "README.md",
+    "list_to_ucptrie.wasm"
 ]
 
 [dependencies]
-icu_collections = { path = "..", features = ["serde"] }
+icu_collections = { version = "1.0.0-beta1", path = "..", features = ["serde"] }
 lazy_static = { version = "1.4.0" }
 toml = "0.5"
 

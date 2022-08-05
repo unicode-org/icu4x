@@ -59,7 +59,7 @@ icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", features = ["export
 displaydoc = { version = "0.2.3", default-features = false }
 elsa = "1.7"
 icu_collections = { version = "1.0.0-beta1", path = "../../components/collections", features = ["serde"] }
-icu_codepointtrie_builder = { path = "../../components/collections/codepointtrie_builder" }
+icu_codepointtrie_builder = { version = "0.3.3", path = "../../components/collections/codepointtrie_builder" }
 icu_locid = { version = "1.0.0-beta1", path = "../../components/locid", features = ["std"]}
 itertools = "0.10"
 log = "0.4"
@@ -78,7 +78,7 @@ syn = {version = "1.0", features = ["parsing"] }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 zip = "0.6"
 cached-path = "0.5"
-reqwest = { version = "*", features = ["blocking"] }
+reqwest = { version = "0.11", features = ["blocking"] }
 lazy_static = "1"
 
 # Dependencies for "bin" feature

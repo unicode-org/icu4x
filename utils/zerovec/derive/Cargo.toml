@@ -4,7 +4,7 @@
 
 [package]
 name = "zerovec-derive"
-version = "0.6.1"
+version = "0.8.0"
 description = "Custom derive for the zerovec crate"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
