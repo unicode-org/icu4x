@@ -119,7 +119,8 @@ export function setup(dataProvider: ICU4XDataProvider): void {
     const otherLocaleInput = document.getElementById('dtf-locale-other-input') as HTMLInputElement | null;
     otherLocaleInput?.addEventListener('input', () => {
         const otherLocaleBtn = document.getElementById('dtf-locale-other') as HTMLInputElement | null;
-        if (otherLocaleBtn?.checked) {
+        if (otherLocaleBtn != null) {
+            otherLocaleBtn.checked = true;
             dateTimeDemo.setLocale(otherLocaleInput.value);
         }
     });

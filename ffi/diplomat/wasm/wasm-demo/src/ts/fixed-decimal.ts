@@ -68,7 +68,8 @@ export function setup(dataProvider: ICU4XDataProvider): void {
 
     const otherLocaleInput = document.getElementById('fdf-locale-other-input') as HTMLInputElement | null;
     otherLocaleInput?.addEventListener('input', () => {
-        if (otherLocaleBtn?.checked) {
+        if (otherLocaleBtn != null) {
+            otherLocaleBtn.checked = true;
             fixedDecimalDemo.setLocale(otherLocaleInput.value);
         }
     });
