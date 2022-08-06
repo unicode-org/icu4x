@@ -49,4 +49,4 @@ databake = { version = "0.1.0", path = "../../utils/databake", optional = true, 
 
 [dev-dependencies]
 icu = { path = "../../components/icu", default-features = false, features = ["experimental"] }
-icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata" }
+icu_testdata = { path = "../../provider/testdata" }
