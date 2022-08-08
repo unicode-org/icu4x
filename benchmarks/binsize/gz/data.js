@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659988875152,
+  "lastUpdate": 1659992502394,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -131435,6 +131435,192 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/11dc2bbfc4bcbf2b7ebccf39f019af753b66be0c"
         },
         "date": 1659988833635,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "litemap_bincode+opt.wasm.gz",
+            "value": 9645,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "filter_langids+opt.wasm.gz",
+            "value": 6453,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "borrowed_pattern+opt.wasm.gz",
+            "value": 5684,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "code_line_diff+opt.wasm.gz",
+            "value": 2165416,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "simple_static+opt.wasm.gz",
+            "value": 9077,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "yoke_derive+opt.wasm.gz",
+            "value": 3783,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_hash_map+opt.wasm.gz",
+            "value": 4384,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "language_names_lite_map+opt.wasm.gz",
+            "value": 3088,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "tui+opt.wasm.gz",
+            "value": 2279923,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "elevator_floors+opt.wasm.gz",
+            "value": 2165486,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "writeable_message+opt.wasm.gz",
+            "value": 9121,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "postcard+opt.wasm.gz",
+            "value": 5040,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "iso_datetime_manipulations+opt.wasm.gz",
+            "value": 3324,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "derives+opt.wasm.gz",
+            "value": 5745,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "and_list+opt.wasm.gz",
+            "value": 12548,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "iso_date_manipulations+opt.wasm.gz",
+            "value": 3097,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make_var+opt.wasm.gz",
+            "value": 36890,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "make+opt.wasm.gz",
+            "value": 4585,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unicode_bmp_blocks_selector+opt.wasm.gz",
+            "value": 6416,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "syntatically_canonicalize_locales+opt.wasm.gz",
+            "value": 12436,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "owned_pattern+opt.wasm.gz",
+            "value": 6671,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "litemap_postcard+opt.wasm.gz",
+            "value": 4058,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "work_log+opt.wasm.gz",
+            "value": 2251369,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "permyriad+opt.wasm.gz",
+            "value": 4121,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zv_serde+opt.wasm.gz",
+            "value": 225,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "zf_derive+opt.wasm.gz",
+            "value": 3781,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          },
+          {
+            "name": "unread_emails+opt.wasm.gz",
+            "value": 2164314,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "692972bb70c4fc288fef8f5fb944202d93a1163d",
+          "message": "Update CI error msg that instructs fixing diplomat-gen data mismatch (#2354)",
+          "timestamp": "2022-08-08T20:54:24Z",
+          "tree_id": "baad60fd8c3ab6f6288ce7190914a9d33b911310",
+          "url": "https://github.com/unicode-org/icu4x/commit/692972bb70c4fc288fef8f5fb944202d93a1163d"
+        },
+        "date": 1659992455779,
         "tool": "ndjson",
         "benches": [
           {
