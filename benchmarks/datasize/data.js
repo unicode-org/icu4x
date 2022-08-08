@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659988448192,
+  "lastUpdate": 1659992183236,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23663,6 +23663,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/11dc2bbfc4bcbf2b7ebccf39f019af753b66be0c"
         },
         "date": 1659988407273,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3924376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "692972bb70c4fc288fef8f5fb944202d93a1163d",
+          "message": "Update CI error msg that instructs fixing diplomat-gen data mismatch (#2354)",
+          "timestamp": "2022-08-08T20:54:24Z",
+          "tree_id": "baad60fd8c3ab6f6288ce7190914a9d33b911310",
+          "url": "https://github.com/unicode-org/icu4x/commit/692972bb70c4fc288fef8f5fb944202d93a1163d"
+        },
+        "date": 1659992143598,
         "tool": "ndjson",
         "benches": [
           {
