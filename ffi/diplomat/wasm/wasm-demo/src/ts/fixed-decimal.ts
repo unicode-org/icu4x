@@ -1,8 +1,8 @@
 import { ICU4XDataProvider, ICU4XFixedDecimal, ICU4XFixedDecimalFormatter, ICU4XFixedDecimalGroupingStrategy, ICU4XLocale } from "icu4x";
-import { Result, Ok, result, unwrap } from './index';
+import { Result, Ok, result, unwrap } from './index.js';
 
-class FixedDecimalDemo {
-    #formattedDecimal: HTMLParagraphElement;
+export class FixedDecimalDemo {
+    #displayFn: (formatted: string) => void;
     #dataProvider: ICU4XDataProvider;
 
     #locale: Result<ICU4XLocale>;
@@ -10,8 +10,8 @@ class FixedDecimalDemo {
     #formatter: Result<ICU4XFixedDecimalFormatter>;
     #fixedDecimal: Result<ICU4XFixedDecimal> | null;
 
-    constructor(formattedDecimal: HTMLParagraphElement, dataProvider: ICU4XDataProvider) {
-        this.#formattedDecimal = formattedDecimal;
+    constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
+        this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
         this.#locale = Ok(ICU4XLocale.create_en());
@@ -49,19 +49,21 @@ class FixedDecimalDemo {
             if (this.#fixedDecimal !== null) {
                 const fixedDecimal = unwrap(this.#fixedDecimal);
                 const formatter = unwrap(this.#formatter);
-                this.#formattedDecimal.innerHTML = formatter.format(fixedDecimal);
+                this.#displayFn(formatter.format(fixedDecimal));
             } else {
-                this.#formattedDecimal.innerHTML = "";
+                this.#displayFn("");
             }
         } catch (e) {
-            this.#formattedDecimal.innerHTML = `Error: ${e.error_value}`;
+            this.#displayFn(`Error: ${e.error_value}`);
         }
     }
 }
 
 export function setup(dataProvider: ICU4XDataProvider): void {
     const formattedDecimal = document.getElementById('fdf-formatted') as HTMLParagraphElement;
-    const fixedDecimalDemo = new FixedDecimalDemo(formattedDecimal, dataProvider);
+    const fixedDecimalDemo = new FixedDecimalDemo((formatted) => {
+        formattedDecimal.innerText = formatted;
+    }, dataProvider);
 
     const otherLocaleBtn = document.getElementById('fdf-locale-other') as HTMLInputElement | null;
     otherLocaleBtn?.addEventListener('click', () => fixedDecimalDemo.setLocale(otherLocaleInput.value));

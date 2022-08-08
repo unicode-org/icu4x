@@ -1,8 +1,8 @@
 import { ICU4XDataProvider, ICU4XDateLength, ICU4XDateTime, ICU4XDateTimeFormatter, ICU4XLocale, ICU4XTimeLength, ICU4XCalendar } from "icu4x";
-import { Ok, Result, result, unwrap } from ".";
+import { Ok, Result, result, unwrap } from "./index.js";
 
-class DateTimeDemo {
-    #formattedDateTime: HTMLParagraphElement;
+export class DateTimeDemo {
+    #displayFn: (formatted: string) => void;
     #dataProvider: ICU4XDataProvider;
 
     #localeStr: string;
@@ -16,8 +16,8 @@ class DateTimeDemo {
     #formatter: Result<ICU4XDateTimeFormatter>;
     #dateTime: Result<ICU4XDateTime> | null;
 
-    constructor(formattedDateTime: HTMLParagraphElement, dataProvider: ICU4XDataProvider) {
-        this.#formattedDateTime = formattedDateTime;
+    constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
+        this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
         this.#locale = Ok(ICU4XLocale.create("en-u-ca-gregory"));
@@ -97,19 +97,19 @@ class DateTimeDemo {
             const formatter = unwrap(this.#formatter);
             if (this.#dateTime !== null) {
                 const dateTime = unwrap(this.#dateTime);
-                this.#formattedDateTime.innerHTML = formatter.format_datetime(dateTime);
+                this.#displayFn(formatter.format_datetime(dateTime));
             } else {
-                this.#formattedDateTime.innerHTML = "";
+                this.#displayFn("");
             }
         } catch (e) {
-            this.#formattedDateTime.innerHTML = `Error: ${e.error_value}`;
+            this.#displayFn(`Error: ${e.error_value}`);
         }
     }
 }
 
 export function setup(dataProvider: ICU4XDataProvider): void {
     const formattedDateTime = document.getElementById('dtf-formatted') as HTMLInputElement;
-    const dateTimeDemo = new DateTimeDemo(formattedDateTime, dataProvider);
+    const dateTimeDemo = new DateTimeDemo((formatted) => formattedDateTime.innerText = formatted, dataProvider);
 
     const otherLocaleBtn = document.getElementById('dtf-locale-other') as HTMLInputElement | null;
     otherLocaleBtn?.addEventListener('click', () => {
@@ -127,23 +127,33 @@ export function setup(dataProvider: ICU4XDataProvider): void {
 
     for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-locale"]')) {
         if (btn?.value !== 'other') {
-            btn.addEventListener('click', () => dateTimeDemo.setLocale(btn.value));
+            btn.addEventListener('input', () => {
+                dateTimeDemo.setLocale(btn.value)
+            });
         }
     }
     for (let btn of document.querySelectorAll<HTMLSelectElement | null>('select[name="dtf-calendar"]')) {
-        btn.addEventListener('click', () => dateTimeDemo.setCalendar(btn.value));
+        btn.addEventListener('input', () => {
+            dateTimeDemo.setCalendar(btn.value)
+        });
     }
 
     for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-date-length"]')) {
-        btn?.addEventListener('click', () => dateTimeDemo.setDateLength(btn.value));
+        btn?.addEventListener('input', () => {
+            dateTimeDemo.setDateLength(btn.value)
+        });
     }
 
     for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-time-length"]')) {
-        btn?.addEventListener('click', () => dateTimeDemo.setTimeLength(btn.value));
+        btn?.addEventListener('input', () => {
+            dateTimeDemo.setTimeLength(btn.value)
+        });
     }
 
     const inputDateTime = document.getElementById('dtf-input') as HTMLInputElement | null;
-    inputDateTime?.addEventListener('input', () => dateTimeDemo.setDateTime(inputDateTime.value));
+    inputDateTime?.addEventListener('input', () => {
+        dateTimeDemo.setDateTime(inputDateTime.value)
+    });
     
     // Annoyingly `toISOString()` gets us the format we need, but it converts to UTC first
     // We instead get the current datetime and recast it to a date that is the current datetime

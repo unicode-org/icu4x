@@ -6,7 +6,8 @@
   "scripts": {
     "clean": "rm dist/*.js dist/*.wasm",
     "build": "webpack",
-    "start": "webpack serve --mode development"
+    "start": "webpack serve --mode development",
+    "tsc": "tsc -p ."
   },
   "author": "",
   "license": "ISC",

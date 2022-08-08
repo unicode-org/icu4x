@@ -30,7 +30,19 @@
         </style>
     </head>
     <body>
+        <!-- With Webpack -->
         <script src='index.js'></script>
+        <!-- Without Webpack -->
+        <!--
+        <script type="importmap">
+            {
+                "imports": {
+                    "icu4x": "../icu4x/lib/index.js"
+                }
+            }
+        </script>
+        <script type="module" src='./dist/app.js'></script>
+        -->
 
         <div id="main" class="container">
 
