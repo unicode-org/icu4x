@@ -1,5 +1,5 @@
 import { ICU4XDataProvider, ICU4XFixedDecimal, ICU4XFixedDecimalFormatter, ICU4XFixedDecimalGroupingStrategy, ICU4XLocale } from "icu4x";
-import { Result, Ok, result, unwrap } from './index.js';
+import { Result, Ok, result, unwrap } from './index';
 
 export class FixedDecimalDemo {
     #displayFn: (formatted: string) => void;
@@ -46,9 +46,9 @@ export class FixedDecimalDemo {
 
     #render(): void {
         try {
+            const formatter = unwrap(this.#formatter);
             if (this.#fixedDecimal !== null) {
                 const fixedDecimal = unwrap(this.#fixedDecimal);
-                const formatter = unwrap(this.#formatter);
                 this.#displayFn(formatter.format(fixedDecimal));
             } else {
                 this.#displayFn("");

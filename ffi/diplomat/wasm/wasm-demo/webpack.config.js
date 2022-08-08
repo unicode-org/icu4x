@@ -1,5 +1,10 @@
 export default {
-  entry: './src/ts/app.ts',
+  entry: {
+    index: [
+      './src/ts/app.ts',
+      './src/scss/styles.scss',
+    ],
+  },
   module: {
     rules: [
       {
@@ -11,7 +16,7 @@ export default {
         test: /\.(scss)$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: 'style-loader',
           },
           {
             loader: 'css-loader'

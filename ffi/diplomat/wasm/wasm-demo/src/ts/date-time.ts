@@ -1,5 +1,5 @@
 import { ICU4XDataProvider, ICU4XDateLength, ICU4XDateTime, ICU4XDateTimeFormatter, ICU4XLocale, ICU4XTimeLength, ICU4XCalendar } from "icu4x";
-import { Ok, Result, result, unwrap } from "./index.js";
+import { Ok, Result, result, unwrap } from "./index";
 
 export class DateTimeDemo {
     #displayFn: (formatted: string) => void;
@@ -125,28 +125,28 @@ export function setup(dataProvider: ICU4XDataProvider): void {
         }
     });
 
-    for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-locale"]')) {
-        if (btn?.value !== 'other') {
-            btn.addEventListener('input', () => {
-                dateTimeDemo.setLocale(btn.value)
+    for (let input of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-locale"]')) {
+        if (input?.value !== 'other') {
+            input.addEventListener('input', () => {
+                dateTimeDemo.setLocale(input.value)
             });
         }
     }
-    for (let btn of document.querySelectorAll<HTMLSelectElement | null>('select[name="dtf-calendar"]')) {
-        btn.addEventListener('input', () => {
-            dateTimeDemo.setCalendar(btn.value)
+    for (let selector of document.querySelector<HTMLSelectElement | null>('select[name="dtf-calendar"]')) {
+        selector?.addEventListener('input', () => {
+            dateTimeDemo.setCalendar(selector.value)
         });
     }
 
-    for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-date-length"]')) {
-        btn?.addEventListener('input', () => {
-            dateTimeDemo.setDateLength(btn.value)
+    for (let input of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-date-length"]')) {
+        input?.addEventListener('input', () => {
+            dateTimeDemo.setDateLength(input.value)
         });
     }
 
-    for (let btn of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-time-length"]')) {
-        btn?.addEventListener('input', () => {
-            dateTimeDemo.setTimeLength(btn.value)
+    for (let input of document.querySelectorAll<HTMLInputElement | null>('input[name="dtf-time-length"]')) {
+        input?.addEventListener('input', () => {
+            dateTimeDemo.setTimeLength(input.value)
         });
     }
 
