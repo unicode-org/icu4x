@@ -32,9 +32,6 @@ An example `ICU4X` powered application in Rust may look like below...
 [dependencies]
 icu = { version = "1.0.0-beta1", features = ["serde"] }
 icu_testdata = "1.0.0-beta1"
-
-[features]
-serde = ["icu_datetime/serde"]
 ```
 
 `src/main.rs`:
