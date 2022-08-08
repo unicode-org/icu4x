@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659989270079,
+  "lastUpdate": 1659992767513,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -43949,6 +43949,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 106,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "692972bb70c4fc288fef8f5fb944202d93a1163d",
+          "message": "Update CI error msg that instructs fixing diplomat-gen data mismatch (#2354)",
+          "timestamp": "2022-08-08T20:54:24Z",
+          "tree_id": "baad60fd8c3ab6f6288ce7190914a9d33b911310",
+          "url": "https://github.com/unicode-org/icu4x/commit/692972bb70c4fc288fef8f5fb944202d93a1163d"
+        },
+        "date": 1659992727677,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 103837,
+            "range": "± 8255",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20011,
+            "range": "± 1506",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 60413,
+            "range": "± 5658",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 189,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 63,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 71,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
