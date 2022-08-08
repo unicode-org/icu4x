@@ -1,4 +1,4 @@
-mod slice;
+pub mod slice;
 #[macro_use]
 mod macros;
 
@@ -30,7 +30,7 @@ pub struct Parser<S> {
 
 impl<'s, S> Parser<S>
 where
-    S: Slice<'s>,
+    S: Slice,
 {
     #[inline]
     fn next_if(&mut self, b: u8) -> bool {
@@ -58,7 +58,7 @@ where
 
 impl<'s, S> Parser<S>
 where
-    S: Slice<'s>,
+    S: Slice,
 {
     #[must_use]
     pub const fn new(source: S) -> Self {
