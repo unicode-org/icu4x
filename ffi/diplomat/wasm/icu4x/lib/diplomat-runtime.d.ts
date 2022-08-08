@@ -16,4 +16,3 @@ export type i64 = bigint;
 export type f32 = number;
 export type f64 = number;
 export type char = string;
-export type usize = number;

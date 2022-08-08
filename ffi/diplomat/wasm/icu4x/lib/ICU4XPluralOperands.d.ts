@@ -1,4 +1,4 @@
-import { u64, u32, usize } from "./diplomat-runtime"
+import { u64, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
 
