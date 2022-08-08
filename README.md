@@ -60,8 +60,6 @@ fn main() {
 }
 ```
 
-...which can be run by `cargo run --all-features`.
-
 ## Development
 
 `ICU4X` is developed by the `ICU4X-SC`. We are a subcommittee of ICU-TC in the Unicode Consortium focused on providing solutions for client-side internationalization.  See [unicode.org](https://www.unicode.org/consortium/techchairs.html) for more information on our governance.
