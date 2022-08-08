@@ -4,6 +4,7 @@
 
 use alloc::vec;
 use alloc::vec::Vec;
+use litemap::store::*;
 
 /// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -44,10 +45,20 @@ impl<T> ShortVec<T> {
         }
     }
 
+    #[inline]
     pub const fn single(&self) -> Option<&T> {
         match self {
             ShortVec::Single(v) => Some(v),
             _ => None,
+        }
+    }
+
+    #[inline]
+    pub fn len(&self) -> usize {
+        match self {
+            ShortVec::Empty => 0,
+            ShortVec::Single(_) => 1,
+            ShortVec::Multi(ref v) => v.len(),
         }
     }
 }
@@ -66,6 +77,46 @@ impl<T> From<Vec<T>> for ShortVec<T> {
 impl<T> Default for ShortVec<T> {
     fn default() -> Self {
         ShortVec::Empty
+    }
+}
+
+#[inline]
+fn map_f<K, V>(input: &(K, V)) -> (&K, &V) {
+    (&input.0, &input.1)
+}
+
+impl<K, V> Store<K, V> for ShortVec<(K, V)> {
+    #[inline]
+    fn lm_len(&self) -> usize {
+        self.len()
+    }
+
+    #[inline]
+    fn lm_is_empty(&self) -> bool {
+        matches!(self, ShortVec::Empty)
+    }
+
+    #[inline]
+    fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
+        self.as_slice().get(index).map(map_f)
+    }
+
+    #[inline]
+    fn lm_last(&self) -> Option<(&K, &V)> {
+        match self {
+            ShortVec::Empty => None,
+            ShortVec::Single(v) => Some(v),
+            ShortVec::Multi(v) => v.as_slice().last(),
+        }
+        .map(map_f)
+    }
+
+    #[inline]
+    fn lm_binary_search_by<F>(&self, mut cmp: F) -> Result<usize, usize>
+    where
+        F: FnMut(&K) -> core::cmp::Ordering,
+    {
+        self.as_slice().binary_search_by(|(k, _)| cmp(k))
     }
 }
 
