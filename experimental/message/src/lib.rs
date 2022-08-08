@@ -5,7 +5,7 @@ pub mod types;
 use parser::{slice::Slice, Parser};
 use resolver::{Resolver, Scope};
 use std::collections::HashMap;
-use types::VariableType;
+use types::{MessagePart, VariableType};
 
 #[derive(Default)]
 pub struct MessageFormat<'m, S> {
@@ -31,6 +31,15 @@ where
         Resolver::resolve_to_string(msg, &scope)
     }
 
+    pub fn format_to_parts(
+        &self,
+        msg: &ast::Message<S>,
+        variables: Option<HashMap<String, VariableType>>,
+    ) -> Vec<MessagePart<S>> {
+        let scope = Scope::new(variables, Some(&self.messages));
+        Resolver::resolve_to_parts(msg, &scope)
+    }
+
     pub fn format_from_source(
         &self,
         source: S,
@@ -38,16 +47,16 @@ where
     ) -> S::Output {
         let parser = Parser::new(source);
         let msg = parser.parse().unwrap();
-        let scope = Scope::new(variables, Some(&self.messages));
-        Resolver::resolve_to_string(&msg, &scope)
+        self.format(&msg, variables)
     }
 }
 
 #[cfg(test)]
 mod test {
     use super::parser::Parser;
-    use super::types::VariableType;
+    use super::types::{MessagePart, VariableType};
     use super::MessageFormat;
+    use std::borrow::Cow;
     use std::collections::HashMap;
 
     #[test]
@@ -90,5 +99,41 @@ mod test {
 
         let result = mf.format_from_source("{{$monster} killed you.}", Some(variables));
         assert_eq!(result, "Dragon killed you.");
+    }
+
+    #[test]
+    fn markup_passthrough_check() {
+        let mf = MessageFormat::new();
+
+        let mut variables = HashMap::new();
+        variables.insert(
+            "input-markup".into(),
+            VariableType::List(vec![
+                VariableType::Markup {
+                    name: String::from("strong"),
+                },
+                VariableType::String(String::from("Hello World!")),
+                VariableType::MarkupEnd {
+                    name: String::from("strong"),
+                },
+            ]),
+        );
+
+        let parser = Parser::new("{{$input-markup}}");
+        let msg = parser.parse().unwrap();
+
+        let result = mf.format_to_parts(&msg, Some(variables));
+        assert_eq!(
+            result,
+            vec![
+                MessagePart::Markup {
+                    name: Cow::Borrowed("strong")
+                },
+                MessagePart::Literal(Cow::Borrowed("Hello World!")),
+                MessagePart::MarkupEnd {
+                    name: Cow::Borrowed("strong")
+                },
+            ]
+        );
     }
 }

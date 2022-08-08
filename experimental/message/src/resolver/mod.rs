@@ -1,6 +1,6 @@
 use super::ast;
 use super::parser::slice::Slice;
-use super::types::VariableType;
+use super::types::{MessagePart, VariableType};
 use std::collections::HashMap;
 
 pub struct Scope<'h, 'm, S> {
@@ -23,6 +23,22 @@ impl<'h, 'm, S> Scope<'h, 'm, S> {
 pub struct Resolver {}
 
 impl<'h, 'm> Resolver {
+    pub fn resolve_to_parts<S: Slice>(
+        msg: &ast::Message<S>,
+        scope: &Scope<'h, 'm, S>,
+    ) -> Vec<MessagePart<S>> {
+        let value = &msg.value;
+        let pattern = match value {
+            ast::MessageValue::Pattern(pattern) => pattern,
+            ast::MessageValue::Select(_) => todo!(),
+        };
+        if pattern.body.len() == 1 {
+            todo!()
+        } else {
+            todo!()
+        }
+    }
+
     pub fn resolve_to_string<S: Slice>(
         msg: &ast::Message<S>,
         scope: &Scope<'h, 'm, S>,
@@ -92,6 +108,9 @@ impl<'h, 'm> Resolver {
                                     todo!()
                                 }
                             }
+                            VariableType::Markup { name } => todo!(),
+                            VariableType::MarkupEnd { name } => todo!(),
+                            VariableType::List(_) => todo!(),
                         }
                     } else {
                         todo!()
