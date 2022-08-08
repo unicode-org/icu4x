@@ -46,6 +46,15 @@ impl<T> ShortVec<T> {
     }
 
     #[inline]
+    pub fn as_mut_slice(&mut self) -> &mut [T] {
+        match self {
+            ShortVec::Empty => &mut [],
+            ShortVec::Single(v) => core::slice::from_mut(v),
+            ShortVec::Multi(v) => v.as_mut_slice(),
+        }
+    }
+
+    #[inline]
     pub const fn single(&self) -> Option<&T> {
         match self {
             ShortVec::Single(v) => Some(v),
@@ -60,6 +69,63 @@ impl<T> ShortVec<T> {
             ShortVec::Single(_) => 1,
             ShortVec::Multi(ref v) => v.len(),
         }
+    }
+
+    #[inline]
+    pub fn insert(&mut self, index: usize, elt: T) {
+        assert!(
+            index <= self.len(),
+            "insertion index (is {}) should be <= len (is {})",
+            index,
+            self.len()
+        );
+
+        *self = match core::mem::replace(self, ShortVec::Empty) {
+            ShortVec::Empty => ShortVec::Single(elt),
+            ShortVec::Single(item) => {
+                let mut items = vec![item];
+                items.insert(index, elt);
+                ShortVec::Multi(items)
+            }
+            ShortVec::Multi(mut items) => {
+                items.insert(index, elt);
+                ShortVec::Multi(items)
+            }
+        }
+    }
+
+    #[inline]
+    pub fn remove(&mut self, index: usize) -> T {
+        assert!(
+            index < self.len(),
+            "removal index (is {}) should be < len (is {})",
+            index,
+            self.len()
+        );
+
+        let (replaced, maybe_removed_item) = match core::mem::replace(self, ShortVec::Empty) {
+            ShortVec::Empty => (ShortVec::Empty, None),
+            ShortVec::Single(v) => (ShortVec::Empty, Some(v)),
+            ShortVec::Multi(mut v) => {
+                let removed_item = v.remove(index);
+                match v.len() {
+                    #[allow(clippy::unwrap_used)]
+                    // we know that the vec has exactly one element left
+                    1 => (ShortVec::Single(v.pop().unwrap()), Some(removed_item)),
+                    // v has atleast 2 elements, create a Mutli variant
+                    _ => (ShortVec::Multi(v), Some(removed_item)),
+                }
+            }
+        };
+        *self = replaced;
+        #[allow(clippy::unwrap_used)]
+        // we know that the vec was non-empty so atleast one item must be removed
+        maybe_removed_item.unwrap()
+    }
+
+    #[inline]
+    pub fn clear(&mut self) {
+        let _ = core::mem::replace(self, ShortVec::Empty);
     }
 }
 
@@ -117,6 +183,44 @@ impl<K, V> Store<K, V> for ShortVec<(K, V)> {
         F: FnMut(&K) -> core::cmp::Ordering,
     {
         self.as_slice().binary_search_by(|(k, _)| cmp(k))
+    }
+}
+
+#[inline]
+fn map_f_mut<K, V>(input: &mut (K, V)) -> (&K, &mut V) {
+    (&input.0, &mut input.1)
+}
+
+impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
+    fn lm_with_capacity(_capacity: usize) -> Self {
+        ShortVec::Empty
+    }
+
+    // ShortVec supports reserving capacity for additional elements only if we have already allocated a vector
+    fn lm_reserve(&mut self, additional: usize) {
+        if let ShortVec::Multi(ref mut v) = self {
+            v.reserve(additional)
+        }
+    }
+
+    fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
+        self.as_mut_slice().get_mut(index).map(map_f_mut)
+    }
+
+    fn lm_push(&mut self, key: K, value: V) {
+        self.push((key, value))
+    }
+
+    fn lm_insert(&mut self, index: usize, key: K, value: V) {
+        self.insert(index, (key, value))
+    }
+
+    fn lm_remove(&mut self, index: usize) -> (K, V) {
+        self.remove(index)
+    }
+
+    fn lm_clear(&mut self) {
+        self.clear();
     }
 }
 
