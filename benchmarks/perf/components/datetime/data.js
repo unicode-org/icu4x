@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1659989285190,
+  "lastUpdate": 1659992846472,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -59399,6 +59399,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4536,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "692972bb70c4fc288fef8f5fb944202d93a1163d",
+          "message": "Update CI error msg that instructs fixing diplomat-gen data mismatch (#2354)",
+          "timestamp": "2022-08-08T20:54:24Z",
+          "tree_id": "baad60fd8c3ab6f6288ce7190914a9d33b911310",
+          "url": "https://github.com/unicode-org/icu4x/commit/692972bb70c4fc288fef8f5fb944202d93a1163d"
+        },
+        "date": 1659992788838,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 71854,
+            "range": "± 14663",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 640943,
+            "range": "± 4829",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 133921,
+            "range": "± 7766",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 66131,
+            "range": "± 470",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 72025,
+            "range": "± 335",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 72227,
+            "range": "± 5494",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 77443,
+            "range": "± 1593",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 126065,
+            "range": "± 1803",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 134548,
+            "range": "± 895",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 133873,
+            "range": "± 591",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 141355,
+            "range": "± 7251",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 3369,
+            "range": "± 43",
             "unit": "ns/iter"
           }
         ]
