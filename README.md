@@ -24,39 +24,45 @@ More information about the project can be found in [the docs subdirectory](docs/
 
 ## Quick Start
 
-An example `ICU4X` powered application in Rust may look like this:
+An example `ICU4X` powered application in Rust may look like below...
+
+`Cargo.toml`:
 
 ```toml
-icu = "0.2"
-icu_provider_fs = "0.2"
+[dependencies]
+icu = "1.0.0-beta1"
+icu_provider_fs = "1.0.0-beta1"
+icu_testdata = "1.0.0-beta1"
+icu_datetime = "1.0.0-beta1"
+
+[features]
+serde = ["icu_datetime/serde"]
 ```
 
+`src/main.rs`:
+
 ```rust
+use icu::datetime::{mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter};
 use icu::locid::locale;
-use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
-use icu_provider_fs::FsDataProvider;
 
 fn main() {
-    let date: MockDateTime = "2020-10-14T13:21:00".parse()
-        .expect("Failed to parse a datetime.");
+    let provider = icu_testdata::get_provider();
 
-    let provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
-        .expect("Failed to initialize Data Provider.");
+    let options =
+        length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-    let options = length::Bag {
-        time: Some(length::Time::Medium),
-        date: Some(length::Date::Long),
-        ..Default::default()
-    }.into();
+    let dtf = TypedDateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("es").into(), options)
+        .expect("Failed to create TypedDateTimeFormatter instance.");
 
-    let dtf = DateTimeFormat::try_new(locale!("pl"), &provider, &options)
-        .expect("Failed to initialize DateTimeFormat");
+    let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
 
     let formatted_date = dtf.format(&date);
 
     println!("📅: {}", formatted_date);
 }
 ```
+
+...which can be run by `cargo run --all-features`.
 
 ## Development
 
