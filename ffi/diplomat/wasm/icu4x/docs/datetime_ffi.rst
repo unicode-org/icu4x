@@ -5,23 +5,23 @@
 
 .. js:class:: ICU4XDateTimeFormatter
 
-    An ICU4X DateFormatter object capable of formatting a :js:class:`ICU4XDateTime` as a string, using the Gregorian Calendar.
+    An ICU4X DateFormatter object capable of formatting a :js:class:`ICU4XDateTime` as a string, using some calendar specified at runtime in the locale.
 
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html>`__ for more information.
 
 
     .. js:staticfunction:: try_new(provider, locale, date_length, time_length)
 
-        Creates a new :js:class:`ICU4XGregorianDateFormatter` from locale data.
+        Creates a new :js:class:`ICU4XDateTimeFormatter` from locale data.
 
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
     .. js:function:: format_datetime(value)
 
-        Formats a :js:class:`ICU4XGregorianDateTime` to a string.
+        Formats a :js:class:`ICU4XDateTime` to a string.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write>`__ for more information.
 
 
 .. js:class:: ICU4XGregorianDateFormatter

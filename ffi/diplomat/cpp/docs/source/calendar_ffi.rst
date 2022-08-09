@@ -8,14 +8,14 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCalendar, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
-        Creates a new :cpp:class:`ICU4XGregorianDateTime` from the specified date and time.
+        Creates a new :cpp:class:`ICU4XCalendar` from the specified date and time.
 
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable>`__ for more information.
 
 
 .. cpp:class:: ICU4XDateTime
 
-    An ICU4X DateTime object capable of containing a Gregorian date and time.
+    An ICU4X DateTime object capable of containing a date and time for any calendar.
 
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 

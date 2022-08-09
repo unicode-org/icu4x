@@ -11,7 +11,7 @@ export class ICU4XCalendar {
 
   /**
 
-   * Creates a new {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} from the specified date and time.
+   * Creates a new {@link ICU4XCalendar `ICU4XCalendar`} from the specified date and time.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>

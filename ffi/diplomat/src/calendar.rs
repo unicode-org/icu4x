@@ -43,7 +43,7 @@ pub mod ffi {
     pub struct ICU4XCalendar(pub Arc<AnyCalendar>);
 
     impl ICU4XCalendar {
-        /// Creates a new [`ICU4XGregorianDateTime`] from the specified date and time.
+        /// Creates a new [`ICU4XCalendar`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
@@ -65,7 +65,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    /// An ICU4X DateTime object capable of containing a Gregorian date and time.
+    /// An ICU4X DateTime object capable of containing a date and time for any calendar.
     #[diplomat::rust_link(icu::calendar::DateTime, Struct)]
     pub struct ICU4XDateTime(pub DateTime<Arc<AnyCalendar>>);
 

@@ -190,12 +190,12 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X DateFormatter object capable of formatting a [`ICU4XDateTime`] as a string,
-    /// using the Gregorian Calendar.
+    /// using some calendar specified at runtime in the locale.
     #[diplomat::rust_link(icu::datetime::DateTimeFormatter, Struct)]
     pub struct ICU4XDateTimeFormatter(pub DateTimeFormatter);
 
     impl ICU4XDateTimeFormatter {
-        /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
+        /// Creates a new [`ICU4XDateTimeFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
@@ -228,8 +228,8 @@ pub mod ffi {
                 .into()
         }
 
-        /// Formats a [`ICU4XGregorianDateTime`] to a string.
-        #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::format_to_write, FnInStruct)]
+        /// Formats a [`ICU4XDateTime`] to a string.
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_to_write, FnInStruct)]
         pub fn format_datetime(
             &self,
             value: &ICU4XDateTime,

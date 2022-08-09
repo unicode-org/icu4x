@@ -34,7 +34,7 @@ class ICU4XCalendar {
  public:
 
   /**
-   * Creates a new [`ICU4XGregorianDateTime`] from the specified date and time.
+   * Creates a new [`ICU4XCalendar`] from the specified date and time.
    * 
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable) for more information.
    */

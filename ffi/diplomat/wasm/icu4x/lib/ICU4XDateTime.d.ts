@@ -5,7 +5,7 @@ import { ICU4XError } from "./ICU4XError";
 
 /**
 
- * An ICU4X DateTime object capable of containing a Gregorian date and time.
+ * An ICU4X DateTime object capable of containing a date and time for any calendar.
 
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html Rust documentation} for more information.
  */

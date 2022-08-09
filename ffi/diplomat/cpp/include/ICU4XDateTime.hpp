@@ -25,7 +25,7 @@ struct ICU4XDateTimeDeleter {
 };
 
 /**
- * An ICU4X DateTime object capable of containing a Gregorian date and time.
+ * An ICU4X DateTime object capable of containing a date and time for any calendar.
  * 
  * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html) for more information.
  */
