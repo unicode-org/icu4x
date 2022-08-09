@@ -146,11 +146,6 @@ impl<T> Default for ShortVec<T> {
     }
 }
 
-#[inline]
-fn map_f<K, V>(input: &(K, V)) -> (&K, &V) {
-    (&input.0, &input.1)
-}
-
 impl<K, V> Store<K, V> for ShortVec<(K, V)> {
     #[inline]
     fn lm_len(&self) -> usize {
@@ -164,7 +159,7 @@ impl<K, V> Store<K, V> for ShortVec<(K, V)> {
 
     #[inline]
     fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
-        self.as_slice().get(index).map(map_f)
+        self.as_slice().get(index).map(|elt| (&elt.0, &elt.1))
     }
 
     #[inline]
@@ -174,7 +169,7 @@ impl<K, V> Store<K, V> for ShortVec<(K, V)> {
             ShortVec::Single(v) => Some(v),
             ShortVec::Multi(v) => v.as_slice().last(),
         }
-        .map(map_f)
+        .map(|elt| (&elt.0, &elt.1))
     }
 
     #[inline]
@@ -184,11 +179,6 @@ impl<K, V> Store<K, V> for ShortVec<(K, V)> {
     {
         self.as_slice().binary_search_by(|(k, _)| cmp(k))
     }
-}
-
-#[inline]
-fn map_f_mut<K, V>(input: &mut (K, V)) -> (&K, &mut V) {
-    (&input.0, &mut input.1)
 }
 
 impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
@@ -204,7 +194,9 @@ impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
     }
 
     fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
-        self.as_mut_slice().get_mut(index).map(map_f_mut)
+        self.as_mut_slice()
+            .get_mut(index)
+            .map(|elt| (&elt.0, &mut elt.1))
     }
 
     fn lm_push(&mut self, key: K, value: V) {
@@ -229,7 +221,7 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortVec<(K, V)> {
         core::iter::Map<core::slice::Iter<'a, (K, V)>, for<'r> fn(&'r (K, V)) -> (&'r K, &'r V)>;
 
     fn lm_iter(&'a self) -> Self::KeyValueIter {
-        self.as_slice().iter().map(map_f)
+        self.as_slice().iter().map(|elt| (&elt.0, &elt.1))
     }
 }
 
