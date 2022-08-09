@@ -168,7 +168,7 @@ impl PassthroughPayloadHolder {
 // Magic marker trie value for characters whose decomposition
 // starts with a non-starter. The actual decompostion is
 // hard-coded.
-const DECOMPOSITION_STARTS_WITH_NON_STARTER: u32 = 2 << 16;
+const DECOMPOSITION_STARTS_WITH_NON_STARTER: u32 = 2;
 
 /// The tail (everything after the first character) of the NFKD form U+FDFA
 /// as 16-bit units.
@@ -683,8 +683,15 @@ where
                     // The character is its own decomposition
                     (c, 0)
                 } else {
-                    let high = (decomposition >> 16) as u16;
-                    let low = decomposition as u16;
+                    // These two variables are now misnomers. The sides were swapped
+                    // to bring marker values that used to be in the upper half of
+                    // the 32 bits to the lower half so that comparisons of the whole
+                    // 32 bits bring marker values next to zero for effient comparison
+                    // if the value is 0 or 1. Only swapping the variable initializations
+                    // here and leaving them as misnomers to constrain the change only
+                    // to the place where swapping _has_ to occur.
+                    let low = (decomposition >> 16) as u16;
+                    let high = decomposition as u16;
                     if high != 0 && low != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
                         let starter = char_from_u16(high);
@@ -1786,8 +1793,15 @@ impl CanonicalDecomposition {
         // The loop is only broken out of as goto forward
         #[allow(clippy::never_loop)]
         loop {
-            let high = (decomposition >> 16) as u16;
-            let low = decomposition as u16;
+            // These two variables are now misnomers. The sides were swapped
+            // to bring marker values that used to be in the upper half of
+            // the 32 bits to the lower half so that comparisons of the whole
+            // 32 bits bring marker values next to zero for effient comparison
+            // if the value is 0 or 1. Only swapping the variable initializations
+            // here and leaving them as misnomers to constrain the change only
+            // to the place where swapping _has_ to occur.
+            let low = (decomposition >> 16) as u16;
+            let high = decomposition as u16;
             if high != 0 && low != 0 {
                 // Decomposition into two BMP characters: starter and non-starter
                 if in_inclusive_range(c, '\u{1F71}', '\u{1FFB}') {
@@ -1901,8 +1915,15 @@ impl CanonicalDecomposition {
             debug_assert!(false);
             return Decomposed::Default;
         }
-        let high = (non_recursive_decomposition >> 16) as u16;
-        let low = non_recursive_decomposition as u16;
+        // These two variables are now misnomers. The sides were swapped
+        // to bring marker values that used to be in the upper half of
+        // the 32 bits to the lower half so that comparisons of the whole
+        // 32 bits bring marker values next to zero for effient comparison
+        // if the value is 0 or 1. Only swapping the variable initializations
+        // here and leaving them as misnomers to constrain the change only
+        // to the place where swapping _has_ to occur.
+        let low = (non_recursive_decomposition >> 16) as u16;
+        let high = non_recursive_decomposition as u16;
         if high != 0 && low != 0 {
             // Decomposition into two BMP characters
             return Decomposed::Expansion(char_from_u16(high), char_from_u16(low));

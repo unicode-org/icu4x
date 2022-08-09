@@ -37,7 +37,7 @@ use crate::provider::CollationDataV1;
 // Magic marker trie value for characters whose decomposition
 // starts with a non-starter. The actual decompostion is
 // hard-coded.
-const DECOMPOSITION_STARTS_WITH_NON_STARTER: u32 = 2 << 16;
+const DECOMPOSITION_STARTS_WITH_NON_STARTER: u32 = 2;
 
 // These constants originate from page 143 of Unicode 14.0
 const HANGUL_S_BASE: u32 = 0xAC00;
@@ -1015,8 +1015,15 @@ where
                 CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(c.character()),
             );
         } else {
-            let high = (decomposition >> 16) as u16;
-            let low = decomposition as u16;
+            // These two variables are now misnomers. The sides were swapped
+            // to bring marker values that used to be in the upper half of
+            // the 32 bits to the lower half so that comparisons of the whole
+            // 32 bits bring marker values next to zero for effient comparison
+            // if the value is 0 or 1. Only swapping the variable initializations
+            // here and leaving them as misnomers to constrain the change only
+            // to the place where swapping _has_ to occur.
+            let low = (decomposition >> 16) as u16;
+            let high = decomposition as u16;
             if high != 0 && low != 0 {
                 // Decomposition into two BMP characters: starter and non-starter
                 self.upcoming.push(
@@ -1316,8 +1323,15 @@ where
                         // handle `Implicit` and `Offset` tags here.
                     }
                 } else {
-                    let high = (decomposition >> 16) as u16;
-                    let low = decomposition as u16;
+                    // These two variables are now misnomers. The sides were swapped
+                    // to bring marker values that used to be in the upper half of
+                    // the 32 bits to the lower half so that comparisons of the whole
+                    // 32 bits bring marker values next to zero for effient comparison
+                    // if the value is 0 or 1. Only swapping the variable initializations
+                    // here and leaving them as misnomers to constrain the change only
+                    // to the place where swapping _has_ to occur.
+                    let low = (decomposition >> 16) as u16;
+                    let high = decomposition as u16;
                     if high != 0 && low != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
                         c = char_from_u16(high);
