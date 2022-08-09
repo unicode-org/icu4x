@@ -1,13 +1,13 @@
 import { ICU4XDataProvider, ICU4XWordBreakSegmenter } from "icu4x";
 
-class SegmenterDemo {
-    #segmentedText: HTMLParagraphElement;
+export class SegmenterDemo {
+    #displayFn: (formatted: string) => void;
 
     #segmenter: ICU4XWordBreakSegmenter;
     #text: string;
 
-    constructor(segmentedText: HTMLParagraphElement, dataProvider: ICU4XDataProvider) {
-        this.#segmentedText = segmentedText;
+    constructor(displayFn: (formatted: string) => void, dataProvider: ICU4XDataProvider) {
+        this.#displayFn = displayFn;
         this.#segmenter = ICU4XWordBreakSegmenter.try_new(dataProvider);
     }
 
@@ -55,7 +55,7 @@ class SegmenterDemo {
             } else {
                 const nextIndex = updateIndexToByte(next);
                 if (nextIndex === -1) {
-                    this.#segmentedText.innerHTML = "Error: characters currently not support in the JS demo";
+                    this.#displayFn("Error: characters currently not support in the JS demo");
                     return;
                 }
                 segments.push(this.#text.slice(index, nextIndex));
@@ -63,13 +63,16 @@ class SegmenterDemo {
             }
         }
 
-        this.#segmentedText.innerHTML = segments.join('<span class="seg-delim"> . </span>');
+        this.#displayFn(segments.join('<span class="seg-delim"> . </span>'));
     }
 }
 
 export function setup(dataProvider: ICU4XDataProvider): void {
     const segmentedText = document.getElementById('seg-segmented') as HTMLParagraphElement;
-    const segmenterDemo = new SegmenterDemo(segmentedText, dataProvider);
+    const segmenterDemo = new SegmenterDemo((formatted) => {
+        // Use innerHTML because we have actual HTML we want to display
+        segmentedText.innerHTML = formatted;
+    }, dataProvider);
 
     const inputText = document.getElementById('seg-input') as HTMLTextAreaElement | null;
     inputText?.addEventListener('input', () => segmenterDemo.setText(inputText.value));

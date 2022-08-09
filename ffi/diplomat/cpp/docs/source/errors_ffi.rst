@@ -83,7 +83,13 @@
 
     .. cpp:enumerator:: DateTimeOutOfRangeError
 
+    .. cpp:enumerator:: DateTimeUnknownEraError
+
+    .. cpp:enumerator:: DateTimeUnknownMonthCodeError
+
     .. cpp:enumerator:: DateTimeMissingInputError
+
+    .. cpp:enumerator:: DateTimeUnknownAnyCalendarKindError
 
     .. cpp:enumerator:: DateTimeFormatPatternError
 
