@@ -642,10 +642,13 @@ where
                     trie_val: DECOMPOSITION_STARTS_WITH_NON_STARTER,
                 });
             }
+            // TODO: Figure out if this is needed or if the supplementary
+            // trie takes care of this either way. Changing this doesn't
+            // seem to affect tests.
             if c == '\u{0345}' && self.iota_subscript_becomes_starter {
                 return Some(CharacterAndTrieValue {
                     character: c,
-                    trie_val: u32::from('ι') << 16,
+                    trie_val: u32::from('ι'),
                 });
             }
         }
