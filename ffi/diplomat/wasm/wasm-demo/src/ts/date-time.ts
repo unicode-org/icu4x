@@ -132,8 +132,9 @@ export function setup(dataProvider: ICU4XDataProvider): void {
             });
         }
     }
-    for (let selector of document.querySelector<HTMLSelectElement | null>('select[name="dtf-calendar"]')) {
-        selector?.addEventListener('input', () => {
+    for (let selector of document.querySelectorAll<HTMLSelectElement | null>('select[name="dtf-calendar"]')) {
+        // <select> doesn't have oninput
+        selector?.addEventListener('change', () => {
             dateTimeDemo.setCalendar(selector.value)
         });
     }
