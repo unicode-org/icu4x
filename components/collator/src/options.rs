@@ -30,8 +30,8 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Primary));
     /// let collator =
-    ///   Collator::try_new(&data_provider,
-    ///                     icu_locid::Locale::default(),
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("E", "é"),
     ///            core::cmp::Ordering::Equal);
@@ -49,8 +49,8 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Secondary));
     /// let collator =
-    ///   Collator::try_new(&data_provider,
-    ///                     icu_locid::Locale::default(),
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("E", "e"),
     ///            core::cmp::Ordering::Equal);
@@ -82,8 +82,8 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Tertiary));
     /// let collator =
-    ///   Collator::try_new(&data_provider,
-    ///                     icu_locid::Locale::default(),
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
@@ -98,10 +98,10 @@ pub enum Strength {
     /// assert_eq!(collator.compare("e", "ｅ"), // Full-width e
     ///            core::cmp::Ordering::Less);
     ///
-    /// let locale: icu_locid::Locale = icu_locid::langid!("ja").into();
+    /// let locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new(&data_provider,
-    ///                     locale,
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("E", "e"),
     ///            core::cmp::Ordering::Greater);
@@ -131,10 +131,10 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Quaternary));
     ///
-    /// let ja_locale: icu_locid::Locale = icu_locid::langid!("ja").into();
+    /// let ja_locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new(&data_provider,
-    ///                     ja_locale,
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &ja_locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("あ", "ア"),
     ///            core::cmp::Ordering::Less);
@@ -146,8 +146,8 @@ pub enum Strength {
     /// // Even this level doesn't distinguish everything,
     /// // e.g. Hebrew cantillation marks are still ignored.
     /// let collator =
-    ///   Collator::try_new(&data_provider,
-    ///                     icu_locid::Locale::default(),
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Equal);
@@ -171,10 +171,10 @@ pub enum Strength {
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Identical));
     ///
-    /// let ja_locale: icu_locid::Locale = icu_locid::langid!("ja").into();
+    /// let ja_locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new(&data_provider,
-    ///                     ja_locale,
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &ja_locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),
     ///            core::cmp::Ordering::Less);
@@ -182,8 +182,8 @@ pub enum Strength {
     ///            core::cmp::Ordering::Less);
     ///
     /// let collator =
-    ///   Collator::try_new(&data_provider,
-    ///                     icu_locid::Locale::default(),
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
     ///            core::cmp::Ordering::Less);
@@ -438,8 +438,8 @@ impl CollatorOptions {
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Tertiary));
     /// let tertiary =
-    ///   Collator::try_new(&data_provider,
-    ///                     icu_locid::Locale::default(),
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &Default::default(),
     ///                     options).unwrap();
     /// // The first string starts with full-width a
     /// assert_eq!(tertiary.compare("ａa", "aA"),
@@ -447,8 +447,8 @@ impl CollatorOptions {
     ///
     /// options.set_case_level(Some(true));
     /// let tertiary_and_case =
-    ///   Collator::try_new(&data_provider,
-    ///                     icu_locid::Locale::default(),
+    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///                     &Default::default(),
     ///                     options).unwrap();
     /// // The first string starts with full-width a
     /// // TODO!!!!

@@ -10,7 +10,8 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        // Exhaustiveness and Debug is not required for Diplomat types
     )
 )]
 #![allow(clippy::upper_case_acronyms)]
@@ -40,7 +41,7 @@ pub mod decimal;
 pub mod errors;
 pub mod fixed_decimal;
 pub mod locale;
-pub mod locale_canonicalizer;
+pub mod locid_transform;
 pub mod pluralrules;
 pub mod properties_maps;
 pub mod properties_sets;

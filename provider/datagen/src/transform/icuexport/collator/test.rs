@@ -4,33 +4,10 @@
 
 use std::cmp::Ordering;
 
-use super::super::normalizer::NormalizationProvider;
-use super::super::uprops::EnumeratedPropertyCodePointTrieProvider;
-use super::CollationProvider;
-use crate::SourceData;
+use crate::*;
 use icu_collator::{Collator, CollatorOptions, Strength};
-use icu_locid::{langid, Locale};
-use icu_provider::AsDowncastingAnyProvider;
-use icu_provider::AsDynamicDataProviderAnyMarkerWrap;
-use icu_provider::{AnyMarker, DynamicDataProvider};
-use icu_provider_adapters::fork::by_key::ForkByKeyProvider;
-use lazy_static::lazy_static;
-
-fn get_provider() -> impl DynamicDataProvider<AnyMarker> {
-    lazy_static! {
-        static ref SOURCE_DATA: SourceData = SourceData::default()
-            .with_icuexport(icu_testdata::paths::icuexport_toml_root())
-            .unwrap();
-    }
-    icu_provider_adapters::make_forking_provider!(
-        ForkByKeyProvider,
-        [
-            CollationProvider::from(&*SOURCE_DATA),
-            NormalizationProvider::from(&*SOURCE_DATA),
-            EnumeratedPropertyCodePointTrieProvider::from(&*SOURCE_DATA),
-        ]
-    )
-}
+use icu_locid::{langid, locale};
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
 #[derive(Debug)]
 struct TestCase<'a> {
@@ -39,7 +16,9 @@ struct TestCase<'a> {
     expectation: Ordering,
 }
 
-fn check_expectations(collator: &Collator, cases: &[TestCase<'_>]) {
+fn check_expectations(locale: &DataLocale, options: CollatorOptions, cases: &[TestCase<'_>]) {
+    let collator =
+        Collator::try_new_unstable(&DatagenProvider::for_test(), locale, options).unwrap();
     for cas in cases {
         let TestCase {
             left,
@@ -91,26 +70,14 @@ fn test_fi() {
             expectation: Ordering::Equal,
         },
     ];
-    let locale: Locale = langid!("fi").into();
-
-    let any_dyn_provider = get_provider();
-    let any_provider = any_dyn_provider.as_any_provider();
-    let provider = any_provider.as_downcasting();
-
+    let locale: DataLocale = langid!("fi").into();
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
 
-    {
-        let collator: Collator = Collator::try_new(&provider, locale.clone(), options).unwrap();
-        check_expectations(&collator, &cases);
-    }
+    options.set_strength(Some(Strength::Tertiary));
+    check_expectations(&locale, options, &cases);
 
     options.set_strength(Some(Strength::Primary));
-
-    {
-        let collator: Collator = Collator::try_new(&provider, locale, options).unwrap();
-        check_expectations(&collator, &cases);
-    }
+    check_expectations(&locale, options, &cases);
 }
 
 #[test]
@@ -158,24 +125,69 @@ fn test_sv() {
             expectation: Ordering::Equal,
         },
     ];
-    let locale: Locale = langid!("sv").into();
-
-    let any_dyn_provider = get_provider();
-    let any_provider = any_dyn_provider.as_any_provider();
-    let provider = any_provider.as_downcasting();
-
+    let locale: DataLocale = langid!("sv").into();
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
 
-    {
-        let collator: Collator = Collator::try_new(&provider, locale.clone(), options).unwrap();
-        check_expectations(&collator, &cases);
-    }
+    options.set_strength(Some(Strength::Tertiary));
+    check_expectations(&locale, options, &cases);
 
     options.set_strength(Some(Strength::Primary));
+    check_expectations(&locale, options, &cases);
+}
 
+#[test]
+fn test_nb_nn_no() {
+    let provider = crate::DatagenProvider::for_test();
+
+    let input = vec!["ü", "y", "å", "ø"];
+    let expected = &["y", "ü", "ø", "å"];
+
+    // Test "no" macro language without fallback (should equal expected)
+    let collator =
+        Collator::try_new_unstable(&provider, &locale!("no").into(), CollatorOptions::new())
+            .unwrap();
+    let mut strs = input.clone();
+    strs.sort_by(|a, b| collator.compare(a, b));
+    assert_eq!(strs, expected);
+
+    // Test "und" without fallback (should NOT equal expected)
+    let collator =
+        Collator::try_new_unstable(&provider, &locale!("und").into(), CollatorOptions::new())
+            .unwrap();
+    let mut strs = input.clone();
+    strs.sort_by(|a, b| collator.compare(a, b));
+    assert_ne!(strs, expected);
+
+    // Test "nb" without fallback (should fail to load)
+    if Collator::try_new_unstable(&provider, &locale!("nb").into(), CollatorOptions::new()).is_ok()
     {
-        let collator: Collator = Collator::try_new(&provider, locale, options).unwrap();
-        check_expectations(&collator, &cases);
+        panic!("Should fail to create 'nb' without fallback enabled")
     }
+
+    // Enable locale fallback on the provider now
+    let provider = LocaleFallbackProvider::try_new_unstable(provider).unwrap();
+
+    // Test "no" macro language WITH fallback (should equal expected)
+    let collator =
+        Collator::try_new_unstable(&provider, &locale!("no").into(), CollatorOptions::new())
+            .unwrap();
+    let mut strs = input.clone();
+    strs.sort_by(|a, b| collator.compare(a, b));
+    assert_eq!(strs, expected);
+
+    // Now "nb" should work
+    let collator =
+        Collator::try_new_unstable(&provider, &locale!("nb").into(), CollatorOptions::new())
+            .unwrap();
+    let mut strs = input.clone();
+    strs.sort_by(|a, b| collator.compare(a, b));
+    assert_eq!(strs, expected);
+
+    // And "nn" should work, too
+    let collator =
+        Collator::try_new_unstable(&provider, &locale!("nn").into(), CollatorOptions::new())
+            .unwrap();
+    let mut strs = input.clone();
+    strs.sort_by(|a, b| collator.compare(a, b));
+    assert_eq!(strs, expected);
 }

@@ -16,9 +16,9 @@
 //! # use icu_locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_and(
-//!     locale!("es"),
+//! let list_formatter = ListFormatter::try_new_and_with_buffer_provider(
 //!     &icu_testdata::get_provider(),
+//!     &locale!("es").into(),
 //!     ListStyle::Wide,
 //! )
 //! .expect("Data should load successfully");
@@ -42,9 +42,9 @@
 //! # use icu_locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_or(
-//!     locale!("th"),
+//! let list_formatter = ListFormatter::try_new_or_with_buffer_provider(
 //!     &icu_testdata::get_provider(),
+//!     &locale!("th").into(),
 //!     ListStyle::Short,
 //! )
 //! .expect("Data should load successfully");
@@ -63,9 +63,9 @@
 //! # use icu_locid::locale;
 //! # use writeable::*;
 //! #
-//! let list_formatter = ListFormatter::try_new_unit(
-//!     locale!("en"),
+//! let list_formatter = ListFormatter::try_new_unit_with_buffer_provider(
 //!     &icu_testdata::get_provider(),
+//!     &locale!("en").into(),
 //!     ListStyle::Wide,
 //! )
 //! .expect("Data should load successfully");
@@ -87,7 +87,8 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]

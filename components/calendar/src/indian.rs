@@ -76,6 +76,19 @@ impl CalendarArithmetic for Indian {
 
 impl Calendar for Indian {
     type DateInner = IndianDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        if era.0 != tinystr!(16, "saka") {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        }
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IndianDateInner)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> IndianDateInner {
         let day_of_year = Iso::day_of_year(*iso.inner());
         IndianDateInner(ArithmeticDate::date_from_year_day(
@@ -182,7 +195,7 @@ impl Indian {
 }
 
 impl Date<Indian> {
-    /// Construct new Indian Date.
+    /// Construct new Indian Date, with year provided in the Śaka era.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -212,7 +225,7 @@ impl Date<Indian> {
 }
 
 impl DateTime<Indian> {
-    /// Construct a new Indian datetime from integers.
+    /// Construct a new Indian datetime from integers, with year provided in the Śaka era.
     ///
     /// ```rust
     /// use icu::calendar::DateTime;

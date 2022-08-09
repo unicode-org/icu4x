@@ -7,9 +7,13 @@
 #include <stdio.h>
 
 int main() {
-    ICU4XLocale* locale = ICU4XLocale_create("ar", 2);
+    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create("ar", 2);
+    if (!locale_result.is_ok) {
+        return 1;
+    }
+    ICU4XLocale* locale = locale_result.ok;
     ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
-    diplomat_result_box_ICU4XPluralRules_ICU4XError plural_result = ICU4XPluralRules_try_new_cardinal(locale, provider);
+    diplomat_result_box_ICU4XPluralRules_ICU4XError plural_result = ICU4XPluralRules_try_new_cardinal(provider, locale);
     if (!plural_result.is_ok) {
         printf("Failed to create PluralRules\n");
         return 1;

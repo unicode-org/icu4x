@@ -45,7 +45,7 @@
 //!
 //! // Create a blob provider reading from the buffer
 //! let provider =
-//!     BlobDataProvider::new_from_blob(buffer).expect("Should successfully read from buffer");
+//!     BlobDataProvider::try_new_from_blob(buffer).expect("Should successfully read from buffer");
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {

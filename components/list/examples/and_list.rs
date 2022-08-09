@@ -14,9 +14,9 @@ use writeable::Writeable;
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let list_formatter = ListFormatter::try_new_and(
-        locale!("es"),
+    let list_formatter = ListFormatter::try_new_and_unstable(
         &icu_testdata::get_baked_provider(),
+        &locale!("es").into(),
         ListStyle::Wide,
     )
     .unwrap();

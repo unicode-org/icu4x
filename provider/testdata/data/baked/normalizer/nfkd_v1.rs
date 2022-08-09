@@ -1,15 +1,16 @@
 // @generated
-type DataStruct = & 'static < :: icu_normalizer :: provider :: CompatibilityDecompositionSupplementV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_normalizer::provider::DecompositionSupplementV1 {
-    trie: ::icu_codepointtrie::CodePointTrie::from_parts(
-        ::icu_codepointtrie::CodePointTrieHeader {
+type DataStruct = < :: icu_normalizer :: provider :: CompatibilityDecompositionSupplementV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_normalizer::provider::DecompositionSupplementV1 {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 130048u32,
             shifted12_high_start: 32u16,
             index3_null_offset: 252u16,
             data_null_offset: 0u32,
             null_value: 0u32,
-            trie_type: ::icu_codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -1332,6 +1333,7 @@ static UND: DataStruct = &::icu_normalizer::provider::DecompositionSupplementV1 
                 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
             ])
         },
+        0u32,
     ),
     flags: 1u8,
 };

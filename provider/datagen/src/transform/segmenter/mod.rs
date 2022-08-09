@@ -4,27 +4,21 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-use crate::transform::icuexport::uprops::{
-    BinaryPropertyCodePointSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
-};
-use crate::SourceData;
-use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_locid::{langid, locale};
 use icu_properties::{
-    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
-    WordBreak,
+    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
+    SentenceBreak, WordBreak,
 };
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use icu_segmenter::provider::*;
 use icu_segmenter::symbols::*;
-use icu_segmenter::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
 
 mod lstm;
-
-pub use lstm::SegmenterLstmProvider;
 
 // state machine name define by builtin name
 // [[tables]]
@@ -227,21 +221,7 @@ fn is_cjk_fullwidth(eaw: maps::CodePointMapDataBorrowed<EastAsianWidth>, codepoi
     )
 }
 
-/// A data provider reading from segmenter rule files.
-#[derive(Debug)]
-pub struct SegmenterRuleProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for SegmenterRuleProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl SegmenterRuleProvider {
+impl crate::DatagenProvider {
     fn generate_rule_break_data(
         &self,
         key: DataKey,
@@ -257,33 +237,28 @@ impl SegmenterRuleProvider {
                     .expect("DataKey format should be valid!")
             ))?;
 
-        // Load enumerate Unicode property dependencies.
-        let cp_map_provider = EnumeratedPropertyCodePointTrieProvider::from(&self.source);
-
-        let data = maps::get_word_break(&cp_map_provider).expect("The data should be valid!");
+        let data = maps::load_word_break(self).expect("The data should be valid!");
         let wb = data.as_borrowed();
 
-        let data =
-            maps::get_grapheme_cluster_break(&cp_map_provider).expect("The data should be valid!");
+        let data = maps::load_grapheme_cluster_break(self).expect("The data should be valid!");
         let gb = data.as_borrowed();
 
-        let data = maps::get_sentence_break(&cp_map_provider).expect("The data should be valid!");
+        let data = maps::load_sentence_break(self).expect("The data should be valid!");
         let sb = data.as_borrowed();
 
-        let data = maps::get_line_break(&cp_map_provider).expect("The data should be valid!");
+        let data = maps::load_line_break(self).expect("The data should be valid!");
         let lb = data.as_borrowed();
 
-        let data = maps::get_east_asian_width(&cp_map_provider).expect("The data should be valid!");
+        let data = maps::load_east_asian_width(self).expect("The data should be valid!");
         let eaw = data.as_borrowed();
 
-        let data = maps::get_general_category(&cp_map_provider).expect("The data should be valid!");
+        let data = maps::load_general_category(self).expect("The data should be valid!");
         let gc = data.as_borrowed();
 
-        // Load binary Unicode property dependencies.
-        let uniset_provider = BinaryPropertyCodePointSetDataProvider::from(&self.source);
+        let data = maps::load_script(self).expect("The data should be valid");
+        let script = data.as_borrowed();
 
-        let data =
-            sets::get_extended_pictographic(&uniset_provider).expect("The data should be valid!");
+        let data = sets::load_extended_pictographic(self).expect("The data should be valid!");
         let extended_pictographic = data.as_borrowed();
 
         // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
@@ -337,10 +312,17 @@ impl SegmenterRuleProvider {
 
                         if p.name == "SA" {
                             // Word break property doesn't define SA, but we will use non-UAX29 rules.
-                            // SA property is within 0..U+0x20000
-                            for c in 0..0x20000 {
+                            // SA/CJ property is within 0..U+0x40000
+                            for c in 0..0x40000 {
                                 if lb.get_u32(c) == LineBreak::ComplexContext {
                                     properties_map[c as usize] = property_index
+                                } else if let Some(c) = char::from_u32(c) {
+                                    match script.get(c) {
+                                        Script::Han | Script::Hiragana => {
+                                            properties_map[c as usize] = property_index;
+                                        }
+                                        _ => {}
+                                    }
                                 }
                             }
 
@@ -638,7 +620,7 @@ impl SegmenterRuleProvider {
     }
 }
 
-impl DataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
+impl DataProvider<LineBreakDataV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(LineBreakDataV1Marker::KEY)?;
 
@@ -649,7 +631,7 @@ impl DataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-impl DataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
+impl DataProvider<GraphemeClusterBreakDataV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         _req: DataRequest,
@@ -663,7 +645,7 @@ impl DataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-impl DataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
+impl DataProvider<WordBreakDataV1Marker> for crate::DatagenProvider {
     fn load(&self, _req: DataRequest) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(WordBreakDataV1Marker::KEY)?;
 
@@ -674,7 +656,7 @@ impl DataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-impl DataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
+impl DataProvider<SentenceBreakDataV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         _req: DataRequest,
@@ -688,35 +670,25 @@ impl DataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(
-    SegmenterRuleProvider,
-    [
-        LineBreakDataV1Marker,
-        GraphemeClusterBreakDataV1Marker,
-        WordBreakDataV1Marker,
-        SentenceBreakDataV1Marker,
-    ]
-);
-
-impl IterableDataProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
+impl IterableDataProvider<LineBreakDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableDataProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
+impl IterableDataProvider<GraphemeClusterBreakDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableDataProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
+impl IterableDataProvider<WordBreakDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableDataProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
+impl IterableDataProvider<SentenceBreakDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
@@ -727,13 +699,7 @@ struct SegmenterDictionaryData {
     trie_data: Vec<u16>,
 }
 
-/// A data provider reading from segmenter dictionary files.
-#[derive(Debug)]
-pub struct SegmenterDictionaryProvider {
-    source: SourceData,
-}
-
-impl SegmenterDictionaryProvider {
+impl crate::DatagenProvider {
     fn get_toml_filename(locale: &DataLocale) -> Option<&'static str> {
         if locale.get_langid() == langid!("km") {
             Some("dictionary_km.toml")
@@ -751,15 +717,7 @@ impl SegmenterDictionaryProvider {
     }
 }
 
-impl From<&SourceData> for SegmenterDictionaryProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl DataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
+impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
         req: DataRequest,
@@ -781,12 +739,7 @@ impl DataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvi
     }
 }
 
-icu_provider::make_exportable_provider!(
-    SegmenterDictionaryProvider,
-    [UCharDictionaryBreakDataV1Marker,]
-);
-
-impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for SegmenterDictionaryProvider {
+impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             locale!("th").into(),
@@ -804,7 +757,7 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = SegmenterRuleProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
             .load(Default::default())
             .expect("Loading should succeed!")

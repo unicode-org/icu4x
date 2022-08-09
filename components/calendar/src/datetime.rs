@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
-use crate::types::Time;
-use crate::{AsCalendar, Calendar, Date, Iso};
+use crate::types::{self, Time};
+use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
 
 /// A date+time for a given calendar.
 ///
@@ -36,6 +36,21 @@ pub struct DateTime<A: AsCalendar> {
 impl<A: AsCalendar> DateTime<A> {
     pub fn new(date: Date<A>, time: Time) -> Self {
         DateTime { date, time }
+    }
+
+    /// Construct a datetime from from era/month codes and fields,
+    /// and some calendar representation
+    #[inline]
+    pub fn new_from_codes(
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+        time: Time,
+        calendar: A,
+    ) -> Result<Self, DateTimeError> {
+        let date = Date::new_from_codes(era, year, month_code, day, calendar)?;
+        Ok(DateTime { date, time })
     }
 
     /// Construct a DateTime from an ISO datetime and some calendar representation

@@ -9,11 +9,11 @@
 #include <array>
 
 int main() {
-    ICU4XLocale locale = ICU4XLocale::create("bn").value();
+    ICU4XLocale locale = ICU4XLocale::create_bn();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::try_new(
-        locale, dp, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
+        dp, locale, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
     ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create(1000007);
     std::string out = fdf.format(decimal).ok().value();
@@ -48,7 +48,7 @@ int main() {
         return 1;
     }
 
-    decimal.pad_right(-4);
+    decimal.pad_end(-4);
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted left-padded float value is " << out << std::endl;
     if (out != "১০০.০১০০") {
@@ -56,7 +56,7 @@ int main() {
         return 1;
     }
 
-    decimal.pad_left(4);
+    decimal.pad_start(4);
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted right-padded float value is " << out << std::endl;
     if (out != "০,১০০.০১০০") {
@@ -64,7 +64,7 @@ int main() {
         return 1;
     }
 
-    decimal.truncate_left(3);
+    decimal.set_max_position(3);
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted truncated float value is " << out << std::endl;
     if (out != "১০০.০১০০") {
@@ -109,5 +109,17 @@ int main() {
         return 1;
     }
 
+    locale = ICU4XLocale::create("th-u-nu-thai").ok().value();
+    std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
+    fdf = ICU4XFixedDecimalFormatter::try_new(
+        dp, locale, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
+
+    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).ok().value();
+    out = fdf.format(decimal).ok().value();
+    std::cout << "Formatted value is " << out << std::endl;
+    if (out != "๑๒๓,๔๕๖.๘๙๐๑") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
     return 0;
 }

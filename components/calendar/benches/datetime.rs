@@ -100,7 +100,18 @@ fn datetime_benches(c: &mut Criterion) {
         "calendar/ethiopic",
         &fxs,
         icu::calendar::ethiopic::Ethiopic::new(),
-        |y, m, d, h, min, s| DateTime::new_ethiopic_datetime(y, m, d, h, min, s).unwrap(),
+        |y, m, d, h, min, s| {
+            DateTime::new_ethiopic_datetime(
+                icu::calendar::ethiopic::EthiopicEraStyle::AmeteMihret,
+                y,
+                m,
+                d,
+                h,
+                min,
+                s,
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]

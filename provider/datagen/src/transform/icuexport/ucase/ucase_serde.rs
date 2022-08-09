@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use icu_codepointtrie::toml::CodePointTrieToml;
+use icu_collections::codepointtrie::toml::CodePointTrieToml;
 
 #[derive(serde::Deserialize)]
 pub struct Exceptions {

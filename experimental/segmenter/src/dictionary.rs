@@ -7,7 +7,7 @@ use crate::provider::*;
 
 use core::iter::Peekable;
 use core::str::CharIndices;
-use icu_char16trie::char16trie::{Char16Trie, TrieResult};
+use icu_collections::char16trie::{Char16Trie, TrieResult};
 use icu_provider::prelude::*;
 
 // SpacingMark and Extend for Myanmar shouldn't be first character of segment.

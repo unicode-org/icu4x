@@ -9,7 +9,3 @@ mod bin_uniset;
 mod enum_codepointtrie;
 mod script;
 mod uprops_serde;
-
-pub use bin_uniset::BinaryPropertyCodePointSetDataProvider;
-pub use enum_codepointtrie::EnumeratedPropertyCodePointTrieProvider;
-pub use script::ScriptWithExtensionsPropertyProvider;

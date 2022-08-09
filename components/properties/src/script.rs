@@ -12,9 +12,9 @@ use crate::provider::*;
 use crate::props::ScriptULE;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointInversionList;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
@@ -36,6 +36,8 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 /// into the `extensions` structure.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::script))]
 #[repr(transparent)]
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -189,7 +191,7 @@ impl ScriptExtensionsSet<'_> {
     /// ```
     /// use icu::properties::{script, Script};
     /// let provider = icu_testdata::get_provider();
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -208,7 +210,7 @@ impl ScriptExtensionsSet<'_> {
     /// ```
     /// use icu::properties::{script, Script};
     /// let provider = icu_testdata::get_provider();
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -282,7 +284,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -318,7 +320,7 @@ impl<'data> ScriptWithExtensions<'data> {
             let scx_val = self.extensions.get(ext_idx as usize);
             let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
 
-            let default_sc_val = <Script as TrieValue>::DATA_GET_ERROR_VALUE;
+            let default_sc_val = Script::Unknown;
 
             scx_first_sc.unwrap_or(default_sc_val)
         } else if sc_with_ext.is_common() {
@@ -381,7 +383,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -435,7 +437,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -485,7 +487,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -549,7 +551,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -590,7 +592,7 @@ pub type ScriptWithExtensionsResult =
 /// let provider = icu_testdata::get_provider();
 ///
 /// let payload =
-///     script::get_script_with_extensions(&provider)
+///     script::load_script_with_extensions_with_buffer_provider(&provider)
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let swe = &data_struct.data;
@@ -640,10 +642,21 @@ pub type ScriptWithExtensionsResult =
 /// assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
 /// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
 /// ```
-pub fn get_script_with_extensions(
+pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
 ) -> ScriptWithExtensionsResult {
     Ok(provider
         .load(Default::default())
         .and_then(DataResponse::take_payload)?)
 }
+
+icu_provider::gen_any_buffer_constructors!(
+    locale: skip,
+    options: skip,
+    result: ScriptWithExtensionsResult,
+    functions: [
+        load_script_with_extensions_unstable,
+        load_script_with_extensions_with_any_provider,
+        load_script_with_extensions_with_buffer_provider
+    ]
+);

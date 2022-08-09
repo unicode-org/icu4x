@@ -33,7 +33,9 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
+use crate::{
+    types, ArithmeticDate, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError,
+};
 use tinystr::tinystr;
 
 /// The Gregorian Calendar
@@ -47,6 +49,32 @@ pub struct GregorianDateInner(IsoDateInner);
 
 impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let year = if era.0 == tinystr!(16, "ce") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            year
+        } else if era.0 == tinystr!(16, "bce") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            1 - year
+        } else {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day)
+            .map(IsoDateInner)
+            .map(GregorianDateInner)
+    }
+
     fn date_from_iso(&self, iso: Date<Iso>) -> GregorianDateInner {
         GregorianDateInner(*iso.inner())
     }

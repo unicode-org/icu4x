@@ -6,20 +6,24 @@
 
 use crate::buddhist::Buddhist;
 use crate::coptic::Coptic;
-use crate::ethiopic::Ethiopic;
+use crate::ethiopic::{Ethiopic, EthiopicEraStyle};
 use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
-use crate::japanese::{Japanese, JapaneseEraStyle};
-use crate::{types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Ref};
+use crate::japanese::{Japanese, JapaneseExtended};
+use crate::{
+    types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
+};
+use alloc::string::ToString;
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
     Locale,
 };
-
 use icu_provider::prelude::*;
+use tinystr::tinystr;
 
+use core::convert::TryFrom;
 use core::fmt;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
@@ -32,12 +36,52 @@ use core::fmt;
 ///
 /// [`Date`](crate::Date) can also be converted to [`AnyCalendar`]-compatible ones
 /// via [`Date::to_any()`](crate::Date::to_any()).
+///
+/// There are many ways of constructing an AnyCalendar'd date:
+/// ```
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, japanese::Japanese, types::Time};
+/// use icu::locid::Locale;
+/// # use std::str::FromStr;
+/// # use std::rc::Rc;
+/// # use std::convert::TryInto;
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
+///
+/// let calendar = AnyCalendar::try_new_with_buffer_provider(&provider, (&locale).try_into().unwrap())
+///                    .expect("constructing AnyCalendar failed");
+/// let calendar = Rc::new(calendar); // Avoid cloning it each time
+///                                   // If everything is a local reference, you may use icu_calendar::Ref instead.
+///
+///
+/// // manually construct a datetime in this calendar
+/// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
+/// // construct from era code, year, month code, day, time, and a calendar
+/// // This is March 28, 15 Heisei
+/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+///                                                manual_time, calendar.clone())
+///                     .expect("Failed to construct DateTime manually");
+///
+///
+/// // construct another datetime by converting from ISO
+/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct ISO DateTime.");
+/// let iso_converted = iso_datetime.to_calendar(calendar);
+///
+/// // Construct a datetime in the appropriate typed calendar and convert
+/// let japanese_calendar = Japanese::try_new_with_buffer_provider(&provider).unwrap();
+/// let japanese_datetime = DateTime::new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
+///                                                         12, 33, 12, japanese_calendar).unwrap();
+/// // This is a DateTime<AnyCalendar>
+/// let any_japanese_datetime = japanese_datetime.to_any();
+/// ```
 #[non_exhaustive]
 pub enum AnyCalendar {
     Gregorian(Gregorian),
     Buddhist(Buddhist),
     Japanese(Japanese),
-    Japanext(Japanese),
+    JapaneseExtended(JapaneseExtended),
     Ethiopic(Ethiopic),
     Indian(Indian),
     Coptic(Coptic),
@@ -51,7 +95,7 @@ pub enum AnyDateInner {
     Gregorian(<Gregorian as Calendar>::DateInner),
     Buddhist(<Buddhist as Calendar>::DateInner),
     Japanese(<Japanese as Calendar>::DateInner),
-    Japanext(<Japanese as Calendar>::DateInner),
+    JapaneseExtended(<JapaneseExtended as Calendar>::DateInner),
     Ethiopic(<Ethiopic as Calendar>::DateInner),
     Indian(<Indian as Calendar>::DateInner),
     Coptic(<Coptic as Calendar>::DateInner),
@@ -64,7 +108,10 @@ macro_rules! match_cal_and_date {
             (&Self::Gregorian(ref $cal_matched), &AnyDateInner::Gregorian(ref $date_matched)) => $e,
             (&Self::Buddhist(ref $cal_matched), &AnyDateInner::Buddhist(ref $date_matched)) => $e,
             (&Self::Japanese(ref $cal_matched), &AnyDateInner::Japanese(ref $date_matched)) => $e,
-            (&Self::Japanext(ref $cal_matched), &AnyDateInner::Japanext(ref $date_matched)) => $e,
+            (
+                &Self::JapaneseExtended(ref $cal_matched),
+                &AnyDateInner::JapaneseExtended(ref $date_matched),
+            ) => $e,
             (&Self::Ethiopic(ref $cal_matched), &AnyDateInner::Ethiopic(ref $date_matched)) => $e,
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
@@ -80,12 +127,45 @@ macro_rules! match_cal_and_date {
 
 impl Calendar for AnyCalendar {
     type DateInner = AnyDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let ret = match *self {
+            Self::Gregorian(ref c) => {
+                AnyDateInner::Gregorian(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Buddhist(ref c) => {
+                AnyDateInner::Buddhist(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Japanese(ref c) => {
+                AnyDateInner::Japanese(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::JapaneseExtended(ref c) => {
+                AnyDateInner::JapaneseExtended(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Ethiopic(ref c) => {
+                AnyDateInner::Ethiopic(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Indian(ref c) => {
+                AnyDateInner::Indian(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Coptic(ref c) => {
+                AnyDateInner::Coptic(c.date_from_codes(era, year, month_code, day)?)
+            }
+            Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_codes(era, year, month_code, day)?),
+        };
+        Ok(ret)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> AnyDateInner {
         match *self {
             Self::Gregorian(ref c) => AnyDateInner::Gregorian(c.date_from_iso(iso)),
             Self::Buddhist(ref c) => AnyDateInner::Buddhist(c.date_from_iso(iso)),
             Self::Japanese(ref c) => AnyDateInner::Japanese(c.date_from_iso(iso)),
-            Self::Japanext(ref c) => AnyDateInner::Japanext(c.date_from_iso(iso)),
+            Self::JapaneseExtended(ref c) => AnyDateInner::JapaneseExtended(c.date_from_iso(iso)),
             Self::Ethiopic(ref c) => AnyDateInner::Ethiopic(c.date_from_iso(iso)),
             Self::Indian(ref c) => AnyDateInner::Indian(c.date_from_iso(iso)),
             Self::Coptic(ref c) => AnyDateInner::Coptic(c.date_from_iso(iso)),
@@ -120,7 +200,7 @@ impl Calendar for AnyCalendar {
             (&Self::Japanese(ref c), &mut AnyDateInner::Japanese(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Japanext(ref c), &mut AnyDateInner::Japanext(ref mut d)) => {
+            (&Self::JapaneseExtended(ref c), &mut AnyDateInner::JapaneseExtended(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             (&Self::Ethiopic(ref c), &mut AnyDateInner::Ethiopic(ref mut d)) => {
@@ -179,10 +259,10 @@ impl Calendar for AnyCalendar {
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Japanext(ref c1),
-                &Self::Japanext(ref c2),
-                &AnyDateInner::Japanext(ref d1),
-                &AnyDateInner::Japanext(ref d2),
+                &Self::JapaneseExtended(ref c1),
+                &Self::JapaneseExtended(ref c2),
+                &AnyDateInner::JapaneseExtended(ref d1),
+                &AnyDateInner::JapaneseExtended(ref d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -258,7 +338,7 @@ impl Calendar for AnyCalendar {
             Self::Gregorian(_) => "AnyCalendar (Gregorian)",
             Self::Buddhist(_) => "AnyCalendar (Buddhist)",
             Self::Japanese(_) => "AnyCalendar (Japanese)",
-            Self::Japanext(_) => "AnyCalendar (Japanese, Historical Era Data)",
+            Self::JapaneseExtended(_) => "AnyCalendar (Japanese, Historical Era Data)",
             Self::Ethiopic(_) => "AnyCalendar (Ethiopic)",
             Self::Indian(_) => "AnyCalendar (Indian)",
             Self::Coptic(_) => "AnyCalendar (Coptic)",
@@ -276,10 +356,10 @@ impl AnyCalendar {
     ///
     /// For calendars that need data, will attempt to load the appropriate data from the source.
     ///
-    /// This API needs the `calendar/japanese@1` data key if working with Japanese calendars.
+    /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
     pub fn try_new_with_any_provider<P>(
-        kind: AnyCalendarKind,
         provider: &P,
+        kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
     where
         P: AnyProvider + ?Sized,
@@ -288,20 +368,20 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Japanese => {
-                let p = provider.as_downcasting();
-                AnyCalendar::Japanese(Japanese::try_new(&p, JapaneseEraStyle::Modern)?)
+                AnyCalendar::Japanese(Japanese::try_new_with_any_provider(provider)?)
             }
-            AnyCalendarKind::Japanext => {
-                let p = provider.as_downcasting();
-                AnyCalendar::Japanext(Japanese::try_new(&p, JapaneseEraStyle::All)?)
-            }
+            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
+                JapaneseExtended::try_new_with_any_provider(provider)?,
+            ),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
@@ -309,13 +389,13 @@ impl AnyCalendar {
     ///
     /// For calendars that need data, will attempt to load the appropriate data from the source.
     ///
-    /// This API needs the `calendar/japanese@1` data key if working with Japanese calendars.
+    /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
     ///
     /// This needs the `"serde"` feature to be enabled to be used
     #[cfg(feature = "serde")]
     pub fn try_new_with_buffer_provider<P>(
-        kind: AnyCalendarKind,
         provider: &P,
+        kind: AnyCalendarKind,
     ) -> Result<Self, DataError>
     where
         P: BufferProvider + ?Sized,
@@ -324,20 +404,20 @@ impl AnyCalendar {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Japanese => {
-                let p = provider.as_deserializing();
-                AnyCalendar::Japanese(Japanese::try_new(&p, JapaneseEraStyle::Modern)?)
+                AnyCalendar::Japanese(Japanese::try_new_with_buffer_provider(provider)?)
             }
-            AnyCalendarKind::Japanext => {
-                let p = provider.as_deserializing();
-                AnyCalendar::Japanext(Japanese::try_new(&p, JapaneseEraStyle::All)?)
-            }
+            AnyCalendarKind::JapaneseExtended => AnyCalendar::JapaneseExtended(
+                JapaneseExtended::try_new_with_buffer_provider(provider)?,
+            ),
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
@@ -346,26 +426,30 @@ impl AnyCalendar {
     /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
     ///
     /// For calendars that need data, will attempt to load the appropriate data from the source
-    pub fn try_new_unstable<P>(kind: AnyCalendarKind, provider: &P) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
-        P: DataProvider<crate::provider::JapaneseErasV1Marker> + ?Sized,
+        P: DataProvider<crate::provider::JapaneseErasV1Marker>
+            + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
+            + ?Sized,
     {
         Ok(match kind {
             AnyCalendarKind::Gregorian => AnyCalendar::Gregorian(Gregorian),
             AnyCalendarKind::Buddhist => AnyCalendar::Buddhist(Buddhist),
             AnyCalendarKind::Japanese => {
-                AnyCalendar::Japanese(Japanese::try_new(provider, JapaneseEraStyle::Modern)?)
+                AnyCalendar::Japanese(Japanese::try_new_unstable(provider)?)
             }
-            AnyCalendarKind::Japanext => {
-                AnyCalendar::Japanext(Japanese::try_new(provider, JapaneseEraStyle::All)?)
+            AnyCalendarKind::JapaneseExtended => {
+                AnyCalendar::JapaneseExtended(JapaneseExtended::try_new_unstable(provider)?)
             }
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
             AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(false))
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
             }
-            AnyCalendarKind::Ethioaa => AnyCalendar::Ethiopic(Ethiopic::new_with_amete_alem(true)),
+            AnyCalendarKind::Ethioaa => {
+                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            }
         })
     }
 
@@ -374,7 +458,7 @@ impl AnyCalendar {
             Self::Gregorian(_) => "Gregorian",
             Self::Buddhist(_) => "Buddhist",
             Self::Japanese(_) => "Japanese",
-            Self::Japanext(_) => "Japanese (Historical era data)",
+            Self::JapaneseExtended(_) => "Japanese (Historical era data)",
             Self::Ethiopic(_) => "Ethiopic",
             Self::Indian(_) => "Indian",
             Self::Coptic(_) => "Coptic",
@@ -387,7 +471,7 @@ impl AnyCalendar {
             Self::Gregorian(_) => AnyCalendarKind::Gregorian,
             Self::Buddhist(_) => AnyCalendarKind::Buddhist,
             Self::Japanese(_) => AnyCalendarKind::Japanese,
-            Self::Japanext(_) => AnyCalendarKind::Japanext,
+            Self::JapaneseExtended(_) => AnyCalendarKind::JapaneseExtended,
             #[allow(clippy::expect_used)] // Invariant known at compile time
             Self::Ethiopic(ref e) => e
                 .any_calendar_kind()
@@ -433,7 +517,7 @@ impl AnyDateInner {
             AnyDateInner::Gregorian(_) => "Gregorian",
             AnyDateInner::Buddhist(_) => "Buddhist",
             AnyDateInner::Japanese(_) => "Japanese",
-            AnyDateInner::Japanext(_) => "Japanese (Historical era data)",
+            AnyDateInner::JapaneseExtended(_) => "Japanese (Historical era data)",
             AnyDateInner::Ethiopic(_) => "Ethiopic",
             AnyDateInner::Indian(_) => "Indian",
             AnyDateInner::Coptic(_) => "Coptic",
@@ -449,7 +533,7 @@ pub enum AnyCalendarKind {
     Gregorian,
     Buddhist,
     Japanese,
-    Japanext,
+    JapaneseExtended,
     Indian,
     Coptic,
     Iso,
@@ -464,7 +548,7 @@ impl AnyCalendarKind {
             "gregory" => AnyCalendarKind::Gregorian,
             "buddhist" => AnyCalendarKind::Buddhist,
             "japanese" => AnyCalendarKind::Japanese,
-            "japanext" => AnyCalendarKind::Japanext,
+            "japanext" => AnyCalendarKind::JapaneseExtended,
             "indian" => AnyCalendarKind::Indian,
             "coptic" => AnyCalendarKind::Coptic,
             "iso" => AnyCalendarKind::Iso,
@@ -474,15 +558,15 @@ impl AnyCalendarKind {
         })
     }
 
-    pub fn from_bcp47(x: &Value) -> Option<Self> {
-        Some(if *x == value!("gregory") {
+    pub fn from_bcp47(x: &Value) -> Result<Self, DateTimeError> {
+        Ok(if *x == value!("gregory") {
             AnyCalendarKind::Gregorian
         } else if *x == value!("buddhist") {
             AnyCalendarKind::Buddhist
         } else if *x == value!("japanese") {
             AnyCalendarKind::Japanese
         } else if *x == value!("japanext") {
-            AnyCalendarKind::Japanext
+            AnyCalendarKind::JapaneseExtended
         } else if *x == value!("indian") {
             AnyCalendarKind::Indian
         } else if *x == value!("coptic") {
@@ -494,7 +578,10 @@ impl AnyCalendarKind {
         } else if *x == value!("ethioaa") {
             AnyCalendarKind::Ethioaa
         } else {
-            return None;
+            let mut string = x.to_string();
+            string.truncate(16);
+            let tiny = string.parse().unwrap_or(tinystr!(16, "unknown"));
+            return Err(DateTimeError::UnknownAnyCalendarKind(tiny));
         })
     }
 
@@ -503,7 +590,7 @@ impl AnyCalendarKind {
             AnyCalendarKind::Gregorian => "gregory",
             AnyCalendarKind::Buddhist => "buddhist",
             AnyCalendarKind::Japanese => "japanese",
-            AnyCalendarKind::Japanext => "japanext",
+            AnyCalendarKind::JapaneseExtended => "japanext",
             AnyCalendarKind::Indian => "indian",
             AnyCalendarKind::Coptic => "coptic",
             AnyCalendarKind::Iso => "iso",
@@ -512,20 +599,34 @@ impl AnyCalendarKind {
         }
     }
 
-    pub fn from_locale(l: &Locale) -> Option<Self> {
+    pub fn from_locale(l: &Locale) -> Result<Self, DateTimeError> {
         l.extensions
             .unicode
             .keywords
             .get(&key!("ca"))
+            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
+                16,
+                "(unspecified)"
+            )))
             .and_then(Self::from_bcp47)
     }
 
-    pub fn from_data_locale(l: &DataLocale) -> Option<Self> {
+    pub fn from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
         l.get_unicode_ext(&key!("ca"))
+            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
+                16,
+                "(unspecified)"
+            )))
             .and_then(|v| Self::from_bcp47(&v))
     }
 }
 
+impl TryFrom<&'_ Locale> for AnyCalendarKind {
+    type Error = DateTimeError;
+    fn try_from(l: &'_ Locale) -> Result<Self, DateTimeError> {
+        Self::from_locale(l)
+    }
+}
 impl fmt::Display for AnyCalendarKind {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Debug::fmt(self, f)
@@ -581,25 +682,25 @@ impl IncludedInAnyCalendar for Buddhist {
 
 impl IncludedInAnyCalendar for Japanese {
     fn to_any(self) -> AnyCalendar {
-        if self.japanext {
-            AnyCalendar::Japanext(self)
-        } else {
-            AnyCalendar::Japanese(self)
-        }
+        AnyCalendar::Japanese(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        if self.japanext {
-            AnyCalendar::Japanext(self.clone())
-        } else {
-            AnyCalendar::Japanese(self.clone())
-        }
+        AnyCalendar::Japanese(self.clone())
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        if self.japanext {
-            AnyDateInner::Japanext(*d)
-        } else {
-            AnyDateInner::Japanese(*d)
-        }
+        AnyDateInner::Japanese(*d)
+    }
+}
+
+impl IncludedInAnyCalendar for JapaneseExtended {
+    fn to_any(self) -> AnyCalendar {
+        AnyCalendar::JapaneseExtended(self)
+    }
+    fn to_any_cloned(&self) -> AnyCalendar {
+        AnyCalendar::JapaneseExtended(self.clone())
+    }
+    fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
+        AnyDateInner::JapaneseExtended(*d)
     }
 }
 
@@ -649,5 +750,244 @@ impl IncludedInAnyCalendar for Iso {
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
         AnyDateInner::Iso(*d)
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use crate::Ref;
+    use core::convert::TryInto;
+
+    fn single_test_roundtrip(
+        calendar: Ref<AnyCalendar>,
+        era: &str,
+        year: i32,
+        month_code: &str,
+        day: u8,
+    ) {
+        let era = types::Era(era.parse().expect("era must parse"));
+        let month = types::MonthCode(month_code.parse().expect("month code must parse"));
+
+        let date = Date::new_from_codes(era, year, month, day, calendar).unwrap_or_else(|e| {
+            panic!(
+                "Failed to construct date for {} with {:?}, {}, {}, {}: {}",
+                calendar.debug_name(),
+                era,
+                year,
+                month,
+                day,
+                e,
+            )
+        });
+
+        let roundtrip_year = date.year();
+        let roundtrip_era = roundtrip_year.era;
+        let roundtrip_year = roundtrip_year.number;
+        let roundtrip_month = date.month().code;
+        let roundtrip_day = date.day_of_month().0.try_into().expect("Must fit in u8");
+
+        assert_eq!(
+            (era, year, month, day),
+            (
+                roundtrip_era,
+                roundtrip_year,
+                roundtrip_month,
+                roundtrip_day
+            ),
+            "Failed to roundtrip for calendar {}",
+            calendar.debug_name()
+        );
+
+        let iso = date.to_iso();
+        let reconstructed = Date::new_from_iso(iso, calendar);
+        assert_eq!(
+            date, reconstructed,
+            "Failed to roundtrip via iso with {era:?}, {year}, {month}, {day}"
+        )
+    }
+
+    fn single_test_error(
+        calendar: Ref<AnyCalendar>,
+        era: &str,
+        year: i32,
+        month_code: &str,
+        day: u8,
+        error: DateTimeError,
+    ) {
+        let era = types::Era(era.parse().expect("era must parse"));
+        let month = types::MonthCode(month_code.parse().expect("month code must parse"));
+
+        let date = Date::new_from_codes(era, year, month, day, calendar);
+        assert_eq!(
+            date,
+            Err(error),
+            "Construction with {era:?}, {year}, {month}, {day} did not return {error:?}"
+        )
+    }
+
+    #[test]
+    fn test_any_construction() {
+        let provider = icu_testdata::get_provider();
+
+        let buddhist =
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Buddhist)
+                .expect("Calendar construction must succeed");
+        let coptic = AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Coptic)
+            .expect("Calendar construction must succeed");
+        let ethiopic =
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethiopic)
+                .expect("Calendar construction must succeed");
+        let ethioaa =
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethioaa)
+                .expect("Calendar construction must succeed");
+        let gregorian =
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Gregorian)
+                .expect("Calendar construction must succeed");
+        let indian = AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Indian)
+            .expect("Calendar construction must succeed");
+        let japanese =
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Japanese)
+                .expect("Calendar construction must succeed");
+        let japanext =
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::JapaneseExtended)
+                .expect("Calendar construction must succeed");
+        let buddhist = Ref(&buddhist);
+        let coptic = Ref(&coptic);
+        let ethiopic = Ref(&ethiopic);
+        let ethioaa = Ref(&ethioaa);
+        let gregorian = Ref(&gregorian);
+        let indian = Ref(&indian);
+        let japanese = Ref(&japanese);
+        let japanext = Ref(&japanext);
+
+        single_test_roundtrip(buddhist, "be", 100, "M03", 1);
+        single_test_roundtrip(buddhist, "be", 2000, "M03", 1);
+        single_test_roundtrip(buddhist, "be", -100, "M03", 1);
+        single_test_error(
+            buddhist,
+            "be",
+            100,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode("M13".parse().unwrap(), "Buddhist"),
+        );
+
+        single_test_roundtrip(coptic, "ad", 100, "M03", 1);
+        single_test_roundtrip(coptic, "ad", 2000, "M03", 1);
+        // fails ISO roundtrip
+        // single_test_roundtrip(coptic, "bd", 100, "M03", 1);
+        single_test_roundtrip(coptic, "ad", 100, "M13", 1);
+        single_test_error(
+            coptic,
+            "ad",
+            100,
+            "M14",
+            1,
+            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Coptic"),
+        );
+        single_test_error(coptic, "ad", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(coptic, "bd", 0, "M03", 1, DateTimeError::OutOfRange);
+
+        single_test_roundtrip(ethiopic, "incar", 100, "M03", 1);
+        single_test_roundtrip(ethiopic, "incar", 2000, "M03", 1);
+        single_test_roundtrip(ethiopic, "incar", 2000, "M13", 1);
+        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
+        // single_test_roundtrip(ethiopic, "pre-incar", 100, "M03", 1);
+        single_test_error(ethiopic, "incar", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(
+            ethiopic,
+            "pre-incar",
+            0,
+            "M03",
+            1,
+            DateTimeError::OutOfRange,
+        );
+        single_test_error(
+            ethiopic,
+            "incar",
+            100,
+            "M14",
+            1,
+            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Ethiopic"),
+        );
+
+        single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
+        single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
+        // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
+        // single_test_roundtrip(ethioaa, "mundi", 100, "M03", 1);
+        single_test_error(
+            ethiopic,
+            "mundi",
+            100,
+            "M14",
+            1,
+            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Ethiopic"),
+        );
+
+        single_test_roundtrip(gregorian, "ce", 100, "M03", 1);
+        single_test_roundtrip(gregorian, "ce", 2000, "M03", 1);
+        single_test_roundtrip(gregorian, "bce", 100, "M03", 1);
+        single_test_error(gregorian, "ce", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(gregorian, "bce", 0, "M03", 1, DateTimeError::OutOfRange);
+
+        single_test_error(
+            gregorian,
+            "bce",
+            100,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode("M13".parse().unwrap(), "Gregorian"),
+        );
+
+        single_test_roundtrip(indian, "saka", 100, "M03", 1);
+        single_test_roundtrip(indian, "saka", 2000, "M12", 1);
+        single_test_roundtrip(indian, "saka", -100, "M03", 1);
+        single_test_roundtrip(indian, "saka", 0, "M03", 1);
+        single_test_error(
+            indian,
+            "saka",
+            100,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode("M13".parse().unwrap(), "Indian"),
+        );
+        single_test_roundtrip(japanese, "reiwa", 3, "M03", 1);
+        single_test_roundtrip(japanese, "heisei", 6, "M12", 1);
+        single_test_roundtrip(japanese, "meiji", 10, "M03", 1);
+        single_test_roundtrip(japanese, "ce", 1000, "M03", 1);
+        single_test_roundtrip(japanese, "bce", 10, "M03", 1);
+        single_test_error(japanese, "ce", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(japanese, "bce", 0, "M03", 1, DateTimeError::OutOfRange);
+
+        single_test_error(
+            japanese,
+            "reiwa",
+            2,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode("M13".parse().unwrap(), "Japanese (Modern eras only)"),
+        );
+
+        single_test_roundtrip(japanext, "reiwa", 3, "M03", 1);
+        single_test_roundtrip(japanext, "heisei", 6, "M12", 1);
+        single_test_roundtrip(japanext, "meiji", 10, "M03", 1);
+        single_test_roundtrip(japanext, "tenpyokampo-749", 1, "M04", 20);
+        single_test_roundtrip(japanext, "ce", 100, "M03", 1);
+        single_test_roundtrip(japanext, "bce", 10, "M03", 1);
+        single_test_error(japanext, "ce", 0, "M03", 1, DateTimeError::OutOfRange);
+        single_test_error(japanext, "bce", 0, "M03", 1, DateTimeError::OutOfRange);
+
+        single_test_error(
+            japanext,
+            "reiwa",
+            2,
+            "M13",
+            1,
+            DateTimeError::UnknownMonthCode(
+                "M13".parse().unwrap(),
+                "Japanese (With historical eras)",
+            ),
+        );
     }
 }

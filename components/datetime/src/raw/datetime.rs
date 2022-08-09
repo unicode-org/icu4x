@@ -6,16 +6,16 @@
 //! Central to this is the [`DateTimeFormatter`].
 
 use crate::{
-    date::{DateTimeInput, ExtractedDateTimeInput},
     format::datetime,
+    input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
     options::components,
     options::{length, preferences, DateTimeFormatterOptions},
     pattern::runtime::PatternPlurals,
     provider,
-    provider::calendar::patterns::PatternPluralsFromPatternsV1Marker,
     provider::calendar::{
-        patterns::GenericPatternV1Marker, DatePatternsV1Marker, DateSkeletonPatternsV1Marker,
-        DateSymbolsV1Marker, TimePatternsV1Marker, TimeSymbolsV1Marker,
+        patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
+        DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker,
+        TimeLengthsV1Marker, TimeSymbolsV1Marker,
     },
     provider::week_data::WeekDataV1Marker,
     DateTimeFormatterError, FormattedDateTime,
@@ -44,13 +44,13 @@ impl TimeFormatter {
     /// using the short style.
     #[inline(never)]
     pub fn try_new<D>(
-        locale: DataLocale,
         data_provider: &D,
+        locale: DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<TimePatternsV1Marker>
+        D: DataProvider<TimeLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
@@ -81,9 +81,12 @@ impl TimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            data_provider,
+            &locale,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -108,18 +111,18 @@ impl TimeFormatter {
         }
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
-        T: DateTimeInput,
+        T: IsoTimeInput,
     {
         FormattedDateTime {
             patterns: &self.patterns,
             date_symbols: None,
             time_symbols: self.symbols.as_ref().map(|s| s.get()),
-            datetime: ExtractedDateTimeInput::extract_from(value),
+            datetime: ExtractedDateTimeInput::extract_from_time(value),
             week_data: None,
             locale: &self.locale,
             ordinal_rules: None,
@@ -128,18 +131,19 @@ impl TimeFormatter {
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`IsoTimeInput`] implementer and populates the buffer with a formatted value.
     #[inline(never)]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput,
+        value: &impl IsoTimeInput,
     ) -> core::fmt::Result {
+        let extracted = ExtractedDateTimeInput::extract_from_time(value);
         datetime::write_pattern_plurals(
             &self.patterns.get().0,
             None,
             self.symbols.as_ref().map(|s| s.get()),
-            value,
+            &extracted,
             None,
             None,
             &self.fixed_decimal_format,
@@ -149,9 +153,9 @@ impl TimeFormatter {
         .map_err(|_| core::fmt::Error)
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`IsoTimeInput`] implementer and returns it formatted as a string.
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
+    pub fn format_to_string(&self, value: &impl IsoTimeInput) -> String {
         let mut s = String::new();
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.format_to_write(&mut s, value)
@@ -164,7 +168,7 @@ pub(crate) struct DateFormatter {
     pub locale: DataLocale,
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+    pub symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
     pub week_data: Option<DataPayload<WeekDataV1Marker>>,
     pub ordinal_rules: Option<PluralRules>,
     pub fixed_decimal_format: FixedDecimalFormatter,
@@ -175,14 +179,14 @@ impl DateFormatter {
     /// a list of options, then collects all data necessary to format date values into the given locale.
     #[inline(never)]
     pub fn try_new<D>(
-        mut locale: DataLocale,
         data_provider: &D,
+        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
+        mut locale: DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<DecimalSymbolsV1Marker>
+        D: DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
@@ -190,11 +194,10 @@ impl DateFormatter {
         if locale.get_unicode_ext(&key!("ca")) == Some(value!("ethioaa")) {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
-        let patterns =
-            provider::date_time::pattern_for_date_length(data_provider, &locale, length)?;
+        let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
 
         let generic_pattern =
-            provider::date_time::generic_pattern_for_date_length(data_provider, &locale, length)?;
+            provider::date_time::generic_pattern_for_date_length(length, patterns_data);
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
@@ -211,13 +214,16 @@ impl DateFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(&locale, data_provider)?)
+            Some(PluralRules::try_new_ordinal_unstable(
+                data_provider,
+                &locale,
+            )?)
         } else {
             None
         };
 
         let symbols_data = if required.date_symbols_data {
-            Some(data_provider.load(req)?.take_payload()?)
+            Some(symbols_data_fn()?)
         } else {
             None
         };
@@ -225,9 +231,12 @@ impl DateFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            data_provider,
+            &locale,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -245,7 +254,7 @@ impl DateFormatter {
         locale: DataLocale,
         generic_pattern: DataPayload<GenericPatternV1Marker>,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-        symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+        symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,
         fixed_decimal_format: FixedDecimalFormatter,
@@ -261,18 +270,18 @@ impl DateFormatter {
         }
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
+    /// Takes a [`DateInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedDateTime<'l>
+    pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
-        T: DateTimeInput,
+        T: DateInput,
     {
         FormattedDateTime {
             patterns: &self.patterns,
             date_symbols: self.symbols.as_ref().map(|s| s.get()),
             time_symbols: None,
-            datetime: ExtractedDateTimeInput::extract_from(value),
+            datetime: ExtractedDateTimeInput::extract_from_date(value),
             week_data: None,
             locale: &self.locale,
             ordinal_rules: None,
@@ -281,18 +290,19 @@ impl DateFormatter {
     }
 
     /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
+    /// and a [`DateInput`] implementer and populates the buffer with a formatted value.
     #[inline(never)]
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput,
+        value: &impl DateInput,
     ) -> core::fmt::Result {
+        let extracted = ExtractedDateTimeInput::extract_from_date(value);
         datetime::write_pattern_plurals(
             &self.patterns.get().0,
             self.symbols.as_ref().map(|s| s.get()),
             None,
-            value,
+            &extracted,
             None,
             None,
             &self.fixed_decimal_format,
@@ -302,9 +312,9 @@ impl DateFormatter {
         .map_err(|_| core::fmt::Error)
     }
 
-    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
+    /// Takes a [`DateInput`] implementer and returns it formatted as a string.
     #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
+    pub fn format_to_string(&self, value: &impl DateInput) -> String {
         let mut s = String::new();
         #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.format_to_write(&mut s, value)
@@ -318,7 +328,7 @@ impl DateFormatter {
 pub(crate) struct DateTimeFormatter {
     pub locale: DataLocale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-    pub date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+    pub date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
     pub time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
     pub week_data: Option<DataPayload<WeekDataV1Marker>>,
     pub ordinal_rules: Option<PluralRules>,
@@ -372,15 +382,15 @@ impl DateTimeFormatter {
     /// a list of options, then collects all data necessary to format date and time values into the given locale.
     #[inline(never)]
     pub fn try_new<D>(
-        mut locale: DataLocale,
         data_provider: &D,
-        options: &DateTimeFormatterOptions,
+        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
+        mut locale: DataLocale,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DatePatternsV1Marker>
-            + DataProvider<TimePatternsV1Marker>
+        D: DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
@@ -391,8 +401,12 @@ impl DateTimeFormatter {
         if cal == Some(value!("ethioaa")) {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
-        let patterns =
-            provider::date_time::PatternSelector::for_options(data_provider, &locale, options)?;
+        let patterns = provider::date_time::PatternSelector::for_options(
+            data_provider,
+            patterns_data,
+            &locale,
+            &options,
+        )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
@@ -409,13 +423,16 @@ impl DateTimeFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(&locale, data_provider)?)
+            Some(PluralRules::try_new_ordinal_unstable(
+                data_provider,
+                &locale,
+            )?)
         } else {
             None
         };
 
         let date_symbols_data = if required.date_symbols_data {
-            Some(data_provider.load(req)?.take_payload()?)
+            Some(symbols_data_fn()?)
         } else {
             None
         };
@@ -429,9 +446,12 @@ impl DateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(&locale, data_provider, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            data_provider,
+            &locale,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
             locale,
@@ -448,7 +468,7 @@ impl DateTimeFormatter {
     pub fn new(
         locale: DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-        date_symbols: Option<DataPayload<DateSymbolsV1Marker>>,
+        date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
         time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
         week_data: Option<DataPayload<WeekDataV1Marker>>,
         ordinal_rules: Option<PluralRules>,

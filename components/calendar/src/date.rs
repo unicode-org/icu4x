@@ -3,8 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
-use crate::{types, Calendar, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
+use alloc::sync::Arc;
 use core::fmt;
 use core::ops::Deref;
 
@@ -35,6 +36,14 @@ impl<C: Calendar> AsCalendar for Rc<C> {
     }
 }
 
+impl<C: Calendar> AsCalendar for Arc<C> {
+    type Calendar = C;
+    #[inline]
+    fn as_calendar(&self) -> &C {
+        &*self
+    }
+}
+
 /// This exists as a wrapper around `&'a T` so that
 /// `Date<&'a C>` is possible for calendar `C`. Unfortunately,
 /// [`AsCalendar`] cannot be implemented on `&'a T` directly because
@@ -43,7 +52,16 @@ impl<C: Calendar> AsCalendar for Rc<C> {
 ///
 /// Use `Date<Ref<'a, C>>` where you would use `Date<&'a C>`
 #[allow(clippy::exhaustive_structs)] // newtype
+#[derive(PartialEq, Eq, Debug)]
 pub struct Ref<'a, C>(pub &'a C);
+
+impl<C> Copy for Ref<'_, C> {}
+
+impl<C> Clone for Ref<'_, C> {
+    fn clone(&self) -> Self {
+        *self
+    }
+}
 
 impl<C: Calendar> AsCalendar for Ref<'_, C> {
     type Calendar = C;
@@ -82,6 +100,21 @@ pub struct Date<A: AsCalendar> {
 }
 
 impl<A: AsCalendar> Date<A> {
+    /// Construct a date from from era/month codes and fields, and some calendar representation
+    #[inline]
+    pub fn new_from_codes(
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+        calendar: A,
+    ) -> Result<Self, DateTimeError> {
+        let inner = calendar
+            .as_calendar()
+            .date_from_codes(era, year, month_code, day)?;
+        Ok(Date { inner, calendar })
+    }
+
     /// Construct a date from an ISO date and some calendar representation
     #[inline]
     pub fn new_from_iso(iso: Date<Iso>, calendar: A) -> Self {

@@ -31,15 +31,15 @@ diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f
 
 diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_fromstr(const char* v_data, size_t v_len);
 
-bool ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
+void ICU4XFixedDecimal_multiply_pow10(ICU4XFixedDecimal* self, int16_t power);
 
 void ICU4XFixedDecimal_set_sign(ICU4XFixedDecimal* self, ICU4XFixedDecimalSign sign);
 
-void ICU4XFixedDecimal_pad_left(ICU4XFixedDecimal* self, int16_t position);
+void ICU4XFixedDecimal_pad_start(ICU4XFixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_truncate_left(ICU4XFixedDecimal* self, int16_t position);
+void ICU4XFixedDecimal_set_max_position(ICU4XFixedDecimal* self, int16_t position);
 
-void ICU4XFixedDecimal_pad_right(ICU4XFixedDecimal* self, int16_t position);
+void ICU4XFixedDecimal_pad_end(ICU4XFixedDecimal* self, int16_t position);
 
 void ICU4XFixedDecimal_to_string(const ICU4XFixedDecimal* self, DiplomatWriteable* to);
 void ICU4XFixedDecimal_destroy(ICU4XFixedDecimal* self);

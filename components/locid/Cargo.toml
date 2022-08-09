@@ -5,12 +5,12 @@
 [package]
 name = "icu_locid"
 description = "API for managing Unicode Language and Locale Identifiers"
-version = "0.6.0"
+version = "1.0.0-beta1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+license = "Unicode-DFS-2016"
 categories = ["internationalization"]
 # Keep this in sync with other crates unless there are exceptions
 include = [
@@ -38,14 +38,14 @@ tinystr = { path = "../../utils/tinystr", version = "0.6.0", features = ["alloc"
 serde = { version = "1.0", optional = true, default-features = false, features = ["alloc", "derive"] }
 writeable = { version = "0.4", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }
-zerovec = { version = "0.7", path = "../../utils/zerovec", optional = true }
-litemap = { version = "0.4", path = "../../utils/litemap" }
+zerovec = { version = "0.8", path = "../../utils/zerovec", optional = true }
+litemap = { version = "0.5", path = "../../utils/litemap" }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 
 [dev-dependencies]
 criterion = "0.3.3"
 icu = { path = "../icu", default-features = false }
-icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
+icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 postcard = { version = "1.0.0-alpha.4", default-features = false, features = ["use-std"] }

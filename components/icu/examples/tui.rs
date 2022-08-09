@@ -10,11 +10,11 @@
 use icu::calendar::Gregorian;
 use icu::datetime::DateTimeFormatterOptions;
 use icu::datetime::{
-    mock::parse_zoned_gregorian_from_str, TimeZoneFormatterOptions, ZonedDateTimeFormatter,
+    mock::parse_zoned_gregorian_from_str, TimeZoneFormatterOptions, TypedZonedDateTimeFormatter,
 };
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
-use icu_uniset::CodePointInversionListBuilder;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {
@@ -46,16 +46,13 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     print(format!("User: {}", user_name));
 
     {
-        let dtf = ZonedDateTimeFormatter::<Gregorian>::try_new(
+        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+            &provider,
             &locale.into(),
-            &provider,
-            &provider,
-            &provider,
-            &provider,
-            &DateTimeFormatterOptions::default(),
-            &TimeZoneFormatterOptions::default(),
+            DateTimeFormatterOptions::default(),
+            TimeZoneFormatterOptions::default(),
         )
-        .expect("Failed to create DateTimeFormatter.");
+        .expect("Failed to create TypedDateTimeFormatter.");
         let (today_date, today_tz) =
             parse_zoned_gregorian_from_str("2020-10-10T18:56:00Z").expect("Failed to parse date");
 
@@ -80,10 +77,10 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(&locale!("en").into(), &provider)
+        let pr = PluralRules::try_new_cardinal_unstable(&provider, &locale!("en").into())
             .expect("Failed to create PluralRules.");
 
-        match pr.select(email_count) {
+        match pr.category_for(email_count) {
             PluralCategory::One => print("Note: You have one unread email."),
             _ => print(format!("Note: You have {} unread emails.", email_count)),
         }

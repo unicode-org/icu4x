@@ -20,7 +20,7 @@
 //!
 //! // Set up a LocaleFallbacker with data.
 //! let provider = icu_testdata::get_provider();
-//! let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
+//! let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
 //!
 //! // Create a LocaleFallbackerWithConfig with a configuration for a specific key.
 //! // By default, uses language priority with no additional extension keywords.
@@ -74,7 +74,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
+    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Language;
     /// let key_fallbacker = fallbacker.for_config(config);
@@ -104,7 +104,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
+    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Region;
     /// let key_fallbacker = fallbacker.for_config(config);
@@ -137,7 +137,7 @@ pub struct LocaleFallbackConfig {
     ///
     /// // Set up the fallback iterator.
     /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
+    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.extension_key = Some(icu_locid::extensions_unicode_key!("nu"));
     /// let key_fallbacker = fallbacker.for_config(config);
@@ -206,7 +206,7 @@ pub struct LocaleFallbackIterator<'a, 'b> {
 
 impl LocaleFallbacker {
     /// Creates a [`LocaleFallbacker`] with fallback data (likely subtags and parent locales).
-    pub fn try_new<P>(provider: &P) -> Result<Self, DataError>
+    pub fn try_new_unstable<P>(provider: &P) -> Result<Self, DataError>
     where
         P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
             + DataProvider<LocaleFallbackParentsV1Marker>
@@ -219,6 +219,8 @@ impl LocaleFallbacker {
             parents,
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: DataError);
 
     /// Creates a [`LocaleFallbacker`] without fallback data. Using this constructor may result in
     /// surprising behavior, especially in multi-script languages.
@@ -259,7 +261,7 @@ impl LocaleFallbacker {
     ///
     /// // Set up the fallback iterator.
     /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new(&provider).expect("data");
+    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
     /// let key_fallbacker = fallbacker.for_key(FooV1Marker::KEY);
     /// let mut fallback_iterator = key_fallbacker
     ///     .fallback_for(icu_locid::Locale::from_bytes(b"en-GB").unwrap().into());

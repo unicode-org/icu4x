@@ -380,8 +380,8 @@ jobs:
         uses: actions/cache@v2
         id: npm-cache
         with:
-          path: ffi/diplomat/wasm/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
+          path: ffi/diplomat/wasm/icu4x/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/icu4x/package-lock.json') }}
       - name: Install npm packages.
         # If npm dependencies are not found in cache.
         if: steps.npm-cache.outputs.cache-hit != 'true'
@@ -390,12 +390,12 @@ jobs:
           # ready-to-use locally, you also can execute
           # 'sudo npm install -g wasm-opt --unsafe-perm' and
           # 'sudo npm install -g wabt'.
-          cd ffi/diplomat/wasm
+          cd ffi/diplomat/wasm/icu4x
           npm ci
       - name: Set path to wasm-opt and wabt binaries
         run: |
-          echo "$PWD/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-          echo "$PWD/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+          echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+          echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wabt/bin" >> $GITHUB_PATH
 
       - name: Get twiggy version
         id: twiggy-version
@@ -630,7 +630,7 @@ jobs:
           - components/locid
           - components/plurals
           - components/datetime
-          - utils/uniset
+          - components/collections
           - utils/fixed_decimal
 
 
@@ -752,7 +752,7 @@ jobs:
               icu_locid/filter_langids
               icu_plurals/unread_emails
               icu_plurals/elevator_floors
-              icu_uniset/unicode_bmp_blocks_selector
+              icu_collections/unicode_bmp_blocks_selector
               fixed_decimal/permyriad
               writeable/writeable_message
               litemap/language_names_lite_map
@@ -895,32 +895,32 @@ jobs:
       uses: actions/cache@v2
       id: npm-cache
       with:
-        path: ffi/diplomat/wasm/node_modules
-        key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
+        path: ffi/diplomat/wasm/icu4x/node_modules
+        key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/icu4x/package-lock.json') }}
 
     - name: Install npm packages.
       # If npm dependencies are not found in cache.
       if: steps.npm-cache.outputs.cache-hit != 'true'
       # Note: if package.json and package-lock.json are out of sync then
       # 'npm ci' will fail. Locally execute 'npm install' in directory
-      # 'ffi/diplomat/wasm' to generate a new package-lock.json file and
+      # 'ffi/diplomat/wasm/icu4x' to generate a new package-lock.json file and
       # merge it into the repository.
       run: |
-        cd ffi/diplomat/wasm
+        cd ffi/diplomat/wasm/icu4x
         npm ci
         if [ $? -ne 0 ]
         then
           echo Execution of npm ci failed. This may be due to package.json
           echo and package-lock.json being out of sync. Locally execute
-          echo npm install in directory  ffi/diplomat/wasm to generate a
+          echo npm install in directory  ffi/diplomat/wasm/icu4x to generate a
           echo new package-lock.json file and and merge it into the repository.
           exit 1
         fi
 
     - name: Set path to wasm-opt and wabt binaries
       run: |
-        echo "$PWD/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-        echo "$PWD/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+        echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+        echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wabt/bin" >> $GITHUB_PATH
 
     - name: Install prerequisites for wasm build
       run: |

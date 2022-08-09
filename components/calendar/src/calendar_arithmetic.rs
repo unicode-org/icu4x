@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{types, Calendar, DateDuration, DateDurationUnit};
+use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError};
 use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
@@ -173,4 +173,58 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             code: types::MonthCode(code),
         }
     }
+
+    /// Construct a new arithmetic date from a year, month code, and day, bounds checking
+    /// the month
+    pub fn new_from_solar<C2: Calendar>(
+        // Separate type since the debug_name() impl may differ when DateInner types
+        // are nested (e.g. in GregorianDateInner)
+        cal: &C2,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self, DateTimeError> {
+        let month = if let Some(ordinal) = ordinal_solar_month_from_code(month_code) {
+            ordinal
+        } else {
+            return Err(DateTimeError::UnknownMonthCode(
+                month_code.0,
+                cal.debug_name(),
+            ));
+        };
+
+        if month > C::months_for_every_year() {
+            return Err(DateTimeError::UnknownMonthCode(
+                month_code.0,
+                cal.debug_name(),
+            ));
+        }
+
+        if day > C::month_days(year, month) {
+            return Err(DateTimeError::OutOfRange);
+        }
+
+        Ok(Self::new(year, month, day))
+    }
+}
+
+/// For solar calendars, get the month number from the month code
+pub fn ordinal_solar_month_from_code(code: types::MonthCode) -> Option<u8> {
+    // Match statements on tinystrs are annoying so instead
+    // we calculate it from the bytes directly
+    if code.0.len() != 3 {
+        return None;
+    }
+    let bytes = code.0.all_bytes();
+    if bytes[0] != b'M' {
+        return None;
+    }
+    if bytes[1] == b'0' {
+        if bytes[2] >= b'1' && bytes[2] <= b'9' {
+            return Some(bytes[2] - b'0');
+        }
+    } else if bytes[1] == b'1' && bytes[2] >= b'1' && bytes[2] <= b'3' {
+        return Some(10 + bytes[2] - b'0');
+    }
+    None
 }

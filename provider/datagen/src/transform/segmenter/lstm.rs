@@ -4,16 +4,13 @@
 
 //! This module contains provider implementations backed by LSTM segmentation data.
 
-use crate::transform::cldr::source::read_and_parse_json;
-use crate::SourceData;
-use icu_locid::{langid, locale};
+use icu_locid::locale;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use icu_segmenter::*;
+use icu_segmenter::provider::*;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use std::fmt::Debug;
-use zerovec::ZeroMap;
 use zerovec::ZeroVec;
 
 // ndarray data structure in LSTM JSON data.
@@ -50,89 +47,34 @@ struct RawLstmData {
     mat9: RawLstmMatrix,
 }
 
-/// A data provider reading from segmenter lstm files.
-#[derive(Debug)]
-pub struct SegmenterLstmProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for SegmenterLstmProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl SegmenterLstmProvider {
-    // Generate LSTM Data for DataProvider from LSTM JSON.
-    fn generate_data(&self, locale: &DataLocale) -> Result<LstmDataV1<'static>, DataError> {
-        let lstm_data: &RawLstmData = read_and_parse_json::<RawLstmData>(
-            self.source.segmenter_lstm()?,
-            &format!(
-                "lstm/{}",
-                Self::get_json_filename(locale)
-                    .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
-            ),
-        )?;
-        // The map of "dic" may not be sorted, so we cannot use ZeroMap directly.
-        let mut dic: ZeroMap<'static, str, i16> = ZeroMap::new();
-        lstm_data.dic.iter().for_each(|(k, v)| {
-            dic.insert(k, v);
-        });
-        let mat1 = lstm_data.mat1.as_lstm_matrix();
-        let mat2 = lstm_data.mat2.as_lstm_matrix();
-        let mat3 = lstm_data.mat3.as_lstm_matrix();
-        let mat4 = lstm_data.mat4.as_lstm_matrix();
-        let mat5 = lstm_data.mat5.as_lstm_matrix();
-        let mat6 = lstm_data.mat6.as_lstm_matrix();
-        let mat7 = lstm_data.mat7.as_lstm_matrix();
-        let mat8 = lstm_data.mat8.as_lstm_matrix();
-        let mat9 = lstm_data.mat9.as_lstm_matrix();
-
-        Ok(LstmDataV1 {
-            model: Cow::from(lstm_data.model.clone()),
-            dic,
-            mat1,
-            mat2,
-            mat3,
-            mat4,
-            mat5,
-            mat6,
-            mat7,
-            mat8,
-            mat9,
-        })
-    }
-
-    fn get_json_filename(locale: &DataLocale) -> Option<&'static str> {
-        if locale.get_langid() == langid!("km") {
-            Some("lstm_km.json")
-        } else if locale.get_langid() == langid!("lo") {
-            Some("lstm_lo.json")
-        } else if locale.get_langid() == langid!("my") {
-            Some("lstm_my.json")
-        } else if locale.get_langid() == langid!("th") {
-            Some("lstm_th.json")
-        } else {
-            None
-        }
-    }
-}
-
-impl DataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
+impl DataProvider<LstmDataV1Marker> for crate::DatagenProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<LstmDataV1Marker>, DataError> {
-        let lstm_data = self.generate_data(req.locale)?;
+        let lstm_data = self
+            .source
+            .segmenter_lstm()?
+            .read_and_parse_json::<RawLstmData>(&format!("lstm_{}.json", req.locale))
+            .map_err(|_| DataErrorKind::MissingLocale.into_error())?;
+
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(lstm_data)),
+            payload: Some(DataPayload::from_owned(LstmDataV1 {
+                model: Cow::from(lstm_data.model.clone()),
+                dic: lstm_data.dic.iter().map(|(k, v)| (k.as_str(), v)).collect(),
+                mat1: lstm_data.mat1.as_lstm_matrix(),
+                mat2: lstm_data.mat2.as_lstm_matrix(),
+                mat3: lstm_data.mat3.as_lstm_matrix(),
+                mat4: lstm_data.mat4.as_lstm_matrix(),
+                mat5: lstm_data.mat5.as_lstm_matrix(),
+                mat6: lstm_data.mat6.as_lstm_matrix(),
+                mat7: lstm_data.mat7.as_lstm_matrix(),
+                mat8: lstm_data.mat8.as_lstm_matrix(),
+                mat9: lstm_data.mat9.as_lstm_matrix(),
+            })),
         })
     }
 }
 
-icu_provider::make_exportable_provider!(SegmenterLstmProvider, [LstmDataV1Marker,]);
-
-impl IterableDataProvider<LstmDataV1Marker> for SegmenterLstmProvider {
+impl IterableDataProvider<LstmDataV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![
             locale!("km").into(),

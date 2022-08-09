@@ -1,55 +1,46 @@
 // @generated
 type DataStruct =
-    &'static <::icu_segmenter::LstmDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
-pub static DATA: &[(&str, DataStruct)] = &[("th", TH)];
-static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
+    <::icu_segmenter::provider::LstmDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("th", TH)]);
+static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
     model: alloc::borrow::Cow::Borrowed("Thai_codepoints_exclusive_model4_heavy"),
     dic: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    73u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 6u8, 0u8, 0u8,
-                    0u8, 9u8, 0u8, 0u8, 0u8, 12u8, 0u8, 0u8, 0u8, 15u8, 0u8, 0u8, 0u8, 18u8, 0u8,
-                    0u8, 0u8, 21u8, 0u8, 0u8, 0u8, 24u8, 0u8, 0u8, 0u8, 27u8, 0u8, 0u8, 0u8, 30u8,
-                    0u8, 0u8, 0u8, 33u8, 0u8, 0u8, 0u8, 36u8, 0u8, 0u8, 0u8, 39u8, 0u8, 0u8, 0u8,
-                    42u8, 0u8, 0u8, 0u8, 45u8, 0u8, 0u8, 0u8, 48u8, 0u8, 0u8, 0u8, 51u8, 0u8, 0u8,
-                    0u8, 54u8, 0u8, 0u8, 0u8, 57u8, 0u8, 0u8, 0u8, 60u8, 0u8, 0u8, 0u8, 63u8, 0u8,
-                    0u8, 0u8, 66u8, 0u8, 0u8, 0u8, 69u8, 0u8, 0u8, 0u8, 72u8, 0u8, 0u8, 0u8, 75u8,
-                    0u8, 0u8, 0u8, 78u8, 0u8, 0u8, 0u8, 81u8, 0u8, 0u8, 0u8, 84u8, 0u8, 0u8, 0u8,
-                    87u8, 0u8, 0u8, 0u8, 90u8, 0u8, 0u8, 0u8, 93u8, 0u8, 0u8, 0u8, 96u8, 0u8, 0u8,
-                    0u8, 99u8, 0u8, 0u8, 0u8, 102u8, 0u8, 0u8, 0u8, 105u8, 0u8, 0u8, 0u8, 108u8,
-                    0u8, 0u8, 0u8, 111u8, 0u8, 0u8, 0u8, 114u8, 0u8, 0u8, 0u8, 117u8, 0u8, 0u8,
-                    0u8, 120u8, 0u8, 0u8, 0u8, 123u8, 0u8, 0u8, 0u8, 126u8, 0u8, 0u8, 0u8, 129u8,
-                    0u8, 0u8, 0u8, 132u8, 0u8, 0u8, 0u8, 135u8, 0u8, 0u8, 0u8, 138u8, 0u8, 0u8,
-                    0u8, 141u8, 0u8, 0u8, 0u8, 144u8, 0u8, 0u8, 0u8, 147u8, 0u8, 0u8, 0u8, 150u8,
-                    0u8, 0u8, 0u8, 153u8, 0u8, 0u8, 0u8, 156u8, 0u8, 0u8, 0u8, 159u8, 0u8, 0u8,
-                    0u8, 162u8, 0u8, 0u8, 0u8, 165u8, 0u8, 0u8, 0u8, 168u8, 0u8, 0u8, 0u8, 171u8,
-                    0u8, 0u8, 0u8, 174u8, 0u8, 0u8, 0u8, 177u8, 0u8, 0u8, 0u8, 180u8, 0u8, 0u8,
-                    0u8, 183u8, 0u8, 0u8, 0u8, 186u8, 0u8, 0u8, 0u8, 189u8, 0u8, 0u8, 0u8, 192u8,
-                    0u8, 0u8, 0u8, 195u8, 0u8, 0u8, 0u8, 198u8, 0u8, 0u8, 0u8, 201u8, 0u8, 0u8,
-                    0u8, 204u8, 0u8, 0u8, 0u8, 207u8, 0u8, 0u8, 0u8, 210u8, 0u8, 0u8, 0u8, 213u8,
-                    0u8, 0u8, 0u8, 216u8, 0u8, 0u8, 0u8, 224u8, 184u8, 129u8, 224u8, 184u8, 130u8,
-                    224u8, 184u8, 131u8, 224u8, 184u8, 132u8, 224u8, 184u8, 133u8, 224u8, 184u8,
-                    134u8, 224u8, 184u8, 135u8, 224u8, 184u8, 136u8, 224u8, 184u8, 137u8, 224u8,
-                    184u8, 138u8, 224u8, 184u8, 139u8, 224u8, 184u8, 140u8, 224u8, 184u8, 141u8,
-                    224u8, 184u8, 142u8, 224u8, 184u8, 143u8, 224u8, 184u8, 144u8, 224u8, 184u8,
-                    145u8, 224u8, 184u8, 146u8, 224u8, 184u8, 147u8, 224u8, 184u8, 148u8, 224u8,
-                    184u8, 149u8, 224u8, 184u8, 150u8, 224u8, 184u8, 151u8, 224u8, 184u8, 152u8,
-                    224u8, 184u8, 153u8, 224u8, 184u8, 154u8, 224u8, 184u8, 155u8, 224u8, 184u8,
-                    156u8, 224u8, 184u8, 157u8, 224u8, 184u8, 158u8, 224u8, 184u8, 159u8, 224u8,
-                    184u8, 160u8, 224u8, 184u8, 161u8, 224u8, 184u8, 162u8, 224u8, 184u8, 163u8,
-                    224u8, 184u8, 164u8, 224u8, 184u8, 165u8, 224u8, 184u8, 166u8, 224u8, 184u8,
-                    167u8, 224u8, 184u8, 168u8, 224u8, 184u8, 169u8, 224u8, 184u8, 170u8, 224u8,
-                    184u8, 171u8, 224u8, 184u8, 172u8, 224u8, 184u8, 173u8, 224u8, 184u8, 174u8,
-                    224u8, 184u8, 175u8, 224u8, 184u8, 176u8, 224u8, 184u8, 177u8, 224u8, 184u8,
-                    178u8, 224u8, 184u8, 179u8, 224u8, 184u8, 180u8, 224u8, 184u8, 181u8, 224u8,
-                    184u8, 182u8, 224u8, 184u8, 183u8, 224u8, 184u8, 184u8, 224u8, 184u8, 185u8,
-                    224u8, 184u8, 186u8, 224u8, 185u8, 128u8, 224u8, 185u8, 129u8, 224u8, 185u8,
-                    130u8, 224u8, 185u8, 131u8, 224u8, 185u8, 132u8, 224u8, 185u8, 133u8, 224u8,
-                    185u8, 134u8, 224u8, 185u8, 135u8, 224u8, 185u8, 136u8, 224u8, 185u8, 137u8,
-                    224u8, 185u8, 138u8, 224u8, 185u8, 139u8, 224u8, 185u8, 140u8, 224u8, 185u8,
-                    141u8, 224u8, 185u8, 142u8,
+                    73u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 6u8, 0u8, 9u8, 0u8, 12u8, 0u8, 15u8,
+                    0u8, 18u8, 0u8, 21u8, 0u8, 24u8, 0u8, 27u8, 0u8, 30u8, 0u8, 33u8, 0u8, 36u8,
+                    0u8, 39u8, 0u8, 42u8, 0u8, 45u8, 0u8, 48u8, 0u8, 51u8, 0u8, 54u8, 0u8, 57u8,
+                    0u8, 60u8, 0u8, 63u8, 0u8, 66u8, 0u8, 69u8, 0u8, 72u8, 0u8, 75u8, 0u8, 78u8,
+                    0u8, 81u8, 0u8, 84u8, 0u8, 87u8, 0u8, 90u8, 0u8, 93u8, 0u8, 96u8, 0u8, 99u8,
+                    0u8, 102u8, 0u8, 105u8, 0u8, 108u8, 0u8, 111u8, 0u8, 114u8, 0u8, 117u8, 0u8,
+                    120u8, 0u8, 123u8, 0u8, 126u8, 0u8, 129u8, 0u8, 132u8, 0u8, 135u8, 0u8, 138u8,
+                    0u8, 141u8, 0u8, 144u8, 0u8, 147u8, 0u8, 150u8, 0u8, 153u8, 0u8, 156u8, 0u8,
+                    159u8, 0u8, 162u8, 0u8, 165u8, 0u8, 168u8, 0u8, 171u8, 0u8, 174u8, 0u8, 177u8,
+                    0u8, 180u8, 0u8, 183u8, 0u8, 186u8, 0u8, 189u8, 0u8, 192u8, 0u8, 195u8, 0u8,
+                    198u8, 0u8, 201u8, 0u8, 204u8, 0u8, 207u8, 0u8, 210u8, 0u8, 213u8, 0u8, 216u8,
+                    0u8, 224u8, 184u8, 129u8, 224u8, 184u8, 130u8, 224u8, 184u8, 131u8, 224u8,
+                    184u8, 132u8, 224u8, 184u8, 133u8, 224u8, 184u8, 134u8, 224u8, 184u8, 135u8,
+                    224u8, 184u8, 136u8, 224u8, 184u8, 137u8, 224u8, 184u8, 138u8, 224u8, 184u8,
+                    139u8, 224u8, 184u8, 140u8, 224u8, 184u8, 141u8, 224u8, 184u8, 142u8, 224u8,
+                    184u8, 143u8, 224u8, 184u8, 144u8, 224u8, 184u8, 145u8, 224u8, 184u8, 146u8,
+                    224u8, 184u8, 147u8, 224u8, 184u8, 148u8, 224u8, 184u8, 149u8, 224u8, 184u8,
+                    150u8, 224u8, 184u8, 151u8, 224u8, 184u8, 152u8, 224u8, 184u8, 153u8, 224u8,
+                    184u8, 154u8, 224u8, 184u8, 155u8, 224u8, 184u8, 156u8, 224u8, 184u8, 157u8,
+                    224u8, 184u8, 158u8, 224u8, 184u8, 159u8, 224u8, 184u8, 160u8, 224u8, 184u8,
+                    161u8, 224u8, 184u8, 162u8, 224u8, 184u8, 163u8, 224u8, 184u8, 164u8, 224u8,
+                    184u8, 165u8, 224u8, 184u8, 166u8, 224u8, 184u8, 167u8, 224u8, 184u8, 168u8,
+                    224u8, 184u8, 169u8, 224u8, 184u8, 170u8, 224u8, 184u8, 171u8, 224u8, 184u8,
+                    172u8, 224u8, 184u8, 173u8, 224u8, 184u8, 174u8, 224u8, 184u8, 175u8, 224u8,
+                    184u8, 176u8, 224u8, 184u8, 177u8, 224u8, 184u8, 178u8, 224u8, 184u8, 179u8,
+                    224u8, 184u8, 180u8, 224u8, 184u8, 181u8, 224u8, 184u8, 182u8, 224u8, 184u8,
+                    183u8, 224u8, 184u8, 184u8, 224u8, 184u8, 185u8, 224u8, 184u8, 186u8, 224u8,
+                    185u8, 128u8, 224u8, 185u8, 129u8, 224u8, 185u8, 130u8, 224u8, 185u8, 131u8,
+                    224u8, 185u8, 132u8, 224u8, 185u8, 133u8, 224u8, 185u8, 134u8, 224u8, 185u8,
+                    135u8, 224u8, 185u8, 136u8, 224u8, 185u8, 137u8, 224u8, 185u8, 138u8, 224u8,
+                    185u8, 139u8, 224u8, 185u8, 140u8, 224u8, 185u8, 141u8, 224u8, 185u8, 142u8,
                 ])
             },
             unsafe {
@@ -69,7 +60,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             },
         )
     },
-    mat1: ::icu_segmenter::LstmMatrix {
+    mat1: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[74u8, 0u8, 40u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -1032,7 +1023,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             ])
         },
     },
-    mat2: ::icu_segmenter::LstmMatrix {
+    mat2: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[40u8, 0u8, 108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -2437,7 +2428,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             ])
         },
     },
-    mat3: ::icu_segmenter::LstmMatrix {
+    mat3: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[27u8, 0u8, 108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -3388,7 +3379,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             ])
         },
     },
-    mat4: ::icu_segmenter::LstmMatrix {
+    mat4: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -3431,7 +3422,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             ])
         },
     },
-    mat5: ::icu_segmenter::LstmMatrix {
+    mat5: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[40u8, 0u8, 108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -4835,7 +4826,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             ])
         },
     },
-    mat6: ::icu_segmenter::LstmMatrix {
+    mat6: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[27u8, 0u8, 108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -5786,7 +5777,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             ])
         },
     },
-    mat7: ::icu_segmenter::LstmMatrix {
+    mat7: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -5829,7 +5820,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             ])
         },
     },
-    mat8: ::icu_segmenter::LstmMatrix {
+    mat8: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[54u8, 0u8, 4u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -5907,7 +5898,7 @@ static TH: DataStruct = &::icu_segmenter::LstmDataV1 {
             ])
         },
     },
-    mat9: ::icu_segmenter::LstmMatrix {
+    mat9: ::icu_segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[4u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[

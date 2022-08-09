@@ -7,18 +7,35 @@
 //! This module is published as its own crate ([`icu_datetime`](https://docs.rs/icu_datetime/latest/icu_datetime/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
-//! [`DateTimeFormatter`] is the main structure of the component. It accepts a set of arguments which
+//! [`TypedDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
 //! allow it to collect necessary data from the [data provider], and once instantiated, can be
-//! used to quickly format any date and time provided.
+//! used to quickly format any date and time provided. There are variants of these types that can format greater or fewer components,
+//! including [`TypedDateFormatter`] & [`DateFormatter`], [`TypedZonedDateTimeFormatter`] & [`ZonedDateTimeFormatter`], [`TimeFormatter`],
+//! and [`TimeZoneFormatter`]
+//!
+//! These formatters work with types from the [`icu_calendar`] crate, like [`Date`], [`DateTime`], and [`Time`],
+//! and [`icu_timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
+//!
+//! Each instance of a date-related formatter (i.e. not [`TimeFormatter`] or [`TimeZoneFormatter`]
+//! is associated with a particular [calendar](icu_calendar::Calendar).
+//! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
+//! will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
+//! APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
+//! the calendar at runtime, you can use [`DateTimeFormatter`] with the calendar specified in the locale, and use it with
+//! [`DateTime`](icu_calendar::DateTime)[`<AnyCalendar>`](icu_calendar::any_calendar::AnyCalendar). These formatters still require dates associated
+//! with the appropriate calendar (though they will convert ISO dates to the calendar if provided), they just do not force the
+//! programmer to pick the calendar at compile time.
+//!
 //!
 //! # Examples
 //!
 //! ```
 //! use icu::calendar::Gregorian;
 //! use icu::datetime::{
-//!     mock::parse_gregorian_from_str, options::length, DateTimeFormatter, DateTimeFormatterOptions,
+//!     mock::parse_gregorian_from_str, options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
 //! };
-//! use icu::locid::locale;
+//! use icu::locid::{Locale, locale};
+//! use std::str::FromStr;
 //!
 //! let provider = icu_testdata::get_provider();
 //!
@@ -28,13 +45,23 @@
 //!     length::Time::Short,
 //! ));
 //!
-//! let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale!("en").into(), &provider, &options)
+//! // You can work with a formatter that can select the calendar at runtime:
+//! let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+//! let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.clone())
 //!     .expect("Failed to create DateTimeFormatter instance.");
 //!
-//! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
+//! // Or one that selects a calendar at compile time:
+//! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale!("en").into(), options)
+//!     .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
-//! let formatted_date = dtf.format(&date);
+//! let typed_date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
+//! let date = typed_date.to_any();
+//!
+//! let formatted_date = dtf.format(&date).expect("Formatting should succeed");
+//! let typed_formatted_date = typed_dtf.format(&typed_date);
+//!
 //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
+//! assert_eq!(typed_formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
@@ -42,28 +69,24 @@
 //!
 //! ```
 //! use icu::calendar::Gregorian;
-//! use icu::datetime::{options::length, DateTimeFormatter, DateTimeFormatterOptions};
+//! use icu::datetime::{options::length, TypedDateTimeFormatter, DateTimeFormatterOptions};
 //! # let provider = icu_testdata::get_provider();
 //! # let locale = icu::locid::locale!("en");
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
 //!
-//! let dtf = DateTimeFormatter::<Gregorian>::try_new(&locale.into(), &provider, &options);
+//! let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options);
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Length`] bag, but in the future,
 //! we expect to add more ways to customize the output, like skeletons, and components.
 //!
-//! *Notice:* Rust at the moment does not have a canonical way to represent date and time. We use
-//! [`DateTime`] as an example of the data necessary for ICU [`DateTimeFormatter`] to work, and
-//! [we hope to work with the community](https://github.com/unicode-org/icu4x/blob/main/docs/research/datetime.md)
-//! to develop core date and time APIs that will work as an input for this component. [`DateTime`] additionally
-//! has support for non-Gregorian calendars, which this module will eventually be able to format.
-//!
 //! [data provider]: icu_provider
 //! [`ICU4X`]: ../icu/index.html
 //! [`Length`]: options::length
 //! [`DateTime`]: icu_calendar::DateTime
+//! [`Date`]: icu_calendar::Date
+//! [`Time`]: icu_calendar::types::Time
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -75,7 +98,8 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -83,11 +107,11 @@
 extern crate alloc;
 
 mod calendar;
-pub mod date;
-pub mod datetime;
+mod datetime;
 mod error;
 pub mod fields;
 mod format;
+pub mod input;
 pub mod mock;
 pub mod options;
 #[doc(hidden)]
@@ -99,13 +123,13 @@ pub(crate) mod raw;
 pub mod skeleton;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod time_zone;
-#[allow(missing_docs)] // TODO(#686) - Add missing docs.
-pub mod zoned_datetime;
+mod zoned_datetime;
 
-pub mod any;
+mod any;
 
+pub use any::{DateFormatter, DateTimeFormatter, ZonedDateTimeFormatter};
 pub use calendar::CldrCalendar;
-pub use datetime::{DateFormatter, DateTimeFormatter, TimeFormatter};
+pub use datetime::{TimeFormatter, TypedDateFormatter, TypedDateTimeFormatter};
 pub use error::DateTimeFormatterError;
 pub use format::datetime::FormattedDateTime;
 pub use format::time_zone::FormattedTimeZone;
@@ -114,4 +138,4 @@ pub use options::DateTimeFormatterOptions;
 pub use time_zone::TimeZoneFormatter;
 pub use time_zone::TimeZoneFormatterConfig;
 pub use time_zone::TimeZoneFormatterOptions;
-pub use zoned_datetime::ZonedDateTimeFormatter;
+pub use zoned_datetime::TypedZonedDateTimeFormatter;

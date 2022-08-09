@@ -2,8 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date::DateTimeError;
 use crate::fields::FieldSymbol;
+use crate::input::DateTimeError;
 use crate::pattern::PatternError;
 use crate::skeleton::SkeletonError;
 use displaydoc::Display;
@@ -14,7 +14,7 @@ use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
 use tinystr::TinyStr16;
 
-/// A list of possible error outcomes for the [`DateTimeFormatter`](crate::DateTimeFormatter) struct.
+/// A list of possible error outcomes for the [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) struct.
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum DateTimeFormatterError {
@@ -30,7 +30,7 @@ pub enum DateTimeFormatterError {
     /// An error originating from a missing field in datetime input.
     /// TODO: How can we return which field was missing?
     #[displaydoc("Missing input field")]
-    MissingInputField,
+    MissingInputField(Option<&'static str>),
     /// An error originating from skeleton matching.
     #[displaydoc("{0}")]
     Skeleton(SkeletonError),
@@ -43,7 +43,7 @@ pub enum DateTimeFormatterError {
     /// An error originating from [`PluralRules`][icu_plurals::PluralRules].
     #[displaydoc("{0}")]
     PluralRules(PluralRulesError),
-    /// An error originating from [`DateTimeInput`][crate::date::DateTimeInput].
+    /// An error originating from [`DateTimeInput`][crate::input::DateTimeInput].
     #[displaydoc("{0}")]
     DateTimeInput(DateTimeError),
     /// An error originating from a missing weekday symbol in the data.
@@ -58,12 +58,12 @@ pub enum DateTimeFormatterError {
     /// An error originating from FixedDecimalFormatter
     #[displaydoc("{0}")]
     FixedDecimalFormatter(FixedDecimalFormatterError),
-    /// An error from mixing calendar types in AnyDateTimeFormat
-    #[displaydoc("AnyDateTimeFormatter for {0} calendar was given a {1:?} calendar")]
+    /// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
+    #[displaydoc("DateTimeFormatter for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
     /// An error from mixing calendar types in DateTimeFormat
     #[displaydoc(
-        "DateTimeFormatter<{0}> was given a locale asking for incompatible calendar u-ca-{1}"
+        "TypedDateTimeFormatter<{0}> was given a locale asking for incompatible calendar u-ca-{1}"
     )]
     MismatchedCalendarLocale(&'static str, TinyStr16),
 }

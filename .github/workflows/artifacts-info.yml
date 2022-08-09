@@ -31,3 +31,6 @@ jobs:
         echo "The link will be available after the following job completes:"
         echo "${{ github.event.pull_request.head.repo.html_url }}/actions/workflows/artifacts-build.yml"
         echo "::endgroup::"
+        echo "::group::Wasm Demo Preview"
+        echo "https://storage.googleapis.com/icu4x-pr-artifacts/gha/${{ github.sha }}/wasm-demo/index.html"
+        echo "::endgroup::"

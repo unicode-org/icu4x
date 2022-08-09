@@ -331,7 +331,7 @@ where
     /// assert_eq!(it.next(), None);
     /// ```
     #[inline]
-    pub fn iter(&self) -> impl DoubleEndedIterator<Item = T> + '_ {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = T> + ExactSizeIterator<Item = T> + '_ {
         self.as_ule_slice().iter().copied().map(T::from_unaligned)
     }
 }

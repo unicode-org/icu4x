@@ -89,8 +89,8 @@ pub mod ffi {
 
         /// Multiply the [`ICU4XFixedDecimal`] by a given power of ten.
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::multiply_pow10, FnInStruct)]
-        pub fn multiply_pow10(&mut self, power: i16) -> bool {
-            self.0.multiply_pow10(power).is_ok()
+        pub fn multiply_pow10(&mut self, power: i16) {
+            self.0.multiply_pow10(power)
         }
 
         /// Set the sign of the [`ICU4XFixedDecimal`].
@@ -100,22 +100,22 @@ pub mod ffi {
         }
 
         /// Zero-pad the [`ICU4XFixedDecimal`] on the left to a particular position
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_left, FnInStruct)]
-        pub fn pad_left(&mut self, position: i16) {
-            self.0.pad_left(position)
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_start, FnInStruct)]
+        pub fn pad_start(&mut self, position: i16) {
+            self.0.pad_start(position)
         }
 
         /// Truncate the [`ICU4XFixedDecimal`] on the left to a particular position, deleting digits if necessary. This is useful for, e.g. abbreviating years
         /// ("2022" -> "22")
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::truncate_left, FnInStruct)]
-        pub fn truncate_left(&mut self, position: i16) {
-            self.0.truncate_left(position)
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::set_max_position, FnInStruct)]
+        pub fn set_max_position(&mut self, position: i16) {
+            self.0.set_max_position(position)
         }
 
         /// Zero-pad the [`ICU4XFixedDecimal`] on the right to a particular position
-        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_right, FnInStruct)]
-        pub fn pad_right(&mut self, position: i16) {
-            self.0.pad_right(position)
+        #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::pad_end, FnInStruct)]
+        pub fn pad_end(&mut self, position: i16) {
+            self.0.pad_end(position)
         }
 
         /// Format the [`ICU4XFixedDecimal`] as a string.

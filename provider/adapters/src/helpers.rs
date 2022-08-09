@@ -4,16 +4,6 @@
 
 use icu_provider::prelude::*;
 
-pub(crate) fn result_is_err_missing_data_key<T>(result: &Result<T, DataError>) -> bool {
-    matches!(
-        result,
-        Err(DataError {
-            kind: DataErrorKind::MissingDataKey,
-            ..
-        })
-    )
-}
-
 pub(crate) fn result_is_err_missing_data_options<T>(result: &Result<T, DataError>) -> bool {
     matches!(
         result,

@@ -4,12 +4,12 @@
 
 use core::convert::TryFrom;
 use core::num::TryFromIntError;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 #[cfg(feature = "datagen")]
-use icu_codepointtrie::CodePointTrieHeader;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_collections::codepointtrie::CodePointTrieHeader;
+use icu_collections::codepointtrie::{CodePointTrie, TrieValue};
 use icu_locid::Locale;
 use icu_provider::{yoke, zerofrom};
-use icu_uniset::CodePointInversionListBuilder;
 #[cfg(feature = "datagen")]
 use std::collections::HashMap;
 use zerovec::ule::{AsULE, RawBytesULE};
@@ -95,11 +95,14 @@ impl DotType {
     }
 }
 
-// The datatype stored in the codepoint trie for casemapping.
+/// The datatype stored in the codepoint trie for casemapping.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize))]
-pub struct CaseMappingData(u16);
+#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_casemapping::provider))]
+// field is doc(hidden) so that databake can work, though it's unclear if
+// this field has invariants
+pub struct CaseMappingData(#[doc(hidden)] pub u16);
 
 impl CaseMappingData {
     // Sequences of case-ignorable characters are skipped when determining
@@ -237,7 +240,6 @@ impl AsULE for CaseMappingData {
 }
 
 impl TrieValue for CaseMappingData {
-    const DATA_GET_ERROR_VALUE: CaseMappingData = CaseMappingData(0);
     type TryFromU32Error = TryFromIntError;
 
     fn try_from_u32(i: u32) -> Result<Self, Self::TryFromU32Error> {

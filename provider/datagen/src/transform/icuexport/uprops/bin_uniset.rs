@@ -3,23 +3,10 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceData;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use icu_uniset::CodePointInversionListBuilder;
-
-/// A data provider reading from TOML files produced by the ICU4C icuexportdata tool.
-pub struct BinaryPropertyCodePointSetDataProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for BinaryPropertyCodePointSetDataProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
 
 fn get_binary<'a>(
     source: &'a SourceData,
@@ -40,7 +27,7 @@ fn get_binary<'a>(
 macro_rules! expand {
     ($(($marker:ident, $prop_name:literal)),+) => {
         $(
-            impl DataProvider<$marker> for BinaryPropertyCodePointSetDataProvider {
+            impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(
                     &self,
                     _: DataRequest,
@@ -62,7 +49,7 @@ macro_rules! expand {
                 }
             }
 
-            impl IterableDataProvider<$marker> for BinaryPropertyCodePointSetDataProvider {
+            impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(
                     &self,
                 ) -> Result<Vec<DataLocale>, DataError> {
@@ -72,8 +59,6 @@ macro_rules! expand {
                 }
             }
         )+
-
-        icu_provider::make_exportable_provider!(BinaryPropertyCodePointSetDataProvider, [$($marker),+,]);
     };
 }
 
@@ -147,11 +132,11 @@ expand!(
 
 #[test]
 fn test_basic() {
+    use icu_collections::codepointinvlist::CodePointInversionList;
     use icu_properties::provider::PropertyCodePointSetV1;
     use icu_properties::provider::WhiteSpaceV1Marker;
-    use icu_uniset::CodePointInversionList;
 
-    let provider = BinaryPropertyCodePointSetDataProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
 
     let payload: DataPayload<WhiteSpaceV1Marker> = provider
         .load(Default::default())

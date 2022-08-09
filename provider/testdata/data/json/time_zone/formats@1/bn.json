@@ -10,5 +10,6 @@
     "daylight": "{0} দিবালোক সময়",
     "standard": "{0} মানক সময়"
   },
-  "fallback_format": "{1} ({0})"
+  "fallback_format": "{1} ({0})",
+  "gmt_offset_fallback": "GMT+?"
 }

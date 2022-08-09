@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use crate::varzerovec::Index32;
 use crate::VarZeroSlice;
 use core::mem;
 
@@ -16,7 +17,7 @@ use core::mem;
 /// Internally, it is represented by a VarZeroSlice.
 #[derive(PartialEq, Eq)]
 #[repr(transparent)]
-pub struct MultiFieldsULE(VarZeroSlice<[u8]>);
+pub struct MultiFieldsULE(VarZeroSlice<[u8], Index32>);
 
 impl MultiFieldsULE {
     /// Compute the amount of bytes needed to support elements with lengths `lengths`
@@ -26,7 +27,7 @@ impl MultiFieldsULE {
         unsafe {
             // safe since BlankSliceEncoder is transparent over usize
             let lengths = &*(lengths as *const [usize] as *const [BlankSliceEncoder]);
-            crate::varzerovec::components::compute_serializable_len(lengths)
+            crate::varzerovec::components::compute_serializable_len::<_, _, Index32>(lengths)
                 .expect("Too many bytes to encode") as usize
         }
     }
@@ -39,15 +40,17 @@ impl MultiFieldsULE {
         unsafe {
             // safe since BlankSliceEncoder is transparent over usize
             let lengths = &*(lengths as *const [usize] as *const [BlankSliceEncoder]);
-            crate::varzerovec::components::write_serializable_bytes(lengths, output);
+            crate::varzerovec::components::write_serializable_bytes::<_, _, Index32>(
+                lengths, output,
+            );
             debug_assert!(
                 <VarZeroSlice<[u8]>>::validate_byte_slice(output).is_ok(),
                 "Encoded slice must be valid VarZeroSlice"
             );
             // Safe since write_serializable_bytes produces a valid VarZeroSlice buffer
-            let slice = <VarZeroSlice<[u8]>>::from_byte_slice_unchecked_mut(output);
+            let slice = <VarZeroSlice<[u8], Index32>>::from_byte_slice_unchecked_mut(output);
             // safe since `Self` is transparent over VarZeroSlice
-            mem::transmute::<&mut VarZeroSlice<_>, &mut Self>(slice)
+            mem::transmute::<&mut VarZeroSlice<_, Index32>, &mut Self>(slice)
         }
     }
 

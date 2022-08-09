@@ -85,7 +85,7 @@ macro_rules! make_exportable_provider {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
-                    const $struct_m: DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.get_hash();
+                    const $struct_m: $crate::DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.get_hash();
                 )+
                 match key.get_hash() {
                     $(
@@ -99,11 +99,11 @@ macro_rules! make_exportable_provider {
         }
 
         impl $crate::datagen::DataConverter<$crate::buf::BufferMarker, $crate::datagen::HeapStatsMarker> for $provider {
-            fn convert(&self, key: $crate::DataKey, from: DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, $crate::datagen::ReturnedPayloadError<$crate::buf::BufferMarker>> {
+            fn convert(&self, key: $crate::DataKey, from: $crate::DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, $crate::datagen::ReturnedPayloadError<$crate::buf::BufferMarker>> {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
-                    const $struct_m: DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.get_hash();
+                    const $struct_m: $crate::DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.get_hash();
                 )+
                 match key.get_hash() {
                     $(

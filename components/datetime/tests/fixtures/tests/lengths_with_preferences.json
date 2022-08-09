@@ -6,14 +6,13 @@
             "options": {
                 "length": {
                     "time": "medium",
-                    "date": "medium",
-                    "preferences": { "hourCycle": "h12" }
+                    "date": "medium"
                 }
             }
         },
         "output": {
             "values": {
-                "en": "Feb 20, 2020, 12:12:00 AM"
+                "en-u-hc-h12": "Feb 20, 2020, 12:12:00 AM"
             }
         }
     },
@@ -24,14 +23,13 @@
             "options": {
                 "length": {
                     "time": "medium",
-                    "date": "medium",
-                    "preferences": { "hourCycle": "h24" }
+                    "date": "medium"
                 }
             }
         },
         "output": {
             "values": {
-                "en": "Feb 20, 2020, 24:12:00"
+                "en-u-hc-h24": "Feb 20, 2020, 24:12:00"
             }
         }
     },
@@ -42,14 +40,13 @@
             "options": {
                 "length": {
                     "time": "medium",
-                    "date": "medium",
-                    "preferences": { "hourCycle": "h11" }
+                    "date": "medium"
                 }
             }
         },
         "output": {
             "values": {
-                "en": "Feb 20, 2020, 0:12:00 AM"
+                "en-u-hc-h11": "Feb 20, 2020, 0:12:00 AM"
             }
         }
     },
@@ -60,14 +57,13 @@
             "options": {
                 "length": {
                     "time": "medium",
-                    "date": "medium",
-                    "preferences": { "hourCycle": "h23" }
+                    "date": "medium"
                 }
             }
         },
         "output": {
             "values": {
-                "en": "Feb 20, 2020, 00:12:00"
+                "en-u-hc-h23": "Feb 20, 2020, 00:12:00"
             }
         }
     },
@@ -78,14 +74,13 @@
             "options": {
                 "length": {
                     "time": "medium",
-                    "date": "full",
-                    "preferences": { "hourCycle": "h11" }
+                    "date": "full"
                 }
             }
         },
         "output": {
             "values": {
-                "ja": "2020年2月20日木曜日 午前0:12:00"
+                "ja-u-hc-h11": "2020年2月20日木曜日 午前0:12:00"
             }
         }
     },
@@ -96,14 +91,13 @@
             "options": {
                 "length": {
                     "time": "medium",
-                    "date": "full",
-                    "preferences": { "hourCycle": "h12" }
+                    "date": "full"
                 }
             }
         },
         "output": {
             "values": {
-                "ja": "2020年2月20日木曜日 午前12:12:00"
+                "ja-u-hc-h12": "2020年2月20日木曜日 午前12:12:00"
             }
         }
     },
@@ -114,14 +108,13 @@
             "options": {
                 "length": {
                     "time": "medium",
-                    "date": "full",
-                    "preferences": { "hourCycle": "h24" }
+                    "date": "full"
                 }
             }
         },
         "output": {
             "values": {
-                "ja": "2020年2月20日木曜日 24:12:00"
+                "ja-u-hc-h24": "2020年2月20日木曜日 24:12:00"
             }
         }
     },
@@ -132,14 +125,13 @@
             "options": {
                 "length": {
                     "time": "medium",
-                    "date": "full",
-                    "preferences": { "hourCycle": "h23" }
+                    "date": "full"
                 }
             }
         },
         "output": {
             "values": {
-                "ja": "2020年2月20日木曜日 0:12:00"
+                "ja-u-hc-h23": "2020年2月20日木曜日 0:12:00"
             }
         }
     }

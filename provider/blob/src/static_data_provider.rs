@@ -30,7 +30,7 @@ use serde::de::Deserialize;
 ///     "/tests/data/hello_world.postcard"
 /// ));
 ///
-/// let provider = StaticDataProvider::new_from_static_blob(&HELLO_WORLD_BLOB)
+/// let provider = StaticDataProvider::try_new_from_static_blob(&HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
@@ -52,7 +52,7 @@ pub struct StaticDataProvider {
 
 impl StaticDataProvider {
     /// Create a [`StaticDataProvider`] from a `'static` blob of ICU4X data.
-    pub fn new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
+    pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(StaticDataProvider {
             data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob)).map(
                 |blob| {
@@ -110,7 +110,7 @@ impl BufferProvider for StaticDataProvider {
             .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
                 cursor
-                    .get1_copied_by(|bytes| req.locale.strict_cmp(bytes).reverse())
+                    .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
                     .ok_or(DataErrorKind::MissingLocale)
             })
             .map_err(|kind| kind.with_req(key, req))?;

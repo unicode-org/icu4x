@@ -7,6 +7,7 @@
 
 use alloc::borrow::Cow;
 use icu_calendar::types::MonthCode;
+use icu_provider::prelude::*;
 use icu_provider::{yoke, zerofrom};
 use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
@@ -14,11 +15,15 @@ use zerovec::ZeroMap;
 /// Symbol data for the months, weekdays, and eras needed to format a date.
 /// 
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
-#[icu_provider::data_struct(marker(
-    DateSymbolsV1Marker,
-    "datetime/datesymbols@1",
-    extension_key = "ca"
-))]
+#[icu_provider::data_struct(
+    marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
+    marker(BuddhistDateSymbolsV1Marker, "datetime/buddhist/datesymbols@1"),
+    marker(JapaneseDateSymbolsV1Marker, "datetime/japanese/datesymbols@1"),
+    marker(JapaneseExtendedDateSymbolsV1Marker, "datetime/japanext/datesymbols@1"),
+    marker(CopticDateSymbolsV1Marker, "datetime/coptic/datesymbols@1"),
+    marker(IndianDateSymbolsV1Marker, "datetime/indian/datesymbols@1"),
+    marker(EthiopicDateSymbolsV1Marker, "datetime/ethiopic/datesymbols@1")
+)]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -42,11 +47,13 @@ pub struct DateSymbolsV1<'data> {
 /// Symbol data for the day periods needed to format a time.
 /// 
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
-#[icu_provider::data_struct(marker(
-    TimeSymbolsV1Marker,
-    "datetime/timesymbols@1",
-    extension_key = "ca"
-))]
+pub(crate) struct ErasedDateSymbolsV1Marker;
+
+impl DataMarker for ErasedDateSymbolsV1Marker {
+    type Yokeable = DateSymbolsV1<'static>;
+}
+
+#[icu_provider::data_struct(marker(TimeSymbolsV1Marker, "datetime/timesymbols@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",

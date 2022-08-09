@@ -155,14 +155,14 @@ macro_rules! impl_dynamic_data_provider {
                 $crate::DataError,
             > {
                 $(
-                    const $ident: DataKeyHash = $key.get_hash();
+                    const $ident: $crate::DataKeyHash = $key.get_hash();
                 )+
                 match key.get_hash() {
                     $(
                         $ident => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::DynamicDataProvider::<$struct_m>::load_data(self, key, req)?;
-                            Ok(DataResponse {
+                            Ok($crate::DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
                                     $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)
@@ -174,7 +174,7 @@ macro_rules! impl_dynamic_data_provider {
                         _ => {
                             let result: $crate::DataResponse<$struct_d> =
                                 $crate::DynamicDataProvider::<$struct_d>::load_data(self, key, req)?;
-                            Ok(DataResponse {
+                            Ok($crate::DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
                                     $crate::dynutil::UpcastDataPayload::<$struct_d>::upcast(p)
@@ -209,7 +209,7 @@ macro_rules! impl_dynamic_data_provider {
                         $struct_m => {
                             let result: $crate::DataResponse<$struct_m> =
                                 $crate::DataProvider::load(self, req)?;
-                            Ok(DataResponse {
+                            Ok($crate::DataResponse {
                                 metadata: result.metadata,
                                 payload: result.payload.map(|p| {
                                     $crate::dynutil::UpcastDataPayload::<$struct_m>::upcast(p)

@@ -1,7 +1,9 @@
 // @generated
-type DataStruct = & 'static < :: icu_collator :: provider :: CollationDiacriticsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
-pub static DATA: &[(&str, DataStruct)] = &[("und", UND)];
-static UND: DataStruct = &::icu_collator::provider::CollationDiacriticsV1 {
+type DataStruct =
+    <::icu_collator::provider::CollationDiacriticsV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_collator::provider::CollationDiacriticsV1 {
     secondaries: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
             0u8, 138u8, 0u8, 136u8, 0u8, 142u8, 0u8, 154u8, 0u8, 164u8, 0u8, 180u8, 0u8, 140u8,

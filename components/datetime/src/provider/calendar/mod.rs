@@ -2,6 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Data struct definitions for calendar-specific symbols and patterns.
+
+#![allow(missing_docs)] // TODO(#686) - Add missing docs.
+
 mod skeletons;
 mod symbols;
 
@@ -12,11 +16,15 @@ pub use skeletons::*;
 pub use symbols::*;
 
 /// Pattern data for dates.
-#[icu_provider::data_struct(marker(
-    DatePatternsV1Marker,
-    "datetime/datelengths@1",
-    extension_key = "ca"
-))]
+#[icu_provider::data_struct(
+    marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
+    marker(BuddhistDateLengthsV1Marker, "datetime/buddhist/datelengths@1"),
+    marker(JapaneseDateLengthsV1Marker, "datetime/japanese/datelengths@1"),
+    marker(JapaneseExtendedDateLengthsV1Marker, "datetime/japanext/datelengths@1"),
+    marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),
+    marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
+    marker(EthiopicDateLengthsV1Marker, "datetime/ethiopic/datelengths@1")
+)]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -24,7 +32,7 @@ pub use symbols::*;
     databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DatePatternsV1<'data> {
+pub struct DateLengthsV1<'data> {
     /// Date pattern data, broken down by pattern length.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub date: patterns::LengthPatternsV1<'data>,
@@ -34,12 +42,14 @@ pub struct DatePatternsV1<'data> {
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
 }
 
+pub(crate) struct ErasedDateLengthsV1Marker;
+
+impl DataMarker for ErasedDateLengthsV1Marker {
+    type Yokeable = DateLengthsV1<'static>;
+}
+
 /// Pattern data for times.
-#[icu_provider::data_struct(marker(
-    TimePatternsV1Marker,
-    "datetime/timelengths@1",
-    extension_key = "ca"
-))]
+#[icu_provider::data_struct(marker(TimeLengthsV1Marker, "datetime/timelengths@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -47,7 +57,7 @@ pub struct DatePatternsV1<'data> {
     databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct TimePatternsV1<'data> {
+pub struct TimeLengthsV1<'data> {
     /// These patterns are common uses of time formatting, broken down by the length of the
     /// pattern. Users can override the hour cycle with a preference, so there are two
     /// pattern groups stored here. Note that the pattern will contain either h11 or h12.

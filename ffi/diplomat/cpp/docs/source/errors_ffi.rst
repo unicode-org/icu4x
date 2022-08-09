@@ -51,10 +51,14 @@
         The subtag being requested was not set
 
 
-    .. cpp:enumerator:: LocaleParserError
+    .. cpp:enumerator:: LocaleParserLanguageError
 
         The locale or subtag string failed to parse
 
+
+    .. cpp:enumerator:: LocaleParserSubtagError
+
+    .. cpp:enumerator:: LocaleParserExtensionError
 
     .. cpp:enumerator:: DataStructValidityError
 
@@ -77,11 +81,15 @@
 
     .. cpp:enumerator:: DateTimeUnderflowError
 
-    .. cpp:enumerator:: DateTimeInvalidTimeZoneOffsetError
-
     .. cpp:enumerator:: DateTimeOutOfRangeError
 
+    .. cpp:enumerator:: DateTimeUnknownEraError
+
+    .. cpp:enumerator:: DateTimeUnknownMonthCodeError
+
     .. cpp:enumerator:: DateTimeMissingInputError
+
+    .. cpp:enumerator:: DateTimeUnknownAnyCalendarKindError
 
     .. cpp:enumerator:: DateTimeFormatPatternError
 

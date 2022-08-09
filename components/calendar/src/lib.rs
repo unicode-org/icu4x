@@ -142,7 +142,8 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 
@@ -167,6 +168,7 @@ pub mod julian;
 pub mod provider;
 pub mod types;
 
+pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
 pub use calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 pub use date::{AsCalendar, Date, Ref};

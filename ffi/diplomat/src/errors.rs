@@ -8,6 +8,7 @@ use fixed_decimal::Error as DecimalError;
 use icu_calendar::DateTimeError;
 use icu_datetime::DateTimeFormatterError;
 use icu_decimal::FixedDecimalFormatterError;
+use icu_locid::ParserError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
@@ -53,7 +54,9 @@ pub mod ffi {
         /// The subtag being requested was not set
         LocaleUndefinedSubtagError = 0x2_00,
         /// The locale or subtag string failed to parse
-        LocaleParserError = 0x2_01,
+        LocaleParserLanguageError = 0x2_01,
+        LocaleParserSubtagError = 0x2_02,
+        LocaleParserExtensionError = 0x2_03,
 
         // data struct errors
         /// Attempted to construct an invalid data struct
@@ -74,9 +77,11 @@ pub mod ffi {
         DateTimeParseError = 0x7_00,
         DateTimeOverflowError = 0x7_01,
         DateTimeUnderflowError = 0x7_02,
-        DateTimeInvalidTimeZoneOffsetError = 0x7_03,
-        DateTimeOutOfRangeError = 0x7_04,
-        DateTimeMissingInputError = 0x7_05,
+        DateTimeOutOfRangeError = 0x7_03,
+        DateTimeUnknownEraError = 0x7_04,
+        DateTimeUnknownMonthCodeError = 0x7_05,
+        DateTimeMissingInputError = 0x7_06,
+        DateTimeUnknownAnyCalendarKindError = 0x7_07,
 
         // datetime format errors
         DateTimeFormatPatternError = 0x8_00,
@@ -144,9 +149,13 @@ impl From<DateTimeError> for ICU4XError {
             DateTimeError::Parse => ICU4XError::DateTimeParseError,
             DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
             DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
-            DateTimeError::InvalidTimeZoneOffset => ICU4XError::DateTimeInvalidTimeZoneOffsetError,
             DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
+            DateTimeError::UnknownEra(..) => ICU4XError::DateTimeUnknownEraError,
+            DateTimeError::UnknownMonthCode(..) => ICU4XError::DateTimeUnknownMonthCodeError,
             DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
+            DateTimeError::UnknownAnyCalendarKind(_) => {
+                ICU4XError::DateTimeUnknownAnyCalendarKindError
+            }
             _ => ICU4XError::UnknownError,
         }
     }
@@ -158,7 +167,7 @@ impl From<DateTimeFormatterError> for ICU4XError {
             DateTimeFormatterError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
             DateTimeFormatterError::Format(err) => err.into(),
             DateTimeFormatterError::DataProvider(err) => err.into(),
-            DateTimeFormatterError::MissingInputField => {
+            DateTimeFormatterError::MissingInputField(_) => {
                 ICU4XError::DateTimeFormatMissingInputFieldError
             }
             DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
@@ -212,6 +221,17 @@ impl From<FixedDecimalFormatterError> for ICU4XError {
     fn from(e: FixedDecimalFormatterError) -> Self {
         match e {
             FixedDecimalFormatterError::Data(e) => e.into(),
+            _ => ICU4XError::UnknownError,
+        }
+    }
+}
+
+impl From<ParserError> for ICU4XError {
+    fn from(e: ParserError) -> Self {
+        match e {
+            ParserError::InvalidLanguage => ICU4XError::LocaleParserLanguageError,
+            ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
+            ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
             _ => ICU4XError::UnknownError,
         }
     }
