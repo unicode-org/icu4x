@@ -1,4 +1,4 @@
-import { u8, i32 } from "./diplomat-runtime"
+import { u8, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCalendar } from "./ICU4XCalendar";
 import { ICU4XError } from "./ICU4XError";
@@ -19,4 +19,13 @@ export class ICU4XDateTime {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new_from_iso_in_calendar(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, calendar: ICU4XCalendar): ICU4XDateTime | never;
+
+  /**
+
+   * Sets the fractional seconds field of this datetime, in nanoseconds
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond Rust documentation} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  set_ns(ns: u32): void | never;
 }

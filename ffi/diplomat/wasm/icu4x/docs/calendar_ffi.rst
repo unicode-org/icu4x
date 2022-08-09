@@ -27,6 +27,13 @@
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
 
 
+    .. js:function:: set_ns(ns)
+
+        Sets the fractional seconds field of this datetime, in nanoseconds
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
+
+
 .. js:class:: ICU4XGregorianDateTime
 
     An ICU4X DateTime object capable of containing a Gregorian date and time.

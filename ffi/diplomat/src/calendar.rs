@@ -89,7 +89,7 @@ pub mod ffi {
                 .into()
         }
 
-        /// Sets the fractional seconds field of this datetime
+        /// Sets the fractional seconds field of this datetime, in nanoseconds
         #[diplomat::rust_link(icu::calendar::types::Time::nanosecond, StructField)]
         pub fn set_ns(&mut self, ns: u32) -> DiplomatResult<(), ICU4XError> {
             match ns.try_into() {

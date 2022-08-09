@@ -39,6 +39,13 @@ class ICU4XDateTime {
    * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime) for more information.
    */
   static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, const ICU4XCalendar& calendar);
+
+  /**
+   * Sets the fractional seconds field of this datetime, in nanoseconds
+   * 
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> set_ns(uint32_t ns);
   inline const capi::ICU4XDateTime* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDateTime* AsFFIMut() { return this->inner.get(); }
   inline ICU4XDateTime(capi::ICU4XDateTime* i) : inner(i) {}
@@ -56,6 +63,16 @@ inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::try_new_from_i
   diplomat::result<ICU4XDateTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDateTime>(std::move(ICU4XDateTime(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XDateTime::set_ns(uint32_t ns) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_set_ns(this->inner.get(), ns);
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
