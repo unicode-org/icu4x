@@ -577,7 +577,7 @@ impl<'data> ScriptWithExtensions<'data> {
     }
 }
 
-/// The return type `Result` for [`get_script_with_extensions`].
+/// The return type `Result` for any of the `load_script_with_extensions_`* functions.
 pub type ScriptWithExtensionsResult =
     Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
 
