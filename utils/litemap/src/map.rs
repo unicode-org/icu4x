@@ -16,12 +16,13 @@ use core::ops::{Index, IndexMut};
 /// See the [module level documentation][super] for why one should use this.
 ///
 /// The API is roughly similar to that of [`std::collections::BTreeMap`].
+#[allow(clippy::exhaustive_structs)]
 #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 pub struct LiteMap<K: ?Sized, V: ?Sized, S = alloc::vec::Vec<(K, V)>> {
-    pub(crate) values: S,
-    pub(crate) _key_type: PhantomData<K>,
-    pub(crate) _value_type: PhantomData<V>,
+    pub values: S,
+    pub _key_type: PhantomData<K>,
+    pub _value_type: PhantomData<V>,
 }
 
 impl<K, V> LiteMap<K, V> {
