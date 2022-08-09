@@ -224,6 +224,15 @@ impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
     }
 }
 
+impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortVec<(K, V)> {
+    type KeyValueIter =
+        core::iter::Map<core::slice::Iter<'a, (K, V)>, for<'r> fn(&'r (K, V)) -> (&'r K, &'r V)>;
+
+    fn lm_iter(&'a self) -> Self::KeyValueIter {
+        self.as_slice().iter().map(map_f)
+    }
+}
+
 macro_rules! impl_writeable_for_single_subtag {
     ($type:tt, $sample:literal) => {
         impl core::fmt::Display for $type {
