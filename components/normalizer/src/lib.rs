@@ -170,12 +170,18 @@ impl PassthroughPayloadHolder {
 // hard-coded.
 const DECOMPOSITION_STARTS_WITH_NON_STARTER: u32 = 2;
 
+// `u16` version of the previous marker value.
+const DECOMPOSITION_STARTS_WITH_NON_STARTER_U16: u16 = 2;
+
 /// The tail (everything after the first character) of the NFKD form U+FDFA
 /// as 16-bit units.
 static FDFA_NFKD: [u16; 17] = [
     0x644, 0x649, 0x20, 0x627, 0x644, 0x644, 0x647, 0x20, 0x639, 0x644, 0x64A, 0x647, 0x20, 0x648,
     0x633, 0x644, 0x645,
 ];
+
+/// Marker value for U+FDFA in NFKD
+const FDFA_MARKER: u16 = 3;
 
 // These constants originate from page 143 of Unicode 14.0
 /// Syllable base
@@ -699,9 +705,9 @@ where
                         self.buffer.push(CharacterAndClass::new(combining));
                         (starter, 0)
                     } else if high != 0 {
-                        if high != 1 {
+                        if high != FDFA_MARKER {
                             debug_assert_ne!(
-                                high, 2,
+                                high, DECOMPOSITION_STARTS_WITH_NON_STARTER_U16,
                                 "Should not reach this point with non-starter marker"
                             );
                             // Decomposition into one BMP character
@@ -1816,8 +1822,11 @@ impl CanonicalDecomposition {
             }
             if high != 0 {
                 // Decomposition into one BMP character or non-starter
-                debug_assert_ne!(high, 1, "How come we got the U+FDFA NFKD marker here?");
-                if high == 2 {
+                debug_assert_ne!(
+                    high, FDFA_MARKER,
+                    "How come we got the U+FDFA NFKD marker here?"
+                );
+                if high == DECOMPOSITION_STARTS_WITH_NON_STARTER_U16 {
                     // Non-starter
                     if !in_inclusive_range(c, '\u{0340}', '\u{0F81}') {
                         return Decomposed::Default;

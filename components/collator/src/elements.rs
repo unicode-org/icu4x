@@ -39,6 +39,12 @@ use crate::provider::CollationDataV1;
 // hard-coded.
 const DECOMPOSITION_STARTS_WITH_NON_STARTER: u32 = 2;
 
+// `u16` version of the previous marker value.
+const DECOMPOSITION_STARTS_WITH_NON_STARTER_U16: u16 = 2;
+
+/// Marker value for U+FDFA in NFKD
+const FDFA_MARKER: u16 = 3;
+
 // These constants originate from page 143 of Unicode 14.0
 const HANGUL_S_BASE: u32 = 0xAC00;
 const HANGUL_L_BASE: u32 = 0x1100;
@@ -1038,8 +1044,11 @@ where
                         self.ccc.get(low_c),
                     ));
             } else if high != 0 {
-                debug_assert_ne!(high, 1, "How come U+FDFA NFKD marker seen in NFD?");
-                if high == 2 {
+                debug_assert_ne!(
+                    high, FDFA_MARKER,
+                    "How come U+FDFA NFKD marker seen in NFD?"
+                );
+                if high == DECOMPOSITION_STARTS_WITH_NON_STARTER_U16 {
                     // We're at the end of the stream, so we aren't dealing with the
                     // next undecomposed starter but are dealing with an
                     // already-decomposed non-starter. Just put it back.
