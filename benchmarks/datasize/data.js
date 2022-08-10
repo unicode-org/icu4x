@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660151568440,
+  "lastUpdate": 1660159663669,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23843,6 +23843,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ea35cb4578e5b5c460515392188301c4129f3b20"
         },
         "date": 1660151526229,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3924376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "57224050+QnnOkabayashi@users.noreply.github.com",
+            "name": "Quinn",
+            "username": "QnnOkabayashi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "084fca357ef6287b57206fcb2c953caf27045c94",
+          "message": "Fix link generated in CI (#2361)",
+          "timestamp": "2022-08-10T12:25:37-07:00",
+          "tree_id": "005a0cd717388b75d7f46282fdea329a76a8ed28",
+          "url": "https://github.com/unicode-org/icu4x/commit/084fca357ef6287b57206fcb2c953caf27045c94"
+        },
+        "date": 1660159619620,
         "tool": "ndjson",
         "benches": [
           {
