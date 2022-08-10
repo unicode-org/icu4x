@@ -36,6 +36,11 @@ use crate::provider::CollationDataV1;
 /// Marker value for U+FDFA in NFKD
 const FDFA_MARKER: u16 = 3;
 
+/// Marker for starters that decompose to themselves but may
+/// combine backwards under canonical composition.
+/// (Main trie only; not used in the supplementary trie.)
+const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
+
 // Magic marker trie value for characters whose decomposition
 // starts with a non-starter. The actual decompostion is
 // hard-coded.
@@ -1058,7 +1063,7 @@ where
         // participate in contractions, and the trie default is that a character
         // is its own decomposition.
         let decomposition = c.trie_val;
-        if decomposition == 0 {
+        if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
             // The character is its own decomposition (or Hangul syllable)
             // Set the Canonical Combining Class to zero
             self.upcoming.push(
@@ -1319,7 +1324,7 @@ where
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
                 let decomposition = c_c_tv.trie_val;
-                if decomposition == 0 {
+                if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
                     // The character is its own decomposition
                     let jamo_index = (c as usize).wrapping_sub(HANGUL_L_BASE as usize);
                     // Attribute belongs on an inner expression, but

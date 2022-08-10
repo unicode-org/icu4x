@@ -164,9 +164,14 @@ impl PassthroughPayloadHolder {
     }
 }
 
-// Magic marker trie value for characters whose decomposition
-// starts with a non-starter. The actual decompostion is
-// hard-coded.
+/// Marker for starters that decompose to themselves but may
+/// combine backwards under canonical composition.
+/// (Main trie only; not used in the supplementary trie.)
+const BACKWARD_COMBINING_STARTER_MARKER: u32 = 1;
+
+/// Magic marker trie value for characters whose decomposition
+/// starts with a non-starter. The actual decompostion is
+/// hard-coded.
 const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
 
 /// `u16` version of the previous marker value.
@@ -744,7 +749,7 @@ where
                     decomposition = c_and_trie_val.trie_val;
                     break;
                 }
-                if decomposition == 0 {
+                if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
                     // The character is its own decomposition
                     (c, 0)
                 } else {
@@ -1831,7 +1836,7 @@ impl CanonicalDecomposition {
     #[inline(always)]
     fn decompose_non_hangul(&self, c: char) -> Decomposed {
         let decomposition = self.decompositions.get().trie.get(u32::from(c));
-        if decomposition == 0 {
+        if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
             return Decomposed::Default;
         }
         // The loop is only broken out of as goto forward
