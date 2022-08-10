@@ -1070,35 +1070,28 @@ where
                 CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(c.character()),
             );
         } else {
-            // These two variables are now misnomers. The sides were swapped
-            // to bring marker values that used to be in the upper half of
-            // the 32 bits to the lower half so that comparisons of the whole
-            // 32 bits bring marker values next to zero for effient comparison
-            // if the value is 0 or 1. Only swapping the variable initializations
-            // here and leaving them as misnomers to constrain the change only
-            // to the place where swapping _has_ to occur.
-            let low = (decomposition >> 16) as u16;
-            let high = decomposition as u16;
-            if high != 0 && low != 0 {
+            let trail_or_complex = (decomposition >> 16) as u16;
+            let lead = decomposition as u16;
+            if lead != 0 && trail_or_complex != 0 {
                 // Decomposition into two BMP characters: starter and non-starter
                 self.upcoming.push(
                     CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(char_from_u16(
-                        high,
+                        lead,
                     )),
                 );
-                let low_c = char_from_u16(low);
+                let low_c = char_from_u16(trail_or_complex);
                 let trie_value = self.trie.get(u32::from(low_c));
                 self.upcoming.push(
                     CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
                         low_c, trie_value,
                     ),
                 );
-            } else if high != 0 {
+            } else if lead != 0 {
                 debug_assert_ne!(
-                    high, FDFA_MARKER,
+                    lead, FDFA_MARKER,
                     "How come U+FDFA NFKD marker seen in NFD?"
                 );
-                if (high & 0xFF00) == 0xD800 {
+                if (lead & 0xFF00) == 0xD800 {
                     // We're at the end of the stream, so we aren't dealing with the
                     // next undecomposed starter but are dealing with an
                     // already-decomposed non-starter. Just put it back.
@@ -1107,11 +1100,11 @@ where
                     #[cfg(debug_assertions)]
                     debug_assert!(self.iter_exhausted);
                 } else {
-                    debug_assert_ne!(high, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16);
+                    debug_assert_ne!(lead, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16);
                     // Decomposition into one BMP character
                     self.upcoming.push(
                         CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(
-                            char_from_u16(high),
+                            char_from_u16(lead),
                         ),
                     );
                 }
@@ -1133,9 +1126,9 @@ where
                 //         scalars16, the offset is into scalars16. Otherwise,
                 //         the offset minus the length of scalars16 is an offset
                 //         into scalars32.
-                let offset = usize::from(low & 0xFFF);
+                let offset = usize::from(trail_or_complex & 0xFFF);
                 if offset < self.scalars16.len() {
-                    let len = usize::from(low >> 13) + 2;
+                    let len = usize::from(trail_or_complex >> 13) + 2;
                     for u in unwrap_or_gigo(
                         self.scalars16.get_subslice(offset..offset + len),
                         SINGLE_U16, // single instead of empty for consistency with the other code path
@@ -1148,7 +1141,7 @@ where
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
                     }
                 } else {
-                    let len = usize::from(low >> 13) + 1;
+                    let len = usize::from(trail_or_complex >> 13) + 1;
                     let offset32 = offset - self.scalars16.len();
                     for u in unwrap_or_gigo(
                         self.scalars32.get_subslice(offset32..offset32 + len),
@@ -1162,7 +1155,7 @@ where
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
                     }
                 }
-                search_start_combining = low & 0x1000 == 0;
+                search_start_combining = trail_or_complex & 0x1000 == 0;
             }
         }
         let start_combining = if search_start_combining {
@@ -1378,29 +1371,22 @@ where
                         // handle `Implicit` and `Offset` tags here.
                     }
                 } else {
-                    // These two variables are now misnomers. The sides were swapped
-                    // to bring marker values that used to be in the upper half of
-                    // the 32 bits to the lower half so that comparisons of the whole
-                    // 32 bits bring marker values next to zero for effient comparison
-                    // if the value is 0 or 1. Only swapping the variable initializations
-                    // here and leaving them as misnomers to constrain the change only
-                    // to the place where swapping _has_ to occur.
-                    let low = (decomposition >> 16) as u16;
-                    let high = decomposition as u16;
-                    if high != 0 && low != 0 {
+                    let trail_or_complex = (decomposition >> 16) as u16;
+                    let lead = decomposition as u16;
+                    if lead != 0 && trail_or_complex != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
-                        c = char_from_u16(high);
+                        c = char_from_u16(lead);
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
                             data = self.root;
                             ce32 = data.ce32_for_char(c);
                         }
-                        let combining = char_from_u16(low);
+                        let combining = char_from_u16(trail_or_complex);
                         if self.is_next_decomposition_starts_with_starter() {
                             let diacritic_index =
-                                (low as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
+                                (trail_or_complex as usize).wrapping_sub(COMBINING_DIACRITICS_BASE);
                             if let Some(secondary) = self.diacritics.get(diacritic_index) {
-                                debug_assert!(low != 0x0344, "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
+                                debug_assert!(trail_or_complex != 0x0344, "Should never have COMBINING GREEK DIALYTIKA TONOS here, since it should have decomposed further.");
                                 if let Some(ce) = ce32.to_ce_simple_or_long_primary() {
                                     let ce_for_combining =
                                         CollationElement::new_from_secondary(secondary);
@@ -1450,11 +1436,11 @@ where
                         }
                         combining_characters
                             .push(CharacterAndClass::new_with_placeholder(combining));
-                    } else if high != 0 {
-                        debug_assert_ne!(high, 1, "How come U+FDFA NFKD marker seen in NFD?");
-                        debug_assert_ne!(high, 2, "How come non-starter marker seen here?");
+                    } else if lead != 0 {
+                        debug_assert_ne!(lead, 1, "How come U+FDFA NFKD marker seen in NFD?");
+                        debug_assert_ne!(lead, 2, "How come non-starter marker seen here?");
                         // Decomposition into one BMP character
-                        c = char_from_u16(high);
+                        c = char_from_u16(lead);
                         ce32 = data.ce32_for_char(c);
                         if ce32 == FALLBACK_CE32 {
                             data = self.root;
@@ -1484,13 +1470,13 @@ where
                         //         scalars16, the offset is into scalars16. Otherwise,
                         //         the offset minus the length of scalars16 is an offset
                         //         into scalars32.
-                        let offset = usize::from(low & 0xFFF);
+                        let offset = usize::from(trail_or_complex & 0xFFF);
                         if offset < self.scalars16.len() {
-                            let len = usize::from(low >> 13) + 2;
+                            let len = usize::from(trail_or_complex >> 13) + 2;
                             let (starter, tail) =
                                 split_first_u16(self.scalars16.get_subslice(offset..offset + len));
                             c = starter;
-                            if low & 0x1000 != 0 {
+                            if trail_or_complex & 0x1000 != 0 {
                                 for u in tail.iter() {
                                     let char_from_u = char_from_u16(u);
                                     let trie_value = self.trie.get(u32::from(char_from_u));
@@ -1527,13 +1513,13 @@ where
                                 }
                             }
                         } else {
-                            let len = usize::from(low >> 13) + 1;
+                            let len = usize::from(trail_or_complex >> 13) + 1;
                             let offset32 = offset - self.scalars16.len();
                             let (starter, tail) = split_first_u32(
                                 self.scalars32.get_subslice(offset32..offset32 + len),
                             );
                             c = starter;
-                            if low & 0x1000 != 0 {
+                            if trail_or_complex & 0x1000 != 0 {
                                 for u in tail.iter() {
                                     let char_from_u = char_from_u24(u);
                                     let trie_value = self.trie.get(u32::from(char_from_u));

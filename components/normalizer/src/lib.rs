@@ -753,30 +753,23 @@ where
                     // The character is its own decomposition
                     (c, 0)
                 } else {
-                    // These two variables are now misnomers. The sides were swapped
-                    // to bring marker values that used to be in the upper half of
-                    // the 32 bits to the lower half so that comparisons of the whole
-                    // 32 bits bring marker values next to zero for effient comparison
-                    // if the value is 0 or 1. Only swapping the variable initializations
-                    // here and leaving them as misnomers to constrain the change only
-                    // to the place where swapping _has_ to occur.
-                    let low = (decomposition >> 16) as u16;
-                    let high = decomposition as u16;
-                    if high != 0 && low != 0 {
+                    let trail_or_complex = (decomposition >> 16) as u16;
+                    let lead = decomposition as u16;
+                    if lead != 0 && trail_or_complex != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
-                        let starter = char_from_u16(high);
-                        let combining = char_from_u16(low);
+                        let starter = char_from_u16(lead);
+                        let combining = char_from_u16(trail_or_complex);
                         self.buffer
                             .push(CharacterAndClass::new_with_placeholder(combining));
                         (starter, 0)
-                    } else if high != 0 {
-                        if high != FDFA_MARKER {
+                    } else if lead != 0 {
+                        if lead != FDFA_MARKER {
                             debug_assert_ne!(
-                                high, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16,
+                                lead, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16,
                                 "Should not reach this point with non-starter marker"
                             );
                             // Decomposition into one BMP character
-                            let starter = char_from_u16(high);
+                            let starter = char_from_u16(lead);
                             (starter, 0)
                         } else {
                             // Special case for the NFKD form of U+FDFA.
@@ -806,12 +799,12 @@ where
                         //  11..0: Start offset in storage. The offset is to the logical
                         //         sequence of scalars16, scalars32, supplementary_scalars16,
                         //         supplementary_scalars32.
-                        let offset = usize::from(low & 0xFFF);
+                        let offset = usize::from(trail_or_complex & 0xFFF);
                         if offset < self.scalars16.len() {
-                            self.push_decomposition16(low, offset, self.scalars16)
+                            self.push_decomposition16(trail_or_complex, offset, self.scalars16)
                         } else if offset < self.scalars16.len() + self.scalars24.len() {
                             self.push_decomposition32(
-                                low,
+                                trail_or_complex,
                                 offset - self.scalars16.len(),
                                 self.scalars24,
                             )
@@ -821,13 +814,13 @@ where
                                 + self.supplementary_scalars16.len()
                         {
                             self.push_decomposition16(
-                                low,
+                                trail_or_complex,
                                 offset - (self.scalars16.len() + self.scalars24.len()),
                                 self.supplementary_scalars16,
                             )
                         } else {
                             self.push_decomposition32(
-                                low,
+                                trail_or_complex,
                                 offset
                                     - (self.scalars16.len()
                                         + self.scalars24.len()
@@ -1842,16 +1835,9 @@ impl CanonicalDecomposition {
         // The loop is only broken out of as goto forward
         #[allow(clippy::never_loop)]
         loop {
-            // These two variables are now misnomers. The sides were swapped
-            // to bring marker values that used to be in the upper half of
-            // the 32 bits to the lower half so that comparisons of the whole
-            // 32 bits bring marker values next to zero for effient comparison
-            // if the value is 0 or 1. Only swapping the variable initializations
-            // here and leaving them as misnomers to constrain the change only
-            // to the place where swapping _has_ to occur.
-            let low = (decomposition >> 16) as u16;
-            let high = decomposition as u16;
-            if high != 0 && low != 0 {
+            let trail_or_complex = (decomposition >> 16) as u16;
+            let lead = decomposition as u16;
+            if lead != 0 && trail_or_complex != 0 {
                 // Decomposition into two BMP characters: starter and non-starter
                 if in_inclusive_range(c, '\u{1F71}', '\u{1FFB}') {
                     // Look in the other trie due to oxia singleton
@@ -1861,15 +1847,15 @@ impl CanonicalDecomposition {
                     // ANGSTROM SIGN
                     return Decomposed::Singleton('\u{00C5}');
                 }
-                return Decomposed::Expansion(char_from_u16(high), char_from_u16(low));
+                return Decomposed::Expansion(char_from_u16(lead), char_from_u16(trail_or_complex));
             }
-            if high != 0 {
+            if lead != 0 {
                 // Decomposition into one BMP character or non-starter
                 debug_assert_ne!(
-                    high, FDFA_MARKER,
+                    lead, FDFA_MARKER,
                     "How come we got the U+FDFA NFKD marker here?"
                 );
-                if high == SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16 {
+                if lead == SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16 {
                     // Non-starter
                     if !in_inclusive_range(c, '\u{0340}', '\u{0F81}') {
                         return Decomposed::Default;
@@ -1906,7 +1892,7 @@ impl CanonicalDecomposition {
                         _ => Decomposed::Default,
                     };
                 }
-                return Decomposed::Singleton(char_from_u16(high));
+                return Decomposed::Singleton(char_from_u16(lead));
             }
             // Complex decomposition
             // Format for 16-bit value:
@@ -1924,10 +1910,10 @@ impl CanonicalDecomposition {
             //  11..0: Start offset in storage. The offset is to the logical
             //         sequence of scalars16, scalars32, supplementary_scalars16,
             //         supplementary_scalars32.
-            let offset = usize::from(low & 0xFFF);
+            let offset = usize::from(trail_or_complex & 0xFFF);
             let tables = self.tables.get();
             if offset < tables.scalars16.len() {
-                if usize::from(low >> 13) != 0 {
+                if usize::from(trail_or_complex >> 13) != 0 {
                     // i.e. logical len isn't 2
                     break;
                 }
@@ -1941,7 +1927,7 @@ impl CanonicalDecomposition {
                 debug_assert!(false);
                 return Decomposed::Default;
             }
-            let len = usize::from(low >> 13) + 1;
+            let len = usize::from(trail_or_complex >> 13) + 1;
             if len > 2 {
                 break;
             }
@@ -1967,26 +1953,19 @@ impl CanonicalDecomposition {
             debug_assert!(false);
             return Decomposed::Default;
         }
-        // These two variables are now misnomers. The sides were swapped
-        // to bring marker values that used to be in the upper half of
-        // the 32 bits to the lower half so that comparisons of the whole
-        // 32 bits bring marker values next to zero for effient comparison
-        // if the value is 0 or 1. Only swapping the variable initializations
-        // here and leaving them as misnomers to constrain the change only
-        // to the place where swapping _has_ to occur.
-        let low = (non_recursive_decomposition >> 16) as u16;
-        let high = non_recursive_decomposition as u16;
-        if high != 0 && low != 0 {
+        let trail_or_complex = (non_recursive_decomposition >> 16) as u16;
+        let lead = non_recursive_decomposition as u16;
+        if lead != 0 && trail_or_complex != 0 {
             // Decomposition into two BMP characters
-            return Decomposed::Expansion(char_from_u16(high), char_from_u16(low));
+            return Decomposed::Expansion(char_from_u16(lead), char_from_u16(trail_or_complex));
         }
-        if high != 0 {
+        if lead != 0 {
             // Decomposition into one BMP character
-            return Decomposed::Singleton(char_from_u16(high));
+            return Decomposed::Singleton(char_from_u16(lead));
         }
         // Decomposition into two non-BMP characters
         // Low is offset into a table plus one to keep it non-zero.
-        let offset = usize::from(low - 1);
+        let offset = usize::from(trail_or_complex - 1);
         if let Some(first) = non_recursive.scalars24.get(offset) {
             if let Some(second) = non_recursive.scalars24.get(offset + 1) {
                 return Decomposed::Expansion(char_from_u24(first), char_from_u24(second));
