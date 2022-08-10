@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660136256561,
+  "lastUpdate": 1660152124589,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -44248,6 +44248,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 73,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ea35cb4578e5b5c460515392188301c4129f3b20",
+          "message": "Fix root Readme example to work (#2353)",
+          "timestamp": "2022-08-10T10:10:38-07:00",
+          "tree_id": "5bbd3ed498f350305e39fc80581c1cc08bf77a3f",
+          "url": "https://github.com/unicode-org/icu4x/commit/ea35cb4578e5b5c460515392188301c4129f3b20"
+        },
+        "date": 1660152083092,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121771,
+            "range": "± 770",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24975,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72309,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 201,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 89,
             "range": "± 0",
             "unit": "ns/iter"
           }
