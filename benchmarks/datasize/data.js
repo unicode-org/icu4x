@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660086102196,
+  "lastUpdate": 1660135638921,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -23783,6 +23783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/67d10fcf6bc90b63cb696bdaecbe6311c1810b5c"
         },
         "date": 1660086055807,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3924376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "005c5ec23e0939d20570a3b2844070d127024fb7",
+          "message": "Touching up icu_collections docs (#2346)",
+          "timestamp": "2022-08-10T14:45:08+02:00",
+          "tree_id": "2ce612b0dd7c727fe01125d7f68e2f8ff75b9a14",
+          "url": "https://github.com/unicode-org/icu4x/commit/005c5ec23e0939d20570a3b2844070d127024fb7"
+        },
+        "date": 1660135595725,
         "tool": "ndjson",
         "benches": [
           {
