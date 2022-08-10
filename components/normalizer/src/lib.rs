@@ -319,6 +319,11 @@ fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
 }
 
+#[inline(always)]
+fn in_inclusive_range32(u: u32, start: u32, end: u32) -> bool {
+    u.wrapping_sub(start) <= (end - start)
+}
+
 /// Performs canonical composition (including Hangul) on a pair of
 /// characters or returns `None` if these characters don't compose.
 /// Composition exclusions are taken into account.
@@ -386,10 +391,37 @@ fn compose_non_hangul(mut iter: Char16TrieIterator, starter: char, second: char)
 /// Struct for holding together a character and the value
 /// looked up for it from the NFD trie in a more explicit
 /// way than an anonymous pair.
+/// Also holds a flag about the supplementary-trie provenance.
 #[derive(Debug, PartialEq, Eq)]
 struct CharacterAndTrieValue {
     character: char,
     trie_val: u32,
+    from_supplement: bool,
+}
+
+impl CharacterAndTrieValue {
+    #[inline(always)]
+    pub fn new(c: char, trie_value: u32) -> Self {
+        CharacterAndTrieValue {
+            character: c,
+            trie_val: trie_value,
+            from_supplement: false,
+        }
+    }
+    #[inline(always)]
+    pub fn new_from_supplement(c: char, trie_value: u32) -> Self {
+        CharacterAndTrieValue {
+            character: c,
+            trie_val: trie_value,
+            from_supplement: true,
+        }
+    }
+    #[inline(always)]
+    pub fn can_combine_backwards(&self) -> bool {
+        decomposition_starts_with_non_starter(self.trie_val)
+            || self.trie_val == BACKWARD_COMBINING_STARTER_MARKER
+            || in_inclusive_range32(self.trie_val, 0x1161, 0x11C2)
+    }
 }
 
 /// Pack a `char` and a `CanonicalCombiningClass` in
@@ -503,7 +535,6 @@ where
     supplementary_scalars24: &'data ZeroSlice<U24>,
     half_width_voicing_marks_become_non_starters: bool,
     iota_subscript_becomes_starter: bool,
-    has_starter_exceptions: bool,
     /// This set is only used when this `Decomposition` is used inside `Composition`.
     /// Therefore, when this `is_some()`, other things should take `Composition`-specific
     /// actions and when this `is_none()`, `Decomposition`-only optimizations may be
@@ -586,10 +617,7 @@ where
             buffer_pos: 0,
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
-            pending: Some(CharacterAndTrieValue {
-                character: '\u{FFFF}',
-                trie_val: 0,
-            }),
+            pending: Some(CharacterAndTrieValue::new('\u{FFFF}', 0)),
             trie: &decompositions.trie,
             supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
             scalars16: &tables.scalars16,
@@ -606,8 +634,6 @@ where
             },
             half_width_voicing_marks_become_non_starters,
             iota_subscript_becomes_starter,
-            has_starter_exceptions: half_width_voicing_marks_become_non_starters
-                || iota_subscript_becomes_starter,
             potential_passthrough_and_not_backward_combining,
             pending_is_potential_passthrough_and_not_backward_combining: true, // U+FFFF
         };
@@ -637,10 +663,7 @@ where
                 let ch = char_from_u16(u);
                 let trie_value = self.trie.get(u32::from(ch));
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
-                    CharacterAndTrieValue {
-                        character: ch,
-                        trie_val: trie_value,
-                    },
+                    CharacterAndTrieValue::new(ch, trie_value),
                 ));
                 i += 1;
                 // Half-width kana and iota subscript don't occur in the tails
@@ -675,10 +698,7 @@ where
                 let ch = char_from_u24(u);
                 let trie_value = self.trie.get(u32::from(ch));
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
-                    CharacterAndTrieValue {
-                        character: ch,
-                        trie_val: trie_value,
-                    },
+                    CharacterAndTrieValue::new(ch, trie_value),
                 ));
                 i += 1;
                 // Half-width kana and iota subscript don't occur in the tails
@@ -695,29 +715,27 @@ where
         debug_assert!(self.pending.is_none());
         let c = self.delegate.next()?;
 
-        if self.has_starter_exceptions {
+        if let Some(supplementary) = self.supplementary_trie {
             if u32::from(c) & !1 == 0xFF9E && self.half_width_voicing_marks_become_non_starters {
-                return Some(CharacterAndTrieValue {
-                    character: if c == '\u{FF9E}' {
+                return Some(CharacterAndTrieValue::new(
+                    if c == '\u{FF9E}' {
                         '\u{3099}'
                     } else {
                         '\u{309A}'
                     },
-                    trie_val: 0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
-                });
+                    0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
+                ));
             }
             if c == '\u{0345}' && self.iota_subscript_becomes_starter {
-                return Some(CharacterAndTrieValue {
-                    character: 'ι',
-                    trie_val: 0,
-                });
+                return Some(CharacterAndTrieValue::new('ι', 0));
+            }
+            let trie_value = supplementary.get(u32::from(c));
+            if trie_value != 0 {
+                return Some(CharacterAndTrieValue::new_from_supplement(c, trie_value));
             }
         }
 
-        Some(CharacterAndTrieValue {
-            character: c,
-            trie_val: self.trie.get(u32::from(c)),
-        })
+        Some(CharacterAndTrieValue::new(c, self.trie.get(u32::from(c))))
     }
 
     fn delegate_next(&mut self) -> Option<CharacterAndTrieValue> {
@@ -736,19 +754,7 @@ where
             let c = c_and_trie_val.character;
             let hangul_offset = u32::from(c).wrapping_sub(HANGUL_S_BASE); // SIndex in the spec
             if hangul_offset >= HANGUL_S_COUNT {
-                let mut decomposition;
-                // The loop is only broken out of as goto forward
-                #[allow(clippy::never_loop)]
-                loop {
-                    if let Some(supplementary) = self.supplementary_trie {
-                        decomposition = supplementary.get(u32::from(c));
-                        if decomposition != 0 {
-                            break;
-                        }
-                    }
-                    decomposition = c_and_trie_val.trie_val;
-                    break;
-                }
+                let decomposition = c_and_trie_val.trie_val;
                 if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
                     // The character is its own decomposition
                     (c, 0)
@@ -1033,10 +1039,7 @@ where
 
     #[inline]
     fn next(&mut self) -> Option<char> {
-        let mut undecomposed_starter = CharacterAndTrieValue {
-            character: '\u{0}',
-            trie_val: 0,
-        }; // The compiler can't figure out that this gets overwritten before use.
+        let mut undecomposed_starter = CharacterAndTrieValue::new('\u{0}', 0); // The compiler can't figure out that this gets overwritten before use.
         if self.unprocessed_starter.is_none() {
             // The loop is only broken out of as goto forward
             #[allow(clippy::never_loop)]
@@ -1067,6 +1070,7 @@ where
                 }
                 debug_assert_eq!(self.decomposition.buffer_pos, 0);
                 undecomposed_starter = self.decomposition.pending.take()?;
+                // We're checking the "potential passthrough aspect"
                 if self
                     .decomposition
                     .pending_is_potential_passthrough_and_not_backward_combining
@@ -1083,6 +1087,7 @@ where
                         // `unwrap` is OK, because we are in `Composition` and
                         // `potential_passthrough_and_not_backward_combining.is_some()` whenever
                         // `Decomposition` is inside `Composition`.
+                        let can_combine_backwards = upcoming.can_combine_backwards();
                         self.decomposition
                             .pending_is_potential_passthrough_and_not_backward_combining = self
                             .decomposition
@@ -1091,10 +1096,7 @@ where
                             .unwrap()
                             .contains(upcoming.character);
                         self.decomposition.pending = Some(upcoming);
-                        if self
-                            .decomposition
-                            .pending_is_potential_passthrough_and_not_backward_combining
-                        {
+                        if !can_combine_backwards {
                             // Fast-track succeeded!
                             return Some(undecomposed_starter.character);
                         }
@@ -1114,13 +1116,7 @@ where
         let mut attempt_composition = false;
         loop {
             if let Some(unprocessed) = self.unprocessed_starter.take() {
-                debug_assert_eq!(
-                    undecomposed_starter,
-                    CharacterAndTrieValue {
-                        character: '\u{0}',
-                        trie_val: 0
-                    }
-                );
+                debug_assert_eq!(undecomposed_starter, CharacterAndTrieValue::new('\u{0}', 0));
                 debug_assert_eq!(starter, '\u{0}');
                 starter = unprocessed;
             } else {
