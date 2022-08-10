@@ -702,7 +702,7 @@ locid_transform/likelysubtags@1, und, 18793B, c4c5a1819d8e3ca8f1cabdd3548b6e1ba3
 normalizer/comp@1, und, 5092B, bb6312f594d6d73110877a3b4fe8717849fa852d2d7ad2a0be07f3518cc848bc
 normalizer/decomp@1, und, 4155B, fc6dab54c750859466c8f7ccab2e11a3619ceb13dce0829f99a5f198b197685c
 normalizer/nfc@1, und, 2774B, d474db9534ae48140b777502f2f2bdb8398257e40b4117153bcd2dbb05bbe2d0
-normalizer/nfd@1, und, 23562B, b600d2ead33eb18a9ca1a849e2cf51b0440f93156b67d647729761e60becd660
+normalizer/nfd@1, und, 25926B, e141fcb360d74eab405fee2ce353410b02be508b7dafbd681ecb93f85b7b6889
 normalizer/nfdex@1, und, 2039B, b353245ff9e94a5601f2c6c09895d387e52c474e94b5e350c8c55fc262dc2b69
 normalizer/nfkc@1, und, 3419B, 471bd6f2c9545a911229fd080beba77e62634b898aa9d574f9bf7854454d1465
 normalizer/nfkd@1, und, 19995B, bd53f74f87bbb59bb323d83d6ce4a486f5e369f3ebddcc8c8126c84e5592b23c
