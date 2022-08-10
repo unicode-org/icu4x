@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660152168526,
+  "lastUpdate": 1660160346092,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -2758,6 +2758,126 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "57224050+QnnOkabayashi@users.noreply.github.com",
+            "name": "Quinn",
+            "username": "QnnOkabayashi"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "084fca357ef6287b57206fcb2c953caf27045c94",
+          "message": "Fix link generated in CI (#2361)",
+          "timestamp": "2022-08-10T12:25:37-07:00",
+          "tree_id": "005a0cd717388b75d7f46282fdea329a76a8ed28",
+          "url": "https://github.com/unicode-org/icu4x/commit/084fca357ef6287b57206fcb2c953caf27045c94"
+        },
+        "date": 1660160294639,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 1066,
+            "range": "± 73",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 765,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 952,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 906,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 1294,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1446,
+            "range": "± 410",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 760,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 889,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 908,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 861,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 1423,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 54833806,
+            "range": "± 2686875",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
