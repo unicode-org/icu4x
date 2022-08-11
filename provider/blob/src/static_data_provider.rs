@@ -46,6 +46,7 @@ use serde::de::Deserialize;
 /// ```
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
+#[derive(Clone, Copy)]
 pub struct StaticDataProvider {
     data: BlobSchemaV1<'static>,
 }
