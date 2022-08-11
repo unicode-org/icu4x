@@ -18,9 +18,7 @@ use alloc::string::ToString;
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
-    Locale,
-    subtags_language as language
-
+    subtags_language as language, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::tinystr;
@@ -481,7 +479,6 @@ impl AnyCalendar {
     {
         let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
         Self::try_new_with_any_provider(provider, kind)
-
     }
 
     /// Constructs an AnyCalendar for a given calendar kind and [`BufferProvider`] data source
@@ -504,7 +501,6 @@ impl AnyCalendar {
     {
         let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
         Self::try_new_with_buffer_provider(provider, kind)
-
     }
 
     /// Constructs an AnyCalendar for a given calendar kind and data source.
@@ -515,7 +511,10 @@ impl AnyCalendar {
     /// calendar for the locale, falling back to gregorian.
     ///
     /// For calendars that need data, will attempt to load the appropriate data from the source
-    pub fn try_new_for_locale_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
+    pub fn try_new_for_locale_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+    ) -> Result<Self, DataError>
     where
         P: DataProvider<crate::provider::JapaneseErasV1Marker>
             + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
@@ -523,7 +522,6 @@ impl AnyCalendar {
     {
         let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
         Self::try_new_unstable(provider, kind)
-
     }
 
     fn calendar_name(&self) -> &'static str {
@@ -665,7 +663,7 @@ impl AnyCalendarKind {
     }
 
     /// Convert to a BCP-47 string
-    pub fn as_bcp47(&self) -> &'static str {
+    pub fn as_bcp47_string(&self) -> &'static str {
         match *self {
             AnyCalendarKind::Gregorian => "gregory",
             AnyCalendarKind::Buddhist => "buddhist",
@@ -676,6 +674,21 @@ impl AnyCalendarKind {
             AnyCalendarKind::Iso => "iso",
             AnyCalendarKind::Ethiopic => "ethiopic",
             AnyCalendarKind::Ethioaa => "ethioaa",
+        }
+    }
+
+    /// Convert to a BCP-47 `Value`
+    pub fn as_bcp47_value(&self) -> Value {
+        match *self {
+            AnyCalendarKind::Gregorian => value!("gregory"),
+            AnyCalendarKind::Buddhist => value!("buddhist"),
+            AnyCalendarKind::Japanese => value!("japanese"),
+            AnyCalendarKind::JapaneseExtended => value!("japanext"),
+            AnyCalendarKind::Indian => value!("indian"),
+            AnyCalendarKind::Coptic => value!("coptic"),
+            AnyCalendarKind::Iso => value!("iso"),
+            AnyCalendarKind::Ethiopic => value!("ethiopic"),
+            AnyCalendarKind::Ethioaa => value!("ethioaa"),
         }
     }
 
@@ -693,6 +706,12 @@ impl AnyCalendarKind {
                 "(unspecified)"
             )))
             .and_then(Self::from_bcp47)
+    }
+
+    /// Set the `u-ca` extension on a DataLocale to the calendar represented
+    /// by this type
+    pub fn set_on_data_locale(&self, l: &mut DataLocale) {
+        l.set_unicode_ext(key!("ca"), self.as_bcp47_value());
     }
 
     /// Extract the calendar component from a [`DataLocale`]
