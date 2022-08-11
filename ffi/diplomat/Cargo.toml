@@ -32,7 +32,8 @@ all-features = true
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # smaller_test gets tested on the FFI job anyway
-denylist = ["bench", "smaller_test"]
+# logging enables a feature of a dependency that has no externally visible API changes
+denylist = ["bench", "smaller_test", "logging"]
 
 # Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
@@ -43,6 +44,9 @@ smaller_test = ["provider_test"]
 deserialize_json = ["icu_provider/deserialize_json"]
 deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
+logging = ["icu_provider/log_error_context"]
+# Use the env_logger functionality to log based on environment variables
+simple_logger = ["dep:simple_logger"]
 
 completeness = ["syn-inline-mod", "serde_json", "rustdoc-types", "diplomat_core", "lazy_static", "elsa"]
 
@@ -78,6 +82,10 @@ rustdoc-types = { version =  "0.11", optional = true }
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "be4f3aa9da018b05296f0d3b1777e1f3806054fa", optional = true }
 lazy_static = { version =  "1", optional = true }
 elsa = { version = "1", optional = true }
+
+[target.'cfg(not(target_arch = "wasm32"))'.dependencies]
+# Logging is automagical in wasm, we only need this for native
+simple_logger = { version = "1.12", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
