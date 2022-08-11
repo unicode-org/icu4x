@@ -130,7 +130,7 @@ impl Unicode {
 
     pub(crate) fn try_from_iter(iter: &mut SubtagIterator) -> Result<Self, ParserError> {
         let mut attributes = vec![];
-        let mut keywords = LiteMap::default();
+        let mut keywords = LiteMap::new();
 
         let mut current_keyword = None;
         let mut current_type = vec![];

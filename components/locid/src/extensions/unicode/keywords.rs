@@ -77,7 +77,7 @@ impl Keywords {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(LiteMap::new_empty())
+        Self(LiteMap::new())
     }
 
     /// Returns `true` if there are no keywords.

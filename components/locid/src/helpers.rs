@@ -82,8 +82,11 @@ impl<T> ShortVec<T> {
         *self = match core::mem::replace(self, ShortVec::Empty) {
             ShortVec::Empty => ShortVec::Single(elt),
             ShortVec::Single(item) => {
-                let mut items = vec![item];
-                items.insert(index, elt);
+                let items = if index == 0 {
+                    vec![elt, item]
+                } else {
+                    vec![item, elt]
+                };
                 ShortVec::Multi(items)
             }
             ShortVec::Multi(mut items) => {

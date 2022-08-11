@@ -43,7 +43,7 @@ const BINCODE: [u8; 278] = [
 /// Run this function to print new data to the console.
 #[allow(dead_code)]
 fn generate() {
-    let mut map = LiteMap::new();
+    let mut map: LiteMap<_, _, Vec<_>> = LiteMap::new();
     for (lang, name) in DATA.iter() {
         map.try_append(lang, name).ok_or(()).unwrap_err();
     }

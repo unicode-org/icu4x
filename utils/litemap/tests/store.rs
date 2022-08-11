@@ -11,12 +11,6 @@ use std::cmp::Ordering;
 #[derive(Debug, Clone, PartialEq, Eq, PartialOrd, Ord, Hash)]
 struct VecWithDefaults<T>(Vec<T>);
 
-impl<T> VecWithDefaults<T> {
-    pub const fn new() -> Self {
-        Self(Vec::new())
-    }
-}
-
 type MapF<K, V> = fn(&(K, V)) -> (&K, &V);
 
 #[inline]
@@ -32,7 +26,7 @@ fn map_f_mut<K, V>(input: &mut (K, V)) -> (&K, &mut V) {
 }
 
 impl<K, V> StoreConstEmpty<K, V> for VecWithDefaults<(K, V)> {
-    const EMPTY: VecWithDefaults<(K, V)> = VecWithDefaults::new();
+    const EMPTY: VecWithDefaults<(K, V)> = VecWithDefaults(Vec::new());
 }
 
 impl<K, V> Store<K, V> for VecWithDefaults<(K, V)> {
