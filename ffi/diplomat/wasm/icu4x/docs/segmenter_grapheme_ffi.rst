@@ -26,14 +26,14 @@
 
     An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints in strings.
 
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html>`__ for more information.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html>`__ for more information.
 
 
     .. js:staticfunction:: try_new(provider)
 
         Construct an :js:class:`ICU4XGraphemeClusterBreakSegmenter`.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.try_new>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.try_new>`__ for more information.
 
 
     .. js:function:: segment_utf8(input)

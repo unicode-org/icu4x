@@ -7,7 +7,7 @@ name = "icu_capi"
 description = "C interface to ICU4X"
 version = "1.0.0-alpha1"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 resolver = "2"
 repository = "https://github.com/unicode-org/icu4x"
 license = "Unicode-DFS-2016"
@@ -44,6 +44,8 @@ deserialize_json = ["icu_provider/deserialize_json"]
 deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
 
+completeness = ["syn-inline-mod", "serde_json", "rustdoc-types", "diplomat_core", "lazy_static", "elsa"]
+
 [dependencies]
 fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar"}
@@ -69,8 +71,21 @@ diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "d49289af3
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "d49289af387b9803c90e46139fe95dd0d6f324ae" }
 icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", optional = true }
 
+# completeness feature
+syn-inline-mod = { version =  "0.4.0", optional = true }
+serde_json = { version =  "1", optional = true }
+rustdoc-types = { version =  "0.11", optional = true }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "be4f3aa9da018b05296f0d3b1777e1f3806054fa", optional = true }
+lazy_static = { version =  "1", optional = true }
+elsa = { version = "1", optional = true }
+
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { version = "1.0.0-beta1", path = "../../provider/fs/", optional = true }
+
+[[bin]]
+name = "completeness"
+path = "src/bin/completeness.rs"
+required-features = ["completeness"]

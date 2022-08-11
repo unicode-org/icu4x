@@ -26,21 +26,21 @@
 
     An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
 
-    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.WordBreakSegmenter.html>`__ for more information.
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XWordBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider)
 
         Construct an :cpp:class:`ICU4XWordBreakSegmenter`.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.WordBreakSegmenter.html#method.try_new>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.try_new>`__ for more information.
 
 
     .. cpp:function:: ICU4XWordBreakIteratorUtf8 segment_utf8(const std::string_view input) const
 
         Segments a UTF-8 string.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.WordBreakSegmenter.html#method.segment_str>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_str>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
@@ -49,7 +49,7 @@
 
         Segments a UTF-16 string.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.WordBreakSegmenter.html#method.segment_utf16>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_utf16>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
@@ -58,7 +58,7 @@
 
         Segments a Latin-1 string.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.WordBreakSegmenter.html#method.segment_latin1>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_latin1>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.

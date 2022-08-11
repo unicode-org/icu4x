@@ -726,7 +726,7 @@ name = "diplomat"
 version = "0.3.0"
 source = "git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae#d49289af387b9803c90e46139fe95dd0d6f324ae"
 dependencies = [
- "diplomat_core",
+ "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae)",
  "proc-macro2",
  "quote",
  "syn",
@@ -736,6 +736,20 @@ dependencies = [
 name = "diplomat-runtime"
 version = "0.3.0"
 source = "git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae#d49289af387b9803c90e46139fe95dd0d6f324ae"
+
+[[package]]
+name = "diplomat_core"
+version = "0.3.0"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa#be4f3aa9da018b05296f0d3b1777e1f3806054fa"
+dependencies = [
+ "impls",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "rustdoc-types",
+ "serde",
+ "syn",
+]
 
 [[package]]
 name = "diplomat_core"
@@ -1357,6 +1371,8 @@ version = "1.0.0-alpha1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
+ "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa)",
+ "elsa",
  "fixed_decimal",
  "icu_calendar",
  "icu_collections",
@@ -1372,7 +1388,11 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_testdata",
+ "lazy_static",
  "log",
+ "rustdoc-types",
+ "serde_json",
+ "syn-inline-mod",
  "tinystr 0.6.1",
  "unicode-bidi",
  "writeable",
@@ -3185,6 +3205,16 @@ dependencies = [
  "proc-macro2",
  "quote",
  "unicode-xid",
+]
+
+[[package]]
+name = "syn-inline-mod"
+version = "0.4.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d0356188b235b38dc1357a13fa13b79319d80598028d549af5750e4b03a0fc47"
+dependencies = [
+ "proc-macro2",
+ "syn",
 ]
 
 [[package]]

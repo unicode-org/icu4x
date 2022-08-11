@@ -8,12 +8,15 @@
 use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
-use icu_calendar::{arithmetic::week_of, types::Time, AsCalendar, Date, DateTime, Iso};
+use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
 use icu_provider::DataLocale;
 use icu_timezone::{CustomTimeZone, GmtOffset, TimeVariant};
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
-pub use icu_calendar::types::*;
+pub use icu_calendar::types::{
+    DayOfMonth, DayOfWeekInMonth, DayOfYearInfo, Era, FormattableMonth, FormattableYear, IsoHour,
+    IsoMinute, IsoSecond, IsoWeekday, MonthCode, NanoSecond, Time, WeekOfMonth, WeekOfYear,
+};
 pub use icu_calendar::DateTimeError;
 
 /// Representation of a formattable calendar date. Supports dates in any calendar system that uses

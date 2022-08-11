@@ -23,10 +23,10 @@ pub mod ffi {
 
     #[diplomat::opaque]
     /// An ICU4X line-break segmenter, capable of finding breakpoints in strings.
-    #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter, Struct)]
+    #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter, Struct)]
     pub struct ICU4XLineBreakSegmenter(LineBreakSegmenter);
 
-    #[diplomat::rust_link(icu_segmenter::LineBreakRule, Enum)]
+    #[diplomat::rust_link(icu::segmenter::LineBreakRule, Enum)]
     pub enum ICU4XLineBreakRule {
         Loose,
         Normal,
@@ -34,14 +34,14 @@ pub mod ffi {
         Anywhere,
     }
 
-    #[diplomat::rust_link(icu_segmenter::WordBreakRule, Enum)]
+    #[diplomat::rust_link(icu::segmenter::WordBreakRule, Enum)]
     pub enum ICU4XWordBreakRule {
         Normal,
         BreakAll,
         KeepAll,
     }
 
-    #[diplomat::rust_link(icu_segmenter::LineBreakOptions, Struct)]
+    #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
     pub struct ICU4XLineBreakOptions {
         pub line_break_rule: ICU4XLineBreakRule,
         pub word_break_rule: ICU4XWordBreakRule,
@@ -59,7 +59,7 @@ pub mod ffi {
 
     impl ICU4XLineBreakSegmenter {
         /// Construct a [`ICU4XLineBreakSegmenter`] with default options.
-        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::try_new, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
@@ -82,7 +82,7 @@ pub mod ffi {
         }
 
         /// Construct a [`ICU4XLineBreakSegmenter`] with custom options.
-        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::try_new_with_options, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::try_new_with_options, FnInStruct)]
         pub fn try_new_with_options(
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptions,
@@ -109,13 +109,13 @@ pub mod ffi {
         }
 
         /// Segments a UTF-8 string.
-        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::segment_str, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_str, FnInStruct)]
         pub fn segment_utf8<'a>(&'a self, input: &'a str) -> Box<ICU4XLineBreakIteratorUtf8<'a>> {
             Box::new(ICU4XLineBreakIteratorUtf8(self.0.segment_str(input)))
         }
 
         /// Segments a UTF-16 string.
-        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::segment_utf16, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_utf16, FnInStruct)]
         pub fn segment_utf16<'a>(
             &'a self,
             input: &'a [u16],
@@ -124,7 +124,7 @@ pub mod ffi {
         }
 
         /// Segments a Latin-1 string.
-        #[diplomat::rust_link(icu_segmenter::LineBreakSegmenter::segment_latin1, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_latin1, FnInStruct)]
         pub fn segment_latin1<'a>(
             &'a self,
             input: &'a [u8],

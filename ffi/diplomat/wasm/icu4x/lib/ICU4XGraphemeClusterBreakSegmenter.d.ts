@@ -9,7 +9,7 @@ import { ICU4XGraphemeClusterBreakIteratorUtf8 } from "./ICU4XGraphemeClusterBre
 
  * An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints in strings.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html Rust documentation} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html Rust documentation} for more information.
  */
 export class ICU4XGraphemeClusterBreakSegmenter {
 
@@ -17,7 +17,7 @@ export class ICU4XGraphemeClusterBreakSegmenter {
 
    * Construct an {@link ICU4XGraphemeClusterBreakSegmenter `ICU4XGraphemeClusterBreakSegmenter`}.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.try_new Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.try_new Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(provider: ICU4XDataProvider): ICU4XGraphemeClusterBreakSegmenter | never;
