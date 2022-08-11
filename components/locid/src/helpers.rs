@@ -71,7 +71,6 @@ impl<T> ShortVec<T> {
         }
     }
 
-    #[inline]
     pub fn insert(&mut self, index: usize, elt: T) {
         assert!(
             index <= self.len(),
@@ -94,7 +93,6 @@ impl<T> ShortVec<T> {
         }
     }
 
-    #[inline]
     pub fn remove(&mut self, index: usize) -> T {
         assert!(
             index < self.len(),
@@ -103,24 +101,22 @@ impl<T> ShortVec<T> {
             self.len()
         );
 
-        let (replaced, maybe_removed_item) = match core::mem::replace(self, ShortVec::Empty) {
-            ShortVec::Empty => (ShortVec::Empty, None),
-            ShortVec::Single(v) => (ShortVec::Empty, Some(v)),
+        let (replaced, removed_item) = match core::mem::replace(self, ShortVec::Empty) {
+            ShortVec::Empty => unreachable!(),
+            ShortVec::Single(v) => (ShortVec::Empty, v),
             ShortVec::Multi(mut v) => {
                 let removed_item = v.remove(index);
                 match v.len() {
                     #[allow(clippy::unwrap_used)]
                     // we know that the vec has exactly one element left
-                    1 => (ShortVec::Single(v.pop().unwrap()), Some(removed_item)),
-                    // v has atleast 2 elements, create a Mutli variant
-                    _ => (ShortVec::Multi(v), Some(removed_item)),
+                    1 => (ShortVec::Single(v.pop().unwrap()), removed_item),
+                    // v has atleast 2 elements, create a Multi variant
+                    _ => (ShortVec::Multi(v), removed_item),
                 }
             }
         };
         *self = replaced;
-        #[allow(clippy::unwrap_used)]
-        // we know that the vec was non-empty so atleast one item must be removed
-        maybe_removed_item.unwrap()
+        removed_item
     }
 
     #[inline]
