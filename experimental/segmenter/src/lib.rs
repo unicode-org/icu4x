@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-// TODO: Document all exported types in this module
-// #![warn(missing_docs)]
-
 //! \[Experimental\] Segment strings by lines, graphemes, word, and sentences.
 //!
 //! This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
@@ -153,8 +150,6 @@ mod line;
 mod sentence;
 mod word;
 
-// icu_datagen uses provider, but we don't want to expose this implementation detail to the users.
-#[doc(hidden)]
 pub mod provider;
 
 // icu_datagen uses symbols, but we don't want to expose this implementation detail to the users.
