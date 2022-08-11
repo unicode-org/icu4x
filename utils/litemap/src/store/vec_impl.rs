@@ -19,6 +19,10 @@ fn map_f_mut<K, V>(input: &mut (K, V)) -> (&K, &mut V) {
     (&input.0, &mut input.1)
 }
 
+impl<K, V> StoreConstEmpty<K, V> for Vec<(K, V)> {
+    const EMPTY: Vec<(K, V)> = Vec::new();
+}
+
 impl<K, V> Store<K, V> for Vec<(K, V)> {
     #[inline]
     fn lm_len(&self) -> usize {

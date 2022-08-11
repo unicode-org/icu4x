@@ -20,9 +20,9 @@ use core::ops::{Index, IndexMut};
 #[derive(Clone, Debug, PartialEq, Eq, Hash, PartialOrd, Ord)]
 #[cfg_attr(feature = "yoke", derive(yoke::Yokeable))]
 pub struct LiteMap<K: ?Sized, V: ?Sized, S = alloc::vec::Vec<(K, V)>> {
-    pub values: S,
-    pub _key_type: PhantomData<K>,
-    pub _value_type: PhantomData<V>,
+    pub(crate) values: S,
+    pub(crate) _key_type: PhantomData<K>,
+    pub(crate) _value_type: PhantomData<V>,
 }
 
 impl<K, V> LiteMap<K, V> {
@@ -66,6 +66,20 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
     pub const fn from_sorted_slice_unchecked(values: &'a [(K, V)]) -> Self {
         Self {
             values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+}
+
+impl<K: ?Sized, V: ?Sized, S> LiteMap<K, V, S>
+where
+    S: StoreConstEmpty<K, V>,
+{
+    /// Create a new empty [`LiteMap`]
+    pub const fn new_empty() -> Self {
+        Self {
+            values: S::EMPTY,
             _key_type: PhantomData,
             _value_type: PhantomData,
         }

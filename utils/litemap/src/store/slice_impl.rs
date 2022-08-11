@@ -11,6 +11,10 @@ fn map_f<K, V>(input: &(K, V)) -> (&K, &V) {
     (&input.0, &input.1)
 }
 
+impl<'a, K: 'a, V: 'a> StoreConstEmpty<K, V> for &'a [(K, V)] {
+    const EMPTY: &'a [(K, V)] = &[];
+}
+
 impl<'a, K: 'a, V: 'a> Store<K, V> for &'a [(K, V)] {
     #[inline]
     fn lm_len(&self) -> usize {

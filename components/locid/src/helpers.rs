@@ -142,6 +142,10 @@ impl<T> Default for ShortVec<T> {
     }
 }
 
+impl<K, V> StoreConstEmpty<K, V> for ShortVec<(K, V)> {
+    const EMPTY: ShortVec<(K, V)> = ShortVec::Empty;
+}
+
 impl<K, V> Store<K, V> for ShortVec<(K, V)> {
     #[inline]
     fn lm_len(&self) -> usize {

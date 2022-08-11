@@ -32,6 +32,12 @@ use core::iter::DoubleEndedIterator;
 use core::iter::FromIterator;
 use core::iter::Iterator;
 
+/// Trait to enable const construction of empty store.
+pub trait StoreConstEmpty<K: ?Sized, V: ?Sized> {
+    /// An empty store
+    const EMPTY: Self;
+}
+
 /// Trait to enable pluggable backends for LiteMap.
 ///
 /// Some methods have default implementations provided for convenience; however, it is generally

@@ -5,7 +5,6 @@
 use core::borrow::Borrow;
 use core::cmp::Ordering;
 use core::iter::FromIterator;
-use core::marker::PhantomData;
 use litemap::LiteMap;
 
 use super::Key;
@@ -78,11 +77,7 @@ impl Keywords {
     /// ```
     #[inline]
     pub const fn new() -> Self {
-        Self(LiteMap {
-            values: ShortVec::Empty,
-            _key_type: PhantomData,
-            _value_type: PhantomData,
-        })
+        Self(LiteMap::new_empty())
     }
 
     /// Returns `true` if there are no keywords.
