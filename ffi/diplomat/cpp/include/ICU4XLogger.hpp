@@ -29,7 +29,8 @@ class ICU4XLogger {
 
   /**
    * Initialize the logger from the `simple_logger` crate, which simply logs to
-   * stdout. Returns `false` if there was already a logger set.
+   * stdout. Returns `false` if there was already a logger set, or if logging has not been
+   * compiled into the platform
    */
   static bool init_simple_logger();
   inline const capi::ICU4XLogger* AsFFI() const { return this->inner.get(); }
