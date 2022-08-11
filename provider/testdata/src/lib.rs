@@ -15,7 +15,9 @@
 //!   and the list of included locales.
 //!
 //! However, clients should not generally choose a specific provider, but rather use [`get_provider`].
-//! This is currently an alias for [`get_postcard_provider`], as it is fast and has few dependencies.
+//! This is currently a [`get_postcard_provider`] (which has the best trade-off between build and
+//! runtime performance for testing), with locale fallback enabled. There is also
+//! [`get_provider_no_fallback`] if locale fallback is not desired.
 //!
 //! # Re-generating the data
 //!
@@ -80,6 +82,7 @@ pub mod paths;
 
 #[cfg(feature = "static")]
 use {
+    icu_provider::serde::DeserializingBufferProvider, icu_provider::BufferProvider,
     icu_provider_adapters::fallback::LocaleFallbackProvider, icu_provider_blob::StaticDataProvider,
 };
 
@@ -97,7 +100,7 @@ use icu_provider_fs::FsDataProvider;
 // The function is documented to allow panics.
 #[allow(clippy::panic)]
 #[cfg(feature = "fs")]
-pub fn get_json_provider() -> FsDataProvider {
+pub fn get_json_provider() -> impl BufferProvider {
     lazy_static::lazy_static! {
         static ref JSON: FsDataProvider = {
             let path = match std::env::var_os("ICU4X_TESTDATA_DIR") {
@@ -132,14 +135,14 @@ lazy_static::lazy_static! {
 
 /// Get a data provider, loading from the statically initialized postcard blob.
 #[cfg(feature = "static")]
-pub fn get_postcard_provider() -> StaticDataProvider {
+pub fn get_postcard_provider() -> impl BufferProvider {
     *POSTCARD
 }
 
 /// Get a small data provider that only contains the `decimal/symbols@1[u-nu]` key
 /// for `en` and `bn`.
 #[cfg(feature = "static")]
-pub fn get_smaller_postcard_provider() -> StaticDataProvider {
+pub fn get_smaller_postcard_provider() -> impl BufferProvider {
     lazy_static::lazy_static! {
         static ref SMALLER_POSTCARD: StaticDataProvider = {
             // The statically compiled data file is valid.
@@ -166,11 +169,18 @@ pub fn get_baked_provider() -> BakedDataProvider {
     BakedDataProvider
 }
 
-/// Get a data provider loading from a statically initialized postcard blob
+/// Get a data provider deserializing from a statically initialized postcard blob
 /// with locale fallbacking enabled.
 #[cfg(feature = "static")]
-pub fn get_provider() -> LocaleFallbackProvider<StaticDataProvider> {
+pub fn get_provider(
+) -> LocaleFallbackProvider<DeserializingBufferProvider<'static, StaticDataProvider>> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new_unstable(*POSTCARD).unwrap()
+    LocaleFallbackProvider::try_new_unstable(get_provider_no_fallback()).unwrap()
+}
+
+/// Get a data provider deserializing from a statically initialized postcard blob
+#[cfg(feature = "static")]
+pub fn get_provider_no_fallback() -> DeserializingBufferProvider<'static, StaticDataProvider> {
+    icu_provider::AsDeserializingBufferProvider::as_deserializing(&POSTCARD)
 }

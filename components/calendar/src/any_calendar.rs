@@ -830,28 +830,22 @@ mod tests {
     fn test_any_construction() {
         let provider = icu_testdata::get_provider();
 
-        let buddhist =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Buddhist)
-                .expect("Calendar construction must succeed");
-        let coptic = AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Coptic)
+        let buddhist = AnyCalendar::try_new_unstable(&provider, AnyCalendarKind::Buddhist)
             .expect("Calendar construction must succeed");
-        let ethiopic =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethiopic)
-                .expect("Calendar construction must succeed");
-        let ethioaa =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethioaa)
-                .expect("Calendar construction must succeed");
-        let gregorian =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Gregorian)
-                .expect("Calendar construction must succeed");
-        let indian = AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Indian)
+        let coptic = AnyCalendar::try_new_unstable(&provider, AnyCalendarKind::Coptic)
             .expect("Calendar construction must succeed");
-        let japanese =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Japanese)
-                .expect("Calendar construction must succeed");
-        let japanext =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::JapaneseExtended)
-                .expect("Calendar construction must succeed");
+        let ethiopic = AnyCalendar::try_new_unstable(&provider, AnyCalendarKind::Ethiopic)
+            .expect("Calendar construction must succeed");
+        let ethioaa = AnyCalendar::try_new_unstable(&provider, AnyCalendarKind::Ethioaa)
+            .expect("Calendar construction must succeed");
+        let gregorian = AnyCalendar::try_new_unstable(&provider, AnyCalendarKind::Gregorian)
+            .expect("Calendar construction must succeed");
+        let indian = AnyCalendar::try_new_unstable(&provider, AnyCalendarKind::Indian)
+            .expect("Calendar construction must succeed");
+        let japanese = AnyCalendar::try_new_unstable(&provider, AnyCalendarKind::Japanese)
+            .expect("Calendar construction must succeed");
+        let japanext = AnyCalendar::try_new_unstable(&provider, AnyCalendarKind::JapaneseExtended)
+            .expect("Calendar construction must succeed");
         let buddhist = Ref(&buddhist);
         let coptic = Ref(&coptic);
         let ethiopic = Ref(&ethiopic);

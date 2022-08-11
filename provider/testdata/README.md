@@ -13,7 +13,9 @@ There are four modes of operation, enabled by features:
   and the list of included locales.
 
 However, clients should not generally choose a specific provider, but rather use [`get_provider`].
-This is currently an alias for [`get_postcard_provider`], as it is fast and has few dependencies.
+This is currently a [`get_postcard_provider`] (which has the best trade-off between build and
+runtime performance for testing), with locale fallback enabled. There is also
+[`get_provider_no_fallback`] if locale fallback is not desired.
 
 ## Re-generating the data
 

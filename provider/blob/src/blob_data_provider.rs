@@ -107,5 +107,3 @@ impl BufferProvider for BlobDataProvider {
         })
     }
 }
-
-icu_provider::impl_auto_deserializing!(BlobDataProvider);

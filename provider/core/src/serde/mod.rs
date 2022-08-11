@@ -138,45 +138,6 @@ where
     }
 }
 
-/// Implements [DataProvider] and [DynamicDataProvider] if [BufferProvider] is implemented.
-/// This allows dropping the call to `.as_deserializing()`.
-#[macro_export]
-macro_rules! impl_auto_deserializing {
-    ($buffer_provider: ty) => {
-        impl<M> DataProvider<M> for $buffer_provider
-        where
-            M: KeyedDataMarker,
-            // Actual bound:
-            //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-            // Necessary workaround bound (see `yoke::trait_hack` docs):
-            for<'de> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
-                serde::de::Deserialize<'de>,
-        {
-            fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-                self.as_deserializing().load(req)
-            }
-        }
-
-        impl<M> DynamicDataProvider<M> for $buffer_provider
-        where
-            M: DataMarker,
-            // Actual bound:
-            //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
-            // Necessary workaround bound (see `yoke::trait_hack` docs):
-            for<'de> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
-                serde::de::Deserialize<'de>,
-        {
-            fn load_data(
-                &self,
-                key: DataKey,
-                req: DataRequest,
-            ) -> Result<DataResponse<M>, DataError> {
-                self.as_deserializing().load_data(key, req)
-            }
-        }
-    };
-}
-
 #[cfg(feature = "serde_json")]
 impl From<serde_json::error::Error> for crate::DataError {
     fn from(e: serde_json::error::Error) -> Self {

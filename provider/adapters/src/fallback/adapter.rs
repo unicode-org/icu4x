@@ -16,9 +16,7 @@ use crate::helpers::result_is_err_missing_data_options;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
 ///
-/// // Note: icu_testdata::get_provider() is itself a LocaleFallbackProvider,
-/// // so we need to use icu_testdata::get_postcard_provider() instead.
-/// let provider = icu_testdata::get_postcard_provider();
+/// let provider = icu_testdata::get_provider_no_fallback();
 ///
 /// let req = DataRequest {
 ///     locale: &locale!("ja-JP").into(),

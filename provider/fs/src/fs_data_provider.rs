@@ -70,5 +70,3 @@ impl BufferProvider for FsDataProvider {
         })
     }
 }
-
-icu_provider::impl_auto_deserializing!(FsDataProvider);

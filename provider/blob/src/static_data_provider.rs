@@ -126,5 +126,3 @@ impl BufferProvider for StaticDataProvider {
         })
     }
 }
-
-icu_provider::impl_auto_deserializing!(StaticDataProvider);

@@ -33,8 +33,7 @@ fn test_static_load_works() {
 
 #[test]
 fn test_plural_rules_missing() {
-    // Use get_postcard_provider to skip vertical fallback
-    let provider = icu_testdata::get_postcard_provider();
+    let provider = icu_testdata::get_provider_no_fallback();
 
     let pr =
         PluralRules::try_new_unstable(&provider, &locale!("xx").into(), PluralRuleType::Cardinal);
