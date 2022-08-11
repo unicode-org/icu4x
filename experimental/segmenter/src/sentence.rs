@@ -21,7 +21,31 @@ pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, Sentenc
 pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf16>;
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string
-/// encodings. Please see the [module-level documentation](crate) for its usages.
+/// encodings.
+///
+/// # Examples
+///
+/// Segment a string:
+///
+/// ```rust
+/// use icu_segmenter::SentenceBreakSegmenter;
+/// let provider = icu_testdata::get_provider();
+/// let segmenter = SentenceBreakSegmenter::try_new(&provider).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// assert_eq!(&breakpoints, &[0, 11]);
+/// ```
+///
+/// Segment a Latin1 byte string:
+///
+/// ```rust
+/// use icu_segmenter::SentenceBreakSegmenter;
+/// let provider = icu_testdata::get_provider();
+/// let segmenter = SentenceBreakSegmenter::try_new(&provider).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// assert_eq!(&breakpoints, &[0, 11]);
+/// ```
 pub struct SentenceBreakSegmenter {
     payload: DataPayload<SentenceBreakDataV1Marker>,
     dictionary: Dictionary,

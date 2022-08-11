@@ -24,7 +24,31 @@ pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTy
 pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
 
 /// Supports loading word break data, and creating word break iterators for different string
-/// encodings. Please see the [module-level documentation](crate) for its usages.
+/// encodings.
+///
+/// # Examples
+///
+/// Segment a string:
+///
+/// ```rust
+/// use icu_segmenter::WordBreakSegmenter;
+/// let provider = icu_testdata::get_provider();
+/// let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
+/// ```
+///
+/// Segment a Latin1 byte string:
+///
+/// ```rust
+/// use icu_segmenter::WordBreakSegmenter;
+/// let provider = icu_testdata::get_provider();
+/// let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
+/// ```
 pub struct WordBreakSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
     dictionary: Dictionary,
