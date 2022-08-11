@@ -32,6 +32,7 @@ pub struct GraphemeClusterBreakSegmenter {
 }
 
 impl GraphemeClusterBreakSegmenter {
+    /// Construct a [`GraphemeClusterBreakSegmenter`].
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,

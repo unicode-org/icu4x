@@ -138,6 +138,7 @@
 //! ```
 
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
@@ -152,6 +153,8 @@ mod line;
 mod sentence;
 mod word;
 
+// icu_datagen uses provider, but we don't want to expose this implementation detail to the users.
+#[doc(hidden)]
 pub mod provider;
 
 // icu_datagen uses symbols, but we don't want to expose this implementation detail to the users.

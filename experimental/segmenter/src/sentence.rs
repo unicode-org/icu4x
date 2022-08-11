@@ -29,6 +29,7 @@ pub struct SentenceBreakSegmenter {
 }
 
 impl SentenceBreakSegmenter {
+    /// Construct a [`SentenceBreakSegmenter`].
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
         D: DataProvider<SentenceBreakDataV1Marker> + ?Sized,

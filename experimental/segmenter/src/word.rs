@@ -32,6 +32,7 @@ pub struct WordBreakSegmenter {
 }
 
 impl WordBreakSegmenter {
+    /// Construct a [`WordBreakSegmenter`].
     #[cfg(feature = "lstm")]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
@@ -72,6 +73,7 @@ impl WordBreakSegmenter {
         })
     }
 
+    /// Construct a [`WordBreakSegmenter`].
     #[cfg(not(feature = "lstm"))]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
