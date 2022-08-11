@@ -46,6 +46,10 @@ deserialize_bincode_1 = ["icu_capi/deserialize_bincode_1"]
 logging = ["icu_capi/logging"]
 simple_logger = ["icu_capi/simple_logger"]
 
+# meta feature for things we enable by default in C and C++
+# do not sync with other crates
+cpp_default = ["provider_test", "logging", "simple_logger"]
+
 # Enables size-optimized builds on x86_64
 x86tiny = ["dlmalloc"]
 
@@ -59,7 +63,8 @@ skip_optional_dependencies = true
 # x86tiny is not relevant in normal environments,
 # smaller_test gets tested on the FFI job anyway
 # logging enables a feature of a dependency that has no externally visible API changes
-denylist = ["bench", "x86tiny", "smaller_test", "internal_all_features_hack", "logging"]
+# cpp_default is a meta-feature
+denylist = ["bench", "x86tiny", "smaller_test", "internal_all_features_hack", "logging", "cpp_default"]
 
 # This cfg originates in dlmalloc/lib.rs
 [target.'cfg(any(target_os = "linux", target_os = "macos", target_arch = "wasm32"))'.dependencies]
