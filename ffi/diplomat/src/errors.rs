@@ -112,7 +112,7 @@ fn log_conversion<T: core::fmt::Display>(e: &T, ffi_error: ICU4XError) {
 
 #[cfg(not(feature = "logging"))]
 #[inline]
-fn log_conversion<T: Display>(_e: &T, _ffi_error: ICU4XError) {}
+fn log_conversion<T: core::fmt::Display>(_e: &T, _ffi_error: ICU4XError) {}
 
 impl From<fmt::Error> for ICU4XError {
     fn from(e: fmt::Error) -> Self {
