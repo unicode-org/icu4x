@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Data struct definitions for calendar-specific symbols and patterns.
+
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
 mod skeletons;
@@ -13,11 +15,15 @@ use icu_provider::{yoke, zerofrom};
 pub use skeletons::*;
 pub use symbols::*;
 
-#[icu_provider::data_struct(marker(
-    DateLengthsV1Marker,
-    "datetime/datelengths@1",
-    extension_key = "ca"
-))]
+#[icu_provider::data_struct(
+    marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
+    marker(BuddhistDateLengthsV1Marker, "datetime/buddhist/datelengths@1"),
+    marker(JapaneseDateLengthsV1Marker, "datetime/japanese/datelengths@1"),
+    marker(JapaneseExtendedDateLengthsV1Marker, "datetime/japanext/datelengths@1"),
+    marker(CopticDateLengthsV1Marker, "datetime/coptic/datelengths@1"),
+    marker(IndianDateLengthsV1Marker, "datetime/indian/datelengths@1"),
+    marker(EthiopicDateLengthsV1Marker, "datetime/ethiopic/datelengths@1")
+)]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -25,13 +31,19 @@ pub use symbols::*;
     databake(path = icu_datetime::provider::calendar),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct DatePatternsV1<'data> {
+pub struct DateLengthsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub date: patterns::LengthPatternsV1<'data>,
 
     /// Patterns used to combine date and time length patterns into full date_time patterns.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub length_combinations: patterns::GenericLengthPatternsV1<'data>,
+}
+
+pub(crate) struct ErasedDateLengthsV1Marker;
+
+impl DataMarker for ErasedDateLengthsV1Marker {
+    type Yokeable = DateLengthsV1<'static>;
 }
 
 #[icu_provider::data_struct(marker(TimeLengthsV1Marker, "datetime/timelengths@1",))]

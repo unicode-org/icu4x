@@ -7,10 +7,7 @@
 
 use crate::{
     options::{components, length, preferences, DateTimeFormatterOptions},
-    provider::calendar::{
-        DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-        TimeLengthsV1Marker, TimeSymbolsV1Marker,
-    },
+    provider::calendar::{DateSkeletonPatternsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker},
     provider::week_data::WeekDataV1Marker,
     raw,
 };
@@ -45,11 +42,10 @@ use crate::{
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let tf = TimeFormatter::try_new(
+/// let tf = TimeFormatter::try_new_with_buffer_provider(
 ///     &provider,
 ///     &locale!("en").into(),
 ///     Time::Short,
-///     None,
 /// )
 /// .expect("Failed to create TimeFormatter instance.");
 ///
@@ -77,22 +73,20 @@ impl TimeFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// TimeFormatter::try_new(
+    /// TimeFormatter::try_new_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     Time::Short,
-    ///     None,
     /// )
     /// .unwrap();
     /// ```
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<D>(
+    pub fn try_new_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         length: length::Time,
-        preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<TimeLengthsV1Marker>
@@ -100,6 +94,7 @@ impl TimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
+        let preferences = Some(preferences::Bag::from_data_locale(locale));
         let locale = locale.clone();
 
         Ok(Self(raw::TimeFormatter::try_new(
@@ -109,6 +104,12 @@ impl TimeFormatter {
             preferences,
         )?))
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        length: length::Time,
+        error: DateTimeFormatterError
+    );
 
     /// Takes a [`IsoTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
@@ -122,7 +123,7 @@ impl TimeFormatter {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short, None)
+    ///     TimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Time::Short)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -153,7 +154,7 @@ impl TimeFormatter {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short, None)
+    ///     TimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Time::Short)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -184,7 +185,7 @@ impl TimeFormatter {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// let tf =
-    ///     TimeFormatter::try_new(&provider, &locale.into(), Time::Short, None)
+    ///     TimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Time::Short)
     ///         .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -219,7 +220,7 @@ impl TimeFormatter {
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), length::Date::Full)
+/// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale!("en").into(), length::Date::Full)
 ///     .expect("Failed to create TypedDateFormatter instance.");
 ///
 /// let date = Date::new_gregorian_date(2020, 9, 1)
@@ -246,20 +247,20 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// TypedDateFormatter::<Gregorian>::try_new(&provider, &locale!("en").into(), length::Date::Full)
+    /// TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale!("en").into(), length::Date::Full)
     ///     .unwrap();
     /// ```
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<D>(
+    pub fn try_new_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
+        D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -267,14 +268,26 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
-        let mut locale = locale.clone();
+        let mut locale_with_cal = locale.clone();
 
-        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
+        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
         Ok(Self(
-            raw::DateFormatter::try_new(data_provider, locale, length)?,
+            raw::DateFormatter::try_new(
+                data_provider,
+                calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
+                locale_with_cal,
+                length,
+            )?,
             PhantomData,
         ))
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        length: length::Date,
+        error: DateTimeFormatterError
+    );
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
@@ -287,7 +300,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use writeable::assert_writeable_eq;
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Full)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), length::Date::Full)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let date = Date::new_gregorian_date(2020, 9, 1)
@@ -317,7 +330,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Short)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), length::Date::Short)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let date = Date::new_gregorian_date(2020, 9, 1)
@@ -347,7 +360,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(&provider, &locale.into(), length::Date::Short)
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), length::Date::Short)
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let date = Date::new_gregorian_date(2020, 9, 1)
@@ -388,10 +401,10 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 ///     length::Time::Short,
 /// );
 ///
-/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
+/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
 ///     &provider,
 ///     &locale!("en").into(),
-///     &options.into(),
+///     options.into(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
@@ -420,14 +433,13 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tf = TimeFormatter::try_new(
+    /// let tf = TimeFormatter::try_new_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     length::Time::Short,
-    ///     None,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
-    /// let df = TypedDateFormatter::<Gregorian>::try_new(
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     length::Date::Short,
@@ -464,25 +476,25 @@ where {
     ///
     /// let options = length::Bag::from_time_style(length::Time::Medium);
     ///
-    /// TypedDateTimeFormatter::<Gregorian>::try_new(
+    /// TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
-    ///     &options.into(),
+    ///     options.into(),
     /// )
     /// .unwrap();
     /// ```
     ///
     /// [data provider]: icu_provider
     #[inline]
-    pub fn try_new<D>(
+    pub fn try_new_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        D: DataProvider<DateSymbolsV1Marker>
+        D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
@@ -492,14 +504,26 @@ where {
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
-        let mut locale = locale.clone();
+        let mut locale_with_cal = locale.clone();
 
-        calendar::potentially_fixup_calendar::<C>(&mut locale)?;
+        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
         Ok(Self(
-            raw::DateTimeFormatter::try_new(data_provider, locale, options)?,
+            raw::DateTimeFormatter::try_new(
+                data_provider,
+                calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
+                locale_with_cal,
+                options,
+            )?,
             PhantomData,
         ))
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: DateTimeFormatterOptions,
+        error: DateTimeFormatterError
+    );
 
     /// Takes a [`DateTimeInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
@@ -513,7 +537,7 @@ where {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), &options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -544,7 +568,7 @@ where {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), &options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -575,7 +599,7 @@ where {
     /// # let locale = icu::locid::locale!("en");
     /// # let provider = icu_testdata::get_provider();
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(&provider, &locale.into(), &options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -606,10 +630,10 @@ where {
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new(
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
-    ///     &options,
+    ///     options,
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///

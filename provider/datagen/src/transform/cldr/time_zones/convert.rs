@@ -426,20 +426,24 @@ long_short_impls!(
     short_metazone_names
 );
 
+fn convert_cldr_time_variant(cldr_time_variant: &str) -> TimeVariant {
+    match cldr_time_variant {
+        "standard" => TimeVariant::standard(),
+        "daylight" => TimeVariant::daylight(),
+        _ => panic!(
+            "Time-zone variant was not compatible with TimeVariant: {}",
+            cldr_time_variant
+        ),
+    }
+}
+
 fn iterate_zone_format_for_meta_zone_id(
     pair: (MetaZoneId, ZoneFormat),
 ) -> impl Iterator<Item = (MetaZoneId, TimeVariant, String)> {
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .map(move |(key, value)| {
-            (
-                key1,
-                key.parse::<TimeVariant>()
-                    .expect("Time-zone variant was not compatible with TimeVariant"),
-                value,
-            )
-        })
+        .map(move |(key, value)| (key1, convert_cldr_time_variant(&key), value))
 }
 
 fn iterate_zone_format_for_time_zone_id(
@@ -448,14 +452,7 @@ fn iterate_zone_format_for_time_zone_id(
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .map(move |(key, value)| {
-            (
-                key1,
-                key.parse::<TimeVariant>()
-                    .expect("Time-zone variant was not compatible with TimeVariant"),
-                value,
-            )
-        })
+        .map(move |(key, value)| (key1, convert_cldr_time_variant(&key), value))
 }
 
 fn metazone_periods_iter(

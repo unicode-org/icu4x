@@ -11,10 +11,11 @@ use serde::{Deserialize, Serialize};
 /// Selection constants for Unicode properties.
 /// These constants are used to select one of the Unicode properties.
 /// See `UProperty` in ICU4C.
+#[allow(dead_code)] // Not currently used but seems like it could be useful
 #[derive(Clone, PartialEq, Debug)]
 #[non_exhaustive]
 #[repr(i32)]
-pub enum EnumeratedProperty {
+enum EnumeratedProperty {
     /// The Bidi_Class property.
     BidiClass = 0x1000,
     /// The Canonical_Combining_Class property.
@@ -328,10 +329,10 @@ impl GeneralCategoryGroup {
     ///
     /// ```
     /// use icu::properties::{maps, GeneralCategory, GeneralCategoryGroup};
-    /// use icu_codepointtrie::CodePointTrie;
+    /// use icu_collections::codepointtrie::CodePointTrie;
     ///
     /// let provider = icu_testdata::get_provider();
-    /// let data = maps::get_general_category(&provider).expect("The data should be valid");
+    /// let data = maps::load_general_category(&provider).expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
     /// assert_eq!(gc.get('A'), GeneralCategory::UppercaseLetter);

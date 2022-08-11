@@ -35,14 +35,14 @@ class ICU4XCodePointSetData {
   /**
    * Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.get_ascii_hex_digit.html) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_ascii_hex_digit.html) for more information.
    */
   static diplomat::result<ICU4XCodePointSetData, ICU4XError> try_get_ascii_hex_digit(const ICU4XDataProvider& provider);
 
   /**
    * Checks whether the code point is in the set.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/uniset/struct.CodePointSet.html#method.contains) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointinvlist/struct.CodePointSet.html#method.contains) for more information.
    */
   bool contains(char32_t cp) const;
   inline const capi::ICU4XCodePointSetData* AsFFI() const { return this->inner.get(); }

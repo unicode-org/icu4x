@@ -3,6 +3,8 @@ impl AnyProvider for BakedDataProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         const JAPANESEERASV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_calendar::provider::JapaneseErasV1Marker::KEY.get_hash();
+        const JAPANESEEXTENDEDERASV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY.get_hash();
         const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
         const COLLATIONDATAV1MARKER: ::icu_provider::DataKeyHash =
@@ -17,12 +19,36 @@ impl AnyProvider for BakedDataProvider {
             ::icu_collator::provider::CollationReorderingV1Marker::KEY.get_hash();
         const COLLATIONSPECIALPRIMARIESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.get_hash();
-        const DATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::DateLengthsV1Marker::KEY.get_hash();
+        const BUDDHISTDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY.get_hash();
+        const BUDDHISTDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker::KEY.get_hash();
+        const COPTICDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::CopticDateLengthsV1Marker::KEY.get_hash();
+        const COPTICDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY.get_hash();
         const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
-        const DATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY.get_hash();
+        const ETHIOPICDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker::KEY.get_hash();
+        const ETHIOPICDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker::KEY.get_hash();
+        const GREGORIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY.get_hash();
+        const GREGORIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY.get_hash();
+        const INDIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::IndianDateLengthsV1Marker::KEY.get_hash();
+        const INDIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker::KEY.get_hash();
+        const JAPANESEDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker::KEY.get_hash();
+        const JAPANESEDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker::KEY.get_hash();
+        const JAPANESEEXTENDEDDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker::KEY.get_hash();
+        const JAPANESEEXTENDEDDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker::KEY.get_hash();
         const TIMELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY.get_hash();
         const TIMESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
@@ -51,9 +77,9 @@ impl AnyProvider for BakedDataProvider {
         const UNITLISTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_list::provider::UnitListV1Marker::KEY.get_hash();
         const ALIASESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_locale_canonicalizer::provider::AliasesV1Marker::KEY.get_hash();
+            ::icu_locid_transform::provider::AliasesV1Marker::KEY.get_hash();
         const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_locale_canonicalizer::provider::LikelySubtagsV1Marker::KEY.get_hash();
+            ::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.get_hash();
         const CANONICALCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY.get_hash();
         const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
@@ -221,7 +247,10 @@ impl AnyProvider for BakedDataProvider {
             ::icu_timezone::provider::MetaZonePeriodV1Marker::KEY.get_hash();
         Ok(AnyResponse {
             payload: Some(match key.get_hash() {
-                JAPANESEERASV1MARKER => calendar::japanese_v1_u_ca::DATA
+                JAPANESEERASV1MARKER => calendar::japanese_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                JAPANESEEXTENDEDERASV1MARKER => calendar::japanext_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 CASEMAPPINGV1MARKER => props::casemap_v1::DATA
@@ -245,7 +274,16 @@ impl AnyProvider for BakedDataProvider {
                 COLLATIONSPECIALPRIMARIESV1MARKER => collator::prim_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                DATELENGTHSV1MARKER => datetime::datelengths_v1_u_ca::DATA
+                BUDDHISTDATELENGTHSV1MARKER => datetime::buddhist::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                BUDDHISTDATESYMBOLSV1MARKER => datetime::buddhist::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                COPTICDATELENGTHSV1MARKER => datetime::coptic::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                COPTICDATESYMBOLSV1MARKER => datetime::coptic::datesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1_u_ca::DATA
@@ -257,7 +295,34 @@ impl AnyProvider for BakedDataProvider {
                             zerofrom::ZeroFrom::zero_from(data),
                         )))
                     }),
-                DATESYMBOLSV1MARKER => datetime::datesymbols_v1_u_ca::DATA
+                ETHIOPICDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                ETHIOPICDATESYMBOLSV1MARKER => datetime::ethiopic::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                GREGORIANDATELENGTHSV1MARKER => datetime::gregory::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                GREGORIANDATESYMBOLSV1MARKER => datetime::gregory::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                INDIANDATELENGTHSV1MARKER => datetime::indian::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                INDIANDATESYMBOLSV1MARKER => datetime::indian::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                JAPANESEDATELENGTHSV1MARKER => datetime::japanese::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                JAPANESEDATESYMBOLSV1MARKER => datetime::japanese::datesymbols_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                JAPANESEEXTENDEDDATELENGTHSV1MARKER => datetime::japanext::datelengths_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
+                JAPANESEEXTENDEDDATESYMBOLSV1MARKER => datetime::japanext::datesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 TIMELENGTHSV1MARKER => datetime::timelengths_v1::DATA
@@ -299,10 +364,10 @@ impl AnyProvider for BakedDataProvider {
                 UNITLISTV1MARKER => list::unit_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                ALIASESV1MARKER => locale_canonicalizer::aliases_v1::DATA
+                ALIASESV1MARKER => locid_transform::aliases_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                LIKELYSUBTAGSV1MARKER => locale_canonicalizer::likelysubtags_v1::DATA
+                LIKELYSUBTAGSV1MARKER => locid_transform::likelysubtags_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 CANONICALCOMPOSITIONPASSTHROUGHV1MARKER => normalizer::nfc_v1::DATA

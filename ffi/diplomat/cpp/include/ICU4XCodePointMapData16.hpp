@@ -35,14 +35,14 @@ class ICU4XCodePointMapData16 {
   /**
    * Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.get_script.html) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData16, ICU4XError> try_get_script(const ICU4XDataProvider& provider);
 
   /**
    * Gets the value for a code point.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
    */
   uint16_t get(char32_t cp) const;
   inline const capi::ICU4XCodePointMapData16* AsFFI() const { return this->inner.get(); }

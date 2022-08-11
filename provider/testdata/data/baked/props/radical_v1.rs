@@ -6,7 +6,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
 static UND: &DataStruct =
     &::icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
         #[allow(unused_unsafe)]
-        ::icu_uniset::CodePointInversionList::from_parts_unchecked(
+        ::icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 46u8, 0u8, 0u8, 154u8, 46u8, 0u8, 0u8, 155u8, 46u8, 0u8, 0u8, 244u8,

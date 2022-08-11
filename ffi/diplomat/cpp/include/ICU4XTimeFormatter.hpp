@@ -14,7 +14,6 @@
 class ICU4XDataProvider;
 class ICU4XLocale;
 #include "ICU4XTimeLength.hpp"
-#include "ICU4XHourCyclePreference.hpp"
 class ICU4XTimeFormatter;
 #include "ICU4XError.hpp"
 class ICU4XGregorianDateTime;
@@ -39,9 +38,9 @@ class ICU4XTimeFormatter {
   /**
    * Creates a new [`ICU4XTimeFormatter`] from locale data.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length, ICU4XHourCyclePreference preferences);
+  static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length);
 
   /**
    * Formats a [`ICU4XGregorianDateTime`] to a string.
@@ -70,8 +69,8 @@ class ICU4XTimeFormatter {
 #include "ICU4XLocale.hpp"
 #include "ICU4XGregorianDateTime.hpp"
 
-inline diplomat::result<ICU4XTimeFormatter, ICU4XError> ICU4XTimeFormatter::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length, ICU4XHourCyclePreference preferences) {
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeFormatter_try_new(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XTimeLength>(length), static_cast<capi::ICU4XHourCyclePreference>(preferences));
+inline diplomat::result<ICU4XTimeFormatter, ICU4XError> ICU4XTimeFormatter::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeFormatter_try_new(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XTimeLength>(length));
   diplomat::result<ICU4XTimeFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XTimeFormatter>(std::move(ICU4XTimeFormatter(diplomat_result_raw_out_value.ok)));

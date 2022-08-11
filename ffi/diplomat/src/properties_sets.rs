@@ -18,20 +18,23 @@ pub mod ffi {
 
     impl ICU4XCodePointSetData {
         /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
-        #[diplomat::rust_link(icu::properties::sets::get_ascii_hex_digit, Fn)]
+        #[diplomat::rust_link(icu::properties::sets::load_ascii_hex_digit, Fn)]
         pub fn try_get_ascii_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            sets::get_ascii_hex_digit(&provider)
+            sets::load_ascii_hex_digit(&provider)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
         }
 
         /// Checks whether the code point is in the set.
-        #[diplomat::rust_link(icu::uniset::CodePointSet::contains, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::collections::codepointinvlist::CodePointSet::contains,
+            FnInStruct
+        )]
         pub fn contains(&self, cp: char) -> bool {
             self.0.as_borrowed().contains(cp)
         }

@@ -29,14 +29,10 @@ static AR_AR_EG: &DataStruct =
             ::zerovec::ZeroMap2d::from_parts_unchecked(
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[103u8, 117u8, 108u8, 102u8]) },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-                unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                    ])
-                },
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 71u8, 83u8, 84u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 71u8, 83u8, 84u8,
                     ])
                 },
             )
@@ -50,14 +46,10 @@ static AR_AR_EG: &DataStruct =
                     ])
                 },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-                unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                    ])
-                },
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
                     ])
                 },
             )
@@ -69,14 +61,10 @@ static BN_CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpec
         ::zerovec::ZeroMap2d::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[105u8, 110u8, 100u8, 105u8]) },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 73u8, 83u8, 84u8,
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 73u8, 83u8, 84u8,
                 ])
             },
         )
@@ -90,14 +78,10 @@ static BN_CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpec
                 ])
             },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
                 ])
             },
         )
@@ -123,30 +107,20 @@ static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
             },
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
-                    110u8, 100u8, 97u8, 114u8, 100u8, 100u8, 97u8, 121u8, 108u8, 105u8, 103u8,
-                    104u8, 116u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8, 100u8,
-                    97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8, 110u8,
-                    100u8, 97u8, 114u8, 100u8, 100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8,
-                    116u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8, 100u8, 97u8,
-                    121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8, 110u8, 100u8,
-                    97u8, 114u8, 100u8, 100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8,
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8, 100u8, 97u8, 121u8,
-                    108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8,
-                    114u8, 100u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
+                    100u8, 116u8, 115u8, 116u8, 100u8, 116u8, 115u8, 116u8, 100u8, 116u8, 115u8,
+                    116u8, 100u8, 116u8, 115u8, 116u8, 100u8, 116u8, 115u8, 116u8, 100u8, 116u8,
+                    115u8, 116u8, 100u8, 116u8, 115u8, 116u8, 115u8, 116u8,
                 ])
             },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    15u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 8u8, 0u8, 0u8,
-                    0u8, 11u8, 0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8, 17u8, 0u8, 0u8, 0u8, 20u8, 0u8,
-                    0u8, 0u8, 23u8, 0u8, 0u8, 0u8, 26u8, 0u8, 0u8, 0u8, 29u8, 0u8, 0u8, 0u8, 32u8,
-                    0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 38u8, 0u8, 0u8, 0u8, 42u8, 0u8, 0u8, 0u8,
-                    46u8, 0u8, 0u8, 0u8, 65u8, 75u8, 68u8, 84u8, 65u8, 75u8, 83u8, 84u8, 67u8,
-                    68u8, 84u8, 67u8, 83u8, 84u8, 69u8, 68u8, 84u8, 69u8, 83u8, 84u8, 77u8, 68u8,
-                    84u8, 77u8, 83u8, 84u8, 80u8, 68u8, 84u8, 80u8, 83u8, 84u8, 65u8, 68u8, 84u8,
-                    65u8, 83u8, 84u8, 72u8, 65u8, 68u8, 84u8, 72u8, 65u8, 83u8, 84u8, 71u8, 77u8,
-                    84u8,
+                    15u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 8u8, 0u8, 11u8, 0u8, 14u8, 0u8, 17u8,
+                    0u8, 20u8, 0u8, 23u8, 0u8, 26u8, 0u8, 29u8, 0u8, 32u8, 0u8, 35u8, 0u8, 38u8,
+                    0u8, 42u8, 0u8, 46u8, 0u8, 65u8, 75u8, 68u8, 84u8, 65u8, 75u8, 83u8, 84u8,
+                    67u8, 68u8, 84u8, 67u8, 83u8, 84u8, 69u8, 68u8, 84u8, 69u8, 83u8, 84u8, 77u8,
+                    68u8, 84u8, 77u8, 83u8, 84u8, 80u8, 68u8, 84u8, 80u8, 83u8, 84u8, 65u8, 68u8,
+                    84u8, 65u8, 83u8, 84u8, 72u8, 65u8, 68u8, 84u8, 72u8, 65u8, 83u8, 84u8, 71u8,
+                    77u8, 84u8,
                 ])
             },
         )
@@ -165,15 +139,13 @@ static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
             },
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
-                    110u8, 100u8, 97u8, 114u8, 100u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8,
-                    114u8, 100u8,
+                    100u8, 116u8, 115u8, 116u8, 115u8, 116u8,
                 ])
             },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 6u8, 0u8, 0u8, 0u8,
-                    72u8, 68u8, 84u8, 72u8, 83u8, 84u8, 85u8, 84u8, 67u8,
+                    3u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 6u8, 0u8, 72u8, 68u8, 84u8, 72u8, 83u8,
+                    84u8, 85u8, 84u8, 67u8,
                 ])
             },
         )
@@ -185,14 +157,10 @@ static EN_001: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpec
         ::zerovec::ZeroMap2d::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[109u8, 103u8, 109u8, 116u8]) },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 71u8, 77u8, 84u8,
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 71u8, 77u8, 84u8,
                 ])
             },
         )
@@ -206,14 +174,10 @@ static EN_001: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpec
                 ])
             },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
                 ])
             },
         )
@@ -237,19 +201,15 @@ static EN_ZA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
             },
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8, 115u8, 116u8, 97u8,
-                    110u8, 100u8, 97u8, 114u8, 100u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8,
-                    114u8, 100u8, 100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8,
-                    116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8, 115u8, 116u8, 97u8, 110u8,
-                    100u8, 97u8, 114u8, 100u8,
+                    115u8, 116u8, 115u8, 116u8, 115u8, 116u8, 100u8, 116u8, 115u8, 116u8, 115u8,
+                    116u8,
                 ])
             },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 6u8, 0u8, 0u8, 0u8,
-                    10u8, 0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8, 17u8, 0u8, 0u8, 0u8, 67u8, 65u8,
-                    84u8, 69u8, 65u8, 84u8, 83u8, 65u8, 83u8, 84u8, 87u8, 65u8, 83u8, 84u8, 87u8,
-                    65u8, 84u8, 71u8, 77u8, 84u8,
+                    6u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 6u8, 0u8, 10u8, 0u8, 14u8, 0u8, 17u8,
+                    0u8, 67u8, 65u8, 84u8, 69u8, 65u8, 84u8, 83u8, 65u8, 83u8, 84u8, 87u8, 65u8,
+                    83u8, 84u8, 87u8, 65u8, 84u8, 71u8, 77u8, 84u8,
                 ])
             },
         )
@@ -263,14 +223,10 @@ static EN_ZA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
                 ])
             },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
                 ])
             },
         )
@@ -290,16 +246,13 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
             },
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
-                    110u8, 100u8, 97u8, 114u8, 100u8, 100u8, 97u8, 121u8, 108u8, 105u8, 103u8,
-                    104u8, 116u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
+                    100u8, 116u8, 115u8, 116u8, 100u8, 116u8, 115u8, 116u8,
                 ])
             },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    4u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8, 0u8,
-                    12u8, 0u8, 0u8, 0u8, 65u8, 82u8, 83u8, 84u8, 65u8, 82u8, 84u8, 87u8, 65u8,
-                    82u8, 83u8, 84u8, 87u8, 65u8, 82u8, 84u8,
+                    4u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 7u8, 0u8, 12u8, 0u8, 65u8, 82u8, 83u8,
+                    84u8, 65u8, 82u8, 84u8, 87u8, 65u8, 82u8, 83u8, 84u8, 87u8, 65u8, 82u8, 84u8,
                 ])
             },
         )
@@ -313,14 +266,10 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
                 ])
             },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
                 ])
             },
         )
@@ -345,21 +294,16 @@ static ES_SR_SR_CYRL_SR_LATN: &DataStruct =
                 },
                 unsafe {
                     ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
-                        110u8, 100u8, 97u8, 114u8, 100u8, 100u8, 97u8, 121u8, 108u8, 105u8, 103u8,
-                        104u8, 116u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8, 100u8,
-                        97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8, 110u8,
-                        100u8, 97u8, 114u8, 100u8, 115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8,
-                        100u8,
+                        100u8, 116u8, 115u8, 116u8, 100u8, 116u8, 115u8, 116u8, 100u8, 116u8,
+                        115u8, 116u8, 115u8, 116u8,
                     ])
                 },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 0u8, 0u8, 7u8, 0u8, 0u8,
-                        0u8, 11u8, 0u8, 0u8, 0u8, 14u8, 0u8, 0u8, 0u8, 18u8, 0u8, 0u8, 0u8, 21u8,
-                        0u8, 0u8, 0u8, 67u8, 69u8, 83u8, 84u8, 67u8, 69u8, 84u8, 69u8, 69u8, 83u8,
-                        84u8, 69u8, 69u8, 84u8, 87u8, 69u8, 83u8, 84u8, 87u8, 69u8, 84u8, 71u8,
-                        77u8, 84u8,
+                        7u8, 0u8, 0u8, 0u8, 0u8, 0u8, 4u8, 0u8, 7u8, 0u8, 11u8, 0u8, 14u8, 0u8,
+                        18u8, 0u8, 21u8, 0u8, 67u8, 69u8, 83u8, 84u8, 67u8, 69u8, 84u8, 69u8, 69u8,
+                        83u8, 84u8, 69u8, 69u8, 84u8, 87u8, 69u8, 83u8, 84u8, 87u8, 69u8, 84u8,
+                        71u8, 77u8, 84u8,
                     ])
                 },
             )
@@ -373,14 +317,10 @@ static ES_SR_SR_CYRL_SR_LATN: &DataStruct =
                     ])
                 },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-                unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                    ])
-                },
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
                     ])
                 },
             )
@@ -406,14 +346,10 @@ static FIL_FR_RU_TH_TR_UND: &DataStruct =
                     ])
                 },
                 unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-                unsafe {
-                    ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                        115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                    ])
-                },
+                unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
                 unsafe {
                     ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                        1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
                     ])
                 },
             )
@@ -425,16 +361,10 @@ static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         ::zerovec::ZeroMap2d::from_parts_unchecked(
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[106u8, 97u8, 112u8, 97u8]) },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[2u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    100u8, 97u8, 121u8, 108u8, 105u8, 103u8, 104u8, 116u8, 115u8, 116u8, 97u8,
-                    110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[100u8, 116u8, 115u8, 116u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 0u8, 0u8, 74u8, 68u8, 84u8,
-                    74u8, 83u8, 84u8,
+                    2u8, 0u8, 0u8, 0u8, 0u8, 0u8, 3u8, 0u8, 74u8, 68u8, 84u8, 74u8, 83u8, 84u8,
                 ])
             },
         )
@@ -448,14 +378,10 @@ static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
                 ])
             },
             unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[1u8, 0u8, 0u8, 0u8]) },
-            unsafe {
-                ::zerovec::ZeroVec::from_bytes_unchecked(&[
-                    115u8, 116u8, 97u8, 110u8, 100u8, 97u8, 114u8, 100u8,
-                ])
-            },
+            unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[115u8, 116u8]) },
             unsafe {
                 ::zerovec::VarZeroVec::from_bytes_unchecked(&[
-                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
+                    1u8, 0u8, 0u8, 0u8, 0u8, 0u8, 85u8, 84u8, 67u8,
                 ])
             },
         )

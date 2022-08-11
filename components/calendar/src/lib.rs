@@ -168,6 +168,7 @@ pub mod julian;
 pub mod provider;
 pub mod types;
 
+pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
 pub use calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 pub use date::{AsCalendar, Date, Ref};

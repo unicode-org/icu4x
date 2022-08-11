@@ -21,10 +21,9 @@ use crate::provider::CollationMetadataV1Marker;
 use crate::provider::CollationReorderingV1Marker;
 use crate::provider::CollationSpecialPrimariesV1Marker;
 use crate::{AlternateHandling, CollatorOptions, MaxVariable, Strength};
-use alloc::string::ToString;
 use core::cmp::Ordering;
 use core::convert::TryFrom;
-use icu_locid::Locale;
+use icu_locid::extensions_unicode_value as value;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
@@ -73,9 +72,9 @@ pub struct Collator {
 
 impl Collator {
     /// Instantiates a collator for a given locale with the given options
-    pub fn try_new<T: Into<Locale>, D>(
+    pub fn try_new_unstable<D>(
         data_provider: &D,
-        locale: T,
+        locale: &DataLocale,
         options: CollatorOptions,
     ) -> Result<Self, CollatorError>
     where
@@ -90,7 +89,6 @@ impl Collator {
             + DataProvider<CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
-        // let locale: Locale = locale.into();
         let locale = {
             // Remove irrelevant extensions, i.e. everything but -u-co-.
             //
@@ -100,30 +98,24 @@ impl Collator {
             // the default, the code here that omits the explicit
             // variant if it matches the default should become
             // unnecessary.
-            let original_locale: Locale = locale.into();
-            let mut filtered_locale: Locale = original_locale.id.into();
+            let original_locale = locale;
+            let mut filtered_locale = alloc::borrow::Cow::Borrowed(locale);
 
             let key = icu_locid::extensions_unicode_key!("co");
-            if let Some(variant) = original_locale.extensions.unicode.keywords.get(&key) {
-                let s = variant.to_string();
-                let zh = filtered_locale.id.language == icu_locid::subtags_language!("zh");
-                let sv = filtered_locale.id.language == icu_locid::subtags_language!("sv");
+            if let Some(variant) = original_locale.get_unicode_ext(&key) {
+                let zh = filtered_locale.language() == icu_locid::subtags_language!("zh");
+                let sv = filtered_locale.language() == icu_locid::subtags_language!("sv");
                 // Omit the explicit collation variant if it is the default.
                 // "standard" is the default for all languages except zh and sv.
-                if !((!zh && !sv && s == "standard")
-                    || (zh && s == "pinyin")
-                    || (sv && s == "reformed"))
+                if !((!zh && !sv && variant == value!("standard"))
+                    || (zh && variant == value!("pinyin"))
+                    || (sv && variant == value!("reformed")))
                 {
-                    filtered_locale
-                        .extensions
-                        .unicode
-                        .keywords
-                        .set(key, variant.clone());
+                    filtered_locale.to_mut().set_unicode_ext(key, variant);
                 }
             }
             filtered_locale
         };
-        let locale = locale.into();
         let req = DataRequest {
             locale: &locale,
             metadata: Default::default(),
@@ -193,7 +185,7 @@ impl Collator {
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
 
-        let ccc = icu_properties::maps::get_canonical_combining_class(data_provider)?;
+        let ccc = icu_properties::maps::load_canonical_combining_class(data_provider)?;
 
         let mut altered_defaults = CollatorOptions::new();
 
@@ -239,6 +231,12 @@ impl Collator {
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: CollatorOptions,
+        error: CollatorError
+    );
 
     /// Compare potentially-invalid UTF-16 slices. Unpaired surrogates
     /// are compared as if each one was a REPLACEMENT CHARACTER.

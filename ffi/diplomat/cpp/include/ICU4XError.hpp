@@ -55,7 +55,9 @@ enum struct ICU4XError {
   /**
    * The locale or subtag string failed to parse
    */
-  LocaleParserError = 513,
+  LocaleParserLanguageError = 513,
+  LocaleParserSubtagError = 514,
+  LocaleParserExtensionError = 515,
 
   /**
    * Attempted to construct an invalid data struct
@@ -70,7 +72,10 @@ enum struct ICU4XError {
   DateTimeOverflowError = 1793,
   DateTimeUnderflowError = 1794,
   DateTimeOutOfRangeError = 1795,
-  DateTimeMissingInputError = 1796,
+  DateTimeUnknownEraError = 1796,
+  DateTimeUnknownMonthCodeError = 1797,
+  DateTimeMissingInputError = 1798,
+  DateTimeUnknownAnyCalendarKindError = 1799,
   DateTimeFormatPatternError = 2048,
   DateTimeFormatMissingInputFieldError = 2049,
   DateTimeFormatSkeletonError = 2050,

@@ -12,14 +12,14 @@
 
         Gets a map for Unicode property Script from a :cpp:class:`ICU4XDataProvider`.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.get_script.html>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html>`__ for more information.
 
 
     .. cpp:function:: uint16_t get(char32_t cp) const
 
         Gets the value for a code point.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointtrie/struct.CodePointTrie.html#method.get_u32>`__ for more information.
 
 
 .. cpp:struct:: ICU4XCodePointMapData16Response

@@ -45,7 +45,7 @@
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 //!
-//! let dtf = TypedDateTimeFormatter::try_new(&provider, &locale!("en").into(), &options)
+//! let dtf = TypedDateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("es").into(), options)
 //!     .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
 //! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
@@ -53,7 +53,7 @@
 //! let formatted_date = dtf.format(&date);
 //! assert_eq!(
 //!     formatted_date.to_string(),
-//!     "September 12, 2020 at 12:35:00 PM"
+//!     "12 de septiembre de 2020, 12:35:00"
 //! );
 //! ```
 //!
@@ -119,7 +119,7 @@ pub use icu_decimal as decimal;
 pub use icu_list as list;
 
 #[doc(inline)]
-pub use icu_locale_canonicalizer as locale_canonicalizer;
+pub use icu_locid_transform as locale_canonicalizer;
 
 #[doc(inline)]
 pub use icu_locid as locid;
@@ -132,6 +132,9 @@ pub use icu_plurals as plurals;
 
 #[doc(inline)]
 pub use icu_properties as properties;
+
+#[doc(inline)]
+pub use icu_collections as collections;
 
 #[cfg(feature = "experimental")]
 #[doc(inline)]

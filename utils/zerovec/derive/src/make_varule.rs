@@ -324,6 +324,7 @@ fn make_encode_impl(
     let last_encode_len = unsized_field_info.encode_len();
     let last_encode_write = unsized_field_info.encode_write(quote!(dst[#remaining_offset..]));
     quote!(
+        #[allow(clippy::indexing_slicing)] // known to be in range
         unsafe impl #maybe_lt_bound zerovec::ule::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
             // Safety: unimplemented as the other two are implemented
             fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
@@ -572,7 +573,8 @@ impl<'a> UnsizedFieldKind<'a> {
             that are Cow, ZeroVec, VarZeroVec, Box, String, or Vec";
         static PATH_TYPE_GENERICS_ERROR: &str =
             "Can only automatically detect corresponding VarULE types for path \
-            types with at most one lifetime and at most one generic parameter";
+            types with at most one lifetime and at most one generic parameter. VarZeroVecFormat
+            types are not currently supported";
         match *ty {
             Type::Reference(ref tyref) => OwnULETy::new(&tyref.elem, "reference").map(UnsizedFieldKind::Ref),
             Type::Path(ref typath) => {

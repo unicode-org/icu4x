@@ -20,7 +20,7 @@ toolchain = "nightly-2022-04-05"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
-args = ["wasm-build-release", "--package", "icu_capi_cdylib", "--features", "provider_test,smaller_test"]
+args = ["wasm-build-release", "--package", "icu_capi_cdylib", "--features", "provider_test"]
 
 [tasks.wasm-build-examples]
 description = "Build WASM examples into the target directory"

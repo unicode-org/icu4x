@@ -12,14 +12,14 @@
 
         Gets a map for Unicode property Script from a :js:class:`ICU4XDataProvider`.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.get_script.html>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html>`__ for more information.
 
 
     .. js:function:: get(cp)
 
         Gets the value for a code point.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointtrie/struct.CodePointTrie.html#method.get_u32>`__ for more information.
 
 
 .. js:class:: ICU4XCodePointMapData16Response

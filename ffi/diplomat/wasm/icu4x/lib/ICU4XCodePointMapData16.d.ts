@@ -15,7 +15,7 @@ export class ICU4XCodePointMapData16 {
 
    * Gets a map for Unicode property Script from a {@link ICU4XDataProvider `ICU4XDataProvider`}.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.get_script.html Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html Rust documentation} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_get_script(provider: ICU4XDataProvider): ICU4XCodePointMapData16 | never;
@@ -24,7 +24,7 @@ export class ICU4XCodePointMapData16 {
 
    * Gets the value for a code point.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32 Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointtrie/struct.CodePointTrie.html#method.get_u32 Rust documentation} for more information.
    */
   get(cp: char): u16;
 }

@@ -18,7 +18,6 @@ use crate::{
     pattern::{PatternError, PatternItem},
     provider::{self, calendar::patterns::PatternPluralsFromPatternsV1Marker},
 };
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
@@ -45,7 +44,7 @@ where
     Ok(())
 }
 
-/// [`TimeZoneFormatter`] uses data from the [data provider], the selected [`Locale`], and the provided
+/// [`TimeZoneFormatter`] uses data from the [data provider], the selected locale, and the provided
 /// [`TimeZoneFormatterConfig`] to collect all data necessary to format time zones into that locale.
 ///
 /// The various time-zone configs specified in UTS-35 require different sets of data for
@@ -65,11 +64,11 @@ where
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let tzf = TimeZoneFormatter::try_from_config(
-///     locale!("en"),
-///     TimeZoneFormatterConfig::GenericNonLocationLong,
+/// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
 ///     &provider,
-///     &TimeZoneFormatterOptions::default(),
+///     &locale!("en").into(),
+///     TimeZoneFormatterConfig::GenericNonLocationLong,
+///     TimeZoneFormatterOptions::default(),
 /// )
 /// .expect("Failed to create TimeZoneFormatter");
 ///
@@ -87,7 +86,7 @@ pub struct TimeZoneFormatter {
 }
 
 /// A container contains all data payloads for CustomTimeZone.
-pub struct TimeZoneDataPayloads {
+pub(super) struct TimeZoneDataPayloads {
     /// The data that contains meta information about how to display content.
     pub(super) zone_formats: DataPayload<provider::time_zones::TimeZoneFormatsV1Marker>,
     /// The exemplar cities for time zones.
@@ -110,9 +109,9 @@ impl TimeZoneFormatter {
     /// Constructor that selectively loads data based on what is required to
     /// format the given pattern into the given locale.
     pub(super) fn try_new<ZP>(
+        zone_provider: &ZP,
         locale: &DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
-        zone_provider: &ZP,
         options: &TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
@@ -350,23 +349,22 @@ impl TimeZoneFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_from_config(
-    ///     locale!("en"),
-    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    /// let tzf = TimeZoneFormatter::try_from_config_unstable(
     ///     &provider,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale!("en").into(),
+    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    ///     TimeZoneFormatterOptions::default(),
     /// );
     ///
     /// assert!(tzf.is_ok());
     /// ```
-    pub fn try_from_config<L, ZP>(
-        locale: L,
-        config: TimeZoneFormatterConfig,
+    pub fn try_from_config_unstable<ZP>(
         zone_provider: &ZP,
-        options: &TimeZoneFormatterOptions,
+        locale: &DataLocale,
+        config: TimeZoneFormatterConfig,
+        options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        L: Into<Locale>,
         ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
@@ -375,12 +373,11 @@ impl TimeZoneFormatter {
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
-        let locale = DataLocale::from(locale.into());
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
         let data_payloads = TimeZoneDataPayloads {
             zone_formats: zone_provider
                 .load(DataRequest {
-                    locale: &locale,
+                    locale,
                     metadata: Default::default(),
                 })?
                 .take_payload()?,
@@ -393,7 +390,7 @@ impl TimeZoneFormatter {
 
         let mut tz_format: TimeZoneFormatter = Self {
             data_payloads,
-            locale,
+            locale: locale.clone(),
             format_units,
             fallback_unit: TimeZoneFormatter::get_fallback_unit(options.fallback_format),
         };
@@ -423,6 +420,18 @@ impl TimeZoneFormatter {
         }
         Ok(tz_format)
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        config: TimeZoneFormatterConfig,
+        options: TimeZoneFormatterOptions,
+        error: DateTimeFormatterError,
+        functions: [
+            Self::try_from_config_unstable,
+            try_from_config_with_any_provider,
+            try_from_config_with_buffer_provider
+        ]
+    );
 
     /// Load generic non location long format for timezone. For example, Pacific Time.
     pub fn load_generic_non_location_long<ZP>(
@@ -608,11 +617,11 @@ impl TimeZoneFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_from_config(
-    ///     locale!("en"),
-    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
     ///     &provider,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale!("en").into(),
+    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
@@ -642,11 +651,11 @@ impl TimeZoneFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_from_config(
-    ///     locale!("en"),
-    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
     ///     &provider,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale!("en").into(),
+    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
@@ -677,11 +686,11 @@ impl TimeZoneFormatter {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_from_config(
-    ///     locale!("en"),
-    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
     ///     &provider,
-    ///     &TimeZoneFormatterOptions::default(),
+    ///     &locale!("en").into(),
+    ///     TimeZoneFormatterConfig::LocalizedGMT,
+    ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///

@@ -14,7 +14,7 @@ use icu::datetime::{
 };
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
-use icu_uniset::CodePointInversionListBuilder;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use std::env;
 
 fn print<T: AsRef<str>>(_input: T) {
@@ -46,14 +46,11 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     print(format!("User: {}", user_name));
 
     {
-        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new(
+        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+            &provider,
             &locale.into(),
-            &provider,
-            &provider,
-            &provider,
-            &provider,
-            &DateTimeFormatterOptions::default(),
-            &TimeZoneFormatterOptions::default(),
+            DateTimeFormatterOptions::default(),
+            TimeZoneFormatterOptions::default(),
         )
         .expect("Failed to create TypedDateTimeFormatter.");
         let (today_date, today_tz) =
@@ -80,7 +77,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(&provider, &locale!("en").into())
+        let pr = PluralRules::try_new_cardinal_unstable(&provider, &locale!("en").into())
             .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {

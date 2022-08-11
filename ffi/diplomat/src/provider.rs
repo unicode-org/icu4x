@@ -71,7 +71,7 @@ pub mod ffi {
         pub fn create_from_byte_slice(
             blob: &[u8],
         ) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
-            BlobDataProvider::new_from_blob(blob)
+            BlobDataProvider::try_new_from_blob(blob)
                 .map_err(Into::into)
                 .map(convert_provider)
                 .into()

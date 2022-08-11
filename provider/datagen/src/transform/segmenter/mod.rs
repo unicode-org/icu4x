@@ -4,8 +4,8 @@
 
 //! This module contains provider implementations backed by built-in segmentation data.
 
-use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_locid::{langid, locale};
 use icu_properties::{
     maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
@@ -237,28 +237,28 @@ impl crate::DatagenProvider {
                     .expect("DataKey format should be valid!")
             ))?;
 
-        let data = maps::get_word_break(self).expect("The data should be valid!");
+        let data = maps::load_word_break(self).expect("The data should be valid!");
         let wb = data.as_borrowed();
 
-        let data = maps::get_grapheme_cluster_break(self).expect("The data should be valid!");
+        let data = maps::load_grapheme_cluster_break(self).expect("The data should be valid!");
         let gb = data.as_borrowed();
 
-        let data = maps::get_sentence_break(self).expect("The data should be valid!");
+        let data = maps::load_sentence_break(self).expect("The data should be valid!");
         let sb = data.as_borrowed();
 
-        let data = maps::get_line_break(self).expect("The data should be valid!");
+        let data = maps::load_line_break(self).expect("The data should be valid!");
         let lb = data.as_borrowed();
 
-        let data = maps::get_east_asian_width(self).expect("The data should be valid!");
+        let data = maps::load_east_asian_width(self).expect("The data should be valid!");
         let eaw = data.as_borrowed();
 
-        let data = maps::get_general_category(self).expect("The data should be valid!");
+        let data = maps::load_general_category(self).expect("The data should be valid!");
         let gc = data.as_borrowed();
 
-        let data = maps::get_script(self).expect("The data should be valid");
+        let data = maps::load_script(self).expect("The data should be valid");
         let script = data.as_borrowed();
 
-        let data = sets::get_extended_pictographic(self).expect("The data should be valid!");
+        let data = sets::load_extended_pictographic(self).expect("The data should be valid!");
         let extended_pictographic = data.as_borrowed();
 
         // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are

@@ -82,7 +82,7 @@ fn load<M: KeyedDataMarker<Yokeable = ListFormatterPatternsV1<'static>>>(
         // Cannot cache this because it depends on `selff`. However we don't expect many Hebrew locales.
         let non_hebrew = StringMatcher::new(&format!(
             "[^{}]",
-            icu_properties::maps::get_script(selff)
+            icu_properties::maps::load_script(selff)
                 .map_err(|e| DataError::custom("data for CodePointTrie of Script")
                     .with_display_context(&e))?
                 .as_borrowed()
@@ -148,8 +148,8 @@ mod tests {
     macro_rules! test {
         ($locale:literal, $type:ident, $(($input:expr, $output:literal),)+) => {
             let f = ListFormatter::$type(
-                &locale!($locale).into(),
                 &crate::DatagenProvider::for_test(),
+                &locale!($locale).into(),
                 ListStyle::Wide
             ).unwrap();
             $(
@@ -160,14 +160,14 @@ mod tests {
 
     #[test]
     fn test_basic() {
-        test!("fr", try_new_or, (["A", "B"], "A ou B"),);
+        test!("fr", try_new_or_unstable, (["A", "B"], "A ou B"),);
     }
 
     #[test]
     fn test_spanish() {
         test!(
             "es",
-            try_new_and,
+            try_new_and_unstable,
             (["x", "Mallorca"], "x y Mallorca"),
             (["x", "Ibiza"], "x e Ibiza"),
             (["x", "Hidalgo"], "x e Hidalgo"),
@@ -176,7 +176,7 @@ mod tests {
 
         test!(
             "es",
-            try_new_or,
+            try_new_or_unstable,
             (["x", "Ibiza"], "x o Ibiza"),
             (["x", "Okinawa"], "x u Okinawa"),
             (["x", "8 más"], "x u 8 más"),
@@ -193,14 +193,14 @@ mod tests {
             (["x", "11.000,92"], "x u 11.000,92"),
         );
 
-        test!("es-AR", try_new_and, (["x", "Ibiza"], "x e Ibiza"),);
+        test!("es-AR", try_new_and_unstable, (["x", "Ibiza"], "x e Ibiza"),);
     }
 
     #[test]
     fn test_hebrew() {
         test!(
             "he",
-            try_new_and,
+            try_new_and_unstable,
             (["x", "יפו"], "x ויפו"),
             (["x", "Ibiza"], "x ו-Ibiza"),
         );

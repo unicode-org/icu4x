@@ -5,6 +5,7 @@
 use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
+use alloc::sync::Arc;
 use core::fmt;
 use core::ops::Deref;
 
@@ -28,6 +29,14 @@ impl<C: Calendar> AsCalendar for C {
 }
 
 impl<C: Calendar> AsCalendar for Rc<C> {
+    type Calendar = C;
+    #[inline]
+    fn as_calendar(&self) -> &C {
+        &*self
+    }
+}
+
+impl<C: Calendar> AsCalendar for Arc<C> {
     type Calendar = C;
     #[inline]
     fn as_calendar(&self) -> &C {

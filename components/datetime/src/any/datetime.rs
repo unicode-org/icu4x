@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
+    calendar,
     options::{components, DateTimeFormatterOptions},
     raw, DateFormatter, TimeFormatter,
 };
@@ -12,16 +13,10 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 
 use icu_provider::prelude::*;
 
-use crate::provider::{
-    calendar::{
-        DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
-        TimeLengthsV1Marker, TimeSymbolsV1Marker,
-    },
-    week_data::WeekDataV1Marker,
-};
+use crate::provider::{calendar::*, week_data::WeekDataV1Marker};
 use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
@@ -51,7 +46,7 @@ use icu_provider::DataLocale;
 ///
 /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), &options.into())
+/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), options.into())
 ///     .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -60,6 +55,53 @@ use icu_provider::DataLocale;
 ///
 /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
 /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
+/// ```
+///
+/// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu_calendar::DateTime) with [`AnyCalendar`]
+/// to have a date in a runtime-selected calendar:
+///
+/// ```
+/// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, types::Time};
+/// use icu::datetime::{options::length, DateTimeFormatter};
+/// use icu::locid::Locale;
+/// # use std::str::FromStr;
+/// # use std::rc::Rc;
+/// # use std::convert::TryInto;
+///
+/// let provider = icu_testdata::get_provider();
+///
+/// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
+///
+/// let calendar = AnyCalendar::try_new_with_buffer_provider(&provider, (&locale).try_into().unwrap())
+///                    .expect("constructing AnyCalendar failed");
+/// let calendar = Rc::new(calendar); // Avoid cloning it
+///
+///
+/// // manually construct a datetime in this calendar
+/// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
+/// // construct from era code, year, month code, day, time, and a calendar
+/// // This is March 28, 15 Heisei
+/// let manual_datetime = DateTime::new_from_codes("heisei".parse().unwrap(), 15, "M03".parse().unwrap(), 28,
+///                                                manual_time, calendar.clone())
+///                     .expect("Failed to construct DateTime manually");
+///
+///
+/// // construct another datetime by converting from ISO
+/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+///     .expect("Failed to construct ISO DateTime.");
+/// let iso_converted = iso_datetime.to_calendar(calendar);
+///
+///
+/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+///
+/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
+///     .expect("Failed to create TypedDateTimeFormatter instance.");
+///
+/// let manual_value = dtf.format_to_string(&manual_datetime).expect("calendars should match");
+/// assert_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
+///
+/// let converted_value = dtf.format_to_string(&iso_converted).expect("calendars should match");
+/// assert_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -82,7 +124,7 @@ impl DateTimeFormatter {
     pub fn try_new_with_any_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: AnyProvider,
@@ -115,7 +157,7 @@ impl DateTimeFormatter {
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), &options.into())
+    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -130,7 +172,7 @@ impl DateTimeFormatter {
     pub fn try_new_with_buffer_provider<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: BufferProvider,
@@ -160,7 +202,7 @@ impl DateTimeFormatter {
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), &options.into())
+    /// let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -174,41 +216,60 @@ impl DateTimeFormatter {
     pub fn try_new_unstable<P>(
         data_provider: &P,
         locale: &DataLocale,
-        options: &DateTimeFormatterOptions,
+        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        P: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
+        P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<GregorianDateLengthsV1Marker>
+            + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<JapaneseDateLengthsV1Marker>
+            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+            + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<GregorianDateSymbolsV1Marker>
+            + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<JapaneseDateSymbolsV1Marker>
+            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+            + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<EthiopicDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
         // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
         // separately into the raw formatter.
-        let mut locale = locale.clone();
+        let mut locale_with_cal = locale.clone();
 
         // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Some(kind) = AnyCalendarKind::from_data_locale(&locale) {
+        let kind = if let Ok(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
             kind
         } else {
-            locale.set_unicode_ext(key!("ca"), value!("gregory"));
+            locale_with_cal.set_unicode_ext(key!("ca"), value!("gregory"));
             AnyCalendarKind::Gregorian
         };
 
         // We share data under ethiopic
         if kind == AnyCalendarKind::Ethioaa {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+            locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
 
-        let calendar = AnyCalendar::try_new_unstable(kind, data_provider)?;
+        let calendar = AnyCalendar::try_new_unstable(data_provider, kind)?;
 
         Ok(Self(
-            raw::DateTimeFormatter::try_new(data_provider, locale, options)?,
+            raw::DateTimeFormatter::try_new(
+                data_provider,
+                calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
+                || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
+                locale_with_cal,
+                options,
+            )?,
             calendar,
         ))
     }
@@ -233,11 +294,10 @@ impl DateTimeFormatter {
     /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let tf = TimeFormatter::try_new(
+    /// let tf = TimeFormatter::try_new_with_buffer_provider(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     length::Time::Short,
-    ///     None,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
     ///
@@ -344,7 +404,7 @@ where {
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     ///     &provider,
     ///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
-    ///     &options
+    ///     options
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///

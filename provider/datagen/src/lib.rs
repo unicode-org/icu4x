@@ -105,6 +105,12 @@ impl DatagenProvider {
     }
 }
 
+impl AnyProvider for DatagenProvider {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.as_any_provider().load_any(key, req)
+    }
+}
+
 /// Parses a list of human-readable key identifiers and returns a
 /// list of [`DataKey`]s.
 ///
@@ -346,10 +352,16 @@ pub fn datagen(
 #[test]
 fn test_keys() {
     assert_eq!(
-        keys(&["list/and@1", "datetime/datelengths@1[u-ca]", "trash",]),
+        keys(&[
+            "list/and@1",
+            "datetime/gregory/datelengths@1",
+            "datetime/skeletons@1[u-ca]",
+            "trash",
+        ]),
         vec![
             icu_list::provider::AndListV1Marker::KEY,
-            icu_datetime::provider::calendar::DateLengthsV1Marker::KEY,
+            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
         ]
     );
 }
@@ -362,10 +374,10 @@ fn test_keys_from_file() {
         )
         .unwrap(),
         vec![
-            icu_datetime::provider::calendar::DateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
-            icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
             icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
@@ -382,10 +394,10 @@ fn test_keys_from_bin() {
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),
         vec![
-            icu_datetime::provider::calendar::DateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
-            icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,

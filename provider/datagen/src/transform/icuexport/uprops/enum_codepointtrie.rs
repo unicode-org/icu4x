@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::SourceData;
-use icu_codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::provider::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
@@ -71,7 +71,7 @@ expand!(
 #[cfg(test)]
 mod tests {
     use super::*;
-    use icu_codepointtrie::CodePointTrie;
+    use icu_collections::codepointtrie::CodePointTrie;
     use icu_properties::provider::{
         GeneralCategoryV1Marker, PropertyCodePointMapV1, ScriptV1Marker,
     };

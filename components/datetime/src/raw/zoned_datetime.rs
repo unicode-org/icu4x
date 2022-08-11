@@ -24,7 +24,7 @@ use crate::{
     provider::{
         self,
         calendar::{
-            DateLengthsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker,
+            DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker,
             TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
@@ -48,41 +48,38 @@ impl ZonedDateTimeFormatter {
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
-    pub fn try_new<DP, ZP, PP, DEP>(
+    pub fn try_new<P>(
+        provider: &P,
+        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
-        date_provider: &DP,
-        zone_provider: &ZP,
-        plural_provider: &PP,
-        decimal_provider: &DEP,
-        date_time_format_options: &DateTimeFormatterOptions,
-        time_zone_format_options: &TimeZoneFormatterOptions,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
-        DP: DataProvider<DateSymbolsV1Marker>
-            + DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<DateLengthsV1Marker>
+        P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
             + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
-            + ?Sized,
-        ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
             + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
             + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
-        PP: DataProvider<OrdinalV1Marker> + ?Sized,
-        DEP: DataProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
         if locale.get_unicode_ext(&key!("ca")) == Some(value!("ethioaa")) {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
 
         let patterns = provider::date_time::PatternSelector::for_options(
-            date_provider,
+            provider,
+            patterns_data,
             &locale,
-            date_time_format_options,
+            &date_time_format_options,
         )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
@@ -93,25 +90,25 @@ impl ZonedDateTimeFormatter {
         };
 
         let week_data = if required.week_data {
-            Some(date_provider.load(req)?.take_payload()?)
+            Some(provider.load(req)?.take_payload()?)
         } else {
             None
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(plural_provider, &locale)?)
+            Some(PluralRules::try_new_ordinal_unstable(provider, &locale)?)
         } else {
             None
         };
 
         let date_symbols_data = if required.date_symbols_data {
-            Some(date_provider.load(req)?.take_payload()?)
+            Some(symbols_data_fn()?)
         } else {
             None
         };
 
         let time_symbols_data = if required.time_symbols_data {
-            Some(date_provider.load(req)?.take_payload()?)
+            Some(provider.load(req)?.take_payload()?)
         } else {
             None
         };
@@ -119,9 +116,12 @@ impl ZonedDateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new(decimal_provider, &locale, fixed_decimal_format_options)
-                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            provider,
+            &locale,
+            fixed_decimal_format_options,
+        )
+        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
             locale,
@@ -134,13 +134,13 @@ impl ZonedDateTimeFormatter {
         );
 
         let time_zone_format = TimeZoneFormatter::try_new(
+            provider,
             &datetime_format.locale,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns
                 .clone(),
-            zone_provider,
-            time_zone_format_options,
+            &time_zone_format_options,
         )?;
 
         Ok(Self {
