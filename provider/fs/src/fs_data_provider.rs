@@ -19,7 +19,7 @@ use writeable::Writeable;
 /// let provider = FsDataProvider::try_new("/path/to/data/directory")
 ///     .expect_err("Specify a real directory in the line above");
 /// ```
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FsDataProvider {
     root: PathBuf,
     manifest: Manifest,
