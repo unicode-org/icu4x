@@ -33,6 +33,10 @@ use zerovec::ZeroSlice;
 
 use crate::provider::CollationDataV1;
 
+/// Marker that a complex decomposition isn't round-trippable
+/// under re-composition.
+const NON_ROUND_TRIP_MARKER: u16 = 1;
+
 /// Marker value for U+FDFA in NFKD
 const FDFA_MARKER: u16 = 3;
 
@@ -1072,7 +1076,7 @@ where
         } else {
             let trail_or_complex = (decomposition >> 16) as u16;
             let lead = decomposition as u16;
-            if lead != 0 && trail_or_complex != 0 {
+            if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
                 // Decomposition into two BMP characters: starter and non-starter
                 self.upcoming.push(
                     CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(char_from_u16(
@@ -1086,7 +1090,7 @@ where
                         low_c, trie_value,
                     ),
                 );
-            } else if lead != 0 {
+            } else if lead > NON_ROUND_TRIP_MARKER {
                 debug_assert_ne!(
                     lead, FDFA_MARKER,
                     "How come U+FDFA NFKD marker seen in NFD?"
@@ -1373,7 +1377,7 @@ where
                 } else {
                     let trail_or_complex = (decomposition >> 16) as u16;
                     let lead = decomposition as u16;
-                    if lead != 0 && trail_or_complex != 0 {
+                    if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
                         c = char_from_u16(lead);
                         ce32 = data.ce32_for_char(c);
@@ -1436,7 +1440,7 @@ where
                         }
                         combining_characters
                             .push(CharacterAndClass::new_with_placeholder(combining));
-                    } else if lead != 0 {
+                    } else if lead > NON_ROUND_TRIP_MARKER {
                         debug_assert_ne!(lead, 1, "How come U+FDFA NFKD marker seen in NFD?");
                         debug_assert_ne!(lead, 2, "How come non-starter marker seen here?");
                         // Decomposition into one BMP character

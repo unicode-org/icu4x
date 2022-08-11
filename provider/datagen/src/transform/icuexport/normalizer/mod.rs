@@ -111,29 +111,6 @@ macro_rules! normalization_tables_provider {
     };
 }
 
-macro_rules! normalization_passthrough_provider {
-    ($marker:ident, $file_name:literal) => {
-        normalization_provider!(
-            $marker,
-            CompositionPassthrough,
-            $file_name,
-            {
-                let trie = CodePointTrie::<u8>::try_from(&toml_data.trie)
-                    .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
-
-                Ok(DataResponse {
-                    metadata: DataResponseMetadata::default(),
-                    payload: Some(DataPayload::from_owned(CompositionPassthroughV1 {
-                        first: toml_data.first,
-                        trie,
-                    })),
-                })
-            },
-            toml_data // simply matches the identifier in the above block
-        );
-    };
-}
-
 macro_rules! normalization_canonical_compositions_provider {
     ($marker:ident, $file_name:literal) => {
         normalization_provider!(
@@ -198,38 +175,6 @@ normalization_tables_provider!(CanonicalDecompositionTablesV1Marker, "nfdex");
 normalization_tables_provider!(CompatibilityDecompositionTablesV1Marker, "nfkdex");
 
 // No uts46dex, because that data is also in nfkdex.
-
-normalization_passthrough_provider!(
-    CanonicalCompositionPassthroughV1Marker,
-    // nfkc.toml is close enough that we could provide an option
-    // to use nfkc.toml here so that it would get deduplicated
-    // with the meant-for-NFKC case below for data size at the
-    // expense of pessimizing the performance for the characters
-    // that have compatibility decompositions that matter for
-    // NFKC but that could be passed through in NFC.
-    // This optimization only makes sense if the application
-    // is known to use both NFC and NFKC, and it's likely
-    // enough for an app to want NFC and for it to be maximally
-    // performant that it doesn't make sense to default to
-    // this size optimization.
-    "nfc"
-);
-
-normalization_passthrough_provider!(
-    CompatibilityCompositionPassthroughV1Marker,
-    // To get a smaller size at the expense of performance,
-    // we could provide an option to pass "passthroughnop"
-    // here.
-    "nfkc"
-);
-
-normalization_passthrough_provider!(
-    Uts46CompositionPassthroughV1Marker,
-    // To get a smaller size at the expense of performance,
-    // we could provide an option to pass "passthroughnop"
-    // here.
-    "uts46"
-);
 
 normalization_canonical_compositions_provider!(CanonicalCompositionsV1Marker, "compositions");
 

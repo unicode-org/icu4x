@@ -86,17 +86,12 @@ use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
-use provider::CanonicalCompositionPassthroughV1Marker;
 use provider::CanonicalCompositionsV1Marker;
 use provider::CanonicalDecompositionTablesV1Marker;
-use provider::CompatibilityCompositionPassthroughV1Marker;
 use provider::CompatibilityDecompositionTablesV1Marker;
-use provider::CompositionPassthroughV1;
 use provider::DecompositionSupplementV1;
 use provider::DecompositionTablesV1;
 use provider::NonRecursiveDecompositionSupplementV1Marker;
-#[cfg(any(test, feature = "experimental"))]
-use provider::Uts46CompositionPassthroughV1Marker;
 use smallvec::SmallVec;
 use u24::EMPTY_U24;
 use u24::U24;
@@ -105,30 +100,6 @@ use utf8_iter::Utf8CharsEx;
 use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
-
-/// Wrapper around trie to get the needed set semantics.
-struct PassthroughSet<'data> {
-    trie: &'data CodePointTrie<'data, u8>,
-}
-
-impl<'data> PassthroughSet<'data> {
-    /// Constructor
-    pub fn new(trie: &'data CodePointTrie<'data, u8>) -> Self {
-        Self { trie }
-    }
-    /// Lookup by scalar value
-    pub fn contains(&self, c: char) -> bool {
-        self.contains_u32(u32::from(c))
-    }
-    /// Lookup by code point
-    pub fn contains_u32(&self, u: u32) -> bool {
-        let head = u >> 3;
-        let tail = (u & 0b111) as u8;
-        let trie_val = self.trie.get(head);
-        // Bit 1 means not passthrough
-        (trie_val & (1 << tail)) == 0
-    }
-}
 
 enum SupplementPayloadHolder {
     Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
@@ -146,24 +117,6 @@ impl SupplementPayloadHolder {
     }
 }
 
-enum PassthroughPayloadHolder {
-    Canonical(DataPayload<CanonicalCompositionPassthroughV1Marker>),
-    Compatibility(DataPayload<CompatibilityCompositionPassthroughV1Marker>),
-    #[cfg(any(test, feature = "experimental"))]
-    Uts46(DataPayload<Uts46CompositionPassthroughV1Marker>),
-}
-
-impl PassthroughPayloadHolder {
-    fn get(&self) -> &CompositionPassthroughV1 {
-        match self {
-            PassthroughPayloadHolder::Canonical(d) => d.get(),
-            PassthroughPayloadHolder::Compatibility(d) => d.get(),
-            #[cfg(any(test, feature = "experimental"))]
-            PassthroughPayloadHolder::Uts46(d) => d.get(),
-        }
-    }
-}
-
 /// Marker for starters that decompose to themselves but may
 /// combine backwards under canonical composition.
 /// (Main trie only; not used in the supplementary trie.)
@@ -176,6 +129,10 @@ const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER: u32 = 2;
 
 /// `u16` version of the previous marker value.
 const SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16: u16 = 2;
+
+/// Marker that a complex decomposition isn't round-trippable
+/// under re-composition.
+const NON_ROUND_TRIP_MARKER: u16 = 1;
 
 /// Checks if a trie value carries a (non-zero) canonical
 /// combining class.
@@ -324,6 +281,11 @@ fn in_inclusive_range32(u: u32, start: u32, end: u32) -> bool {
     u.wrapping_sub(start) <= (end - start)
 }
 
+#[inline(always)]
+fn in_inclusive_range16(u: u16, start: u16, end: u16) -> bool {
+    u.wrapping_sub(start) <= (end - start)
+}
+
 /// Performs canonical composition (including Hangul) on a pair of
 /// characters or returns `None` if these characters don't compose.
 /// Composition exclusions are taken into account.
@@ -422,6 +384,51 @@ impl CharacterAndTrieValue {
             || self.trie_val == BACKWARD_COMBINING_STARTER_MARKER
             || in_inclusive_range32(self.trie_val, 0x1161, 0x11C2)
     }
+    #[inline(always)]
+    pub fn potential_passthrough(&self) -> bool {
+        // This methods looks badly branchy, but most characters
+        // take the first return.
+        if self.trie_val <= BACKWARD_COMBINING_STARTER_MARKER {
+            return true;
+        }
+        if self.from_supplement {
+            return false;
+        }
+        let trail_or_complex = (self.trie_val >> 16) as u16;
+        if trail_or_complex == 0 {
+            return false;
+        }
+        let lead = self.trie_val as u16;
+        if lead == 0 {
+            return true;
+        }
+        if lead == NON_ROUND_TRIP_MARKER {
+            return false;
+        }
+        if (trail_or_complex & 0x7F) == 0x3C
+            && in_inclusive_range16(trail_or_complex, 0x0900, 0x0BFF)
+        {
+            // Nukta
+            return false;
+        }
+        if in_inclusive_range(self.character, '\u{FB1D}', '\u{FB4E}') {
+            // Hebrew presentation forms
+            return false;
+        }
+        if in_inclusive_range(self.character, '\u{1F71}', '\u{1FFB}') {
+            // Polytonic Greek with oxia
+            return false;
+        }
+        // To avoid more branchiness, 4 characters that decompose to
+        // a BMP starter followed by a BMP non-starter are excluded
+        // from being encoded directly into the trie value and are
+        // handled as complex decompositions instead. These are:
+        // U+0F76 TIBETAN VOWEL SIGN VOCALIC R
+        // U+0F78 TIBETAN VOWEL SIGN VOCALIC L
+        // U+212B ANGSTROM SIGN
+        // U+2ADC FORKING
+        true
+    }
 }
 
 /// Pack a `char` and a `CanonicalCombiningClass` in
@@ -479,22 +486,6 @@ impl CharacterAndClass {
 
 // This function exists as a borrow check helper.
 #[inline(always)]
-fn assign_ccc_and_sort_combining(
-    slice: &mut [CharacterAndClass],
-    combining_start: usize,
-    trie: &CodePointTrie<u32>,
-) {
-    slice
-        .iter_mut()
-        .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(trie));
-    // Slicing succeeds by construction; we've always ensured that `combining_start`
-    // is in permissible range.
-    #[allow(clippy::indexing_slicing)]
-    slice[combining_start..].sort_by_key(|cc| cc.ccc());
-}
-
-// This function exists as a borrow check helper.
-#[inline(always)]
 fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrie<u32>) {
     // We don't look up the canonical combining class for starters
     // of for single combining characters between starters. When
@@ -535,35 +526,6 @@ where
     supplementary_scalars24: &'data ZeroSlice<U24>,
     half_width_voicing_marks_become_non_starters: bool,
     iota_subscript_becomes_starter: bool,
-    /// This set is only used when this `Decomposition` is used inside `Composition`.
-    /// Therefore, when this `is_some()`, other things should take `Composition`-specific
-    /// actions and when this `is_none()`, `Decomposition`-only optimizations may be
-    /// taken.
-    ///
-    /// Whether `Decomposition`-only mode vs. inside-`Composition` mode should be
-    /// a compile-time specialization instead of an `Option` discriminant is a topic
-    /// to be revisited.
-    ///
-    /// As for the semantics of the set itself:
-    /// In order to have to check each character only from one set in the
-    /// best case, this set combines both the characteristic that a starter
-    /// maps to itself if not followed by something that combines backwards
-    /// and the characteristic that the character is a starter that never
-    /// combines backwards. Therefore, if both the current character and the
-    /// next character are in this set, it is OK for `Composition` to pass
-    /// the current character through.
-    ///
-    /// Membership in this set is an optimization, so it's always valid to
-    /// omit some characters from this set. As a consequence, multiple
-    /// normalization forms whose sets are similar may use the intersection
-    /// of their exact sets in order to need to store only the intersection.
-    potential_passthrough_and_not_backward_combining: Option<PassthroughSet<'data>>,
-    /// The character in `pending` is a in the
-    /// `potential_passthrough_and_not_backward_combining` set.
-    /// This flag is meaningful only when `pending.is_some()` and
-    /// `potential_passthrough_and_not_backward_combining.is_some()`.
-    /// That is, this flag is only used in the inside-`Composition` mode.
-    pending_is_potential_passthrough_and_not_backward_combining: bool,
 }
 
 impl<'data, I> Decomposition<'data, I>
@@ -585,7 +547,7 @@ where
         decompositions: &'data DecompositionDataV1,
         tables: &'data DecompositionTablesV1,
     ) -> Self {
-        Self::new_with_supplements(delegate, decompositions, None, tables, None, None)
+        Self::new_with_supplements(delegate, decompositions, None, tables, None)
     }
 
     /// Constructs a decomposing iterator adapter from a delegate
@@ -600,7 +562,6 @@ where
         supplementary_decompositions: Option<&'data DecompositionSupplementV1>,
         tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
-        potential_passthrough_and_not_backward_combining: Option<PassthroughSet<'data>>,
     ) -> Self {
         let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
             if let Some(supplementary) = supplementary_decompositions {
@@ -634,8 +595,6 @@ where
             },
             half_width_voicing_marks_become_non_starters,
             iota_subscript_becomes_starter,
-            potential_passthrough_and_not_backward_combining,
-            pending_is_potential_passthrough_and_not_backward_combining: true, // U+FFFF
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
         ret
@@ -740,9 +699,7 @@ where
 
     fn delegate_next(&mut self) -> Option<CharacterAndTrieValue> {
         if let Some(pending) = self.pending.take() {
-            debug_assert!(self
-                .potential_passthrough_and_not_backward_combining
-                .is_some());
+            // only happens as part of `Composition`
             Some(pending)
         } else {
             self.delegate_next_no_pending()
@@ -761,14 +718,14 @@ where
                 } else {
                     let trail_or_complex = (decomposition >> 16) as u16;
                     let lead = decomposition as u16;
-                    if lead != 0 && trail_or_complex != 0 {
+                    if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
                         // Decomposition into two BMP characters: starter and non-starter
                         let starter = char_from_u16(lead);
                         let combining = char_from_u16(trail_or_complex);
                         self.buffer
                             .push(CharacterAndClass::new_with_placeholder(combining));
                         (starter, 0)
-                    } else if lead != 0 {
+                    } else if lead > NON_ROUND_TRIP_MARKER {
                         if lead != FDFA_MARKER {
                             debug_assert_ne!(
                                 lead, SPECIAL_NON_STARTER_DECOMPOSITION_MARKER_U16,
@@ -860,11 +817,8 @@ where
                 }
             }
         };
-        debug_assert!(
-            self.potential_passthrough_and_not_backward_combining
-                .is_some()
-                || self.pending.is_none()
-        );
+        // Either we're inside `Composition` or `self.pending.is_none()`.
+
         // Not a `for` loop to avoid holding a mutable reference to `self` across
         // the loop body.
         while let Some(ch_and_trie_val) = self.delegate_next() {
@@ -928,30 +882,14 @@ where
                 };
                 self.buffer.push(mapped);
             } else {
-                if let Some(set) = self
-                    .potential_passthrough_and_not_backward_combining
-                    .as_ref()
-                {
-                    self.pending_is_potential_passthrough_and_not_backward_combining =
-                        set.contains(ch_and_trie_val.character)
-                }
                 self.pending = Some(ch_and_trie_val);
                 break;
             }
         }
-        if self
-            .potential_passthrough_and_not_backward_combining
-            .is_some()
-        {
-            // As part of `Composition`, we have to compute the canonical combining
-            // class for every character in `buffer`.
-            assign_ccc_and_sort_combining(&mut self.buffer[..], combining_start, self.trie);
-        } else {
-            // Slicing succeeds by construction; we've always ensured that `combining_start`
-            // is in permissible range.
-            #[allow(clippy::indexing_slicing)]
-            sort_slice_by_ccc(&mut self.buffer[combining_start..], self.trie);
-        }
+        // Slicing succeeds by construction; we've always ensured that `combining_start`
+        // is in permissible range.
+        #[allow(clippy::indexing_slicing)]
+        sort_slice_by_ccc(&mut self.buffer[combining_start..], self.trie);
         starter
     }
 }
@@ -1070,11 +1008,7 @@ where
                 }
                 debug_assert_eq!(self.decomposition.buffer_pos, 0);
                 undecomposed_starter = self.decomposition.pending.take()?;
-                // We're checking the "potential passthrough aspect"
-                if self
-                    .decomposition
-                    .pending_is_potential_passthrough_and_not_backward_combining
-                {
+                if undecomposed_starter.potential_passthrough() {
                     // Attribute belongs on inner expression, but
                     // https://github.com/rust-lang/rust/issues/15701
                     #[allow(clippy::unwrap_used)]
@@ -1088,13 +1022,6 @@ where
                         // `potential_passthrough_and_not_backward_combining.is_some()` whenever
                         // `Decomposition` is inside `Composition`.
                         let can_combine_backwards = upcoming.can_combine_backwards();
-                        self.decomposition
-                            .pending_is_potential_passthrough_and_not_backward_combining = self
-                            .decomposition
-                            .potential_passthrough_and_not_backward_combining
-                            .as_ref()
-                            .unwrap()
-                            .contains(upcoming.character);
                         self.decomposition.pending = Some(upcoming);
                         if !can_combine_backwards {
                             // Fast-track succeeded!
@@ -1209,9 +1136,7 @@ where
                 // Note that this check has to happen _after_ checking that `pending`
                 // holds a character, because this flag isn't defined to be meaningful
                 // when `pending` isn't holding a character.
-                if self
-                    .decomposition
-                    .pending_is_potential_passthrough_and_not_backward_combining
+                if !self.decomposition.pending.as_ref().unwrap().can_combine_backwards()
                 {
                     // Won't combine backwards anyway.
                     return Some(starter);
@@ -1509,7 +1434,6 @@ impl DecomposingNormalizer {
             self.supplementary_decompositions.as_ref().map(|s| s.get()),
             self.tables.get(),
             self.supplementary_tables.as_ref().map(|s| s.get()),
-            None,
         )
     }
 
@@ -1520,7 +1444,6 @@ impl DecomposingNormalizer {
 pub struct ComposingNormalizer {
     decomposing_normalizer: DecomposingNormalizer,
     canonical_compositions: DataPayload<CanonicalCompositionsV1Marker>,
-    potential_passthrough_and_not_backward_combining: PassthroughPayloadHolder,
 }
 
 impl ComposingNormalizer {
@@ -1530,23 +1453,16 @@ impl ComposingNormalizer {
         D: DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
-            + DataProvider<CanonicalCompositionPassthroughV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfd_unstable(data_provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
-        let potential_passthrough_and_not_backward_combining: DataPayload<
-            CanonicalCompositionPassthroughV1Marker,
-        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
             canonical_compositions,
-            potential_passthrough_and_not_backward_combining: PassthroughPayloadHolder::Canonical(
-                potential_passthrough_and_not_backward_combining,
-            ),
         })
     }
 
@@ -1569,24 +1485,16 @@ impl ComposingNormalizer {
             + DataProvider<CanonicalDecompositionTablesV1Marker>
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             + DataProvider<CanonicalCompositionsV1Marker>
-            + DataProvider<CompatibilityCompositionPassthroughV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer = DecomposingNormalizer::try_new_nfkd_unstable(data_provider)?;
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
-        let potential_passthrough_and_not_backward_combining: DataPayload<
-            CompatibilityCompositionPassthroughV1Marker,
-        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
             canonical_compositions,
-            potential_passthrough_and_not_backward_combining:
-                PassthroughPayloadHolder::Compatibility(
-                    potential_passthrough_and_not_backward_combining,
-                ),
         })
     }
 
@@ -1635,7 +1543,6 @@ impl ComposingNormalizer {
             + DataProvider<CompatibilityDecompositionTablesV1Marker>
             // UTS 46 tables merged into CompatibilityDecompositionTablesV1Marker
             + DataProvider<CanonicalCompositionsV1Marker>
-            + DataProvider<Uts46CompositionPassthroughV1Marker>
             + ?Sized,
     {
         let decomposing_normalizer =
@@ -1645,16 +1552,10 @@ impl ComposingNormalizer {
 
         let canonical_compositions: DataPayload<CanonicalCompositionsV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
-        let potential_passthrough_and_not_backward_combining: DataPayload<
-            Uts46CompositionPassthroughV1Marker,
-        > = data_provider.load(Default::default())?.take_payload()?;
 
         Ok(ComposingNormalizer {
             decomposing_normalizer,
             canonical_compositions,
-            potential_passthrough_and_not_backward_combining: PassthroughPayloadHolder::Uts46(
-                potential_passthrough_and_not_backward_combining,
-            ),
         })
     }
 
@@ -1686,12 +1587,6 @@ impl ComposingNormalizer {
                     .supplementary_tables
                     .as_ref()
                     .map(|s| s.get()),
-                Some(PassthroughSet::new(
-                    &self
-                        .potential_passthrough_and_not_backward_combining
-                        .get()
-                        .trie,
-                )),
             ),
             ZeroFrom::zero_from(&self.canonical_compositions.get().canonical_compositions),
         )
@@ -1833,19 +1728,16 @@ impl CanonicalDecomposition {
         loop {
             let trail_or_complex = (decomposition >> 16) as u16;
             let lead = decomposition as u16;
-            if lead != 0 && trail_or_complex != 0 {
+            if lead > NON_ROUND_TRIP_MARKER && trail_or_complex != 0 {
                 // Decomposition into two BMP characters: starter and non-starter
                 if in_inclusive_range(c, '\u{1F71}', '\u{1FFB}') {
                     // Look in the other trie due to oxia singleton
                     // mappings to corresponding character with tonos.
                     break;
-                } else if c == '\u{212B}' {
-                    // ANGSTROM SIGN
-                    return Decomposed::Singleton('\u{00C5}');
                 }
                 return Decomposed::Expansion(char_from_u16(lead), char_from_u16(trail_or_complex));
             }
-            if lead != 0 {
+            if lead > NON_ROUND_TRIP_MARKER {
                 // Decomposition into one BMP character or non-starter
                 debug_assert_ne!(
                     lead, FDFA_MARKER,
@@ -1889,6 +1781,13 @@ impl CanonicalDecomposition {
                     };
                 }
                 return Decomposed::Singleton(char_from_u16(lead));
+            }
+            // The recursive decomposition of ANGSTROM SIGN is in the complex
+            // decomposition structure to avoid a branch in `potential_passthrough`
+            // for the BMP case.
+            if c == '\u{212B}' {
+                // ANGSTROM SIGN
+                return Decomposed::Singleton('\u{00C5}');
             }
             // Complex decomposition
             // Format for 16-bit value:
