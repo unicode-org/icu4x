@@ -19,8 +19,7 @@ use litemap::LiteMap;
 //     "datetime/skeletons@1",
 //     extension_key = "ca"
 // ))]
-#[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
-#[derive(Debug, PartialEq, Clone, Default)]
+#[derive(yoke::Yokeable, zerofrom::ZeroFrom, Debug, PartialEq, Clone, Default)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DateSkeletonPatternsV1<'data>(

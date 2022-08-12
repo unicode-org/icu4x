@@ -145,7 +145,9 @@ where
         locale: &'a DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        debug_assert!(locale.get_unicode_ext(&icu_locid::extensions_unicode_key!("ca")).is_some());
+        debug_assert!(locale
+            .get_unicode_ext(&icu_locid::extensions_unicode_key!("ca"))
+            .is_some());
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,
@@ -227,7 +229,9 @@ where
         locale: &'a DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        debug_assert!(locale.get_unicode_ext(&icu_locid::extensions_unicode_key!("ca")).is_some());
+        debug_assert!(locale
+            .get_unicode_ext(&icu_locid::extensions_unicode_key!("ca"))
+            .is_some());
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,

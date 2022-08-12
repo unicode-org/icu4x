@@ -183,7 +183,7 @@ fn assert_fixture_element<A, D>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
-    D: BufferProvider
+    D: BufferProvider,
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
@@ -198,7 +198,8 @@ fn assert_fixture_element<A, D>(
     assert_eq!(result, output_value, "{}", description);
 
     let any_dtf =
-        DateTimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), options.clone()).unwrap();
+        DateTimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), options.clone())
+            .unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
@@ -231,8 +232,12 @@ fn assert_fixture_element<A, D>(
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), bag.time.unwrap())
-                .unwrap();
+            let tf = TimeFormatter::try_new_with_buffer_provider(
+                provider,
+                &locale.into(),
+                bag.time.unwrap(),
+            )
+            .unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
             let result = dtf.format_to_string(input_value);
@@ -273,8 +278,12 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), bag.time.unwrap())
-                .unwrap();
+            let tf = TimeFormatter::try_new_with_buffer_provider(
+                provider,
+                &locale.into(),
+                bag.time.unwrap(),
+            )
+            .unwrap();
 
             let result = tf.format_to_string(input_value);
 
