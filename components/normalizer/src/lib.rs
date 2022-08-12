@@ -1946,5 +1946,59 @@ impl CanonicalDecomposition {
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
 }
 
+/// Lookup of the Canonical_Combining_Class Unicode property.
+///
+/// # Example
+///
+/// ```
+/// use icu_properties::CanonicalCombiningClass;
+/// use icu_normalizer::CanonicalCombiningClassMap;
+///
+/// let provider = icu_testdata::get_provider();
+/// let map = CanonicalCombiningClassMap::try_new_unstable(&provider).unwrap();
+/// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
+/// assert_eq!(map.get_u32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+/// ```
+pub struct CanonicalCombiningClassMap {
+    /// The data trie
+    decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
+}
+
+impl CanonicalCombiningClassMap {
+    /// Look up the canonical combining class for a scalar value
+    #[inline(always)]
+    pub fn get(&self, c: char) -> CanonicalCombiningClass {
+        self.get_u32(u32::from(c))
+    }
+
+    /// Look up the canonical combining class for a scalar value
+    /// represented as `u32`. If the argument is outside the scaler
+    /// value range, `CanonicalCombiningClass::NotReordered` is returned.
+    pub fn get_u32(&self, c: u32) -> CanonicalCombiningClass {
+        let trie_value = self.decompositions.get().trie.get(c);
+        if trie_value_has_ccc(trie_value) {
+            CanonicalCombiningClass(trie_value as u8)
+        } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {
+            match c {
+                0x0340 | 0x0341 | 0x0343 | 0x0344 => CanonicalCombiningClass::Above,
+                _ => CanonicalCombiningClass::NotReordered,
+            }
+        } else {
+            CanonicalCombiningClass::NotReordered
+        }
+    }
+
+    /// Construct from data provider.
+    pub fn try_new_unstable<D>(data_provider: &D) -> Result<Self, NormalizerError>
+    where
+        D: DataProvider<CanonicalDecompositionDataV1Marker> + ?Sized,
+    {
+        let decompositions: DataPayload<CanonicalDecompositionDataV1Marker> =
+            data_provider.load(Default::default())?.take_payload()?;
+        Ok(CanonicalCombiningClassMap { decompositions })
+    }
+
+    icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
+}
 #[cfg(all(test, feature = "serde"))]
 mod tests;

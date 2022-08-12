@@ -2,6 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::CanonicalCombiningClassMap;
 use crate::CanonicalComposition;
 use crate::CanonicalDecomposition;
 use crate::ComposingNormalizer;
@@ -25,8 +26,7 @@ fn test_nfd_basic() {
     assert_eq!(normalizer.normalize("ﬁ"), "ﬁ"); // ligature unchanged
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{FDFA}"); // ligature unchanged
     assert_eq!(normalizer.normalize("㈎"), "㈎"); // parenthetical unchanged
-                                                  // Iota subscript
-    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}");
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
 }
 
 #[test]
@@ -47,8 +47,7 @@ fn test_nfkd_basic() {
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{635}\u{644}\u{649} \u{627}\u{644}\u{644}\u{647} \u{639}\u{644}\u{64A}\u{647} \u{648}\u{633}\u{644}\u{645}");
     // ligature expanded
     assert_eq!(normalizer.normalize("㈎"), "(\u{1100}\u{1161})"); // parenthetical expanded
-                                                                  // Iota subscript
-    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}");
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
 }
 
 #[test]
@@ -101,8 +100,7 @@ fn test_nfc_basic() {
     assert_eq!(normalizer.normalize("ﬁ"), "ﬁ"); // ligature unchanged
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{FDFA}"); // ligature unchanged
     assert_eq!(normalizer.normalize("㈎"), "㈎"); // parenthetical unchanged
-                                                  // Iota subscript
-    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}");
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
 }
 
 #[test]
@@ -124,8 +122,7 @@ fn test_nfkc_basic() {
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
     // ligature expanded
     assert_eq!(normalizer.normalize("㈎"), "(가)"); // parenthetical expanded and partially recomposed
-                                                    // Iota subscript
-    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}");
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}"); // Iota subscript
 }
 
 #[test]
@@ -550,4 +547,15 @@ fn test_canonical_decomposition() {
         decomp.decompose('ά'),
         Decomposed::Expansion('α', '\u{0301}')
     ); // tonos
+}
+
+#[test]
+fn test_ccc() {
+    let data_provider = icu_testdata::get_provider();
+    let map = CanonicalCombiningClassMap::try_new_unstable(&data_provider).unwrap();
+    let props = icu_properties::maps::load_canonical_combining_class(&data_provider).unwrap();
+    let sb = props.as_borrowed();
+    for u in 0..=0x10FFFF {
+        assert_eq!(map.get_u32(u), sb.get_u32(u));
+    }
 }

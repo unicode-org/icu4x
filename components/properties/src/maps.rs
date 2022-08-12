@@ -470,6 +470,9 @@ make_map_property! {
     /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].
     ///
+    /// See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
+    /// to look up the Canonical_Combining_Class property by scalar value.
+    ///
     /// # Example
     ///
     /// ```
