@@ -461,46 +461,16 @@ impl AnyCalendar {
         })
     }
 
-    /// Constructs an AnyCalendar for a given locale and [`AnyProvider`] data source.
-    ///
-    /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
-    /// calendar for the locale, falling back to gregorian.
-    ///
-    /// For calendars that need data, will attempt to load the appropriate data from the source.
-    ///
-    /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
-    pub fn try_new_for_locale_with_any_provider<P>(
-        provider: &P,
-        locale: &DataLocale,
-    ) -> Result<Self, DataError>
-    where
-        P: AnyProvider + ?Sized,
-    {
-        let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
-        Self::try_new_with_any_provider(provider, kind)
-    }
-
-    /// Constructs an AnyCalendar for a given calendar kind and [`BufferProvider`] data source
-    ///
-    /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
-    /// calendar for the locale, falling back to gregorian.
-    ///
-    /// For calendars that need data, will attempt to load the appropriate data from the source.
-    ///
-    /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
-    ///
-    /// This needs the `"serde"` feature to be enabled to be used
-    #[cfg(feature = "serde")]
-    pub fn try_new_for_locale_with_buffer_provider<P>(
-        provider: &P,
-        locale: &DataLocale,
-    ) -> Result<Self, DataError>
-    where
-        P: BufferProvider + ?Sized,
-    {
-        let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
-        Self::try_new_with_buffer_provider(provider, kind)
-    }
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: skip,
+        error: DataError,
+        functions: [
+            Self::try_new_for_locale_unstable,
+            try_new_for_locale_with_any_provider,
+            try_new_for_locale_with_buffer_provider
+        ]
+    );
 
     /// Constructs an AnyCalendar for a given calendar kind and data source.
     ///
