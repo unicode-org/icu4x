@@ -6,14 +6,14 @@
 
 #![allow(missing_docs)] // TODO(#686) - Add missing docs.
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "experimental_skeleton_matching")]
 mod skeletons;
 mod symbols;
 
 use crate::pattern;
 use icu_provider::prelude::*;
 use icu_provider::{yoke, zerofrom};
-#[cfg(feature = "experimental")]
+#[cfg(feature = "experimental_skeleton_matching")]
 pub use skeletons::*;
 pub use symbols::*;
 

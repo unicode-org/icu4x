@@ -72,9 +72,12 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = []
 bench = ["serde"]
-experimental = []
+# experimental_skeleton_matching is the minimal set of skeleton features required for datagen.
+experimental_skeleton_matching = []
+# experimental is the full set of skeleton and component APIs.
+experimental = ["experimental_skeleton_matching"]
 serde = ["dep:serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serde", "icu_decimal/serde", "icu_provider/serde", "icu_plurals/serde", "icu_timezone/serde"]
-datagen = ["serde", "icu_calendar/datagen", "icu_timezone/datagen", "icu_provider/datagen", "std", "databake"]
+datagen = ["serde", "experimental_skeleton_matching", "icu_calendar/datagen", "icu_timezone/datagen", "icu_provider/datagen", "std", "databake"]
 
 [[bench]]
 name = "datetime"

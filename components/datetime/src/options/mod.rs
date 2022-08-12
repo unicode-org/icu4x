@@ -23,7 +23,7 @@
 //! At the moment only the [`length::Bag`] works, and we plan to extend that to support
 //! `ECMA402`-like components bag later.
 
-#[cfg(feature = "experimental")]
+#[cfg(feature = "experimental_skeleton_matching")]
 pub mod components;
 pub mod length;
 pub mod preferences;

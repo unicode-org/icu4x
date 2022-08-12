@@ -14,7 +14,6 @@ use std::collections::HashSet;
 use std::str::FromStr;
 
 mod patterns;
-#[cfg(feature = "experimental")]
 mod skeletons;
 mod symbols;
 pub mod week_data;

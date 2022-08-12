@@ -120,7 +120,7 @@ pub mod provider;
 pub(crate) mod raw;
 #[doc(hidden)]
 #[allow(clippy::exhaustive_structs, clippy::exhaustive_enums)] // private-ish module
-#[cfg(feature = "experimental")]
+#[cfg(feature = "experimental_skeleton_matching")]
 pub mod skeleton;
 #[allow(missing_docs)] // TODO(#686) - Add missing docs.
 pub mod time_zone;
