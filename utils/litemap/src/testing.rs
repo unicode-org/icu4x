@@ -122,7 +122,7 @@ where
 /// Call this function in a test and pass it an empty instance of a `LiteMap` with a custom store.
 // Test code
 #[allow(clippy::expect_used)]
-pub fn check_litemap<'a, S>()
+pub fn check_store<'a, S>()
 where
     S: StoreConstEmpty<u32, u64>
         + StoreMut<u32, u64>
@@ -168,7 +168,7 @@ where
 
 // Test code
 #[allow(clippy::expect_used)]
-pub fn check_litemap_full<'a, S>()
+pub fn check_store_full<'a, S>()
 where
     S: StoreConstEmpty<u32, u64>
         + StoreIterableMut<'a, u32, u64>

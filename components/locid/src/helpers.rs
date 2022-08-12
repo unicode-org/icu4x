@@ -240,7 +240,7 @@ impl<K, V> StoreFromIterator<K, V> for ShortVec<(K, V)> {}
 
 #[test]
 fn test_shortvec_impl() {
-    litemap::testing::check_litemap::<ShortVec<(u32, u64)>>();
+    litemap::testing::check_store::<ShortVec<(u32, u64)>>();
 }
 
 macro_rules! impl_writeable_for_single_subtag {

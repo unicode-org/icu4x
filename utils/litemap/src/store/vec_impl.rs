@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::testing::check_litemap_full;
-
 use super::*;
 use alloc::vec::Vec;
 
@@ -138,5 +136,5 @@ impl<K, V> StoreFromIterator<K, V> for Vec<(K, V)> {}
 
 #[test]
 fn test_vec_impl() {
-    check_litemap_full::<Vec<(u32, u64)>>();
+    crate::testing::check_store_full::<Vec<(u32, u64)>>();
 }
