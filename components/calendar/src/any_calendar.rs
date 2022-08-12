@@ -23,7 +23,6 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-use core::convert::TryFrom;
 use core::fmt;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
@@ -748,12 +747,6 @@ impl AnyCalendarKind {
     }
 }
 
-impl TryFrom<&'_ Locale> for AnyCalendarKind {
-    type Error = DateTimeError;
-    fn try_from(l: &'_ Locale) -> Result<Self, DateTimeError> {
-        Self::from_locale(l)
-    }
-}
 impl fmt::Display for AnyCalendarKind {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Debug::fmt(self, f)

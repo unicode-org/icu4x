@@ -51,13 +51,9 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XCalendar>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
+            let locale = locale.to_datalocale();
 
-            let kind = match (&locale.0).try_into() {
-                Ok(k) => k,
-                Err(e) => return Err(ICU4XError::from(e)).into(),
-            };
-
-            AnyCalendar::try_new_unstable(&provider, kind)
+            AnyCalendar::try_new_for_locale_unstable(&provider, &locale)
                 .map(|df| Box::new(ICU4XCalendar(Arc::new(df))))
                 .map_err(Into::into)
                 .into()
