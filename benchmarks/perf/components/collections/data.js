@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660336820450,
+  "lastUpdate": 1660348541409,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -3472,6 +3472,126 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/best",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "606d98c9e49f052db01d522b06521db5df7e0027",
+          "message": "Logging in FFI (#2368)\n\n* Add features for logging in FFI\r\n\r\n* Add ICU4XLogger\r\n\r\n* regen\r\n\r\n* Add cpp_default feature\r\n\r\n* init logger in all cpp examples\r\n\r\n* Add logging to ICU4XError conversion\r\n\r\n* gen\r\n\r\n* fix features",
+          "timestamp": "2022-08-12T23:42:41Z",
+          "tree_id": "3b8bcc4ff25be8e9a30e3e141c3dc44a9df1a103",
+          "url": "https://github.com/unicode-org/icu4x/commit/606d98c9e49f052db01d522b06521db5df7e0027"
+        },
+        "date": 1660348490743,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 973,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 710,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 859,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 892,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 1254,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1320,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 715,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 839,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 880,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 827,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 1316,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 49619467,
+            "range": "± 2031342",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           },
