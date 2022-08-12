@@ -214,6 +214,7 @@ impl DataExporter for BakedDataExporter {
             supers = quote! { super:: #supers };
         }
 
+        #[allow(unused_mut)]
         let mut struct_type = quote! {
             <#marker as ::icu_provider::DataMarker>::Yokeable
         };

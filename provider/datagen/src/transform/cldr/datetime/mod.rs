@@ -363,9 +363,7 @@ impl_data_provider!(
 #[cfg(test)]
 mod test {
     use super::*;
-    use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
     use icu_locid::locale;
-    use icu_plurals::PluralCategory;
 
     #[test]
     fn test_basic_patterns() {
@@ -406,6 +404,8 @@ mod test {
     #[test]
     #[cfg(feature = "experimental")]
     fn test_datetime_skeletons() {
+        use icu_datetime::pattern::runtime::{Pattern, PluralPattern};
+        use icu_plurals::PluralCategory;
         use std::convert::TryFrom;
 
         let provider = crate::DatagenProvider::for_test();
