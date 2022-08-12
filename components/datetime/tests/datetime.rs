@@ -199,7 +199,7 @@ fn assert_fixture_element<A, D>(
 
     let any_dtf =
         DateTimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), options.clone())
-            .unwrap();
+            .expect(description);
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);

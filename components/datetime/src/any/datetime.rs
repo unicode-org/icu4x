@@ -310,25 +310,14 @@ impl DateTimeFormatter {
         // separately into the raw formatter.
         let mut locale_with_cal = locale.clone();
 
-        // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Ok(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
-            kind
-        } else {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("gregory"));
-            AnyCalendarKind::Gregorian
-        };
-
-        // We share data under ethiopic
-        if kind == AnyCalendarKind::Ethioaa {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
-
-        let calendar = AnyCalendar::try_new_unstable(data_provider, kind)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, &locale_with_cal)?;
+        let kind = calendar.kind();
+        kind.set_on_data_locale(&mut locale_with_cal);
 
         let patterns = PatternSelector::for_options(
             data_provider,
             calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
-            &locale,
+            &locale_with_cal,
             &options,
         )?;
 
