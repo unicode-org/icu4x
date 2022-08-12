@@ -521,13 +521,12 @@ where {
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
                 locale_with_cal,
-                options,
             )?,
             PhantomData,
         ))
     }
 
-    // No docs because the "experimental" version is what docs use
+    #[allow(missing_docs)] // The docs use the "experimental" version
     #[cfg(not(feature = "experimental"))]
     #[inline]
     pub fn try_new_unstable<D>(
@@ -562,7 +561,6 @@ where {
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
                 locale_with_cal,
-                options,
             )?,
             PhantomData,
         ))

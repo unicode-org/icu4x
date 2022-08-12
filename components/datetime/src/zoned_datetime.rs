@@ -140,14 +140,13 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
                 locale_with_cal,
-                date_time_format_options,
                 time_zone_format_options,
             )?,
             PhantomData,
         ))
     }
 
-    // No docs because the "experimental" version is what docs use
+    #[allow(missing_docs)] // The docs use the "experimental" version
     #[cfg(not(feature = "experimental"))]
     #[inline]
     pub fn try_new_unstable<P>(
@@ -190,7 +189,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
                 locale_with_cal,
-                date_time_format_options,
                 time_zone_format_options,
             )?,
             PhantomData,

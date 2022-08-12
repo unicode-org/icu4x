@@ -16,6 +16,11 @@ use crate::provider::calendar::{
 use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
 use icu_calendar::types::{Era, MonthCode};
 use icu_provider::prelude::*;
+#[cfg(feature = "experimental")]
+use crate::{
+    options::components,
+    provider::calendar::DateSkeletonPatternsV1Marker
+};
 
 type Result<T> = core::result::Result<T, DateTimeFormatterError>;
 
@@ -217,7 +222,7 @@ where
 impl<D> PatternSelector<'_, D>
 where
     D: DataProvider<TimeLengthsV1Marker>
-        + DataProvider<crate::provider::DateSkeletonPatternsV1Marker>
+        + DataProvider<DateSkeletonPatternsV1Marker>
         + ?Sized,
 {
     pub(crate) fn for_options<'a>(

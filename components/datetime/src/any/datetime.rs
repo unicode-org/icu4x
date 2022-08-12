@@ -17,6 +17,8 @@ use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::DataLocale;
+#[cfg(feature = "experimental")]
+use crate::options::components;
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting
 /// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter),
@@ -272,13 +274,12 @@ impl DateTimeFormatter {
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
                 locale_with_cal,
-                options,
             )?,
             calendar,
         ))
     }
 
-    // No docs because the "experimental" version is what docs use
+    #[allow(missing_docs)] // The docs use the "experimental" version
     #[cfg(not(feature = "experimental"))]
     #[inline(never)]
     pub fn try_new_unstable<P>(
@@ -342,7 +343,6 @@ impl DateTimeFormatter {
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
                 locale_with_cal,
-                options,
             )?,
             calendar,
         ))

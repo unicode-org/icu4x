@@ -19,7 +19,6 @@ use crate::{
     },
     input::{DateTimeInput, TimeZoneInput},
     input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
-    options::DateTimeFormatterOptions,
     pattern::runtime::PatternPlurals,
     provider::{
         self,
@@ -53,7 +52,6 @@ impl ZonedDateTimeFormatter {
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
-        date_time_format_options: DateTimeFormatterOptions,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where

@@ -8,7 +8,7 @@
 use crate::{
     format::datetime,
     input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
-    options::{length, preferences, DateTimeFormatterOptions},
+    options::{length, preferences},
     pattern::runtime::PatternPlurals,
     provider::{
         self,
@@ -21,6 +21,8 @@ use crate::{
     },
     DateTimeFormatterError, FormattedDateTime,
 };
+#[cfg(feature = "experimental")]
+use crate::options::components;
 use alloc::string::String;
 
 use icu_decimal::{
@@ -387,7 +389,6 @@ impl DateTimeFormatter {
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
-        options: DateTimeFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<TimeSymbolsV1Marker>

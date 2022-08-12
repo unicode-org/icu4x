@@ -182,14 +182,13 @@ impl ZonedDateTimeFormatter {
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
                 locale_with_cal,
-                date_time_format_options,
                 time_zone_format_options,
             )?,
             calendar,
         ))
     }
 
-    // No docs because the "experimental" version is what docs use
+    #[allow(missing_docs)] // The docs use the "experimental" version
     #[cfg(not(feature = "experimental"))]
     #[inline]
     #[allow(clippy::too_many_arguments)]
@@ -261,7 +260,6 @@ impl ZonedDateTimeFormatter {
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
                 locale_with_cal,
-                date_time_format_options,
                 time_zone_format_options,
             )?,
             calendar,
