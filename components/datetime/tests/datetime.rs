@@ -14,7 +14,6 @@ use icu_calendar::{
     ethiopic::{Ethiopic, EthiopicEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
-    provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker},
     AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
@@ -35,7 +34,6 @@ use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_locid::{
     extensions_unicode_key as key, extensions_unicode_value as value, LanguageIdentifier, Locale,
 };
-use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByKeyProvider;
@@ -61,7 +59,13 @@ fn test_fixture(fixture_name: &str) {
         let japanese = Japanese::try_new_unstable(&provider).expect("Cannot load japanese data");
         let japanext =
             JapaneseExtended::try_new_unstable(&provider).expect("Cannot load japanese data");
-        let options_base = fixtures::get_options(&fx.input.options);
+        let options_base = match fixtures::get_options(&fx.input.options) {
+            Some(o) => o,
+            #[cfg(feature = "experimental")]
+            None => unreachable!(),
+            #[cfg(not(feature = "experimental"))]
+            None => continue,
+        };
         let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
@@ -179,35 +183,11 @@ fn assert_fixture_element<A, D>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
-    D: DataProvider<TimeSymbolsV1Marker>
-        + DataProvider<TimeLengthsV1Marker>
-        + DataProvider<DateSkeletonPatternsV1Marker>
-        + DataProvider<DecimalSymbolsV1Marker>
-        + DataProvider<GregorianDateLengthsV1Marker>
-        + DataProvider<BuddhistDateLengthsV1Marker>
-        + DataProvider<JapaneseDateLengthsV1Marker>
-        + DataProvider<JapaneseExtendedDateLengthsV1Marker>
-        + DataProvider<CopticDateLengthsV1Marker>
-        + DataProvider<IndianDateLengthsV1Marker>
-        + DataProvider<EthiopicDateLengthsV1Marker>
-        + DataProvider<GregorianDateSymbolsV1Marker>
-        + DataProvider<BuddhistDateSymbolsV1Marker>
-        + DataProvider<JapaneseDateSymbolsV1Marker>
-        + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
-        + DataProvider<CopticDateSymbolsV1Marker>
-        + DataProvider<IndianDateSymbolsV1Marker>
-        + DataProvider<EthiopicDateSymbolsV1Marker>
-        // Note: all CldrCalendar markers are covered above, but the compiler doesn't know that
-        + DataProvider<<<A as AsCalendar>::Calendar as CldrCalendar>::DateLengthsV1Marker>
-        + DataProvider<<<A as AsCalendar>::Calendar as CldrCalendar>::DateSymbolsV1Marker>
-        + DataProvider<OrdinalV1Marker>
-        + DataProvider<WeekDataV1Marker>
-        + DataProvider<JapaneseErasV1Marker>
-        + DataProvider<JapaneseExtendedErasV1Marker>,
+    D: BufferProvider
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = TypedDateTimeFormatter::<A::Calendar>::try_new_unstable(
+    let dtf = TypedDateTimeFormatter::<A::Calendar>::try_new_with_buffer_provider(
         provider,
         &locale.into(),
         options.clone(),
@@ -218,7 +198,7 @@ fn assert_fixture_element<A, D>(
     assert_eq!(result, output_value, "{}", description);
 
     let any_dtf =
-        DateTimeFormatter::try_new_unstable(provider, &locale.into(), options.clone()).unwrap();
+        DateTimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), options.clone()).unwrap();
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
@@ -245,13 +225,13 @@ fn assert_fixture_element<A, D>(
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_buffer_provider(
                 provider,
                 &locale.into(),
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new_unstable(provider, &locale.into(), bag.time.unwrap())
+            let tf = TimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), bag.time.unwrap())
                 .unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
@@ -271,7 +251,7 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_buffer_provider(
                 provider,
                 &locale.into(),
                 bag.date.unwrap(),
@@ -293,7 +273,7 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_unstable(provider, &locale.into(), bag.time.unwrap())
+            let tf = TimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), bag.time.unwrap())
                 .unwrap();
 
             let result = tf.format_to_string(input_value);
@@ -322,7 +302,13 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         .expect("Unable to get fixture.")
         .0
     {
-        let options = fixtures::get_options(&fx.input.options);
+        let options = match fixtures::get_options(&fx.input.options) {
+            Some(o) => o,
+            #[cfg(feature = "experimental")]
+            None => unreachable!(),
+            #[cfg(not(feature = "experimental"))]
+            None => continue,
+        };
 
         let (input_date, mut time_zone) = parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
@@ -397,6 +383,7 @@ fn test_dayperiod_patterns() {
             provider.load(req).unwrap().take_payload().unwrap();
         let time_symbols_data: DataPayload<TimeSymbolsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
+        #[cfg(feature = "experimental")]
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             provider.load(req).unwrap().take_payload().unwrap();
         let week_data: DataPayload<WeekDataV1Marker> =
@@ -430,6 +417,7 @@ fn test_dayperiod_patterns() {
                                 key: TimeSymbolsV1Marker::KEY,
                                 data: time_symbols_data.clone().wrap_into_any_payload(),
                             },
+                            #[cfg(feature = "experimental")]
                             AnyPayloadProvider {
                                 key: DateSkeletonPatternsV1Marker::KEY,
                                 data: skeleton_data.clone().wrap_into_any_payload(),
@@ -599,6 +587,7 @@ fn test_time_zone_patterns() {
             date_provider.load(req).unwrap().take_payload().unwrap();
         let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
+        #[cfg(feature = "experimental")]
         let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
         let symbols_data: DataPayload<GregorianDateSymbolsV1Marker> =
@@ -643,6 +632,7 @@ fn test_time_zone_patterns() {
                         key: GregorianDateSymbolsV1Marker::KEY,
                         data: symbols_data.clone().wrap_into_any_payload(),
                     },
+                    #[cfg(feature = "experimental")]
                     AnyPayloadProvider {
                         key: DateSkeletonPatternsV1Marker::KEY,
                         data: skeleton_data.clone().wrap_into_any_payload(),

@@ -7,7 +7,6 @@
 //! This file contains the serde representaitons of the JSON files located in
 //! components/datetime/tests/fixtures/tests
 
-use icu_datetime::options::{components, length};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 
@@ -30,9 +29,13 @@ pub struct TestInput {
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum TestOptions {
     #[serde(rename = "length")]
-    Length(length::Bag),
+    Length(icu_datetime::options::length::Bag),
     #[serde(rename = "components")]
-    Components(components::Bag),
+    #[cfg(feature = "experimental")]
+    Components(icu_datetime::options::components::Bag),
+    #[serde(rename = "components")]
+    #[cfg(not(feature = "experimental"))]
+    Components(serde_json::Value),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

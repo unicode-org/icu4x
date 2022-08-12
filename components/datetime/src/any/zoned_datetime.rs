@@ -282,7 +282,7 @@ impl ZonedDateTimeFormatter {
     /// since these functions currently *must* be given a fallback-enabled provider and
     /// we do not have one in `icu_testdata`
     ///
-    /// ```rust,should_panic
+    /// ```ignore
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
