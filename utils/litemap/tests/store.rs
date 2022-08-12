@@ -130,8 +130,3 @@ impl<K, V> StoreFromIterator<K, V> for VecWithDefaults<(K, V)> {}
 fn test_default_impl() {
     check_litemap_full::<VecWithDefaults<(u32, u64)>>();
 }
-
-#[test]
-fn test_vec_impl() {
-    check_litemap_full::<Vec<(u32, u64)>>();
-}
