@@ -40,8 +40,6 @@ fn print(_input: &str, _value: Option<usize>) {
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
-    let provider = icu_testdata::get_provider();
-
     let dates = DATES_ISO
         .iter()
         .copied()
@@ -55,7 +53,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     options.time = Some(length::Time::Short);
 
     let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-        &provider,
+        &icu_testdata::unstable(),
         &locale!("en").into(),
         options.into(),
     )

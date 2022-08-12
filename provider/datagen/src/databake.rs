@@ -365,6 +365,7 @@ impl DataExporter for BakedDataExporter {
                     #ident => {
                         #data::DATA
                             .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                            .copied()
                             .map(AnyPayload::from_static_ref)
                     }
                 }

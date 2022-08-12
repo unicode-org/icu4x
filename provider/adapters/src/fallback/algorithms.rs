@@ -324,8 +324,8 @@ mod tests {
     #[test]
     fn test_fallback() {
         let fallbacker_no_data = LocaleFallbacker::new_without_data();
-        let provider = icu_testdata::get_provider();
-        let fallbacker_with_data = LocaleFallbacker::try_new_unstable(&provider).unwrap();
+        let fallbacker_with_data =
+            LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).unwrap();
         for cas in TEST_CASES {
             for (priority, expected_chain) in [
                 (FallbackPriority::Language, cas.expected_language_chain),

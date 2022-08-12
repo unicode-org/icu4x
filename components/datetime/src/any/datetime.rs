@@ -42,18 +42,25 @@ use icu_provider::DataLocale;
 /// use icu::locid::Locale;
 /// use std::str::FromStr;
 ///
-/// let provider = icu_testdata::get_provider();
+/// let mut options = length::Bag::from_date_time_style(
+///     length::Date::Medium,
+///     length::Time::Short,
+/// );
 ///
-/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
-///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), options.into())
-///     .expect("Failed to create TypedDateTimeFormatter instance.");
+/// let dtf = DateTimeFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
+///     options.into(),
+/// )
+/// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+/// let value = dtf
+///     .format_to_string(&any_datetime)
+///     .expect("calendars should match");
 /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
@@ -68,11 +75,9 @@ use icu_provider::DataLocale;
 /// # use std::rc::Rc;
 /// # use std::convert::TryInto;
 ///
-/// let provider = icu_testdata::get_provider();
-///
 /// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::try_new_with_buffer_provider(&provider, (&locale).try_into().unwrap())
+/// let calendar = AnyCalendar::try_new_unstable(&icu_testdata::unstable(), (&locale).try_into().unwrap())
 ///                    .expect("constructing AnyCalendar failed");
 /// let calendar = Rc::new(calendar); // Avoid cloning it
 ///
@@ -94,7 +99,7 @@ use icu_provider::DataLocale;
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
+/// let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale.into(), options.into())
 ///     .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let manual_value = dtf.format_to_string(&manual_datetime).expect("calendars should match");
@@ -152,19 +157,26 @@ impl DateTimeFormatter {
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let mut options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Short,
+    /// );
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
-    ///     .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
+    ///     &icu_testdata::buffer(),
+    ///     &locale.into(),
+    ///     options.into(),
+    /// )
+    /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = dtf
+    ///     .format_to_string(&any_datetime)
+    ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline]
@@ -197,19 +209,26 @@ impl DateTimeFormatter {
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let mut options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Short,
+    /// );
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), options.into())
-    ///     .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// let dtf = DateTimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale.into(),
+    ///     options.into(),
+    /// )
+    /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = dtf
+    ///     .format_to_string(&any_datetime)
+    ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline(never)]
@@ -281,21 +300,25 @@ impl DateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::DateTime;
-    /// use icu::datetime::{options::length, DateTimeFormatter, DateFormatter, TimeFormatter};
+    /// use icu::datetime::{
+    ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
+    /// };
     /// use icu::locid::{locale, Locale};
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let length = length::Date::Medium;
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
-    /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale.into(),
+    ///     length,
+    /// )
+    /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let tf = TimeFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let tf = TimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Time::Short,
     /// )
@@ -307,7 +330,9 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = dtf
+    ///     .format_to_string(&any_datetime)
+    ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     ///
@@ -400,11 +425,10 @@ where {
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let dtf = DateTimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
-    ///     options
+    ///     options,
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///

@@ -189,14 +189,15 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let provider = icu_testdata::get_provider();
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload =
+    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
     /// assert!(swe
-    ///    .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
-    ///    .contains(&Script::Grantha));
+    ///     .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+    ///     .contains(&Script::Grantha));
     /// ```
     pub fn contains(&self, x: &Script) -> bool {
         ZeroSlice::binary_search(&*self.values, x).is_ok()
@@ -208,8 +209,9 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let provider = icu_testdata::get_provider();
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload =
+    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -281,9 +283,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -380,9 +380,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -434,9 +432,10 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let provider = icu_testdata::unstable();
+    /// let payload =
+    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -484,9 +483,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -548,9 +545,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -588,10 +583,8 @@ pub type ScriptWithExtensionsResult =
 /// ```
 /// use icu::properties::{script, Script};
 ///
-/// let provider = icu_testdata::get_provider();
-///
 /// let payload =
-///     script::load_script_with_extensions_with_buffer_provider(&provider)
+///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let swe = &data_struct.data;

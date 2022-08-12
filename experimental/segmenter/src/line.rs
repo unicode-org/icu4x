@@ -853,17 +853,17 @@ mod tests {
 
     #[test]
     fn linebreak_propery() {
-        let provider = icu_testdata::get_provider();
-        let payload: DataPayload<LineBreakDataV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
-        let lb_data: &RuleBreakDataV1 = payload.get();
+        let payload = DataProvider::<LineBreakDataV1Marker>::load(
+            &icu_testdata::unstable(),
+            Default::default(),
+        )
+        .expect("Loading should succeed!")
+        .take_payload()
+        .expect("Data should be present!");
 
         let get_linebreak_property = |codepoint| {
             get_linebreak_property_with_rule(
-                &lb_data.property_table,
+                &payload.get().property_table,
                 codepoint,
                 LineBreakRule::Strict,
                 WordBreakRule::Normal,
@@ -889,12 +889,13 @@ mod tests {
     #[test]
     #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
-        let provider = icu_testdata::get_provider();
-        let payload: DataPayload<LineBreakDataV1Marker> = provider
-            .load(Default::default())
-            .expect("Loading should succeed!")
-            .take_payload()
-            .expect("Data should be present!");
+        let payload = DataProvider::<LineBreakDataV1Marker>::load(
+            &icu_testdata::unstable(),
+            Default::default(),
+        )
+        .expect("Loading should succeed!")
+        .take_payload()
+        .expect("Data should be present!");
         let lb_data: &RuleBreakDataV1 = payload.get();
 
         let is_break = |left, right| {
@@ -999,8 +1000,8 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let provider = icu_testdata::get_provider();
-        let segmenter = LineBreakSegmenter::try_new(&provider).expect("Data exists");
+        let segmenter =
+            LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());

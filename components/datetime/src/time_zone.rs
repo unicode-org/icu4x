@@ -58,21 +58,22 @@ where
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::{GmtOffset, CustomTimeZone};
-/// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
+/// use icu::timezone::{CustomTimeZone, GmtOffset};
+/// use icu_datetime::{
+///     TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions,
+/// };
 /// use icu_locid::locale;
 ///
-/// let provider = icu_testdata::get_provider();
-///
-/// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
-///     &provider,
+/// let tzf = TimeZoneFormatter::try_from_config_unstable(
+///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     TimeZoneFormatterConfig::GenericNonLocationLong,
 ///     TimeZoneFormatterOptions::default(),
 /// )
 /// .expect("Failed to create TimeZoneFormatter");
 ///
-/// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
+/// let time_zone =
+///     CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
 ///
 /// let value = tzf.format_to_string(&time_zone);
 /// ```
@@ -344,13 +345,13 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
+    /// use icu_datetime::{
+    ///     TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions,
+    /// };
     /// use icu_locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let tzf = TimeZoneFormatter::try_from_config_unstable(
-    ///     &provider,
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterConfig::LocalizedGMT,
     ///     TimeZoneFormatterOptions::default(),
@@ -611,21 +612,22 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::{GmtOffset, CustomTimeZone};
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
+    /// use icu::timezone::{CustomTimeZone, GmtOffset};
+    /// use icu_datetime::{
+    ///     TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions,
+    /// };
     /// use icu_locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
-    ///     &provider,
+    /// let tzf = TimeZoneFormatter::try_from_config_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterConfig::LocalizedGMT,
     ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
+    /// let time_zone =
+    ///     CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let _ = tzf.format(&time_zone);
     /// ```
@@ -645,21 +647,22 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::{GmtOffset, CustomTimeZone};
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
+    /// use icu::timezone::{CustomTimeZone, GmtOffset};
+    /// use icu_datetime::{
+    ///     TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions,
+    /// };
     /// use icu_locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
-    ///     &provider,
+    /// let tzf = TimeZoneFormatter::try_from_config_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterConfig::LocalizedGMT,
     ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
+    /// let time_zone =
+    ///     CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let mut buffer = String::new();
     /// tzf.format_to_write(&mut buffer, &time_zone)
@@ -680,21 +683,22 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::{GmtOffset, CustomTimeZone};
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
+    /// use icu::timezone::{CustomTimeZone, GmtOffset};
+    /// use icu_datetime::{
+    ///     TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions,
+    /// };
     /// use icu_locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let tzf = TimeZoneFormatter::try_from_config_with_buffer_provider(
-    ///     &provider,
+    /// let tzf = TimeZoneFormatter::try_from_config_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterConfig::LocalizedGMT,
     ///     TimeZoneFormatterOptions::default(),
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
+    /// let time_zone =
+    ///     CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
     ///
     /// let _ = tzf.format_to_string(&time_zone);
     /// ```

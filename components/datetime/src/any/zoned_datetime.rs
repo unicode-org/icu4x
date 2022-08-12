@@ -41,16 +41,17 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// ```
 /// use icu::calendar::{DateTime, Gregorian};
-/// use icu::timezone::CustomTimeZone;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
+/// use icu::timezone::CustomTimeZone;
 /// use icu_datetime::TimeZoneFormatterOptions;
 ///
-/// let provider = icu_testdata::get_provider();
-///
-/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
-/// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
-///     &provider,
+/// let options = length::Bag::from_date_time_style(
+///     length::Date::Medium,
+///     length::Time::Long,
+/// );
+/// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     options.into(),
 ///     TimeZoneFormatterOptions::default(),
@@ -61,9 +62,12 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let time_zone: CustomTimeZone = "+05:00".parse().expect("Timezone should parse");
+/// let time_zone: CustomTimeZone =
+///     "+05:00".parse().expect("Timezone should parse");
 ///
-/// let value = zdtf.format_to_string(&any_datetime, &time_zone).expect("calendars should match");
+/// let value = zdtf
+///     .format_to_string(&any_datetime, &time_zone)
+///     .expect("calendars should match");
 ///
 /// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
@@ -83,30 +87,37 @@ impl ZonedDateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::datetime::options::length;
+    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
-    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// )
+    /// .into();
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
-    ///     &provider,
+    ///     &icu_testdata::unstable(),
     ///     &locale.into(),
     ///     options,
     ///     TimeZoneFormatterOptions::default(),
-    /// ).expect("Construction should succeed");
+    /// )
+    /// .expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///     .expect("Failed to parse zoned datetime");
+    /// let (datetime, time_zone) =
+    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
+    ///         .expect("Failed to parse zoned datetime");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
+    /// assert_eq!(
+    ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    /// );
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -199,30 +210,37 @@ impl ZonedDateTimeFormatter {
     ///
     /// ```rust,should_panic
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::datetime::options::length;
+    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
-    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_baked_provider();
-    ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// )
+    /// .into();
     /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
-    ///     &provider,
+    ///     &icu_testdata::any(),
     ///     &locale.into(),
     ///     options,
     ///     TimeZoneFormatterOptions::default(),
-    /// ).expect("Construction should succeed");
+    /// )
+    /// .expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///     .expect("Failed to parse zoned datetime");
+    /// let (datetime, time_zone) =
+    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
+    ///         .expect("Failed to parse zoned datetime");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
+    /// assert_eq!(
+    ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    /// );
     /// ```
     #[inline]
     pub fn try_new_with_any_provider<P>(
@@ -252,30 +270,37 @@ impl ZonedDateTimeFormatter {
     ///
     /// ```rust
     /// use icu::calendar::Gregorian;
-    /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::datetime::options::length;
+    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
-    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let options = length::Bag::from_date_time_style(
+    ///     length::Date::Medium,
+    ///     length::Time::Long,
+    /// )
+    /// .into();
     /// let locale = Locale::from_str("en").unwrap();
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    ///     &icu_testdata::buffer(),
     ///     &locale.into(),
     ///     options,
     ///     TimeZoneFormatterOptions::default(),
-    /// ).expect("Construction should succeed");
+    /// )
+    /// .expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///     .expect("Failed to parse zoned datetime");
+    /// let (datetime, time_zone) =
+    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
+    ///         .expect("Failed to parse zoned datetime");
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
+    /// assert_eq!(
+    ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    /// );
     /// ```
     #[inline]
     #[cfg(feature = "serde")]

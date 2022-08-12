@@ -10,10 +10,8 @@ use crate::DecomposingNormalizer;
 
 #[test]
 fn test_nfd_basic() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
     assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
@@ -28,10 +26,8 @@ fn test_nfd_basic() {
 
 #[test]
 fn test_nfkd_basic() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&data_provider).unwrap();
+        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
     assert_eq!(normalizer.normalize("Ä"), "A\u{0308}");
     assert_eq!(normalizer.normalize("ệ"), "e\u{0323}\u{0302}");
@@ -47,11 +43,9 @@ fn test_nfkd_basic() {
 
 #[test]
 fn test_uts46d_basic() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: DecomposingNormalizer =
         DecomposingNormalizer::try_new_uts46_decomposed_without_ignored_and_disallowed(
-            &data_provider,
+            &icu_testdata::unstable(),
         )
         .unwrap();
     assert_eq!(normalizer.normalize("ä"), "a\u{0308}");
@@ -75,10 +69,8 @@ fn test_uts46d_basic() {
 
 #[test]
 fn test_nfc_basic() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
     assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
@@ -94,10 +86,8 @@ fn test_nfc_basic() {
 
 #[test]
 fn test_nfkc_basic() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&data_provider).unwrap();
+        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "Ä");
     assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
@@ -114,11 +104,11 @@ fn test_nfkc_basic() {
 
 #[test]
 fn test_uts46_basic() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_unstable(&data_provider)
-            .unwrap();
+        ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_unstable(
+            &icu_testdata::unstable(),
+        )
+        .unwrap();
     assert_eq!(normalizer.normalize("a\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("A\u{0308}"), "ä");
     assert_eq!(normalizer.normalize("e\u{0323}\u{0302}"), "ệ");
@@ -143,10 +133,8 @@ type StackString = arraystring::ArrayString<arraystring::typenum::U48>;
 
 #[test]
 fn test_nfd_str_to() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut buf = StackString::new();
     assert!(normalizer.normalize_to("ä", &mut buf).is_ok());
@@ -159,10 +147,8 @@ fn test_nfd_str_to() {
 
 #[test]
 fn test_nfd_utf8_to() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -181,10 +167,8 @@ type StackVec = arrayvec::ArrayVec<u16, 32>;
 
 #[test]
 fn test_nfd_utf16_to() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -201,10 +185,8 @@ fn test_nfd_utf16_to() {
 
 #[test]
 fn test_nfc_str_to() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut buf = StackString::new();
     assert!(normalizer.normalize_to("a\u{0308}", &mut buf).is_ok());
@@ -219,10 +201,8 @@ fn test_nfc_str_to() {
 
 #[test]
 fn test_nfc_utf8_to() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -239,10 +219,8 @@ fn test_nfc_utf8_to() {
 
 #[test]
 fn test_nfc_utf16_to() {
-    let data_provider = icu_testdata::get_provider();
-
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -294,16 +272,14 @@ fn parse_hex(mut hexes: &[u8]) -> [StackString; 5] {
 
 #[test]
 fn test_conformance() {
-    let data_provider = icu_testdata::get_provider();
-
     let nfd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::unstable()).unwrap();
     let nfkd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&data_provider).unwrap();
+        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::unstable()).unwrap();
     let nfc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
     let nfkc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&data_provider).unwrap();
+        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::unstable()).unwrap();
 
     let mut prev = 0u32;
     let mut part = 0u8;
@@ -447,9 +423,7 @@ fn test_conformance() {
 //     let builder = CodePointSetBuilder::new();
 //     let set: CodePointSet = builder.build();
 
-//     let data_provider = icu_testdata::get_provider();
-
-//     let normalizer: ComposingNormalizer = ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+//     let normalizer: ComposingNormalizer = ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::unstable()).unwrap();
 //     {
 //         let mut norm_iter = normalizer.normalize_iter("A\u{AC00}\u{11A7}".chars());
 //         // Pessimize passthrough to avoid hiding bugs.
@@ -470,8 +444,7 @@ fn test_conformance() {
 
 #[test]
 fn test_canonical_composition() {
-    let data_provider = icu_testdata::get_provider();
-    let comp = CanonicalComposition::try_new_unstable(&data_provider).unwrap();
+    let comp = CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
     assert_eq!(comp.compose('a', 'b'), None); // Just two starters
 
@@ -490,8 +463,7 @@ fn test_canonical_composition() {
 
 #[test]
 fn test_canonical_decomposition() {
-    let data_provider = icu_testdata::get_provider();
-    let decomp = CanonicalDecomposition::try_new_unstable(&data_provider).unwrap();
+    let decomp = CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
     assert_eq!(
         decomp.decompose('ä'),

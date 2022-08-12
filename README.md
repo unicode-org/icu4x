@@ -41,12 +41,10 @@ use icu::datetime::{mock::parse_gregorian_from_str, options::length, TypedDateTi
 use icu::locid::locale;
 
 fn main() {
-    let provider = icu_testdata::get_provider();
-
     let options =
         length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-    let dtf = TypedDateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("es").into(), options)
+    let dtf = TypedDateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
         .expect("Failed to create TypedDateTimeFormatter instance.");
 
     let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");

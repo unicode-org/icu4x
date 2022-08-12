@@ -24,11 +24,10 @@ impl MetaZoneCalculator {
     /// # Examples
     ///
     /// ```
-    /// use icu_locid::locale;
     /// use icu::timezone::MetaZoneCalculator;
+    /// use icu_locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::try_new_unstable(&provider);
+    /// let mzc = MetaZoneCalculator::try_new_unstable(&icu_testdata::unstable());
     ///
     /// assert!(mzc.is_ok());
     /// ```
@@ -52,14 +51,14 @@ impl MetaZoneCalculator {
     /// # Examples
     ///
     /// ```
+    /// use icu::timezone::provider::{MetaZoneId, TimeZoneBcp47Id};
     /// use icu::timezone::MetaZoneCalculator;
     /// use icu_calendar::DateTime;
-    /// use icu::timezone::provider::{MetaZoneId, TimeZoneBcp47Id};
     /// use icu_locid::locale;
     /// use tinystr::tinystr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::try_new_with_buffer_provider(&provider).expect("data exists");
+    /// let mzc = MetaZoneCalculator::try_new_unstable(&icu_testdata::unstable())
+    ///     .expect("data exists");
     ///
     /// assert_eq!(
     ///     mzc.compute_metazone_from_timezone(

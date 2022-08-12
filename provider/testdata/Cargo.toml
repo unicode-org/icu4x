@@ -277,10 +277,10 @@ denylist = ["bench"]
 
 [dependencies]
 icu_provider = { version = "1.0.0-beta1", path = "../core" }
-icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters", optional = true }
-icu_provider_blob = { version = "1.0.0-beta1", path = "../blob", optional = true }
+icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters", features = ["serde"] }
+icu_provider_blob = { version = "1.0.0-beta1", path = "../blob" }
 icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", optional = true }
-lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
+lazy_static = { version = "1", features = ["spin_no_std"] }
 
 # bin feature
 bytes = {version = "1.1.0", optional = true }
@@ -324,7 +324,6 @@ zerovec = { version = "0.8", path = "../../utils/zerovec", optional = true }
 icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals" }
 
 [features]
-default = ["static"]
 # Enables programmatic access to this Cargo.toml file
 metadata = [
     "cargo_metadata",
@@ -335,13 +334,7 @@ metadata = [
     "writeable",
     "std"
 ]
-fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std", "lazy_static"]
-static = [
-    "icu_provider_blob",
-    "icu_provider_adapters",
-    "icu_provider_adapters/serde",
-    "lazy_static",
-]
+fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
 baked = [
     "icu_list",
     "icu_calendar",
@@ -355,7 +348,6 @@ baked = [
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
-    "icu_provider_adapters",
     "icu_segmenter",
     "icu_timezone",
     "icu_collections",

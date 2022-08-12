@@ -26,15 +26,15 @@ pub enum Strength {
     /// ```
     /// use icu_collator::*;
     ///
-    /// let data_provider = icu_testdata::get_provider();
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Primary));
-    /// let collator =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
-    ///                     &Default::default(),
-    ///                     options).unwrap();
-    /// assert_eq!(collator.compare("E", "é"),
-    ///            core::cmp::Ordering::Equal);
+    /// let collator = Collator::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &Default::default(),
+    ///     options,
+    /// )
+    /// .unwrap();
+    /// assert_eq!(collator.compare("E", "é"), core::cmp::Ordering::Equal);
     /// ```
     Primary = 0,
 
@@ -45,23 +45,19 @@ pub enum Strength {
     /// ```
     /// use icu_collator::*;
     ///
-    /// let data_provider = icu_testdata::get_provider();
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Secondary));
-    /// let collator =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
-    ///                     &Default::default(),
-    ///                     options).unwrap();
-    /// assert_eq!(collator.compare("E", "e"),
-    ///            core::cmp::Ordering::Equal);
-    /// assert_eq!(collator.compare("e", "é"),
-    ///            core::cmp::Ordering::Less);
-    /// assert_eq!(collator.compare("あ", "ア"),
-    ///            core::cmp::Ordering::Equal);
-    /// assert_eq!(collator.compare("ァ", "ア"),
-    ///            core::cmp::Ordering::Equal);
-    /// assert_eq!(collator.compare("ア", "ｱ"),
-    ///            core::cmp::Ordering::Equal);
+    /// let collator = Collator::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &Default::default(),
+    ///     options,
+    /// )
+    /// .unwrap();
+    /// assert_eq!(collator.compare("E", "e"), core::cmp::Ordering::Equal);
+    /// assert_eq!(collator.compare("e", "é"), core::cmp::Ordering::Less);
+    /// assert_eq!(collator.compare("あ", "ア"), core::cmp::Ordering::Equal);
+    /// assert_eq!(collator.compare("ァ", "ア"), core::cmp::Ordering::Equal);
+    /// assert_eq!(collator.compare("ア", "ｱ"), core::cmp::Ordering::Equal);
     /// ```
     Secondary = 1,
 
@@ -78,11 +74,10 @@ pub enum Strength {
     /// ```
     /// use icu_collator::*;
     ///
-    /// let data_provider = icu_testdata::get_provider();
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Tertiary));
     /// let collator =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
     ///                     &Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("E", "e"),
@@ -100,7 +95,7 @@ pub enum Strength {
     ///
     /// let locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
     ///                     &locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("E", "e"),
@@ -127,13 +122,12 @@ pub enum Strength {
     /// ```
     /// use icu_collator::*;
     ///
-    /// let data_provider = icu_testdata::get_provider();
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Quaternary));
     ///
     /// let ja_locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
     ///                     &ja_locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("あ", "ア"),
@@ -146,7 +140,7 @@ pub enum Strength {
     /// // Even this level doesn't distinguish everything,
     /// // e.g. Hebrew cantillation marks are still ignored.
     /// let collator =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
     ///                     &Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
@@ -167,13 +161,12 @@ pub enum Strength {
     /// ```
     /// use icu_collator::*;
     ///
-    /// let data_provider = icu_testdata::get_provider();
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Identical));
     ///
     /// let ja_locale = icu_locid::locale!("ja");
     /// let ja_collator =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
     ///                     &ja_locale.into(),
     ///                     options).unwrap();
     /// assert_eq!(ja_collator.compare("ア", "ｱ"),
@@ -182,7 +175,7 @@ pub enum Strength {
     ///            core::cmp::Ordering::Less);
     ///
     /// let collator =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
+    ///   Collator::try_new_unstable(&icu_testdata::unstable(),
     ///                     &Default::default(),
     ///                     options).unwrap();
     /// assert_eq!(collator.compare("דחי", "דחי֭"),
@@ -434,22 +427,24 @@ impl CollatorOptions {
     /// ```
     /// use icu_collator::*;
     ///
-    /// let data_provider = icu_testdata::get_provider();
     /// let mut options = CollatorOptions::new();
     /// options.set_strength(Some(Strength::Tertiary));
-    /// let tertiary =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
-    ///                     &Default::default(),
-    ///                     options).unwrap();
+    /// let tertiary = Collator::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &Default::default(),
+    ///     options,
+    /// )
+    /// .unwrap();
     /// // The first string starts with full-width a
-    /// assert_eq!(tertiary.compare("ａa", "aA"),
-    ///            core::cmp::Ordering::Greater);
+    /// assert_eq!(tertiary.compare("ａa", "aA"), core::cmp::Ordering::Greater);
     ///
     /// options.set_case_level(Some(true));
-    /// let tertiary_and_case =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
-    ///                     &Default::default(),
-    ///                     options).unwrap();
+    /// let tertiary_and_case = Collator::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &Default::default(),
+    ///     options,
+    /// )
+    /// .unwrap();
     /// // The first string starts with full-width a
     /// // TODO!!!!
     /// ```

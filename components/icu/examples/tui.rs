@@ -24,8 +24,6 @@ fn print<T: AsRef<str>>(_input: T) {
 
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
-    let provider = icu_testdata::get_provider();
-
     let args: Vec<String> = env::args().collect();
 
     let locale: Locale = args
@@ -47,7 +45,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
 
     {
         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-            &provider,
+            &icu_testdata::unstable(),
             &locale.into(),
             DateTimeFormatterOptions::default(),
             TimeZoneFormatterOptions::default(),
@@ -77,8 +75,11 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal_unstable(&provider, &locale!("en").into())
-            .expect("Failed to create PluralRules.");
+        let pr = PluralRules::try_new_cardinal_unstable(
+            &icu_testdata::unstable(),
+            &locale!("en").into(),
+        )
+        .expect("Failed to create PluralRules.");
 
         match pr.category_for(email_count) {
             PluralCategory::One => print("Note: You have one unread email."),

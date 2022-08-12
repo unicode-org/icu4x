@@ -30,29 +30,38 @@ programmer to pick the calendar at compile time.
 ```rust
 use icu::calendar::Gregorian;
 use icu::datetime::{
-    mock::parse_gregorian_from_str, options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
+    mock::parse_gregorian_from_str, options::length, DateTimeFormatter,
+    DateTimeFormatterOptions, TypedDateTimeFormatter,
 };
-use icu::locid::{Locale, locale};
+use icu::locid::{locale, Locale};
 use std::str::FromStr;
 
-let provider = icu_testdata::get_provider();
-
 // See the next code example for a more ergonomic example with .into().
-let options = DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
-    length::Date::Medium,
-    length::Time::Short,
-));
+let options =
+    DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
+        length::Date::Medium,
+        length::Time::Short,
+    ));
 
 // You can work with a formatter that can select the calendar at runtime:
 let locale = Locale::from_str("en-u-ca-gregory").unwrap();
-let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.clone())
-    .expect("Failed to create DateTimeFormatter instance.");
+let dtf = DateTimeFormatter::try_new_unstable(
+    &icu_testdata::unstable(),
+    &locale.into(),
+    options.clone(),
+)
+.expect("Failed to create DateTimeFormatter instance.");
 
 // Or one that selects a calendar at compile time:
-let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale!("en").into(), options)
-    .expect("Failed to create TypedDateTimeFormatter instance.");
+let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    &icu_testdata::unstable(),
+    &locale!("en").into(),
+    options,
+)
+.expect("Failed to create TypedDateTimeFormatter instance.");
 
-let typed_date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
+let typed_date = parse_gregorian_from_str("2020-09-12T12:35:00")
+    .expect("Failed to parse date.");
 let date = typed_date.to_any();
 
 let formatted_date = dtf.format(&date).expect("Formatting should succeed");
@@ -67,11 +76,21 @@ convert a [`options::length::Bag`] into a [`DateTimeFormatterOptions::Length`].
 
 ```rust
 use icu::calendar::Gregorian;
-use icu::datetime::{options::length, TypedDateTimeFormatter, DateTimeFormatterOptions};
-let options =
-    length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
+use icu::datetime::{
+    options::length, DateTimeFormatterOptions, TypedDateTimeFormatter,
+};
+use icu::locid::locale;
+let options = length::Bag::from_date_time_style(
+    length::Date::Medium,
+    length::Time::Short,
+)
+.into();
 
-let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options);
+let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    &icu_testdata::unstable(),
+    &locale!("en").into(),
+    options,
+);
 ```
 
 At the moment, the crate provides only options using the [`Length`] bag, but in the future,

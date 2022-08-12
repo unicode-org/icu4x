@@ -60,9 +60,9 @@ pub mod ffi {
 
             #[cfg(feature = "provider_test")]
             if cfg!(feature = "smaller_test") {
-                convert_provider(icu_testdata::get_smaller_postcard_provider())
+                convert_provider(icu_testdata::buffer())
             } else {
-                convert_provider(icu_testdata::get_postcard_provider())
+                convert_provider(icu_testdata::small_buffer())
             }
         }
 

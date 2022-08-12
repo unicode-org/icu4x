@@ -127,7 +127,7 @@ In this tutorial we are going to use ICU4X's "test" data provider and then move 
 
 ## Test data
 
-ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#generating-data) to generate a JSON directory tree or postcard blob and feed it to `FsDataProvider` or `BlobDataProvider` respectively, but for the purposes of trying stuff out, it is sufficient to use the data providers exported by `icu_testdata`.
+ICU4X's repository comes with pre-generated test data that covers all of its keys for a select set of locales. For production use it is recommended one use the steps in [Generating Data](#generating-data) to generate custom data, but for the purposes of trying stuff out, it is sufficient to use the data providers exported by `icu_testdata`.
 
 
 ## Using test data
@@ -136,15 +136,15 @@ First, we need to register our choice of the provider in `~/projects/icu/myapp/C
 
 ```
 [dependencies]
-icu = "0.6"
-icu_testdata = "0.6"
+icu = "1"
+icu_testdata = "1"
 ```
 
 and then we can use it in our code:
 
 ```rust
 fn main() {
-    let _provider = icu_testdata::get_provider();
+    let _provider = icu_testdata::unstable();
 }
 ```
 
@@ -158,15 +158,13 @@ fn main() {
     let date = parse_gregorian_from_str("2020-10-14T13:21:00")
         .expect("Failed to parse a datetime.");
 
-    let provider = icu_testdata::get_provider();
-
     let options = length::Bag {
         time: Some(length::Time::Medium),
         date: Some(length::Date::Long),
         ..Default::default()
     }.into();
 
-    let dtf = DateTimeFormat::try_new(locale!("ja"), &provider, &options)
+    let dtf = DateTimeFormat::try_new(locale!("ja"), &icu_testdata::unstable(), &options)
         .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);
@@ -205,7 +203,7 @@ fn main() {
 }
 ```
 
-The ICU4X repository has test data checked in tree in `provider/testdata/data/json`, however it is recommended one generate data on their own as described in the [next section](#generating data). Under the hood, `icu_testdata::get_provider()` is simply loading this data.
+The ICU4X repository has test data checked in tree in `provider/testdata/data/json`, however it is recommended one generate data on their own as described in the [next section](#generating data). Under the hood, `icu_testdata` is simply loading this data.
 
 ## Generating data
 

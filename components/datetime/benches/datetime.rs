@@ -18,7 +18,7 @@ use icu_locid::Locale;
 use icu_timezone::CustomTimeZone;
 
 fn datetime_benches(c: &mut Criterion) {
-    let provider = icu_testdata::get_provider();
+    let provider = icu_testdata::unstable();
     let mut group = c.benchmark_group("datetime");
 
     let mut bench_datetime_with_fixture = |name| {

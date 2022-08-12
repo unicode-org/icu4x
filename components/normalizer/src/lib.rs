@@ -1671,8 +1671,10 @@ impl CanonicalComposition {
     /// Composition exclusions are taken into account.
     ///
     /// ```
-    /// let data_provider = icu_testdata::get_provider();
-    /// let comp = icu_normalizer::CanonicalComposition::try_new_with_buffer_provider(&data_provider).unwrap();
+    /// let comp = icu_normalizer::CanonicalComposition::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    /// )
+    /// .unwrap();
     ///
     /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
     /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
@@ -1738,8 +1740,7 @@ impl CanonicalDecomposition {
     ///
     /// ```
     ///     use icu_normalizer::Decomposed;
-    ///     let data_provider = icu_testdata::get_provider();
-    ///     let decomp = icu_normalizer::CanonicalDecomposition::try_new_with_buffer_provider(&data_provider).unwrap();
+    ///     let decomp = icu_normalizer::CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
     ///
     ///     assert_eq!(decomp.decompose('e'), Decomposed::Default);
     ///     assert_eq!(

@@ -52,7 +52,7 @@ use std::str::FromStr;
 use tinystr::tinystr;
 
 fn test_fixture(fixture_name: &str) {
-    let provider = icu_testdata::get_provider();
+    let provider = icu_testdata::unstable();
 
     for fx in fixtures::get_fixture(fixture_name)
         .expect("Unable to get fixture.")
@@ -316,7 +316,7 @@ fn assert_fixture_element<A, D>(
 }
 
 fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
-    let provider = icu_testdata::get_provider();
+    let provider = icu_testdata::unstable();
 
     for fx in fixtures::get_fixture(fixture_name)
         .expect("Unable to get fixture.")
@@ -369,7 +369,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
 
 #[test]
 fn test_dayperiod_patterns() {
-    let provider = icu_testdata::get_provider();
+    let provider = icu_testdata::unstable();
     let format_options = DateTimeFormatterOptions::default();
     for test in get_dayperiod_tests("dayperiods").unwrap().0 {
         let mut locale: Locale = test.locale.parse().unwrap();
@@ -477,7 +477,7 @@ fn test_dayperiod_patterns() {
 
 #[test]
 fn test_time_zone_format_configs() {
-    let zone_provider = icu_testdata::get_provider();
+    let zone_provider = icu_testdata::unstable();
 
     for test in get_time_zone_tests("time_zones").unwrap().0 {
         let data_locale: DataLocale = test.locale.parse::<LanguageIdentifier>().unwrap().into();
@@ -528,7 +528,7 @@ fn test_time_zone_format_configs() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = "using last-resort time zone fallback")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
-    let zone_provider = icu_testdata::get_provider();
+    let zone_provider = icu_testdata::unstable();
     let langid: LanguageIdentifier = "en".parse().unwrap();
     let time_zone = CustomTimeZone::new(
         None,
@@ -550,7 +550,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
 #[test]
 #[cfg(not(debug_assertions))]
 fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
-    let zone_provider = icu_testdata::get_provider();
+    let zone_provider = icu_testdata::unstable();
     let langid: LanguageIdentifier = "en".parse().unwrap();
     let time_zone = MockTimeZone::new(
         None,
@@ -572,9 +572,9 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
 
 #[test]
 fn test_time_zone_patterns() {
-    let date_provider = icu_testdata::get_provider();
-    let decimal_provider = icu_testdata::get_provider();
-    let zone_provider = icu_testdata::get_provider();
+    let date_provider = icu_testdata::unstable();
+    let decimal_provider = icu_testdata::unstable();
+    let zone_provider = icu_testdata::unstable();
     let format_options = DateTimeFormatterOptions::default();
 
     for test in get_time_zone_tests("time_zones").unwrap().0 {
@@ -806,7 +806,7 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     length_bag.time = Some(Time::Full); // Full has timezone symbols
     let options = DateTimeFormatterOptions::Length(length_bag);
 
-    let provider = icu_testdata::get_provider();
+    let provider = icu_testdata::unstable();
     let result = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
         &provider,
         &locale!("en").into(),
