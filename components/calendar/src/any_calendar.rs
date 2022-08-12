@@ -18,7 +18,7 @@ use alloc::string::ToString;
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
-    subtags_language as language, Locale,
+    subtags_language as language,
 };
 use icu_provider::prelude::*;
 use tinystr::tinystr;
@@ -690,23 +690,6 @@ impl AnyCalendarKind {
             AnyCalendarKind::Ethioaa => value!("ethioaa"),
         }
     }
-
-    /// Extract the calendar component from a [`Locale`]
-    ///
-    /// Will NOT perform any kind of fallbacking and will error for
-    /// unknown or unspecified calendar kinds
-    pub fn from_locale(l: &Locale) -> Result<Self, DateTimeError> {
-        l.extensions
-            .unicode
-            .keywords
-            .get(&key!("ca"))
-            .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
-                16,
-                "(unspecified)"
-            )))
-            .and_then(Self::from_bcp47)
-    }
-
     /// Set the `u-ca` extension on a DataLocale to the calendar represented
     /// by this type
     pub fn set_on_data_locale(&self, l: &mut DataLocale) {
@@ -717,7 +700,7 @@ impl AnyCalendarKind {
     ///
     /// Will NOT perform any kind of fallbacking and will error for
     /// unknown or unspecified calendar kinds
-    pub fn from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
+    fn from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
         l.get_unicode_ext(&key!("ca"))
             .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
                 16,
