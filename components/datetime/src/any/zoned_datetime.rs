@@ -5,8 +5,6 @@
 use crate::{calendar, options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
-
 use icu_provider::prelude::*;
 
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
@@ -78,6 +76,9 @@ impl ZonedDateTimeFormatter {
     /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
     /// # Examples
     ///
@@ -153,20 +154,9 @@ impl ZonedDateTimeFormatter {
         // separately into the raw formatter.
         let mut locale_with_cal = locale.clone();
 
-        // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Ok(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
-            kind
-        } else {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("gregory"));
-            AnyCalendarKind::Gregorian
-        };
-
-        // We share data under ethiopic
-        if kind == AnyCalendarKind::Ethioaa {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
-
-        let calendar = AnyCalendar::try_new_unstable(provider, kind)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, &locale_with_cal)?;
+        let kind = calendar.kind();
+        kind.set_on_data_locale(&mut locale_with_cal);
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
@@ -183,6 +173,9 @@ impl ZonedDateTimeFormatter {
 
     /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
     /// [`AnyProvider`].
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
     /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, `plurals/ordinals@1`,
@@ -240,6 +233,9 @@ impl ZonedDateTimeFormatter {
 
     /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
     /// [`BufferProvider`].
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
     /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, `plurals/ordinals@1`,
