@@ -76,6 +76,7 @@ macro_rules! normalization_supplement_provider {
                     payload: Some(DataPayload::from_owned(DecompositionSupplementV1 {
                         trie,
                         flags: toml_data.flags,
+                        passthrough_cap: toml_data.cap,
                     })),
                 })
             },

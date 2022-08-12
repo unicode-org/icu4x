@@ -52,6 +52,10 @@ pub struct DecompositionSupplementV1<'data> {
     ///        LETTER IOTA).
     /// (Other bits unused.)
     pub flags: u8,
+    /// The passthrough bounds of NFD/NFC are lowered to this
+    /// maximum instead. (16-bit, because cannot be higher
+    /// than 0x0300, which is the bound for NFC.)
+    pub passthrough_cap: u16,
 }
 
 impl DecompositionSupplementV1<'_> {

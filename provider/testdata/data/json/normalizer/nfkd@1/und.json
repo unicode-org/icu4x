@@ -5526,5 +5526,6 @@
       0
     ]
   },
-  "flags": 1
+  "flags": 1,
+  "passthrough_cap": 160
 }

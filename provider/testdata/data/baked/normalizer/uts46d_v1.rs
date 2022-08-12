@@ -1844,4 +1844,5 @@ static UND: &DataStruct = &::icu_normalizer::provider::DecompositionSupplementV1
         0u32,
     ),
     flags: 3u8,
+    passthrough_cap: 65u16,
 };

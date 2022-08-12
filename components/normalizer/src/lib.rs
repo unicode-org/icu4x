@@ -526,6 +526,11 @@ where
     supplementary_scalars24: &'data ZeroSlice<U24>,
     half_width_voicing_marks_become_non_starters: bool,
     iota_subscript_becomes_starter: bool,
+    /// The lowest character for which either of the following does
+    /// not hold:
+    /// 1. Decomposes to self.
+    /// 2. Decomposition starts with a non-starter
+    decomposition_passthrough_bound: u32, // never above 0xC0
 }
 
 impl<'data, I> Decomposition<'data, I>
@@ -547,7 +552,7 @@ where
         decompositions: &'data DecompositionDataV1,
         tables: &'data DecompositionTablesV1,
     ) -> Self {
-        Self::new_with_supplements(delegate, decompositions, None, tables, None)
+        Self::new_with_supplements(delegate, decompositions, None, tables, None, 0xC0)
     }
 
     /// Constructs a decomposing iterator adapter from a delegate
@@ -562,6 +567,7 @@ where
         supplementary_decompositions: Option<&'data DecompositionSupplementV1>,
         tables: &'data DecompositionTablesV1,
         supplementary_tables: Option<&'data DecompositionTablesV1>,
+        decomposition_passthrough_bound: u8,
     ) -> Self {
         let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
             if let Some(supplementary) = supplementary_decompositions {
@@ -595,6 +601,7 @@ where
             },
             half_width_voicing_marks_become_non_starters,
             iota_subscript_becomes_starter,
+            decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
         ret
@@ -673,6 +680,13 @@ where
     fn delegate_next_no_pending(&mut self) -> Option<CharacterAndTrieValue> {
         debug_assert!(self.pending.is_none());
         let c = self.delegate.next()?;
+
+        // TODO: Measure if this check is actually an optimization even in the
+        // non-supplementary case of if this should go inside the supplementary
+        // `if` below.
+        if u32::from(c) < self.decomposition_passthrough_bound {
+            return Some(CharacterAndTrieValue::new(c, 0));
+        }
 
         if let Some(supplementary) = self.supplementary_trie {
             if u32::from(c) & !1 == 0xFF9E && self.half_width_voicing_marks_become_non_starters {
@@ -935,6 +949,12 @@ where
     /// wait for the next `next()` call (or a jump forward within the
     /// `next()` call).
     unprocessed_starter: Option<char>,
+    /// The lowest character for which any one of the following does
+    /// not hold:
+    /// 1. Roundtrips via decomposition and recomposition.
+    /// 2. Decomposition starts with a non-starter
+    /// 3. Is not a backward-combining starter
+    composition_passthrough_bound: u32,
 }
 
 impl<'data, I> Composition<'data, I>
@@ -944,11 +964,13 @@ where
     fn new(
         decomposition: Decomposition<'data, I>,
         canonical_compositions: Char16Trie<'data>,
+        composition_passthrough_bound: u16,
     ) -> Self {
         Self {
             decomposition,
             canonical_compositions,
             unprocessed_starter: None,
+            composition_passthrough_bound: u32::from(composition_passthrough_bound),
         }
     }
 
@@ -1008,22 +1030,23 @@ where
                 }
                 debug_assert_eq!(self.decomposition.buffer_pos, 0);
                 undecomposed_starter = self.decomposition.pending.take()?;
-                if undecomposed_starter.potential_passthrough() {
+                if u32::from(undecomposed_starter.character) < self.composition_passthrough_bound
+                    || undecomposed_starter.potential_passthrough()
+                {
+                    // TODO: In the NFC case (moot for NFKC and UTS46), if the upcoming
+                    // character is not below `decomposition_passthrough_bound` but is
+                    // below `composition_passthrough_bound`, we read from the trie
+                    // unnecessarily.
+
                     // Attribute belongs on inner expression, but
                     // https://github.com/rust-lang/rust/issues/15701
                     #[allow(clippy::unwrap_used)]
                     if let Some(upcoming) = self.decomposition.delegate_next_no_pending() {
-                        // Note: If `upcoming` is not in the set due to its decomposition
-                        // starting with a non-starter, we end up checking set membership
-                        // again. Bookkeeping to avoid the second check would be possible
-                        // but error-prone.
-                        //
-                        // `unwrap` is OK, because we are in `Composition` and
-                        // `potential_passthrough_and_not_backward_combining.is_some()` whenever
-                        // `Decomposition` is inside `Composition`.
-                        let can_combine_backwards = upcoming.can_combine_backwards();
+                        let cannot_combine_backwards = u32::from(upcoming.character)
+                            < self.composition_passthrough_bound
+                            || !upcoming.can_combine_backwards();
                         self.decomposition.pending = Some(upcoming);
-                        if !can_combine_backwards {
+                        if cannot_combine_backwards {
                             // Fast-track succeeded!
                             return Some(undecomposed_starter.character);
                         }
@@ -1136,7 +1159,9 @@ where
                 // Note that this check has to happen _after_ checking that `pending`
                 // holds a character, because this flag isn't defined to be meaningful
                 // when `pending` isn't holding a character.
-                if !self.decomposition.pending.as_ref().unwrap().can_combine_backwards()
+                let pending = self.decomposition.pending.as_ref().unwrap();
+                if u32::from(pending.character) < self.composition_passthrough_bound
+                    || !pending.can_combine_backwards()
                 {
                     // Won't combine backwards anyway.
                     return Some(starter);
@@ -1261,6 +1286,8 @@ pub struct DecomposingNormalizer {
     supplementary_decompositions: Option<SupplementPayloadHolder>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
     supplementary_tables: Option<DataPayload<CompatibilityDecompositionTablesV1Marker>>,
+    decomposition_passthrough_bound: u8, // never above 0xC0
+    composition_passthrough_bound: u16,  // never above 0x0300
 }
 
 impl DecomposingNormalizer {
@@ -1291,6 +1318,8 @@ impl DecomposingNormalizer {
             supplementary_decompositions: None,
             tables,
             supplementary_tables: None,
+            decomposition_passthrough_bound: 0xC0,
+            composition_passthrough_bound: 0x0300,
         })
     }
 
@@ -1339,6 +1368,13 @@ impl DecomposingNormalizer {
             return Err(NormalizerError::FutureExtension);
         }
 
+        let cap = supplementary_decompositions.get().passthrough_cap;
+        if cap > 0x0300 {
+            return Err(NormalizerError::ValidationError);
+        }
+        let decomposition_capped = cap.min(0xC0);
+        let composition_capped = cap.min(0x0300);
+
         Ok(DecomposingNormalizer {
             decompositions,
             supplementary_decompositions: Some(SupplementPayloadHolder::Compatibility(
@@ -1346,6 +1382,8 @@ impl DecomposingNormalizer {
             )),
             tables,
             supplementary_tables: Some(supplementary_tables),
+            decomposition_passthrough_bound: decomposition_capped as u8,
+            composition_passthrough_bound: composition_capped as u16,
         })
     }
 
@@ -1415,6 +1453,13 @@ impl DecomposingNormalizer {
             return Err(NormalizerError::FutureExtension);
         }
 
+        let cap = supplementary_decompositions.get().passthrough_cap;
+        if cap > 0x0300 {
+            return Err(NormalizerError::ValidationError);
+        }
+        let decomposition_capped = cap.min(0xC0);
+        let composition_capped = cap.min(0x0300);
+
         Ok(DecomposingNormalizer {
             decompositions,
             supplementary_decompositions: Some(SupplementPayloadHolder::Uts46(
@@ -1422,6 +1467,8 @@ impl DecomposingNormalizer {
             )),
             tables,
             supplementary_tables: Some(supplementary_tables),
+            decomposition_passthrough_bound: decomposition_capped as u8,
+            composition_passthrough_bound: composition_capped as u16,
         })
     }
 
@@ -1434,6 +1481,7 @@ impl DecomposingNormalizer {
             self.supplementary_decompositions.as_ref().map(|s| s.get()),
             self.tables.get(),
             self.supplementary_tables.as_ref().map(|s| s.get()),
+            self.decomposition_passthrough_bound,
         )
     }
 
@@ -1587,8 +1635,10 @@ impl ComposingNormalizer {
                     .supplementary_tables
                     .as_ref()
                     .map(|s| s.get()),
+                self.decomposing_normalizer.decomposition_passthrough_bound,
             ),
             ZeroFrom::zero_from(&self.canonical_compositions.get().canonical_compositions),
+            self.decomposing_normalizer.composition_passthrough_bound,
         )
     }
 
