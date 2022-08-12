@@ -60,18 +60,11 @@ pub struct DecompositionSupplementV1<'data> {
 
 impl DecompositionSupplementV1<'_> {
     const HALF_WIDTH_VOICING_MARK_MASK: u8 = 1;
-    const IOTA_SUBSCRIPT_MASK: u8 = (1 << 1);
 
     /// Whether half-width kana voicing marks decompose into non-starters
     /// (their full-width combining counterparts).
     pub fn half_width_voicing_marks_become_non_starters(&self) -> bool {
         (self.flags & DecompositionSupplementV1::HALF_WIDTH_VOICING_MARK_MASK) != 0
-    }
-
-    /// Whether U+0345 COMBINING GREEK YPOGEGRAMMENI decomposes into a
-    /// starter (U+03B9 GREEK SMALL LETTER IOTA).
-    pub fn iota_subscript_becomes_starter(&self) -> bool {
-        (self.flags & DecompositionSupplementV1::IOTA_SUBSCRIPT_MASK) != 0
     }
 }
 

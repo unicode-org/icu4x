@@ -525,7 +525,6 @@ where
     supplementary_scalars16: &'data ZeroSlice<u16>,
     supplementary_scalars24: &'data ZeroSlice<U24>,
     half_width_voicing_marks_become_non_starters: bool,
-    iota_subscript_becomes_starter: bool,
     /// The lowest character for which either of the following does
     /// not hold:
     /// 1. Decomposes to self.
@@ -569,14 +568,11 @@ where
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         decomposition_passthrough_bound: u8,
     ) -> Self {
-        let (half_width_voicing_marks_become_non_starters, iota_subscript_becomes_starter) =
+        let half_width_voicing_marks_become_non_starters =
             if let Some(supplementary) = supplementary_decompositions {
-                (
-                    supplementary.half_width_voicing_marks_become_non_starters(),
-                    supplementary.iota_subscript_becomes_starter(),
-                )
+                supplementary.half_width_voicing_marks_become_non_starters()
             } else {
-                (false, false)
+                false
             };
         let mut ret = Decomposition::<I> {
             delegate,
@@ -600,7 +596,6 @@ where
                 EMPTY_U24
             },
             half_width_voicing_marks_become_non_starters,
-            iota_subscript_becomes_starter,
             decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
         };
         let _ = ret.next(); // Remove the U+FFFF placeholder
@@ -689,18 +684,16 @@ where
         }
 
         if let Some(supplementary) = self.supplementary_trie {
-            if u32::from(c) & !1 == 0xFF9E && self.half_width_voicing_marks_become_non_starters {
+            let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
+            if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
                 return Some(CharacterAndTrieValue::new(
-                    if c == '\u{FF9E}' {
+                    if voicing_mark == 0 {
                         '\u{3099}'
                     } else {
                         '\u{309A}'
                     },
                     0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
                 ));
-            }
-            if c == '\u{0345}' && self.iota_subscript_becomes_starter {
-                return Some(CharacterAndTrieValue::new('ι', 0));
             }
             let trie_value = supplementary.get(u32::from(c));
             if trie_value != 0 {

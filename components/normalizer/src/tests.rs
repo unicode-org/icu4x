@@ -21,9 +21,12 @@ fn test_nfd_basic() {
     assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}");
     assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ﾍﾞ"); // half-width unchanged
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ﾍﾟ"); // half-width unchanged
     assert_eq!(normalizer.normalize("ﬁ"), "ﬁ"); // ligature unchanged
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{FDFA}"); // ligature unchanged
     assert_eq!(normalizer.normalize("㈎"), "㈎"); // parenthetical unchanged
+                                                  // Iota subscript
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}");
 }
 
 #[test]
@@ -39,10 +42,13 @@ fn test_nfkd_basic() {
     assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}");
     assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ヘ\u{3099}"); // half-width to full-width
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ヘ\u{309A}"); // half-width to full-width
     assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{635}\u{644}\u{649} \u{627}\u{644}\u{644}\u{647} \u{639}\u{644}\u{64A}\u{647} \u{648}\u{633}\u{644}\u{645}");
     // ligature expanded
     assert_eq!(normalizer.normalize("㈎"), "(\u{1100}\u{1161})"); // parenthetical expanded
+                                                                  // Iota subscript
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}");
 }
 
 #[test]
@@ -61,6 +67,7 @@ fn test_uts46d_basic() {
     assert_eq!(normalizer.normalize("𝅗𝅥"), "𝅗\u{1D165}");
     assert_eq!(normalizer.normalize("\u{2126}"), "ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ヘ\u{3099}"); // half-width to full-width
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ヘ\u{309A}"); // half-width to full-width
     assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{635}\u{644}\u{649} \u{627}\u{644}\u{644}\u{647} \u{639}\u{644}\u{64A}\u{647} \u{648}\u{633}\u{644}\u{645}");
     // ligature expanded
@@ -71,6 +78,9 @@ fn test_uts46d_basic() {
     assert_eq!(normalizer.normalize("\u{200D}"), "\u{200D}");
     assert_eq!(normalizer.normalize("ß"), "ß");
     assert_eq!(normalizer.normalize("ς"), "ς");
+
+    // Iota subscript
+    assert_eq!(normalizer.normalize("\u{0345}"), "ι");
 }
 
 #[test]
@@ -87,9 +97,12 @@ fn test_nfc_basic() {
 
     assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ﾍﾞ"); // half-width unchanged
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ﾍﾟ"); // half-width unchanged
     assert_eq!(normalizer.normalize("ﬁ"), "ﬁ"); // ligature unchanged
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{FDFA}"); // ligature unchanged
     assert_eq!(normalizer.normalize("㈎"), "㈎"); // parenthetical unchanged
+                                                  // Iota subscript
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}");
 }
 
 #[test]
@@ -106,10 +119,13 @@ fn test_nfkc_basic() {
 
     assert_eq!(normalizer.normalize("\u{2126}"), "Ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ベ"); // half-width to full-width, the compose
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ペ"); // half-width to full-width, the compose
     assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
     // ligature expanded
     assert_eq!(normalizer.normalize("㈎"), "(가)"); // parenthetical expanded and partially recomposed
+                                                    // Iota subscript
+    assert_eq!(normalizer.normalize("\u{0345}"), "\u{0345}");
 }
 
 #[test]
@@ -127,6 +143,7 @@ fn test_uts46_basic() {
 
     assert_eq!(normalizer.normalize("\u{2126}"), "ω"); // ohm sign
     assert_eq!(normalizer.normalize("ﾍﾞ"), "ベ"); // half-width to full-width, the compose
+    assert_eq!(normalizer.normalize("ﾍﾟ"), "ペ"); // half-width to full-width, the compose
     assert_eq!(normalizer.normalize("ﬁ"), "fi"); // ligature expanded
     assert_eq!(normalizer.normalize("\u{FDFA}"), "\u{0635}\u{0644}\u{0649} \u{0627}\u{0644}\u{0644}\u{0647} \u{0639}\u{0644}\u{064A}\u{0647} \u{0648}\u{0633}\u{0644}\u{0645}");
     // ligature expanded
@@ -137,6 +154,9 @@ fn test_uts46_basic() {
     assert_eq!(normalizer.normalize("\u{200D}"), "\u{200D}");
     assert_eq!(normalizer.normalize("ß"), "ß");
     assert_eq!(normalizer.normalize("ς"), "ς");
+
+    // Iota subscript
+    assert_eq!(normalizer.normalize("\u{0345}"), "ι");
 }
 
 type StackString = arraystring::ArrayString<arraystring::typenum::U48>;
