@@ -16,7 +16,8 @@ use crate::{
     options::DateTimeFormatterOptions,
     provider::{
         self,
-        calendar::{DateSkeletonPatternsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker},
+        calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
+        date_time::PatternSelector,
         week_data::WeekDataV1Marker,
     },
     raw,
@@ -96,6 +97,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// ```
     ///
     /// [data provider]: icu_provider
+    #[cfg(feature = "experimental")]
     #[inline]
     pub fn try_new_unstable<P>(
         provider: &P,
@@ -108,7 +110,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
@@ -126,10 +128,66 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         let mut locale_with_cal = locale.clone();
 
         calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
+        let patterns = PatternSelector::for_options(
+            provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+            &locale,
+            &date_time_format_options,
+        )?;
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
                 provider,
-                calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+                patterns,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
+                locale_with_cal,
+                date_time_format_options,
+                time_zone_format_options,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    // No docs because the "experimental" version is what docs use
+    #[cfg(not(feature = "experimental"))]
+    #[inline]
+    pub fn try_new_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
+    where
+        P: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + ?Sized,
+    {
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale_with_cal = locale.clone();
+
+        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
+        let patterns = PatternSelector::for_options(
+            provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
+            &locale,
+            &date_time_format_options,
+        )?;
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                provider,
+                patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
                 locale_with_cal,
                 date_time_format_options,

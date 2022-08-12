@@ -72,6 +72,7 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = []
 bench = ["serde"]
+experimental = []
 serde = ["dep:serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serde", "icu_decimal/serde", "icu_provider/serde", "icu_plurals/serde", "icu_timezone/serde"]
 datagen = ["serde", "icu_calendar/datagen", "icu_timezone/datagen", "icu_provider/datagen", "std", "databake"]
 

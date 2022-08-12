@@ -24,7 +24,7 @@ use crate::{
     provider::{
         self,
         calendar::{
-            DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker,
+            patterns::PatternPluralsFromPatternsV1Marker, ErasedDateSymbolsV1Marker,
             TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
@@ -50,7 +50,7 @@ impl ZonedDateTimeFormatter {
     #[inline(never)]
     pub fn try_new<P>(
         provider: &P,
-        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
@@ -59,7 +59,6 @@ impl ZonedDateTimeFormatter {
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
@@ -75,12 +74,6 @@ impl ZonedDateTimeFormatter {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
 
-        let patterns = provider::date_time::PatternSelector::for_options(
-            provider,
-            patterns_data,
-            &locale,
-            &date_time_format_options,
-        )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 

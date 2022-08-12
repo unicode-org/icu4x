@@ -4,6 +4,9 @@
 
 //! # Implementation status
 //!
+//! This module is available by enabling the `"experimental"` feature. It may change in breaking
+//! ways, including across minor releases.
+//!
 //! This is currently only a partial implementation of the UTS-35 skeleton matching algorithm.
 //!
 //! | Algorithm step | Status |

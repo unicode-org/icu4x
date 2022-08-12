@@ -8,16 +8,17 @@
 use crate::{
     format::datetime,
     input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
-    options::components,
     options::{length, preferences, DateTimeFormatterOptions},
     pattern::runtime::PatternPlurals,
-    provider,
-    provider::calendar::{
-        patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
-        DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker,
-        TimeLengthsV1Marker, TimeSymbolsV1Marker,
+    provider::{
+        self,
+        calendar::{
+            patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
+            ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker, TimeLengthsV1Marker,
+            TimeSymbolsV1Marker,
+        },
+        week_data::WeekDataV1Marker,
     },
-    provider::week_data::WeekDataV1Marker,
     DateTimeFormatterError, FormattedDateTime,
 };
 use alloc::string::String;
@@ -383,7 +384,7 @@ impl DateTimeFormatter {
     #[inline(never)]
     pub fn try_new<D>(
         data_provider: &D,
-        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
         mut locale: DataLocale,
         options: DateTimeFormatterOptions,
@@ -391,7 +392,6 @@ impl DateTimeFormatter {
     where
         D: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -401,12 +401,6 @@ impl DateTimeFormatter {
         if cal == Some(value!("ethioaa")) {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         }
-        let patterns = provider::date_time::PatternSelector::for_options(
-            data_provider,
-            patterns_data,
-            &locale,
-            &options,
-        )?;
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
@@ -539,6 +533,7 @@ impl DateTimeFormatter {
 
     /// Returns a [`components::Bag`] that represents the resolved components for the
     /// options that were provided to the [`DateTimeFormatter`].
+    #[cfg(feature = "experimental")]
     pub fn resolve_components(&self) -> components::Bag {
         components::Bag::from(&self.patterns.get().0)
     }

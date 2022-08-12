@@ -6,8 +6,9 @@
 //! Central to this is the [`TypedDateTimeFormatter`].
 
 use crate::{
-    options::{components, length, preferences, DateTimeFormatterOptions},
-    provider::calendar::{DateSkeletonPatternsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker},
+    options::{length, preferences, DateTimeFormatterOptions},
+    provider::calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
+    provider::date_time::PatternSelector,
     provider::week_data::WeekDataV1Marker,
     raw,
 };
@@ -485,6 +486,7 @@ where {
     /// ```
     ///
     /// [data provider]: icu_provider
+    #[cfg(feature = "experimental")]
     #[inline]
     pub fn try_new_unstable<D>(
         data_provider: &D,
@@ -496,7 +498,7 @@ where {
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -507,10 +509,57 @@ where {
         let mut locale_with_cal = locale.clone();
 
         calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
+        let patterns = PatternSelector::for_options(
+            data_provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+            &locale,
+            &options,
+        )?;
         Ok(Self(
             raw::DateTimeFormatter::try_new(
                 data_provider,
-                calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+                patterns,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
+                locale_with_cal,
+                options,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    // No docs because the "experimental" version is what docs use
+    #[cfg(not(feature = "experimental"))]
+    #[inline]
+    pub fn try_new_unstable<D>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
+    where
+        D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + ?Sized,
+    {
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale_with_cal = locale.clone();
+
+        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
+        let patterns = PatternSelector::for_options(
+            data_provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+            &locale,
+            &options,
+        )?;
+        Ok(Self(
+            raw::DateTimeFormatter::try_new(
+                data_provider,
+                patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
                 locale_with_cal,
                 options,
@@ -644,7 +693,8 @@ where {
     ///
     /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
-    pub fn resolve_components(&self) -> components::Bag {
+    #[cfg(feature = "experimental")]
+    pub fn resolve_components(&self) -> crate::options::components::Bag {
         self.0.resolve_components()
     }
 }
