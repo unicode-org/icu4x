@@ -172,7 +172,7 @@ impl ZonedDateTimeFormatter {
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
-            &locale,
+            &locale_with_cal,
             &date_time_format_options,
         )?;
 

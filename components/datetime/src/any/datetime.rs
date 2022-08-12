@@ -264,7 +264,7 @@ impl DateTimeFormatter {
         let patterns = PatternSelector::for_options(
             data_provider,
             calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
-            &locale,
+            &locale_with_cal,
             &options,
         )?;
 

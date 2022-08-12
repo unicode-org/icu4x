@@ -131,7 +131,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
-            &locale,
+            &locale_with_cal,
             &date_time_format_options,
         )?;
         Ok(Self(
@@ -180,7 +180,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
-            &locale,
+            &locale_with_cal,
             &date_time_format_options,
         )?;
         Ok(Self(

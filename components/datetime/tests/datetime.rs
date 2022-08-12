@@ -192,7 +192,7 @@ fn assert_fixture_element<A, D>(
         &locale.into(),
         options.clone(),
     )
-    .unwrap();
+    .expect(description);
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);

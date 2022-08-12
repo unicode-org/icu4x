@@ -105,6 +105,10 @@ pub(crate) fn potentially_fixup_calendar<C: CldrCalendar>(
         locale.set_unicode_ext(key!("ca"), C::DEFAULT_BCP_47_IDENTIFIER);
     }
 
+    if locale.get_unicode_ext(&key!("ca")) == Some(value!("ethioaa")) {
+        locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+    }
+
     Ok(())
 }
 

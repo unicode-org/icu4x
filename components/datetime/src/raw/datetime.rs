@@ -194,9 +194,7 @@ impl DateFormatter {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        if locale.get_unicode_ext(&key!("ca")) == Some(value!("ethioaa")) {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
+        debug_assert!(locale.get_unicode_ext(&key!("ca")) != Some(value!("ethioaa")));
         let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
 
         let generic_pattern =
@@ -398,10 +396,8 @@ impl DateTimeFormatter {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
+        debug_assert!(locale.get_unicode_ext(&key!("ca")) != Some(value!("ethioaa")));
         let cal = locale.get_unicode_ext(&key!("ca"));
-        if cal == Some(value!("ethioaa")) {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;

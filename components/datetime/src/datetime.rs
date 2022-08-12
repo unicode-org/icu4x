@@ -512,7 +512,7 @@ where {
         let patterns = PatternSelector::for_options(
             data_provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
-            &locale,
+            &locale_with_cal,
             &options,
         )?;
         Ok(Self(
@@ -552,7 +552,7 @@ where {
         let patterns = PatternSelector::for_options(
             data_provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
-            &locale,
+            &locale_with_cal,
             &options,
         )?;
         Ok(Self(
