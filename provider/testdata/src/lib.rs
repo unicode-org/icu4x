@@ -39,7 +39,6 @@
 //! use icu_locid::locale;
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
-//! use std::borrow::Cow;
 //!
 //! let req = DataRequest {
 //!     locale: &locale!("en").into(),
@@ -124,6 +123,8 @@ use icu_provider_blob::StaticDataProvider;
 /// compared to [`unstable_baked`].
 pub fn unstable() -> LocaleFallbackProvider<DeserializingBufferProvider<'static, StaticDataProvider>>
 {
+    // The statically compiled data file is valid.
+    #[allow(clippy::unwrap_used)]
     LocaleFallbackProvider::try_new_unstable(POSTCARD.as_deserializing()).unwrap()
 }
 
@@ -235,6 +236,8 @@ mod baked {
 /// An [`AnyProvider`] backed by baked data.
 #[cfg(feature = "baked")]
 pub fn any() -> impl AnyProvider {
+    // The baked data is valid.
+    #[allow(clippy::unwrap_used)]
     LocaleFallbackProvider::try_new_with_any_provider(baked::BakedDataProvider).unwrap()
 }
 
@@ -254,6 +257,8 @@ pub fn any_no_fallback() -> impl AnyProvider {
 /// compared to [`unstable`].
 #[cfg(feature = "baked")]
 pub fn unstable_baked() -> LocaleFallbackProvider<baked::BakedDataProvider> {
+    // The baked data is valid.
+    #[allow(clippy::unwrap_used)]
     LocaleFallbackProvider::try_new_unstable(baked::BakedDataProvider).unwrap()
 }
 
