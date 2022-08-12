@@ -18,7 +18,7 @@ use alloc::string::ToString;
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
-    subtags_language as language,
+    subtags_language as language, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::tinystr;
