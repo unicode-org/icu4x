@@ -1037,10 +1037,6 @@ where
                     // character is not below `decomposition_passthrough_bound` but is
                     // below `composition_passthrough_bound`, we read from the trie
                     // unnecessarily.
-
-                    // Attribute belongs on inner expression, but
-                    // https://github.com/rust-lang/rust/issues/15701
-                    #[allow(clippy::unwrap_used)]
                     if let Some(upcoming) = self.decomposition.delegate_next_no_pending() {
                         let cannot_combine_backwards = u32::from(upcoming.character)
                             < self.composition_passthrough_bound
