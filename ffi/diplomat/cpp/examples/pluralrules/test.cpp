@@ -3,12 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XPluralRules.hpp"
+#include "../../include/ICU4XLogger.hpp"
 
 #include <iostream>
 
 const std::string_view path = "../../../../../provider/testdata/data/json/";
 
 int main() {
+    ICU4XLogger::init_simple_logger();
     ICU4XLocale locale = ICU4XLocale::create("ar").ok().value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).ok().value();

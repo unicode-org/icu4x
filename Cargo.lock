@@ -409,6 +409,17 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
 
 [[package]]
+name = "colored"
+version = "1.9.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "f4ffc801dacf156c5854b9df4f425a626539c3a6ef7893cc0c5084a23f0b6c59"
+dependencies = [
+ "atty",
+ "lazy_static",
+ "winapi",
+]
+
+[[package]]
 name = "combine"
 version = "4.6.4"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1392,6 +1403,7 @@ dependencies = [
  "log",
  "rustdoc-types",
  "serde_json",
+ "simple_logger",
  "syn-inline-mod",
  "tinystr 0.6.1",
  "unicode-bidi",
@@ -3059,6 +3071,8 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "b7de33c687404ec3045d4a0d437580455257c0436f858d702f244e7d652f9f07"
 dependencies = [
  "atty",
+ "chrono",
+ "colored",
  "log",
  "winapi",
 ]

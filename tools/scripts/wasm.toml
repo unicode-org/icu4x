@@ -10,7 +10,7 @@ category = "ICU4X WASM"
 install_crate = { rustup_component_name = "rust-src" }
 toolchain = "nightly-2022-04-05"
 command = "cargo"
-args = ["wasm-build-dev", "--package", "icu_capi_cdylib", "--features", "provider_test"]
+args = ["wasm-build-dev", "--package", "icu_capi_cdylib", "--features", "wasm_default"]
 
 [tasks.wasm-build-release]
 description = "Build WASM FFI into the target directory (release mode)"
@@ -20,7 +20,7 @@ toolchain = "nightly-2022-04-05"
 # We don't care about panics in release mode because most incorrect inputs are handled by result types.
 env = { "RUSTFLAGS" = "-C panic=abort -C opt-level=s" }
 command = "cargo"
-args = ["wasm-build-release", "--package", "icu_capi_cdylib", "--features", "provider_test"]
+args = ["wasm-build-release", "--package", "icu_capi_cdylib", "--features", "wasm_default"]
 
 [tasks.wasm-build-examples]
 description = "Build WASM examples into the target directory"
