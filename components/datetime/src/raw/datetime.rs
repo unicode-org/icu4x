@@ -185,7 +185,7 @@ impl DateFormatter {
         data_provider: &D,
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        mut locale: DataLocale,
+        locale: DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
@@ -386,7 +386,7 @@ impl DateTimeFormatter {
         data_provider: &D,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        mut locale: DataLocale,
+        locale: DataLocale,
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<TimeSymbolsV1Marker>
@@ -397,7 +397,6 @@ impl DateTimeFormatter {
             + ?Sized,
     {
         debug_assert!(locale.get_unicode_ext(&key!("ca")) != Some(value!("ethioaa")));
-        let cal = locale.get_unicode_ext(&key!("ca"));
 
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;

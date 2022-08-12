@@ -355,6 +355,7 @@ mod test {
     }
 
     #[test]
+    #[cfg(feature = "experimental")]
     fn test_datetime_skeletons() {
         use std::convert::TryFrom;
 
