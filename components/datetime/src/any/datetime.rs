@@ -480,7 +480,7 @@ mod tests {
     fn test_fallback() {
         let provider = icu_testdata::get_provider();
         // We can rely on the code's ability to convert ISO datetimes
-        let datetime = DateTime::new_iso_datetime(2022, 04, 05, 12, 33, 44).unwrap();
+        let datetime = DateTime::new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
         test_format(&provider, &datetime, "fr", "5 avril 2022 à 12:33");
