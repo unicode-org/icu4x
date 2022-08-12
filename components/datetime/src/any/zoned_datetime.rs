@@ -10,7 +10,7 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 use icu_provider::prelude::*;
 
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
-use crate::provider::{self, calendar::*, week_data::WeekDataV1Marker, date_time::PatternSelector};
+use crate::provider::{self, calendar::*, date_time::PatternSelector, week_data::WeekDataV1Marker};
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};

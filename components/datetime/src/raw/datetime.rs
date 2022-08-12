@@ -5,6 +5,8 @@
 //! The collection of code that is needed for handling formatting operations for DateTimes.
 //! Central to this is the [`DateTimeFormatter`].
 
+#[cfg(feature = "experimental")]
+use crate::options::components;
 use crate::{
     format::datetime,
     input::{DateInput, DateTimeInput, ExtractedDateTimeInput, IsoTimeInput},
@@ -21,8 +23,6 @@ use crate::{
     },
     DateTimeFormatterError, FormattedDateTime,
 };
-#[cfg(feature = "experimental")]
-use crate::options::components;
 use alloc::string::String;
 
 use icu_decimal::{

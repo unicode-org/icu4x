@@ -9,7 +9,9 @@ use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value
 
 use icu_provider::prelude::*;
 
-use crate::provider::{calendar::*, week_data::WeekDataV1Marker, date_time::PatternSelector};
+#[cfg(feature = "experimental")]
+use crate::options::components;
+use crate::provider::{calendar::*, date_time::PatternSelector, week_data::WeekDataV1Marker};
 use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
@@ -17,8 +19,6 @@ use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::DataLocale;
-#[cfg(feature = "experimental")]
-use crate::options::components;
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting
 /// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter),
