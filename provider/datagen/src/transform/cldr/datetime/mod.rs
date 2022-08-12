@@ -14,6 +14,7 @@ use std::collections::HashSet;
 use std::str::FromStr;
 
 mod patterns;
+#[cfg(feature = "experimental")]
 mod skeletons;
 mod symbols;
 pub mod week_data;
@@ -34,8 +35,7 @@ lazy_static! {
 }
 
 macro_rules! impl_data_provider {
-    ($(($marker:ident, $expr:expr, calendared = $calendared:expr)),+) => {
-        $(
+    ($marker:ident, $expr:expr, calendared = $calendared:expr) => {
             impl DataProvider<$marker> for crate::DatagenProvider {
                 fn load(
                     &self,
@@ -205,97 +205,112 @@ macro_rules! impl_data_provider {
                     Ok(r)
                 }
             }
-        )+
     };
 }
 
-impl_data_provider!(
+impl_data_provider!
     (
         GregorianDateSymbolsV1Marker,
         symbols::convert_dates,
         calendared = "gregory"
-    ),
+    );
+impl_data_provider!
     (
         BuddhistDateSymbolsV1Marker,
         symbols::convert_dates,
         calendared = "buddhist"
-    ),
+    );
+impl_data_provider!
     (
         JapaneseDateSymbolsV1Marker,
         symbols::convert_dates,
         calendared = "japanese"
-    ),
+    );
+impl_data_provider!
     (
         JapaneseExtendedDateSymbolsV1Marker,
         symbols::convert_dates,
         calendared = "japanext"
-    ),
+    );
+impl_data_provider!
     (
         CopticDateSymbolsV1Marker,
         symbols::convert_dates,
         calendared = "coptic"
-    ),
+    );
+impl_data_provider!
     (
         IndianDateSymbolsV1Marker,
         symbols::convert_dates,
         calendared = "indian"
-    ),
+    );
+impl_data_provider!
     (
         EthiopicDateSymbolsV1Marker,
         symbols::convert_dates,
         calendared = "ethiopic"
-    ),
+    );
+impl_data_provider!
     (
         TimeSymbolsV1Marker,
         |dates, _| { symbols::convert_times(dates) },
         calendared = "false"
-    ),
+    );
+#[cfg(feature = "experimental")]
+impl_data_provider!
     (
         DateSkeletonPatternsV1Marker,
         |dates, _| { DateSkeletonPatternsV1::from(dates) },
         calendared = "locale"
-    ),
+    );
+impl_data_provider!
     (
         GregorianDateLengthsV1Marker,
         |dates, _| DateLengthsV1::from(dates),
         calendared = "gregory"
-    ),
+    );
+impl_data_provider!
     (
         BuddhistDateLengthsV1Marker,
         |dates, _| DateLengthsV1::from(dates),
         calendared = "buddhist"
-    ),
+    );
+impl_data_provider!
     (
         JapaneseDateLengthsV1Marker,
         |dates, _| DateLengthsV1::from(dates),
         calendared = "japanese"
-    ),
+    );
+impl_data_provider!
     (
         JapaneseExtendedDateLengthsV1Marker,
         |dates, _| DateLengthsV1::from(dates),
         calendared = "japanext"
-    ),
+    );
+impl_data_provider!
     (
         CopticDateLengthsV1Marker,
         |dates, _| DateLengthsV1::from(dates),
         calendared = "coptic"
-    ),
+    );
+impl_data_provider!
     (
         IndianDateLengthsV1Marker,
         |dates, _| DateLengthsV1::from(dates),
         calendared = "indian"
-    ),
+    );
+impl_data_provider!
     (
         EthiopicDateLengthsV1Marker,
         |dates, _| DateLengthsV1::from(dates),
         calendared = "ethiopic"
-    ),
+    );
+impl_data_provider!
     (
         TimeLengthsV1Marker,
         |dates, _| TimeLengthsV1::from(dates),
         calendared = "false"
-    )
-);
+    );
 
 #[cfg(test)]
 mod test {

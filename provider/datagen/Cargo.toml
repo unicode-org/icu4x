@@ -92,7 +92,7 @@ icu_testdata = { path = "../testdata", features = ["metadata"] }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental"]
 bin = ["clap", "eyre", "simple_logger"]
 
 [[bin]]

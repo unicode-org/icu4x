@@ -70,7 +70,7 @@ serde = [
 serde_human = [
     "icu_list/serde_human"
 ]
-experimental = ["icu_segmenter", "icu_timezone"]
+experimental = ["icu_segmenter", "icu_timezone", "icu_datetime/experimental"]
 
 [[example]]
 name = "tui"
