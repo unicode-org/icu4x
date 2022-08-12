@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use litemap::store::*;
-use litemap::testing::check_litemap;
-use litemap::LiteMap;
+use litemap::testing::check_litemap_full;
 use std::cmp::Ordering;
 
 /// A Vec wrapper that leverages the default function impls from `Store`
@@ -129,6 +128,10 @@ impl<K, V> StoreFromIterator<K, V> for VecWithDefaults<(K, V)> {}
 
 #[test]
 fn test_default_impl() {
-    let litemap_test = LiteMap::<u32, u64, VecWithDefaults<(u32, u64)>>::with_capacity(0);
-    check_litemap(litemap_test);
+    check_litemap_full::<VecWithDefaults<(u32, u64)>>();
+}
+
+#[test]
+fn test_vec_impl() {
+    check_litemap_full::<Vec<(u32, u64)>>();
 }

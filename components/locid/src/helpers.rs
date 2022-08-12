@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::iter::FromIterator;
+
 use alloc::vec;
 use alloc::vec::Vec;
 use litemap::store::*;
@@ -145,6 +147,12 @@ impl<T> Default for ShortVec<T> {
     }
 }
 
+impl<T> FromIterator<T> for ShortVec<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        iter.into_iter().collect::<Vec<_>>().into()
+    }
+}
+
 impl<K, V> StoreConstEmpty<K, V> for ShortVec<(K, V)> {
     const EMPTY: ShortVec<(K, V)> = ShortVec::Empty;
 }
@@ -226,6 +234,13 @@ impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortVec<(K, V)> {
     fn lm_iter(&'a self) -> Self::KeyValueIter {
         self.as_slice().iter().map(|elt| (&elt.0, &elt.1))
     }
+}
+
+impl<K, V> StoreFromIterator<K, V> for ShortVec<(K, V)> {}
+
+#[test]
+fn test_shortvec_impl() {
+    litemap::testing::check_litemap::<ShortVec<(u32, u64)>>();
 }
 
 macro_rules! impl_writeable_for_single_subtag {
