@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660256455033,
+  "lastUpdate": 1660336841200,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -60455,6 +60455,102 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5131,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "18946bb86f9c0ddbd05e819a66aaab1df2e0d356",
+          "message": "Pick default calendar based off of locale in AnyCalendar (#2369)\n\n* Handle defaults in AnyCalendar\r\n\r\n* Fall back to default calendar in DTF\r\n\r\n* docs and test\r\n\r\n* clippy\r\n\r\n* rm TryFrom\r\n\r\n* remove extra methods\r\n\r\n* use macro\r\n\r\n* readd from_locale\r\n\r\n* fix\r\n\r\n* fix",
+          "timestamp": "2022-08-12T20:27:03Z",
+          "tree_id": "2c5d48f8557c1dcea704b2d4c748bfeed0b6b5fc",
+          "url": "https://github.com/unicode-org/icu4x/commit/18946bb86f9c0ddbd05e819a66aaab1df2e0d356"
+        },
+        "date": 1660336794151,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 99130,
+            "range": "± 195",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/datetime_components",
+            "value": 887681,
+            "range": "± 2073",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 182136,
+            "range": "± 342",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 89749,
+            "range": "± 304",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 98149,
+            "range": "± 132",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 99958,
+            "range": "± 159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 106880,
+            "range": "± 98",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 172549,
+            "range": "± 612",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 186502,
+            "range": "± 286",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 182286,
+            "range": "± 273",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 195373,
+            "range": "± 202",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4601,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
