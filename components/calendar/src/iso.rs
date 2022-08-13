@@ -58,7 +58,7 @@ impl CalendarArithmetic for Iso {
         }
     }
 
-    fn months_for_every_year() -> u8 {
+    fn months_for_every_year(_: i32) -> u8 {
         12
     }
 
@@ -149,42 +149,8 @@ impl Calendar for Iso {
         types::IsoWeekday::from((day_offset + 1) as usize)
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, mut offset: DateDuration<Self>) {
-        date.0.year += offset.years;
-        date.add_months(offset.months);
-        offset.months = 0;
-
-        offset.days += offset.weeks * 7;
-
-        // Normalize date to beginning of month
-        offset.days += date.0.day as i32 - 1;
-        date.0.day = 1;
-
-        while offset.days != 0 {
-            if offset.days < 0 {
-                date.add_months(-1);
-                let month_days = self.days_in_month(date);
-                if (-offset.days) > month_days as i32 {
-                    offset.days += month_days as i32;
-                } else {
-                    // Add 1 since we are subtracting from the first day of the
-                    // *next* month
-                    date.0.day = 1 + (month_days as i8 + offset.days as i8) as u8;
-                    offset.days = 0;
-                }
-            } else {
-                let month_days = self.days_in_month(date);
-                // >= because we date.day is 1, so adding the number of days in the month
-                // will still have the same effect
-                if offset.days >= month_days as i32 {
-                    date.add_months(1);
-                    offset.days -= month_days as i32;
-                } else {
-                    date.0.day += offset.days as u8;
-                    offset.days = 0;
-                }
-            }
-        }
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        date.0.offset_date(offset);
     }
 
     #[allow(clippy::field_reassign_with_default)]
@@ -517,22 +483,6 @@ impl IsoDateInner {
     pub(crate) fn dec_31(year: i32) -> Self {
         Self(ArithmeticDate::new(year, 12, 1))
     }
-
-    fn add_months(&mut self, months: i32) {
-        // Get a zero-indexed new month
-        let new_month = (self.0.month as i32 - 1) + months;
-        if new_month >= 0 {
-            self.0.year += new_month / 12;
-            self.0.month = ((new_month % 12) + 1) as u8;
-        } else {
-            // subtract full years
-            self.0.year -= (-new_month) / 12;
-            // subtract a partial year
-            self.0.year -= 1;
-            // adding 13 since months are 1-indexed
-            self.0.month = (13 + (new_month % 12)) as u8
-        }
-    }
 }
 
 impl From<&'_ IsoDateInner> for crate::provider::EraStartDate {
@@ -659,6 +609,26 @@ mod test {
         let today = Date::new_iso_date(2020, 3, 1).unwrap();
         let today_minus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -1));
+        assert_eq!(offset, today_minus_1);
+
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_1 = Date::new_iso_date(2020, 1, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, -2, 0, 0));
+        assert_eq!(offset, today_minus_1);
+
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_1 = Date::new_iso_date(2019, 11, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, -4, 0, 0));
+        assert_eq!(offset, today_minus_1);
+
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_1 = Date::new_iso_date(2018, 3, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, -24, 0, 0));
+        assert_eq!(offset, today_minus_1);
+
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_1 = Date::new_iso_date(2017, 12, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, -27, 0, 0));
         assert_eq!(offset, today_minus_1);
     }
 }

@@ -20,7 +20,7 @@ pub struct ArithmeticDate<C: CalendarArithmetic> {
 
 pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
-    fn months_for_every_year() -> u8;
+    fn months_for_every_year(year: i32) -> u8;
     fn is_leap_year(year: i32) -> bool;
 }
 
@@ -34,39 +34,46 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             marker: PhantomData,
         }
     }
+
     #[inline]
-    pub fn offset_date(&mut self, mut offset: DateDuration<C>) {
-        self.year += offset.years;
-        self.month += offset.months as u8;
-        offset.months = 0;
-
-        offset.days += offset.weeks * 7;
-
-        offset.days += self.day as i32 - 1;
-        self.day = 1;
-
-        while offset.days != 0 {
-            if offset.days < 0 {
-                self.month -= 1;
-                let month_days = C::month_days(self.year, self.month);
-                if (-offset.days) > month_days as i32 {
-                    offset.days += month_days as i32;
-                } else {
-                    self.day = 1 + (month_days as i8 + offset.days as i8) as u8;
-                    offset.days = 0;
-                }
+    pub fn offset_days(&mut self, mut day_offset: i32) {
+        while day_offset != 0 {
+            let month_days = C::month_days(self.year, self.month);
+            if self.day as i32 + day_offset > month_days as i32 {
+                self.offset_months(1);
+                day_offset -= month_days as i32;
+            } else if self.day as i32 + day_offset < 1 {
+                self.offset_months(-1);
+                day_offset += C::month_days(self.year, self.month) as i32;
             } else {
-                let month_days = C::month_days(self.year, self.month);
-
-                if offset.days >= month_days as i32 {
-                    self.month += 1;
-                    offset.days -= month_days as i32;
-                } else {
-                    self.day += offset.days as u8;
-                    offset.days = 0;
-                }
+                self.day = (self.day as i32 + day_offset) as u8;
+                day_offset = 0;
             }
         }
+    }
+
+    #[inline]
+    pub fn offset_months(&mut self, mut month_offset: i32) {
+        while month_offset != 0 {
+            let year_months = C::months_for_every_year(self.year);
+            if self.month as i32 + month_offset > year_months as i32 {
+                self.year += 1;
+                month_offset -= year_months as i32;
+            } else if self.month as i32 + month_offset < 1 {
+                self.year -= 1;
+                month_offset += C::months_for_every_year(self.year) as i32;
+            } else {
+                self.month = (self.month as i32 + month_offset) as u8;
+                month_offset = 0
+            }
+        }
+    }
+
+    #[inline]
+    pub fn offset_date(&mut self, offset: DateDuration<C>) {
+        self.year += offset.years;
+        self.offset_months(offset.months);
+        self.offset_days(offset.days + offset.weeks * 7);
     }
 
     #[inline]
@@ -86,7 +93,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn days_in_year(&self) -> u32 {
-        let months_in_year = C::months_for_every_year();
+        let months_in_year = C::months_for_every_year(self.year);
         let mut days: u32 = 0;
         for month in 1..=months_in_year {
             days += C::month_days(self.year, month) as u32;
@@ -96,7 +103,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn months_in_year(&self) -> u8 {
-        C::months_for_every_year() as u8
+        C::months_for_every_year(self.year) as u8
     }
 
     #[inline]
@@ -117,7 +124,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     pub fn date_from_year_day(year: i32, year_day: u32) -> ArithmeticDate<C> {
         let mut month = 1;
         let mut day = year_day as i32;
-        while month <= C::months_for_every_year() {
+        while month <= C::months_for_every_year(year) {
             let month_days = C::month_days(year, month) as i32;
             if day <= month_days {
                 break;
@@ -152,7 +159,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     #[inline]
     pub fn solar_month(&self) -> types::FormattableMonth {
         let code = match self.month {
-            a if a > C::months_for_every_year() => tinystr!(4, "und"),
+            a if a > C::months_for_every_year(self.year) => tinystr!(4, "und"),
             1 => tinystr!(4, "M01"),
             2 => tinystr!(4, "M02"),
             3 => tinystr!(4, "M03"),
@@ -193,7 +200,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
             ));
         };
 
-        if month > C::months_for_every_year() {
+        if month > C::months_for_every_year(year) {
             return Err(DateTimeError::UnknownMonthCode(
                 month_code.0,
                 cal.debug_name(),
