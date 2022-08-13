@@ -30,7 +30,7 @@ pub struct Parser<S> {
 
 impl<'s, S> Parser<S>
 where
-    S: Slice,
+    S: Slice<'s>,
 {
     #[inline]
     fn next_if(&mut self, b: u8) -> bool {
@@ -58,7 +58,7 @@ where
 
 impl<'s, S> Parser<S>
 where
-    S: Slice,
+    S: Slice<'s>,
 {
     #[must_use]
     pub const fn new(source: S) -> Self {
@@ -238,8 +238,14 @@ where
 
     fn parse_name(&mut self) -> ParserResult<S> {
         let start = self.ptr;
+        if let Some(ch) = self.next() {
+            assert!(ch.is_ascii_alphabetic());
+        } else {
+            unreachable!();
+        }
+
         while let Some(b) = get_current_byte!(self) {
-            if b.is_ascii_alphabetic() {
+            if b.is_ascii_alphabetic() || *b == b'-' {
                 self.ptr += 1;
             } else {
                 break;

@@ -11,11 +11,12 @@ pub enum VariableType {
 }
 
 #[derive(Debug, PartialEq)]
-pub enum MessagePart<S>
+pub enum MessagePart<'s, S>
 where
-    S: Slice,
+    S: Slice<'s>,
 {
-    Literal(S::Output),
-    Markup { name: S::Output },
-    MarkupEnd { name: S::Output },
+    Literal(S),
+    Markup { name: S },
+    MarkupEnd { name: S },
+    PhantomData(std::marker::PhantomData<&'s str>),
 }
