@@ -52,13 +52,12 @@ fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu = { path = "../icu", default-features = false, features = ["experimental"] }
+icu = { path = "../icu" }
 icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
 icu_testdata = { path = "../../provider/testdata" }
 icu_calendar = { version = "1.0.0-beta1", path = "../calendar", features = ["serde"] }
-icu_datetime = { path = "../../components/datetime", features = ["datagen"] }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"

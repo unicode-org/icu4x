@@ -9,7 +9,6 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::prelude::*;
 use icu_provider::{yoke, zerofrom};
 use litemap::LiteMap;
 
@@ -31,12 +30,12 @@ pub struct DateSkeletonPatternsV1<'data>(
 #[cfg(feature = "experimental")]
 pub struct DateSkeletonPatternsV1Marker;
 #[cfg(feature = "experimental")]
-impl DataMarker for DateSkeletonPatternsV1Marker {
+impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
     type Yokeable = DateSkeletonPatternsV1<'static>;
 }
 #[cfg(feature = "experimental")]
-impl KeyedDataMarker for DateSkeletonPatternsV1Marker {
-    const KEY: DataKey = icu_provider::data_key!("datetime/skeletons@1[u-ca]");
+impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
+    const KEY: icu_provider::DataKey = icu_provider::data_key!("datetime/skeletons@1[u-ca]");
 }
 
 /// This struct is a public wrapper around the internal `Skeleton` struct. This allows

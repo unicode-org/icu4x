@@ -513,6 +513,7 @@ where {
 }
 
 #[cfg(test)]
+#[cfg(feature = "serde")]
 mod tests {
     use core::str::FromStr;
     use icu::calendar::{AnyCalendar, DateTime};

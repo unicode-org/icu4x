@@ -222,7 +222,7 @@ impl ZonedDateTimeFormatter {
         // separately into the raw formatter.
         let mut locale_with_cal = locale.clone();
 
-        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, &locale_with_cal)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, &locale_with_cal)?;
         let kind = calendar.kind();
         kind.set_on_data_locale(&mut locale_with_cal);
 
