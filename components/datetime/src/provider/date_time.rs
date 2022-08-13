@@ -145,9 +145,6 @@ where
         locale: &'a DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        debug_assert!(locale
-            .get_unicode_ext(&icu_locid::extensions_unicode_key!("ca"))
-            .is_some());
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,
@@ -229,9 +226,6 @@ where
         locale: &'a DataLocale,
         options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        debug_assert!(locale
-            .get_unicode_ext(&icu_locid::extensions_unicode_key!("ca"))
-            .is_some());
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,
@@ -272,10 +266,22 @@ where
 
     #[cfg(feature = "experimental")]
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
+        use alloc::borrow::Cow;
+        use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+        let cal = self.locale.get_unicode_ext(&key!("ca"));
+        debug_assert!(cal.is_some());
+        // Skeleton data for ethioaa is stored under ethiopic
+        let locale = if cal == Some(value!("ethioaa")) {
+            let mut locale = self.locale.clone();
+            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+            Cow::Owned(locale)
+        } else {
+            Cow::Borrowed(self.locale)
+        };
         let data = self
             .data_provider
             .load(DataRequest {
-                locale: self.locale,
+                locale: &locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;

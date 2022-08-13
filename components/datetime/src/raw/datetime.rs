@@ -30,7 +30,6 @@ use icu_decimal::{
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormatter,
 };
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -194,7 +193,6 @@ impl DateFormatter {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        debug_assert!(locale.get_unicode_ext(&key!("ca")) != Some(value!("ethioaa")));
         let patterns = provider::date_time::pattern_for_date_length(length, patterns_data.clone());
 
         let generic_pattern =
@@ -396,8 +394,6 @@ impl DateTimeFormatter {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        debug_assert!(locale.get_unicode_ext(&key!("ca")) != Some(value!("ethioaa")));
-
         let required = datetime::analyze_patterns(&patterns.get().0, false)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 

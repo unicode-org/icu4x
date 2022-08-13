@@ -8,7 +8,6 @@ use icu_decimal::{
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormatter,
 };
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -51,7 +50,7 @@ impl ZonedDateTimeFormatter {
         provider: &P,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        mut locale: DataLocale,
+        locale: DataLocale,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
@@ -68,10 +67,6 @@ impl ZonedDateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
-        if locale.get_unicode_ext(&key!("ca")) == Some(value!("ethioaa")) {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
-
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
