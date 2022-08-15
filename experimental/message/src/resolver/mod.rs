@@ -92,32 +92,86 @@ impl<'s> MessagePartCollector<'s> for MessagePartsList<'s> {
 
 pub struct Resolver {}
 
-fn resolve_to_parts<'m, 'v, 'mv, 'h, 'mv2, 'p>(
-    msg: &'m ast::PatternElement<&'mv str>,
-    vars: Option<&'v VariableType>,
-    msg2: Option<&'h ast::PatternElement<&'mv2 str>>,
+// fn resolve_to_parts<'m, 'v, 'mv, 'mv2, 'h, 'p, S>(
+//     msg: &'m ast::PatternElement<S>,
+//     vars: Option<&'v VariableType>,
+//     msg2: Option<&'h ast::PatternElement<&'mv2 str>>,
+// ) -> Vec<MessagePart<'p>>
+// where
+//     S: Slice<'mv>,
+//     'm: 'p,
+//     'm: 'mv,
+//     'mv: 'p,
+//     'h: 'p,
+//     'v: 'p,
+//     'mv2: 'p,
+// {
+//     let s: &'p str = match msg {
+//         ast::PatternElement::Text(s) => s.as_str(),
+//         ast::PatternElement::Placeholder(_) => todo!(),
+//     };
+//     let part: MessagePart<'p> = MessagePart::Literal(s);
+//     let mut result = vec![part];
+//     if let Some(m) = &msg2 {
+//         let s2: &'p str = match m {
+//             ast::PatternElement::Text(s) => s.as_str(),
+//             ast::PatternElement::Placeholder(_) => todo!(),
+//         };
+//         result.push(MessagePart::Literal(s2));
+//         match vars.unwrap() {
+//             VariableType::String(s) => {
+//                 result.push(MessagePart::Literal(s.as_str()));
+//             }
+//             _ => todo!(),
+//         }
+//     }
+//     result
+// }
+
+fn resolve_to_parts<'m, 'mv, 'v, 'msgs, 'mv2, 'p>(
+    msg: &'m Vec<ast::PatternElement<&'mv str>>,
+    vars: Option<&'v HashMap<String, VariableType>>,
+    msgs: Option<&'msgs HashMap<String, Vec<ast::PatternElement<&'mv2 str>>>>,
 ) -> Vec<MessagePart<'p>>
 where
-    'm: 'p,
     'mv: 'p,
-    'h: 'p,
-    'v: 'p,
     'mv2: 'p,
+    'v: 'p,
 {
-    let s: &'mv str = match msg {
-        ast::PatternElement::Text(s) => *s,
-        ast::PatternElement::Placeholder(_) => todo!(),
-    };
-    let part: MessagePart<'p> = MessagePart::Literal(s);
-    let mut result = vec![part];
-    if let Some(msg2) = msg2 {
-        let parts2 = resolve_to_parts(msg2, vars, None);
-        result.extend(parts2);
-        match vars.unwrap() {
-            VariableType::String(s) => {
-                result.push(MessagePart::Literal(s.as_str()));
+    let mut result = vec![];
+    for p in msg {
+        match p {
+            ast::PatternElement::Text(s) => {
+                result.push(MessagePart::Literal(s));
             }
-            _ => todo!(),
+            ast::PatternElement::Placeholder(p) => match p {
+                ast::Placeholder::Expression(e) => match e {
+                    ast::Expression::Operand {
+                        operand,
+                        annotation,
+                    } => match operand {
+                        ast::Operand::Literal(_) => todo!(),
+                        ast::Operand::Variable(v) => {
+                            if let Some(v) = vars.unwrap().get(v.as_str()) {
+                                match v {
+                                    VariableType::String(s) => {
+                                        result.push(MessagePart::Literal(s));
+                                    }
+                                    VariableType::MessageReference(mr) => {
+                                        if let Some(msg) = msgs.unwrap().get(mr) {
+                                            let p2 = resolve_to_parts(msg, vars, msgs);
+                                            result.extend(p2);
+                                        }
+                                    }
+                                    _ => todo!(),
+                                }
+                            }
+                        }
+                    },
+                    _ => todo!(),
+                },
+                _ => todo!(),
+            },
         }
     }
     result
@@ -125,36 +179,67 @@ where
 
 #[cfg(test)]
 mod test2 {
-    use super::super::parser::Parser;
+    // use super::super::parser::Parser;
     use super::super::types::{MessagePart, VariableType};
     use super::ast;
-    use super::{resolve_to_parts, Scope};
-    use smallvec::SmallVec;
-    use std::borrow::Cow;
+    // use super::{resolve_to_parts, Scope};
+    use super::*;
+    // use smallvec::SmallVec;
+    // use std::borrow::Cow;
     use std::collections::HashMap;
 
     #[test]
     fn test_sanity_check() {
-        let source = "{Hello World}";
-        let parser = Parser::new(source);
-        let msg = parser.parse().unwrap();
+        let s = "baz".to_string();
+        let msg = vec![
+            ast::PatternElement::Text("foo"),
+            ast::PatternElement::Placeholder(ast::Placeholder::Expression(
+                ast::Expression::Operand {
+                    operand: ast::Operand::Variable("user"),
+                    annotation: None,
+                },
+            )),
+            ast::PatternElement::Placeholder(ast::Placeholder::Expression(
+                ast::Expression::Operand {
+                    operand: ast::Operand::Variable("creature"),
+                    annotation: None,
+                },
+            )),
+        ];
+        let mut msgs = HashMap::new();
+        msgs.insert(
+            "creature".to_string(),
+            vec![ast::PatternElement::Text(s.as_str())],
+        );
 
-        // let mut variables = HashMap::new();
-        // variables.insert("name".into(), VariableType::String("John".into()));
-        // let scope = Scope::new(Some(&variables), None);
-        let pat = ast::PatternElement::Text("Foo");
-        let pat2 = ast::PatternElement::Text("Bar");
-        let var = VariableType::String("Baz".into());
-        let parts = resolve_to_parts(&pat, Some(&var), Some(&pat2));
-
+        let mut vars = HashMap::new();
+        vars.insert("user".to_string(), VariableType::String("bar".to_string()));
+        vars.insert(
+            "creature".to_string(),
+            VariableType::MessageReference("creature".to_string()),
+        );
+        let parts = resolve_to_parts(&msg, Some(&vars), Some(&msgs));
         assert_eq!(
             parts,
             vec![
-                MessagePart::Literal("Foo"),
-                MessagePart::Literal("Bar"),
-                MessagePart::Literal("Baz"),
+                MessagePart::Literal("foo"),
+                MessagePart::Literal("bar"),
+                MessagePart::Literal("baz"),
             ]
         );
+        // let pat = ast::PatternElement::Text("Foo");
+        // let pat2 = ast::PatternElement::Text("Bar");
+        // let var = VariableType::String("Baz".into());
+        // let parts = resolve_to_parts(&pat, Some(&var), Some(&pat2));
+        //
+        // assert_eq!(
+        //     parts,
+        //     vec![
+        //         MessagePart::Literal("Foo"),
+        //         MessagePart::Literal("Bar"),
+        //         MessagePart::Literal("Baz"),
+        //     ]
+        // );
     }
 }
 
