@@ -6,7 +6,7 @@ pub trait Slice<'s>: Hash + PartialEq {
     fn from_str(input: &'s str) -> Self;
     fn slice(&self, range: Range<usize>) -> Self;
     fn byte_at(&self, ptr: usize) -> Option<&u8>;
-    fn as_str(&'s self) -> &'s str;
+    fn as_str(&self) -> &str;
 }
 
 impl<'s> Slice<'s> for String {
@@ -22,7 +22,7 @@ impl<'s> Slice<'s> for String {
         self.as_bytes().get(ptr)
     }
 
-    fn as_str(&'s self) -> &'s str {
+    fn as_str(&self) -> &str {
         self.as_str()
     }
 }
@@ -42,7 +42,7 @@ impl<'s> Slice<'s> for &'s str {
         self.as_bytes().get(ptr)
     }
 
-    fn as_str(&'s self) -> &'s str {
+    fn as_str(&self) -> &str {
         self
     }
 }

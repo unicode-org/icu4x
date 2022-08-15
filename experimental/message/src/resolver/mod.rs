@@ -128,21 +128,24 @@ pub struct Resolver {}
 //     result
 // }
 
-fn resolve_to_parts<'m, 'mv, 'v, 'msgs, 'mv2, 'p>(
-    msg: &'m Vec<ast::PatternElement<&'mv str>>,
+fn resolve_to_parts<'m, 'mv, 'v, 'msgs, 'mv2, 'p, S>(
+    msg: &'m Vec<ast::PatternElement<S>>,
     vars: Option<&'v HashMap<String, VariableType>>,
     msgs: Option<&'msgs HashMap<String, Vec<ast::PatternElement<&'mv2 str>>>>,
 ) -> Vec<MessagePart<'p>>
 where
+    S: Slice<'mv>,
     'mv: 'p,
     'mv2: 'p,
     'v: 'p,
+    'm: 'p,
+    'msgs: 'p,
 {
     let mut result = vec![];
-    for p in msg {
+    for p in msg.iter() {
         match p {
             ast::PatternElement::Text(s) => {
-                result.push(MessagePart::Literal(s));
+                result.push(MessagePart::Literal(s.as_str()));
             }
             ast::PatternElement::Placeholder(p) => match p {
                 ast::Placeholder::Expression(e) => match e {
