@@ -2,11 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::CanonicalCombiningClassMap;
-use crate::CanonicalComposition;
-use crate::CanonicalDecomposition;
+use crate::properties::CanonicalCombiningClassMap;
+use crate::properties::CanonicalComposition;
+use crate::properties::CanonicalDecomposition;
+use crate::properties::Decomposed;
 use crate::ComposingNormalizer;
-use crate::Decomposed;
 use crate::DecomposingNormalizer;
 
 #[test]
