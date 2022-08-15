@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660348506279,
+  "lastUpdate": 1660546031683,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -44729,6 +44729,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 91,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cad97@cad97.com",
+            "name": "Christopher Durham",
+            "username": "CAD97"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f6dd9d0982d4170d44cf58ed9cb0838e785c40b",
+          "message": "impl EncodeAsVarULE for Cow (#2376)",
+          "timestamp": "2022-08-14T23:35:23-07:00",
+          "tree_id": "80165192bb57dd70e4d65cfa452e3a2c2d8fe357",
+          "url": "https://github.com/unicode-org/icu4x/commit/5f6dd9d0982d4170d44cf58ed9cb0838e785c40b"
+        },
+        "date": 1660545986679,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105621,
+            "range": "± 493",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21350,
+            "range": "± 118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66195,
+            "range": "± 262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 171,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
