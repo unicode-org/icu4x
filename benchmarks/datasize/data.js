@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660672266633,
+  "lastUpdate": 1660688916877,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24143,6 +24143,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ed6a46de959cea469f05e6ab4154c886f3709fbe"
         },
         "date": 1660672217338,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3924376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "cad97@cad97.com",
+            "name": "Christopher Durham",
+            "username": "CAD97"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "47b289e60253050d3933ddd61b851d00317c1caa",
+          "message": "Generalize impl EncodeAsVarULE for Cow (#2377)\n\nFixes: 5f6dd9d0982d4170d44cf58ed9cb0838e785c40b",
+          "timestamp": "2022-08-16T15:25:54-07:00",
+          "tree_id": "cda464b395e5c348f6f098916d57461b116c85dd",
+          "url": "https://github.com/unicode-org/icu4x/commit/47b289e60253050d3933ddd61b851d00317c1caa"
+        },
+        "date": 1660688851535,
         "tool": "ndjson",
         "benches": [
           {
