@@ -577,39 +577,13 @@ where
         supplementary_tables: Option<&'data DecompositionTablesV1>,
         decomposition_passthrough_bound: u8,
     ) -> Self {
-        let mut ret = Self::new_with_supplements_raw(
-            delegate,
-            decompositions,
-            supplementary_decompositions,
-            tables,
-            supplementary_tables,
-            decomposition_passthrough_bound,
-        );
-        let _ = ret.next(); // Remove the U+FFFF placeholder
-        ret
-    }
-
-    /// Constructs a decomposing iterator adapter from a delegate
-    /// iterator and references to the necessary data, including
-    /// supplementary data.
-    ///
-    /// Leaves the iterator in a state where the first item that it
-    /// yields is a U+FFFF placeholder.
-    fn new_with_supplements_raw(
-        delegate: I,
-        decompositions: &'data DecompositionDataV1,
-        supplementary_decompositions: Option<&'data DecompositionSupplementV1>,
-        tables: &'data DecompositionTablesV1,
-        supplementary_tables: Option<&'data DecompositionTablesV1>,
-        decomposition_passthrough_bound: u8,
-    ) -> Self {
         let half_width_voicing_marks_become_non_starters =
             if let Some(supplementary) = supplementary_decompositions {
                 supplementary.half_width_voicing_marks_become_non_starters()
             } else {
                 false
             };
-        Decomposition::<I> {
+        let mut ret = Decomposition::<I> {
             delegate,
             buffer: SmallVec::new(), // Normalized
             buffer_pos: 0,
@@ -632,7 +606,9 @@ where
             },
             half_width_voicing_marks_become_non_starters,
             decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
-        }
+        };
+        let _ = ret.next(); // Remove the U+FFFF placeholder
+        ret
     }
 
     fn push_decomposition16(
@@ -1232,26 +1208,7 @@ macro_rules! composing_normalize_to {
             $sink: &mut W,
         ) -> core::fmt::Result {
             $prolog
-            let mut $composition = Composition::new(
-                Decomposition::new_with_supplements_raw(
-                    $text.chars(),
-                    self.decomposing_normalizer.decompositions.get(),
-                    self.decomposing_normalizer
-                        .supplementary_decompositions
-                        .as_ref()
-                        .map(|s| s.get()),
-                    self.decomposing_normalizer.tables.get(),
-                    self.decomposing_normalizer
-                        .supplementary_tables
-                        .as_ref()
-                        .map(|s| s.get()),
-                    self.decomposing_normalizer.decomposition_passthrough_bound
-                ),
-                ZeroFrom::zero_from(&self.canonical_compositions.get().canonical_compositions),
-                self.decomposing_normalizer.composition_passthrough_bound
-            );
-            let placeholder = $composition.decomposition.next();
-            debug_assert_eq!(placeholder, Some('\u{FFFF}'));
+            let mut $composition = self.normalize_iter($text.chars());
             for cc in $composition.decomposition.buffer.drain(..) {
                 $sink.write_char(cc.character())?;
             }
