@@ -204,11 +204,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     ///
-    /// Test will currently fail due to <https://github.com/unicode-org/icu4x/issues/2188>,
-    /// since these functions currently *must* be given a fallback-enabled provider and
-    /// we do not have one in `icu_testdata`
-    ///
-    /// ```rust,should_panic
+    /// ```rust
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::options::length;

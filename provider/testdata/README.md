@@ -37,7 +37,6 @@ $ cargo run --bin --features=bin icu4x-testdata-datagen
 use icu_locid::locale;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
-use std::borrow::Cow;
 
 let req = DataRequest {
     locale: &locale!("en").into(),

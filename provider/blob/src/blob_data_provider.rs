@@ -42,6 +42,7 @@ use yoke::*;
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider
+///     .as_deserializing()
 ///     .load(DataRequest {
 ///         locale: &locale!("la").into(),
 ///         metadata: Default::default(),

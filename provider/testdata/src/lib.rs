@@ -10,10 +10,9 @@
 //! The crate exposes three kinds of providers, corresponding to the three types of constructors
 //! in ICU:
 //! * [`unstable`], [`unstable_no_fallback`]
-//!   * [`unstable_baked`], [`unstable_baked_no_fallback`] (`baked` feature)
+//! * [`any`], [`any_no_fallback`]
 //! * [`buffer`], [`buffer_no_fallback`], [`small_buffer`]
 //!   * [`buffer_json`], [`buffer_json_no_fallback`] (`fs` feature)
-//! * [`any`], [`any_no_fallback`] (`baked` feature)
 //!
 //!
 //! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
@@ -109,23 +108,22 @@ pub mod metadata;
 pub mod paths;
 
 use icu_provider::prelude::*;
-use icu_provider::serde::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
 use icu_provider_blob::StaticDataProvider;
 
+#[doc(hidden)]
+pub type UnstableDataProvider = baked::BakedDataProvider;
+
 /// A data provider that is compatible with all ICU `_unstable` constructors.
 ///
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
-///
-/// This uses serde internally, which adds a runtime overhead, but reduces build time
-/// compared to [`unstable_baked`].
-pub fn unstable() -> LocaleFallbackProvider<DeserializingBufferProvider<'static, StaticDataProvider>>
+pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider>
 {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new_unstable(POSTCARD.as_deserializing()).unwrap()
+    LocaleFallbackProvider::try_new_unstable(unstable_no_fallback()).unwrap()
 }
 
 /// A data provider that is compatible with all ICU `_unstable` constructors.
@@ -133,34 +131,42 @@ pub fn unstable() -> LocaleFallbackProvider<DeserializingBufferProvider<'static,
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
-///
-/// This uses serde internally, which adds a runtime overhead, but reduces build time
-/// compared to [`unstable_baked_no_fallback`].
-pub fn unstable_no_fallback() -> DeserializingBufferProvider<'static, StaticDataProvider> {
-    POSTCARD.as_deserializing()
+pub fn unstable_no_fallback() -> UnstableDataProvider {
+    baked::BakedDataProvider
 }
 
-lazy_static::lazy_static! {
-    static ref POSTCARD: StaticDataProvider = {
-        // The statically compiled data file is valid.
-        #[allow(clippy::unwrap_used)]
-        StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/data/testdata.postcard"
-        )))
-        .unwrap()
-    };
+/// An [`AnyProvider`] backed by baked data.
+pub fn any() -> impl AnyProvider {
+    // The baked data is valid.
+    #[allow(clippy::unwrap_used)]
+    LocaleFallbackProvider::try_new_with_any_provider(any_no_fallback()).unwrap()
+}
+
+/// An [`AnyProvider`] backed by baked data.
+pub fn any_no_fallback() -> impl AnyProvider {
+    baked::BakedDataProvider
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
 pub fn buffer() -> impl BufferProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new_with_buffer_provider(*POSTCARD).unwrap()
+    LocaleFallbackProvider::try_new_with_buffer_provider(buffer_no_fallback()).unwrap()
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
 pub fn buffer_no_fallback() -> impl BufferProvider {
+    lazy_static::lazy_static! {
+        static ref POSTCARD: StaticDataProvider = {
+            // The statically compiled data file is valid.
+            #[allow(clippy::unwrap_used)]
+            StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/data/testdata.postcard"
+            )))
+            .unwrap()
+        };
+    }
     *POSTCARD
 }
 
@@ -227,50 +233,7 @@ pub fn buffer_json_no_fallback() -> impl BufferProvider {
     (*JSON).clone()
 }
 
-#[cfg(feature = "baked")]
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
-}
-
-/// An [`AnyProvider`] backed by baked data.
-#[cfg(feature = "baked")]
-pub fn any() -> impl AnyProvider {
-    // The baked data is valid.
-    #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new_with_any_provider(baked::BakedDataProvider).unwrap()
-}
-
-/// An [`AnyProvider`] backed by baked data.
-#[cfg(feature = "baked")]
-pub fn any_no_fallback() -> impl AnyProvider {
-    baked::BakedDataProvider
-}
-
-/// A data provider that is compatible with all ICU `_unstable` constructors.
-///
-/// The return type of this method is not considered stable, mirroring the unstable trait
-/// bounds of `_unstable` constructors. For matching versions of `icu` and `icu_testdata`,
-/// these are guaranteed to match, however.
-///
-/// This uses databake, which adds a build time overhead, but improves runtime performance
-/// compared to [`unstable`].
-#[cfg(feature = "baked")]
-pub fn unstable_baked() -> LocaleFallbackProvider<baked::BakedDataProvider> {
-    // The baked data is valid.
-    #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new_unstable(baked::BakedDataProvider).unwrap()
-}
-
-/// A data provider that is compatible with all ICU `_unstable` constructors.
-///
-/// The return type of this method is not considered stable, mirroring the unstable trait
-/// bounds of `_unstable` constructors. For matching versions of `icu` and `icu_testdata`,
-/// these are guaranteed to match, however.
-///
-/// This uses databake, which adds a build time overhead, but improves runtime performance
-/// compared to [`unstable_no_fallback`].
-#[cfg(feature = "baked")]
-pub fn unstable_baked_no_fallback() -> baked::BakedDataProvider {
-    baked::BakedDataProvider
 }

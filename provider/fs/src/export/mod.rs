@@ -54,6 +54,7 @@
 //!     metadata: Default::default(),
 //! };
 //! let response: DataPayload<HelloWorldV1Marker> = provider
+//!     .as_deserializing()
 //!     .load(req)
 //!     .unwrap()
 //!     .take_payload()
