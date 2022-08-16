@@ -6,7 +6,7 @@ use litemap::LiteMap;
 
 #[test]
 fn test_ser() {
-    let mut map = LiteMap::new();
+    let mut map = LiteMap::new_vec();
     map.insert(1, "jat");
     map.insert(4, "sei");
     map.insert(3, "saam");

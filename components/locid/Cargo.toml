@@ -50,6 +50,7 @@ serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
 postcard = { version = "1.0.0-alpha.4", default-features = false, features = ["use-std"] }
 iai = "0.1.1"
+litemap = { version = "0.5", path = "../../utils/litemap", features = ["testing"]}
 
 [lib]
 path = "src/lib.rs"
