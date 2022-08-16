@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660545450329,
+  "lastUpdate": 1660643901569,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24083,6 +24083,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5f6dd9d0982d4170d44cf58ed9cb0838e785c40b"
         },
         "date": 1660545405940,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3924376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dff842eb4c68299f5a22ea4a72bf498a5be1f4e2",
+          "message": "Enable ShortVec as a backend for LiteMap (#2356)",
+          "timestamp": "2022-08-16T11:55:57+02:00",
+          "tree_id": "94c73f2449f5deb111929cbcad5dcb1597dcb38f",
+          "url": "https://github.com/unicode-org/icu4x/commit/dff842eb4c68299f5a22ea4a72bf498a5be1f4e2"
+        },
+        "date": 1660643852073,
         "tool": "ndjson",
         "benches": [
           {
