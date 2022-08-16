@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660546031683,
+  "lastUpdate": 1660644476912,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -44788,6 +44788,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 73,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dff842eb4c68299f5a22ea4a72bf498a5be1f4e2",
+          "message": "Enable ShortVec as a backend for LiteMap (#2356)",
+          "timestamp": "2022-08-16T11:55:57+02:00",
+          "tree_id": "94c73f2449f5deb111929cbcad5dcb1597dcb38f",
+          "url": "https://github.com/unicode-org/icu4x/commit/dff842eb4c68299f5a22ea4a72bf498a5be1f4e2"
+        },
+        "date": 1660644434558,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122083,
+            "range": "± 415",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25245,
+            "range": "± 622",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72122,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 88,
             "range": "± 0",
             "unit": "ns/iter"
           }
