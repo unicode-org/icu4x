@@ -3,7 +3,7 @@ import { ICU4XWordBreakRule } from "./ICU4XWordBreakRule";
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakOptions.html Rust documentation} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakOptions.html Rust documentation} for more information.
  */
 export class ICU4XLineBreakOptions {
   line_break_rule: ICU4XLineBreakRule;

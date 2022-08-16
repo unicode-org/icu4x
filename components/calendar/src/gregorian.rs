@@ -208,7 +208,7 @@ impl DateTime<Gregorian> {
     }
 }
 
-pub fn year_as_gregorian(year: i32) -> types::FormattableYear {
+pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
     if year > 0 {
         types::FormattableYear {
             era: types::Era(tinystr!(16, "ce")),

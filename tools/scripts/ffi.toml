@@ -38,7 +38,7 @@ script = '''
 exit_on_error true
 code = exec --get-exit-code git diff --exit-code -- ffi/diplomat
 if ${code}
-    trigger_error "Diplomat bindings need to be regenerated. Please run `cargo make diplomat-gen` and commit."
+    trigger_error "Diplomat bindings need to be regenerated. Please run `cargo make diplomat-install`, then `cargo make diplomat-gen`, and commit. (Testing against different Diplomat versions may omit install step.)"
 end
 '''
 

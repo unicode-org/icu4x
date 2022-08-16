@@ -4,14 +4,17 @@
 
 #include "../../include/ICU4XGregorianDateFormatter.hpp"
 #include "../../include/ICU4XGregorianDateTimeFormatter.hpp"
+#include "../../include/ICU4XDateTimeFormatter.hpp"
 #include "../../include/ICU4XTimeFormatter.hpp"
 #include "../../include/ICU4XDataStruct.hpp"
+#include "../../include/ICU4XLogger.hpp"
 
 #include <atomic>
 #include <iostream>
 #include <array>
 
 int main() {
+    ICU4XLogger::init_simple_logger();
     ICU4XLocale locale = ICU4XLocale::create("es").ok().value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
@@ -42,5 +45,15 @@ int main() {
         return 1;
     }
 
+    locale = ICU4XLocale::create("en-u-ca-japanese").ok().value();
+    ICU4XCalendar cal = ICU4XCalendar::try_new(dp, locale).ok().value();
+    ICU4XDateTime any_date = ICU4XDateTime::try_new_from_iso_in_calendar(2020, 10, 5, 13, 33, 15, cal).ok().value();
+    ICU4XDateTimeFormatter any_dtf = ICU4XDateTimeFormatter::try_new(dp, locale, ICU4XDateLength::Medium, ICU4XTimeLength::Short).ok().value();
+    out = any_dtf.format_datetime(any_date).ok().value();
+    std::cout << "Formatted value is " << out << std::endl;
+    if (out != "Oct 5, 2 Reiwa, 1:33 PM") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
     return 0;
 }

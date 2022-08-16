@@ -14,6 +14,7 @@ Documentation
    fixed_decimal_ffi
    locale_ffi
    locid_transform_ffi
+   logging_ffi
    pluralrules_ffi
    properties_maps_ffi
    properties_sets_ffi

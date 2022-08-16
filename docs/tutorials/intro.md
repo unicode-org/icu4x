@@ -23,7 +23,7 @@ cargo 1.51.0 (43b129a20 2021-03-16)
 ```
 
 In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu/`. The `~` in the path indicates the relative location of the user home directory.
-Please crate the directory structure necessary.
+Please create the directory structure necessary.
 
 # 2. Creating MyApp
 

@@ -62,7 +62,10 @@ dependencies = [
     "test-docs",
 ]
 
-[tasks.ci-job-full-data]
+[tasks.ci-job-full-datagen]
+# Note: ci-job-full-datagen is not actually invoked by CI and instead exists
+# for symmetry and predictability. CI instead uses a custom GitHub action
+# that allows it to download and cache the CLDR releases efficiently
 description = "Run full data generation on latest CLDR and ICU"
 category = "CI"
 dependencies = [

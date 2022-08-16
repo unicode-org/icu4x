@@ -280,6 +280,7 @@ icu_provider = { version = "1.0.0-beta1", path = "../core" }
 icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters", optional = true }
 icu_provider_blob = { version = "1.0.0-beta1", path = "../blob", optional = true }
 icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", optional = true }
+lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
 
 # bin feature
 bytes = {version = "1.1.0", optional = true }
@@ -334,11 +335,12 @@ metadata = [
     "writeable",
     "std"
 ]
-fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
+fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std", "lazy_static"]
 static = [
     "icu_provider_blob",
     "icu_provider_adapters",
     "icu_provider_adapters/serde",
+    "lazy_static",
 ]
 baked = [
     "icu_list",

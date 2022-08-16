@@ -54,8 +54,8 @@ use yoke::*;
 /// ```
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
+#[derive(Clone)]
 pub struct BlobDataProvider {
-    #[allow(clippy::type_complexity)]
     data: Yoke<BlobSchemaV1<'static>, RcWrap<[u8]>>,
 }
 
