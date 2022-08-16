@@ -117,9 +117,10 @@ where
     assert_eq!(20, map.len());
 }
 
-/// Tests that the given litemap instance has behavior consistent with the reference impl.
+/// Tests that a litemap that uses the given store as backend has behavior consistent with the
+/// reference impl.
 ///
-/// Call this function in a test and pass it an empty instance of a `LiteMap` with a custom store.
+/// Call this function in a test with the store impl to test as a valid backend for LiteMap.
 // Test code
 #[allow(clippy::expect_used)]
 pub fn check_store<'a, S>()
@@ -166,6 +167,8 @@ where
     check_equivalence(litemap_test.values, litemap_std.values);
 }
 
+/// Similar to [`check_store`] function, but also checks the validitiy of [`StoreIterableMut`]
+/// trait.
 // Test code
 #[allow(clippy::expect_used)]
 pub fn check_store_full<'a, S>()
