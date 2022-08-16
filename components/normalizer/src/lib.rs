@@ -1842,7 +1842,7 @@ impl ComposingNormalizer {
         core::fmt::Write,
         &str,
         {},
-        false,
+        true,
         as_str,
         {
             // Let's hope LICM hoists this outside `'outer`.
