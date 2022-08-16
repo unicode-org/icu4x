@@ -98,6 +98,7 @@ use u24::EMPTY_U24;
 use u24::U24;
 use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
+use write16::Write16;
 use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ZeroSlice;
@@ -1458,7 +1459,11 @@ macro_rules! normalizer_methods {
 
         /// Check whether a string slice is normalized.
         pub fn is_normalized(&self, text: &str) -> bool {
-            self.normalize_iter(text.chars()).eq(text.chars())
+            let mut sink = IsNormalizedSinkStr::new(text);
+            if self.normalize_to(text, &mut sink).is_err() {
+                return false;
+            }
+            sink.finished()
         }
 
         /// Normalize a slice of potentially-invalid UTF-16 into a `Vec`.
@@ -1475,7 +1480,11 @@ macro_rules! normalizer_methods {
         ///
         /// Unpaired surrogates are treated as the REPLACEMENT CHARACTER.
         pub fn is_normalized_utf16(&self, text: &[u16]) -> bool {
-            self.normalize_iter(text.chars()).eq(text.chars())
+            let mut sink = IsNormalizedSinkUtf16::new(text);
+            if self.normalize_utf16_to(text, &mut sink).is_err() {
+                return false;
+            }
+            sink.finished()
         }
 
         /// Normalize a slice of potentially-invalid UTF-8 into a `String`.
@@ -1494,7 +1503,11 @@ macro_rules! normalizer_methods {
         /// Errors are mapped to the REPLACEMENT CHARACTER according
         /// to the WHATWG Encoding Standard before checking.
         pub fn is_normalized_utf8(&self, text: &[u8]) -> bool {
-            self.normalize_iter(text.chars()).eq(text.chars())
+            let mut sink = IsNormalizedSinkUtf8::new(text);
+            if self.normalize_utf8_to(text, &mut sink).is_err() {
+                return false;
+            }
+            sink.finished()
         }
     };
 }
@@ -2384,6 +2397,114 @@ impl ComposingNormalizer {
         undecomposed_starter,
         pending_slice,
     );
+}
+
+struct IsNormalizedSinkUtf16<'a> {
+    expect: &'a [u16],
+}
+
+impl<'a> IsNormalizedSinkUtf16<'a> {
+    pub fn new(slice: &'a [u16]) -> Self {
+        IsNormalizedSinkUtf16 { expect: slice }
+    }
+    pub fn finished(&self) -> bool {
+        self.expect.is_empty()
+    }
+}
+
+impl<'a> Write16 for IsNormalizedSinkUtf16<'a> {
+    fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
+        // We know that if we get a slice, it's a pass-through,
+        // so we can compare addresses.
+        if s.as_ptr() == self.expect.as_ptr() {
+            self.expect = &self.expect[s.len()..];
+            Ok(())
+        } else {
+            Err(core::fmt::Error {})
+        }
+    }
+
+    fn write_char(&mut self, c: char) -> core::fmt::Result {
+        let mut iter = self.expect.chars();
+        if iter.next() == Some(c) {
+            self.expect = iter.as_slice();
+            Ok(())
+        } else {
+            Err(core::fmt::Error {})
+        }
+    }
+}
+
+struct IsNormalizedSinkUtf8<'a> {
+    expect: &'a [u8],
+}
+
+impl<'a> IsNormalizedSinkUtf8<'a> {
+    pub fn new(slice: &'a [u8]) -> Self {
+        IsNormalizedSinkUtf8 { expect: slice }
+    }
+    pub fn finished(&self) -> bool {
+        self.expect.is_empty()
+    }
+}
+
+impl<'a> core::fmt::Write for IsNormalizedSinkUtf8<'a> {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        // We know that if we get a slice, it's a pass-through,
+        // so we can compare addresses.
+        if s.as_ptr() == self.expect.as_ptr() {
+            self.expect = &self.expect[s.len()..];
+            Ok(())
+        } else {
+            Err(core::fmt::Error {})
+        }
+    }
+
+    fn write_char(&mut self, c: char) -> core::fmt::Result {
+        let mut iter = self.expect.chars();
+        if iter.next() == Some(c) {
+            self.expect = iter.as_slice();
+            Ok(())
+        } else {
+            Err(core::fmt::Error {})
+        }
+    }
+}
+
+struct IsNormalizedSinkStr<'a> {
+    expect: &'a str,
+}
+
+impl<'a> IsNormalizedSinkStr<'a> {
+    pub fn new(slice: &'a str) -> Self {
+        IsNormalizedSinkStr { expect: slice }
+    }
+    pub fn finished(&self) -> bool {
+        self.expect.is_empty()
+    }
+}
+
+impl<'a> core::fmt::Write for IsNormalizedSinkStr<'a> {
+    fn write_str(&mut self, s: &str) -> core::fmt::Result {
+        // We know that if we get a slice, it's a pass-through,
+        // so we can compare addresses.
+        if s.as_ptr() == self.expect.as_ptr() {
+            self.expect = &self.expect[s.len()..];
+            Ok(())
+        } else {
+            Err(core::fmt::Error {})
+        }
+    }
+
+    fn write_char(&mut self, c: char) -> core::fmt::Result {
+        let mut iter = self.expect.chars();
+        if iter.next() == Some(c) {
+            self.expect = iter.as_str();
+            Ok(())
+        } else {
+            Err(core::fmt::Error {})
+        }
+    }
 }
 
 #[cfg(all(test, feature = "serde"))]

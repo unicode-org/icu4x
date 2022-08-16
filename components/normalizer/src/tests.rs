@@ -1380,3 +1380,23 @@ fn test_utf16_basic() {
         [0x0323, 0x0300].as_slice()
     );
 }
+
+#[test]
+fn test_is_normalized() {
+    let data_provider = icu_testdata::get_provider();
+
+    let nfd: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+    let nfkd: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfkd_unstable(&data_provider).unwrap();
+    let nfc: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+    let nfkc: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfkc_unstable(&data_provider).unwrap();
+
+    let aaa = "aaa";
+    assert!(nfd.is_normalized(aaa));
+    assert!(nfkd.is_normalized(aaa));
+    assert!(nfc.is_normalized(aaa));
+    assert!(nfkc.is_normalized(aaa));
+}
