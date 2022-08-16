@@ -355,12 +355,12 @@ fn test_keys() {
         keys(&[
             "list/and@1",
             "datetime/gregory/datelengths@1",
-            "datetime/skeletons@1[u-ca]",
+            "decimal/symbols@1[u-nu]",
             "trash",
         ]),
         vec![
             icu_list::provider::AndListV1Marker::KEY,
-            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
         ]
     );
@@ -374,7 +374,6 @@ fn test_keys_from_file() {
         )
         .unwrap(),
         vec![
-            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
@@ -388,13 +387,12 @@ fn test_keys_from_file() {
 #[test]
 fn test_keys_from_bin() {
     // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_postcard_provider`
-    // and running `cargo +nightly wasm-build-release --examples -p icu_datetime --features serde \
+    // and running `cargo +nightly-2022-04-05 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),
         vec![
-            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,

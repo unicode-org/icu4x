@@ -103,3 +103,4 @@ required-features = ["bin"]
 [[test]]
 name = "icu4x-verify-zero-copy"
 path = "tests/verify-zero-copy.rs"
+required-features = ["experimental"]
