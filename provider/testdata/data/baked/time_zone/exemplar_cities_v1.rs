@@ -1,5 +1,5 @@
 // @generated
-type DataStruct = < :: icu_datetime :: provider :: time_zones :: ExemplarCitiesV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu :: datetime :: provider :: time_zones :: ExemplarCitiesV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
@@ -22,7 +22,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static AR_AR_EG: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -861,7 +861,7 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCi
         },
     )
 });
-static BN: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static BN: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -2096,7 +2096,7 @@ static BN: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1
         },
     )
 });
-static CCP: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static CCP: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -3615,7 +3615,7 @@ static CCP: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV
         },
     )
 });
-static EN: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static EN: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -4230,7 +4230,7 @@ static EN: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1
     )
 });
 static EN_001_EN_ZA: &DataStruct =
-    &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+    &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
             unsafe {
@@ -4871,7 +4871,7 @@ static EN_001_EN_ZA: &DataStruct =
             },
         )
     });
-static ES: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static ES: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -5500,7 +5500,7 @@ static ES: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1
         },
     )
 });
-static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static ES_AR: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -6130,7 +6130,7 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitie
         },
     )
 });
-static FIL: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static FIL: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -6751,7 +6751,7 @@ static FIL: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV
         },
     )
 });
-static FR: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static FR: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -7385,7 +7385,7 @@ static FR: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1
         },
     )
 });
-static JA: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static JA: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -8280,7 +8280,7 @@ static JA: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1
         },
     )
 });
-static RU: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static RU: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -9173,7 +9173,7 @@ static RU: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1
         },
     )
 });
-static SR_LATN: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static SR_LATN: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -9788,7 +9788,7 @@ static SR_LATN: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCit
         },
     )
 });
-static SR_SR_CYRL: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -10666,7 +10666,7 @@ static SR_SR_CYRL: &DataStruct = &::icu_datetime::provider::time_zones::Exemplar
         },
     )
 });
-static TH: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static TH: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -11877,7 +11877,7 @@ static TH: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1
         },
     )
 });
-static TR: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static TR: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {
@@ -12498,7 +12498,7 @@ static TR: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1
         },
     )
 });
-static UND: &DataStruct = &::icu_datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
+static UND: &DataStruct = &::icu::datetime::provider::time_zones::ExemplarCitiesV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap::from_parts_unchecked(
         unsafe {

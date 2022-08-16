@@ -1,17 +1,17 @@
 // @generated
-type DataStruct = < :: icu_properties :: provider :: ScriptWithExtensionsPropertyV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu :: properties :: provider :: ScriptWithExtensionsPropertyV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu_properties::provider::ScriptWithExtensionsPropertyV1 {
-    data: ::icu_properties::script::ScriptWithExtensions {
-        trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
-            ::icu_collections::codepointtrie::CodePointTrieHeader {
+static UND: &DataStruct = &::icu::properties::provider::ScriptWithExtensionsPropertyV1 {
+    data: ::icu::properties::script::ScriptWithExtensions {
+        trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
+            ::icu::collections::codepointtrie::CodePointTrieHeader {
                 high_start: 918016u32,
                 shifted12_high_start: 225u16,
                 index3_null_offset: 1104u16,
                 data_null_offset: 2889u32,
                 null_value: 103u32,
-                trie_type: ::icu_collections::codepointtrie::TrieType::Small,
+                trie_type: ::icu::collections::codepointtrie::TrieType::Small,
             },
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -1895,7 +1895,7 @@ static UND: &DataStruct = &::icu_properties::provider::ScriptWithExtensionsPrope
                     103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8, 103u8, 0u8,
                 ])
             },
-            ::icu_properties::script::ScriptWithExt(103u16),
+            ::icu::properties::script::ScriptWithExt(103u16),
         ),
         extensions: unsafe {
             ::zerovec::VarZeroVec::from_bytes_unchecked(&[

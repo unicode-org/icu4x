@@ -1,9 +1,8 @@
 // @generated
-type DataStruct =
-    <::icu_collator::provider::CollationReorderingV1Marker as ::icu_provider::DataMarker>::Yokeable;
+type DataStruct = < :: icu :: collator :: provider :: CollationReorderingV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("bn", BN), ("ja", JA), ("th", TH)]);
-static BN: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
+static BN: &DataStruct = &::icu::collator::provider::CollationReorderingV1 {
     min_high_no_reorder: 1906311168u32,
     reorder_table: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -33,7 +32,7 @@ static BN: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[191u8, 255u8, 160u8, 113u8])
     },
 };
-static JA: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
+static JA: &DataStruct = &::icu::collator::provider::CollationReorderingV1 {
     min_high_no_reorder: 4261412864u32,
     reorder_table: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -61,7 +60,7 @@ static JA: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
     },
     reorder_ranges: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
 };
-static TH: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
+static TH: &DataStruct = &::icu::collator::provider::CollationReorderingV1 {
     min_high_no_reorder: 1929379840u32,
     reorder_table: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[

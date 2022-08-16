@@ -1,9 +1,9 @@
 // @generated
 type DataStruct =
-    <::icu_segmenter::provider::LstmDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu::segmenter::provider::LstmDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("th", TH)]);
-static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
+static TH: &DataStruct = &::icu::segmenter::provider::LstmDataV1 {
     model: alloc::borrow::Cow::Borrowed("Thai_codepoints_exclusive_model4_heavy"),
     dic: unsafe {
         #[allow(unused_unsafe)]
@@ -60,7 +60,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             },
         )
     },
-    mat1: ::icu_segmenter::provider::LstmMatrix {
+    mat1: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[74u8, 0u8, 40u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -1023,7 +1023,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             ])
         },
     },
-    mat2: ::icu_segmenter::provider::LstmMatrix {
+    mat2: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[40u8, 0u8, 108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -2428,7 +2428,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             ])
         },
     },
-    mat3: ::icu_segmenter::provider::LstmMatrix {
+    mat3: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[27u8, 0u8, 108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -3379,7 +3379,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             ])
         },
     },
-    mat4: ::icu_segmenter::provider::LstmMatrix {
+    mat4: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -3422,7 +3422,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             ])
         },
     },
-    mat5: ::icu_segmenter::provider::LstmMatrix {
+    mat5: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[40u8, 0u8, 108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -4826,7 +4826,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             ])
         },
     },
-    mat6: ::icu_segmenter::provider::LstmMatrix {
+    mat6: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[27u8, 0u8, 108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -5777,7 +5777,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             ])
         },
     },
-    mat7: ::icu_segmenter::provider::LstmMatrix {
+    mat7: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[108u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -5820,7 +5820,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             ])
         },
     },
-    mat8: ::icu_segmenter::provider::LstmMatrix {
+    mat8: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[54u8, 0u8, 4u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -5898,7 +5898,7 @@ static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
             ])
         },
     },
-    mat9: ::icu_segmenter::provider::LstmMatrix {
+    mat9: ::icu::segmenter::provider::LstmMatrix {
         dim: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[4u8, 0u8]) },
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[

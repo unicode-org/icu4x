@@ -1,5 +1,5 @@
 // @generated
-type DataStruct = < :: icu_datetime :: provider :: time_zones :: MetaZoneGenericNamesLongV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu :: datetime :: provider :: time_zones :: MetaZoneGenericNamesLongV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
@@ -22,7 +22,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static AR_AR_EG: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -538,7 +538,7 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGe
         )
     },
 };
-static BN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static BN: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1288,7 +1288,7 @@ static BN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericN
         )
     },
 };
-static CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static CCP: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -2367,7 +2367,7 @@ static CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGeneric
         )
     },
 };
-static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static EN: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -2686,7 +2686,7 @@ static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericN
     },
 };
 static EN_001_EN_ZA: &DataStruct =
-    &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+    &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -3023,7 +3023,7 @@ static EN_001_EN_ZA: &DataStruct =
             )
         },
     };
-static ES: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static ES: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -3394,7 +3394,7 @@ static ES: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericN
         )
     },
 };
-static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static ES_AR: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -3761,7 +3761,7 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGener
         )
     },
 };
-static FIL: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static FIL: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -4102,7 +4102,7 @@ static FIL: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGeneric
         )
     },
 };
-static FR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static FR: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -4515,7 +4515,7 @@ static FR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericN
         )
     },
 };
-static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static JA: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -4960,7 +4960,7 @@ static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericN
         )
     },
 };
-static RU: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static RU: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -5400,7 +5400,7 @@ static RU: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericN
         )
     },
 };
-static SR_LATN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static SR_LATN: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -5757,7 +5757,7 @@ static SR_LATN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGen
     },
 };
 static SR_SR_CYRL: &DataStruct =
-    &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+    &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -6364,7 +6364,7 @@ static SR_SR_CYRL: &DataStruct =
             )
         },
     };
-static TH: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static TH: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -7106,7 +7106,7 @@ static TH: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericN
         )
     },
 };
-static TR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static TR: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -7442,7 +7442,7 @@ static TR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericN
         )
     },
 };
-static UND: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
+static UND: &DataStruct = &::icu::datetime::provider::time_zones::MetaZoneGenericNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(

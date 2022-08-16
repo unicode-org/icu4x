@@ -1,8 +1,8 @@
 // @generated
-type DataStruct = < :: icu_calendar :: provider :: JapaneseExtendedErasV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu :: calendar :: provider :: JapaneseExtendedErasV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu_calendar::provider::JapaneseErasV1 {
+static UND: &DataStruct = &::icu::calendar::provider::JapaneseErasV1 {
     dates_to_eras: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
             133u8, 2u8, 0u8, 0u8, 6u8, 19u8, 116u8, 97u8, 105u8, 107u8, 97u8, 45u8, 54u8, 52u8,

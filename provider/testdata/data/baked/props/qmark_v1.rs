@@ -1,12 +1,12 @@
 // @generated
 type DataStruct =
-    <::icu_properties::provider::QuotationMarkV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu::properties::provider::QuotationMarkV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
 static UND: &DataStruct =
-    &::icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
+    &::icu::properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
         #[allow(unused_unsafe)]
-        ::icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(
+        ::icu::collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     34u8, 0u8, 0u8, 0u8, 35u8, 0u8, 0u8, 0u8, 39u8, 0u8, 0u8, 0u8, 40u8, 0u8, 0u8,

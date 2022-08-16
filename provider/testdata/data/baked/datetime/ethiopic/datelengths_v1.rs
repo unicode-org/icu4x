@@ -1,5 +1,5 @@
 // @generated
-type DataStruct = < :: icu_datetime :: provider :: calendar :: EthiopicDateLengthsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu :: datetime :: provider :: calendar :: EthiopicDateLengthsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
@@ -22,9 +22,9 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 6u8, 12u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
@@ -32,38 +32,38 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV
                     128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 32u8,
                     15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 32u8, 15u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 32u8,
                     15u8, 0u8, 0u8, 47u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8, 0u8,
@@ -71,7 +71,7 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8, 0u8,
@@ -79,7 +79,7 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8, 0u8,
@@ -87,7 +87,7 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 6u8, 65u8, 0u8, 6u8, 74u8, 0u8, 0u8,
@@ -97,9 +97,9 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV
         },
     },
 };
-static BN_CCP: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static BN_CCP: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
@@ -107,59 +107,59 @@ static BN_CCP: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 
                     0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -168,9 +168,9 @@ static BN_CCP: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 
         },
     },
 };
-static EN: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static EN: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
@@ -178,38 +178,38 @@ static EN: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
@@ -217,7 +217,7 @@ static EN: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
@@ -225,14 +225,14 @@ static EN: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -241,9 +241,9 @@ static EN: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static EN_001: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static EN_001: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
@@ -251,38 +251,38 @@ static EN_001: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 
                     128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
@@ -290,7 +290,7 @@ static EN_001: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
@@ -298,14 +298,14 @@ static EN_001: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -314,9 +314,9 @@ static EN_001: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 
         },
     },
 };
-static EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 2u8, 0u8, 0u8,
@@ -324,38 +324,38 @@ static EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8,
                     2u8, 0u8, 0u8, 47u8, 128u8, 64u8, 2u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
@@ -363,7 +363,7 @@ static EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 97u8, 0u8, 0u8, 116u8, 0u8, 0u8,
@@ -371,14 +371,14 @@ static EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -387,9 +387,9 @@ static EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static ES: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static ES: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
@@ -398,9 +398,9 @@ static ES: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8,
@@ -408,9 +408,9 @@ static ES: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8,
@@ -418,41 +418,41 @@ static ES: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -461,9 +461,9 @@ static ES: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
@@ -472,9 +472,9 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8,
@@ -482,9 +482,9 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 100u8, 0u8, 0u8, 101u8, 0u8, 0u8,
@@ -492,41 +492,41 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -535,9 +535,9 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
@@ -545,38 +545,38 @@ static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 110u8, 0u8, 0u8, 97u8, 0u8, 0u8,
@@ -584,7 +584,7 @@ static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 110u8, 0u8, 0u8, 97u8, 0u8, 0u8,
@@ -592,14 +592,14 @@ static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -608,47 +608,47 @@ static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static FR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static FR: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8,
                     32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 224u8, 0u8, 0u8, 32u8, 128u8, 0u8,
@@ -656,7 +656,7 @@ static FR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 0u8, 0u8, 224u8, 0u8, 0u8, 32u8, 128u8, 0u8,
@@ -664,14 +664,14 @@ static FR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -680,9 +680,9 @@ static FR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static JA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static JA: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
@@ -690,59 +690,59 @@ static JA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     4u8, 0u8, 0u8, 41u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 128u8, 16u8, 1u8, 0u8, 94u8, 116u8, 128u8, 32u8, 1u8, 0u8,
                     103u8, 8u8, 128u8, 64u8, 1u8, 0u8, 101u8, 229u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 5u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 2u8, 0u8, 0u8,
                     47u8, 128u8, 64u8, 2u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 5u8, 128u8, 16u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8,
                     47u8, 128u8, 64u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -751,9 +751,9 @@ static JA: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static RU: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static RU: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
@@ -761,9 +761,9 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     4u8, 51u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8,
@@ -771,9 +771,9 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8,
@@ -781,41 +781,41 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 2u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -824,9 +824,9 @@ static RU: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static SR_SR_CYRL_SR_LATN: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static SR_SR_CYRL_SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 0u8, 44u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8,
@@ -834,59 +834,59 @@ static SR_SR_CYRL_SR_LATN: &DataStruct = &::icu_datetime::provider::calendar::Da
                     0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8,
                     32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 2u8, 0u8, 0u8, 46u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8, 1u8, 0u8, 0u8, 46u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 46u8, 0u8, 0u8, 32u8, 128u8, 0u8, 5u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -895,9 +895,9 @@ static SR_SR_CYRL_SR_LATN: &DataStruct = &::icu_datetime::provider::calendar::Da
         },
     },
 };
-static TH: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static TH: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 80u8, 4u8, 0u8, 14u8, 23u8, 0u8, 14u8, 53u8, 0u8, 14u8, 72u8, 0u8, 0u8,
@@ -905,59 +905,59 @@ static TH: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 4u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                     1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8, 3u8, 0u8, 0u8, 32u8, 128u8, 0u8,
                     1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 64u8, 1u8, 0u8, 0u8, 47u8, 128u8, 32u8, 1u8, 0u8, 0u8, 47u8, 128u8,
                     16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -966,68 +966,68 @@ static TH: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static TR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static TR: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                     4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 80u8, 4u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                     4u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                     3u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8, 0u8, 0u8, 46u8, 128u8, 32u8,
                     2u8, 0u8, 0u8, 46u8, 128u8, 16u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
@@ -1036,9 +1036,9 @@ static TR: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
         },
     },
 };
-static UND: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
-    date: ::icu_datetime::provider::calendar::patterns::LengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::Pattern {
+static UND: &DataStruct = &::icu::datetime::provider::calendar::DateLengthsV1 {
+    date: ::icu::datetime::provider::calendar::patterns::LengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8,
@@ -1046,59 +1046,59 @@ static UND: &DataStruct = &::icu_datetime::provider::calendar::DateLengthsV1 {
                     80u8, 4u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        long: ::icu_datetime::pattern::runtime::Pattern {
+        long: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                     4u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        medium: ::icu_datetime::pattern::runtime::Pattern {
+        medium: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 32u8, 128u8, 32u8,
                     3u8, 0u8, 0u8, 32u8, 128u8, 64u8, 1u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
-        short: ::icu_datetime::pattern::runtime::Pattern {
+        short: ::icu::datetime::pattern::runtime::Pattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 5u8, 0u8, 0u8, 32u8, 128u8, 16u8, 1u8, 0u8, 0u8, 45u8, 128u8, 32u8,
                     2u8, 0u8, 0u8, 45u8, 128u8, 64u8, 2u8,
                 ])
             },
-            time_granularity: ::icu_datetime::pattern::TimeGranularity::None,
+            time_granularity: ::icu::datetime::pattern::TimeGranularity::None,
         },
     },
-    length_combinations: ::icu_datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
-        full: ::icu_datetime::pattern::runtime::GenericPattern {
+    length_combinations: ::icu::datetime::provider::calendar::patterns::GenericLengthPatternsV1 {
+        full: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        long: ::icu_datetime::pattern::runtime::GenericPattern {
+        long: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        medium: ::icu_datetime::pattern::runtime::GenericPattern {
+        medium: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,
                 ])
             },
         },
-        short: ::icu_datetime::pattern::runtime::GenericPattern {
+        short: ::icu::datetime::pattern::runtime::GenericPattern {
             items: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     128u8, 0u8, 1u8, 0u8, 0u8, 32u8, 128u8, 0u8, 0u8,

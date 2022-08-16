@@ -1,17 +1,17 @@
 // @generated
-type DataStruct = < :: icu_normalizer :: provider :: Uts46CompositionPassthroughV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu :: normalizer :: provider :: Uts46CompositionPassthroughV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu_normalizer::provider::CompositionPassthroughV1 {
+static UND: &DataStruct = &::icu::normalizer::provider::CompositionPassthroughV1 {
     first: 65u32,
-    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
-        ::icu_collections::codepointtrie::CodePointTrieHeader {
+    trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu::collections::codepointtrie::CodePointTrieHeader {
             high_start: 24576u32,
             shifted12_high_start: 6u16,
             index3_null_offset: 26u16,
             data_null_offset: 617u32,
             null_value: 0u32,
-            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
+            trie_type: ::icu::collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[

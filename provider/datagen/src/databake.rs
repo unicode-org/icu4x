@@ -12,6 +12,7 @@ use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Mutex;
+use std::collections::BTreeSet;
 
 macro_rules! move_out {
     ($field:expr) => {{
@@ -30,6 +31,7 @@ pub(crate) struct BakedDataExporter {
     mod_directory: PathBuf,
     pretty: bool,
     insert_feature_gates: bool,
+    use_separate_crates: bool,
     // Temporary storage for put_payload: key -> (marker path, bake -> [locale])
     data: Mutex<HashMap<DataKey, (SyncTokenStream, HashMap<SyncTokenStream, Vec<String>>)>>,
     // All mod.rs files in the module tree. Because generation is parallel,
@@ -43,12 +45,18 @@ pub(crate) struct BakedDataExporter {
 }
 
 impl BakedDataExporter {
-    pub fn new(mod_directory: PathBuf, pretty: bool, insert_feature_gates: bool) -> Self {
+    pub fn new(
+        mod_directory: PathBuf,
+        pretty: bool,
+        insert_feature_gates: bool,
+        use_separate_crates: bool,
+    ) -> Self {
         let _ = std::fs::remove_dir_all(&mod_directory);
         Self {
             mod_directory,
             pretty,
             insert_feature_gates,
+            use_separate_crates,
             data: Default::default(),
             mod_files: Default::default(),
             marker_data_feature: Default::default(),
@@ -67,7 +75,17 @@ impl BakedDataExporter {
         {
             let mut file = crlify::BufWriterWithLineEndingFix::new(File::create(&path)?);
             writeln!(file, "// @generated")?;
-            writeln!(file, "{}", data)?;
+            if self.use_separate_crates {
+                writeln!(file, "{}", data)?;
+            } else {
+                writeln!(
+                    file,
+                    "{}",
+                    data.to_string()
+                        .replace("icu_", "icu :: ")
+                        .replace("icu :: provider", "icu_provider")
+                )?;
+            }
         }
 
         if self.pretty {
@@ -258,8 +276,11 @@ impl DataExporter for BakedDataExporter {
 
     fn close(&mut self) -> Result<(), DataError> {
         self.dependencies.insert("icu_provider");
-        let mut deps = move_out!(self.dependencies).into_iter().collect::<Vec<_>>();
-        deps.sort_unstable();
+        let mut deps = move_out!(self.dependencies).into_iter().collect::<BTreeSet<_>>();
+        if !self.use_separate_crates {
+            deps.retain(|&krate| krate == "icu_provider" || !krate.starts_with("icu_"));
+            deps.insert("icu");
+        }
         log::info!("The generated module requires the following crates:");
         for crate_name in deps {
             log::info!("{}", crate_name);
