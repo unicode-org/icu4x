@@ -380,6 +380,14 @@ impl CharacterAndTrieValue {
         }
     }
     #[inline(always)]
+    pub fn starter_and_decomposes_to_self(&self) -> bool {
+        if self.trie_val > BACKWARD_COMBINING_STARTER_MARKER {
+            return false;
+        }
+        // Hangul syllables get 0 as their trie value
+        u32::from(self.character).wrapping_sub(HANGUL_S_BASE) >= HANGUL_S_COUNT
+    }
+    #[inline(always)]
     pub fn can_combine_backwards(&self) -> bool {
         decomposition_starts_with_non_starter(self.trie_val)
             || self.trie_val == BACKWARD_COMBINING_STARTER_MARKER
@@ -720,7 +728,10 @@ where
 
     fn delegate_next(&mut self) -> Option<CharacterAndTrieValue> {
         if let Some(pending) = self.pending.take() {
-            // only happens as part of `Composition`
+            // Only happens as part of `Composition` and as part of
+            // the contiguous-buffer methods of `DecomposingNormalizer`.
+            // I.e. does not happen as part of standalone iterator
+            // usage of `Decomposition`.
             Some(pending)
         } else {
             self.delegate_next_no_pending()
@@ -840,6 +851,11 @@ where
         };
         // Either we're inside `Composition` or `self.pending.is_none()`.
 
+        self.gather_and_sort_combining(combining_start);
+        starter
+    }
+
+    fn gather_and_sort_combining(&mut self, combining_start: usize) {
         // Not a `for` loop to avoid holding a mutable reference to `self` across
         // the loop body.
         while let Some(ch_and_trie_val) = self.delegate_next() {
@@ -911,7 +927,6 @@ where
         // is in permissible range.
         #[allow(clippy::indexing_slicing)]
         sort_slice_by_ccc(&mut self.buffer[combining_start..], self.trie);
-        starter
     }
 }
 
@@ -1375,6 +1390,62 @@ macro_rules! composing_normalize_to {
     };
 }
 
+macro_rules! decomposing_normalize_to {
+    ($(#[$meta:meta])*,
+     $normalize_to:ident,
+     $write:path,
+     $slice:ty,
+     $prolog:block,
+     $as_slice:ident,
+     $fast:block,
+     $text:ident,
+     $sink:ident,
+     $decomposition:ident,
+     $decomposition_passthrough_bound:ident,
+     $undecomposed_starter:ident,
+     $pending_slice:ident,
+     $outer:lifetime, // loop labels use lifetime tokens
+    ) => {
+        $(#[$meta])*
+        pub fn $normalize_to<W: $write + ?Sized>(
+            &self,
+            $text: $slice,
+            $sink: &mut W,
+        ) -> core::fmt::Result {
+            $prolog
+
+            let mut $decomposition = self.normalize_iter($text.chars());
+
+            // Try to get the compiler to hoist the bound to a register.
+            let $decomposition_passthrough_bound = $decomposition.decomposition_passthrough_bound;
+            $outer: loop {
+                for cc in $decomposition.buffer.drain(..) {
+                    $sink.write_char(cc.character())?;
+                }
+                debug_assert_eq!($decomposition.buffer_pos, 0);
+                let mut $undecomposed_starter = if let Some(pending) = $decomposition.pending.take() {
+                    pending
+                } else {
+                    return Ok(());
+                };
+                // Allowing indexed slicing, because the a failure would be a code bug and
+                // not a data issue.
+                #[allow(clippy::indexing_slicing)]
+                if $undecomposed_starter.starter_and_decomposes_to_self() {
+                    // Don't bother including `undecomposed_starter` in a contiguous buffer
+                    // write: Just write it right away:
+                    $sink.write_char($undecomposed_starter.character)?;
+
+                    let $pending_slice = $decomposition.delegate.$as_slice();
+                    $fast
+                }
+                let starter = $decomposition.decomposing_next($undecomposed_starter);
+                $sink.write_char(starter)?;
+            }
+        }
+    };
+}
+
 macro_rules! normalizer_methods {
     () => {
         /// Normalize a string slice into a `String`.
@@ -1635,48 +1706,256 @@ impl DecomposingNormalizer {
 
     normalizer_methods!();
 
-    /// Normalize a string slice into a `Write` sink.
-    pub fn normalize_to<W: core::fmt::Write + ?Sized>(
-        &self,
-        text: &str,
-        sink: &mut W,
-    ) -> core::fmt::Result {
-        for c in self.normalize_iter(text.chars()) {
-            sink.write_char(c)?;
-        }
-        Ok(())
-    }
+    decomposing_normalize_to!(
+        /// Normalize a string slice into a `Write` sink.
+        ,
+        normalize_to,
+        core::fmt::Write,
+        &str,
+        {
+        },
+        as_str,
+        {
+            let decomposition_passthrough_byte_bound = if decomposition_passthrough_bound == 0xC0 {
+                0xC3u8
+            } else {
+                decomposition_passthrough_bound.min(0x80) as u8
+            };
+            // The attribute belongs on an inner statement, but Rust doesn't allow it there.
+            #[allow(clippy::unwrap_used)]
+            'fast: loop {
+                let mut code_unit_iter = decomposition.delegate.as_str().as_bytes().iter();
+                'fastest: loop {
+                    if let Some(&upcoming_byte) = code_unit_iter.next() {
+                        if upcoming_byte < decomposition_passthrough_byte_bound {
+                            // Fast-track succeeded!
+                            continue 'fastest;
+                        }
+                        break 'fastest;
+                    }
+                    // End of stream
+                    sink.write_str(pending_slice)?;
+                    return Ok(());
+                }
+                decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
 
-    /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
-    ///
-    /// Errors are mapped to the REPLACEMENT CHARACTER according
-    /// to the WHATWG Encoding Standard.
-    pub fn normalize_utf8_to<W: core::fmt::Write + ?Sized>(
-        &self,
-        text: &[u8],
-        sink: &mut W,
-    ) -> core::fmt::Result {
-        for c in self.normalize_iter(text.chars()) {
-            sink.write_char(c)?;
-        }
-        Ok(())
-    }
+                // `unwrap()` OK, because the slice is valid UTF-8 and we know there
+                // is an upcoming byte.
+                let upcoming = decomposition.delegate.next().unwrap();
+                let upcoming_with_trie_value = decomposition.attach_trie_value(upcoming);
+                if upcoming_with_trie_value.starter_and_decomposes_to_self() {
+                    continue 'fast;
+                }
+                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                    - decomposition.delegate.as_str().len()
+                    - upcoming.len_utf8()];
+                sink.write_str(consumed_so_far_slice)?;
 
-    /// Normalize a slice of potentially-invalid UTF-16 into a `Write16` sink.
-    ///
-    /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
-    /// before normalizing.
-    pub fn normalize_utf16_to<W: write16::Write16 + ?Sized>(
-        &self,
-        text: &[u16],
-        sink: &mut W,
-    ) -> core::fmt::Result {
-        sink.size_hint(text.len())?;
-        for c in self.normalize_iter(text.chars()) {
-            sink.write_char(c)?;
-        }
-        Ok(())
-    }
+                // Now let's figure out if we got a starter or a non-starter.
+                if decomposition_starts_with_non_starter(
+                    upcoming_with_trie_value.trie_val,
+                ) {
+                    // Let this trie value to be reprocessed in case it is
+                    // one of the rare decomposing ones.
+                    decomposition.pending = Some(upcoming_with_trie_value);
+                    decomposition.gather_and_sort_combining(0);
+                    continue 'outer;
+                }
+                undecomposed_starter = upcoming_with_trie_value;
+                debug_assert!(decomposition.pending.is_none());
+                break 'fast;
+            }
+        },
+        text,
+        sink,
+        decomposition,
+        decomposition_passthrough_bound,
+        undecomposed_starter,
+        pending_slice,
+        'outer,
+    );
+
+    decomposing_normalize_to!(
+        /// Normalize a slice of potentially-invalid UTF-8 into a `Write` sink.
+        ///
+        /// Errors are mapped to the REPLACEMENT CHARACTER according
+        /// to the WHATWG Encoding Standard.
+        ,
+        normalize_utf8_to,
+        core::fmt::Write,
+        &[u8],
+        {
+        },
+        as_slice,
+        {
+            let decomposition_passthrough_byte_bound = decomposition_passthrough_bound.min(0x80) as u8;
+            // The attribute belongs on an inner statement, but Rust doesn't allow it there.
+            #[allow(clippy::unwrap_used)]
+            'fast: loop {
+                let mut code_unit_iter = decomposition.delegate.as_slice().iter();
+                'fastest: loop {
+                    if let Some(&upcoming_byte) = code_unit_iter.next() {
+                        if upcoming_byte < decomposition_passthrough_byte_bound {
+                            // Fast-track succeeded!
+                            continue 'fastest;
+                        }
+                        break 'fastest;
+                    }
+                    // End of stream
+                    sink.write_str(unsafe { from_utf8_unchecked(pending_slice) })?;
+                    return Ok(());
+                }
+                decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
+
+                // `unwrap()` OK, because the slice is valid UTF-8 and we know there
+                // is an upcoming byte.
+                let upcoming = decomposition.delegate.next().unwrap();
+                let upcoming_with_trie_value = decomposition.attach_trie_value(upcoming);
+                if upcoming_with_trie_value.starter_and_decomposes_to_self() {
+                    if upcoming != REPLACEMENT_CHARACTER {
+                        continue 'fast;
+                    }
+                    // We might have an error, so fall out of the fast path.
+
+                    // Since the U+FFFD might signify an error, we can't
+                    // assume `upcoming.len_utf8()` for the backoff length.
+                    let mut consumed_so_far = pending_slice[..pending_slice.len() - decomposition.delegate.as_slice().len()].chars();
+                    let back = consumed_so_far.next_back();
+                    debug_assert_eq!(back, Some(REPLACEMENT_CHARACTER));
+                    let consumed_so_far_slice = consumed_so_far.as_slice();
+                    sink.write_str(unsafe{from_utf8_unchecked(consumed_so_far_slice)})?;
+
+                    // We could call `gather_and_sort_combining` here and
+                    // `continue 'outer`, but this should be better for code
+                    // size.
+                    undecomposed_starter = upcoming_with_trie_value;
+                    debug_assert!(decomposition.pending.is_none());
+                    break 'fast;
+                }
+                let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                    - decomposition.delegate.as_slice().len()
+                    - upcoming.len_utf8()];
+                sink.write_str(unsafe{from_utf8_unchecked(consumed_so_far_slice)})?;
+
+                // Now let's figure out if we got a starter or a non-starter.
+                if decomposition_starts_with_non_starter(
+                    upcoming_with_trie_value.trie_val,
+                ) {
+                    // Let this trie value to be reprocessed in case it is
+                    // one of the rare decomposing ones.
+                    decomposition.pending = Some(upcoming_with_trie_value);
+                    decomposition.gather_and_sort_combining(0);
+                    continue 'outer;
+                }
+                undecomposed_starter = upcoming_with_trie_value;
+                debug_assert!(decomposition.pending.is_none());
+                break 'fast;
+            }
+        },
+        text,
+        sink,
+        decomposition,
+        decomposition_passthrough_bound,
+        undecomposed_starter,
+        pending_slice,
+        'outer,
+    );
+
+    decomposing_normalize_to!(
+        /// Normalize a slice of potentially-invalid UTF-16 into a `Write16` sink.
+        ///
+        /// Unpaired surrogates are mapped to the REPLACEMENT CHARACTER
+        /// before normalizing.
+        ,
+        normalize_utf16_to,
+        write16::Write16,
+        &[u16],
+        {
+            sink.size_hint(text.len())?;
+        },
+        as_slice,
+        {
+            let mut code_unit_iter = decomposition.delegate.as_slice().iter();
+            'fast: loop {
+                if let Some(&upcoming_code_unit) = code_unit_iter.next() {
+                    let mut upcoming32 = u32::from(upcoming_code_unit);
+                    if upcoming32 < decomposition_passthrough_bound {
+                        continue 'fast;
+                    }
+                    // The loop is only broken out of as goto forward
+                    #[allow(clippy::never_loop)]
+                    'surrogateloop: loop {
+                        let surrogate_base = upcoming32.wrapping_sub(0xD800);
+                        if surrogate_base > (0xDFFF - 0xD800) {
+                            // Not surrogate
+                            break 'surrogateloop;
+                        }
+                        if surrogate_base <= (0xDBFF - 0xD800) {
+                            let iter_backup = code_unit_iter.clone();
+                            if let Some(&low) = code_unit_iter.next() {
+                                if in_inclusive_range16(low, 0xDC00, 0xDFFF) {
+                                    upcoming32 = (upcoming32 << 10) + u32::from(low)
+                                        - (((0xD800u32 << 10) - 0x10000u32) + 0xDC00u32);
+                                    break 'surrogateloop;
+                                } else {
+                                    code_unit_iter = iter_backup;
+                                }
+                            }
+                        }
+                        // unpaired surrogate
+                        let slice_to_write = &pending_slice
+                            [..pending_slice.len() - code_unit_iter.as_slice().len() - 1];
+                        sink.write_slice(slice_to_write)?;
+                        undecomposed_starter =
+                            CharacterAndTrieValue::new(REPLACEMENT_CHARACTER, 0);
+                        debug_assert!(decomposition.pending.is_none());
+                        // We could instead call `gather_and_sort_combining` and `continue 'outer`, but
+                        // assuming this is better for code size.
+                        break 'fast;
+                    }
+                    // Not unpaired surrogate
+                    let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
+                    let upcoming_with_trie_value =
+                        decomposition.attach_trie_value(upcoming);
+                    if upcoming_with_trie_value.starter_and_decomposes_to_self() {
+                        continue 'fast;
+                    }
+                    let consumed_so_far_slice = &pending_slice[..pending_slice.len()
+                        - code_unit_iter.as_slice().len()
+                        - upcoming.len_utf16()];
+                    sink.write_slice(consumed_so_far_slice)?;
+
+                    // Now let's figure out if we got a starter or a non-starter.
+                    if decomposition_starts_with_non_starter(
+                        upcoming_with_trie_value.trie_val,
+                    ) {
+                        // Sync with main iterator
+                        decomposition.delegate = code_unit_iter.as_slice().chars();
+                        // Let this trie value to be reprocessed in case it is
+                        // one of the rare decomposing ones.
+                        decomposition.pending = Some(upcoming_with_trie_value);
+                        decomposition.gather_and_sort_combining(0);
+                        continue 'outer;
+                    }
+                    undecomposed_starter = upcoming_with_trie_value;
+                    debug_assert!(decomposition.pending.is_none());
+                    break 'fast;
+                }
+                // End of stream
+                sink.write_slice(pending_slice)?;
+                return Ok(());
+            }
+            // Sync the main iterator
+            decomposition.delegate = code_unit_iter.as_slice().chars();
+        },
+        text,
+        sink,
+        decomposition,
+        decomposition_passthrough_bound,
+        undecomposed_starter,
+        pending_slice,
+        'outer,
+    );
 }
 
 /// A normalizer for performing composing normalization.

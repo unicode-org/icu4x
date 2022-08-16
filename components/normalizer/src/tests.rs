@@ -307,6 +307,38 @@ fn test_nfc_utf8_to_errors() {
 }
 
 #[test]
+fn test_nfd_utf8_to_errors() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+
+    let mut buf = StackString::new();
+    assert!(normalizer
+        .normalize_utf8_to(b"\xFF\xC3\xA4\xFF", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "\u{FFFD}a\u{0308}\u{FFFD}");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"\x80\xE1\xBB\x87\x80", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "\u{FFFD}e\u{0323}\u{0302}\u{FFFD}");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"aaa\xFFaaa\xFFaaa", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "aaa\u{FFFD}aaa\u{FFFD}aaa");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"aaa\xE2\x98aaa\xE2\x98aaa", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "aaa\u{FFFD}aaa\u{FFFD}aaa");
+}
+
+#[test]
 fn test_nfc_utf16_to_errors() {
     let data_provider = icu_testdata::get_provider();
 
@@ -365,6 +397,116 @@ fn test_nfc_utf16_to_errors() {
     assert_eq!(
         &buf,
         [0x0061u16, 0xFFFDu16, 0x00E4u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x0061u16, 0x0061u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0061u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x0061u16, 0x0061u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0061u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x0308u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x0308u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+}
+
+#[test]
+fn test_nfd_utf16_to_errors() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+
+    let mut buf = StackVec::new();
+    assert!(normalizer
+        .normalize_utf16_to([0xD800u16, 0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0xFFFDu16, 0x0061u16, 0x0308u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0xDC00u16, 0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0xFFFDu16, 0x0061u16, 0x0308u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0x0061u16, 0xD800u16, 0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0308u16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0x0061u16, 0xDC00u16, 0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0308u16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x00E4u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x00E4u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0308u16, 0xFFFDu16].as_slice()
     );
 
     buf.clear();
