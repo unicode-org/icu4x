@@ -5,8 +5,6 @@
 use crate::{calendar, options::length, raw};
 use alloc::string::String;
 
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
-
 use icu_provider::prelude::*;
 
 use crate::provider::{calendar::*, week_data::WeekDataV1Marker};
@@ -66,6 +64,9 @@ impl DateFormatter {
     /// Construct a new [`DateFormatter`] from a data provider that implements
     /// [`AnyProvider`].
     ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
     /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
 
@@ -88,6 +89,9 @@ impl DateFormatter {
 
     /// Construct a new [`DateFormatter`] from a data provider that implements
     /// [`BufferProvider`].
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/datelengths@1`,
     /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
@@ -144,6 +148,9 @@ impl DateFormatter {
     /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
     /// # Examples
     ///
@@ -208,20 +215,9 @@ impl DateFormatter {
         // separately into the raw formatter.
         let mut locale_with_cal = locale.clone();
 
-        // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Ok(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
-            kind
-        } else {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("gregory"));
-            AnyCalendarKind::Gregorian
-        };
-
-        // We share data under ethiopic
-        if kind == AnyCalendarKind::Ethioaa {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
-
-        let calendar = AnyCalendar::try_new_unstable(data_provider, kind)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, &locale_with_cal)?;
+        let kind = calendar.kind();
+        kind.set_on_data_locale(&mut locale_with_cal);
 
         Ok(Self(
             raw::DateFormatter::try_new(
