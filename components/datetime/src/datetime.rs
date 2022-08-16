@@ -6,8 +6,9 @@
 //! Central to this is the [`TypedDateTimeFormatter`].
 
 use crate::{
-    options::{components, length, preferences, DateTimeFormatterOptions},
-    provider::calendar::{DateSkeletonPatternsV1Marker, TimeLengthsV1Marker, TimeSymbolsV1Marker},
+    options::{length, preferences, DateTimeFormatterOptions},
+    provider::calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
+    provider::date_time::PatternSelector,
     provider::week_data::WeekDataV1Marker,
     raw,
 };
@@ -21,6 +22,9 @@ use crate::{
     calendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput, CldrCalendar,
     DateTimeFormatterError, FormattedDateTime,
 };
+
+#[cfg(feature = "experimental")]
+use crate::options::components;
 
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
@@ -485,6 +489,7 @@ where {
     /// ```
     ///
     /// [data provider]: icu_provider
+    #[cfg(feature = "experimental")]
     #[inline]
     pub fn try_new_unstable<D>(
         data_provider: &D,
@@ -496,7 +501,7 @@ where {
             + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
             + DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
@@ -507,13 +512,58 @@ where {
         let mut locale_with_cal = locale.clone();
 
         calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
+        let patterns = PatternSelector::for_options(
+            data_provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+            &locale_with_cal,
+            &options,
+        )?;
         Ok(Self(
             raw::DateTimeFormatter::try_new(
                 data_provider,
-                calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+                patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
                 locale_with_cal,
-                options,
+            )?,
+            PhantomData,
+        ))
+    }
+
+    #[allow(missing_docs)] // The docs use the "experimental" version
+    #[cfg(not(feature = "experimental"))]
+    #[inline]
+    pub fn try_new_unstable<D>(
+        data_provider: &D,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
+    where
+        D: DataProvider<<C as CldrCalendar>::DateSymbolsV1Marker>
+            + DataProvider<<C as CldrCalendar>::DateLengthsV1Marker>
+            + DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + ?Sized,
+    {
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale_with_cal = locale.clone();
+
+        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
+        let patterns = PatternSelector::for_options(
+            data_provider,
+            calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
+            &locale_with_cal,
+            &options,
+        )?;
+        Ok(Self(
+            raw::DateTimeFormatter::try_new(
+                data_provider,
+                patterns,
+                || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
+                locale_with_cal,
             )?,
             PhantomData,
         ))
@@ -644,6 +694,7 @@ where {
     ///
     /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
+    #[cfg(feature = "experimental")]
     pub fn resolve_components(&self) -> components::Bag {
         self.0.resolve_components()
     }

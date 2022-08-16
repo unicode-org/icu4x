@@ -194,7 +194,8 @@ impl From<DateTimeFormatterError> for ICU4XError {
             DateTimeFormatterError::MissingInputField(_) => {
                 ICU4XError::DateTimeFormatMissingInputFieldError
             }
-            DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
+            // TODO(#1324): Add back skeleton errors
+            // DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
             DateTimeFormatterError::UnsupportedField(_) => {
                 ICU4XError::DateTimeFormatUnsupportedFieldError
             }
