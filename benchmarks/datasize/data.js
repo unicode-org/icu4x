@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660688916877,
+  "lastUpdate": 1660692895893,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24173,6 +24173,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/47b289e60253050d3933ddd61b851d00317c1caa"
         },
         "date": 1660688851535,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3924376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a6987d11fc296a69c0d54e2ab7c6ea5381d8478d",
+          "message": "Put date skeletons behind a feature (#2370)",
+          "timestamp": "2022-08-16T16:32:50-07:00",
+          "tree_id": "8343996ca5da3c8c3b199f503d1c6e1b45bc82d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/a6987d11fc296a69c0d54e2ab7c6ea5381d8478d"
+        },
+        "date": 1660692851901,
         "tool": "ndjson",
         "benches": [
           {
