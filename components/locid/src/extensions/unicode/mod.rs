@@ -95,6 +95,16 @@ impl Unicode {
         }
     }
 
+    /// Create a new map of Unicode extensions containing exactly one key-value pair, callable in
+    /// `const` context.
+    #[inline]
+    pub const fn single_keyword(key: Key, value: Value) -> Self {
+        Self {
+            keywords: Keywords::single(key, value),
+            attributes: Attributes::new(),
+        }
+    }
+
     /// Returns [`true`] if there list of keywords and attributes is empty.
     ///
     /// # Examples

@@ -136,6 +136,24 @@ impl Value {
         }
     }
 
+    pub(crate) const fn parse_subtag_from_bytes_manual_slice(
+        bytes: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
+        let slice_len = end - start;
+        if slice_len > *VALUE_LENGTH.end() || slice_len < *VALUE_LENGTH.start() {
+            return Err(ParserError::InvalidExtension);
+        }
+
+        match TinyAsciiStr::from_bytes_manual_slice(bytes, start, end) {
+            Ok(TRUE_VALUE) => Ok(None),
+            Ok(s) if s.is_ascii_alphanumeric() => Ok(Some(s.to_ascii_lowercase())),
+            Ok(_) => Err(ParserError::InvalidExtension),
+            Err(_) => Err(ParserError::InvalidSubtag),
+        }
+    }
+
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
     where
         F: FnMut(&str) -> Result<(), E>,

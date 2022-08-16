@@ -35,6 +35,21 @@ impl<K, V> LiteMap<K, V> {
     }
 }
 
+impl<K, V, S> LiteMap<K, V, S> {
+    /// Construct a new [`LiteMap`] using the given values
+    ///
+    /// # Safety
+    ///
+    /// The store must be sorted and have no duplicate keys.
+    pub const fn from_store_unchecked(values: S) -> Self {
+        Self {
+            values,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+}
+
 impl<K, V> LiteMap<K, V, Vec<(K, V)>> {
     /// Convert a `Vec<(K, V)>` into a [`LiteMap`].
     ///

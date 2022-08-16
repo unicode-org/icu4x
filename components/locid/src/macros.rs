@@ -191,7 +191,8 @@ macro_rules! langid {
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: The macro cannot produce locales with more than one variant or extensions due to const
+/// *Note*: The macro cannot produce locales with more than one variant or multiple extensions
+/// (only single keyword unicode extension is supported) due to const
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail
@@ -208,8 +209,10 @@ macro_rules! langid {
 macro_rules! locale {
     ($locale:literal) => {{
         const R: $crate::Locale =
-            match $crate::LanguageIdentifier::from_bytes_with_single_variant($locale.as_bytes()) {
-                Ok((language, script, region, variant)) => $crate::Locale {
+            match $crate::Locale::from_bytes_with_single_variant_single_keyword_unicode_extension(
+                $locale.as_bytes(),
+            ) {
+                Ok((language, script, region, variant, keyword)) => $crate::Locale {
                     id: $crate::LanguageIdentifier {
                         language,
                         script,
@@ -219,7 +222,15 @@ macro_rules! locale {
                             None => $crate::subtags::Variants::new(),
                         },
                     },
-                    extensions: $crate::extensions::Extensions::new(),
+                    extensions: match keyword {
+                        Some(k) => $crate::extensions::Extensions::single_unicode(
+                            $crate::extensions::Unicode::single_keyword(
+                                k.0,
+                                $crate::extensions::unicode::Value::from_tinystr(k.1),
+                            ),
+                        ),
+                        None => $crate::extensions::Extensions::new(),
+                    },
                 },
                 #[allow(clippy::panic)] // const context
                 _ => panic!(concat!(
@@ -367,5 +378,12 @@ mod test {
         const DE_AT_FOOBAR: Locale = locale!("de_at-foobar");
         let de_at_foobar: Locale = "de_at-foobar".parse().unwrap();
         assert_eq!(DE_AT_FOOBAR, de_at_foobar);
+    }
+
+    #[test]
+    fn test_locale_macro_can_parse_locale_with_single_keyword_unicode_extension() {
+        const DE_AT_U_CA_FOOBAR: Locale = locale!("de_at-u-ca-foobar");
+        let de_at_u_ca_foobar: Locale = "de_at-u-ca-foobar".parse().unwrap();
+        assert_eq!(DE_AT_U_CA_FOOBAR, de_at_u_ca_foobar);
     }
 }
