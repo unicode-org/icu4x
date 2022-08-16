@@ -23,6 +23,9 @@ use crate::{
     DateTimeFormatterError, FormattedDateTime,
 };
 
+#[cfg(feature = "experimental")]
+use crate::options::components;
+
 /// [`TimeFormatter`] is a structure of the [`icu_datetime`] component that provides time formatting only.
 /// When constructed, it uses data from the [data provider], selected locale and provided preferences to
 /// collect all data necessary to format any time into that locale.
@@ -692,7 +695,7 @@ where {
     /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
     #[cfg(feature = "experimental")]
-    pub fn resolve_components(&self) -> crate::options::components::Bag {
+    pub fn resolve_components(&self) -> components::Bag {
         self.0.resolve_components()
     }
 }
