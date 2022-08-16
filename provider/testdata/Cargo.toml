@@ -303,7 +303,7 @@ displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
 # databake deps
-icu = { version = "1.0.0-beta1", path = "../../components/icu", optional = true }
+icu = { version = "1.0.0-beta1", path = "../../components/icu", optional = true, features = ["experimental"] }
 litemap = { version = "0.5", path = "../../utils/litemap", optional = true, default-features = false }
 tinystr = { version = "0.6", path = "../../utils/tinystr", optional = true }
 zerovec = { version = "0.8", path = "../../utils/zerovec", optional = true }
