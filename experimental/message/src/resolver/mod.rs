@@ -11,8 +11,6 @@ pub struct Scope<'v, 'msgs, 'msgsv, S2, S4> {
     variables: Option<&'v HashMap<String, VariableType<S4>>>,
     messages: Option<&'msgs HashMap<String, &'msgsv ast::Message<S2>>>,
 }
-// vars: Option<&'v HashMap<String, VariableType<S4>>>,
-// msgs: Option<&'msgs HashMap<String, Vec<ast::PatternElement<S2>>>>,
 
 impl<'v, 'msgs, 'msgsv, S, S4> Scope<'v, 'msgs, 'msgsv, S, S4> {
     pub fn new(
@@ -269,7 +267,7 @@ mod test {
         let scope = Scope::<&str, &str>::new(None, None);
         let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
 
-        assert_eq!(string, Cow::Borrowed("Hello World"));
+        assert!(matches!(string, Cow::Borrowed("Hello World")));
 
         let scope = Scope::<&str, &str>::new(None, None);
         let parts = Resolver::<_, _, &str, _>::resolve_to_parts(&msg, &scope);
@@ -306,6 +304,16 @@ mod test {
                 MessagePart::Literal("Dragon"),
             ]
         );
+
+        let parser = Parser::new("{{$name}}");
+        let msg = parser.parse().unwrap();
+        let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
+        assert!(matches!(string, Cow::Borrowed("John")));
+
+        let parser = Parser::new("{{$creature}}");
+        let msg = parser.parse().unwrap();
+        let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
+        assert!(matches!(string, Cow::Borrowed("Dragon")));
     }
 
     #[test]
