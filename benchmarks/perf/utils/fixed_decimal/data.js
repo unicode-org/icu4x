@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660747671024,
+  "lastUpdate": 1660771838943,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45148,6 +45148,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 73,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aca08bae12b6db27995da89f68a92c9d9f6ce4fc",
+          "message": "Don't save the locale in the DateTimeFormatter (#2389)",
+          "timestamp": "2022-08-17T14:18:42-07:00",
+          "tree_id": "6504341ec68608939668261946f3dcbdcfe7322e",
+          "url": "https://github.com/unicode-org/icu4x/commit/aca08bae12b6db27995da89f68a92c9d9f6ce4fc"
+        },
+        "date": 1660771796140,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 122148,
+            "range": "± 1028",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24948,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72202,
+            "range": "± 78",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 89,
             "range": "± 0",
             "unit": "ns/iter"
           }
