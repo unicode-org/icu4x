@@ -222,15 +222,18 @@ macro_rules! locale {
                             None => $crate::subtags::Variants::new(),
                         },
                     },
-                    extensions: match keyword {
-                        Some(k) => $crate::extensions::Extensions::single_unicode(
-                            $crate::extensions::Unicode::single_keyword(
-                                k.0,
-                                $crate::extensions::unicode::Value::from_tinystr(k.1),
-                            ),
-                        ),
-                        None => $crate::extensions::Extensions::new(),
-                    },
+                    extensions: $crate::extensions::Extensions::single_unicode(
+                        $crate::extensions::Unicode {
+                            keywords: match keyword {
+                                Some(k) => $crate::extensions::unicode::Keywords::new_single(
+                                    k.0,
+                                    $crate::extensions::unicode::Value::from_tinystr(k.1),
+                                ),
+                                None => $crate::extensions::unicode::Keywords::new(),
+                            },
+                            attributes: $crate::extensions::unicode::Attributes::new(),
+                        },
+                    ),
                 },
                 #[allow(clippy::panic)] // const context
                 _ => panic!(concat!(

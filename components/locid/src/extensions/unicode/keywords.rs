@@ -82,7 +82,7 @@ impl Keywords {
 
     /// Create a new list of key-value pairs having exactly one pair, callable in a `const` context.
     #[inline]
-    pub const fn single(key: Key, value: Value) -> Self {
+    pub const fn new_single(key: Key, value: Value) -> Self {
         Self(LiteMap::from_store_unchecked(ShortVec::new_single((
             key, value,
         ))))
