@@ -510,7 +510,6 @@ mod tests {
     use icu_locid::Locale;
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_mixed_calendar_eras() {
         use icu::calendar::japanese::JapaneseExtended;
         use icu::calendar::Date;
@@ -536,7 +535,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_basic() {
         use crate::provider::calendar::{GregorianDateSymbolsV1Marker, TimeSymbolsV1Marker};
         use icu_calendar::DateTime;
@@ -581,7 +579,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_format_number() {
         let values = &[2, 20, 201, 2017, 20173];
         let samples = &[

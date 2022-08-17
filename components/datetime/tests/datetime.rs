@@ -2,8 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![cfg(feature = "serde")]
-
 mod fixtures;
 mod patterns;
 
@@ -174,6 +172,11 @@ fn assert_fixture_element<A>(
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
+    // Bounds for testdata to support the calendar
+    icu_testdata::baked::BakedDataProvider:
+        DataProvider<<A::Calendar as CldrCalendar>::DateSymbolsV1Marker>,
+    icu_testdata::baked::BakedDataProvider:
+        DataProvider<<A::Calendar as CldrCalendar>::DateLengthsV1Marker>,
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();

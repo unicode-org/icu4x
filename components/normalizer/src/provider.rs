@@ -9,9 +9,6 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
-#[cfg(feature = "serde")]
-use serde;
-
 use crate::u24::U24;
 
 /// Main data for NFD

@@ -956,8 +956,6 @@ mod tests {
     use super::*;
     use crate::codepointtrie::planes;
     use alloc::vec::Vec;
-    #[cfg(feature = "serde")]
-    use zerovec::ZeroVec;
 
     #[test]
     #[cfg(feature = "serde")]
@@ -1088,8 +1086,8 @@ mod tests {
         assert_eq!(&trie.index, &trie_deserialized.index);
         assert_eq!(&trie.data, &trie_deserialized.data);
 
-        assert!(matches!(trie_deserialized.index, ZeroVec::Borrowed(_)));
-        assert!(matches!(trie_deserialized.data, ZeroVec::Borrowed(_)));
+        assert!(matches!(trie_deserialized.index, zerovec::ZeroVec::Borrowed(_)));
+        assert!(matches!(trie_deserialized.data, zerovec::ZeroVec::Borrowed(_)));
 
         Ok(())
     }

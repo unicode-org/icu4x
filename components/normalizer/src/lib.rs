@@ -1961,5 +1961,5 @@ impl CanonicalDecomposition {
     icu_provider::gen_any_buffer_constructors!(locale: skip, options: skip, error: NormalizerError);
 }
 
-#[cfg(all(test, feature = "serde"))]
+#[cfg(test)]
 mod tests;

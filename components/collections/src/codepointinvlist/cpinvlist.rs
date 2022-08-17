@@ -42,7 +42,7 @@ pub struct CodePointInversionList<'data> {
     size: usize,
 }
 
-#[cfg(any(feature = "serde", test))]
+#[cfg(feature = "serde")]
 impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -78,7 +78,7 @@ impl databake::Bake for CodePointInversionList<'_> {
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
-#[cfg(any(feature = "serde", test))]
+#[cfg(feature = "serde")]
 impl<'data> serde::Serialize for CodePointInversionList<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
