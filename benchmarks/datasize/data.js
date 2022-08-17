@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660747077246,
+  "lastUpdate": 1660771262488,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24263,6 +24263,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5a6471da1068173ad9172d0f9e2d15ee5b73063f"
         },
         "date": 1660747025883,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3924376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "aca08bae12b6db27995da89f68a92c9d9f6ce4fc",
+          "message": "Don't save the locale in the DateTimeFormatter (#2389)",
+          "timestamp": "2022-08-17T14:18:42-07:00",
+          "tree_id": "6504341ec68608939668261946f3dcbdcfe7322e",
+          "url": "https://github.com/unicode-org/icu4x/commit/aca08bae12b6db27995da89f68a92c9d9f6ce4fc"
+        },
+        "date": 1660771201672,
         "tool": "ndjson",
         "benches": [
           {
