@@ -196,13 +196,39 @@ macro_rules! langid {
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail
-/// icu::locid::locale!("en-US-u-ca-ja");
+/// icu::locid::locale!("sl-IT-rozaj-biske-1994")
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "en-US-u-ca-ja".parse::<icu::locid::Locale>().unwrap();
+/// "sl-IT-rozaj-biske-1994".parse::<icu::locid::Locale>().unwrap();
 /// ```
 ///
+/// Locales with multiple keys are not supported
+/// ```compile_fail
+/// icu::locid::locale!("en-US-u-ca-buddhist-ca-japanese");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "en-US-u-ca-buddhist-ca-japanese".parse::<icu::locid::Locale>().unwrap();
+/// ```
+///
+/// Locales with attributes are not supported
+/// ```compile_fail
+/// icu::locid::locale!("en-US-u-foobar-ca-buddhist");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "en-US-u-foobar-ca-buddhist".parse::<icu::locid::Locale>().unwrap();
+/// ```
+///
+/// Locales with single key but multiple types are not supported
+/// ```compile_fail
+/// icu::locid::locale!("en-US-u-ca-buddhist-japanese");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "en-US-u-ca-buddhist-japanese".parse::<icu::locid::Locale>().unwrap();
+/// ```
 /// [`Locale`]: crate::Locale
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
 #[macro_export]
@@ -222,18 +248,19 @@ macro_rules! locale {
                             None => $crate::subtags::Variants::new(),
                         },
                     },
-                    extensions: $crate::extensions::Extensions::single_unicode(
-                        $crate::extensions::Unicode {
-                            keywords: match keyword {
-                                Some(k) => $crate::extensions::unicode::Keywords::new_single(
+                    extensions: match keyword {
+                        Some(k) => $crate::extensions::Extensions::single_unicode(
+                            $crate::extensions::Unicode {
+                                keywords: $crate::extensions::unicode::Keywords::new_single(
                                     k.0,
                                     $crate::extensions::unicode::Value::from_tinystr(k.1),
                                 ),
-                                None => $crate::extensions::unicode::Keywords::new(),
+
+                                attributes: $crate::extensions::unicode::Attributes::new(),
                             },
-                            attributes: $crate::extensions::unicode::Attributes::new(),
-                        },
-                    ),
+                        ),
+                        None => $crate::extensions::Extensions::new(),
+                    },
                 },
                 #[allow(clippy::panic)] // const context
                 _ => panic!(concat!(
