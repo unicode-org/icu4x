@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660693472379,
+  "lastUpdate": 1660738202648,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45023,6 +45023,66 @@ window.BENCHMARK_DATA = {
             "name": "to_string/write_to/908070605040302010",
             "value": 70,
             "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "14038a5ae761bfb01c702d2903b93161d459f841",
+          "message": "Check if the Swedish reformed collation exists (#2387)\n\nForward compatibility with https://unicode-org.atlassian.net/browse/CLDR-15603\r\nSee https://github.com/unicode-org/cldr/commit/aca740fb9c59efa1f1717bee682d98bded5d0428\r\nand https://github.com/unicode-org/cldr/commit/5b1423acc49c6b539e0cfbc69ae38c9cf044b1ca\r\n\r\nCloses #2183",
+          "timestamp": "2022-08-17T14:58:02+03:00",
+          "tree_id": "d4b9f2031b33a77cae838fc5bcbce9af0e05d7af",
+          "url": "https://github.com/unicode-org/icu4x/commit/14038a5ae761bfb01c702d2903b93161d459f841"
+        },
+        "date": 1660738156704,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105387,
+            "range": "± 339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21377,
+            "range": "± 161",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66129,
+            "range": "± 213",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 172,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 1",
             "unit": "ns/iter"
           },
           {
