@@ -1555,7 +1555,6 @@ dependencies = [
  "icu",
  "icu_benchmark_macros",
  "icu_calendar",
- "icu_datetime",
  "icu_decimal",
  "icu_locid",
  "icu_plurals",

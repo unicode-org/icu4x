@@ -99,7 +99,6 @@ registry!(
     CopticDateLengthsV1Marker,
     CopticDateSymbolsV1Marker,
     DashV1Marker,
-    DateSkeletonPatternsV1Marker,
     DecimalSymbolsV1Marker,
     DefaultIgnorableCodePointV1Marker,
     DeprecatedV1Marker,
@@ -192,6 +191,7 @@ registry!(
     #[cfg(feature = "experimental")]
     {
         CaseMappingV1Marker,
+        DateSkeletonPatternsV1Marker,
         GraphemeClusterBreakDataV1Marker,
         LineBreakDataV1Marker,
         LstmDataV1Marker,
