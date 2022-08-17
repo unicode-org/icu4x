@@ -34,7 +34,6 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 pub(crate) struct TimeFormatter {
-    pub locale: DataLocale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
     pub fixed_decimal_format: FixedDecimalFormatter,
@@ -90,23 +89,16 @@ impl TimeFormatter {
         )
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
-        Ok(Self::new(
-            locale,
-            patterns,
-            symbols_data,
-            fixed_decimal_format,
-        ))
+        Ok(Self::new(patterns, symbols_data, fixed_decimal_format))
     }
 
     /// Creates a new [`TimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
-        locale: DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
         fixed_decimal_format: FixedDecimalFormatter,
     ) -> Self {
         Self {
-            locale,
             patterns,
             symbols,
             fixed_decimal_format,
@@ -126,7 +118,6 @@ impl TimeFormatter {
             time_symbols: self.symbols.as_ref().map(|s| s.get()),
             datetime: ExtractedDateTimeInput::extract_from_time(value),
             week_data: None,
-            locale: &self.locale,
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
         }
@@ -149,7 +140,6 @@ impl TimeFormatter {
             None,
             None,
             &self.fixed_decimal_format,
-            &self.locale,
             w,
         )
         .map_err(|_| core::fmt::Error)
@@ -167,7 +157,6 @@ impl TimeFormatter {
 }
 
 pub(crate) struct DateFormatter {
-    pub locale: DataLocale,
     pub generic_pattern: DataPayload<GenericPatternV1Marker>,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
@@ -238,7 +227,6 @@ impl DateFormatter {
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
-            locale,
             generic_pattern,
             patterns,
             symbols_data,
@@ -250,7 +238,6 @@ impl DateFormatter {
 
     /// Creates a new [`DateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
-        locale: DataLocale,
         generic_pattern: DataPayload<GenericPatternV1Marker>,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
@@ -259,7 +246,6 @@ impl DateFormatter {
         fixed_decimal_format: FixedDecimalFormatter,
     ) -> Self {
         Self {
-            locale,
             generic_pattern,
             patterns,
             symbols,
@@ -282,7 +268,6 @@ impl DateFormatter {
             time_symbols: None,
             datetime: ExtractedDateTimeInput::extract_from_date(value),
             week_data: None,
-            locale: &self.locale,
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
         }
@@ -305,7 +290,6 @@ impl DateFormatter {
             None,
             None,
             &self.fixed_decimal_format,
-            &self.locale,
             w,
         )
         .map_err(|_| core::fmt::Error)
@@ -325,7 +309,6 @@ impl DateFormatter {
 /// This is the internal "raw" version of [crate::DateTimeFormatter], i.e. a version of DateTimeFormatter
 /// without the generic parameter. The actual implementation of [crate::DateTimeFormatter] should live here.
 pub(crate) struct DateTimeFormatter {
-    pub locale: DataLocale,
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
     pub date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
     pub time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
@@ -367,7 +350,6 @@ impl DateTimeFormatter {
             )?;
 
         Ok(Self {
-            locale: date.locale,
             patterns,
             date_symbols: date.symbols,
             time_symbols: time.symbols,
@@ -440,7 +422,6 @@ impl DateTimeFormatter {
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         Ok(Self::new(
-            locale,
             patterns,
             date_symbols_data,
             time_symbols_data,
@@ -452,7 +433,6 @@ impl DateTimeFormatter {
 
     /// Creates a new [`DateTimeFormatter`] regardless of whether there are time-zone symbols in the pattern.
     pub fn new(
-        locale: DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         date_symbols: Option<DataPayload<ErasedDateSymbolsV1Marker>>,
         time_symbols: Option<DataPayload<TimeSymbolsV1Marker>>,
@@ -461,7 +441,6 @@ impl DateTimeFormatter {
         fixed_decimal_format: FixedDecimalFormatter,
     ) -> Self {
         Self {
-            locale,
             patterns,
             date_symbols,
             time_symbols,
@@ -485,7 +464,6 @@ impl DateTimeFormatter {
             time_symbols: self.time_symbols.as_ref().map(|s| s.get()),
             datetime: ExtractedDateTimeInput::extract_from(value),
             week_data: self.week_data.as_ref().map(|s| s.get()),
-            locale: &self.locale,
             ordinal_rules: self.ordinal_rules.as_ref(),
             fixed_decimal_format: &self.fixed_decimal_format,
         }
@@ -507,7 +485,6 @@ impl DateTimeFormatter {
             self.week_data.as_ref().map(|s| s.get()),
             self.ordinal_rules.as_ref(),
             &self.fixed_decimal_format,
-            &self.locale,
             w,
         )
         .map_err(|_| core::fmt::Error)

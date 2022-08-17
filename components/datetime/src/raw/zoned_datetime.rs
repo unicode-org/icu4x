@@ -110,7 +110,6 @@ impl ZonedDateTimeFormatter {
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
-            locale,
             patterns,
             date_symbols_data,
             time_symbols_data,
@@ -121,7 +120,7 @@ impl ZonedDateTimeFormatter {
 
         let time_zone_format = TimeZoneFormatter::try_new(
             provider,
-            &datetime_format.locale,
+            &locale,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns
