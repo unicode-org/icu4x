@@ -125,7 +125,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
     fn flexible_day_period(&self);
 }
 
-pub(crate) struct DateTimeInputWithLocale<'data, T: DateTimeInput> {
+pub(crate) struct DateTimeInputWithCalendar<'data, T: DateTimeInput> {
     data: &'data T,
     calendar: Option<&'data week_of::CalendarInfo>,
 }
@@ -342,13 +342,13 @@ fn day_of_week_in_month<T: DateInput>(datetime: &T) -> Result<DayOfWeekInMonth, 
     Ok(day_of_month.into())
 }
 
-impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
+impl<'data, T: DateTimeInput> DateTimeInputWithCalendar<'data, T> {
     pub(crate) fn new(data: &'data T, calendar: Option<&'data week_of::CalendarInfo>) -> Self {
         Self { data, calendar }
     }
 }
 
-impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithLocale<'data, T> {
+impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithCalendar<'data, T> {
     fn datetime(&self) -> &T {
         self.data
     }
