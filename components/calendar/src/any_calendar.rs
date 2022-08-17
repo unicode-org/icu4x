@@ -46,11 +46,10 @@ use core::fmt;
 ///
 /// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::try_new_unstable(&icu_testdata::unstable(), &(&locale).into())
+/// let calendar = AnyCalendar::try_new_for_locale_unstable(&icu_testdata::unstable(), &locale.into())
 ///                    .expect("constructing AnyCalendar failed");
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu_calendar::Ref instead.
-///
 ///
 /// // manually construct a datetime in this calendar
 /// let manual_time = Time::try_new(12, 33, 12, 0).expect("failed to construct Time");
