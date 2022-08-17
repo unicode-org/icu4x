@@ -197,8 +197,10 @@ impl DataExporter for BakedDataExporter {
         let feature = if self.insert_feature_gates {
             let feature = marker.segments.iter().next().unwrap().ident.to_string();
             if feature != "icu_provider_adapters" {
-            quote! { #![cfg(feature = #feature)] }
-            } else { quote!() }
+                quote! { #![cfg(feature = #feature)] }
+            } else {
+                quote!()
+            }
         } else {
             quote!()
         };
@@ -250,9 +252,11 @@ impl DataExporter for BakedDataExporter {
             quote!(#module_path).to_string(),
             if self.insert_feature_gates {
                 let feature = marker.segments.iter().next().unwrap().ident.to_string();
-            if feature != "icu_provider_adapters" {
-                quote! { #[cfg(feature = #feature)] }.to_string()
-            } else { String::new() }
+                if feature != "icu_provider_adapters" {
+                    quote! { #[cfg(feature = #feature)] }.to_string()
+                } else {
+                    String::new()
+                }
             } else {
                 String::new()
             },

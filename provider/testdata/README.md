@@ -8,10 +8,9 @@ based on a CLDR tag and a short list of locales that, together, cover a range of
 The crate exposes three kinds of providers, corresponding to the three types of constructors
 in ICU:
 * [`unstable`], [`unstable_no_fallback`]
-  * [`unstable_baked`], [`unstable_baked_no_fallback`] (`baked` feature)
-* [`buffer`], [`buffer_no_fallback`], [`small_buffer`]
-  * [`buffer_json`], [`buffer_json_no_fallback`] (`fs` feature)
-* [`any`], [`any_no_fallback`] (`baked` feature)
+* [`any`], [`any_no_fallback`]
+* [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`serde` feature)
+  * [`buffer_json`], [`buffer_json_no_fallback`] (`serde` + `std` features)
 
 
 Additionally, the `metadata` feature exposes the [`metadata`] module which contains information

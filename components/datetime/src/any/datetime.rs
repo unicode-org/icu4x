@@ -544,11 +544,7 @@ mod tests {
     use icu::datetime::{options::length, DateTimeFormatter};
     use icu::locid::Locale;
 
-    fn test_format(
-        datetime: &DateTime<AnyCalendar>,
-        locale: &str,
-        expected: &str,
-    ) {
+    fn test_format(datetime: &DateTime<AnyCalendar>, locale: &str, expected: &str) {
         let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Short);
 
         let dtf = DateTimeFormatter::try_new_unstable(
@@ -570,23 +566,11 @@ mod tests {
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
         test_format(&datetime, "fr", "5 avril 2022 à 12:33");
-        test_format(
-                        &datetime,
-            "fr-u-ca-blahblah",
-            "5 avril 2022 à 12:33",
-        );
+        test_format(&datetime, "fr-u-ca-blahblah", "5 avril 2022 à 12:33");
         // thai falls back to buddhist
-        test_format(
-                        &datetime,
-            "th-u-ca-buddhist",
-            "5 เมษายน 2565 12:33",
-        );
+        test_format(&datetime, "th-u-ca-buddhist", "5 เมษายน 2565 12:33");
         test_format(&datetime, "th", "5 เมษายน 2565 12:33");
         // except when overridden
-        test_format(
-                        &datetime,
-            "th-u-ca-gregory",
-            "5 เมษายน ค.ศ. 2022 12:33",
-        );
+        test_format(&datetime, "th-u-ca-gregory", "5 เมษายน ค.ศ. 2022 12:33");
     }
 }
