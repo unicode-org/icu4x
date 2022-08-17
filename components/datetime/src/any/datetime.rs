@@ -268,7 +268,7 @@ impl DateTimeFormatter {
                 data_provider,
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
-                locale_with_cal,
+                locale,
             )?,
             calendar,
         ))
@@ -326,7 +326,7 @@ impl DateTimeFormatter {
                 data_provider,
                 patterns,
                 || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
-                locale_with_cal,
+                locale,
             )?,
             calendar,
         ))

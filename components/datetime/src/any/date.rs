@@ -211,7 +211,7 @@ impl DateFormatter {
                 data_provider,
                 calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
                 || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
-                locale_with_cal,
+                locale,
                 length,
             )?,
             calendar,

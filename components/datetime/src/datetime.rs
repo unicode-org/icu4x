@@ -99,7 +99,6 @@ impl TimeFormatter {
             + ?Sized,
     {
         let preferences = Some(preferences::Bag::from_data_locale(locale));
-        let locale = locale.clone();
 
         Ok(Self(raw::TimeFormatter::try_new(
             data_provider,
@@ -280,7 +279,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
                 data_provider,
                 calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
-                locale_with_cal,
+                locale,
                 length,
             )?,
             PhantomData,
@@ -523,7 +522,7 @@ where {
                 data_provider,
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
-                locale_with_cal,
+                locale,
             )?,
             PhantomData,
         ))
@@ -563,7 +562,7 @@ where {
                 data_provider,
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(data_provider, locale),
-                locale_with_cal,
+                locale,
             )?,
             PhantomData,
         ))
