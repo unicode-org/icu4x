@@ -25,7 +25,11 @@ pub enum TestOptions {
     #[serde(rename = "length")]
     Length(options::length::Bag),
     #[serde(rename = "components")]
+    #[cfg(feature = "experimental")]
     Components(options::components::Bag),
+    #[serde(rename = "components")]
+    #[cfg(not(feature = "experimental"))]
+    Components(serde_json::Value),
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

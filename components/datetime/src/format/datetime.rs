@@ -503,6 +503,7 @@ pub fn analyze_patterns(
 }
 
 #[cfg(test)]
+#[allow(unused_imports)]
 mod tests {
     use super::*;
     use icu_decimal::options::{FixedDecimalFormatterOptions, GroupingStrategy};

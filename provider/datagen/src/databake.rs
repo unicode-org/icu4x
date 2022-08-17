@@ -214,19 +214,19 @@ impl DataExporter for BakedDataExporter {
             supers = quote! { super:: #supers };
         }
 
-        let struct_type =
-            if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
-                quote! {
-                    [(
-                        &'static [::icu_datetime::fields::Field],
-                        ::icu_datetime::pattern::runtime::PatternPlurals<'static>
-                    )]
-                }
-            } else {
-                quote! {
-                    <#marker as ::icu_provider::DataMarker>::Yokeable
-                }
+        #[allow(unused_mut)]
+        let mut struct_type = quote! {
+            <#marker as ::icu_provider::DataMarker>::Yokeable
+        };
+        #[cfg(feature = "experimental")]
+        if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
+            struct_type = quote! {
+                [(
+                    &'static [::icu_datetime::fields::Field],
+                    ::icu_datetime::pattern::runtime::PatternPlurals<'static>
+                )]
             };
+        }
 
         self.write_to_file(
             &path,

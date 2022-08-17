@@ -8,7 +8,6 @@ use icu_decimal::{
     provider::DecimalSymbolsV1Marker,
     FixedDecimalFormatter,
 };
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
@@ -19,12 +18,11 @@ use crate::{
     },
     input::{DateTimeInput, TimeZoneInput},
     input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
-    options::DateTimeFormatterOptions,
     pattern::runtime::PatternPlurals,
     provider::{
         self,
         calendar::{
-            DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker,
+            patterns::PatternPluralsFromPatternsV1Marker, ErasedDateSymbolsV1Marker,
             TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
         week_data::WeekDataV1Marker,
@@ -50,16 +48,14 @@ impl ZonedDateTimeFormatter {
     #[inline(never)]
     pub fn try_new<P>(
         provider: &P,
-        patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        mut locale: DataLocale,
-        date_time_format_options: DateTimeFormatterOptions,
+        locale: DataLocale,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
@@ -71,16 +67,6 @@ impl ZonedDateTimeFormatter {
             + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
     {
-        if locale.get_unicode_ext(&key!("ca")) == Some(value!("ethioaa")) {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
-
-        let patterns = provider::date_time::PatternSelector::for_options(
-            provider,
-            patterns_data,
-            &locale,
-            &date_time_format_options,
-        )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 

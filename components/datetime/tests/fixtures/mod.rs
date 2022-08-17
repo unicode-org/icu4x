@@ -17,9 +17,12 @@ pub fn get_fixture(name: &str) -> std::io::Result<structs::Fixture> {
     Ok(serde_json::from_reader(reader)?)
 }
 
-pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatterOptions {
+pub fn get_options(input: &structs::TestOptions) -> Option<DateTimeFormatterOptions> {
     match input {
-        structs::TestOptions::Length(bag) => (*bag).into(),
-        structs::TestOptions::Components(bag) => (*bag).into(),
+        structs::TestOptions::Length(bag) => Some((*bag).into()),
+        #[cfg(feature = "experimental")]
+        structs::TestOptions::Components(bag) => Some((*bag).into()),
+        #[cfg(not(feature = "experimental"))]
+        structs::TestOptions::Components(_) => None,
     }
 }

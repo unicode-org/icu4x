@@ -189,7 +189,6 @@ impl DateFormatter {
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>

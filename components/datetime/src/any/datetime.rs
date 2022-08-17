@@ -2,16 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    calendar,
-    options::{components, DateTimeFormatterOptions},
-    raw, DateFormatter, TimeFormatter,
-};
+use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
 use alloc::string::String;
 
 use icu_provider::prelude::*;
 
-use crate::provider::{calendar::*, week_data::WeekDataV1Marker};
+#[cfg(feature = "experimental")]
+use crate::options::components;
+use crate::provider::{calendar::*, date_time::PatternSelector, week_data::WeekDataV1Marker};
 use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
@@ -237,6 +235,7 @@ impl DateTimeFormatter {
     ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
+    #[cfg(feature = "experimental")]
     #[inline(never)]
     pub fn try_new_unstable<P>(
         data_provider: &P,
@@ -246,7 +245,7 @@ impl DateTimeFormatter {
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
@@ -276,13 +275,77 @@ impl DateTimeFormatter {
         let kind = calendar.kind();
         kind.set_on_data_locale(&mut locale_with_cal);
 
+        let patterns = PatternSelector::for_options(
+            data_provider,
+            calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
+            &locale_with_cal,
+            &options,
+        )?;
+
         Ok(Self(
             raw::DateTimeFormatter::try_new(
                 data_provider,
-                calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
+                patterns,
                 || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
                 locale_with_cal,
-                options,
+            )?,
+            calendar,
+        ))
+    }
+
+    #[allow(missing_docs)] // The docs use the "experimental" version
+    #[cfg(not(feature = "experimental"))]
+    #[inline(never)]
+    pub fn try_new_unstable<P>(
+        data_provider: &P,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
+    where
+        P: DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<GregorianDateLengthsV1Marker>
+            + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<JapaneseDateLengthsV1Marker>
+            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+            + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<GregorianDateSymbolsV1Marker>
+            + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<JapaneseDateSymbolsV1Marker>
+            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+            + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
+            + ?Sized,
+    {
+        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
+        // separately into the raw formatter.
+        let mut locale_with_cal = locale.clone();
+
+        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, &locale_with_cal)?;
+        let kind = calendar.kind();
+        kind.set_on_data_locale(&mut locale_with_cal);
+
+        let patterns = PatternSelector::for_options(
+            data_provider,
+            calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
+            &locale_with_cal,
+            &options,
+        )?;
+
+        Ok(Self(
+            raw::DateTimeFormatter::try_new(
+                data_provider,
+                patterns,
+                || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
+                locale_with_cal,
             )?,
             calendar,
         ))
@@ -434,6 +497,7 @@ where {
     ///
     /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
+    #[cfg(feature = "experimental")]
     pub fn resolve_components(&self) -> components::Bag {
         self.0.resolve_components()
     }
@@ -473,6 +537,7 @@ where {
 }
 
 #[cfg(test)]
+#[cfg(feature = "serde")]
 mod tests {
     use core::str::FromStr;
     use icu::calendar::{AnyCalendar, DateTime};
