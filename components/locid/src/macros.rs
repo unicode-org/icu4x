@@ -249,7 +249,7 @@ macro_rules! locale {
                         },
                     },
                     extensions: match keyword {
-                        Some(k) => $crate::extensions::Extensions::single_unicode(
+                        Some(k) => $crate::extensions::Extensions::from_unicode(
                             $crate::extensions::Unicode {
                                 keywords: $crate::extensions::unicode::Keywords::new_single(
                                     k.0,

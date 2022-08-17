@@ -136,7 +136,7 @@ impl Extensions {
     /// Function to create a new map of extensions containing exactly one unicode extension, callable in `const`
     /// context.
     #[inline]
-    pub const fn single_unicode(unicode: Unicode) -> Self {
+    pub const fn from_unicode(unicode: Unicode) -> Self {
         Self {
             unicode,
             transform: Transform::new(),
