@@ -332,6 +332,7 @@ static = [
 ]
 baked = [
     "icu",
+    "icu_provider_adapters",
     "litemap",
     "tinystr",
     "zerovec",

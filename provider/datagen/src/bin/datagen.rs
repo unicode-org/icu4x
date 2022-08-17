@@ -322,7 +322,7 @@ fn main() -> eyre::Result<()> {
                 .ok_or_else(|| eyre::eyre!("--out must be specified for --format=mod"))?,
             pretty: matches.is_present("PRETTY"),
             insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
-            use_separate_crates: matches.is_present("USE_SEPARATE_CRATES")
+            use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
         },
         _ => unreachable!(),
     };

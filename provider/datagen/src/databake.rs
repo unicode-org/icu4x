@@ -7,12 +7,12 @@ use icu_provider::datagen::*;
 use icu_provider::prelude::*;
 use itertools::Itertools;
 use rayon::prelude::*;
+use std::collections::BTreeSet;
 use std::collections::HashMap;
 use std::fs::File;
 use std::io::Write;
 use std::path::PathBuf;
 use std::sync::Mutex;
-use std::collections::BTreeSet;
 
 macro_rules! move_out {
     ($field:expr) => {{
@@ -84,6 +84,7 @@ impl BakedDataExporter {
                     data.to_string()
                         .replace("icu_", "icu :: ")
                         .replace("icu :: provider", "icu_provider")
+                        .replace("icu :: datagen", "icu_datagen")
                 )?;
             }
         }
@@ -276,7 +277,9 @@ impl DataExporter for BakedDataExporter {
 
     fn close(&mut self) -> Result<(), DataError> {
         self.dependencies.insert("icu_provider");
-        let mut deps = move_out!(self.dependencies).into_iter().collect::<BTreeSet<_>>();
+        let mut deps = move_out!(self.dependencies)
+            .into_iter()
+            .collect::<BTreeSet<_>>();
         if !self.use_separate_crates {
             deps.retain(|&krate| krate == "icu_provider" || !krate.starts_with("icu_"));
             deps.insert("icu");
