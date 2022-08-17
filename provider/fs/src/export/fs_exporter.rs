@@ -55,9 +55,10 @@ impl Default for ExporterOptions {
 
 impl From<PathBuf> for ExporterOptions {
     fn from(root: PathBuf) -> Self {
-        let mut options = ExporterOptions::default();
-        options.root = root;
-        options
+        ExporterOptions {
+            root,
+            ..Default::default()
+        }
     }
 }
 
