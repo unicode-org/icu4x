@@ -36,29 +36,15 @@ where
     VARSV: Slice<'varsv>,
     MSGSV: Slice<'msgsv>,
     MPV: 'mpv + Slice<'mpv>,
-    // 'm: 'mv,
     'mv: 'mpv,
     'msgsv: 'mpv,
     'varsv: 'mpv,
-    // 'm: 'mpv,
-    // 'varsm: 'mpv,
-    // 'msgsm: 'mpv,
 {
     pub fn resolve_to_parts(
         msg: &'m ast::Message<MV>,
         scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
     ) -> Vec<MessagePart<MPV>> {
         let mut collector = MessagePartsList::new();
-        // let s: &'mv str = match &msg.value {
-        //     ast::MessageValue::Pattern(p) => {
-        //         match p.body.first().unwrap() {
-        //             ast::PatternElement::Text(s) => s.as_str(),
-        //             ast::PatternElement::Placeholder(_) => todo!(),
-        //         }
-        //     },
-        //     ast::MessageValue::Select(_) => todo!(),
-        // };
-        // collector.push_part(MessagePart::Literal(MPV::from_str(s)));
         Self::resolve_message_to_collector(msg, scope, &mut collector);
         collector.0
     }

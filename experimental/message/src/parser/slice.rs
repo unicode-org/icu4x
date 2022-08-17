@@ -7,10 +7,9 @@ pub trait Slice<'s>: Hash + PartialEq {
     where
         'm: 's;
     fn from_cow(input: Cow<'s, str>) -> Self;
-    fn from_str(input: &'s str) -> Self;
     fn slice(&self, range: Range<usize>) -> Self;
     fn byte_at(&self, ptr: usize) -> Option<&u8>;
-    fn as_str(&self) -> &'s str;
+    fn as_str(&self) -> &str;
     fn as_cow(&self) -> Cow<'s, str>;
     fn into_cow(self) -> Cow<'s, str>;
 }
@@ -34,10 +33,6 @@ impl<'s> Slice<'s> for String {
         Self::from_cow(input.as_cow())
     }
 
-    fn from_str(input: &'s str) -> Self {
-        String::from(input)
-    }
-
     fn slice(&self, range: Range<usize>) -> Self {
         self[range].to_string()
     }
@@ -46,9 +41,8 @@ impl<'s> Slice<'s> for String {
         self.as_bytes().get(ptr)
     }
 
-    fn as_str(&self) -> &'s str {
-        todo!()
-        // self.as_str()
+    fn as_str(&self) -> &str {
+        self.as_str()
     }
 
     fn into_cow(self) -> Cow<'s, str> {
@@ -77,10 +71,6 @@ impl<'s> Slice<'s> for &'s str {
         Self::from_cow(input.as_cow())
     }
 
-    fn from_str(input: &'s str) -> Self {
-        input
-    }
-
     #[inline]
     fn slice(&self, range: Range<usize>) -> Self {
         &self[range]
@@ -91,7 +81,7 @@ impl<'s> Slice<'s> for &'s str {
         self.as_bytes().get(ptr)
     }
 
-    fn as_str(&self) -> &'s str {
+    fn as_str(&self) -> &str {
         self
     }
 
