@@ -18,7 +18,7 @@
 )]
 #![warn(missing_docs)]
 
-//! Proc macros for the [ICU4X data provider](icu_provider).
+//! Proc macros for the ICU4X data provider.
 //!
 //! These macros are re-exported from `icu_provider`.
 
