@@ -8,7 +8,9 @@ In order to assert that library crates conform to the ICU4X style guide, the fol
 
 1. Set the crate to be `no_std`
 2. Enforce no unannotated panicky behavior, except in test mode
-3. Require every exported method to be documented
+3. Require every exported method to be documented, implement `Debug`, and be `non_exhaustive` or annotated as exhaustive
+
+If the crate has no `std` feature:
 
     // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
     #![cfg_attr(not(test), no_std)]
@@ -18,7 +20,10 @@ In order to assert that library crates conform to the ICU4X style guide, the fol
             clippy::indexing_slicing,
             clippy::unwrap_used,
             clippy::expect_used,
-            clippy::panic
+            clippy::panic,
+            clippy::exhaustive_structs,
+            clippy::exhaustive_enums,
+            missing_debug_implementations,
         )
     )]
     #![warn(missing_docs)]
@@ -35,7 +40,10 @@ If the crate has an `std` feature, specify this in the first line:
             clippy::indexing_slicing,
             clippy::unwrap_used,
             clippy::expect_used,
-            clippy::panic
+            clippy::panic,
+            clippy::exhaustive_structs,
+            clippy::exhaustive_enums,
+            missing_debug_implementations,
         )
     )]
     #![warn(missing_docs)]
