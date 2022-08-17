@@ -7,7 +7,7 @@ use icu_message::parser::Parser;
 
 fn overview_bench(c: &mut Criterion) {
     let source = "{Hello World}";
-    c.bench_function("message/parse", |b| {
+    c.bench_function("message/parse/simple", |b| {
         b.iter(|| {
             let parser = Parser::new(black_box(source));
             let _ = parser.parse();
@@ -15,7 +15,7 @@ fn overview_bench(c: &mut Criterion) {
     });
 
     let source = "{Today is {$today}} a good day.";
-    c.bench_function("message/parse_placeholder", |b| {
+    c.bench_function("message/parse/placeholder", |b| {
         b.iter(|| {
             let parser = Parser::new(black_box(source));
             let _ = parser.parse();
@@ -30,7 +30,7 @@ fn compare_bench(c: &mut Criterion) {
         messages.push(format!("{{Value {i}}}"));
     }
 
-    c.bench_function("message/compare/simple", |b| {
+    c.bench_function("message/parse/compare/simple", |b| {
         b.iter(|| {
             for msg in &messages {
                 let parser = Parser::new(black_box(msg.as_str()));
