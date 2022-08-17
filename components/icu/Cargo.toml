@@ -49,6 +49,7 @@ icu_testdata = { path = "../../provider/testdata" }
 default = []
 std = [
     "icu_calendar/std",
+    "icu_collator/std",
     "icu_datetime/std",
     "icu_decimal/std",
     "icu_list/std",
