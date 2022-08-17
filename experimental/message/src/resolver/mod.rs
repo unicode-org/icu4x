@@ -1,129 +1,66 @@
+mod collector;
+mod scope;
+
+use collector::*;
+pub use scope::Scope;
+
 use super::ast;
 use super::parser::slice::Slice;
 use super::types::{MessagePart, VariableType};
 use std::borrow::Cow;
-use std::collections::HashMap;
 
-// 'v - lifetime of variables
-// 'msgs - lifetime of messages
-// 'msgsv - lifetime of messages value
-pub struct Scope<'v, 'msgs, 'msgsv, S2, S4> {
-    variables: Option<&'v HashMap<String, VariableType<S4>>>,
-    messages: Option<&'msgs HashMap<String, &'msgsv ast::Message<S2>>>,
+// MV - message value type
+// VARSV - variables value type
+// MSGSV - messages value type
+// MPV - message parts value type
+pub struct Resolver<MV, VARSV, MSGSV, MPV> {
+    p1: std::marker::PhantomData<MV>,
+    p2: std::marker::PhantomData<VARSV>,
+    p3: std::marker::PhantomData<MSGSV>,
+    p4: std::marker::PhantomData<MPV>,
 }
 
-impl<'v, 'msgs, 'msgsv, S, S4> Scope<'v, 'msgs, 'msgsv, S, S4> {
-    pub fn new(
-        variables: Option<&'v HashMap<String, VariableType<S4>>>,
-        messages: Option<&'msgs HashMap<String, &'msgsv ast::Message<S>>>,
-    ) -> Self {
-        Self {
-            variables,
-            messages,
-        }
-    }
-}
-
-trait MessagePartCollector<S> {
-    fn push_part(&mut self, part: MessagePart<S>);
-}
-
-struct MessagePartsList<S>(Vec<MessagePart<S>>);
-struct MessageString<'s>(Cow<'s, str>);
-struct MessageSink<W>(W);
-
-impl<S> MessagePartsList<S> {
-    pub fn new() -> Self {
-        Self(vec![])
-    }
-}
-
-impl<'s> MessageString<'s> {
-    pub fn new() -> Self {
-        Self("".into())
-    }
-}
-
-impl<W> MessageSink<W> {
-    pub fn new(sink: W) -> Self {
-        Self(sink)
-    }
-}
-
-impl<S> MessagePartCollector<S> for MessagePartsList<S> {
-    fn push_part(&mut self, part: MessagePart<S>) {
-        self.0.push(part);
-    }
-}
-
-impl<'s, S: 's + Slice<'s>> MessagePartCollector<S> for MessageString<'s> {
-    fn push_part(&mut self, part: MessagePart<S>) {
-        if self.0.is_empty() {
-            match part {
-                MessagePart::Literal(l) => {
-                    self.0 = l.into_cow();
-                }
-            }
-        } else {
-            let new_part = match part {
-                MessagePart::Literal(l) => l.into_cow(),
-            };
-            if !new_part.is_empty() {
-                self.0.to_mut().push_str(&new_part);
-            }
-        }
-    }
-}
-
-impl<'s, S: 's + Slice<'s>, W: std::fmt::Write> MessagePartCollector<S> for MessageSink<W> {
-    fn push_part(&mut self, part: MessagePart<S>) {
-        match part {
-            MessagePart::Literal(l) => self.0.write_str(l.as_str()).unwrap(),
-        }
-    }
-}
-
-pub struct Resolver<S, S2, S3, S4> {
-    p1: std::marker::PhantomData<S>,
-    p2: std::marker::PhantomData<S2>,
-    p3: std::marker::PhantomData<S3>,
-    p4: std::marker::PhantomData<S4>,
-}
-
-impl<'m, 'mv, 'v, 'vv, 'msgs, 'msgsv, 'mv2, 'p, 's, S, S2, S3, S4> Resolver<S, S2, S3, S4>
+// 'm - message lifetime
+// 'mv - message value lifetime
+// 'varsm - variables map lifetime
+// 'varsv - variables values lifetime
+// 'msgsm - messages map lifetime
+// 'msgsmv - messages map value lifetime
+// 'msgsv - messages value lifetime
+// 'scope - scope lifetime
+// 'mpv - message parts value lifetime
+impl<'m, 'mv, 'varsm, 'varsv, 'msgsm, 'msgsmv, 'msgsv, 'scope, 'mpv, MV, VARSV, MSGSV, MPV>
+    Resolver<MV, VARSV, MSGSV, MPV>
 where
-    S: Slice<'mv>,
-    S2: Slice<'mv2>,
-    S3: 'v + Slice<'p>,
-    S4: Slice<'vv>,
-    'mv: 'p,
-    'mv2: 'p,
-    'v: 'p,
-    'm: 'p,
-    'msgs: 'p,
-    'vv: 'p,
+    MV: Slice<'mv>,
+    VARSV: Slice<'varsv>,
+    MSGSV: Slice<'msgsv>,
+    MPV: 'mpv + Slice<'mpv>,
+    'm: 'mpv,
+    'varsm: 'mpv,
+    'msgsm: 'mpv,
 {
     pub fn resolve_to_parts(
-        msg: &'m ast::Message<S>,
-        scope: &'s Scope<'v, 'msgs, 'msgsv, S2, S4>,
-    ) -> Vec<MessagePart<S3>> {
+        msg: &'m ast::Message<MV>,
+        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+    ) -> Vec<MessagePart<MPV>> {
         let mut collector = MessagePartsList::new();
         Self::resolve_message_to_collector(msg, scope, &mut collector);
         collector.0
     }
 
     pub fn resolve_to_string(
-        msg: &'m ast::Message<S>,
-        scope: &'s Scope<'v, 'msgs, 'msgsv, S2, S4>,
-    ) -> Cow<'p, str> {
+        msg: &'m ast::Message<MV>,
+        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+    ) -> Cow<'mpv, str> {
         let mut collector = MessageString::new();
         Self::resolve_message_to_collector(msg, scope, &mut collector);
         collector.0
     }
 
     pub fn resolve_to_sink<W: std::fmt::Write>(
-        msg: &'m ast::Message<S>,
-        scope: &'s Scope<'v, 'msgs, 'msgsv, S2, S4>,
+        msg: &'m ast::Message<MV>,
+        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
         sink: W,
     ) {
         let mut collector = MessageSink::new(sink);
@@ -131,11 +68,11 @@ where
     }
 
     fn resolve_message_to_collector<C>(
-        msg: &'m ast::Message<S>,
-        scope: &'s Scope<'v, 'msgs, 'msgsv, S2, S4>,
+        msg: &'m ast::Message<MV>,
+        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
         collector: &mut C,
     ) where
-        C: MessagePartCollector<S3>,
+        C: MessagePartCollector<MPV>,
     {
         let value = &msg.value;
         let pattern = match value {
@@ -148,26 +85,26 @@ where
     }
 
     fn resolve_pattern_element<C>(
-        pe: &'m ast::PatternElement<S>,
-        scope: &'s Scope<'v, 'msgs, 'msgsv, S2, S4>,
+        pe: &'m ast::PatternElement<MV>,
+        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
         collector: &mut C,
     ) where
-        C: MessagePartCollector<S3>,
+        C: MessagePartCollector<MPV>,
     {
         match pe {
             ast::PatternElement::Text(s) => {
-                collector.push_part(MessagePart::Literal(S3::from_str(s.as_str())))
+                collector.push_part(MessagePart::Literal(MPV::from_str(s.as_str())))
             }
             ast::PatternElement::Placeholder(p) => Self::resolve_placeholder(p, scope, collector),
         }
     }
 
     fn resolve_placeholder<C>(
-        placeholder: &'m ast::Placeholder<S>,
-        scope: &'s Scope<'v, 'msgs, 'msgsv, S2, S4>,
+        placeholder: &'m ast::Placeholder<MV>,
+        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
         collector: &mut C,
     ) where
-        C: MessagePartCollector<S3>,
+        C: MessagePartCollector<MPV>,
     {
         match placeholder {
             ast::Placeholder::Markup { name, options } => todo!(),
@@ -177,11 +114,11 @@ where
     }
 
     fn resolve_expression<C>(
-        exp: &'m ast::Expression<S>,
-        scope: &'s Scope<'v, 'msgs, 'msgsv, S2, S4>,
+        exp: &'m ast::Expression<MV>,
+        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
         collector: &mut C,
     ) where
-        C: MessagePartCollector<S3>,
+        C: MessagePartCollector<MPV>,
     {
         match exp {
             ast::Expression::Operand {
@@ -189,7 +126,7 @@ where
                 annotation,
             } => match operand {
                 ast::Operand::Literal(l) => {
-                    collector.push_part(MessagePart::Literal(S3::from_str(l.value.as_str())))
+                    collector.push_part(MessagePart::Literal(MPV::from_str(l.value.as_str())))
                 }
                 ast::Operand::Variable(v) => Self::resolve_variable(v, scope, collector),
             },
@@ -198,17 +135,17 @@ where
     }
 
     fn resolve_variable<C>(
-        variable: &'m S,
-        scope: &'s Scope<'v, 'msgs, 'msgsv, S2, S4>,
+        variable: &'m MV,
+        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
         collector: &mut C,
     ) where
-        C: MessagePartCollector<S3>,
+        C: MessagePartCollector<MPV>,
     {
         if let Some(variables) = scope.variables {
             if let Some(v) = variables.get(variable.as_str()) {
                 match v {
                     VariableType::String(s) => {
-                        collector.push_part(MessagePart::Literal(S3::from_str(s.as_str())))
+                        collector.push_part(MessagePart::Literal(MPV::from_str(s.as_str())))
                     }
                     VariableType::MessageReference(id) => {
                         if let Some(messages) = scope.messages {
@@ -250,7 +187,7 @@ mod test {
         let mut variables = HashMap::new();
         variables.insert("name".into(), VariableType::String("John"));
         let scope = Scope::new(Some(&variables), None);
-        let string = Resolver::<_, &str, &str, _>::resolve_to_string(&msg, &scope);
+        let string = Resolver::<_, _, &str, &str>::resolve_to_string(&msg, &scope);
 
         assert_eq!(string, "Hello World");
     }
@@ -264,8 +201,8 @@ mod test {
             }),
         };
 
-        let scope = Scope::<&str, &str>::new(None, None);
-        let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
+        let scope = Scope::new(None, None);
+        let string = Resolver::<_, &str, &str, &str>::resolve_to_string(&msg, &scope);
 
         assert!(matches!(string, Cow::Borrowed("Hello World")));
 
@@ -275,8 +212,8 @@ mod test {
         assert_eq!(parts, vec![MessagePart::Literal("Hello World"),]);
 
         let mut sink = String::new();
-        let scope = Scope::<&str, &str>::new(None, None);
-        Resolver::<_, _, &str, _>::resolve_to_sink(&msg, &scope, &mut sink);
+        let scope = Scope::new(None, None);
+        Resolver::<_, &str, &str, &str>::resolve_to_sink(&msg, &scope, &mut sink);
 
         assert_eq!(sink, "Hello World");
     }
@@ -285,7 +222,7 @@ mod test {
     fn lifetimes_check() {
         let parser = Parser::new("{Hello World{$name}{$creature}}");
         let msg = parser.parse().unwrap();
-        let parser = Parser::new("{Dragon}".to_string());
+        let parser = Parser::new("{Dragon}");
         let creature_msg = parser.parse().unwrap();
         let mut msgs = HashMap::new();
         msgs.insert("dragon".to_string(), &creature_msg);
@@ -307,12 +244,12 @@ mod test {
 
         let parser = Parser::new("{{$name}}");
         let msg = parser.parse().unwrap();
-        let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
+        let string = Resolver::<_, _, _, &str>::resolve_to_string(&msg, &scope);
         assert!(matches!(string, Cow::Borrowed("John")));
 
         let parser = Parser::new("{{$creature}}");
         let msg = parser.parse().unwrap();
-        let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
+        let string = Resolver::<_, _, _, &str>::resolve_to_string(&msg, &scope);
         assert!(matches!(string, Cow::Borrowed("Dragon")));
     }
 
@@ -329,7 +266,7 @@ mod test {
         };
 
         let scope = Scope::<&str, &str>::new(None, None);
-        let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
+        let string = Resolver::<_, _, _, &str>::resolve_to_string(&msg, &scope);
 
         assert_eq!(string, Cow::<str>::Owned(String::from("Hello World")));
 
@@ -353,8 +290,8 @@ mod test {
 
         let mut variables = HashMap::new();
         variables.insert("name".into(), VariableType::String("John"));
-        let scope = Scope::<&str, _>::new(Some(&variables), None);
-        let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
+        let scope = Scope::new(Some(&variables), None);
+        let string = Resolver::<_, _, &str, &str>::resolve_to_string(&msg, &scope);
 
         assert_eq!(string, "John");
     }
@@ -382,7 +319,7 @@ mod test {
         );
 
         let scope = Scope::new(Some(&variables), Some(&msgs));
-        let string = Resolver::<_, _, &str, _>::resolve_to_string(&msg, &scope);
+        let string = Resolver::<_, _, _, &str>::resolve_to_string(&msg, &scope);
 
         assert_eq!(string, "Dragon killed you.");
     }

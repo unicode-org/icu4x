@@ -4,6 +4,7 @@ pub mod resolver;
 pub mod types;
 use parser::{slice::Slice, Parser};
 use resolver::{Resolver, Scope};
+use std::borrow::Cow;
 use std::collections::HashMap;
 use types::{MessagePart, VariableType};
 
@@ -16,19 +17,27 @@ impl<'s, 'm, S> MessageFormat<'m, S>
 where
     S: Slice<'s>,
 {
-    // pub fn new() -> Self {
-    //     Self {
-    //         messages: Default::default(),
-    //     }
-    // }
-    //
-    // pub fn format(
-    //     &self,
-    //     msg: &ast::Message<S>,
-    //     variables: Option<HashMap<String, VariableType>>,
-    // ) -> S::Output {
+    pub fn new() -> Self {
+        Self {
+            messages: Default::default(),
+        }
+    }
+
+    // pub fn format_to_string<'p, 'm2, 'v, 'mv2, S2>(
+    //     &'s self,
+    //     msg: &'m ast::Message<S>,
+    //     variables: Option<&'v HashMap<String, VariableType<S2>>>,
+    // ) -> Cow<'p, str>
+    // where
+    //     S2: Slice<'mv2>,
+    //     'v: 'p,
+    //     'm: 'p,
+    //     's: 'p,
+    //     'm2: 'p,
+    //     'mv2: 'p,
+    // {
     //     let scope = Scope::new(variables, Some(&self.messages));
-    //     Resolver::resolve_to_string(msg, &scope)
+    //     Resolver::<_, _, &str, _>::resolve_to_string(msg, &scope)
     // }
     //
     // pub fn format_to_parts(
@@ -39,7 +48,7 @@ where
     //     let scope = Scope::new(variables, Some(&self.messages));
     //     Resolver::resolve_to_parts(msg, &scope)
     // }
-    //
+
     // pub fn format_from_source(
     //     &self,
     //     source: S,
