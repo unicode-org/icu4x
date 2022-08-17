@@ -11,8 +11,8 @@
 //! in ICU:
 //! * [`unstable`], [`unstable_no_fallback`]
 //! * [`any`], [`any_no_fallback`]
-//! * [`buffer`], [`buffer_no_fallback`], [`small_buffer`]
-//!   * [`buffer_json`], [`buffer_json_no_fallback`] (`fs` feature)
+//! * [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`serde` feature)
+//!   * [`buffer_json`], [`buffer_json_no_fallback`] (`serde` + `std` features)
 //!
 //!
 //! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
@@ -109,18 +109,13 @@ pub mod paths;
 
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::LocaleFallbackProvider;
-use icu_provider_blob::StaticDataProvider;
-
-#[doc(hidden)]
-pub type UnstableDataProvider = baked::BakedDataProvider;
 
 /// A data provider that is compatible with all ICU `_unstable` constructors.
 ///
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
-pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider>
-{
+pub fn unstable() -> LocaleFallbackProvider<baked::BakedDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
     LocaleFallbackProvider::try_new_unstable(unstable_no_fallback()).unwrap()
@@ -131,7 +126,7 @@ pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider>
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
-pub fn unstable_no_fallback() -> UnstableDataProvider {
+pub fn unstable_no_fallback() -> baked::BakedDataProvider {
     baked::BakedDataProvider
 }
 
@@ -148,6 +143,7 @@ pub fn any_no_fallback() -> impl AnyProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
+#[cfg(feature = "serde")]
 pub fn buffer() -> impl BufferProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -155,12 +151,13 @@ pub fn buffer() -> impl BufferProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
+#[cfg(feature = "serde")]
 pub fn buffer_no_fallback() -> impl BufferProvider {
     lazy_static::lazy_static! {
-        static ref POSTCARD: StaticDataProvider = {
+        static ref POSTCARD: icu_provider_blob::StaticDataProvider = {
             // The statically compiled data file is valid.
             #[allow(clippy::unwrap_used)]
-            StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+            icu_provider_blob::StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
                 env!("CARGO_MANIFEST_DIR"),
                 "/data/testdata.postcard"
             )))
@@ -173,12 +170,13 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
 /// A smaller [`BufferProvider`] backed by a Postcard blob.
 ///
 /// This provider only contains the `decimal/symbols@1[u-nu]` key for `en` and `bn`.
+#[cfg(feature = "serde")]
 pub fn small_buffer() -> impl BufferProvider {
     lazy_static::lazy_static! {
-        static ref SMALLER_POSTCARD: StaticDataProvider = {
+        static ref SMALLER_POSTCARD: icu_provider_blob::StaticDataProvider = {
             // The statically compiled data file is valid.
             #[allow(clippy::unwrap_used)]
-            StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+            icu_provider_blob::StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
                 env!("CARGO_MANIFEST_DIR"),
                 "/data/decimal-bn-en.postcard"
             )))
@@ -196,7 +194,7 @@ pub fn small_buffer() -> impl BufferProvider {
 /// # Panics
 ///
 /// Panics if unable to load the data.
-#[cfg(feature = "fs")]
+#[cfg(all(feature = "serde", feature = "std"))]
 pub fn buffer_json() -> impl BufferProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -212,7 +210,7 @@ pub fn buffer_json() -> impl BufferProvider {
 ///
 /// Panics if unable to load the data.
 #[allow(clippy::panic)]
-#[cfg(feature = "fs")]
+#[cfg(all(feature = "serde", feature = "std"))]
 pub fn buffer_json_no_fallback() -> impl BufferProvider {
     lazy_static::lazy_static! {
         static ref JSON: icu_provider_fs::FsDataProvider = {
@@ -233,7 +231,7 @@ pub fn buffer_json_no_fallback() -> impl BufferProvider {
     (*JSON).clone()
 }
 
-mod baked {
+pub mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
 }

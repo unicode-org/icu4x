@@ -17,6 +17,7 @@ mod time_zone;
 #[non_exhaustive]
 pub struct BakedDataProvider;
 use ::icu_provider::prelude::*;
+#[cfg(feature = "icu_calendar")]
 impl DataProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::JapaneseErasV1Marker>, DataError> {
         Ok(DataResponse {
@@ -29,6 +30,7 @@ impl DataProvider<::icu_calendar::provider::JapaneseErasV1Marker> for BakedDataP
         })
     }
 }
+#[cfg(feature = "icu_calendar")]
 impl DataProvider<::icu_calendar::provider::JapaneseExtendedErasV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::JapaneseExtendedErasV1Marker>, DataError> {
         Ok(DataResponse {
@@ -41,6 +43,7 @@ impl DataProvider<::icu_calendar::provider::JapaneseExtendedErasV1Marker> for Ba
         })
     }
 }
+#[cfg(feature = "icu_casemapping")]
 impl DataProvider<::icu_casemapping::provider::CaseMappingV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_casemapping::provider::CaseMappingV1Marker>, DataError> {
         Ok(DataResponse {
@@ -53,6 +56,7 @@ impl DataProvider<::icu_casemapping::provider::CaseMappingV1Marker> for BakedDat
         })
     }
 }
+#[cfg(feature = "icu_collator")]
 impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -65,6 +69,7 @@ impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for BakedData
         })
     }
 }
+#[cfg(feature = "icu_collator")]
 impl DataProvider<::icu_collator::provider::CollationDiacriticsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationDiacriticsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -77,6 +82,7 @@ impl DataProvider<::icu_collator::provider::CollationDiacriticsV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_collator")]
 impl DataProvider<::icu_collator::provider::CollationJamoV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationJamoV1Marker>, DataError> {
         Ok(DataResponse {
@@ -89,6 +95,7 @@ impl DataProvider<::icu_collator::provider::CollationJamoV1Marker> for BakedData
         })
     }
 }
+#[cfg(feature = "icu_collator")]
 impl DataProvider<::icu_collator::provider::CollationMetadataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationMetadataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -101,6 +108,7 @@ impl DataProvider<::icu_collator::provider::CollationMetadataV1Marker> for Baked
         })
     }
 }
+#[cfg(feature = "icu_collator")]
 impl DataProvider<::icu_collator::provider::CollationReorderingV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationReorderingV1Marker>, DataError> {
         Ok(DataResponse {
@@ -113,6 +121,7 @@ impl DataProvider<::icu_collator::provider::CollationReorderingV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_collator")]
 impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_collator::provider::CollationSpecialPrimariesV1Marker>, DataError> {
         Ok(DataResponse {
@@ -125,6 +134,7 @@ impl DataProvider<::icu_collator::provider::CollationSpecialPrimariesV1Marker> f
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -139,6 +149,7 @@ impl DataProvider<::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marke
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -153,6 +164,7 @@ impl DataProvider<::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marke
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::CopticDateLengthsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::CopticDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -165,6 +177,7 @@ impl DataProvider<::icu_datetime::provider::calendar::CopticDateLengthsV1Marker>
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -177,6 +190,7 @@ impl DataProvider<::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker>
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -191,6 +205,7 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Mark
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -205,6 +220,7 @@ impl DataProvider<::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marke
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -219,6 +235,7 @@ impl DataProvider<::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marke
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -233,6 +250,7 @@ impl DataProvider<::icu_datetime::provider::calendar::GregorianDateLengthsV1Mark
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -247,6 +265,7 @@ impl DataProvider<::icu_datetime::provider::calendar::GregorianDateSymbolsV1Mark
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::IndianDateLengthsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::IndianDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -259,6 +278,7 @@ impl DataProvider<::icu_datetime::provider::calendar::IndianDateLengthsV1Marker>
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -271,6 +291,7 @@ impl DataProvider<::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker>
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -285,6 +306,7 @@ impl DataProvider<::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marke
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -299,6 +321,7 @@ impl DataProvider<::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marke
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -313,6 +336,7 @@ impl DataProvider<::icu_datetime::provider::calendar::JapaneseExtendedDateLength
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -327,6 +351,7 @@ impl DataProvider<::icu_datetime::provider::calendar::JapaneseExtendedDateSymbol
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::TimeLengthsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::TimeLengthsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -339,6 +364,7 @@ impl DataProvider<::icu_datetime::provider::calendar::TimeLengthsV1Marker> for B
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::TimeSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -351,6 +377,7 @@ impl DataProvider<::icu_datetime::provider::calendar::TimeSymbolsV1Marker> for B
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker>, DataError> {
         Ok(DataResponse {
@@ -363,6 +390,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker> 
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker>, DataError> {
         Ok(DataResponse {
@@ -377,6 +405,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesLong
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker>, DataError> {
         Ok(DataResponse {
@@ -391,6 +420,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShor
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker>, DataError> {
         Ok(DataResponse {
@@ -405,6 +435,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLon
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker>, DataError> {
         Ok(DataResponse {
@@ -419,6 +450,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesSho
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -431,6 +463,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>
         })
     }
 }
+#[cfg(feature = "icu_datetime")]
 impl DataProvider<::icu_datetime::provider::week_data::WeekDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::week_data::WeekDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -443,6 +476,7 @@ impl DataProvider<::icu_datetime::provider::week_data::WeekDataV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_decimal")]
 impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_decimal::provider::DecimalSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -455,6 +489,7 @@ impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedData
         })
     }
 }
+#[cfg(feature = "icu_list")]
 impl DataProvider<::icu_list::provider::AndListV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_list::provider::AndListV1Marker>, DataError> {
         Ok(DataResponse {
@@ -467,6 +502,7 @@ impl DataProvider<::icu_list::provider::AndListV1Marker> for BakedDataProvider {
         })
     }
 }
+#[cfg(feature = "icu_list")]
 impl DataProvider<::icu_list::provider::OrListV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_list::provider::OrListV1Marker>, DataError> {
         Ok(DataResponse {
@@ -479,6 +515,7 @@ impl DataProvider<::icu_list::provider::OrListV1Marker> for BakedDataProvider {
         })
     }
 }
+#[cfg(feature = "icu_list")]
 impl DataProvider<::icu_list::provider::UnitListV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_list::provider::UnitListV1Marker>, DataError> {
         Ok(DataResponse {
@@ -491,6 +528,7 @@ impl DataProvider<::icu_list::provider::UnitListV1Marker> for BakedDataProvider 
         })
     }
 }
+#[cfg(feature = "icu_locid_transform")]
 impl DataProvider<::icu_locid_transform::provider::AliasesV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locid_transform::provider::AliasesV1Marker>, DataError> {
         Ok(DataResponse {
@@ -503,6 +541,7 @@ impl DataProvider<::icu_locid_transform::provider::AliasesV1Marker> for BakedDat
         })
     }
 }
+#[cfg(feature = "icu_locid_transform")]
 impl DataProvider<::icu_locid_transform::provider::LikelySubtagsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_locid_transform::provider::LikelySubtagsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -515,6 +554,7 @@ impl DataProvider<::icu_locid_transform::provider::LikelySubtagsV1Marker> for Ba
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker>, DataError> {
         Ok(DataResponse {
@@ -529,6 +569,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalCompositionPassthroughV1M
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalCompositionsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -541,6 +582,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker> for
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalDecompositionDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -553,6 +595,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionDataV1Marker
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker>, DataError> {
         Ok(DataResponse {
@@ -567,6 +610,7 @@ impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionTablesV1Mark
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker>, DataError> {
         Ok(DataResponse {
@@ -581,6 +625,7 @@ impl DataProvider<::icu_normalizer::provider::CompatibilityCompositionPassthroug
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker>, DataError> {
         Ok(DataResponse {
@@ -595,6 +640,7 @@ impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionSuppleme
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker>, DataError> {
         Ok(DataResponse {
@@ -609,6 +655,7 @@ impl DataProvider<::icu_normalizer::provider::CompatibilityDecompositionTablesV1
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker>, DataError> {
         Ok(DataResponse {
@@ -623,6 +670,7 @@ impl DataProvider<::icu_normalizer::provider::NonRecursiveDecompositionSupplemen
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker>, DataError> {
         Ok(DataResponse {
@@ -637,6 +685,7 @@ impl DataProvider<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marke
         })
     }
 }
+#[cfg(feature = "icu_normalizer")]
 impl DataProvider<::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker>, DataError> {
         Ok(DataResponse {
@@ -651,6 +700,7 @@ impl DataProvider<::icu_normalizer::provider::Uts46DecompositionSupplementV1Mark
         })
     }
 }
+#[cfg(feature = "icu_plurals")]
 impl DataProvider<::icu_plurals::provider::CardinalV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_plurals::provider::CardinalV1Marker>, DataError> {
         Ok(DataResponse {
@@ -663,6 +713,7 @@ impl DataProvider<::icu_plurals::provider::CardinalV1Marker> for BakedDataProvid
         })
     }
 }
+#[cfg(feature = "icu_plurals")]
 impl DataProvider<::icu_plurals::provider::OrdinalV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_plurals::provider::OrdinalV1Marker>, DataError> {
         Ok(DataResponse {
@@ -675,6 +726,7 @@ impl DataProvider<::icu_plurals::provider::OrdinalV1Marker> for BakedDataProvide
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::AlphabeticV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::AlphabeticV1Marker>, DataError> {
         Ok(DataResponse {
@@ -687,6 +739,7 @@ impl DataProvider<::icu_properties::provider::AlphabeticV1Marker> for BakedDataP
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::AsciiHexDigitV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::AsciiHexDigitV1Marker>, DataError> {
         Ok(DataResponse {
@@ -699,6 +752,7 @@ impl DataProvider<::icu_properties::provider::AsciiHexDigitV1Marker> for BakedDa
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::BidiClassV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiClassV1Marker>, DataError> {
         Ok(DataResponse {
@@ -711,6 +765,7 @@ impl DataProvider<::icu_properties::provider::BidiClassV1Marker> for BakedDataPr
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::BidiControlV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiControlV1Marker>, DataError> {
         Ok(DataResponse {
@@ -723,6 +778,7 @@ impl DataProvider<::icu_properties::provider::BidiControlV1Marker> for BakedData
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::BidiMirroredV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::BidiMirroredV1Marker>, DataError> {
         Ok(DataResponse {
@@ -735,6 +791,7 @@ impl DataProvider<::icu_properties::provider::BidiMirroredV1Marker> for BakedDat
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::CanonicalCombiningClassV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CanonicalCombiningClassV1Marker>, DataError> {
         Ok(DataResponse {
@@ -747,6 +804,7 @@ impl DataProvider<::icu_properties::provider::CanonicalCombiningClassV1Marker> f
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::CaseIgnorableV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CaseIgnorableV1Marker>, DataError> {
         Ok(DataResponse {
@@ -759,6 +817,7 @@ impl DataProvider<::icu_properties::provider::CaseIgnorableV1Marker> for BakedDa
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::CasedV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::CasedV1Marker>, DataError> {
         Ok(DataResponse {
@@ -771,6 +830,7 @@ impl DataProvider<::icu_properties::provider::CasedV1Marker> for BakedDataProvid
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ChangesWhenCasefoldedV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenCasefoldedV1Marker>, DataError> {
         Ok(DataResponse {
@@ -783,6 +843,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenCasefoldedV1Marker> for
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ChangesWhenLowercasedV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenLowercasedV1Marker>, DataError> {
         Ok(DataResponse {
@@ -795,6 +856,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenLowercasedV1Marker> for
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker>, DataError> {
         Ok(DataResponse {
@@ -807,6 +869,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker>
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ChangesWhenTitlecasedV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenTitlecasedV1Marker>, DataError> {
         Ok(DataResponse {
@@ -819,6 +882,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenTitlecasedV1Marker> for
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ChangesWhenUppercasedV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ChangesWhenUppercasedV1Marker>, DataError> {
         Ok(DataResponse {
@@ -831,6 +895,7 @@ impl DataProvider<::icu_properties::provider::ChangesWhenUppercasedV1Marker> for
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::DashV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::DashV1Marker>, DataError> {
         Ok(DataResponse {
@@ -843,6 +908,7 @@ impl DataProvider<::icu_properties::provider::DashV1Marker> for BakedDataProvide
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::DefaultIgnorableCodePointV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::DefaultIgnorableCodePointV1Marker>, DataError> {
         Ok(DataResponse {
@@ -855,6 +921,7 @@ impl DataProvider<::icu_properties::provider::DefaultIgnorableCodePointV1Marker>
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::DeprecatedV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::DeprecatedV1Marker>, DataError> {
         Ok(DataResponse {
@@ -867,6 +934,7 @@ impl DataProvider<::icu_properties::provider::DeprecatedV1Marker> for BakedDataP
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::DiacriticV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::DiacriticV1Marker>, DataError> {
         Ok(DataResponse {
@@ -879,6 +947,7 @@ impl DataProvider<::icu_properties::provider::DiacriticV1Marker> for BakedDataPr
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::EastAsianWidthV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EastAsianWidthV1Marker>, DataError> {
         Ok(DataResponse {
@@ -891,6 +960,7 @@ impl DataProvider<::icu_properties::provider::EastAsianWidthV1Marker> for BakedD
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::EmojiComponentV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiComponentV1Marker>, DataError> {
         Ok(DataResponse {
@@ -903,6 +973,7 @@ impl DataProvider<::icu_properties::provider::EmojiComponentV1Marker> for BakedD
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::EmojiModifierBaseV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiModifierBaseV1Marker>, DataError> {
         Ok(DataResponse {
@@ -915,6 +986,7 @@ impl DataProvider<::icu_properties::provider::EmojiModifierBaseV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::EmojiModifierV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiModifierV1Marker>, DataError> {
         Ok(DataResponse {
@@ -927,6 +999,7 @@ impl DataProvider<::icu_properties::provider::EmojiModifierV1Marker> for BakedDa
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::EmojiPresentationV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiPresentationV1Marker>, DataError> {
         Ok(DataResponse {
@@ -939,6 +1012,7 @@ impl DataProvider<::icu_properties::provider::EmojiPresentationV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::EmojiV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::EmojiV1Marker>, DataError> {
         Ok(DataResponse {
@@ -951,6 +1025,7 @@ impl DataProvider<::icu_properties::provider::EmojiV1Marker> for BakedDataProvid
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ExtendedPictographicV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExtendedPictographicV1Marker>, DataError> {
         Ok(DataResponse {
@@ -963,6 +1038,7 @@ impl DataProvider<::icu_properties::provider::ExtendedPictographicV1Marker> for 
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ExtenderV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ExtenderV1Marker>, DataError> {
         Ok(DataResponse {
@@ -975,6 +1051,7 @@ impl DataProvider<::icu_properties::provider::ExtenderV1Marker> for BakedDataPro
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::GeneralCategoryV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GeneralCategoryV1Marker>, DataError> {
         Ok(DataResponse {
@@ -987,6 +1064,7 @@ impl DataProvider<::icu_properties::provider::GeneralCategoryV1Marker> for Baked
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::GraphemeBaseV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeBaseV1Marker>, DataError> {
         Ok(DataResponse {
@@ -999,6 +1077,7 @@ impl DataProvider<::icu_properties::provider::GraphemeBaseV1Marker> for BakedDat
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::GraphemeClusterBreakV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeClusterBreakV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1011,6 +1090,7 @@ impl DataProvider<::icu_properties::provider::GraphemeClusterBreakV1Marker> for 
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::GraphemeExtendV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::GraphemeExtendV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1023,6 +1103,7 @@ impl DataProvider<::icu_properties::provider::GraphemeExtendV1Marker> for BakedD
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::HexDigitV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::HexDigitV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1035,6 +1116,7 @@ impl DataProvider<::icu_properties::provider::HexDigitV1Marker> for BakedDataPro
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::IdContinueV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdContinueV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1047,6 +1129,7 @@ impl DataProvider<::icu_properties::provider::IdContinueV1Marker> for BakedDataP
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::IdStartV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdStartV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1059,6 +1142,7 @@ impl DataProvider<::icu_properties::provider::IdStartV1Marker> for BakedDataProv
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::IdeographicV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdeographicV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1071,6 +1155,7 @@ impl DataProvider<::icu_properties::provider::IdeographicV1Marker> for BakedData
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::IdsBinaryOperatorV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdsBinaryOperatorV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1083,6 +1168,7 @@ impl DataProvider<::icu_properties::provider::IdsBinaryOperatorV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::IdsTrinaryOperatorV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::IdsTrinaryOperatorV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1095,6 +1181,7 @@ impl DataProvider<::icu_properties::provider::IdsTrinaryOperatorV1Marker> for Ba
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::JoinControlV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::JoinControlV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1107,6 +1194,7 @@ impl DataProvider<::icu_properties::provider::JoinControlV1Marker> for BakedData
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::LineBreakV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LineBreakV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1119,6 +1207,7 @@ impl DataProvider<::icu_properties::provider::LineBreakV1Marker> for BakedDataPr
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::LogicalOrderExceptionV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LogicalOrderExceptionV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1131,6 +1220,7 @@ impl DataProvider<::icu_properties::provider::LogicalOrderExceptionV1Marker> for
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::LowercaseV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::LowercaseV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1143,6 +1233,7 @@ impl DataProvider<::icu_properties::provider::LowercaseV1Marker> for BakedDataPr
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::MathV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::MathV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1155,6 +1246,7 @@ impl DataProvider<::icu_properties::provider::MathV1Marker> for BakedDataProvide
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::NoncharacterCodePointV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::NoncharacterCodePointV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1167,6 +1259,7 @@ impl DataProvider<::icu_properties::provider::NoncharacterCodePointV1Marker> for
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::PatternSyntaxV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PatternSyntaxV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1179,6 +1272,7 @@ impl DataProvider<::icu_properties::provider::PatternSyntaxV1Marker> for BakedDa
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::PatternWhiteSpaceV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::PatternWhiteSpaceV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1191,6 +1285,7 @@ impl DataProvider<::icu_properties::provider::PatternWhiteSpaceV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::QuotationMarkV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::QuotationMarkV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1203,6 +1298,7 @@ impl DataProvider<::icu_properties::provider::QuotationMarkV1Marker> for BakedDa
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::RadicalV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::RadicalV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1215,6 +1311,7 @@ impl DataProvider<::icu_properties::provider::RadicalV1Marker> for BakedDataProv
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::RegionalIndicatorV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::RegionalIndicatorV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1227,6 +1324,7 @@ impl DataProvider<::icu_properties::provider::RegionalIndicatorV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ScriptV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1239,6 +1337,7 @@ impl DataProvider<::icu_properties::provider::ScriptV1Marker> for BakedDataProvi
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1253,6 +1352,7 @@ impl DataProvider<::icu_properties::provider::ScriptWithExtensionsPropertyV1Mark
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::SentenceBreakV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceBreakV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1265,6 +1365,7 @@ impl DataProvider<::icu_properties::provider::SentenceBreakV1Marker> for BakedDa
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::SentenceTerminalV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SentenceTerminalV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1277,6 +1378,7 @@ impl DataProvider<::icu_properties::provider::SentenceTerminalV1Marker> for Bake
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::SoftDottedV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::SoftDottedV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1289,6 +1391,7 @@ impl DataProvider<::icu_properties::provider::SoftDottedV1Marker> for BakedDataP
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::TerminalPunctuationV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::TerminalPunctuationV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1301,6 +1404,7 @@ impl DataProvider<::icu_properties::provider::TerminalPunctuationV1Marker> for B
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::UnifiedIdeographV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::UnifiedIdeographV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1313,6 +1417,7 @@ impl DataProvider<::icu_properties::provider::UnifiedIdeographV1Marker> for Bake
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::UppercaseV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::UppercaseV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1325,6 +1430,7 @@ impl DataProvider<::icu_properties::provider::UppercaseV1Marker> for BakedDataPr
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::VariationSelectorV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::VariationSelectorV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1337,6 +1443,7 @@ impl DataProvider<::icu_properties::provider::VariationSelectorV1Marker> for Bak
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::WhiteSpaceV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WhiteSpaceV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1349,6 +1456,7 @@ impl DataProvider<::icu_properties::provider::WhiteSpaceV1Marker> for BakedDataP
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::WordBreakV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::WordBreakV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1361,6 +1469,7 @@ impl DataProvider<::icu_properties::provider::WordBreakV1Marker> for BakedDataPr
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::XidContinueV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::XidContinueV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1373,6 +1482,7 @@ impl DataProvider<::icu_properties::provider::XidContinueV1Marker> for BakedData
         })
     }
 }
+#[cfg(feature = "icu_properties")]
 impl DataProvider<::icu_properties::provider::XidStartV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_properties::provider::XidStartV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1385,6 +1495,7 @@ impl DataProvider<::icu_properties::provider::XidStartV1Marker> for BakedDataPro
         })
     }
 }
+#[cfg(feature = "icu_provider")]
 impl DataProvider<::icu_provider::hello_world::HelloWorldV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_provider::hello_world::HelloWorldV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1429,6 +1540,7 @@ impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackPar
         })
     }
 }
+#[cfg(feature = "icu_segmenter")]
 impl DataProvider<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1441,6 +1553,7 @@ impl DataProvider<::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker> f
         })
     }
 }
+#[cfg(feature = "icu_segmenter")]
 impl DataProvider<::icu_segmenter::provider::LineBreakDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::LineBreakDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1453,6 +1566,7 @@ impl DataProvider<::icu_segmenter::provider::LineBreakDataV1Marker> for BakedDat
         })
     }
 }
+#[cfg(feature = "icu_segmenter")]
 impl DataProvider<::icu_segmenter::provider::LstmDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::LstmDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1465,6 +1579,7 @@ impl DataProvider<::icu_segmenter::provider::LstmDataV1Marker> for BakedDataProv
         })
     }
 }
+#[cfg(feature = "icu_segmenter")]
 impl DataProvider<::icu_segmenter::provider::SentenceBreakDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::SentenceBreakDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1477,6 +1592,7 @@ impl DataProvider<::icu_segmenter::provider::SentenceBreakDataV1Marker> for Bake
         })
     }
 }
+#[cfg(feature = "icu_segmenter")]
 impl DataProvider<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1489,6 +1605,7 @@ impl DataProvider<::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker> f
         })
     }
 }
+#[cfg(feature = "icu_segmenter")]
 impl DataProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_segmenter::provider::WordBreakDataV1Marker>, DataError> {
         Ok(DataResponse {
@@ -1501,6 +1618,7 @@ impl DataProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDat
         })
     }
 }
+#[cfg(feature = "icu_timezone")]
 impl DataProvider<::icu_timezone::provider::MetaZonePeriodV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_timezone::provider::MetaZonePeriodV1Marker>, DataError> {
         Ok(DataResponse {

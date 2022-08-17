@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_segmenter")]
 type DataStruct =
     <::icu_segmenter::provider::WordBreakDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =

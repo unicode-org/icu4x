@@ -543,18 +543,16 @@ mod tests {
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};
     use icu::locid::Locale;
-    use icu_provider::BufferProvider;
 
     fn test_format(
-        provider: &impl BufferProvider,
         datetime: &DateTime<AnyCalendar>,
         locale: &str,
         expected: &str,
     ) {
         let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Short);
 
-        let dtf = DateTimeFormatter::try_new_with_buffer_provider(
-            provider,
+        let dtf = DateTimeFormatter::try_new_unstable(
+            &icu_testdata::unstable(),
             &Locale::from_str(locale).unwrap().into(),
             options.into(),
         )
@@ -567,30 +565,26 @@ mod tests {
 
     #[test]
     fn test_fallback() {
-        let provider = icu_testdata::get_provider();
         // We can rely on the code's ability to convert ISO datetimes
         let datetime = DateTime::new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
-        test_format(&provider, &datetime, "fr", "5 avril 2022 à 12:33");
+        test_format(&datetime, "fr", "5 avril 2022 à 12:33");
         test_format(
-            &provider,
-            &datetime,
+                        &datetime,
             "fr-u-ca-blahblah",
             "5 avril 2022 à 12:33",
         );
         // thai falls back to buddhist
         test_format(
-            &provider,
-            &datetime,
+                        &datetime,
             "th-u-ca-buddhist",
             "5 เมษายน 2565 12:33",
         );
-        test_format(&provider, &datetime, "th", "5 เมษายน 2565 12:33");
+        test_format(&datetime, "th", "5 เมษายน 2565 12:33");
         // except when overridden
         test_format(
-            &provider,
-            &datetime,
+                        &datetime,
             "th-u-ca-gregory",
             "5 เมษายน ค.ศ. 2022 12:33",
         );

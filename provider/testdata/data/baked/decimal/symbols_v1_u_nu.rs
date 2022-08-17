@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_decimal")]
 type DataStruct =
     <::icu_decimal::provider::DecimalSymbolsV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =

@@ -96,7 +96,6 @@ fn test_fixture(fixture_name: &str) {
                         &input_buddhist,
                         &input_iso,
                         &output_value,
-                        &provider,
                         options,
                         &description,
                     ),
@@ -105,7 +104,6 @@ fn test_fixture(fixture_name: &str) {
                         &input_japanese,
                         &input_iso,
                         &output_value,
-                        &provider,
                         options,
                         &description,
                     ),
@@ -114,7 +112,6 @@ fn test_fixture(fixture_name: &str) {
                         &input_japanext,
                         &input_iso,
                         &output_value,
-                        &provider,
                         options,
                         &description,
                     ),
@@ -123,7 +120,6 @@ fn test_fixture(fixture_name: &str) {
                         &input_coptic,
                         &input_iso,
                         &output_value,
-                        &provider,
                         options,
                         &description,
                     ),
@@ -132,7 +128,6 @@ fn test_fixture(fixture_name: &str) {
                         &input_indian,
                         &input_iso,
                         &output_value,
-                        &provider,
                         options,
                         &description,
                     ),
@@ -141,7 +136,6 @@ fn test_fixture(fixture_name: &str) {
                         &input_ethiopic,
                         &input_iso,
                         &output_value,
-                        &provider,
                         options,
                         &description,
                     ),
@@ -150,7 +144,6 @@ fn test_fixture(fixture_name: &str) {
                         &input_ethioaa,
                         &input_iso,
                         &output_value,
-                        &provider,
                         options,
                         &description,
                     ),
@@ -162,7 +155,6 @@ fn test_fixture(fixture_name: &str) {
                     &input_value,
                     &input_iso,
                     &output_value,
-                    &provider,
                     options,
                     &description,
                 )
@@ -171,24 +163,22 @@ fn test_fixture(fixture_name: &str) {
     }
 }
 
-fn assert_fixture_element<A, D>(
+fn assert_fixture_element<A>(
     locale: &Locale,
     input_value: &DateTime<A>,
     input_iso: &DateTime<Iso>,
     output_value: &str,
-    provider: &D,
     options: DateTimeFormatterOptions,
     description: &str,
 ) where
     A: AsCalendar,
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
-    D: BufferProvider,
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = TypedDateTimeFormatter::<A::Calendar>::try_new_with_buffer_provider(
-        provider,
+    let dtf = TypedDateTimeFormatter::<A::Calendar>::try_new_with_any_provider(
+        &icu_testdata::any(),
         &locale.into(),
         options.clone(),
     )
@@ -198,7 +188,7 @@ fn assert_fixture_element<A, D>(
     assert_eq!(result, output_value, "{}", description);
 
     let any_dtf =
-        DateTimeFormatter::try_new_with_buffer_provider(provider, &locale.into(), options.clone())
+        DateTimeFormatter::try_new_with_any_provider(&icu_testdata::any(), &locale.into(), options.clone())
             .expect(description);
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
@@ -226,14 +216,14 @@ fn assert_fixture_element<A, D>(
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_with_buffer_provider(
-                provider,
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_any_provider(
+                &icu_testdata::any(),
                 &locale.into(),
                 bag.date.unwrap(),
             )
             .unwrap();
-            let tf = TimeFormatter::try_new_with_buffer_provider(
-                provider,
+            let tf = TimeFormatter::try_new_with_any_provider(
+                &icu_testdata::any(),
                 &locale.into(),
                 bag.time.unwrap(),
             )
@@ -256,8 +246,8 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.date.is_some() {
-            let df = TypedDateFormatter::<A::Calendar>::try_new_with_buffer_provider(
-                provider,
+            let df = TypedDateFormatter::<A::Calendar>::try_new_with_any_provider(
+                &icu_testdata::any(),
                 &locale.into(),
                 bag.date.unwrap(),
             )
@@ -278,8 +268,8 @@ fn assert_fixture_element<A, D>(
             write!(s, "{}", fdt).unwrap();
             assert_eq!(s, output_value, "{}", description);
         } else if bag.time.is_some() {
-            let tf = TimeFormatter::try_new_with_buffer_provider(
-                provider,
+            let tf = TimeFormatter::try_new_with_any_provider(
+                &icu_testdata::any(),
                 &locale.into(),
                 bag.time.unwrap(),
             )

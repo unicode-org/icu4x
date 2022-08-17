@@ -916,7 +916,7 @@ mod tests {
     #[test]
     fn test_any_construction() {
         let buddhist =
-            AnyCalendar::try_new_unstable(&icu_testdata::unstable(), AnyCalendarKind::Buddhist)
+            AnyCalendar::try_new_unstable(&icu_testdata::unstable_no_fallback(), AnyCalendarKind::Buddhist)
                 .expect("Calendar construction must succeed");
         let coptic =
             AnyCalendar::try_new_unstable(&icu_testdata::unstable(), AnyCalendarKind::Coptic)

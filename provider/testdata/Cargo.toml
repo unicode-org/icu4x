@@ -277,10 +277,12 @@ denylist = ["bench"]
 
 [dependencies]
 icu_provider = { version = "1.0.0-beta1", path = "../core" }
-icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters", features = ["serde"] }
-icu_provider_blob = { version = "1.0.0-beta1", path = "../blob" }
+icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters" }
+
+# serde feature
+icu_provider_blob = { version = "1.0.0-beta1", path = "../blob", optional = true }
 icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", optional = true }
-lazy_static = { version = "1", features = ["spin_no_std"] }
+lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
 
 # bin feature
 bytes = {version = "1.1.0", optional = true }
@@ -302,39 +304,71 @@ displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
 # databake deps
-icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar" }
-icu_casemapping = { version = "0.2", path = "../../experimental/casemapping" }
-icu_collator = { version = "1.0.0-beta1", path = "../../components/collator" }
-icu_datetime = { version = "1.0.0-beta1", features = ["experimental"], path = "../../components/datetime" }
-icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal" }
 icu_locid = { version = "1.0.0-beta1", path = "../../components/locid" }
-icu_list = { version = "1.0.0-beta1", path = "../../components/list" }
-icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_transform" }
-icu_normalizer = { version = "1.0.0-beta1", path = "../../components/normalizer" }
-icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals" }
-icu_properties = { version = "1.0.0-beta1", path = "../../components/properties" }
-icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", features = ["lstm"] }
-icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone" }
 icu_collections = { version = "1.0.0-beta1", path = "../../components/collections" }
 litemap = { version = "0.5", path = "../../utils/litemap", default-features = false }
 tinystr = { version = "0.6", path = "../../utils/tinystr" }
 zerovec = { version = "0.8", path = "../../utils/zerovec" }
 
-[dev-dependencies]
-icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals" }
+# databake options
+icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar", optional = true }
+icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", optional = true }
+icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", optional = true }
+icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", features = ["experimental"], optional = true }
+icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal", optional = true }
+icu_list = { version = "1.0.0-beta1", path = "../../components/list", optional = true }
+icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_transform", optional = true }
+icu_normalizer = { version = "1.0.0-beta1", path = "../../components/normalizer", optional = true }
+icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals", optional = true }
+icu_properties = { version = "1.0.0-beta1", path = "../../components/properties", optional = true }
+icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", features = ["lstm"], optional = true }
+icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone", optional = true }
 
 [features]
+default = [
+    "icu_calendar",
+    "icu_casemapping",
+    "icu_collator",
+    "icu_datetime",
+    "icu_decimal",
+    "icu_list",
+    "icu_locid_transform",
+    "icu_normalizer",
+    "icu_plurals",
+    "icu_properties",
+    "icu_segmenter",
+    "icu_timezone",
+]
 # Enables programmatic access to this Cargo.toml file
 metadata = [
     "cargo_metadata",
     "icu_locid/serde",
     "serde_json",
-    "serde",
+    "dep:serde",
     "displaydoc",
     "writeable",
     "std"
 ]
-fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
+serde = [
+    "icu_provider_blob",
+    "icu_provider_fs",
+    "icu_provider/deserialize_postcard_07",
+    "icu_provider/deserialize_json",
+    "icu_provider_adapters/serde",
+    "icu_calendar/serde",
+    "icu_casemapping/serde",
+    "icu_collator/serde",
+    "icu_datetime/serde",
+    "icu_decimal/serde",
+    "icu_list/serde",
+    "icu_locid_transform/serde",
+    "icu_normalizer/serde",
+    "icu_plurals/serde",
+    "icu_properties/serde",
+    "icu_segmenter/serde",
+    "icu_timezone/serde",
+    "lazy_static",
+]
 std = []
 bin = [
     "bytes",
@@ -348,7 +382,7 @@ bin = [
     "std",
     "metadata",
     "icu_datagen",
-    "fs",
+    "icu_provider_fs",
     "zip",
 ]
 

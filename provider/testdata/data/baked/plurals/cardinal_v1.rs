@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_plurals")]
 type DataStruct =
     <::icu_plurals::provider::CardinalV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =

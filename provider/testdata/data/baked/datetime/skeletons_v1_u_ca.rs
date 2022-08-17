@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_datetime")]
 type DataStruct = [(
     &'static [::icu_datetime::fields::Field],
     ::icu_datetime::pattern::runtime::PatternPlurals<'static>,

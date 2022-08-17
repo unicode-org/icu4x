@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_datetime")]
 type DataStruct =
     <::icu_datetime::provider::week_data::WeekDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =

@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_provider")]
 type DataStruct =
     <::icu_provider::hello_world::HelloWorldV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
