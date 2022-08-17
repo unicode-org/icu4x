@@ -676,7 +676,7 @@ where
         debug_assert!(self.pending.is_none());
         let c = self.delegate.next()?;
 
-        // TODO: Measure if this check is actually an optimization even in the
+        // TODO(#2384): Measure if this check is actually an optimization even in the
         // non-supplementary case of if this should go inside the supplementary
         // `if` below.
         if u32::from(c) < self.decomposition_passthrough_bound {
@@ -932,10 +932,6 @@ where
     /// the canonical composition is performed on its output.
     decomposition: Decomposition<'data, I>,
     /// Non-Hangul canonical composition data.
-    /// TODO: Experiment if it makes sense to split this into two tries:
-    /// One where the second character is a starter and another where
-    /// the second character is a non-starter. Upon access, we know the
-    /// starterness of the second character anyway.
     canonical_compositions: Char16Trie<'data>,
     /// To make `next()` yield in cases where there's a non-composing
     /// starter in the decomposition buffer, we put it here to let it
@@ -1026,7 +1022,7 @@ where
                 if u32::from(undecomposed_starter.character) < self.composition_passthrough_bound
                     || undecomposed_starter.potential_passthrough()
                 {
-                    // TODO: In the NFC case (moot for NFKC and UTS46), if the upcoming
+                    // TODO(#2385): In the NFC case (moot for NFKC and UTS46), if the upcoming
                     // character is not below `decomposition_passthrough_bound` but is
                     // below `composition_passthrough_bound`, we read from the trie
                     // unnecessarily.
