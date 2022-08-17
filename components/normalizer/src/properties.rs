@@ -374,7 +374,7 @@ impl CanonicalCombiningClassMap {
     }
 
     /// Look up the canonical combining class for a scalar value
-    /// represented as `u32`. If the argument is outside the scaler
+    /// represented as `u32`. If the argument is outside the scalar
     /// value range, `CanonicalCombiningClass::NotReordered` is returned.
     pub fn get_u32(&self, c: u32) -> CanonicalCombiningClass {
         let trie_value = self.decompositions.get().trie.get(c);
