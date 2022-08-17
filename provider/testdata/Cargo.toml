@@ -267,7 +267,7 @@ icuexportdata_glob = [
     "uprops/small/XIDS.toml",
 ]
 
-icuexportdata_gitref = "icu4x/2022-07-25/71.x"
+icuexportdata_gitref = "icu4x/2022-08-17/71.x"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
