@@ -9,7 +9,6 @@ use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
 use icu_calendar::{arithmetic::week_of, AsCalendar, Date, DateTime, Iso};
-use icu_provider::DataLocale;
 use icu_timezone::{CustomTimeZone, GmtOffset, TimeVariant};
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
@@ -344,11 +343,7 @@ fn day_of_week_in_month<T: DateInput>(datetime: &T) -> Result<DayOfWeekInMonth, 
 }
 
 impl<'data, T: DateTimeInput> DateTimeInputWithLocale<'data, T> {
-    pub fn new(
-        data: &'data T,
-        calendar: Option<&'data week_of::CalendarInfo>,
-        _locale: &DataLocale,
-    ) -> Self {
+    pub(crate) fn new(data: &'data T, calendar: Option<&'data week_of::CalendarInfo>) -> Self {
         Self { data, calendar }
     }
 }

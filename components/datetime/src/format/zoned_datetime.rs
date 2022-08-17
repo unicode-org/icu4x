@@ -61,7 +61,6 @@ where
     Z: TimeZoneInput,
     W: fmt::Write + ?Sized,
 {
-    let locale = &zoned_datetime_format.datetime_format.locale;
     let patterns = &zoned_datetime_format.datetime_format.patterns;
     let loc_datetime = DateTimeInputWithLocale::new(
         datetime,
@@ -70,7 +69,6 @@ where
             .week_data
             .as_ref()
             .map(|d| &d.get().0),
-        locale,
     );
 
     let pattern = patterns.get().0.select(
