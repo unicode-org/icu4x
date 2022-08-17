@@ -39,7 +39,7 @@ denylist = ["bench", "smaller_test", "logging"]
 [features]
 default = ["provider_fs", "deserialize_postcard_07", "deserialize_json"]
 provider_fs = ["icu_provider_fs"]
-provider_test = ["icu_testdata", "deserialize_postcard_07"]
+provider_test = ["icu_testdata"]
 smaller_test = ["provider_test"]
 deserialize_json = ["icu_provider/deserialize_json"]
 deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
@@ -73,7 +73,7 @@ writeable = { version = "0.4", path = "../../utils/writeable/" }
 # Since this crate is published, Diplomat must be published preceding a new ICU4X release but may use git versions in between
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "d49289af387b9803c90e46139fe95dd0d6f324ae" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "d49289af387b9803c90e46139fe95dd0d6f324ae" }
-icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", optional = true }
+icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", optional = true, features = ["serde"] }
 
 # completeness feature
 syn-inline-mod = { version =  "0.4.0", optional = true }
@@ -83,12 +83,10 @@ diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "be4f
 lazy_static = { version =  "1", optional = true }
 elsa = { version = "1", optional = true }
 
-
-
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Logging is automagical in wasm, we only need this for native
 simple_logger = { version = "1.12", optional = true }
-log = { version = "0.4" , optional = true}
+log = { version = "0.4", optional = true }
 
 [target.'cfg(target_arch = "wasm32")'.dependencies]
 log = { version = "0.4" }
