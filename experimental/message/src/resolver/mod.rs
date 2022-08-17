@@ -36,15 +36,29 @@ where
     VARSV: Slice<'varsv>,
     MSGSV: Slice<'msgsv>,
     MPV: 'mpv + Slice<'mpv>,
-    'm: 'mpv,
-    'varsm: 'mpv,
-    'msgsm: 'mpv,
+    // 'm: 'mv,
+    'mv: 'mpv,
+    'msgsv: 'mpv,
+    'varsv: 'mpv,
+    // 'm: 'mpv,
+    // 'varsm: 'mpv,
+    // 'msgsm: 'mpv,
 {
     pub fn resolve_to_parts(
         msg: &'m ast::Message<MV>,
         scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
     ) -> Vec<MessagePart<MPV>> {
         let mut collector = MessagePartsList::new();
+        // let s: &'mv str = match &msg.value {
+        //     ast::MessageValue::Pattern(p) => {
+        //         match p.body.first().unwrap() {
+        //             ast::PatternElement::Text(s) => s.as_str(),
+        //             ast::PatternElement::Placeholder(_) => todo!(),
+        //         }
+        //     },
+        //     ast::MessageValue::Select(_) => todo!(),
+        // };
+        // collector.push_part(MessagePart::Literal(MPV::from_str(s)));
         Self::resolve_message_to_collector(msg, scope, &mut collector);
         collector.0
     }
@@ -93,7 +107,7 @@ where
     {
         match pe {
             ast::PatternElement::Text(s) => {
-                collector.push_part(MessagePart::Literal(MPV::from_str(s.as_str())))
+                collector.push_part(MessagePart::Literal(MPV::from_slice(s)))
             }
             ast::PatternElement::Placeholder(p) => Self::resolve_placeholder(p, scope, collector),
         }
@@ -126,7 +140,7 @@ where
                 annotation,
             } => match operand {
                 ast::Operand::Literal(l) => {
-                    collector.push_part(MessagePart::Literal(MPV::from_str(l.value.as_str())))
+                    collector.push_part(MessagePart::Literal(MPV::from_slice(&l.value)))
                 }
                 ast::Operand::Variable(v) => Self::resolve_variable(v, scope, collector),
             },
@@ -145,7 +159,7 @@ where
             if let Some(v) = variables.get(variable.as_str()) {
                 match v {
                     VariableType::String(s) => {
-                        collector.push_part(MessagePart::Literal(MPV::from_str(s.as_str())))
+                        collector.push_part(MessagePart::Literal(MPV::from_slice(s)))
                     }
                     VariableType::MessageReference(id) => {
                         if let Some(messages) = scope.messages {

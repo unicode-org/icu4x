@@ -3,9 +3,7 @@ use std::hash::Hash;
 use std::ops::Range;
 
 pub trait Slice<'s>: Hash + PartialEq {
-    fn from_slice<'m, S: Slice<'m>>(input: &S) -> Self
-    where
-        'm: 's;
+    fn from_slice<S: Slice<'s>>(input: &S) -> Self;
     fn from_cow(input: Cow<'s, str>) -> Self;
     fn from_str(input: &'s str) -> Self;
     fn slice(&self, range: Range<usize>) -> Self;
@@ -18,8 +16,12 @@ pub trait Slice<'s>: Hash + PartialEq {
 impl<'s> Slice<'s> for String {
     fn from_cow(input: Cow<'s, str>) -> Self {
         match input {
-            Cow::Borrowed(b) => b.to_string(),
-            Cow::Owned(o) => o,
+            Cow::Borrowed(b) => {
+                b.to_string()
+            },
+            Cow::Owned(o) => {
+                o
+            },
         }
     }
 
@@ -27,10 +29,7 @@ impl<'s> Slice<'s> for String {
         Cow::Owned(self.clone())
     }
 
-    fn from_slice<'m, S: Slice<'m>>(input: &S) -> Self
-    where
-        'm: 's,
-    {
+    fn from_slice<'m, S: Slice<'m>>(input: &S) -> Self {
         Self::from_cow(input.as_cow())
     }
 
@@ -59,10 +58,12 @@ impl<'s> Slice<'s> for String {
 impl<'s> Slice<'s> for &'s str {
     fn from_cow(input: Cow<'s, str>) -> Self {
         match input {
-            Cow::Borrowed(b) => b,
+            Cow::Borrowed(b) => {
+                b
+            },
             Cow::Owned(_) => {
                 unimplemented!()
-            }
+            },
         }
     }
 
@@ -70,10 +71,7 @@ impl<'s> Slice<'s> for &'s str {
         Cow::Borrowed(self)
     }
 
-    fn from_slice<'m, S: Slice<'m>>(input: &S) -> Self
-    where
-        'm: 's,
-    {
+    fn from_slice<S: Slice<'s>>(input: &S) -> Self {
         Self::from_cow(input.as_cow())
     }
 
