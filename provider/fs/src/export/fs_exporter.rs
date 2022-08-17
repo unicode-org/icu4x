@@ -13,6 +13,7 @@ use std::path::PathBuf;
 use std::sync::Mutex;
 use writeable::Writeable;
 
+/// Choices of what to do if [`FilesystemExporter`] tries to write to a pre-existing directory.
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq, Serialize, Deserialize)]
 pub enum OverwriteOption {
@@ -22,6 +23,12 @@ pub enum OverwriteOption {
     /// If the directory doesn't exist, create it.
     /// If it does exist, remove it aggressively (rm -rf) and re-create it.
     RemoveAndReplace,
+}
+
+impl Default for OverwriteOption {
+    fn default() -> Self {
+        Self::CheckEmpty
+    }
 }
 
 /// Options bag for initializing a [`FilesystemExporter`].
@@ -40,9 +47,17 @@ impl Default for ExporterOptions {
     fn default() -> Self {
         Self {
             root: PathBuf::from("icu4x_data"),
-            overwrite: OverwriteOption::CheckEmpty,
+            overwrite: Default::default(),
             fingerprint: false,
         }
+    }
+}
+
+impl From<PathBuf> for ExporterOptions {
+    fn from(root: PathBuf) -> Self {
+        let mut options = ExporterOptions::default();
+        options.root = root;
+        options
     }
 }
 
@@ -56,6 +71,12 @@ pub struct FilesystemExporter {
 }
 
 impl FilesystemExporter {
+    /// Creates a new [`FilesystemExporter`] with a [serializer] and [options].
+    ///
+    /// See the module-level docs for an example.
+    ///
+    /// [serializer]: crate::export::serializers
+    /// [options]: ExporterOptions
     pub fn try_new(
         serializer: Box<dyn AbstractSerializer + Sync>,
         options: ExporterOptions,
