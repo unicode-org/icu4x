@@ -814,3 +814,32 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
 
     assert!(result.is_err());
 }
+
+#[test]
+fn test_vertical_fallback_disabled() {
+    use icu_datetime::{
+        options::length::{Bag, Date, Time},
+        DateTimeFormatterOptions,
+    };
+    use icu_locid::locale;
+
+    // Use a provider with no vertical fallback:
+    let provider = icu_testdata::get_postcard_provider();
+
+    let mut length_bag = Bag::default();
+    length_bag.date = Some(Date::Full);
+    length_bag.time = Some(Time::Short);
+    let options = DateTimeFormatterOptions::Length(length_bag);
+
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+        &provider,
+        &locale!("fr").into(),
+        options,
+    )
+    .unwrap();
+
+    assert_eq!(
+        "mardi 5 avril 2022 à 12:33",
+        dtf.format_to_string(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap())
+    );
+}
