@@ -344,7 +344,6 @@ static = [
     "lazy_static",
 ]
 baked = [
-    "icu_list",
     "icu_calendar",
     "icu_casemapping",
     "icu_collator",
