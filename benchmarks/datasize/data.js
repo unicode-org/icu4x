@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660839083628,
+  "lastUpdate": 1660849515705,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24533,6 +24533,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/610bca6e0fcee4f48f831c859ed44bba32cac881"
         },
         "date": 1660839041024,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3924376,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "56eaf09d44be6b3684137ad624a11055e50bd73e",
+          "message": "Enable `locale` macro to support single unicode key value pair extension (#2382)",
+          "timestamp": "2022-08-18T12:02:33-07:00",
+          "tree_id": "01703bd5d752c662aec4a5683c0db35ee4b1815e",
+          "url": "https://github.com/unicode-org/icu4x/commit/56eaf09d44be6b3684137ad624a11055e50bd73e"
+        },
+        "date": 1660849461813,
         "tool": "ndjson",
         "benches": [
           {
