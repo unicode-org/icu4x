@@ -86,7 +86,9 @@ impl CldrCalendar for Ethiopic {
     }
 }
 
-pub(crate) fn check_locale<C: CldrCalendar>(locale: &DataLocale) -> Result<(), DateTimeFormatterError> {
+pub(crate) fn check_locale<C: CldrCalendar>(
+    locale: &DataLocale,
+) -> Result<(), DateTimeFormatterError> {
     let cal = locale.get_unicode_ext(&key!("ca"));
 
     if let Some(cal) = cal {
