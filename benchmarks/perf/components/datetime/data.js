@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660850090865,
+  "lastUpdate": 1660854937006,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62201,6 +62201,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5429,
             "range": "± 221",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a5ac45a4028238afc9c0ef15c4b784e95e22db5f",
+          "message": "Consolidate the two auxiliary tries to the main NFD trie (#2371)",
+          "timestamp": "2022-08-18T20:23:16Z",
+          "tree_id": "3ea9b783f8c2f326a9816f48f3455dcb767679ba",
+          "url": "https://github.com/unicode-org/icu4x/commit/a5ac45a4028238afc9c0ef15c4b784e95e22db5f"
+        },
+        "date": 1660854894498,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 92957,
+            "range": "± 220",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 187547,
+            "range": "± 198",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 84225,
+            "range": "± 785",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 93094,
+            "range": "± 97",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 93044,
+            "range": "± 134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 100401,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 177056,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 191919,
+            "range": "± 268",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 187706,
+            "range": "± 938",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 201652,
+            "range": "± 657",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5177,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
