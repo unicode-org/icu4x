@@ -30,8 +30,8 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
-use crate::{ArithmeticDate, CalendarArithmetic};
 use core::convert::TryInto;
 use tinystr::tinystr;
 

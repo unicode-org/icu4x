@@ -32,13 +32,11 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::coptic::Coptic;
 use crate::iso::Iso;
 use crate::julian::Julian;
-use crate::{
-    types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
-    DateTime, DateTimeError,
-};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::marker::PhantomData;
 use tinystr::tinystr;
 

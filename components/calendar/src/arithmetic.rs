@@ -3,9 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Miscellaneous helper functions.
+
+/// Helpers for week-of-year calculations
 pub mod week_of {
     use crate::{error::DateTimeError, types::IsoWeekday};
 
+    /// Minimum number of days in a month unit required for using this module
     pub const MIN_UNIT_DAYS: u16 = 14;
 
     /// Information about how a given calendar assigns weeks to a year or month.

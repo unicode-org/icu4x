@@ -32,10 +32,9 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{
-    types, ArithmeticDate, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError,
-};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use tinystr::tinystr;
 
 /// The Gregorian Calendar
