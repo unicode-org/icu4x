@@ -40,11 +40,24 @@ use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
-/// The Coptic calendar
+/// The [Coptic Calendar]
+///
+/// The [Coptic calendar] is a solar calendar used by the Coptic Orthodox Church, with twelve normal months
+/// and a thirteenth small epagomenal month.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Coptic calendar]: https://en.wikipedia.org/wiki/Coptic_calendar
+///
+/// # Era codes
+///
+/// This calendar supports two era codes: `"bd"`, and `"ad"`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
+/// eras. 1 A.M. is equivalent to 284 C.E.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;
 
+/// The inner date type used for representing [`Date`]s of [`Coptic`]. See [`Date`] and [`Coptic`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 

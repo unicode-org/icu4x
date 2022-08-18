@@ -38,11 +38,22 @@ use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, Dat
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
-/// The Indian national calendar
+/// The Indian National Calendar (aka the Saka calendar)
+///
+/// The [Indian National calendar] is a solar calendar used by the Indian government, with twelve months.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Indian National calendar]: https://en.wikipedia.org/wiki/Indian_national_calendar
+///
+/// # Era codes
+///
+/// This calendar has a single era: `"saka"`, with Saka 0 being 78 CE. Dates before this era use negative years.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
 
+/// The inner date type used for representing [`Date`]s of [`Indian`]. See [`Date`] and [`Indian`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct IndianDateInner(ArithmeticDate<Indian>);
 

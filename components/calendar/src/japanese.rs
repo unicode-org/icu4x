@@ -45,25 +45,64 @@
 
 use crate::any_calendar::AnyCalendarKind;
 use crate::iso::{Iso, IsoDateInner};
-use crate::provider::{self, EraStartDate};
+use crate::provider::{EraStartDate, JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
 use crate::{
     types, AsCalendar, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError, Ref,
 };
 use icu_provider::prelude::*;
 use tinystr::{tinystr, TinyStr16};
 
-/// The Japanese Calendar
+/// The [Japanese Calendar] (with modern eras only)
+///
+/// The [Japanese calendar] is a solar calendar used in Japan, with twelve months.
+/// The months and days are identical to that of the Gregorian calendar, however the years are counted
+/// differently using the Japanese era system.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Japanese calendar]: https://en.wikipedia.org/wiki/Japanese_calendar
+///
+/// # Era codes
+///
+/// This calendar currently supports seven era codes. It supports the five post-Meiji eras
+/// (`"meiji"`, `"taisho"`, `"showa"`, `"heisei"`, `"reiwa"`), as well as using the Gregorian
+/// `"bce"` and `"ce"` for dates before the Meiji era.
+///
+/// Future eras will also be added to this type when they are decided.
+///
+/// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseErasV1Marker`]
+/// data (`calendar/japanese@1`).
 #[derive(Clone, Debug, Default)]
 pub struct Japanese {
-    eras: DataPayload<provider::JapaneseErasV1Marker>,
+    eras: DataPayload<JapaneseErasV1Marker>,
 }
 
-/// The Japanese Calendar with historical eras
+/// The [Japanese Calendar] (with historical eras)
+///
+/// The [Japanese calendar] is a solar calendar used in Japan, with twelve months.
+/// The months and days are identical to that of the Gregorian calendar, however the years are counted
+/// differently using the Japanese era system.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Japanese calendar]: https://en.wikipedia.org/wiki/Japanese_calendar
+///
+/// # Era codes
+///
+/// This calendar supports a large number of era codes. It supports the five post-Meiji eras
+/// (`"meiji"`, `"taisho"`, `"showa"`, `"heisei"`, `"reiwa"`). Pre-Meiji eras are represented
+/// with their names converted to lowercase ascii and followed by their start year. E.g. the "Ten'ō"
+/// era (781 - 782 CE) has the code `"teno-781"`. The  Gregorian `"bce"` and `"ce"` eras
+/// are used for dates before the first known era era.
+///
+///
+/// These eras are loaded from data, requiring a data provider capable of providing [`JapaneseExtendedErasV1Marker`]
+/// data (`calendar/japanext@1`).
 #[derive(Clone, Debug, Default)]
 pub struct JapaneseExtended(Japanese);
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-/// The inner date type used for representing Date<Japanese>
+/// The inner date type used for representing [`Date`]s of [`Japanese`]. See [`Date`] and [`Japanese`] for more details.
 pub struct JapaneseDateInner {
     inner: IsoDateInner,
     adjusted_year: i32,
@@ -72,7 +111,7 @@ pub struct JapaneseDateInner {
 
 impl Japanese {
     /// Creates a new [`Japanese`] from locale data using only modern eras (post-meiji).
-    pub fn try_new_unstable<D: DataProvider<provider::JapaneseErasV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<JapaneseErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, DataError> {
         let eras = data_provider
@@ -111,7 +150,7 @@ impl Japanese {
 
 impl JapaneseExtended {
     /// Creates a new [`Japanese`] from locale data using all eras (including pre-meiji).
-    pub fn try_new_unstable<D: DataProvider<provider::JapaneseExtendedErasV1Marker> + ?Sized>(
+    pub fn try_new_unstable<D: DataProvider<JapaneseExtendedErasV1Marker> + ?Sized>(
         data_provider: &D,
     ) -> Result<Self, DataError> {
         let eras = data_provider
