@@ -215,7 +215,7 @@ impl DataExporter for BakedDataExporter {
 
         let feature = if self.insert_feature_gates {
             let feature = marker.segments.iter().next().unwrap().ident.to_string();
-            if feature != "icu_provider_adapters" {
+            if !feature.starts_with("icu_provider") {
                 quote! { #![cfg(feature = #feature)] }
             } else {
                 quote!()

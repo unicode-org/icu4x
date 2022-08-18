@@ -339,11 +339,12 @@ default = [
     "icu_segmenter",
     "icu_timezone",
 ]
+icu_datetime = ["icu_calendar", "dep:icu_datetime", "icu_decimal", "icu_plurals"]
 buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]
 icu_calendar_serde = ["buffer", "icu_calendar/serde"]
 icu_casemapping_serde = ["buffer", "icu_casemapping/serde"]
 icu_collator_serde = ["buffer", "icu_collator/serde"]
-icu_datetime_serde = ["buffer", "icu_datetime/serde"]
+icu_datetime_serde = ["buffer", "icu_datetime/serde", "icu_calendar/serde", "icu_decimal/serde", "icu_plurals/serde"]
 icu_decimal_serde = ["buffer", "icu_decimal/serde"]
 icu_list_serde = ["buffer", "icu_list/serde"]
 icu_locid_transform_serde = ["buffer", "icu_locid_transform/serde"]

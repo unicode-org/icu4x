@@ -73,7 +73,7 @@ use icu_provider::DataLocale;
 ///
 /// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::try_new_unstable(&icu_testdata::unstable(), (&locale).into())
+/// let calendar = AnyCalendar::try_new_from_locale_unstable(&icu_testdata::unstable(), (&locale).into())
 ///                    .expect("constructing AnyCalendar failed");
 /// let calendar = Rc::new(calendar); // Avoid cloning it
 ///
