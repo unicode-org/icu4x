@@ -44,6 +44,12 @@ smaller_test = ["icu_capi/smaller_test"]
 deserialize_json = ["icu_capi/deserialize_json"]
 deserialize_postcard_07 = ["icu_capi/deserialize_postcard_07"]
 deserialize_bincode_1 = ["icu_capi/deserialize_bincode_1"]
+logging = ["icu_capi/logging"]
+simple_logger = ["icu_capi/simple_logger"]
+
+# meta feature for things we enable by default in wasm
+# do not sync with other crates
+wasm_default = ["provider_test", "logging"]
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
@@ -51,4 +57,6 @@ skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # x86tiny is not relevant in normal environments,
 # smaller_test gets tested on the FFI job anyway
-denylist = ["bench", "smaller_test"]
+# logging enables a feature of a dependency that has no externally visible API changes'
+# wasm_default is a metafeature
+denylist = ["bench", "smaller_test", "logging", "wasm_default"]

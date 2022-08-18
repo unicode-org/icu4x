@@ -4,6 +4,7 @@
 
 #include "../../include/ICU4XLocaleCanonicalizer.h"
 #include "../../include/ICU4XLocaleExpander.h"
+#include "../../include/ICU4XLogger.h"
 #include <string.h>
 #include <stdio.h>
 
@@ -37,6 +38,7 @@ ICU4XLocale* get_locale(const char* localeText) {
 
 
 int main() {
+    ICU4XLogger_init_simple_logger();
     char output[40];
 
     // Test creating a locale.

@@ -15,7 +15,7 @@ pub(crate) enum BlobSchema<'data> {
 }
 
 /// Version 1 of the ICU4X data blob schema.
-#[derive(serde::Deserialize, yoke::Yokeable)]
+#[derive(Clone, Copy, serde::Deserialize, yoke::Yokeable)]
 #[yoke(prove_covariance_manually)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
 pub(crate) struct BlobSchemaV1<'data> {

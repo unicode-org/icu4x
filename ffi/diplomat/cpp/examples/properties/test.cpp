@@ -4,6 +4,7 @@
 
 #include "../../include/ICU4XCodePointSetData.hpp"
 #include "../../include/ICU4XCodePointMapData16.hpp"
+#include "../../include/ICU4XLogger.hpp"
 
 #include <iostream>
 
@@ -33,6 +34,7 @@ int test_map_16_property(ICU4XCodePointMapData16 data, char32_t sample, uint32_t
 }
 
 int main() {
+    ICU4XLogger::init_simple_logger();
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     int result;
 

@@ -30,7 +30,7 @@ struct ICU4XSentenceBreakSegmenterDeleter {
 /**
  * An ICU4X sentence-break segmenter, capable of finding sentence breakpoints in strings.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.SentenceBreakSegmenter.html) for more information.
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html) for more information.
  */
 class ICU4XSentenceBreakSegmenter {
  public:
@@ -38,28 +38,28 @@ class ICU4XSentenceBreakSegmenter {
   /**
    * Construct an [`ICU4XSentenceBreakSegmenter`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.SentenceBreakSegmenter.html#method.try_new) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html#method.try_new) for more information.
    */
   static diplomat::result<ICU4XSentenceBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
    * Segments a UTF-8 string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.SentenceBreakSegmenter.html#method.segment_str) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html#method.segment_str) for more information.
    */
   ICU4XSentenceBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 
   /**
    * Segments a UTF-16 string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.SentenceBreakSegmenter.html#method.segment_utf16) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html#method.segment_utf16) for more information.
    */
   ICU4XSentenceBreakIteratorUtf16 segment_utf16(const diplomat::span<uint16_t> input) const;
 
   /**
    * Segments a Latin-1 string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.SentenceBreakSegmenter.html#method.segment_latin1) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html#method.segment_latin1) for more information.
    */
   ICU4XSentenceBreakIteratorLatin1 segment_latin1(const diplomat::span<uint8_t> input) const;
   inline const capi::ICU4XSentenceBreakSegmenter* AsFFI() const { return this->inner.get(); }

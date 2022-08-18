@@ -31,7 +31,7 @@ struct ICU4XGraphemeClusterBreakSegmenterDeleter {
  * An ICU4X grapheme-cluster-break segmenter, capable of finding grapheme cluster breakpoints
  * in strings.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html) for more information.
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html) for more information.
  */
 class ICU4XGraphemeClusterBreakSegmenter {
  public:
@@ -39,7 +39,7 @@ class ICU4XGraphemeClusterBreakSegmenter {
   /**
    * Construct an [`ICU4XGraphemeClusterBreakSegmenter`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.try_new) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.try_new) for more information.
    */
   static diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
 

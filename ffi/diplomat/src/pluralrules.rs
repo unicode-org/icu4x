@@ -16,7 +16,7 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
 
     /// FFI version of `PluralCategory`.
-    #[diplomat::rust_link(icu_plurals::PluralCategory, Enum)]
+    #[diplomat::rust_link(icu::plurals::PluralCategory, Enum)]
     pub enum ICU4XPluralCategory {
         Zero,
         One,
@@ -27,13 +27,13 @@ pub mod ffi {
     }
 
     /// FFI version of `PluralRules`.
-    #[diplomat::rust_link(icu_plurals::PluralRules, Struct)]
+    #[diplomat::rust_link(icu::plurals::PluralRules, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XPluralRules(PluralRules);
 
     impl ICU4XPluralRules {
         /// FFI version of `PluralRules::try_new_cardinal()`.
-        #[diplomat::rust_link(icu_plurals::PluralRules::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_unstable, FnInStruct)]
         pub fn try_new_cardinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -48,7 +48,7 @@ pub mod ffi {
         }
 
         /// FFI version of `PluralRules::try_new_ordinal()`.
-        #[diplomat::rust_link(icu_plurals::PluralRules::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::try_new_unstable, FnInStruct)]
         pub fn try_new_ordinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -63,7 +63,7 @@ pub mod ffi {
         }
 
         /// FFI version of `PluralRules::select()`.
-        #[diplomat::rust_link(icu_plurals::PluralRules::select, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::select, FnInStruct)]
         pub fn select(&self, op: ICU4XPluralOperands) -> ICU4XPluralCategory {
             let res = self.0.category_for(PluralOperands {
                 i: op.i,
@@ -85,7 +85,7 @@ pub mod ffi {
         }
 
         /// FFI version of `PluralRules::categories()`.
-        #[diplomat::rust_link(icu_plurals::PluralRules::categories, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralRules::categories, FnInStruct)]
         pub fn categories(&self) -> ICU4XPluralCategories {
             self.0.categories().fold(
                 ICU4XPluralCategories {
@@ -112,7 +112,7 @@ pub mod ffi {
     }
 
     /// FFI version of `PluralOperands`.
-    #[diplomat::rust_link(icu_plurals::PluralOperands, Struct)]
+    #[diplomat::rust_link(icu::plurals::PluralOperands, Struct)]
     pub struct ICU4XPluralOperands {
         pub i: u64,
         pub v: usize,
@@ -124,7 +124,7 @@ pub mod ffi {
 
     impl ICU4XPluralOperands {
         /// FFI version of `PluralOperands::from_str()`.
-        #[diplomat::rust_link(icu_plurals::PluralOperands::from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
         pub fn create(s: &str) -> DiplomatResult<ICU4XPluralOperands, ICU4XError> {
             PluralOperands::from_str(s)
                 .map(|ops| ICU4XPluralOperands {

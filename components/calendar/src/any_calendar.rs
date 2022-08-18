@@ -18,12 +18,11 @@ use alloc::string::ToString;
 
 use icu_locid::{
     extensions::unicode::Value, extensions_unicode_key as key, extensions_unicode_value as value,
-    Locale,
+    subtags_language as language, Locale,
 };
 use icu_provider::prelude::*;
 use tinystr::tinystr;
 
-use core::convert::TryFrom;
 use core::fmt;
 
 /// This is a calendar that encompasses all formattable calendars supported by this crate
@@ -49,7 +48,7 @@ use core::fmt;
 ///
 /// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::try_new_with_buffer_provider(&provider, (&locale).try_into().unwrap())
+/// let calendar = AnyCalendar::try_new_for_locale_with_buffer_provider(&provider, &(&locale).into())
 ///                    .expect("constructing AnyCalendar failed");
 /// let calendar = Rc::new(calendar); // Avoid cloning it each time
 ///                                   // If everything is a local reference, you may use icu_calendar::Ref instead.
@@ -354,6 +353,9 @@ impl Calendar for AnyCalendar {
 impl AnyCalendar {
     /// Constructs an AnyCalendar for a given calendar kind and [`AnyProvider`] data source
     ///
+    /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
+    /// fallbacking. If this is desired, use [`Self::try_new_for_locale_with_any_provider()`].
+    ///
     /// For calendars that need data, will attempt to load the appropriate data from the source.
     ///
     /// This API needs the `calendar/japanese@1` or `calendar/japanext@1` data key if working with Japanese calendars.
@@ -386,6 +388,9 @@ impl AnyCalendar {
     }
 
     /// Constructs an AnyCalendar for a given calendar kind and [`BufferProvider`] data source
+    ///
+    /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
+    /// fallbacking. If this is desired, use [`Self::try_new_for_locale_with_buffer_provider()`].
     ///
     /// For calendars that need data, will attempt to load the appropriate data from the source.
     ///
@@ -425,6 +430,9 @@ impl AnyCalendar {
     ///
     /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
     ///
+    /// As this requires a valid [`AnyCalendarKind`] to work, it does not do any kind of locale-based
+    /// fallbacking. If this is desired, use [`Self::try_new_for_locale_unstable()`].
+    ///
     /// For calendars that need data, will attempt to load the appropriate data from the source
     pub fn try_new_unstable<P>(provider: &P, kind: AnyCalendarKind) -> Result<Self, DataError>
     where
@@ -451,6 +459,38 @@ impl AnyCalendar {
                 AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
             }
         })
+    }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: skip,
+        error: DataError,
+        functions: [
+            Self::try_new_for_locale_unstable,
+            try_new_for_locale_with_any_provider,
+            try_new_for_locale_with_buffer_provider
+        ]
+    );
+
+    /// Constructs an AnyCalendar for a given calendar kind and data source.
+    ///
+    /// **This method is unstable; the bounds on `P` might expand over time as more calendars are added**
+    ///
+    /// In case the locale's calendar is unknown or unspecified, it will attempt to load the default
+    /// calendar for the locale, falling back to gregorian.
+    ///
+    /// For calendars that need data, will attempt to load the appropriate data from the source
+    pub fn try_new_for_locale_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+    ) -> Result<Self, DataError>
+    where
+        P: DataProvider<crate::provider::JapaneseErasV1Marker>
+            + DataProvider<crate::provider::JapaneseExtendedErasV1Marker>
+            + ?Sized,
+    {
+        let kind = AnyCalendarKind::from_data_locale_with_fallback(locale);
+        Self::try_new_unstable(provider, kind)
     }
 
     fn calendar_name(&self) -> &'static str {
@@ -543,6 +583,9 @@ pub enum AnyCalendarKind {
 }
 
 impl AnyCalendarKind {
+    /// Construct from a BCP-47 string
+    ///
+    /// Returns None if the calendar is unknown
     pub fn from_bcp47_string(x: &str) -> Option<Self> {
         Some(match x {
             "gregory" => AnyCalendarKind::Gregorian,
@@ -558,6 +601,9 @@ impl AnyCalendarKind {
         })
     }
 
+    /// Construct from a BCP-47 [`Value`]
+    ///
+    /// Returns an error if the calendar is unknown
     pub fn from_bcp47(x: &Value) -> Result<Self, DateTimeError> {
         Ok(if *x == value!("gregory") {
             AnyCalendarKind::Gregorian
@@ -585,7 +631,8 @@ impl AnyCalendarKind {
         })
     }
 
-    pub fn as_bcp47(&self) -> &'static str {
+    /// Convert to a BCP-47 string
+    pub fn as_bcp47_string(&self) -> &'static str {
         match *self {
             AnyCalendarKind::Gregorian => "gregory",
             AnyCalendarKind::Buddhist => "buddhist",
@@ -599,6 +646,30 @@ impl AnyCalendarKind {
         }
     }
 
+    /// Convert to a BCP-47 `Value`
+    pub fn as_bcp47_value(&self) -> Value {
+        match *self {
+            AnyCalendarKind::Gregorian => value!("gregory"),
+            AnyCalendarKind::Buddhist => value!("buddhist"),
+            AnyCalendarKind::Japanese => value!("japanese"),
+            AnyCalendarKind::JapaneseExtended => value!("japanext"),
+            AnyCalendarKind::Indian => value!("indian"),
+            AnyCalendarKind::Coptic => value!("coptic"),
+            AnyCalendarKind::Iso => value!("iso"),
+            AnyCalendarKind::Ethiopic => value!("ethiopic"),
+            AnyCalendarKind::Ethioaa => value!("ethioaa"),
+        }
+    }
+    /// Set the `u-ca` extension on a DataLocale to the calendar represented
+    /// by this type
+    pub fn set_on_data_locale(&self, l: &mut DataLocale) {
+        l.set_unicode_ext(key!("ca"), self.as_bcp47_value());
+    }
+
+    /// Extract the calendar component from a [`Locale`]
+    ///
+    /// Will not perform any kind of fallbacking and will error for
+    /// unknown or unspecified calendar kinds
     pub fn from_locale(l: &Locale) -> Result<Self, DateTimeError> {
         l.extensions
             .unicode
@@ -611,7 +682,11 @@ impl AnyCalendarKind {
             .and_then(Self::from_bcp47)
     }
 
-    pub fn from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
+    /// Extract the calendar component from a [`DataLocale`]
+    ///
+    /// Will NOT perform any kind of fallbacking and will error for
+    /// unknown or unspecified calendar kinds
+    fn from_data_locale(l: &DataLocale) -> Result<Self, DateTimeError> {
         l.get_unicode_ext(&key!("ca"))
             .ok_or(DateTimeError::UnknownAnyCalendarKind(tinystr!(
                 16,
@@ -619,14 +694,28 @@ impl AnyCalendarKind {
             )))
             .and_then(|v| Self::from_bcp47(&v))
     }
-}
 
-impl TryFrom<&'_ Locale> for AnyCalendarKind {
-    type Error = DateTimeError;
-    fn try_from(l: &'_ Locale) -> Result<Self, DateTimeError> {
-        Self::from_locale(l)
+    // Do not make public, this will eventually need fallback
+    // data from the provider
+    fn from_data_locale_with_fallback(l: &DataLocale) -> Self {
+        if let Ok(kind) = Self::from_data_locale(l) {
+            kind
+        } else {
+            let lang = l.language();
+            if lang == language!("th") {
+                Self::Buddhist
+            // Other known fallback routes for currently-unsupported calendars
+            // } else if lang == langugage!("sa") {
+            //     Self::IslamicUmalqura
+            // } else if lang == language!("af") || lang == langugage!("ir") {
+            //     Self::Persian
+            } else {
+                Self::Gregorian
+            }
+        }
     }
 }
+
 impl fmt::Display for AnyCalendarKind {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         fmt::Debug::fmt(self, f)
