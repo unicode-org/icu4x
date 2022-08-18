@@ -209,7 +209,7 @@ macro_rules! langid {
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "en-US-u-ca-buddhist-ca-japanese".parse::<icu::locid::Locale>().unwrap();
+/// "th-TH-u-ca-buddhist-nu-thai".parse::<icu::locid::Locale>().unwrap();
 /// ```
 ///
 /// Locales with attributes are not supported
@@ -227,7 +227,7 @@ macro_rules! langid {
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "en-US-u-ca-buddhist-japanese".parse::<icu::locid::Locale>().unwrap();
+/// "en-US-u-ca-islamic-umalqura".parse::<icu::locid::Locale>().unwrap();
 /// ```
 /// [`Locale`]: crate::Locale
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
