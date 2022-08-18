@@ -39,14 +39,14 @@ use core::fmt;
 /// There are many ways of constructing an AnyCalendar'd date:
 /// ```
 /// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, japanese::Japanese, types::Time};
-/// use icu::locid::Locale;
+/// use icu::locid::{Locale,locale};
 /// # use std::str::FromStr;
 /// # use std::rc::Rc;
 /// # use std::convert::TryInto;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
+/// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
 /// let calendar = AnyCalendar::try_new_for_locale_with_buffer_provider(&provider, &(&locale).into())
 ///                    .expect("constructing AnyCalendar failed");

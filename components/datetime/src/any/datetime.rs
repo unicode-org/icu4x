@@ -35,14 +35,14 @@ use icu_provider::DataLocale;
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locid::Locale;
+/// use icu::locid::{Locale, locale};
 /// use std::str::FromStr;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
 /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), options.into())
+/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("en-u-ca-gregory").into(), options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -59,14 +59,14 @@ use icu_provider::DataLocale;
 /// ```
 /// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, types::Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locid::Locale;
+/// use icu::locid::{Locale, locale};
 /// # use std::str::FromStr;
 /// # use std::rc::Rc;
 /// # use std::convert::TryInto;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
-/// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
+/// let locale: Locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
 /// let calendar = AnyCalendar::try_new_for_locale_with_buffer_provider(&provider, &(&locale).into())
 ///                    .expect("constructing AnyCalendar failed");
@@ -149,14 +149,14 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::{Locale, locale};
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale: Locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
@@ -197,14 +197,14 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::{Locale, locale};
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale: Locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
@@ -338,7 +338,7 @@ impl DateTimeFormatter {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let length = length::Date::Medium;
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale: Locale = locale!("en-u-ca-gregory");
     ///
     /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
@@ -444,7 +444,7 @@ where {
     ///     options::{components, length},
     ///     DateTimeFormatter, DateTimeFormatterOptions,
     /// };
-    /// use icu::locid::Locale;
+    /// use icu::locid::{Locale, locale};
     /// use std::str::FromStr;
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
@@ -452,7 +452,7 @@ where {
     /// let provider = icu_testdata::get_provider();
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     ///     &provider,
-    ///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
+    ///     &locale!("en-u-ca-gregory").into(),
     ///     options
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
