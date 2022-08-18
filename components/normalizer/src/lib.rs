@@ -1889,16 +1889,12 @@ impl DecomposingNormalizer {
         as_slice,
         {
             let mut code_unit_iter = decomposition.delegate.as_slice().iter();
-            let mut i = 0usize;
-            let mut exit = false;
+            let mut counter = 1073741824usize;
             'fast: loop {
-                if i > 1073741824 {
-                    exit = true;
-                }
-                i += 1;
+                counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     let mut upcoming32 = u32::from(upcoming_code_unit);
-                    if upcoming32 < decomposition_passthrough_bound && !exit {
+                    if upcoming32 < decomposition_passthrough_bound && counter != 0 {
                         continue 'fast;
                     }
                     // The loop is only broken out of as goto forward
@@ -1936,7 +1932,7 @@ impl DecomposingNormalizer {
                     let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
                     let upcoming_with_trie_value =
                         decomposition.attach_trie_value(upcoming);
-                    if upcoming_with_trie_value.starter_and_decomposes_to_self() && !exit {
+                    if upcoming_with_trie_value.starter_and_decomposes_to_self() && counter != 0 {
                         continue 'fast;
                     }
                     let consumed_so_far_slice = &pending_slice[..pending_slice.len()
