@@ -10,7 +10,6 @@ in ICU:
 * [`unstable`], [`unstable_no_fallback`]
 * [`any`], [`any_no_fallback`]
 * [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`serde` feature)
-  * [`buffer_json`], [`buffer_json_no_fallback`] (`serde` + `std` features)
 
 
 Additionally, the `metadata` feature exposes the [`metadata`] module which contains information

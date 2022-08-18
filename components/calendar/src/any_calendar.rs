@@ -919,24 +919,36 @@ mod tests {
             AnyCalendarKind::Buddhist,
         )
         .expect("Calendar construction must succeed");
-        let coptic =
-            AnyCalendar::try_new_with_buffer_provider(&icu_testdata::buffer(), AnyCalendarKind::Coptic)
-                .expect("Calendar construction must succeed");
-        let ethiopic =
-            AnyCalendar::try_new_with_buffer_provider(&icu_testdata::buffer(), AnyCalendarKind::Ethiopic)
-                .expect("Calendar construction must succeed");
-        let ethioaa =
-            AnyCalendar::try_new_with_buffer_provider(&icu_testdata::buffer(), AnyCalendarKind::Ethioaa)
-                .expect("Calendar construction must succeed");
-        let gregorian =
-            AnyCalendar::try_new_with_buffer_provider(&icu_testdata::buffer(), AnyCalendarKind::Gregorian)
-                .expect("Calendar construction must succeed");
-        let indian =
-            AnyCalendar::try_new_with_buffer_provider(&icu_testdata::buffer(), AnyCalendarKind::Indian)
-                .expect("Calendar construction must succeed");
-        let japanese =
-            AnyCalendar::try_new_with_buffer_provider(&icu_testdata::buffer(), AnyCalendarKind::Japanese)
-                .expect("Calendar construction must succeed");
+        let coptic = AnyCalendar::try_new_with_buffer_provider(
+            &icu_testdata::buffer(),
+            AnyCalendarKind::Coptic,
+        )
+        .expect("Calendar construction must succeed");
+        let ethiopic = AnyCalendar::try_new_with_buffer_provider(
+            &icu_testdata::buffer(),
+            AnyCalendarKind::Ethiopic,
+        )
+        .expect("Calendar construction must succeed");
+        let ethioaa = AnyCalendar::try_new_with_buffer_provider(
+            &icu_testdata::buffer(),
+            AnyCalendarKind::Ethioaa,
+        )
+        .expect("Calendar construction must succeed");
+        let gregorian = AnyCalendar::try_new_with_buffer_provider(
+            &icu_testdata::buffer(),
+            AnyCalendarKind::Gregorian,
+        )
+        .expect("Calendar construction must succeed");
+        let indian = AnyCalendar::try_new_with_buffer_provider(
+            &icu_testdata::buffer(),
+            AnyCalendarKind::Indian,
+        )
+        .expect("Calendar construction must succeed");
+        let japanese = AnyCalendar::try_new_with_buffer_provider(
+            &icu_testdata::buffer(),
+            AnyCalendarKind::Japanese,
+        )
+        .expect("Calendar construction must succeed");
         let japanext = AnyCalendar::try_new_with_buffer_provider(
             &icu_testdata::buffer(),
             AnyCalendarKind::JapaneseExtended,
