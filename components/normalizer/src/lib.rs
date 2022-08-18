@@ -1889,7 +1889,9 @@ impl DecomposingNormalizer {
         as_slice,
         {
             let mut code_unit_iter = decomposition.delegate.as_slice().iter();
-            let mut counter = 1073741824usize;
+            // Haswell min: 0b1000000000000usize
+            // Haswell max: 0b10000000000000usize
+            let mut counter = 0b1000000000000usize;
             'fast: loop {
                 counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
