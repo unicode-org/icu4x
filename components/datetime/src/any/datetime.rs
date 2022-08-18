@@ -2,18 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{
-    calendar,
-    options::{components, DateTimeFormatterOptions},
-    raw, DateFormatter, TimeFormatter,
-};
+use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
 use alloc::string::String;
-
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
 
 use icu_provider::prelude::*;
 
-use crate::provider::{calendar::*, week_data::WeekDataV1Marker};
+#[cfg(feature = "experimental")]
+use crate::options::components;
+use crate::provider::{calendar::*, date_time::PatternSelector, week_data::WeekDataV1Marker};
 use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
@@ -47,7 +43,7 @@ use icu_provider::DataLocale;
 /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
 /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), options.into())
-///     .expect("Failed to create TypedDateTimeFormatter instance.");
+///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -72,7 +68,7 @@ use icu_provider::DataLocale;
 ///
 /// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::try_new_with_buffer_provider(&provider, (&locale).try_into().unwrap())
+/// let calendar = AnyCalendar::try_new_for_locale_with_buffer_provider(&provider, &(&locale).into())
 ///                    .expect("constructing AnyCalendar failed");
 /// let calendar = Rc::new(calendar); // Avoid cloning it
 ///
@@ -94,8 +90,8 @@ use icu_provider::DataLocale;
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
-///     .expect("Failed to create TypedDateTimeFormatter instance.");
+/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &(&locale).into(), options.into())
+///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let manual_value = dtf.format_to_string(&manual_datetime).expect("calendars should match");
 /// assert_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
@@ -113,9 +109,11 @@ impl DateTimeFormatter {
     /// Construct a new [`DateTimeFormatter`] from a data provider that implements
     /// [`AnyProvider`].
     ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
     /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
-
     ///
     /// Furthermore, based on the type of calendar used, one of the following data keys may be necessary:
     ///
@@ -135,6 +133,9 @@ impl DateTimeFormatter {
 
     /// Construct a new [`DateTimeFormatter`] from a data provider that implements
     /// [`BufferProvider`].
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/datelengths@1`,
     /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, and `plurals/ordinals@1`.
@@ -188,6 +189,9 @@ impl DateTimeFormatter {
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
     ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
     /// # Examples
     ///
     /// ```
@@ -212,6 +216,7 @@ impl DateTimeFormatter {
     /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
+    #[cfg(feature = "experimental")]
     #[inline(never)]
     pub fn try_new_unstable<P>(
         data_provider: &P,
@@ -221,7 +226,7 @@ impl DateTimeFormatter {
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
@@ -243,32 +248,76 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
-        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
-        // separately into the raw formatter.
-        let mut locale_with_cal = locale.clone();
+        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, locale)?;
+        let kind = calendar.kind();
 
-        // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Ok(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
-            kind
-        } else {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("gregory"));
-            AnyCalendarKind::Gregorian
-        };
-
-        // We share data under ethiopic
-        if kind == AnyCalendarKind::Ethioaa {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
-
-        let calendar = AnyCalendar::try_new_unstable(data_provider, kind)?;
+        let patterns = PatternSelector::for_options(
+            data_provider,
+            calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
+            locale,
+            &kind.as_bcp47_value(),
+            &options,
+        )?;
 
         Ok(Self(
             raw::DateTimeFormatter::try_new(
                 data_provider,
-                calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
+                patterns,
                 || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
-                locale_with_cal,
-                options,
+                locale,
+            )?,
+            calendar,
+        ))
+    }
+
+    #[allow(missing_docs)] // The docs use the "experimental" version
+    #[cfg(not(feature = "experimental"))]
+    #[inline(never)]
+    pub fn try_new_unstable<P>(
+        data_provider: &P,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
+    where
+        P: DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<GregorianDateLengthsV1Marker>
+            + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<JapaneseDateLengthsV1Marker>
+            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+            + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<GregorianDateSymbolsV1Marker>
+            + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<JapaneseDateSymbolsV1Marker>
+            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+            + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
+            + ?Sized,
+    {
+        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, locale)?;
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options(
+            data_provider,
+            calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
+            locale,
+            &options,
+        )?;
+
+        Ok(Self(
+            raw::DateTimeFormatter::try_new(
+                data_provider,
+                patterns,
+                || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
+                locale,
             )?,
             calendar,
         ))
@@ -415,6 +464,7 @@ where {
     ///
     /// assert_eq!(dtf.resolve_components(), expected_components_bag);
     /// ```
+    #[cfg(feature = "experimental")]
     pub fn resolve_components(&self) -> components::Bag {
         self.0.resolve_components()
     }
@@ -450,5 +500,66 @@ where {
         } else {
             Ok(None)
         }
+    }
+}
+
+#[cfg(test)]
+#[cfg(feature = "serde")]
+mod tests {
+    use core::str::FromStr;
+    use icu::calendar::{AnyCalendar, DateTime};
+    use icu::datetime::{options::length, DateTimeFormatter};
+    use icu::locid::Locale;
+    use icu_provider::BufferProvider;
+
+    fn test_format(
+        provider: &impl BufferProvider,
+        datetime: &DateTime<AnyCalendar>,
+        locale: &str,
+        expected: &str,
+    ) {
+        let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Short);
+
+        let dtf = DateTimeFormatter::try_new_with_buffer_provider(
+            provider,
+            &Locale::from_str(locale).unwrap().into(),
+            options.into(),
+        )
+        .unwrap();
+        let value = dtf
+            .format_to_string(datetime)
+            .expect("calendars should match");
+        assert_eq!(value, expected);
+    }
+
+    #[test]
+    fn test_fallback() {
+        let provider = icu_testdata::get_provider();
+        // We can rely on the code's ability to convert ISO datetimes
+        let datetime = DateTime::new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
+        let datetime = datetime.to_any();
+        // fr with unspecified and nonsense calendars falls back to gregorian
+        test_format(&provider, &datetime, "fr", "5 avril 2022 à 12:33");
+        test_format(
+            &provider,
+            &datetime,
+            "fr-u-ca-blahblah",
+            "5 avril 2022 à 12:33",
+        );
+        // thai falls back to buddhist
+        test_format(
+            &provider,
+            &datetime,
+            "th-u-ca-buddhist",
+            "5 เมษายน 2565 12:33",
+        );
+        test_format(&provider, &datetime, "th", "5 เมษายน 2565 12:33");
+        // except when overridden
+        test_format(
+            &provider,
+            &datetime,
+            "th-u-ca-gregory",
+            "5 เมษายน ค.ศ. 2022 12:33",
+        );
     }
 }

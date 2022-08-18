@@ -4,6 +4,7 @@
 
 #include "../../include/ICU4XDataProvider.hpp"
 #include "../../include/ICU4XBidi.hpp"
+#include "../../include/ICU4XLogger.hpp"
 
 #include <iostream>
 

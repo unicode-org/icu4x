@@ -31,7 +31,7 @@ struct ICU4XPluralRulesDeleter {
 /**
  * FFI version of `PluralRules`.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html) for more information.
+ * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html) for more information.
  */
 class ICU4XPluralRules {
  public:
@@ -39,28 +39,28 @@ class ICU4XPluralRules {
   /**
    * FFI version of `PluralRules::try_new_cardinal()`.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * FFI version of `PluralRules::try_new_ordinal()`.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * FFI version of `PluralRules::select()`.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.select) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.select) for more information.
    */
   ICU4XPluralCategory select(ICU4XPluralOperands op) const;
 
   /**
    * FFI version of `PluralRules::categories()`.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/struct.PluralRules.html#method.categories) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.categories) for more information.
    */
   ICU4XPluralCategories categories() const;
   inline const capi::ICU4XPluralRules* AsFFI() const { return this->inner.get(); }

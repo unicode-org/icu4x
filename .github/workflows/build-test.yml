@@ -213,6 +213,7 @@ jobs:
         out-file-path: "data/source/"
     - name: Run datagen
       uses: actions-rs/cargo@v1.0.1
+      # cargo make ci-job-full-datagen replicates this
       with:
         command: run
         args: > 

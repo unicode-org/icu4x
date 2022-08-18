@@ -54,14 +54,14 @@ use yoke::*;
 /// ```
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
+#[derive(Clone)]
 pub struct BlobDataProvider {
-    #[allow(clippy::type_complexity)]
-    data: Yoke<BlobSchemaV1<'static>, RcWrap>,
+    data: Yoke<BlobSchemaV1<'static>, RcWrap<[u8]>>,
 }
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
-    pub fn try_new_from_blob<B: Into<RcWrap>>(blob: B) -> Result<Self, DataError> {
+    pub fn try_new_from_blob<B: Into<RcWrap<[u8]>>>(blob: B) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
             data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(

@@ -19,6 +19,10 @@ fn map_f_mut<K, V>(input: &mut (K, V)) -> (&K, &mut V) {
     (&input.0, &mut input.1)
 }
 
+impl<K, V> StoreConstEmpty<K, V> for Vec<(K, V)> {
+    const EMPTY: Vec<(K, V)> = Vec::new();
+}
+
 impl<K, V> Store<K, V> for Vec<(K, V)> {
     #[inline]
     fn lm_len(&self) -> usize {
@@ -129,3 +133,8 @@ impl<'a, K: 'a, V: 'a> StoreIterableMut<'a, K, V> for Vec<(K, V)> {
 }
 
 impl<K, V> StoreFromIterator<K, V> for Vec<(K, V)> {}
+
+#[test]
+fn test_vec_impl() {
+    crate::testing::check_store_full::<Vec<(u32, u64)>>();
+}

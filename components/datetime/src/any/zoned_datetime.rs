@@ -5,12 +5,10 @@
 use crate::{calendar, options::DateTimeFormatterOptions, raw};
 use alloc::string::String;
 
-use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
-
 use icu_provider::prelude::*;
 
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
-use crate::provider::{self, calendar::*, week_data::WeekDataV1Marker};
+use crate::provider::{self, calendar::*, date_time::PatternSelector, week_data::WeekDataV1Marker};
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
@@ -79,6 +77,9 @@ impl ZonedDateTimeFormatter {
     /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
     /// may also be used if compile stability is desired.
     ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
     /// # Examples
     ///
     /// ```
@@ -110,6 +111,7 @@ impl ZonedDateTimeFormatter {
     /// ```
     ///
     /// [data provider]: icu_provider
+    #[cfg(feature = "experimental")]
     #[inline]
     #[allow(clippy::too_many_arguments)]
     pub fn try_new_unstable<P>(
@@ -121,7 +123,7 @@ impl ZonedDateTimeFormatter {
     where
         P: DataProvider<TimeSymbolsV1Marker>
             + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<DateSkeletonPatternsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
             + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
@@ -149,32 +151,85 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
-        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
-        // separately into the raw formatter.
-        let mut locale_with_cal = locale.clone();
+        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
+        let kind = calendar.kind();
 
-        // TODO (#2038), DO NOT SHIP 1.0 without fixing this
-        let kind = if let Ok(kind) = AnyCalendarKind::from_data_locale(&locale_with_cal) {
-            kind
-        } else {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("gregory"));
-            AnyCalendarKind::Gregorian
-        };
-
-        // We share data under ethiopic
-        if kind == AnyCalendarKind::Ethioaa {
-            locale_with_cal.set_unicode_ext(key!("ca"), value!("ethiopic"));
-        }
-
-        let calendar = AnyCalendar::try_new_unstable(provider, kind)?;
+        let patterns = PatternSelector::for_options(
+            provider,
+            calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+            locale,
+            &kind.as_bcp47_value(),
+            &date_time_format_options,
+        )?;
 
         Ok(Self(
             raw::ZonedDateTimeFormatter::try_new(
                 provider,
-                calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+                patterns,
                 || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
-                locale_with_cal,
-                date_time_format_options,
+                locale,
+                time_zone_format_options,
+            )?,
+            calendar,
+        ))
+    }
+
+    #[allow(missing_docs)] // The docs use the "experimental" version
+    #[cfg(not(feature = "experimental"))]
+    #[inline]
+    #[allow(clippy::too_many_arguments)]
+    pub fn try_new_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        date_time_format_options: DateTimeFormatterOptions,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
+    where
+        P: DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<GregorianDateLengthsV1Marker>
+            + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<JapaneseDateLengthsV1Marker>
+            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+            + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<GregorianDateSymbolsV1Marker>
+            + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<JapaneseDateSymbolsV1Marker>
+            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+            + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
+            + ?Sized,
+    {
+        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options(
+            provider,
+            calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
+            locale,
+            &date_time_format_options,
+        )?;
+
+        Ok(Self(
+            raw::ZonedDateTimeFormatter::try_new(
+                provider,
+                patterns,
+                || calendar::load_symbols_for_any_calendar_kind(provider, locale, kind),
+                locale,
                 time_zone_format_options,
             )?,
             calendar,
@@ -183,6 +238,9 @@ impl ZonedDateTimeFormatter {
 
     /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
     /// [`AnyProvider`].
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
     /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, `plurals/ordinals@1`,
@@ -197,7 +255,7 @@ impl ZonedDateTimeFormatter {
     /// since these functions currently *must* be given a fallback-enabled provider and
     /// we do not have one in `icu_testdata`
     ///
-    /// ```rust,should_panic
+    /// ```ignore
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
@@ -240,6 +298,9 @@ impl ZonedDateTimeFormatter {
 
     /// Construct a new [`ZonedDateTimeFormatter`] from a data provider that implements
     /// [`BufferProvider`].
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
     ///
     /// The provider must be able to provide data for the following keys: `datetime/symbols@1`, `datetime/timelengths@1`,
     /// `datetime/timelengths@1`, `datetime/symbols@1`, `datetime/skeletons@1`, `datetime/week_data@1`, `plurals/ordinals@1`,

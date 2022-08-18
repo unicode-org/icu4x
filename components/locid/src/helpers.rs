@@ -2,8 +2,11 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::iter::FromIterator;
+
 use alloc::vec;
 use alloc::vec::Vec;
+use litemap::store::*;
 
 /// Internal: A vector that supports no-allocation, constant values if length 0 or 1.
 #[derive(Debug, Clone, PartialEq, Eq, Hash, PartialOrd, Ord)]
@@ -44,11 +47,86 @@ impl<T> ShortVec<T> {
         }
     }
 
+    #[inline]
+    pub fn as_mut_slice(&mut self) -> &mut [T] {
+        match self {
+            ShortVec::Empty => &mut [],
+            ShortVec::Single(v) => core::slice::from_mut(v),
+            ShortVec::Multi(v) => v.as_mut_slice(),
+        }
+    }
+
+    #[inline]
     pub const fn single(&self) -> Option<&T> {
         match self {
             ShortVec::Single(v) => Some(v),
             _ => None,
         }
+    }
+
+    #[inline]
+    pub fn len(&self) -> usize {
+        match self {
+            ShortVec::Empty => 0,
+            ShortVec::Single(_) => 1,
+            ShortVec::Multi(ref v) => v.len(),
+        }
+    }
+
+    pub fn insert(&mut self, index: usize, elt: T) {
+        assert!(
+            index <= self.len(),
+            "insertion index (is {}) should be <= len (is {})",
+            index,
+            self.len()
+        );
+
+        *self = match core::mem::replace(self, ShortVec::Empty) {
+            ShortVec::Empty => ShortVec::Single(elt),
+            ShortVec::Single(item) => {
+                let items = if index == 0 {
+                    vec![elt, item]
+                } else {
+                    vec![item, elt]
+                };
+                ShortVec::Multi(items)
+            }
+            ShortVec::Multi(mut items) => {
+                items.insert(index, elt);
+                ShortVec::Multi(items)
+            }
+        }
+    }
+
+    pub fn remove(&mut self, index: usize) -> T {
+        assert!(
+            index < self.len(),
+            "removal index (is {}) should be < len (is {})",
+            index,
+            self.len()
+        );
+
+        let (replaced, removed_item) = match core::mem::replace(self, ShortVec::Empty) {
+            ShortVec::Empty => unreachable!(),
+            ShortVec::Single(v) => (ShortVec::Empty, v),
+            ShortVec::Multi(mut v) => {
+                let removed_item = v.remove(index);
+                match v.len() {
+                    #[allow(clippy::unwrap_used)]
+                    // we know that the vec has exactly one element left
+                    1 => (ShortVec::Single(v.pop().unwrap()), removed_item),
+                    // v has atleast 2 elements, create a Multi variant
+                    _ => (ShortVec::Multi(v), removed_item),
+                }
+            }
+        };
+        *self = replaced;
+        removed_item
+    }
+
+    #[inline]
+    pub fn clear(&mut self) {
+        let _ = core::mem::replace(self, ShortVec::Empty);
     }
 }
 
@@ -67,6 +145,102 @@ impl<T> Default for ShortVec<T> {
     fn default() -> Self {
         ShortVec::Empty
     }
+}
+
+impl<T> FromIterator<T> for ShortVec<T> {
+    fn from_iter<I: IntoIterator<Item = T>>(iter: I) -> Self {
+        iter.into_iter().collect::<Vec<_>>().into()
+    }
+}
+
+impl<K, V> StoreConstEmpty<K, V> for ShortVec<(K, V)> {
+    const EMPTY: ShortVec<(K, V)> = ShortVec::Empty;
+}
+
+impl<K, V> Store<K, V> for ShortVec<(K, V)> {
+    #[inline]
+    fn lm_len(&self) -> usize {
+        self.len()
+    }
+
+    #[inline]
+    fn lm_is_empty(&self) -> bool {
+        matches!(self, ShortVec::Empty)
+    }
+
+    #[inline]
+    fn lm_get(&self, index: usize) -> Option<(&K, &V)> {
+        self.as_slice().get(index).map(|elt| (&elt.0, &elt.1))
+    }
+
+    #[inline]
+    fn lm_last(&self) -> Option<(&K, &V)> {
+        match self {
+            ShortVec::Empty => None,
+            ShortVec::Single(v) => Some(v),
+            ShortVec::Multi(v) => v.as_slice().last(),
+        }
+        .map(|elt| (&elt.0, &elt.1))
+    }
+
+    #[inline]
+    fn lm_binary_search_by<F>(&self, mut cmp: F) -> Result<usize, usize>
+    where
+        F: FnMut(&K) -> core::cmp::Ordering,
+    {
+        self.as_slice().binary_search_by(|(k, _)| cmp(k))
+    }
+}
+
+impl<K, V> StoreMut<K, V> for ShortVec<(K, V)> {
+    fn lm_with_capacity(_capacity: usize) -> Self {
+        ShortVec::Empty
+    }
+
+    // ShortVec supports reserving capacity for additional elements only if we have already allocated a vector
+    fn lm_reserve(&mut self, additional: usize) {
+        if let ShortVec::Multi(ref mut v) = self {
+            v.reserve(additional)
+        }
+    }
+
+    fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)> {
+        self.as_mut_slice()
+            .get_mut(index)
+            .map(|elt| (&elt.0, &mut elt.1))
+    }
+
+    fn lm_push(&mut self, key: K, value: V) {
+        self.push((key, value))
+    }
+
+    fn lm_insert(&mut self, index: usize, key: K, value: V) {
+        self.insert(index, (key, value))
+    }
+
+    fn lm_remove(&mut self, index: usize) -> (K, V) {
+        self.remove(index)
+    }
+
+    fn lm_clear(&mut self) {
+        self.clear();
+    }
+}
+
+impl<'a, K: 'a, V: 'a> StoreIterable<'a, K, V> for ShortVec<(K, V)> {
+    type KeyValueIter =
+        core::iter::Map<core::slice::Iter<'a, (K, V)>, for<'r> fn(&'r (K, V)) -> (&'r K, &'r V)>;
+
+    fn lm_iter(&'a self) -> Self::KeyValueIter {
+        self.as_slice().iter().map(|elt| (&elt.0, &elt.1))
+    }
+}
+
+impl<K, V> StoreFromIterator<K, V> for ShortVec<(K, V)> {}
+
+#[test]
+fn test_shortvec_impl() {
+    litemap::testing::check_store::<ShortVec<(u32, u64)>>();
 }
 
 macro_rules! impl_writeable_for_single_subtag {

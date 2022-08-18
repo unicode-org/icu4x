@@ -5,17 +5,20 @@
 use crate::error::DateTimeFormatterError;
 use crate::fields;
 use crate::input;
-use crate::options::{components, length, preferences, DateTimeFormatterOptions};
+use crate::options::{length, preferences, DateTimeFormatterOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
 use crate::provider::calendar::{
     patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
-    DateSkeletonPatternsV1Marker, ErasedDateLengthsV1Marker, TimeLengthsV1Marker,
+    ErasedDateLengthsV1Marker, TimeLengthsV1Marker,
 };
 use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
-use crate::skeleton;
+#[cfg(feature = "experimental")]
+use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::{Era, MonthCode};
+#[cfg(feature = "experimental")]
+use icu_locid::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
 type Result<T> = core::result::Result<T, DateTimeFormatterError>;
@@ -131,12 +134,15 @@ pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
     date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
     locale: &'a DataLocale,
+    #[cfg(feature = "experimental")]
+    cal_val: &'a Value,
 }
 
 impl<D> PatternSelector<'_, D>
 where
-    D: DataProvider<TimeLengthsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker> + ?Sized,
+    D: DataProvider<TimeLengthsV1Marker> + ?Sized,
 {
+    #[cfg(not(feature = "experimental"))]
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
         date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
@@ -151,7 +157,6 @@ where
         match options {
             DateTimeFormatterOptions::Length(bag) => selector
                 .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
-            DateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
         }
     }
 
@@ -210,12 +215,39 @@ where
             Ok(PatternPlurals::from(pattern.combined(date, time)?).into())
         })
     }
+}
+
+#[cfg(feature = "experimental")]
+impl<D> PatternSelector<'_, D>
+where
+    D: DataProvider<TimeLengthsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker> + ?Sized,
+{
+    pub(crate) fn for_options<'a>(
+        data_provider: &'a D,
+        date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        locale: &'a DataLocale,
+        cal_val: &'a Value,
+        options: &DateTimeFormatterOptions,
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
+        let selector = PatternSelector {
+            data_provider,
+            date_patterns_data,
+            locale,
+            cal_val,
+        };
+        match options {
+            DateTimeFormatterOptions::Length(bag) => selector
+                .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
+            DateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
+        }
+    }
 
     /// Determine the appropriate `PatternPlurals` for a given `options::components::Bag`.
     fn patterns_for_components_bag(
         self,
         components: &components::Bag,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
+        use crate::skeleton;
         let skeletons_data = self.skeleton_data_payload()?;
         // Not all skeletons are currently supported.
         let requested_fields = components.to_vec_fields();
@@ -236,11 +268,20 @@ where
         )))
     }
 
+    #[cfg(feature = "experimental")]
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
+        use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+        let mut locale = self.locale.clone();
+        // Skeleton data for ethioaa is stored under ethiopic
+        if self.cal_val == &value!("ethioaa") {
+            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+        } else {
+            locale.set_unicode_ext(key!("ca"), self.cal_val.clone());
+        };
         let data = self
             .data_provider
             .load(DataRequest {
-                locale: self.locale,
+                locale: &locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;

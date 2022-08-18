@@ -73,7 +73,7 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
-    pub(crate) fn from_byte(key: u8) -> Result<Self, ParserError> {
+    pub(crate) const fn from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
         match key {
             b'u' => Ok(Self::Unicode),
@@ -82,6 +82,18 @@ impl ExtensionType {
             b'a'..=b'z' => Ok(Self::Other(key)),
             _ => Err(ParserError::InvalidExtension),
         }
+    }
+
+    pub(crate) const fn from_bytes_manual_slice(
+        bytes: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        if end - start != 1 {
+            return Err(ParserError::InvalidExtension);
+        }
+        #[allow(clippy::indexing_slicing)]
+        Self::from_byte(bytes[start])
     }
 }
 
@@ -115,6 +127,18 @@ impl Extensions {
     pub const fn new() -> Self {
         Self {
             unicode: Unicode::new(),
+            transform: Transform::new(),
+            private: Private::new(),
+            other: Vec::new(),
+        }
+    }
+
+    /// Function to create a new map of extensions containing exactly one unicode extension, callable in `const`
+    /// context.
+    #[inline]
+    pub const fn from_unicode(unicode: Unicode) -> Self {
+        Self {
+            unicode,
             transform: Transform::new(),
             private: Private::new(),
             other: Vec::new(),

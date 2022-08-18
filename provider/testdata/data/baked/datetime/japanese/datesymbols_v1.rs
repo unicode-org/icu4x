@@ -1,7 +1,7 @@
 // @generated
 type DataStruct = < :: icu_datetime :: provider :: calendar :: JapaneseDateSymbolsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[
+    litemap::LiteMap::from_sorted_store_unchecked(&[
         ("ar", AR_AR_EG),
         ("ar-EG", AR_AR_EG),
         ("bn", BN),

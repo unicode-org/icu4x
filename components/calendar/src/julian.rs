@@ -142,7 +142,7 @@ impl Calendar for Julian {
     }
 
     /// The calendar-specific year represented by `date`
-    /// Julian has the same era scheme as Georgian
+    /// Julian has the same era scheme as Gregorian
     fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         crate::gregorian::year_as_gregorian(date.0.year)
     }

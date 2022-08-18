@@ -15,7 +15,9 @@ use icu_provider::datagen;
 /// `EitherProvider<P0, P1>`.
 #[allow(clippy::exhaustive_enums)] // this is stable
 pub enum EitherProvider<P0, P1> {
+    /// A value of type `P0`.
     A(P0),
+    /// A value of type `P1`.
     B(P1),
 }
 
