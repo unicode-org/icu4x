@@ -2317,10 +2317,12 @@ impl ComposingNormalizer {
             // simple as possible (and potentially as peel-hoistable as possible).
             // Furthermore, this reduces `unwrap()` later.
             let mut undecomposed_starter_valid = true;
+            let mut counter = 0b1000000000000usize;
             'fast: loop {
+                counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
                     upcoming32 = u32::from(upcoming_code_unit); // may be surrogate
-                    if upcoming32 < composition_passthrough_bound {
+                    if upcoming32 < composition_passthrough_bound && counter != 0 {
                         // No need for surrogate or U+FFFD check, because
                         // `composition_passthrough_bound` cannot be higher than
                         // U+0300.
@@ -2359,7 +2361,7 @@ impl ComposingNormalizer {
                     // Not unpaired surrogate
                     let upcoming = unsafe { char::from_u32_unchecked(upcoming32) };
                     let upcoming_with_trie_value = composition.decomposition.attach_trie_value(upcoming);
-                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() {
+                    if upcoming_with_trie_value.potential_passthrough_and_cannot_combine_backwards() && counter != 0 {
                         // Can't combine backwards, hence a plain (non-backwards-combining)
                         // starter albeit past `composition_passthrough_bound`
 
