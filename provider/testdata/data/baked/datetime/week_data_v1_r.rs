@@ -2,7 +2,7 @@
 type DataStruct =
     <::icu_datetime::provider::week_data::WeekDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[
+    litemap::LiteMap::from_sorted_store_unchecked(&[
         ("und", UND_UND_AI_UND_AL_UND_AM_UND_AR_UND_AU),
         ("und-AD", UND_AD_UND_AN_UND_AT_UND_AX_UND_BE_UND_BG),
         ("und-AE", UND_AE_UND_AF_UND_BH_UND_DJ_UND_DZ_UND_EG),

@@ -2,7 +2,7 @@
 type DataStruct =
     <::icu_decimal::provider::DecimalSymbolsV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[
+    litemap::LiteMap::from_sorted_store_unchecked(&[
         ("ar", AR_AR_EG),
         ("ar-EG", AR_AR_EG),
         ("ar-EG-u-nu-latn", AR_EG_U_NU_LATN_AR_U_NU_LATN),
