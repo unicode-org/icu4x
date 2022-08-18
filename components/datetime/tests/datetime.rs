@@ -838,6 +838,7 @@ fn test_vertical_fallback_disabled() {
     )
     .unwrap();
 
+    // This should work for length bag. It doesn't currently work for components bag.
     assert_eq!(
         "mardi 5 avril 2022 à 12:33",
         dtf.format_to_string(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap())
