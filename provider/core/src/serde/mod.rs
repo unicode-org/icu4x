@@ -11,6 +11,8 @@
 //!
 //! [`BufferProvider`]: crate::buf::BufferProvider
 
+// Hidden for now, but could be made public-stable in the future.
+#[doc(hidden)]
 pub mod borrow_de_utils;
 
 use crate::buf::BufferFormat;
@@ -23,8 +25,9 @@ use yoke::Yokeable;
 /// A [`BufferProvider`] that deserializes its data using Serde.
 pub struct DeserializingBufferProvider<'a, P: ?Sized>(&'a P);
 
-/// Auto-implemented for all [`BufferProvider`] for easy wrapping in [`DeserializingBufferProvider`].
+/// Blanket-implemented trait adding the [`Self::as_deserializing()`] function.
 pub trait AsDeserializingBufferProvider {
+    /// Wrap this [`BufferProvider`] in a [`DeserializingBufferProvider`].
     fn as_deserializing(&self) -> DeserializingBufferProvider<Self>;
 }
 
@@ -83,6 +86,30 @@ where
 }
 
 impl DataPayload<BufferMarker> {
+    /// Deserialize a [`DataPayload`]`<`[`BufferMarker`]`>` into a [`DataPayload`] of a
+    /// specific concrete type.
+    ///
+    /// The buffer format must be known externally to this function; it is normally carried
+    /// in the [`DataResponseMetadata`].
+    ///
+    /// # Examples
+    ///
+    /// Requires the `deserialize_json` feature:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::buf::BufferFormat;
+    ///
+    /// let buffer: &[u8] = b"{\"message\":\"Hallo Welt\"}";
+    ///
+    /// let buffer_payload = DataPayload::from_owned(buffer);
+    /// let payload: DataPayload<HelloWorldV1Marker> = buffer_payload
+    ///     .into_deserialized(BufferFormat::Json)
+    ///     .expect("Deserialization successful");
+    ///
+    /// assert_eq!(payload.get().message, "Hallo Welt");
+    /// ```
     pub fn into_deserialized<M>(
         self,
         buffer_format: BufferFormat,

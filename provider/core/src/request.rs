@@ -15,10 +15,16 @@ use writeable::{LengthHint, Writeable};
 #[cfg(doc)]
 use icu_locid::subtags::Variant;
 
+/// The request type passed into all data provider implementations.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DataRequest<'a> {
+    /// The locale for which to load data.
+    ///
+    /// If locale fallback is enabled, the resulting data may be from a different locale
+    /// than the one requested here.
     pub locale: &'a DataLocale,
+    /// Metadata that may affect the behavior of the data provider.
     pub metadata: DataRequestMetadata,
 }
 
@@ -28,13 +34,72 @@ impl fmt::Display for DataRequest<'_> {
     }
 }
 
+/// Metadata for data requests. This is currently empty, but it may be extended with options
+/// for tuning locale fallback, buffer layout, and so forth.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
 pub struct DataRequestMetadata;
 
-/// A variant and language identifier, used for requesting data from a data provider.
+/// The main locale type used by the ICU4X data provider.
 ///
-/// The fields in a [`DataLocale`] are not generally known until runtime.
+/// [`DataLocale`] contains less functionality than [`Locale`] but more than
+/// [`LanguageIdentifier`] for better size and performance while still meeting
+/// the needs of the ICU4X data pipeline.
+///
+/// # Examples
+///
+/// Convert a [`Locale`] to a [`DataLocale`] and back:
+///
+/// ```
+/// use icu_locid::Locale;
+/// use icu_provider::DataLocale;
+///
+/// let locale1 = "en-u-ca-buddhist".parse::<Locale>().unwrap();
+/// let data_locale: DataLocale = locale1.into();
+/// let locale2 = data_locale.into_locale();
+///
+/// assert_eq!(locale2.to_string(), "en-u-ca-buddhist");
+/// ```
+///
+/// You can alternatively create a [`DataLocale`] from a borrowed [`Locale`], which is more
+/// efficient than cloning the [`Locale`]:
+///
+/// ```
+/// use icu_locid::Locale;
+/// use icu_provider::DataLocale;
+///
+/// let locale1 = "en-u-ca-buddhist".parse::<Locale>().unwrap();
+/// let data_locale: DataLocale = (&locale1).into();
+/// let locale2 = data_locale.into_locale();
+///
+/// assert_eq!(locale1, locale2);
+/// ```
+///
+/// If you are sure that you have no Unicode keywords, start with [`LanguageIdentifier`]:
+///
+/// ```
+/// use icu_locid::langid;
+/// use icu_provider::DataLocale;
+///
+/// let langid1 = langid!("es-CA-valencia");
+/// let data_locale: DataLocale = langid1.into();
+/// let langid2 = data_locale.get_langid();
+///
+/// assert_eq!(langid2.to_string(), "es-CA-valencia");
+/// ```
+///
+/// [`DataLocale`] only supports `-u` keywords, to reflect the current state of CLDR data
+/// lookup and fallback. This may change in the future.
+///
+/// ```
+/// use icu_locid::Locale;
+/// use icu_provider::DataLocale;
+///
+/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist".parse::<Locale>().unwrap();
+/// let data_locale = DataLocale::from(locale);
+///
+/// assert_eq!(data_locale.to_string(), "hi-u-ca-buddhist");
+/// ```
 #[derive(PartialEq, Clone, Default, Eq, Hash)]
 pub struct DataLocale {
     langid: LanguageIdentifier,
@@ -310,6 +375,7 @@ impl DataLocale {
         !self.langid.variants.is_empty()
     }
 
+    /// Sets all [`Variants`] on this [`DataLocale`], overwriting any that were there previously.
     #[inline]
     pub fn set_variants(&mut self, variants: Variants) {
         self.langid.variants = variants;

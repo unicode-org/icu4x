@@ -4,6 +4,7 @@
 
 use crate::buf::BufferFormat;
 use crate::prelude::*;
+use core::fmt;
 use displaydoc::Display;
 
 /// A list specifying general categories of data provider error.
@@ -57,6 +58,7 @@ pub enum DataErrorKind {
     #[cfg(feature = "std")]
     Io(std::io::ErrorKind),
 
+    /// An unspecified data source containing the required data is unavailable.
     #[displaydoc("Missing source data")]
     #[cfg(feature = "datagen")]
     MissingSourceData,
@@ -101,8 +103,8 @@ pub struct DataError {
     pub str_context: Option<&'static str>,
 }
 
-impl core::fmt::Display for DataError {
-    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+impl fmt::Display for DataError {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "ICU4X data error")?;
         if self.kind != DataErrorKind::Custom {
             write!(f, ": {}", self.kind)?;
@@ -224,7 +226,7 @@ impl DataError {
     /// it will print out the context.
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
     #[inline]
-    pub fn with_display_context<D: core::fmt::Display + ?Sized>(self, context: &D) -> Self {
+    pub fn with_display_context<D: fmt::Display + ?Sized>(self, context: &D) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {}", self, context);
         self
@@ -236,7 +238,7 @@ impl DataError {
     /// it will print out the context.
     #[cfg_attr(not(feature = "log_error_context"), allow(unused_variables))]
     #[inline]
-    pub fn with_debug_context<D: core::fmt::Debug + ?Sized>(self, context: &D) -> Self {
+    pub fn with_debug_context<D: fmt::Debug + ?Sized>(self, context: &D) -> Self {
         #[cfg(feature = "log_error_context")]
         log::warn!("{}: {:?}", self, context);
         self
@@ -263,3 +265,28 @@ impl From<std::io::Error> for DataError {
         DataErrorKind::Io(e.kind()).into_error()
     }
 }
+
+/// A [`DataError`] that also returns a [`DataPayload`] to the caller.
+#[allow(clippy::exhaustive_structs)] // this type is stable
+pub struct DataErrorWithPayload<M: DataMarker>(pub DataPayload<M>, pub DataError);
+
+impl<M: DataMarker> From<DataErrorWithPayload<M>> for DataError {
+    fn from(other: DataErrorWithPayload<M>) -> Self {
+        other.1
+    }
+}
+
+impl<M: DataMarker> fmt::Debug for DataErrorWithPayload<M> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.1.fmt(f)
+    }
+}
+
+impl<M: DataMarker> fmt::Display for DataErrorWithPayload<M> {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.1.fmt(f)
+    }
+}
+
+#[cfg(feature = "std")]
+impl<M: DataMarker> std::error::Error for DataErrorWithPayload<M> {}

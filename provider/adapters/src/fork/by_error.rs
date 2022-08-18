@@ -4,9 +4,9 @@
 
 use super::ForkByErrorPredicate;
 use alloc::vec::Vec;
-#[cfg(feature = "datagen")]
-use icu_provider::datagen;
 use icu_provider::prelude::*;
+#[cfg(feature = "datagen")]
+use icu_provider::{datagen, DataErrorWithPayload};
 
 /// A provider that returns data from one of two child providers based on a predicate function.
 ///
@@ -219,23 +219,21 @@ where
         &self,
         key: DataKey,
         mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
-        use datagen::ReturnedPayloadError;
-
+    ) -> Result<DataPayload<MTo>, DataErrorWithPayload<MFrom>> {
         for provider in self.providers.iter() {
             let result = provider.convert(key, from);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(e) => {
-                    let ReturnedPayloadError(returned, err) = e;
+                    let DataErrorWithPayload(returned, err) = e;
                     if !self.predicate.test(key, None, err) {
-                        return Err(ReturnedPayloadError(returned, err));
+                        return Err(DataErrorWithPayload(returned, err));
                     }
                     from = returned;
                 }
             };
         }
-        Err(ReturnedPayloadError(
+        Err(DataErrorWithPayload(
             from,
             DataErrorKind::MissingDataKey.with_key(key),
         ))
@@ -255,15 +253,14 @@ where
         &self,
         key: DataKey,
         mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
-        use datagen::ReturnedPayloadError;
+    ) -> Result<DataPayload<MTo>, DataErrorWithPayload<MFrom>> {
         let result = self.0.convert(key, from);
         match result {
             Ok(ok) => return Ok(ok),
             Err(e) => {
-                let ReturnedPayloadError(returned, err) = e;
+                let DataErrorWithPayload(returned, err) = e;
                 if !self.2.test(key, None, err) {
-                    return Err(ReturnedPayloadError(returned, err));
+                    return Err(DataErrorWithPayload(returned, err));
                 }
                 from = returned;
             }

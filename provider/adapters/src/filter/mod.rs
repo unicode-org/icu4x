@@ -38,9 +38,9 @@ mod impls;
 
 pub use impls::*;
 
-#[cfg(feature = "datagen")]
-use icu_provider::datagen;
 use icu_provider::prelude::*;
+#[cfg(feature = "datagen")]
+use icu_provider::{datagen, DataErrorWithPayload};
 
 /// A data provider that selectively filters out data requests.
 ///
@@ -203,7 +203,7 @@ where
         &self,
         key: DataKey,
         from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
+    ) -> Result<DataPayload<MTo>, DataErrorWithPayload<MFrom>> {
         // Conversions are type-agnostic
         self.inner.convert(key, from)
     }

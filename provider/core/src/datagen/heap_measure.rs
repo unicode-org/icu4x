@@ -11,9 +11,9 @@ use yoke::trait_hack::YokeTraitHack;
 #[derive(Debug, Copy, Clone, yoke::Yokeable, Default)]
 #[non_exhaustive]
 pub struct HeapStats {
-    // Total bytes allocated during deserialization
+    /// Total bytes allocated during deserialization
     pub total_bytes_allocated: u64,
-    // Total bytes allocated during deserialization that have not yet been freed
+    /// Total bytes allocated during deserialization that have not yet been freed
     pub net_bytes_allocated: usize,
 }
 

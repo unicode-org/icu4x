@@ -144,6 +144,7 @@
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
@@ -208,6 +209,7 @@ pub mod prelude {
 pub use prelude::*;
 
 // Less important non-prelude items
+pub use crate::error::DataErrorWithPayload;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::FallbackPriority;
 pub use crate::response::RcWrap;

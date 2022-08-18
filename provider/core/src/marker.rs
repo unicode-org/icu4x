@@ -10,6 +10,8 @@ use crate::yoke::Yokeable;
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.
 ///
+/// Structs implementing this trait are normally generated with the [`data_struct!`] macro.
+///
 /// By convention, the non-standard `Marker` suffix is used by types implementing DataMarker.
 ///
 /// In addition to a marker type implementing DataMarker, the following impls must also be present
@@ -18,11 +20,11 @@ use crate::yoke::Yokeable;
 /// - `impl<'a> Yokeable<'a>` (required)
 /// - `impl ZeroFrom<Self>`
 ///
-/// See also some common pre-made DataMarker impls in this module.
+/// Also see [`KeyedDataMarker`].
 ///
 /// # Examples
 ///
-/// Implementing DataMarker for a custom type:
+/// Manually implementing DataMarker for a custom type:
 ///
 /// ```
 /// use icu_provider::prelude::*;
@@ -49,12 +51,30 @@ use crate::yoke::Yokeable;
 /// let payload = DataPayload::<MyDataStructMarker>::from_owned(s);
 /// assert_eq!(payload.get().message, "Hello World");
 /// ```
+///
+/// [`data_struct!`]: crate::data_struct
 pub trait DataMarker {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
     type Yokeable: for<'a> Yokeable<'a>;
 }
 
+/// A [`DataMarker`] with a [`DataKey`] attached.
+///
+/// Structs implementing this trait are normally generated with the [`data_struct!`] macro.
+///
+/// Implementing this trait enables this marker to be used with the main [`DataProvider`] trait.
+/// Most markers should be associated with a specific key and should therefore implement this
+/// trait.
+///
+/// [`BufferMarker`] and [`AnyMarker`] are examples of markers that do _not_ implement this trait
+/// because they are not specific to a single key.
+///
+/// [`data_struct!`]: crate::data_struct
+/// [`DataProvider`]: crate::DataProvider
+/// [`BufferMarker`]: crate::BufferMarker
+/// [`AnyMarker`]: crate::AnyMarker
 pub trait KeyedDataMarker: DataMarker {
+    /// The single [`DataKey`] associated with this marker.
     const KEY: DataKey;
 }

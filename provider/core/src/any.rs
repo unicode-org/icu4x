@@ -274,6 +274,7 @@ impl AnyResponse {
 /// assert_eq!(payload.get().message, "Hallo Welt");
 /// ```
 pub trait AnyProvider {
+    /// Loads an [`AnyPayload`] according to the key and request.
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
@@ -281,6 +282,7 @@ pub trait AnyProvider {
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct DynamicDataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
+/// Blanket-implemented trait adding the [`Self::as_any_provider()`] function.
 pub trait AsDynamicDataProviderAnyMarkerWrap {
     /// Returns an object implementing `AnyProvider` when called on `DynamicDataProvider<AnyMarker>`
     fn as_any_provider(&self) -> DynamicDataProviderAnyMarkerWrap<Self>;
@@ -310,6 +312,7 @@ where
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
+/// Blanket-implemented trait adding the [`Self::as_downcasting()`] function.
 pub trait AsDowncastingAnyProvider {
     /// Returns an object implementing `DynamicDataProvider<M>` when called on `AnyProvider`
     fn as_downcasting(&self) -> DowncastingAnyProvider<Self>;
