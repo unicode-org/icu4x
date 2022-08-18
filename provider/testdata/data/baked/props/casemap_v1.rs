@@ -1,18 +1,18 @@
 // @generated
 type DataStruct =
-    <::icu::casemapping::provider::CaseMappingV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu_casemapping::provider::CaseMappingV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu::casemapping::provider::CaseMappingV1 {
-    casemap: ::icu::casemapping::provider::CaseMappingInternals {
-        trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
-            ::icu::collections::codepointtrie::CodePointTrieHeader {
+static UND: &DataStruct = &::icu_casemapping::provider::CaseMappingV1 {
+    casemap: ::icu_casemapping::provider::CaseMappingInternals {
+        trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+            ::icu_collections::codepointtrie::CodePointTrieHeader {
                 high_start: 918016u32,
                 shifted12_high_start: 225u16,
                 index3_null_offset: 425u16,
                 data_null_offset: 1552u32,
                 null_value: 0u32,
-                trie_type: ::icu::collections::codepointtrie::TrieType::Small,
+                trie_type: ::icu_collections::codepointtrie::TrieType::Small,
             },
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -1276,9 +1276,9 @@ static UND: &DataStruct = &::icu::casemapping::provider::CaseMappingV1 {
                     0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8, 0u8,
                 ])
             },
-            ::icu::casemapping::provider::CaseMappingData(0u16),
+            ::icu_casemapping::provider::CaseMappingData(0u16),
         ),
-        exceptions: ::icu::casemapping::provider::CaseMappingExceptions {
+        exceptions: ::icu_casemapping::provider::CaseMappingExceptions {
             slots: unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     80u8, 200u8, 32u8, 0u8, 0u8, 0u8, 16u8, 72u8, 32u8, 0u8, 65u8, 8u8, 107u8, 0u8,
@@ -1637,7 +1637,7 @@ static UND: &DataStruct = &::icu::casemapping::provider::CaseMappingV1 {
                 ])
             },
         },
-        unfold: ::icu::casemapping::provider::CaseMappingUnfoldData {
+        unfold: ::icu_casemapping::provider::CaseMappingUnfoldData {
             map: unsafe {
                 #[allow(unused_unsafe)]
                 ::zerovec::ZeroMap::from_parts_unchecked(

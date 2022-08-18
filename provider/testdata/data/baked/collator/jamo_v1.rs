@@ -1,9 +1,9 @@
 // @generated
 type DataStruct =
-    <::icu::collator::provider::CollationJamoV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu_collator::provider::CollationJamoV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu::collator::provider::CollationJamoV1 {
+static UND: &DataStruct = &::icu_collator::provider::CollationJamoV1 {
     ce32s: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
             5u8, 5u8, 6u8, 121u8, 5u8, 5u8, 8u8, 121u8, 5u8, 5u8, 10u8, 121u8, 5u8, 5u8, 12u8,

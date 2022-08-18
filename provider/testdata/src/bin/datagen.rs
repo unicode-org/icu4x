@@ -65,7 +65,7 @@ fn main() {
         mod_directory: paths::data_root().join("baked"),
         pretty: true,
         insert_feature_gates: false,
-        use_separate_crates: false,
+        use_separate_crates: true,
     };
 
     icu_datagen::datagen(

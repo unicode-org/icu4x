@@ -1,5 +1,5 @@
 // @generated
-type DataStruct = < :: icu :: datetime :: provider :: calendar :: TimeSymbolsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu_datetime :: provider :: calendar :: TimeSymbolsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
@@ -22,23 +22,23 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", BN_CCP_UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("ص"),
                 pm: alloc::borrow::Cow::Borrowed("م"),
                 noon: None,
                 midnight: None,
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("ص"),
                 pm: alloc::borrow::Cow::Borrowed("م"),
                 noon: None,
                 midnight: None,
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("ص"),
                 pm: alloc::borrow::Cow::Borrowed("م"),
                 noon: None,
@@ -46,39 +46,37 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbols
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
                 narrow: None,
                 short: None,
-                wide: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("صباح\u{64b}ا"),
-                        pm: alloc::borrow::Cow::Borrowed("مساء\u{64b}"),
-                        noon: None,
-                        midnight: None,
-                    },
-                ),
+                wide: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("صباح\u{64b}ا"),
+                    pm: alloc::borrow::Cow::Borrowed("مساء\u{64b}"),
+                    noon: None,
+                    midnight: None,
+                }),
             },
         ),
     },
 };
-static BN_CCP_UND: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static BN_CCP_UND: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: None,
                 midnight: None,
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: None,
                 midnight: None,
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: None,
@@ -88,23 +86,23 @@ static BN_CCP_UND: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbo
         stand_alone: None,
     },
 };
-static EN: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static EN: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("noon")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("midnight")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a"),
                 pm: alloc::borrow::Cow::Borrowed("p"),
                 noon: Some(alloc::borrow::Cow::Borrowed("n")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("mi")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("noon")),
@@ -112,39 +110,37 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("AM"),
-                        pm: alloc::borrow::Cow::Borrowed("PM"),
-                        noon: Some(alloc::borrow::Cow::Borrowed("noon")),
-                        midnight: Some(alloc::borrow::Cow::Borrowed("midnight")),
-                    },
-                ),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("AM"),
+                    pm: alloc::borrow::Cow::Borrowed("PM"),
+                    noon: Some(alloc::borrow::Cow::Borrowed("noon")),
+                    midnight: Some(alloc::borrow::Cow::Borrowed("midnight")),
+                }),
                 short: None,
                 wide: None,
             },
         ),
     },
 };
-static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static EN_001_EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("am"),
                 pm: alloc::borrow::Cow::Borrowed("pm"),
                 noon: Some(alloc::borrow::Cow::Borrowed("noon")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("midnight")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a"),
                 pm: alloc::borrow::Cow::Borrowed("p"),
                 noon: Some(alloc::borrow::Cow::Borrowed("n")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("mi")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("am"),
                 pm: alloc::borrow::Cow::Borrowed("pm"),
                 noon: Some(alloc::borrow::Cow::Borrowed("noon")),
@@ -152,39 +148,37 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::TimeSym
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("am"),
-                        pm: alloc::borrow::Cow::Borrowed("pm"),
-                        noon: Some(alloc::borrow::Cow::Borrowed("noon")),
-                        midnight: Some(alloc::borrow::Cow::Borrowed("midnight")),
-                    },
-                ),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("am"),
+                    pm: alloc::borrow::Cow::Borrowed("pm"),
+                    noon: Some(alloc::borrow::Cow::Borrowed("noon")),
+                    midnight: Some(alloc::borrow::Cow::Borrowed("midnight")),
+                }),
                 short: None,
                 wide: None,
             },
         ),
     },
 };
-static ES: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static ES: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
                 pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
                 noon: Some(alloc::borrow::Cow::Borrowed("del mediodía")),
                 midnight: None,
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
                 pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
                 noon: Some(alloc::borrow::Cow::Borrowed("del mediodía")),
                 midnight: None,
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
                 pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
                 noon: Some(alloc::borrow::Cow::Borrowed("del mediodía")),
@@ -192,53 +186,47 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
-                abbreviated: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
-                        pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
-                        noon: Some(alloc::borrow::Cow::Borrowed("mediodía")),
-                        midnight: None,
-                    },
-                ),
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
-                        pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
-                        noon: Some(alloc::borrow::Cow::Borrowed("mediodía")),
-                        midnight: None,
-                    },
-                ),
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+                abbreviated: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
+                    pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
+                    noon: Some(alloc::borrow::Cow::Borrowed("mediodía")),
+                    midnight: None,
+                }),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
+                    pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
+                    noon: Some(alloc::borrow::Cow::Borrowed("mediodía")),
+                    midnight: None,
+                }),
                 short: None,
-                wide: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
-                        pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
-                        noon: Some(alloc::borrow::Cow::Borrowed("mediodía")),
-                        midnight: None,
-                    },
-                ),
+                wide: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
+                    pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
+                    noon: Some(alloc::borrow::Cow::Borrowed("mediodía")),
+                    midnight: None,
+                }),
             },
         ),
     },
 };
-static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
                 pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
                 noon: Some(alloc::borrow::Cow::Borrowed("mediodía")),
                 midnight: None,
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
                 pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
                 noon: Some(alloc::borrow::Cow::Borrowed("del mediodía")),
                 midnight: None,
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
                 pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
                 noon: Some(alloc::borrow::Cow::Borrowed("mediodía")),
@@ -246,39 +234,37 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
-                        pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
-                        noon: Some(alloc::borrow::Cow::Borrowed("m.")),
-                        midnight: None,
-                    },
-                ),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("a.\u{a0}m."),
+                    pm: alloc::borrow::Cow::Borrowed("p.\u{a0}m."),
+                    noon: Some(alloc::borrow::Cow::Borrowed("m.")),
+                    midnight: None,
+                }),
                 short: None,
                 wide: None,
             },
         ),
     },
 };
-static FIL: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static FIL: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("tanghaling-tapat")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("hatinggabi")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("am"),
                 pm: alloc::borrow::Cow::Borrowed("pm"),
                 noon: Some(alloc::borrow::Cow::Borrowed("tanghaling-tapat")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("hatinggabi")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("tanghaling-tapat")),
@@ -286,39 +272,37 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("AM"),
-                        pm: alloc::borrow::Cow::Borrowed("PM"),
-                        noon: Some(alloc::borrow::Cow::Borrowed("tanghaling-tapat")),
-                        midnight: Some(alloc::borrow::Cow::Borrowed("hatinggabi")),
-                    },
-                ),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("AM"),
+                    pm: alloc::borrow::Cow::Borrowed("PM"),
+                    noon: Some(alloc::borrow::Cow::Borrowed("tanghaling-tapat")),
+                    midnight: Some(alloc::borrow::Cow::Borrowed("hatinggabi")),
+                }),
                 short: None,
                 wide: None,
             },
         ),
     },
 };
-static FR: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static FR: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("midi")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("minuit")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("midi")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("minuit")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("midi")),
@@ -328,23 +312,23 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
         stand_alone: None,
     },
 };
-static JA: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static JA: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("午前"),
                 pm: alloc::borrow::Cow::Borrowed("午後"),
                 noon: Some(alloc::borrow::Cow::Borrowed("正午")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("真夜中")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("午前"),
                 pm: alloc::borrow::Cow::Borrowed("午後"),
                 noon: Some(alloc::borrow::Cow::Borrowed("正午")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("真夜中")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("午前"),
                 pm: alloc::borrow::Cow::Borrowed("午後"),
                 noon: Some(alloc::borrow::Cow::Borrowed("正午")),
@@ -354,23 +338,23 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
         stand_alone: None,
     },
 };
-static RU: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static RU: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("полд.")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("полн.")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("полд.")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("полн.")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("полдень")),
@@ -380,23 +364,23 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
         stand_alone: None,
     },
 };
-static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static SR_LATN: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("podne")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("ponoć")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("podne")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("ponoć")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("podne")),
@@ -404,39 +388,37 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("pre podne"),
-                        pm: alloc::borrow::Cow::Borrowed("po podne"),
-                        noon: Some(alloc::borrow::Cow::Borrowed("podne")),
-                        midnight: Some(alloc::borrow::Cow::Borrowed("ponoć")),
-                    },
-                ),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("pre podne"),
+                    pm: alloc::borrow::Cow::Borrowed("po podne"),
+                    noon: Some(alloc::borrow::Cow::Borrowed("podne")),
+                    midnight: Some(alloc::borrow::Cow::Borrowed("ponoć")),
+                }),
                 short: None,
                 wide: None,
             },
         ),
     },
 };
-static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static SR_SR_CYRL: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("подне")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("поноћ")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("подне")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("поноћ")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("AM"),
                 pm: alloc::borrow::Cow::Borrowed("PM"),
                 noon: Some(alloc::borrow::Cow::Borrowed("подне")),
@@ -444,39 +426,37 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbo
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("пре подне"),
-                        pm: alloc::borrow::Cow::Borrowed("по подне"),
-                        noon: Some(alloc::borrow::Cow::Borrowed("подне")),
-                        midnight: Some(alloc::borrow::Cow::Borrowed("поноћ")),
-                    },
-                ),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("пре подне"),
+                    pm: alloc::borrow::Cow::Borrowed("по подне"),
+                    noon: Some(alloc::borrow::Cow::Borrowed("подне")),
+                    midnight: Some(alloc::borrow::Cow::Borrowed("поноћ")),
+                }),
                 short: None,
                 wide: None,
             },
         ),
     },
 };
-static TH: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static TH: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("ก\u{e48}อนเท\u{e35}\u{e48}ยง"),
                 pm: alloc::borrow::Cow::Borrowed("หล\u{e31}งเท\u{e35}\u{e48}ยง"),
                 noon: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยง")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยงค\u{e37}น")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("a"),
                 pm: alloc::borrow::Cow::Borrowed("p"),
                 noon: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยง")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยงค\u{e37}น")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("ก\u{e48}อนเท\u{e35}\u{e48}ยง"),
                 pm: alloc::borrow::Cow::Borrowed("หล\u{e31}งเท\u{e35}\u{e48}ยง"),
                 noon: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยง")),
@@ -484,39 +464,37 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("ก\u{e48}อนเท\u{e35}\u{e48}ยง"),
-                        pm: alloc::borrow::Cow::Borrowed("หล\u{e31}งเท\u{e35}\u{e48}ยง"),
-                        noon: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยง")),
-                        midnight: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยงค\u{e37}น")),
-                    },
-                ),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("ก\u{e48}อนเท\u{e35}\u{e48}ยง"),
+                    pm: alloc::borrow::Cow::Borrowed("หล\u{e31}งเท\u{e35}\u{e48}ยง"),
+                    noon: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยง")),
+                    midnight: Some(alloc::borrow::Cow::Borrowed("เท\u{e35}\u{e48}ยงค\u{e37}น")),
+                }),
                 short: None,
                 wide: None,
             },
         ),
     },
 };
-static TR: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
-    day_periods: ::icu::datetime::provider::calendar::day_periods::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::day_periods::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+static TR: &DataStruct = &::icu_datetime::provider::calendar::TimeSymbolsV1 {
+    day_periods: ::icu_datetime::provider::calendar::day_periods::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::day_periods::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("ÖÖ"),
                 pm: alloc::borrow::Cow::Borrowed("ÖS"),
                 noon: Some(alloc::borrow::Cow::Borrowed("öğle")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("gece yarısı")),
             },
-            narrow: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            narrow: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("öö"),
                 pm: alloc::borrow::Cow::Borrowed("ös"),
                 noon: Some(alloc::borrow::Cow::Borrowed("ö")),
                 midnight: Some(alloc::borrow::Cow::Borrowed("gece")),
             },
             short: None,
-            wide: ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
+            wide: ::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
                 am: alloc::borrow::Cow::Borrowed("ÖÖ"),
                 pm: alloc::borrow::Cow::Borrowed("ÖS"),
                 noon: Some(alloc::borrow::Cow::Borrowed("öğle")),
@@ -524,16 +502,14 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::TimeSymbolsV1 {
             },
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::day_periods::StandAloneWidthsV1 {
                 abbreviated: None,
-                narrow: Some(
-                    ::icu::datetime::provider::calendar::day_periods::SymbolsV1 {
-                        am: alloc::borrow::Cow::Borrowed("ÖÖ"),
-                        pm: alloc::borrow::Cow::Borrowed("ÖS"),
-                        noon: Some(alloc::borrow::Cow::Borrowed("öğle")),
-                        midnight: Some(alloc::borrow::Cow::Borrowed("gece yarısı")),
-                    },
-                ),
+                narrow: Some(::icu_datetime::provider::calendar::day_periods::SymbolsV1 {
+                    am: alloc::borrow::Cow::Borrowed("ÖÖ"),
+                    pm: alloc::borrow::Cow::Borrowed("ÖS"),
+                    noon: Some(alloc::borrow::Cow::Borrowed("öğle")),
+                    midnight: Some(alloc::borrow::Cow::Borrowed("gece yarısı")),
+                }),
                 short: None,
                 wide: None,
             },

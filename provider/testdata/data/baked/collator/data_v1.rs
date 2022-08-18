@@ -1,6 +1,6 @@
 // @generated
 type DataStruct =
-    <::icu::collator::provider::CollationDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu_collator::provider::CollationDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("bn", BN),
@@ -10,15 +10,15 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", UND),
     ]);
-static BN: &DataStruct = &::icu::collator::provider::CollationDataV1 {
-    trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
-        ::icu::collections::codepointtrie::CodePointTrieHeader {
+static BN: &DataStruct = &::icu_collator::provider::CollationDataV1 {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
             shifted12_high_start: 14u16,
             index3_null_offset: 2u16,
             data_null_offset: 0u32,
             null_value: 192u32,
-            trie_type: ::icu::collections::codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -121,15 +121,15 @@ static BN: &DataStruct = &::icu::collator::provider::CollationDataV1 {
     ce32s: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
     contexts: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
 };
-static ES: &DataStruct = &::icu::collator::provider::CollationDataV1 {
-    trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
-        ::icu::collections::codepointtrie::CodePointTrieHeader {
+static ES: &DataStruct = &::icu_collator::provider::CollationDataV1 {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
             shifted12_high_start: 14u16,
             index3_null_offset: 2u16,
             data_null_offset: 0u32,
             null_value: 192u32,
-            trie_type: ::icu::collections::codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -219,15 +219,15 @@ static ES: &DataStruct = &::icu::collator::provider::CollationDataV1 {
         ])
     },
 };
-static JA: &DataStruct = &::icu::collator::provider::CollationDataV1 {
-    trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
-        ::icu::collections::codepointtrie::CodePointTrieHeader {
+static JA: &DataStruct = &::icu_collator::provider::CollationDataV1 {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 65536u32,
             shifted12_high_start: 16u16,
             index3_null_offset: 2u16,
             data_null_offset: 0u32,
             null_value: 192u32,
-            trie_type: ::icu::collections::codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -6120,15 +6120,15 @@ static JA: &DataStruct = &::icu::collator::provider::CollationDataV1 {
         ])
     },
 };
-static TH: &DataStruct = &::icu::collator::provider::CollationDataV1 {
-    trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
-        ::icu::collections::codepointtrie::CodePointTrieHeader {
+static TH: &DataStruct = &::icu_collator::provider::CollationDataV1 {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
             shifted12_high_start: 14u16,
             index3_null_offset: 2u16,
             data_null_offset: 0u32,
             null_value: 192u32,
-            trie_type: ::icu::collections::codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -6247,15 +6247,15 @@ static TH: &DataStruct = &::icu::collator::provider::CollationDataV1 {
         ])
     },
 };
-static TR: &DataStruct = &::icu::collator::provider::CollationDataV1 {
-    trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
-        ::icu::collections::codepointtrie::CodePointTrieHeader {
+static TR: &DataStruct = &::icu_collator::provider::CollationDataV1 {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 55296u32,
             shifted12_high_start: 14u16,
             index3_null_offset: 5u16,
             data_null_offset: 0u32,
             null_value: 192u32,
-            trie_type: ::icu::collections::codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -6369,15 +6369,15 @@ static TR: &DataStruct = &::icu::collator::provider::CollationDataV1 {
         ])
     },
 };
-static UND: &DataStruct = &::icu::collator::provider::CollationDataV1 {
-    trie: ::icu::collections::codepointtrie::CodePointTrie::from_parts(
-        ::icu::collections::codepointtrie::CodePointTrieHeader {
+static UND: &DataStruct = &::icu_collator::provider::CollationDataV1 {
+    trie: ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 918016u32,
             shifted12_high_start: 225u16,
             index3_null_offset: 1204u16,
             data_null_offset: 758u32,
             null_value: 4294967295u32,
-            trie_type: ::icu::collections::codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[

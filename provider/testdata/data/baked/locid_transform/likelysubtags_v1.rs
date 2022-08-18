@@ -1,8 +1,8 @@
 // @generated
-type DataStruct = < :: icu :: locid_transform :: provider :: LikelySubtagsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu_locid_transform :: provider :: LikelySubtagsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu::locid_transform::provider::LikelySubtagsV1 {
+static UND: &DataStruct = &::icu_locid_transform::provider::LikelySubtagsV1 {
     language_script: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1606,8 +1606,8 @@ static UND: &DataStruct = &::icu::locid_transform::provider::LikelySubtagsV1 {
         )
     },
     und: (
-        ::icu::locid::subtags_language!("en"),
-        ::icu::locid::subtags_script!("Latn"),
-        ::icu::locid::subtags_region!("US"),
+        ::icu_locid::subtags_language!("en"),
+        ::icu_locid::subtags_script!("Latn"),
+        ::icu_locid::subtags_region!("US"),
     ),
 };

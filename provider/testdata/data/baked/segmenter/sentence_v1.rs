@@ -1,18 +1,18 @@
 // @generated
 type DataStruct =
-    <::icu::segmenter::provider::SentenceBreakDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu_segmenter::provider::SentenceBreakDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu::segmenter::provider::RuleBreakDataV1 {
-    property_table: ::icu::segmenter::provider::RuleBreakPropertyTable(
-        ::icu::collections::codepointtrie::CodePointTrie::from_parts(
-            ::icu::collections::codepointtrie::CodePointTrieHeader {
+static UND: &DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
+    property_table: ::icu_segmenter::provider::RuleBreakPropertyTable(
+        ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+            ::icu_collections::codepointtrie::CodePointTrieHeader {
                 high_start: 918016u32,
                 shifted12_high_start: 225u16,
                 index3_null_offset: 747u16,
                 data_null_offset: 14u32,
                 null_value: 0u32,
-                trie_type: ::icu::collections::codepointtrie::TrieType::Small,
+                trie_type: ::icu_collections::codepointtrie::TrieType::Small,
             },
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -953,7 +953,7 @@ static UND: &DataStruct = &::icu::segmenter::provider::RuleBreakDataV1 {
             0u8,
         ),
     ),
-    break_state_table: ::icu::segmenter::provider::RuleBreakStateTable(unsafe {
+    break_state_table: ::icu_segmenter::provider::RuleBreakStateTable(unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
             255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8,
             255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8, 255u8,

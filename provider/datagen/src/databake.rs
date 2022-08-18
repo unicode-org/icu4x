@@ -55,7 +55,7 @@ impl BakedDataExporter {
         Self {
             mod_directory,
             pretty,
-            insert_feature_gates,
+            insert_feature_gates: insert_feature_gates && use_separate_crates,
             use_separate_crates,
             data: Default::default(),
             mod_files: Default::default(),

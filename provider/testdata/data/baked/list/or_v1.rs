@@ -1,5 +1,5 @@
 // @generated
-type DataStruct = <::icu::list::provider::OrListV1Marker as ::icu_provider::DataMarker>::Yokeable;
+type DataStruct = <::icu_list::provider::OrListV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
@@ -22,322 +22,322 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", CCP_EN_UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
+static AR_AR_EG: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
-        },
-        special_case: None,
-    },
-]);
-static BN: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ব\u{9be} ", 9u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ব\u{9be} ", 8u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ব\u{9be} ", 9u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ব\u{9be} ", 8u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ব\u{9be} ", 9u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ব\u{9be} ", 8u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" أو ", 6u8)
         },
         special_case: None,
     },
 ]);
-static CCP_EN_UND: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
+static BN: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", or ", 5u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ব\u{9be} ", 9u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ব\u{9be} ", 8u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", or ", 5u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ব\u{9be} ", 9u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ব\u{9be} ", 8u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", or ", 5u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ব\u{9be} ", 9u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
-        },
-        special_case: None,
-    },
-]);
-static EN_001_EN_ZA: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ব\u{9be} ", 8u8)
         },
         special_case: None,
     },
 ]);
-static ES_ES_AR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
+static CCP_EN_UND: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", or ", 5u8)
         },
-        special_case: Some(::icu::list::provider::SpecialCasePattern {
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", or ", 5u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", or ", 5u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+]);
+static EN_001_EN_ZA: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" or ", 4u8)
+        },
+        special_case: None,
+    },
+]);
+static ES_ES_AR: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+        },
+        special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
-                ::icu::list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
+                ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                     114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8, 45u8,
                     97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8, 102u8, 97u8,
                     45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8, 255u8, 254u8, 0u8,
@@ -701,17 +701,17 @@ static ES_ES_AR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
                 ])
             },
             pattern: unsafe {
-                ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
             },
         }),
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
         },
-        special_case: Some(::icu::list::provider::SpecialCasePattern {
+        special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
-                ::icu::list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
+                ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                     114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8, 45u8,
                     97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8, 102u8, 97u8,
                     45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8, 255u8, 254u8, 0u8,
@@ -1075,29 +1075,29 @@ static ES_ES_AR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
                 ])
             },
             pattern: unsafe {
-                ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
             },
         }),
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
         },
-        special_case: Some(::icu::list::provider::SpecialCasePattern {
+        special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
-                ::icu::list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
+                ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                     114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8, 45u8,
                     97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8, 102u8, 97u8,
                     45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8, 255u8, 254u8, 0u8,
@@ -1461,17 +1461,17 @@ static ES_ES_AR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
                 ])
             },
             pattern: unsafe {
-                ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
             },
         }),
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
         },
-        special_case: Some(::icu::list::provider::SpecialCasePattern {
+        special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
-                ::icu::list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
+                ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                     114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8, 45u8,
                     97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8, 102u8, 97u8,
                     45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8, 255u8, 254u8, 0u8,
@@ -1835,29 +1835,29 @@ static ES_ES_AR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
                 ])
             },
             pattern: unsafe {
-                ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
             },
         }),
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
         },
-        special_case: Some(::icu::list::provider::SpecialCasePattern {
+        special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
-                ::icu::list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
+                ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                     114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8, 45u8,
                     97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8, 102u8, 97u8,
                     45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8, 255u8, 254u8, 0u8,
@@ -2221,17 +2221,17 @@ static ES_ES_AR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
                 ])
             },
             pattern: unsafe {
-                ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
             },
         }),
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
         },
-        special_case: Some(::icu::list::provider::SpecialCasePattern {
+        special_case: Some(::icu_list::provider::SpecialCasePattern {
             condition: unsafe {
-                ::icu::list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
+                ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(&[
                     114u8, 117u8, 115u8, 116u8, 45u8, 114u8, 101u8, 103u8, 101u8, 120u8, 45u8,
                     97u8, 117u8, 116u8, 111u8, 109u8, 97u8, 116u8, 97u8, 45u8, 100u8, 102u8, 97u8,
                     45u8, 115u8, 112u8, 97u8, 114u8, 115u8, 101u8, 0u8, 0u8, 255u8, 254u8, 0u8,
@@ -2595,525 +2595,525 @@ static ES_ES_AR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
                 ])
             },
             pattern: unsafe {
-                ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
+                ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" u ", 3u8)
             },
         }),
     },
 ]);
-static FIL: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
+static FIL: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", o ", 4u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", o ", 4u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", o ", 4u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", o ", 4u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", o ", 4u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", o ", 4u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
-        },
-        special_case: None,
-    },
-]);
-static FR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" o ", 3u8)
         },
         special_case: None,
     },
 ]);
-static JA: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
+static FR: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、または", 12u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("または", 9u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、または", 12u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("または", 9u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("、または", 12u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("または", 9u8)
-        },
-        special_case: None,
-    },
-]);
-static RU_SR_SR_CYRL: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ou ", 4u8)
         },
         special_case: None,
     },
 ]);
-static SR_LATN: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
+static JA: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、または", 12u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("または", 9u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、または", 12u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("または", 9u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、", 3u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("、または", 12u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
-        },
-        special_case: None,
-    },
-]);
-static TH: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" หร\u{e37}อ ", 14u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" หร\u{e37}อ ", 14u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" หร\u{e37}อ ", 14u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("หร\u{e37}อ", 12u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" หร\u{e37}อ ", 14u8)
-        },
-        special_case: None,
-    },
-    ::icu::list::provider::ConditionalListJoinerPattern {
-        default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked("หร\u{e37}อ", 12u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("または", 9u8)
         },
         special_case: None,
     },
 ]);
-static TR: &DataStruct = &::icu::list::provider::ListFormatterPatternsV1([
-    ::icu::list::provider::ConditionalListJoinerPattern {
+static RU_SR_SR_CYRL: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
         },
         special_case: None,
     },
-    ::icu::list::provider::ConditionalListJoinerPattern {
+    ::icu_list::provider::ConditionalListJoinerPattern {
         default: unsafe {
-            ::icu::list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" или ", 8u8)
+        },
+        special_case: None,
+    },
+]);
+static SR_LATN: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" ili ", 5u8)
+        },
+        special_case: None,
+    },
+]);
+static TH: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" หร\u{e37}อ ", 14u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" หร\u{e37}อ ", 14u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" หร\u{e37}อ ", 14u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("หร\u{e37}อ", 12u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" หร\u{e37}อ ", 14u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked("หร\u{e37}อ", 12u8)
+        },
+        special_case: None,
+    },
+]);
+static TR: &DataStruct = &::icu_list::provider::ListFormatterPatternsV1([
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
+        },
+        special_case: None,
+    },
+    ::icu_list::provider::ConditionalListJoinerPattern {
+        default: unsafe {
+            ::icu_list::provider::ListJoinerPattern::from_parts_unchecked(" veya ", 6u8)
         },
         special_case: None,
     },

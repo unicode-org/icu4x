@@ -1,6 +1,6 @@
 // @generated
 type DataStruct =
-    <::icu::collator::provider::CollationMetadataV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu_collator::provider::CollationMetadataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("bn", BN_JA),
@@ -10,7 +10,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", ES_TR),
         ("und", UND),
     ]);
-static BN_JA: &DataStruct = &::icu::collator::provider::CollationMetadataV1 { bits: 41u32 };
-static ES_TR: &DataStruct = &::icu::collator::provider::CollationMetadataV1 { bits: 9u32 };
-static TH: &DataStruct = &::icu::collator::provider::CollationMetadataV1 { bits: 297u32 };
-static UND: &DataStruct = &::icu::collator::provider::CollationMetadataV1 { bits: 1u32 };
+static BN_JA: &DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 41u32 };
+static ES_TR: &DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 9u32 };
+static TH: &DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 297u32 };
+static UND: &DataStruct = &::icu_collator::provider::CollationMetadataV1 { bits: 1u32 };

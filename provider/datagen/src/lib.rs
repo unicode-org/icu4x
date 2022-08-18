@@ -243,6 +243,7 @@ pub enum Out {
         pretty: bool,
         /// Whether to gate each key on its crate name. This allows using the module
         /// even if some keys are not required and their dependencies are not included.
+        /// Requires use_separate_crates.
         insert_feature_gates: bool,
         /// Whether to use separate crates to name types instead of the `icu` metacrate
         use_separate_crates: bool,

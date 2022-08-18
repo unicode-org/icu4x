@@ -1,5 +1,5 @@
 // @generated
-type DataStruct = < :: icu :: datetime :: provider :: calendar :: BuddhistDateSymbolsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu_datetime :: provider :: calendar :: BuddhistDateSymbolsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
@@ -22,10 +22,10 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static AR_AR_EG: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("يناير"),
                 alloc::borrow::Cow::Borrowed("فبراير"),
                 alloc::borrow::Cow::Borrowed("مارس"),
@@ -39,7 +39,7 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbols
                 alloc::borrow::Cow::Borrowed("نوفمبر"),
                 alloc::borrow::Cow::Borrowed("ديسمبر"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("ي"),
                 alloc::borrow::Cow::Borrowed("ف"),
                 alloc::borrow::Cow::Borrowed("م"),
@@ -54,7 +54,7 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbols
                 alloc::borrow::Cow::Borrowed("د"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("يناير"),
                 alloc::borrow::Cow::Borrowed("فبراير"),
                 alloc::borrow::Cow::Borrowed("مارس"),
@@ -71,9 +71,9 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbols
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("الأحد"),
                 alloc::borrow::Cow::Borrowed("الاثنين"),
                 alloc::borrow::Cow::Borrowed("الثلاثاء"),
@@ -82,7 +82,7 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbols
                 alloc::borrow::Cow::Borrowed("الجمعة"),
                 alloc::borrow::Cow::Borrowed("السبت"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("ح"),
                 alloc::borrow::Cow::Borrowed("ن"),
                 alloc::borrow::Cow::Borrowed("ث"),
@@ -91,7 +91,7 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbols
                 alloc::borrow::Cow::Borrowed("ج"),
                 alloc::borrow::Cow::Borrowed("س"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("أحد"),
                 alloc::borrow::Cow::Borrowed("إثنين"),
                 alloc::borrow::Cow::Borrowed("ثلاثاء"),
@@ -100,7 +100,7 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbols
                 alloc::borrow::Cow::Borrowed("جمعة"),
                 alloc::borrow::Cow::Borrowed("سبت"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("الأحد"),
                 alloc::borrow::Cow::Borrowed("الاثنين"),
                 alloc::borrow::Cow::Borrowed("الثلاثاء"),
@@ -112,7 +112,7 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbols
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -162,10 +162,10 @@ static AR_AR_EG: &DataStruct = &::icu::datetime::provider::calendar::DateSymbols
         },
     },
 };
-static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static BN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}"),
                 alloc::borrow::Cow::Borrowed("ফেব"),
                 alloc::borrow::Cow::Borrowed("ম\u{9be}র\u{9cd}চ"),
@@ -179,7 +179,7 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("নভেম\u{9cd}বর"),
                 alloc::borrow::Cow::Borrowed("ডিসেম\u{9cd}বর"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("জ\u{9be}"),
                 alloc::borrow::Cow::Borrowed("ফে"),
                 alloc::borrow::Cow::Borrowed("ম\u{9be}"),
@@ -194,7 +194,7 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("ডি"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}য\u{9bc}\u{9be}রী"),
                 alloc::borrow::Cow::Borrowed("ফেব\u{9cd}র\u{9c1}য\u{9bc}\u{9be}রী"),
                 alloc::borrow::Cow::Borrowed("ম\u{9be}র\u{9cd}চ"),
@@ -210,9 +210,9 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
             ]),
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::months::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                 abbreviated: Some(
-                    ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("জ\u{9be}ন\u{9c1}য\u{9bc}\u{9be}রী"),
                         alloc::borrow::Cow::Borrowed("ফেব\u{9cd}র\u{9c1}য\u{9bc}\u{9be}রী"),
                         alloc::borrow::Cow::Borrowed("ম\u{9be}র\u{9cd}চ"),
@@ -233,9 +233,9 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
             },
         ),
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("রবি"),
                 alloc::borrow::Cow::Borrowed("সোম"),
                 alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গল"),
@@ -244,7 +244,7 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("শ\u{9c1}ক\u{9cd}র"),
                 alloc::borrow::Cow::Borrowed("শনি"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("র"),
                 alloc::borrow::Cow::Borrowed("সো"),
                 alloc::borrow::Cow::Borrowed("ম"),
@@ -253,7 +253,7 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("শ\u{9c1}"),
                 alloc::borrow::Cow::Borrowed("শ"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("রঃ"),
                 alloc::borrow::Cow::Borrowed("সোঃ"),
                 alloc::borrow::Cow::Borrowed("মঃ"),
@@ -262,7 +262,7 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("শ\u{9c1}ঃ"),
                 alloc::borrow::Cow::Borrowed("শনি"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("রবিব\u{9be}র"),
                 alloc::borrow::Cow::Borrowed("সোমব\u{9be}র"),
                 alloc::borrow::Cow::Borrowed("মঙ\u{9cd}গলব\u{9be}র"),
@@ -274,7 +274,7 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -322,10 +322,10 @@ static BN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static CCP: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("𑄎𑄚\u{1112a}"),
                 alloc::borrow::Cow::Borrowed("𑄜𑄬𑄛\u{11134}"),
                 alloc::borrow::Cow::Borrowed("𑄟𑄢\u{11134}𑄌\u{11127}"),
@@ -339,7 +339,7 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("𑄚\u{11127}𑄞𑄬𑄟\u{11134}𑄝\u{11127}𑄢\u{11134}"),
                 alloc::borrow::Cow::Borrowed("𑄓\u{11128}𑄥𑄬𑄟\u{11134}𑄝𑄢\u{11134}"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("𑄎"),
                 alloc::borrow::Cow::Borrowed("𑄜𑄬"),
                 alloc::borrow::Cow::Borrowed("𑄟"),
@@ -354,7 +354,7 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("𑄓\u{11128}"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("𑄎𑄚\u{1112a}𑄠𑄢\u{11128}"),
                 alloc::borrow::Cow::Borrowed("𑄜𑄬𑄛\u{11134}𑄝\u{11133}𑄢\u{1112a}𑄠𑄢\u{11128}"),
                 alloc::borrow::Cow::Borrowed("𑄟𑄢\u{11134}𑄌\u{11127}"),
@@ -370,9 +370,9 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
             ]),
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::months::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                 abbreviated: Some(
-                    ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("𑄎𑄚\u{1112a}𑄠𑄢\u{11128}"),
                         alloc::borrow::Cow::Borrowed("𑄜𑄬𑄛\u{11134}𑄝\u{11133}𑄢\u{1112a}𑄠𑄢\u{11128}"),
                         alloc::borrow::Cow::Borrowed("𑄟𑄢\u{11134}𑄌\u{11127}"),
@@ -394,7 +394,7 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 narrow: None,
                 short: None,
                 wide: Some(
-                    ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("𑄎𑄚\u{1112a}𑄠𑄢\u{11128}"),
                         alloc::borrow::Cow::Borrowed("𑄜𑄬𑄛\u{11134}𑄝\u{11133}𑄢\u{1112a}𑄠𑄢\u{11128}"),
                         alloc::borrow::Cow::Borrowed("𑄟𑄢\u{11134}𑄌\u{11127}"),
@@ -416,9 +416,9 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
             },
         ),
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}"),
                 alloc::borrow::Cow::Borrowed("𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}"),
@@ -427,7 +427,7 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("𑄢\u{11127}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}"),
                 alloc::borrow::Cow::Borrowed("𑄟\u{11127}"),
@@ -436,7 +436,7 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("𑄥\u{1112a}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}"),
                 alloc::borrow::Cow::Borrowed("𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}"),
@@ -445,7 +445,7 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("𑄥\u{1112a}𑄇\u{11134}𑄇\u{1112e}𑄢\u{11134}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄚\u{11128}"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("𑄢\u{11127}𑄝\u{11128}𑄝𑄢\u{11134}"),
                 alloc::borrow::Cow::Borrowed("𑄥\u{11127}𑄟\u{11134}𑄝𑄢\u{11134}"),
                 alloc::borrow::Cow::Borrowed("𑄟\u{11127}\u{11101}𑄉\u{11127}𑄣\u{11134}𑄝𑄢\u{11134}"),
@@ -457,7 +457,7 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -505,10 +505,10 @@ static CCP: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static EN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Jan"),
                 alloc::borrow::Cow::Borrowed("Feb"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -522,7 +522,7 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Nov"),
                 alloc::borrow::Cow::Borrowed("Dec"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("J"),
                 alloc::borrow::Cow::Borrowed("F"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -537,7 +537,7 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("D"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("January"),
                 alloc::borrow::Cow::Borrowed("February"),
                 alloc::borrow::Cow::Borrowed("March"),
@@ -554,9 +554,9 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Sun"),
                 alloc::borrow::Cow::Borrowed("Mon"),
                 alloc::borrow::Cow::Borrowed("Tue"),
@@ -565,7 +565,7 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Fri"),
                 alloc::borrow::Cow::Borrowed("Sat"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("S"),
                 alloc::borrow::Cow::Borrowed("M"),
                 alloc::borrow::Cow::Borrowed("T"),
@@ -574,7 +574,7 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("F"),
                 alloc::borrow::Cow::Borrowed("S"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Su"),
                 alloc::borrow::Cow::Borrowed("Mo"),
                 alloc::borrow::Cow::Borrowed("Tu"),
@@ -583,7 +583,7 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Fr"),
                 alloc::borrow::Cow::Borrowed("Sa"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Sunday"),
                 alloc::borrow::Cow::Borrowed("Monday"),
                 alloc::borrow::Cow::Borrowed("Tuesday"),
@@ -595,7 +595,7 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -643,10 +643,10 @@ static EN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static EN_001_EN_ZA: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Jan"),
                 alloc::borrow::Cow::Borrowed("Feb"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -660,7 +660,7 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSym
                 alloc::borrow::Cow::Borrowed("Nov"),
                 alloc::borrow::Cow::Borrowed("Dec"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("J"),
                 alloc::borrow::Cow::Borrowed("F"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -675,7 +675,7 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSym
                 alloc::borrow::Cow::Borrowed("D"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("January"),
                 alloc::borrow::Cow::Borrowed("February"),
                 alloc::borrow::Cow::Borrowed("March"),
@@ -692,9 +692,9 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSym
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Sun"),
                 alloc::borrow::Cow::Borrowed("Mon"),
                 alloc::borrow::Cow::Borrowed("Tue"),
@@ -703,7 +703,7 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSym
                 alloc::borrow::Cow::Borrowed("Fri"),
                 alloc::borrow::Cow::Borrowed("Sat"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("S"),
                 alloc::borrow::Cow::Borrowed("M"),
                 alloc::borrow::Cow::Borrowed("T"),
@@ -712,7 +712,7 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSym
                 alloc::borrow::Cow::Borrowed("F"),
                 alloc::borrow::Cow::Borrowed("S"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Su"),
                 alloc::borrow::Cow::Borrowed("Mo"),
                 alloc::borrow::Cow::Borrowed("Tu"),
@@ -721,7 +721,7 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSym
                 alloc::borrow::Cow::Borrowed("Fr"),
                 alloc::borrow::Cow::Borrowed("Sa"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Sunday"),
                 alloc::borrow::Cow::Borrowed("Monday"),
                 alloc::borrow::Cow::Borrowed("Tuesday"),
@@ -733,7 +733,7 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSym
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -781,10 +781,10 @@ static EN_001_EN_ZA: &DataStruct = &::icu::datetime::provider::calendar::DateSym
         },
     },
 };
-static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static ES: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("ene"),
                 alloc::borrow::Cow::Borrowed("feb"),
                 alloc::borrow::Cow::Borrowed("mar"),
@@ -798,7 +798,7 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("nov"),
                 alloc::borrow::Cow::Borrowed("dic"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("E"),
                 alloc::borrow::Cow::Borrowed("F"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -813,7 +813,7 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("D"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("enero"),
                 alloc::borrow::Cow::Borrowed("febrero"),
                 alloc::borrow::Cow::Borrowed("marzo"),
@@ -830,9 +830,9 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("dom"),
                 alloc::borrow::Cow::Borrowed("lun"),
                 alloc::borrow::Cow::Borrowed("mar"),
@@ -841,7 +841,7 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("vie"),
                 alloc::borrow::Cow::Borrowed("sáb"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("D"),
                 alloc::borrow::Cow::Borrowed("L"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -850,7 +850,7 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("V"),
                 alloc::borrow::Cow::Borrowed("S"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("DO"),
                 alloc::borrow::Cow::Borrowed("LU"),
                 alloc::borrow::Cow::Borrowed("MA"),
@@ -859,7 +859,7 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("VI"),
                 alloc::borrow::Cow::Borrowed("SA"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("domingo"),
                 alloc::borrow::Cow::Borrowed("lunes"),
                 alloc::borrow::Cow::Borrowed("martes"),
@@ -871,7 +871,7 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -919,10 +919,10 @@ static ES: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static ES_AR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("ene"),
                 alloc::borrow::Cow::Borrowed("feb"),
                 alloc::borrow::Cow::Borrowed("mar"),
@@ -936,7 +936,7 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 
                 alloc::borrow::Cow::Borrowed("nov"),
                 alloc::borrow::Cow::Borrowed("dic"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("E"),
                 alloc::borrow::Cow::Borrowed("F"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -951,7 +951,7 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 
                 alloc::borrow::Cow::Borrowed("D"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("enero"),
                 alloc::borrow::Cow::Borrowed("febrero"),
                 alloc::borrow::Cow::Borrowed("marzo"),
@@ -968,9 +968,9 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("dom"),
                 alloc::borrow::Cow::Borrowed("lun"),
                 alloc::borrow::Cow::Borrowed("mar"),
@@ -979,7 +979,7 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 
                 alloc::borrow::Cow::Borrowed("vie"),
                 alloc::borrow::Cow::Borrowed("sáb"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("D"),
                 alloc::borrow::Cow::Borrowed("L"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -988,7 +988,7 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 
                 alloc::borrow::Cow::Borrowed("V"),
                 alloc::borrow::Cow::Borrowed("S"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("DO"),
                 alloc::borrow::Cow::Borrowed("LU"),
                 alloc::borrow::Cow::Borrowed("MA"),
@@ -997,7 +997,7 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 
                 alloc::borrow::Cow::Borrowed("VI"),
                 alloc::borrow::Cow::Borrowed("SA"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("domingo"),
                 alloc::borrow::Cow::Borrowed("lunes"),
                 alloc::borrow::Cow::Borrowed("martes"),
@@ -1009,7 +1009,7 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1057,10 +1057,10 @@ static ES_AR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 
         },
     },
 };
-static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static FIL: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Ene"),
                 alloc::borrow::Cow::Borrowed("Peb"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -1074,7 +1074,7 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Nob"),
                 alloc::borrow::Cow::Borrowed("Dis"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Ene"),
                 alloc::borrow::Cow::Borrowed("Peb"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -1089,7 +1089,7 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Dis"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Enero"),
                 alloc::borrow::Cow::Borrowed("Pebrero"),
                 alloc::borrow::Cow::Borrowed("Marso"),
@@ -1105,10 +1105,10 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
             ]),
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::months::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                 abbreviated: None,
                 narrow: Some(
-                    ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("E"),
                         alloc::borrow::Cow::Borrowed("P"),
                         alloc::borrow::Cow::Borrowed("M"),
@@ -1128,9 +1128,9 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
             },
         ),
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Lin"),
                 alloc::borrow::Cow::Borrowed("Lun"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -1139,7 +1139,7 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Biy"),
                 alloc::borrow::Cow::Borrowed("Sab"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Lin"),
                 alloc::borrow::Cow::Borrowed("Lun"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -1148,7 +1148,7 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Biy"),
                 alloc::borrow::Cow::Borrowed("Sab"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Li"),
                 alloc::borrow::Cow::Borrowed("Lu"),
                 alloc::borrow::Cow::Borrowed("Ma"),
@@ -1157,7 +1157,7 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Bi"),
                 alloc::borrow::Cow::Borrowed("Sa"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Linggo"),
                 alloc::borrow::Cow::Borrowed("Lunes"),
                 alloc::borrow::Cow::Borrowed("Martes"),
@@ -1169,7 +1169,7 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1217,10 +1217,10 @@ static FIL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static FR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("janv."),
                 alloc::borrow::Cow::Borrowed("févr."),
                 alloc::borrow::Cow::Borrowed("mars"),
@@ -1234,7 +1234,7 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("nov."),
                 alloc::borrow::Cow::Borrowed("déc."),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("J"),
                 alloc::borrow::Cow::Borrowed("F"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -1249,7 +1249,7 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("D"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("janvier"),
                 alloc::borrow::Cow::Borrowed("février"),
                 alloc::borrow::Cow::Borrowed("mars"),
@@ -1266,9 +1266,9 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("dim."),
                 alloc::borrow::Cow::Borrowed("lun."),
                 alloc::borrow::Cow::Borrowed("mar."),
@@ -1277,7 +1277,7 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("ven."),
                 alloc::borrow::Cow::Borrowed("sam."),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("D"),
                 alloc::borrow::Cow::Borrowed("L"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -1286,7 +1286,7 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("V"),
                 alloc::borrow::Cow::Borrowed("S"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("di"),
                 alloc::borrow::Cow::Borrowed("lu"),
                 alloc::borrow::Cow::Borrowed("ma"),
@@ -1295,7 +1295,7 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("ve"),
                 alloc::borrow::Cow::Borrowed("sa"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("dimanche"),
                 alloc::borrow::Cow::Borrowed("lundi"),
                 alloc::borrow::Cow::Borrowed("mardi"),
@@ -1307,7 +1307,7 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1356,10 +1356,10 @@ static FR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static JA: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("1月"),
                 alloc::borrow::Cow::Borrowed("2月"),
                 alloc::borrow::Cow::Borrowed("3月"),
@@ -1373,7 +1373,7 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("11月"),
                 alloc::borrow::Cow::Borrowed("12月"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("1"),
                 alloc::borrow::Cow::Borrowed("2"),
                 alloc::borrow::Cow::Borrowed("3"),
@@ -1388,7 +1388,7 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("12"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("1月"),
                 alloc::borrow::Cow::Borrowed("2月"),
                 alloc::borrow::Cow::Borrowed("3月"),
@@ -1405,9 +1405,9 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("日"),
                 alloc::borrow::Cow::Borrowed("月"),
                 alloc::borrow::Cow::Borrowed("火"),
@@ -1416,7 +1416,7 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("金"),
                 alloc::borrow::Cow::Borrowed("土"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("日"),
                 alloc::borrow::Cow::Borrowed("月"),
                 alloc::borrow::Cow::Borrowed("火"),
@@ -1425,7 +1425,7 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("金"),
                 alloc::borrow::Cow::Borrowed("土"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("日"),
                 alloc::borrow::Cow::Borrowed("月"),
                 alloc::borrow::Cow::Borrowed("火"),
@@ -1434,7 +1434,7 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("金"),
                 alloc::borrow::Cow::Borrowed("土"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("日曜日"),
                 alloc::borrow::Cow::Borrowed("月曜日"),
                 alloc::borrow::Cow::Borrowed("火曜日"),
@@ -1446,7 +1446,7 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1494,10 +1494,10 @@ static JA: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static RU: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("янв."),
                 alloc::borrow::Cow::Borrowed("февр."),
                 alloc::borrow::Cow::Borrowed("мар."),
@@ -1511,7 +1511,7 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("нояб."),
                 alloc::borrow::Cow::Borrowed("дек."),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Я"),
                 alloc::borrow::Cow::Borrowed("Ф"),
                 alloc::borrow::Cow::Borrowed("М"),
@@ -1526,7 +1526,7 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Д"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("января"),
                 alloc::borrow::Cow::Borrowed("февраля"),
                 alloc::borrow::Cow::Borrowed("марта"),
@@ -1542,9 +1542,9 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
             ]),
         },
         stand_alone: Some(
-            ::icu::datetime::provider::calendar::months::StandAloneWidthsV1 {
+            ::icu_datetime::provider::calendar::months::StandAloneWidthsV1 {
                 abbreviated: Some(
-                    ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("янв."),
                         alloc::borrow::Cow::Borrowed("февр."),
                         alloc::borrow::Cow::Borrowed("март"),
@@ -1562,7 +1562,7 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 narrow: None,
                 short: None,
                 wide: Some(
-                    ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+                    ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                         alloc::borrow::Cow::Borrowed("январь"),
                         alloc::borrow::Cow::Borrowed("февраль"),
                         alloc::borrow::Cow::Borrowed("март"),
@@ -1580,9 +1580,9 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
             },
         ),
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("вс"),
                 alloc::borrow::Cow::Borrowed("пн"),
                 alloc::borrow::Cow::Borrowed("вт"),
@@ -1591,7 +1591,7 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("пт"),
                 alloc::borrow::Cow::Borrowed("сб"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("В"),
                 alloc::borrow::Cow::Borrowed("П"),
                 alloc::borrow::Cow::Borrowed("В"),
@@ -1600,7 +1600,7 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("П"),
                 alloc::borrow::Cow::Borrowed("С"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("вс"),
                 alloc::borrow::Cow::Borrowed("пн"),
                 alloc::borrow::Cow::Borrowed("вт"),
@@ -1609,7 +1609,7 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("пт"),
                 alloc::borrow::Cow::Borrowed("сб"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("воскресенье"),
                 alloc::borrow::Cow::Borrowed("понедельник"),
                 alloc::borrow::Cow::Borrowed("вторник"),
@@ -1621,7 +1621,7 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1671,10 +1671,10 @@ static RU: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static SR_LATN: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("jan"),
                 alloc::borrow::Cow::Borrowed("feb"),
                 alloc::borrow::Cow::Borrowed("mar"),
@@ -1688,7 +1688,7 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV
                 alloc::borrow::Cow::Borrowed("nov"),
                 alloc::borrow::Cow::Borrowed("dec"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("j"),
                 alloc::borrow::Cow::Borrowed("f"),
                 alloc::borrow::Cow::Borrowed("m"),
@@ -1703,7 +1703,7 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV
                 alloc::borrow::Cow::Borrowed("d"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("januar"),
                 alloc::borrow::Cow::Borrowed("februar"),
                 alloc::borrow::Cow::Borrowed("mart"),
@@ -1720,9 +1720,9 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("ned"),
                 alloc::borrow::Cow::Borrowed("pon"),
                 alloc::borrow::Cow::Borrowed("uto"),
@@ -1731,7 +1731,7 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV
                 alloc::borrow::Cow::Borrowed("pet"),
                 alloc::borrow::Cow::Borrowed("sub"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("n"),
                 alloc::borrow::Cow::Borrowed("p"),
                 alloc::borrow::Cow::Borrowed("u"),
@@ -1740,7 +1740,7 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV
                 alloc::borrow::Cow::Borrowed("p"),
                 alloc::borrow::Cow::Borrowed("s"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("ne"),
                 alloc::borrow::Cow::Borrowed("po"),
                 alloc::borrow::Cow::Borrowed("ut"),
@@ -1749,7 +1749,7 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV
                 alloc::borrow::Cow::Borrowed("pe"),
                 alloc::borrow::Cow::Borrowed("su"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("nedelja"),
                 alloc::borrow::Cow::Borrowed("ponedeljak"),
                 alloc::borrow::Cow::Borrowed("utorak"),
@@ -1761,7 +1761,7 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1809,10 +1809,10 @@ static SR_LATN: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV
         },
     },
 };
-static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static SR_SR_CYRL: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("јан"),
                 alloc::borrow::Cow::Borrowed("феб"),
                 alloc::borrow::Cow::Borrowed("мар"),
@@ -1826,7 +1826,7 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbo
                 alloc::borrow::Cow::Borrowed("нов"),
                 alloc::borrow::Cow::Borrowed("дец"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("ј"),
                 alloc::borrow::Cow::Borrowed("ф"),
                 alloc::borrow::Cow::Borrowed("м"),
@@ -1841,7 +1841,7 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbo
                 alloc::borrow::Cow::Borrowed("д"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("јануар"),
                 alloc::borrow::Cow::Borrowed("фебруар"),
                 alloc::borrow::Cow::Borrowed("март"),
@@ -1858,9 +1858,9 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbo
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("нед"),
                 alloc::borrow::Cow::Borrowed("пон"),
                 alloc::borrow::Cow::Borrowed("уто"),
@@ -1869,7 +1869,7 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbo
                 alloc::borrow::Cow::Borrowed("пет"),
                 alloc::borrow::Cow::Borrowed("суб"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("н"),
                 alloc::borrow::Cow::Borrowed("п"),
                 alloc::borrow::Cow::Borrowed("у"),
@@ -1878,7 +1878,7 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbo
                 alloc::borrow::Cow::Borrowed("п"),
                 alloc::borrow::Cow::Borrowed("с"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("не"),
                 alloc::borrow::Cow::Borrowed("по"),
                 alloc::borrow::Cow::Borrowed("ут"),
@@ -1887,7 +1887,7 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbo
                 alloc::borrow::Cow::Borrowed("пе"),
                 alloc::borrow::Cow::Borrowed("су"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("недеља"),
                 alloc::borrow::Cow::Borrowed("понедељак"),
                 alloc::borrow::Cow::Borrowed("уторак"),
@@ -1899,7 +1899,7 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbo
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -1947,10 +1947,10 @@ static SR_SR_CYRL: &DataStruct = &::icu::datetime::provider::calendar::DateSymbo
         },
     },
 };
-static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static TH: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("ม.ค."),
                 alloc::borrow::Cow::Borrowed("ก.พ."),
                 alloc::borrow::Cow::Borrowed("ม\u{e35}.ค."),
@@ -1964,7 +1964,7 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("พ.ย."),
                 alloc::borrow::Cow::Borrowed("ธ.ค."),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("ม.ค."),
                 alloc::borrow::Cow::Borrowed("ก.พ."),
                 alloc::borrow::Cow::Borrowed("ม\u{e35}.ค."),
@@ -1979,7 +1979,7 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("ธ.ค."),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("มกราคม"),
                 alloc::borrow::Cow::Borrowed("ก\u{e38}มภาพ\u{e31}นธ\u{e4c}"),
                 alloc::borrow::Cow::Borrowed("ม\u{e35}นาคม"),
@@ -1996,9 +1996,9 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("อา."),
                 alloc::borrow::Cow::Borrowed("จ."),
                 alloc::borrow::Cow::Borrowed("อ."),
@@ -2007,7 +2007,7 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("ศ."),
                 alloc::borrow::Cow::Borrowed("ส."),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("อา"),
                 alloc::borrow::Cow::Borrowed("จ"),
                 alloc::borrow::Cow::Borrowed("อ"),
@@ -2016,7 +2016,7 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("ศ"),
                 alloc::borrow::Cow::Borrowed("ส"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("อา."),
                 alloc::borrow::Cow::Borrowed("จ."),
                 alloc::borrow::Cow::Borrowed("อ."),
@@ -2025,7 +2025,7 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("ศ."),
                 alloc::borrow::Cow::Borrowed("ส."),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("ว\u{e31}นอาท\u{e34}ตย\u{e4c}"),
                 alloc::borrow::Cow::Borrowed("ว\u{e31}นจ\u{e31}นทร\u{e4c}"),
                 alloc::borrow::Cow::Borrowed("ว\u{e31}นอ\u{e31}งคาร"),
@@ -2037,7 +2037,7 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -2090,10 +2090,10 @@ static TH: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static TR: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Oca"),
                 alloc::borrow::Cow::Borrowed("Şub"),
                 alloc::borrow::Cow::Borrowed("Mar"),
@@ -2107,7 +2107,7 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Kas"),
                 alloc::borrow::Cow::Borrowed("Ara"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("O"),
                 alloc::borrow::Cow::Borrowed("Ş"),
                 alloc::borrow::Cow::Borrowed("M"),
@@ -2122,7 +2122,7 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("A"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("Ocak"),
                 alloc::borrow::Cow::Borrowed("Şubat"),
                 alloc::borrow::Cow::Borrowed("Mart"),
@@ -2139,9 +2139,9 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Paz"),
                 alloc::borrow::Cow::Borrowed("Pzt"),
                 alloc::borrow::Cow::Borrowed("Sal"),
@@ -2150,7 +2150,7 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Cum"),
                 alloc::borrow::Cow::Borrowed("Cmt"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("P"),
                 alloc::borrow::Cow::Borrowed("P"),
                 alloc::borrow::Cow::Borrowed("S"),
@@ -2159,7 +2159,7 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("C"),
                 alloc::borrow::Cow::Borrowed("C"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Pa"),
                 alloc::borrow::Cow::Borrowed("Pt"),
                 alloc::borrow::Cow::Borrowed("Sa"),
@@ -2168,7 +2168,7 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Cu"),
                 alloc::borrow::Cow::Borrowed("Ct"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Pazar"),
                 alloc::borrow::Cow::Borrowed("Pazartesi"),
                 alloc::borrow::Cow::Borrowed("Salı"),
@@ -2180,7 +2180,7 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(
@@ -2228,10 +2228,10 @@ static TR: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
     },
 };
-static UND: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
-    months: ::icu::datetime::provider::calendar::months::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::months::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+static UND: &DataStruct = &::icu_datetime::provider::calendar::DateSymbolsV1 {
+    months: ::icu_datetime::provider::calendar::months::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::months::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("M01"),
                 alloc::borrow::Cow::Borrowed("M02"),
                 alloc::borrow::Cow::Borrowed("M03"),
@@ -2245,7 +2245,7 @@ static UND: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("M11"),
                 alloc::borrow::Cow::Borrowed("M12"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            narrow: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("1"),
                 alloc::borrow::Cow::Borrowed("2"),
                 alloc::borrow::Cow::Borrowed("3"),
@@ -2260,7 +2260,7 @@ static UND: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("12"),
             ]),
             short: None,
-            wide: ::icu::datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
+            wide: ::icu_datetime::provider::calendar::months::SymbolsV1::SolarTwelve([
                 alloc::borrow::Cow::Borrowed("M01"),
                 alloc::borrow::Cow::Borrowed("M02"),
                 alloc::borrow::Cow::Borrowed("M03"),
@@ -2277,9 +2277,9 @@ static UND: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    weekdays: ::icu::datetime::provider::calendar::weekdays::ContextsV1 {
-        format: ::icu::datetime::provider::calendar::weekdays::FormatWidthsV1 {
-            abbreviated: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+    weekdays: ::icu_datetime::provider::calendar::weekdays::ContextsV1 {
+        format: ::icu_datetime::provider::calendar::weekdays::FormatWidthsV1 {
+            abbreviated: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Sun"),
                 alloc::borrow::Cow::Borrowed("Mon"),
                 alloc::borrow::Cow::Borrowed("Tue"),
@@ -2288,7 +2288,7 @@ static UND: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Fri"),
                 alloc::borrow::Cow::Borrowed("Sat"),
             ]),
-            narrow: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            narrow: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("S"),
                 alloc::borrow::Cow::Borrowed("M"),
                 alloc::borrow::Cow::Borrowed("T"),
@@ -2297,7 +2297,7 @@ static UND: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("F"),
                 alloc::borrow::Cow::Borrowed("S"),
             ]),
-            short: Some(::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            short: Some(::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Sun"),
                 alloc::borrow::Cow::Borrowed("Mon"),
                 alloc::borrow::Cow::Borrowed("Tue"),
@@ -2306,7 +2306,7 @@ static UND: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
                 alloc::borrow::Cow::Borrowed("Fri"),
                 alloc::borrow::Cow::Borrowed("Sat"),
             ])),
-            wide: ::icu::datetime::provider::calendar::weekdays::SymbolsV1([
+            wide: ::icu_datetime::provider::calendar::weekdays::SymbolsV1([
                 alloc::borrow::Cow::Borrowed("Sun"),
                 alloc::borrow::Cow::Borrowed("Mon"),
                 alloc::borrow::Cow::Borrowed("Tue"),
@@ -2318,7 +2318,7 @@ static UND: &DataStruct = &::icu::datetime::provider::calendar::DateSymbolsV1 {
         },
         stand_alone: None,
     },
-    eras: ::icu::datetime::provider::calendar::Eras {
+    eras: ::icu_datetime::provider::calendar::Eras {
         names: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap::from_parts_unchecked(

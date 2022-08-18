@@ -1,9 +1,9 @@
 // @generated
 type DataStruct =
-    <::icu::locid_transform::provider::AliasesV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu_locid_transform::provider::AliasesV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu::locid_transform::provider::AliasesV1 {
+static UND: &DataStruct = &::icu_locid_transform::provider::AliasesV1 {
     language_variants: unsafe {
         ::zerovec::VarZeroVec::from_bytes_unchecked(&[
             19u8, 0u8, 0u8, 0u8, 0u8, 0u8, 23u8, 0u8, 48u8, 0u8, 74u8, 0u8, 99u8, 0u8, 122u8, 0u8,

@@ -1,6 +1,6 @@
 // @generated
 type DataStruct =
-    <::icu::decimal::provider::DecimalSymbolsV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu_decimal::provider::DecimalSymbolsV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_slice_unchecked(&[
         ("ar", AR_AR_EG),
@@ -28,198 +28,198 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", ES_AR_SR_SR_CYRL_SR_LATN_TR),
         ("und", EN_EN_001_FIL_JA_TH_UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static AR_AR_EG: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("\u{61c}-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("\u{61c}+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed("٫"),
     grouping_separator: alloc::borrow::Cow::Borrowed("٬"),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
         min_grouping: 1u8,
     },
     digits: ['٠', '١', '٢', '٣', '٤', '٥', '٦', '٧', '٨', '٩'],
 };
-static AR_EG_U_NU_LATN_AR_U_NU_LATN: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static AR_EG_U_NU_LATN_AR_U_NU_LATN: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("\u{200e}-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("\u{200e}+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed("."),
     grouping_separator: alloc::borrow::Cow::Borrowed(","),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
         min_grouping: 1u8,
     },
     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
 };
-static BN: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static BN: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed("."),
     grouping_separator: alloc::borrow::Cow::Borrowed(","),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 2u8,
         min_grouping: 1u8,
     },
     digits: ['০', '১', '২', '৩', '৪', '৫', '৬', '৭', '৮', '৯'],
 };
-static BN_U_NU_LATN_CCP_U_NU_LATN: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static BN_U_NU_LATN_CCP_U_NU_LATN: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed("."),
     grouping_separator: alloc::borrow::Cow::Borrowed(","),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 2u8,
         min_grouping: 1u8,
     },
     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
 };
-static CCP: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static CCP: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed("."),
     grouping_separator: alloc::borrow::Cow::Borrowed(","),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 2u8,
         min_grouping: 1u8,
     },
     digits: ['𑄶', '𑄷', '𑄸', '𑄹', '𑄺', '𑄻', '𑄼', '𑄽', '𑄾', '𑄿'],
 };
-static EN_EN_001_FIL_JA_TH_UND: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static EN_EN_001_FIL_JA_TH_UND: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed("."),
     grouping_separator: alloc::borrow::Cow::Borrowed(","),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
         min_grouping: 1u8,
     },
     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
 };
-static EN_ZA_RU: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static EN_ZA_RU: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed(","),
     grouping_separator: alloc::borrow::Cow::Borrowed("\u{a0}"),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
         min_grouping: 1u8,
     },
     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
 };
-static ES: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static ES: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed(","),
     grouping_separator: alloc::borrow::Cow::Borrowed("."),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
         min_grouping: 2u8,
     },
     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
 };
-static ES_AR_SR_SR_CYRL_SR_LATN_TR: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static ES_AR_SR_SR_CYRL_SR_LATN_TR: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed(","),
     grouping_separator: alloc::borrow::Cow::Borrowed("."),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
         min_grouping: 1u8,
     },
     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
 };
-static FR: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static FR: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed(","),
     grouping_separator: alloc::borrow::Cow::Borrowed("\u{202f}"),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
         min_grouping: 1u8,
     },
     digits: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9'],
 };
-static TH_U_NU_THAI: &DataStruct = &::icu::decimal::provider::DecimalSymbolsV1 {
-    minus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+static TH_U_NU_THAI: &DataStruct = &::icu_decimal::provider::DecimalSymbolsV1 {
+    minus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("-"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
-    plus_sign_affixes: ::icu::decimal::provider::AffixesV1 {
+    plus_sign_affixes: ::icu_decimal::provider::AffixesV1 {
         prefix: alloc::borrow::Cow::Borrowed("+"),
         suffix: alloc::borrow::Cow::Borrowed(""),
     },
     decimal_separator: alloc::borrow::Cow::Borrowed("."),
     grouping_separator: alloc::borrow::Cow::Borrowed(","),
-    grouping_sizes: ::icu::decimal::provider::GroupingSizesV1 {
+    grouping_sizes: ::icu_decimal::provider::GroupingSizesV1 {
         primary: 3u8,
         secondary: 3u8,
         min_grouping: 1u8,
