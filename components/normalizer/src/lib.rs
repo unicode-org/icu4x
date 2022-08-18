@@ -2316,8 +2316,16 @@ impl ComposingNormalizer {
             // but making it a boolean so that writes in the tightest loop are as
             // simple as possible (and potentially as peel-hoistable as possible).
             // Furthermore, this reduces `unwrap()` later.
-            let mut undecomposed_starter_valid = true;
+            let mut undecomposed_starter_valid;
+            // The pursose of the counter is to flush once in a while. If we flush
+            // too much, there is too much flushing overhead. If we flush too rarely,
+            // the flush starts reading from too far behind compared to the hot
+            // recently-read memory.
             let mut counter = 0b1000000000000usize;
+            // The purpose of this trickiness is to avoid writing to 
+            // `undecomposed_starter_valid` from the tightest loop. Writing to it
+            // from there destroys performance.
+            let mut counter_reference = counter - 1;
             'fast: loop {
                 counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
@@ -2327,9 +2335,12 @@ impl ComposingNormalizer {
                         // `composition_passthrough_bound` cannot be higher than
                         // U+0300.
                         // Fast-track succeeded!
-                        undecomposed_starter_valid = false;
                         continue 'fast;
                     }
+                    // if `counter` equals `counter_reference`, the `continue 'fast`
+                    // line above has not executed and `undecomposed_starter` is still
+                    // valid.
+                    undecomposed_starter_valid = counter == counter_reference;
                     // The loop is only broken out of as goto forward
                     #[allow(clippy::never_loop)]
                     'surrogateloop: loop {
@@ -2366,8 +2377,10 @@ impl ComposingNormalizer {
                         // starter albeit past `composition_passthrough_bound`
 
                         // Fast-track succeeded!
-                        undecomposed_starter_valid = true;
                         undecomposed_starter = upcoming_with_trie_value;
+                        // Logically, to get `undecomposed_starter_valid` set to true
+                        // we should do `counter_reference = counter - 1;` here.
+                        // However, doing so destroys performance.
                         continue 'fast;
                     }
                     // We need to fall off the fast path.
