@@ -147,13 +147,14 @@ pub fn complex_language_segment_str(
 mod tests {
     use super::*;
     use icu_locid::locale;
-    use icu_provider::{DataProvider, DataRequest};
+    use icu_provider::prelude::*;
 
     #[test]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
         let data_locale = locale!("th").into();
-        let payload = icu_testdata::unstable()
+        let payload = icu_testdata::buffer()
+            .as_deserializing()
             .load(DataRequest {
                 locale: &data_locale,
                 metadata: Default::default(),
@@ -168,7 +169,8 @@ mod tests {
             thai: Some(payload),
             cj: None,
         };
-        let payload = icu_testdata::unstable()
+        let payload = icu_testdata::buffer()
+            .as_deserializing()
             .load(DataRequest {
                 locale: &data_locale,
                 metadata: Default::default(),

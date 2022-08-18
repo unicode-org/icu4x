@@ -12,7 +12,6 @@
 //! * [`unstable`], [`unstable_no_fallback`]
 //! * [`any`], [`any_no_fallback`]
 //! * [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`serde` feature)
-//!   * [`buffer_json`], [`buffer_json_no_fallback`] (`serde` + `std` features)
 //!
 //!
 //! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
@@ -143,7 +142,7 @@ pub fn any_no_fallback() -> impl AnyProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
-#[cfg(feature = "serde")]
+#[cfg(feature = "buffer")]
 pub fn buffer() -> impl BufferProvider {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
@@ -151,7 +150,7 @@ pub fn buffer() -> impl BufferProvider {
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
-#[cfg(feature = "serde")]
+#[cfg(feature = "buffer")]
 pub fn buffer_no_fallback() -> impl BufferProvider {
     lazy_static::lazy_static! {
         static ref POSTCARD: icu_provider_blob::StaticDataProvider = {
@@ -170,7 +169,7 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
 /// A smaller [`BufferProvider`] backed by a Postcard blob.
 ///
 /// This provider only contains the `decimal/symbols@1[u-nu]` key for `en` and `bn`.
-#[cfg(feature = "serde")]
+#[cfg(feature = "buffer")]
 pub fn small_buffer() -> impl BufferProvider {
     lazy_static::lazy_static! {
         static ref SMALLER_POSTCARD: icu_provider_blob::StaticDataProvider = {
@@ -184,51 +183,6 @@ pub fn small_buffer() -> impl BufferProvider {
         };
     }
     *SMALLER_POSTCARD
-}
-
-/// A [`BufferProvider`] backed by a JSON directory.
-///
-/// You can optionally specify your own test data with the
-/// `ICU4X_TESTDATA_DIR` environment variable.
-///
-/// # Panics
-///
-/// Panics if unable to load the data.
-#[cfg(all(feature = "serde", feature = "std"))]
-pub fn buffer_json() -> impl BufferProvider {
-    // The statically compiled data file is valid.
-    #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new_with_buffer_provider(buffer_json_no_fallback()).unwrap()
-}
-
-/// A [`BufferProvider`] backed by a JSON directory.
-///
-/// You can optionally specify your own test data with the
-/// `ICU4X_TESTDATA_DIR` environment variable.
-///
-/// # Panics
-///
-/// Panics if unable to load the data.
-#[allow(clippy::panic)]
-#[cfg(all(feature = "serde", feature = "std"))]
-pub fn buffer_json_no_fallback() -> impl BufferProvider {
-    lazy_static::lazy_static! {
-        static ref JSON: icu_provider_fs::FsDataProvider = {
-            let path = match std::env::var_os("ICU4X_TESTDATA_DIR") {
-                Some(val) => val.into(),
-                None => paths::data_root().join("json"),
-            };
-            // The statically compiled data file is valid.
-            #[allow(clippy::unwrap_used)]
-            icu_provider_fs::FsDataProvider::try_new(&path).unwrap_or_else(|err| {
-                panic!(
-                    "The test data directory was unable to be opened: {}: {:?}",
-                    err, path
-                )
-            })
-        };
-    }
-    (*JSON).clone()
 }
 
 pub mod baked {

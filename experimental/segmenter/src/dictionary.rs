@@ -172,7 +172,8 @@ mod tests {
     fn get_payload(
         locale: Locale,
     ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
-        icu_testdata::unstable()
+        icu_testdata::buffer()
+            .as_deserializing()
             .load(DataRequest {
                 locale: &DataLocale::from(locale),
                 metadata: Default::default(),

@@ -113,7 +113,8 @@ mod tests {
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 
-        let payload = icu_testdata::unstable()
+        let payload = icu_testdata::buffer()
+            .as_deserializing()
             .load(DataRequest {
                 locale: &DataLocale::from(locale!("th")),
                 metadata: Default::default(),

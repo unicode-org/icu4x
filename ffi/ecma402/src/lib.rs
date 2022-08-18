@@ -36,7 +36,13 @@ impl DataLocale {
     /// Creates a `DataLocale` from any other [`ecma402_traits::Locale`]
     fn from_ecma_locale<L: ecma402_traits::Locale>(other: L) -> Self {
         #[allow(clippy::expect_used)]
-        Self(other.to_string().parse::<icu::locid::Locale>().expect("valid locale").into())
+        Self(
+            other
+                .to_string()
+                .parse::<icu::locid::Locale>()
+                .expect("valid locale")
+                .into(),
+        )
     }
 }
 

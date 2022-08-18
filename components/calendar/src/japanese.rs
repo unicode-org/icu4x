@@ -845,10 +845,11 @@ mod tests {
 
     #[test]
     fn test_japanese() {
-        let calendar = Japanese::try_new_unstable(&icu_testdata::unstable())
+        let calendar = Japanese::try_new_unstable(&icu_testdata::buffer().as_deserializing())
             .expect("Cannot load japanese data");
-        let calendar_ext = JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
-            .expect("Cannot load japanese data");
+        let calendar_ext =
+            JapaneseExtended::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+                .expect("Cannot load japanese data");
         let calendar = Ref(&calendar);
         let calendar_ext = Ref(&calendar_ext);
 

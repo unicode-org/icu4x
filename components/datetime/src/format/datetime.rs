@@ -545,12 +545,14 @@ mod tests {
             locale: &locale,
             metadata: Default::default(),
         };
-        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_testdata::unstable()
+        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
             .load(req)
             .unwrap()
             .take_payload()
             .unwrap();
-        let time_data: DataPayload<TimeSymbolsV1Marker> = icu_testdata::unstable()
+        let time_data: DataPayload<TimeSymbolsV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
             .load(req)
             .unwrap()
             .take_payload()

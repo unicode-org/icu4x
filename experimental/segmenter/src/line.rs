@@ -854,7 +854,7 @@ mod tests {
     #[test]
     fn linebreak_propery() {
         let payload = DataProvider::<LineBreakDataV1Marker>::load(
-            &icu_testdata::unstable(),
+            &icu_testdata::buffer().as_deserializing(),
             Default::default(),
         )
         .expect("Loading should succeed!")
@@ -890,7 +890,7 @@ mod tests {
     #[allow(clippy::bool_assert_comparison)] // clearer when we're testing bools directly
     fn break_rule() {
         let payload = DataProvider::<LineBreakDataV1Marker>::load(
-            &icu_testdata::unstable(),
+            &icu_testdata::buffer().as_deserializing(),
             Default::default(),
         )
         .expect("Loading should succeed!")
@@ -1000,8 +1000,8 @@ mod tests {
 
     #[test]
     fn linebreak() {
-        let segmenter =
-            LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+        let segmenter = LineBreakSegmenter::try_new(&icu_testdata::buffer().as_deserializing())
+            .expect("Data exists");
 
         let mut iter = segmenter.segment_str("hello world");
         assert_eq!(Some(6), iter.next());

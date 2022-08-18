@@ -47,12 +47,14 @@ mod test {
             locale: &locale,
             metadata: Default::default(),
         };
-        let patterns = icu_testdata::unstable()
+        let patterns = icu_testdata::buffer()
+            .as_deserializing()
             .load(req)
             .expect("Failed to load payload")
             .take_payload()
             .expect("Failed to retrieve payload");
-        let skeletons = icu_testdata::unstable()
+        let skeletons = icu_testdata::buffer()
+            .as_deserializing()
             .load(req)
             .expect("Failed to load payload")
             .take_payload()

@@ -281,7 +281,6 @@ icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters" }
 
 # serde feature
 icu_provider_blob = { version = "1.0.0-beta1", path = "../blob", optional = true }
-icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", optional = true }
 lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
 
 # bin feature
@@ -289,6 +288,7 @@ bytes = {version = "1.1.0", optional = true }
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
 futures = { version = "0.3", optional = true }
+icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", optional = true }
 icu_datagen = { version = "1.0.0-beta1", path = "../datagen", features = ["experimental"], optional = true }
 log = { version = "0.4", optional = true }
 reqwest = { version = "0.11", features = ["stream"], optional = true }
@@ -339,35 +339,32 @@ default = [
     "icu_segmenter",
     "icu_timezone",
 ]
-# Enables programmatic access to this Cargo.toml file
-metadata = [
-    "cargo_metadata",
-    "icu_locid/serde",
-    "serde_json",
-    "dep:serde",
-    "displaydoc",
-    "writeable",
-    "std"
-]
+buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]
+icu_calendar_serde = ["buffer", "icu_calendar/serde"]
+icu_casemapping_serde = ["buffer", "icu_casemapping/serde"]
+icu_collator_serde = ["buffer", "icu_collator/serde"]
+icu_datetime_serde = ["buffer", "icu_datetime/serde"]
+icu_decimal_serde = ["buffer", "icu_decimal/serde"]
+icu_list_serde = ["buffer", "icu_list/serde"]
+icu_locid_transform_serde = ["buffer", "icu_locid_transform/serde"]
+icu_normalizer_serde = ["buffer", "icu_normalizer/serde"]
+icu_plurals_serde = ["buffer", "icu_plurals/serde"]
+icu_properties_serde = ["buffer", "icu_properties/serde"]
+icu_segmenter_serde = ["buffer", "icu_segmenter/serde"]
+icu_timezone_serde = ["buffer", "icu_timezone/serde"]
 serde = [
-    "icu_provider_blob",
-    "icu_provider_fs",
-    "icu_provider/deserialize_postcard_07",
-    "icu_provider/deserialize_json",
-    "icu_provider_adapters/serde",
-    "icu_calendar/serde",
-    "icu_casemapping/serde",
-    "icu_collator/serde",
-    "icu_datetime/serde",
-    "icu_decimal/serde",
-    "icu_list/serde",
-    "icu_locid_transform/serde",
-    "icu_normalizer/serde",
-    "icu_plurals/serde",
-    "icu_properties/serde",
-    "icu_segmenter/serde",
-    "icu_timezone/serde",
-    "lazy_static",
+    "icu_calendar_serde",
+    "icu_casemapping_serde",
+    "icu_collator_serde",
+    "icu_datetime_serde",
+    "icu_decimal_serde",
+    "icu_list_serde",
+    "icu_locid_transform_serde",
+    "icu_normalizer_serde",
+    "icu_plurals_serde",
+    "icu_properties_serde",
+    "icu_segmenter_serde",
+    "icu_timezone_serde",
 ]
 std = []
 bin = [
@@ -384,6 +381,16 @@ bin = [
     "icu_datagen",
     "icu_provider_fs",
     "zip",
+]
+# Enables programmatic access to this Cargo.toml file
+metadata = [
+    "cargo_metadata",
+    "icu_locid/serde",
+    "serde_json",
+    "dep:serde",
+    "displaydoc",
+    "writeable",
+    "std"
 ]
 
 [[bin]]
