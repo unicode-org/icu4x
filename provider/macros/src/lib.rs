@@ -9,14 +9,18 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic,
+        // Panics are OK in proc macros
+        // clippy::panic,
         clippy::exhaustive_structs,
         clippy::exhaustive_enums,
         missing_debug_implementations,
     )
 )]
-// Panics are OK in proc macros
-#![allow(clippy::panic)]
+#![warn(missing_docs)]
+
+//! Proc macros for the ICU4X data provider.
+//!
+//! These macros are re-exported from `icu_provider`.
 
 extern crate proc_macro;
 use proc_macro::TokenStream;
@@ -36,7 +40,9 @@ mod tests;
 
 #[proc_macro_attribute]
 /// The `#[data_struct]` attribute should be applied to all types intended
-/// for use in a `DataStruct`. It does the following things:
+/// for use in a `DataStruct`.
+///
+/// It does the following things:
 ///
 /// - `Apply #[derive(Yokeable, ZeroFrom)]`. The `ZeroFrom` derive can
 ///    be customized with `#[zerofrom(clone)]` on non-ZeroFrom fields.

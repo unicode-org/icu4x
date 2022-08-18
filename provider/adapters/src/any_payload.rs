@@ -33,10 +33,19 @@ use zerofrom::ZeroFrom;
 ///     .expect("Data should be present");
 ///
 /// assert_eq!(payload.get().message, "hello world");
+///
+/// // Requests for invalid keys get MissingDataKey
+/// assert!(matches!(
+///     provider.load_any(icu_provider::data_key!("foo@1"), Default::default()),
+///     Err(DataError { kind: DataErrorKind::MissingDataKey, .. })
+/// ))
 /// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct AnyPayloadProvider {
+    /// The [`DataKey`] for which to provide data. All others will receive a
+    /// [`DataErrorKind::MissingDataKey`].
     pub key: DataKey,
+    /// The [`AnyPayload`] to return on matching requests.
     pub data: AnyPayload,
 }
 

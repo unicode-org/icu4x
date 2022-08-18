@@ -97,10 +97,13 @@
         clippy::exhaustive_enums
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
+// If you want this to be made public stable, file an issue on the ICU4X repository.
 #[cfg(feature = "metadata")]
+#[doc(hidden)]
 pub mod metadata;
 
 #[cfg(feature = "std")]

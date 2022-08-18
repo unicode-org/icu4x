@@ -5,7 +5,7 @@
 use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{
-    DateTimeInput, DateTimeInputWithLocale, ExtractedDateTimeInput, LocalizedDateTimeInput,
+    DateTimeInput, DateTimeInputWithCalendar, ExtractedDateTimeInput, LocalizedDateTimeInput,
 };
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -20,7 +20,6 @@ use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
-use icu_provider::DataLocale;
 use icu_provider::DataPayload;
 use writeable::Writeable;
 
@@ -57,7 +56,6 @@ pub struct FormattedDateTime<'l> {
     pub(crate) time_symbols: Option<&'l provider::calendar::TimeSymbolsV1<'l>>,
     pub(crate) datetime: ExtractedDateTimeInput,
     pub(crate) week_data: Option<&'l WeekDataV1>,
-    pub(crate) locale: &'l DataLocale,
     pub(crate) ordinal_rules: Option<&'l PluralRules>,
     pub(crate) fixed_decimal_format: &'l FixedDecimalFormatter,
 }
@@ -72,7 +70,6 @@ impl<'l> Writeable for FormattedDateTime<'l> {
             self.week_data,
             self.ordinal_rules,
             self.fixed_decimal_format,
-            self.locale,
             sink,
         )
         .map_err(|_| core::fmt::Error)
@@ -166,14 +163,13 @@ pub fn write_pattern_plurals<T, W>(
     week_data: Option<&WeekDataV1>,
     ordinal_rules: Option<&PluralRules>,
     fixed_decimal_format: &FixedDecimalFormatter,
-    locale: &DataLocale,
     w: &mut W,
 ) -> Result<(), Error>
 where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_datetime = DateTimeInputWithLocale::new(datetime, week_data.map(|d| &d.0), locale);
+    let loc_datetime = DateTimeInputWithCalendar::new(datetime, week_data.map(|d| &d.0));
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(
         pattern,
@@ -567,7 +563,7 @@ mod tests {
         .unwrap();
 
         let mut sink = String::new();
-        let loc_datetime = DateTimeInputWithLocale::new(&datetime, None, &Locale::UND.into());
+        let loc_datetime = DateTimeInputWithCalendar::new(&datetime, None);
         write_pattern(
             &pattern,
             Some(date_data.get()),

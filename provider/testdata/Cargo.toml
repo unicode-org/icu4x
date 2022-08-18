@@ -383,6 +383,7 @@ bin = [
     "zip",
 ]
 # Enables programmatic access to this Cargo.toml file
+# If you want this to be made public stable, file an issue on the ICU4X repository.
 metadata = [
     "cargo_metadata",
     "icu_locid/serde",

@@ -277,12 +277,11 @@ pub fn datagen(
                     overwrite,
                     fingerprint,
                 } => {
-                    let mut options =
-                        icu_provider_fs::export::fs_exporter::ExporterOptions::default();
+                    let mut options = icu_provider_fs::export::ExporterOptions::default();
                     options.root = output_path;
                     if overwrite {
                         options.overwrite =
-                            icu_provider_fs::export::fs_exporter::OverwriteOption::RemoveAndReplace
+                            icu_provider_fs::export::OverwriteOption::RemoveAndReplace
                     }
                     options.fingerprint = fingerprint;
                     Box::new(icu_provider_fs::export::FilesystemExporter::try_new(

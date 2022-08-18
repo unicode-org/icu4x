@@ -44,7 +44,7 @@ use crate::helpers::result_is_err_missing_data_options;
 /// );
 /// ```
 pub struct LocaleFallbackProvider<P> {
-    pub inner: P,
+    inner: P,
     fallbacker: LocaleFallbacker,
 }
 
@@ -153,6 +153,16 @@ impl<P> LocaleFallbackProvider<P> {
             inner: provider,
             fallbacker,
         }
+    }
+
+    /// Returns a reference to the inner provider, bypassing fallback.
+    pub fn inner(&self) -> &P {
+        &self.inner
+    }
+
+    /// Returns ownership of the inner provider to the caller.
+    pub fn into_inner(self) -> P {
+        self.inner
     }
 
     /// Run the fallback algorithm with the data request using the inner data provider.
