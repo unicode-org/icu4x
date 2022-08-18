@@ -117,7 +117,7 @@ use icu_provider_adapters::fallback::LocaleFallbackProvider;
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
-pub fn unstable() -> LocaleFallbackProvider<baked::BakedDataProvider> {
+pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
     LocaleFallbackProvider::try_new_unstable(unstable_no_fallback()).unwrap()
@@ -128,8 +128,8 @@ pub fn unstable() -> LocaleFallbackProvider<baked::BakedDataProvider> {
 /// The return type of this method is not considered stable, mirroring the unstable trait
 /// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
 /// these are guaranteed to match.
-pub fn unstable_no_fallback() -> baked::BakedDataProvider {
-    baked::BakedDataProvider
+pub fn unstable_no_fallback() -> UnstableDataProvider {
+    UnstableDataProvider
 }
 
 /// An [`AnyProvider`] backed by baked data.
@@ -141,7 +141,7 @@ pub fn any() -> impl AnyProvider {
 
 /// An [`AnyProvider`] backed by baked data.
 pub fn any_no_fallback() -> impl AnyProvider {
-    baked::BakedDataProvider
+    UnstableDataProvider
 }
 
 /// A [`BufferProvider`] backed by a Postcard blob.
@@ -187,6 +187,9 @@ pub fn small_buffer() -> impl BufferProvider {
     }
     *SMALLER_POSTCARD
 }
+
+#[doc(hidden)]
+pub use baked::BakedDataProvider as UnstableDataProvider;
 
 mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));

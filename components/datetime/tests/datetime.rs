@@ -173,9 +173,9 @@ fn assert_fixture_element<A>(
     A::Calendar: CldrCalendar,
     A::Calendar: IncludedInAnyCalendar,
     // Bounds for testdata to support the calendar
-    icu_testdata::baked::BakedDataProvider:
+    icu_testdata::UnstableDataProvider:
         DataProvider<<A::Calendar as CldrCalendar>::DateSymbolsV1Marker>,
-    icu_testdata::baked::BakedDataProvider:
+    icu_testdata::UnstableDataProvider:
         DataProvider<<A::Calendar as CldrCalendar>::DateLengthsV1Marker>,
 {
     let any_input = input_value.to_any();
