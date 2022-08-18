@@ -100,6 +100,7 @@ pub mod ffi {
             ) -> Result<maps::CodePointMapData<P>, PropertiesError>,
         {
             let provider = provider.0.as_deserializing();
+            #[allow(clippy::expect_used)] // infallible
             f(&provider)
                 .map(|data| {
                     Box::new(ICU4XCodePointMapData8(
@@ -134,6 +135,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData16>, ICU4XError> {
             let provider = provider.0.as_deserializing();
+            #[allow(clippy::expect_used)] // infallible
             maps::load_script(&provider)
                 .map(|data| {
                     Box::new(ICU4XCodePointMapData16(
