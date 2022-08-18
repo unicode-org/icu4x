@@ -17,7 +17,7 @@
 //! [`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopic`].
 //!
 //! Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
-//! 
+//!
 //! Some of the algorithms implemented here are based on
 //! Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
 //! with associated Lisp code found at <https://github.com/EdReingold/calendar-code2>.
