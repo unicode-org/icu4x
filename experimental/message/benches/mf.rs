@@ -48,17 +48,25 @@ fn overview_bench(c: &mut Criterion) {
 }
 
 fn compare_bench(c: &mut Criterion) {
-    let mut messages = vec![];
-
+    let mut sources = vec![];
     for i in 0..99 {
-        messages.push(format!("{{Value {i}}}"));
+        let source = format!("{{Value {i}}}");
+        sources.push(source);
     }
+
+    let messages: Vec<_> = sources
+        .iter()
+        .map(|s| {
+            let parser = Parser::new(s.as_str());
+            parser.parse().unwrap()
+        })
+        .collect();
 
     c.bench_function("message/format/compare/simple", |b| {
         let mf = MessageFormat::<&str>::new();
         b.iter(|| {
             for msg in &messages {
-                let _ = mf.format_from_source::<&str, &str>(black_box(msg), None);
+                let _ = mf.format_to_string::<_, &str>(black_box(msg), None);
             }
         })
     });
