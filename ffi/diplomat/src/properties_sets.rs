@@ -14,6 +14,8 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
     #[diplomat::rust_link(icu::properties, Mod)]
+    #[diplomat::rust_link(icu::properties::sets::CodePointSetData, Struct)]
+    #[diplomat::rust_link(icu::properties::sets::CodePointSetDataBorrowed, Struct)]
     pub struct ICU4XCodePointSetData(sets::CodePointSetData);
 
     impl ICU4XCodePointSetData {
@@ -31,10 +33,7 @@ pub mod ffi {
         }
 
         /// Checks whether the code point is in the set.
-        #[diplomat::rust_link(
-            icu::collections::codepointinvlist::CodePointSet::contains,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::properties::sets::CodePointSetDataBorrowed::contains, FnInStruct)]
         pub fn contains(&self, cp: char) -> bool {
             self.0.as_borrowed().contains(cp)
         }
