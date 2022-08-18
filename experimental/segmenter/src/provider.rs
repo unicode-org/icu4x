@@ -42,9 +42,18 @@ pub struct RuleBreakDataV1<'data> {
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
     pub property_count: u8,
 
+    /// The index of the last simple state for [`Self::break_state_table`]. (A simple state has no
+    /// `left` nor `right` in SegmenterProperty).
     pub last_codepoint_property: i8,
+
+    /// The index of SOT (start of text) state for [`Self::break_state_table`].
     pub sot_property: u8,
+
+    /// The index of EOT (end of text) state [`Self::break_state_table`].
     pub eot_property: u8,
+
+    /// The index of "SA" state (or 127 if the complex language isn't handled) for
+    /// [`Self::break_state_table`].
     pub complex_property: u8,
 }
 
@@ -97,15 +106,17 @@ pub struct UCharDictionaryBreakDataV1<'data> {
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
 pub struct LstmMatrix<'data> {
+    #[allow(missing_docs)]
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dim: ZeroVec<'data, i16>,
+    #[allow(missing_docs)]
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub data: ZeroVec<'data, f32>,
 }
 
 #[cfg(feature = "lstm")]
 impl<'data> LstmMatrix<'data> {
-    pub fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
+    pub(crate) fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
         if self.dim.len() == 1 {
             Ok(Array::from_vec(self.data.to_vec()))
         } else {
@@ -113,7 +124,7 @@ impl<'data> LstmMatrix<'data> {
         }
     }
 
-    pub fn as_ndarray2(&self) -> Result<Array2<f32>, Error> {
+    pub(crate) fn as_ndarray2(&self) -> Result<Array2<f32>, Error> {
         if self.dim.len() == 2 {
             Array::from_shape_vec(
                 (
