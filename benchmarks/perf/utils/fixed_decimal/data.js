@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660838994693,
+  "lastUpdate": 1660839773567,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -45629,6 +45629,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 105,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "610bca6e0fcee4f48f831c859ed44bba32cac881",
+          "message": "Adding metacrate support to databake (#2380)",
+          "timestamp": "2022-08-18T18:09:16+02:00",
+          "tree_id": "203f5242f728091a046079b0525fe442cf651622",
+          "url": "https://github.com/unicode-org/icu4x/commit/610bca6e0fcee4f48f831c859ed44bba32cac881"
+        },
+        "date": 1660839726930,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105253,
+            "range": "± 372",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21341,
+            "range": "± 908",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66184,
+            "range": "± 827",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 171,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 70,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
