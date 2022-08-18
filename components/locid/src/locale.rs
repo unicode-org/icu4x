@@ -91,12 +91,12 @@ fn test_sizes() {
     assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
 
     assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 48);
     assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
     assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
-    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 168);
+    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 192);
 
-    assert_eq!(core::mem::size_of::<Locale>(), 216);
+    assert_eq!(core::mem::size_of::<Locale>(), 240);
 }
 
 impl Locale {

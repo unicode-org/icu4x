@@ -15,8 +15,8 @@ fn check_equivalence<'a, K, V, S0, S1>(mut a: S0, mut b: S1)
 where
     K: Ord + Debug + PartialEq + 'a,
     V: Debug + PartialEq + 'a,
-    S0: StoreIterableMut<'a, K, V>,
-    S1: StoreIterableMut<'a, K, V>,
+    S0: StoreMut<K, V> + StoreIterable<'a, K, V>,
+    S1: StoreMut<K, V> + StoreIterable<'a, K, V>,
 {
     let len = a.lm_len();
     assert_eq!(len, b.lm_len());
@@ -44,6 +44,17 @@ where
     assert!(a.lm_get(len).is_none());
     assert!(b.lm_get(len).is_none());
     assert_eq!(a.lm_last(), b.lm_last());
+}
+
+// Test code
+#[allow(clippy::expect_used)]
+fn check_into_iter_equivalence<'a, K, V, S0, S1>(a: S0, b: S1)
+where
+    K: Ord + Debug + PartialEq + 'a,
+    V: Debug + PartialEq + 'a,
+    S0: StoreIterableMut<'a, K, V>,
+    S1: StoreIterableMut<'a, K, V>,
+{
     let a_vec = a.lm_into_iter().collect::<Vec<_>>();
     let b_vec = b.lm_into_iter().collect::<Vec<_>>();
     assert_eq!(a_vec, b_vec);
@@ -106,14 +117,63 @@ where
     assert_eq!(20, map.len());
 }
 
-/// Tests that the given litemap instance has behavior consistent with the reference impl.
+/// Tests that a litemap that uses the given store as backend has behavior consistent with the
+/// reference impl.
 ///
-/// Call this function in a test and pass it an empty instance of a `LiteMap` with a custom store.
+/// Call this function in a test with the store impl to test as a valid backend for LiteMap.
 // Test code
 #[allow(clippy::expect_used)]
-pub fn check_litemap<'a, S>(mut litemap_test: LiteMap<u32, u64, S>)
+pub fn check_store<'a, S>()
 where
-    S: StoreMut<u32, u64>
+    S: StoreConstEmpty<u32, u64>
+        + StoreMut<u32, u64>
+        + StoreIterable<'a, u32, u64>
+        + StoreFromIterator<u32, u64>
+        + Clone
+        + Debug
+        + PartialEq
+        + 'a,
+{
+    let mut litemap_test: LiteMap<u32, u64, S> = LiteMap::new();
+    assert!(litemap_test.is_empty());
+    let mut litemap_std = LiteMap::<u32, u64>::new();
+    populate_litemap(&mut litemap_test);
+    populate_litemap(&mut litemap_std);
+    check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+
+    litemap_test.retain(|_, v| v % 2 == 0);
+    litemap_std.retain(|_, v| v % 2 == 0);
+    assert_eq!(11, litemap_test.len());
+    assert_eq!(11, litemap_std.len());
+    check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+
+    litemap_test
+        .remove(&175)
+        .ok_or(())
+        .expect_err("does not exist");
+    litemap_test.remove(&147).ok_or(()).expect("exists");
+    litemap_std
+        .remove(&175)
+        .ok_or(())
+        .expect_err("does not exist");
+    litemap_std.remove(&147).ok_or(()).expect("exists");
+
+    assert_eq!(10, litemap_test.len());
+    assert_eq!(10, litemap_std.len());
+    check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+
+    litemap_test.clear();
+    litemap_std.clear();
+    check_equivalence(litemap_test.values, litemap_std.values);
+}
+
+/// Similar to [`check_store`] function, but also checks the validitiy of [`StoreIterableMut`]
+/// trait.
+// Test code
+#[allow(clippy::expect_used)]
+pub fn check_store_full<'a, S>()
+where
+    S: StoreConstEmpty<u32, u64>
         + StoreIterableMut<'a, u32, u64>
         + StoreFromIterator<u32, u64>
         + Clone
@@ -121,11 +181,13 @@ where
         + PartialEq
         + 'a,
 {
+    let mut litemap_test: LiteMap<u32, u64, S> = LiteMap::new();
     assert!(litemap_test.is_empty());
     let mut litemap_std = LiteMap::<u32, u64>::new();
     populate_litemap(&mut litemap_test);
     populate_litemap(&mut litemap_std);
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
     let extras_test = litemap_test.clone();
     let extras_test = litemap_test
@@ -134,12 +196,14 @@ where
     assert_eq!(extras_test, litemap_test);
     let extras_std = litemap_std.clone();
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
     litemap_test.retain(|_, v| v % 2 == 0);
     litemap_std.retain(|_, v| v % 2 == 0);
     assert_eq!(11, litemap_test.len());
     assert_eq!(11, litemap_std.len());
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
     let extras_test = litemap_test
         .extend_from_litemap(extras_test)
@@ -152,6 +216,7 @@ where
     assert_eq!(20, litemap_test.len());
     assert_eq!(20, litemap_std.len());
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
     litemap_test
         .remove(&175)
@@ -166,8 +231,10 @@ where
     assert_eq!(19, litemap_test.len());
     assert_eq!(19, litemap_std.len());
     check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_into_iter_equivalence(litemap_test.clone().values, litemap_std.clone().values);
 
     litemap_test.clear();
     litemap_std.clear();
-    check_equivalence(litemap_test.values, litemap_std.values);
+    check_equivalence(litemap_test.clone().values, litemap_std.clone().values);
+    check_into_iter_equivalence(litemap_test.values, litemap_std.values);
 }

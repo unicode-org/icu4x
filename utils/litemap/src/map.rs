@@ -25,8 +25,8 @@ pub struct LiteMap<K: ?Sized, V: ?Sized, S = alloc::vec::Vec<(K, V)>> {
 }
 
 impl<K, V> LiteMap<K, V> {
-    /// Construct a new [`LiteMap`]
-    pub const fn new() -> Self {
+    /// Construct a new [`LiteMap`] backed by Vec
+    pub const fn new_vec() -> Self {
         Self {
             values: alloc::vec::Vec::new(),
             _key_type: PhantomData,
@@ -73,6 +73,20 @@ impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
 
 impl<K: ?Sized, V: ?Sized, S> LiteMap<K, V, S>
 where
+    S: StoreConstEmpty<K, V>,
+{
+    /// Create a new empty [`LiteMap`]
+    pub const fn new() -> Self {
+        Self {
+            values: S::EMPTY,
+            _key_type: PhantomData,
+            _value_type: PhantomData,
+        }
+    }
+}
+
+impl<K: ?Sized, V: ?Sized, S> LiteMap<K, V, S>
+where
     S: Store<K, V>,
 {
     /// The number of elements in the [`LiteMap`]
@@ -104,7 +118,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// assert_eq!(map.get(&1), Some(&"one"));
@@ -133,7 +147,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// assert_eq!(map.contains_key(&1), true);
@@ -154,7 +168,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// assert!(map.try_append(1, "uno").is_none());
     /// assert!(map.try_append(3, "tres").is_none());
     ///
@@ -172,7 +186,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// assert!(map.try_append(1, "uno").is_none());
     /// assert!(map.try_append(3, "tres").is_none());
     ///
@@ -239,7 +253,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// if let Some(mut v) = map.get_mut(&1) {
@@ -265,7 +279,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// assert!(map.try_append(1, "uno").is_none());
     /// assert!(map.try_append(3, "tres").is_none());
     ///
@@ -304,7 +318,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// assert_eq!(map.get(&1), Some(&"one"));
@@ -340,7 +354,7 @@ where
     /// ```
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// map.insert(1, "one");
     /// map.insert(3, "three");
     ///
@@ -367,7 +381,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// assert_eq!(map.remove(&1), Some("one"));
@@ -403,11 +417,11 @@ where
     /// ```
     /// use litemap::LiteMap;
     ///
-    /// let mut map1 = LiteMap::new();
+    /// let mut map1 = LiteMap::new_vec();
     /// map1.insert(1, "one");
     /// map1.insert(2, "two");
     ///
-    /// let mut map2 = LiteMap::new();
+    /// let mut map2 = LiteMap::new_vec();
     /// map2.insert(2, "TWO");
     /// map2.insert(4, "FOUR");
     ///
@@ -559,7 +573,7 @@ where
     /// ```rust
     /// use litemap::LiteMap;
     ///
-    /// let mut map = LiteMap::new();
+    /// let mut map = LiteMap::new_vec();
     /// map.insert(1, "one");
     /// map.insert(2, "two");
     /// map.insert(3, "three");
