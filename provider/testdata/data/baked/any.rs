@@ -80,16 +80,12 @@ impl AnyProvider for BakedDataProvider {
             ::icu_locid_transform::provider::AliasesV1Marker::KEY.get_hash();
         const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.get_hash();
-        const CANONICALCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY.get_hash();
         const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.get_hash();
         const CANONICALDECOMPOSITIONDATAV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY.get_hash();
         const CANONICALDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY.get_hash();
-        const COMPATIBILITYCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY.get_hash();
         const COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY
                 .get_hash();
@@ -97,8 +93,6 @@ impl AnyProvider for BakedDataProvider {
             ::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.get_hash();
         const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.get_hash();
-        const UTS46COMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY.get_hash();
         const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY.get_hash();
         const CARDINALV1MARKER: ::icu_provider::DataKeyHash =
@@ -370,9 +364,6 @@ impl AnyProvider for BakedDataProvider {
                 LIKELYSUBTAGSV1MARKER => locid_transform::likelysubtags_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                CANONICALCOMPOSITIONPASSTHROUGHV1MARKER => normalizer::nfc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .map(AnyPayload::from_static_ref),
                 CANONICALCOMPOSITIONSV1MARKER => normalizer::comp_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
@@ -382,9 +373,6 @@ impl AnyProvider for BakedDataProvider {
                 CANONICALDECOMPOSITIONTABLESV1MARKER => normalizer::nfdex_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                COMPATIBILITYCOMPOSITIONPASSTHROUGHV1MARKER => normalizer::nfkc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .map(AnyPayload::from_static_ref),
                 COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::nfkd_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
@@ -392,9 +380,6 @@ impl AnyProvider for BakedDataProvider {
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::decomp_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .map(AnyPayload::from_static_ref),
-                UTS46COMPOSITIONPASSTHROUGHV1MARKER => normalizer::uts46_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 UTS46DECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::uts46d_v1::DATA
