@@ -77,13 +77,21 @@ use core::fmt;
 /// ```
 #[non_exhaustive]
 pub enum AnyCalendar {
+    /// A [`Gregorian`] calendar
     Gregorian(Gregorian),
+    /// A [`Buddhist`] calendar
     Buddhist(Buddhist),
+    /// A [`Japanese`] calendar
     Japanese(Japanese),
+    /// A [`JapaneseExtended`] calendar
     JapaneseExtended(JapaneseExtended),
+    /// An [`Ethiopic`] calendar
     Ethiopic(Ethiopic),
+    /// An [`Indian`] calendar
     Indian(Indian),
+    /// A [`Coptic`] calendar
     Coptic(Coptic),
+    /// An [`Iso`] calendar
     Iso(Iso),
 }
 
@@ -91,13 +99,21 @@ pub enum AnyCalendar {
 #[derive(Clone, PartialEq, Eq, Debug)]
 #[non_exhaustive]
 pub enum AnyDateInner {
+    /// A date for a [`Gregorian`] calendar
     Gregorian(<Gregorian as Calendar>::DateInner),
+    /// A date for a [`Buddhist`] calendar
     Buddhist(<Buddhist as Calendar>::DateInner),
+    /// A date for a [`Japanese`] calendar
     Japanese(<Japanese as Calendar>::DateInner),
+    /// A date for a [`JapaneseExtended`] calendar
     JapaneseExtended(<JapaneseExtended as Calendar>::DateInner),
+    /// A date for an [`Ethiopic`] calendar
     Ethiopic(<Ethiopic as Calendar>::DateInner),
+    /// A date for an [`Indian`] calendar
     Indian(<Indian as Calendar>::DateInner),
+    /// A date for a [`Coptic`] calendar
     Coptic(<Coptic as Calendar>::DateInner),
+    /// A date for an [`Iso`] calendar
     Iso(<Iso as Calendar>::DateInner),
 }
 
@@ -506,6 +522,7 @@ impl AnyCalendar {
         }
     }
 
+    /// The [`AnyCalendarKind`] corresponding to the calendar this contains
     pub fn kind(&self) -> AnyCalendarKind {
         match *self {
             Self::Gregorian(_) => AnyCalendarKind::Gregorian,
@@ -570,16 +587,24 @@ impl AnyDateInner {
 #[non_exhaustive]
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash, Debug)]
 pub enum AnyCalendarKind {
+    /// The kind of a [`Gregorian`] calendar
     Gregorian,
+    /// The kind of a [`Buddhist`] calendar
     Buddhist,
+    /// The kind of a [`Japanese`] calendar
     Japanese,
+    /// The kind of a [`JapaneseExtended`] calendar
     JapaneseExtended,
-    Indian,
-    Coptic,
-    Iso,
+    /// The kind of an [`Ethiopic`] calendar, with Amete Mihret era
     Ethiopic,
-    /// Ethiopic with Amete Alem era
+    /// The kind of an [`Ethiopic`] calendar, with Amete Alem era
     Ethioaa,
+    /// The kind of a [`Indian`] calendar
+    Indian,
+    /// The kind of a [`Coptic`] calendar
+    Coptic,
+    /// The kind of an [`Iso`] calendar
+    Iso,
 }
 
 impl AnyCalendarKind {
