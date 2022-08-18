@@ -205,7 +205,7 @@ macro_rules! langid {
 ///
 /// Locales with multiple keys are not supported
 /// ```compile_fail
-/// icu::locid::locale!("en-US-u-ca-buddhist-ca-japanese");
+/// icu::locid::locale!("th-TH-u-ca-buddhist-nu-thai");
 /// ```
 /// Use runtime parsing instead:
 /// ```
@@ -223,7 +223,7 @@ macro_rules! langid {
 ///
 /// Locales with single key but multiple types are not supported
 /// ```compile_fail
-/// icu::locid::locale!("en-US-u-ca-buddhist-japanese");
+/// icu::locid::locale!("en-US-u-ca-islamic-umalqura");
 /// ```
 /// Use runtime parsing instead:
 /// ```
