@@ -3,7 +3,9 @@
 
 .. cpp:class:: ICU4XCodePointMapData16
 
-    An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. For properties whose values fit into 16 bits.
+    An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+
+    For properties whose values fit into 16 bits.
 
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html>`__ for more information.
 
@@ -19,17 +21,77 @@
 
         Gets the value for a code point.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointtrie/struct.CodePointTrie.html#method.get_u32>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
 
-.. cpp:struct:: ICU4XCodePointMapData16Response
+.. cpp:class:: ICU4XCodePointMapData8
 
-    .. cpp:member:: std::optional<ICU4XCodePointMapData16> data
+    An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
 
-        The :cpp:class:`ICU4XCodePointMapData16`, if creation was successful.
+    For properties whose values fit into 8 bits.
+
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html>`__ for more information.
 
 
-    .. cpp:member:: bool success
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_general_category(const ICU4XDataProvider& provider)
 
-        Whether creating the :cpp:class:`ICU4XCodePointMapData16` was successful.
+        Gets a map for Unicode property General_Category from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_general_category.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_bidi_class(const ICU4XDataProvider& provider)
+
+        Gets a map for Unicode property Bidi_Class from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_bidi_class.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_east_asian_width(const ICU4XDataProvider& provider)
+
+        Gets a map for Unicode property East_Asian_Width from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_east_asian_width.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_line_break(const ICU4XDataProvider& provider)
+
+        Gets a map for Unicode property Line_Break from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_line_break.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_grapheme_cluster_break(const ICU4XDataProvider& provider)
+
+        Gets a map for Unicode property Grapheme_Cluster_Break from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_grapheme_cluster_break.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_word_break(const ICU4XDataProvider& provider)
+
+        Gets a map for Unicode property Word_Break from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_word_break.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_sentence_break(const ICU4XDataProvider& provider)
+
+        Gets a map for Unicode property Sentence_Break from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_canonical_combining_class(const ICU4XDataProvider& provider)
+
+        Gets a map for Unicode property Canonical_Combining_Class from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_canonical_combining_class.html>`__ for more information.
+
+
+    .. cpp:function:: uint8_t get(char32_t cp) const
+
+        Gets the value for a code point.
+
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
