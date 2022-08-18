@@ -660,11 +660,6 @@ impl AnyCalendarKind {
             AnyCalendarKind::Ethioaa => value!("ethioaa"),
         }
     }
-    /// Set the `u-ca` extension on a DataLocale to the calendar represented
-    /// by this type
-    pub fn set_on_data_locale(&self, l: &mut DataLocale) {
-        l.set_unicode_ext(key!("ca"), self.as_bcp47_value());
-    }
 
     /// Extract the calendar component from a [`Locale`]
     ///
