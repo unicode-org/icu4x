@@ -198,7 +198,7 @@ impl DateFormatter {
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
-        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, &locale)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, locale)?;
         let kind = calendar.kind();
 
         Ok(Self(
