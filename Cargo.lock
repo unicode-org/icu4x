@@ -1314,6 +1314,7 @@ name = "icu"
 version = "1.0.0-beta1"
 dependencies = [
  "icu_calendar",
+ "icu_casemapping",
  "icu_collator",
  "icu_collections",
  "icu_datetime",
