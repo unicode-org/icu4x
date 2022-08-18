@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660839808696,
+  "lastUpdate": 1660850135802,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -5495,6 +5495,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 54103667,
             "range": "± 893720",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "56eaf09d44be6b3684137ad624a11055e50bd73e",
+          "message": "Enable `locale` macro to support single unicode key value pair extension (#2382)",
+          "timestamp": "2022-08-18T12:02:33-07:00",
+          "tree_id": "01703bd5d752c662aec4a5683c0db35ee4b1815e",
+          "url": "https://github.com/unicode-org/icu4x/commit/56eaf09d44be6b3684137ad624a11055e50bd73e"
+        },
+        "date": 1660850084681,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 937,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 675,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 831,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 866,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 1196,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1318,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 696,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 822,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 854,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 803,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 1325,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 54747637,
+            "range": "± 780312",
             "unit": "ns/iter"
           },
           {
