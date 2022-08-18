@@ -87,14 +87,14 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::{Locale, locale};
+    /// use icu::locid::locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
-    /// let locale: Locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
     ///     &provider,
@@ -260,14 +260,14 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::{Locale, locale};
+    /// use icu::locid::locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_baked_provider();
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
-    /// let locale: Locale = locale!("en-u-ca-gregory");
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
     ///     &provider,
@@ -316,14 +316,14 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::options::length;
     /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::{Locale, locale};
+    /// use icu::locid::locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
-    /// let locale: Locale = locale!("en");
+    /// let locale = locale!("en");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
     ///     &provider,

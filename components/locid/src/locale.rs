@@ -204,24 +204,24 @@ impl Locale {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{Locale, locale};
+    /// use icu::locid::locale;
     /// use std::cmp::Ordering;
     ///
     /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
     ///
-    /// let loc: Locale = locale!("ca-ES-valencia-u-ca-hebrew");
+    /// let loc = locale!("ca-ES-valencia-u-ca-hebrew");
     /// assert_eq!(
     ///     Ordering::Equal,
     ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
     /// );
     ///
-    /// let loc: Locale = locale!("ca-ES-valencia");
+    /// let loc = locale!("ca-ES-valencia");
     /// assert_eq!(
     ///     Ordering::Less,
     ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
     /// );
     ///
-    /// let loc: Locale = locale!("ca-ES-valencia-u-nu-arab");
+    /// let loc = locale!("ca-ES-valencia-u-nu-arab");
     /// assert_eq!(
     ///     Ordering::Greater,
     ///     loc.strict_cmp_iter(subtags.iter().copied()).end()

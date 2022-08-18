@@ -328,7 +328,7 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::{Locale, locale};
+    /// use icu::locid::locale;
     /// use icu::locid::extensions::unicode::Keywords;
     /// use std::cmp::Ordering;
     ///
