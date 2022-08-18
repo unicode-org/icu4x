@@ -198,13 +198,8 @@ impl DateFormatter {
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
-        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
-        // separately into the raw formatter.
-        let mut locale_with_cal = locale.clone();
-
-        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, &locale_with_cal)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, &locale)?;
         let kind = calendar.kind();
-        kind.set_on_data_locale(&mut locale_with_cal);
 
         Ok(Self(
             raw::DateFormatter::try_new(
