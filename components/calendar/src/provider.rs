@@ -30,11 +30,16 @@ use zerovec::ZeroVec;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct EraStartDate {
+    /// The year the era started in
     pub year: i32,
+    /// The month the era started in
     pub month: u8,
+    /// The day the era started in
     pub day: u8,
 }
 
+/// A data structure containing the necessary era data for constructing a
+/// [`Japanese`](crate::japanese::Japanese) calendar object
 #[icu_provider::data_struct(
     marker(JapaneseErasV1Marker, "calendar/japanese@1"),
     marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1")
@@ -47,6 +52,7 @@ pub struct EraStartDate {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
+    /// A map from era start dates to their era codes
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
