@@ -120,15 +120,12 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
-        // separately into the raw formatter.
-        let mut locale_with_cal = locale.clone();
-
-        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
+        calendar::check_locale::<C>(locale)?;
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
-            &locale_with_cal,
+            locale,
+            &C::DEFAULT_BCP_47_IDENTIFIER,
             &date_time_format_options,
         )?;
         Ok(Self(
@@ -136,7 +133,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
                 provider,
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
-                locale_with_cal,
+                locale,
                 time_zone_format_options,
             )?,
             PhantomData,
@@ -169,15 +166,11 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
-        // separately into the raw formatter.
-        let mut locale_with_cal = locale.clone();
-
-        calendar::potentially_fixup_calendar::<C>(&mut locale_with_cal)?;
+        calendar::check_locale::<C>(locale)?;
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
-            &locale_with_cal,
+            locale,
             &date_time_format_options,
         )?;
         Ok(Self(
@@ -185,7 +178,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
                 provider,
                 patterns,
                 || calendar::load_symbols_for_cldr_calendar::<C, _>(provider, locale),
-                locale_with_cal,
+                locale,
                 time_zone_format_options,
             )?,
             PhantomData,
