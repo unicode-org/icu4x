@@ -259,7 +259,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     }
                     recurse(item, external_crate, types, path, true, None);
                 } else {
-                    unreachable!("id should be in either index or paths")
+                    eprintln!("{:?} should be in either index or paths", path);
                 }
             }
             _ => {
