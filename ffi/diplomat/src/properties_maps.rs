@@ -16,13 +16,6 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties, Mod)]
     pub struct ICU4XCodePointMapData16(maps::CodePointMapData<u16>);
 
-    pub struct ICU4XCodePointMapData16Response {
-        /// The [`ICU4XCodePointMapData16`], if creation was successful.
-        pub data: Option<Box<ICU4XCodePointMapData16>>,
-        /// Whether creating the [`ICU4XCodePointMapData16`] was successful.
-        pub success: bool,
-    }
-
     impl ICU4XCodePointMapData16 {
         /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_script, Fn)]
