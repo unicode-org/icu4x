@@ -18,6 +18,8 @@ use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::{Era, MonthCode};
 use icu_provider::prelude::*;
+#[cfg(feature = "experimental")]
+use icu_locid::extensions::unicode::Value;
 
 type Result<T> = core::result::Result<T, DateTimeFormatterError>;
 
@@ -132,6 +134,8 @@ pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
     date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
     locale: &'a DataLocale,
+    #[cfg(feature = "experimental")]
+    cal_val: &'a Value,
 }
 
 impl<D> PatternSelector<'_, D>
@@ -153,8 +157,6 @@ where
         match options {
             DateTimeFormatterOptions::Length(bag) => selector
                 .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
-            #[cfg(feature = "experimental")]
-            DateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
         }
     }
 
@@ -224,12 +226,14 @@ where
         data_provider: &'a D,
         date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         locale: &'a DataLocale,
+        cal_val: &'a Value,
         options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
             data_provider,
             date_patterns_data,
             locale,
+            cal_val,
         };
         match options {
             DateTimeFormatterOptions::Length(bag) => selector
@@ -266,17 +270,13 @@ where
 
     #[cfg(feature = "experimental")]
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
-        use alloc::borrow::Cow;
         use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
-        let cal = self.locale.get_unicode_ext(&key!("ca"));
-        debug_assert!(cal.is_some());
+        let mut locale = self.locale.clone();
         // Skeleton data for ethioaa is stored under ethiopic
-        let locale = if cal == Some(value!("ethioaa")) {
-            let mut locale = self.locale.clone();
+        if self.cal_val == &value!("ethioaa") {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
-            Cow::Owned(locale)
         } else {
-            Cow::Borrowed(self.locale)
+            locale.set_unicode_ext(key!("ca"), self.cal_val.clone());
         };
         let data = self
             .data_provider

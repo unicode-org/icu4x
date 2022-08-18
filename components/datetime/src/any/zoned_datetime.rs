@@ -151,18 +151,14 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
-        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
-        // separately into the raw formatter.
-        let mut locale_with_cal = locale.clone();
-
-        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, &locale_with_cal)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
         let kind = calendar.kind();
-        kind.set_on_data_locale(&mut locale_with_cal);
 
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
-            &locale_with_cal,
+            locale,
+            &kind.as_bcp47_value(),
             &date_time_format_options,
         )?;
 
@@ -218,18 +214,13 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
     {
-        // TODO(#2188): Avoid cloning the DataLocale by passing the calendar
-        // separately into the raw formatter.
-        let mut locale_with_cal = locale.clone();
-
-        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, &locale_with_cal)?;
+        let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
         let kind = calendar.kind();
-        kind.set_on_data_locale(&mut locale_with_cal);
 
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
-            &locale_with_cal,
+            locale,
             &date_time_format_options,
         )?;
 
