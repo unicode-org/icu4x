@@ -188,7 +188,7 @@ pub fn small_buffer() -> impl BufferProvider {
     *SMALLER_POSTCARD
 }
 
-pub mod baked {
+mod baked {
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
     include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
 }
