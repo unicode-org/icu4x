@@ -9,7 +9,7 @@ use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
 use icu_calendar::{week_of, AsCalendar, Date, DateTime, Iso};
-use icu_timezone::{CustomTimeZone, GmtOffset, TimeVariant};
+use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
 pub use icu_calendar::types::{
@@ -88,7 +88,7 @@ pub trait TimeZoneInput {
     fn metazone_id(&self) -> Option<MetaZoneId>;
 
     /// The time variant (e.g. "daylight", "standard")
-    fn time_variant(&self) -> Option<TimeVariant>;
+    fn time_variant(&self) -> Option<ZoneVariant>;
 }
 
 /// A combination of a formattable calendar date and ISO time.
@@ -154,7 +154,7 @@ pub(crate) struct ExtractedTimeZoneInput {
     gmt_offset: Option<GmtOffset>,
     time_zone_id: Option<TimeZoneBcp47Id>,
     metazone_id: Option<MetaZoneId>,
-    time_variant: Option<TimeVariant>,
+    time_variant: Option<ZoneVariant>,
 }
 
 impl ExtractedDateTimeInput {
@@ -261,7 +261,7 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     fn metazone_id(&self) -> Option<MetaZoneId> {
         self.metazone_id
     }
-    fn time_variant(&self) -> Option<TimeVariant> {
+    fn time_variant(&self) -> Option<ZoneVariant> {
         self.time_variant
     }
 }
@@ -498,7 +498,7 @@ impl TimeZoneInput for CustomTimeZone {
         self.metazone_id
     }
 
-    fn time_variant(&self) -> Option<TimeVariant> {
+    fn time_variant(&self) -> Option<ZoneVariant> {
         self.time_variant
     }
 }

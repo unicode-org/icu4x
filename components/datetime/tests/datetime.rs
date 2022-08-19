@@ -37,7 +37,7 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByKeyProvider;
-use icu_timezone::{CustomTimeZone, TimeVariant};
+use icu_timezone::{CustomTimeZone, ZoneVariant};
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -322,7 +322,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let (input_date, mut time_zone) = parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.map(TimeVariant);
+        time_zone.time_variant = config.time_variant.map(ZoneVariant);
 
         let description = match fx.description {
             Some(description) => {
@@ -482,7 +482,7 @@ fn test_time_zone_format_configs() {
         let (_, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.take().map(TimeVariant);
+        time_zone.time_variant = config.time_variant.take().map(ZoneVariant);
         for TimeZoneExpectation {
             patterns: _,
             configs,
@@ -531,7 +531,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         None,
         Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
         Some(MetaZoneId(tinystr!(4, "ampa"))),
-        Some(TimeVariant::daylight()),
+        Some(ZoneVariant::daylight()),
     );
     let tzf = TimeZoneFormatter::try_from_config_unstable(
         &zone_provider,
@@ -590,7 +590,7 @@ fn test_time_zone_patterns() {
         let (datetime, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.take().map(TimeVariant);
+        time_zone.time_variant = config.time_variant.take().map(ZoneVariant);
 
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
