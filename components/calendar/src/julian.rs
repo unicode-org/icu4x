@@ -58,7 +58,7 @@ const JULIAN_EPOCH: i32 = -1;
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Julian;
 
-/// The inner date type used for representing [`Date`]s of [`Indian`]. See [`Date`] and [`Indian`] for more details.
+/// The inner date type used for representing [`Date`]s of [`Julian`]. See [`Date`] and [`Julian`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 // The inner date type used for representing Date<Julian>
 pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
