@@ -70,7 +70,7 @@ pub struct DataRequestMetadata;
 /// use icu_provider::DataLocale;
 ///
 /// let locale1 = locale!("en-u-ca-buddhist");
-/// let data_locale = DataLocale::from(&locale);
+/// let data_locale = DataLocale::from(&locale1);
 /// let locale2 = data_locale.into_locale();
 ///
 /// assert_eq!(locale1, locale2);
