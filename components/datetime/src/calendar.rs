@@ -78,11 +78,11 @@ impl CldrCalendar for Indian {
 }
 
 impl CldrCalendar for Ethiopian {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopian");
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
     type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
     type DateLengthsV1Marker = EthiopianDateLengthsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("ethiopian") || *value == value!("ethioaa")
+        *value == value!("ethiopic") || *value == value!("ethioaa")
     }
 }
 
@@ -195,7 +195,7 @@ where
                 .take_payload()?
                 .cast()
         }
-        AnyCalendarKind::Ethioaa => {
+        AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
@@ -265,7 +265,7 @@ where
                 .take_payload()?
                 .cast()
         }
-        AnyCalendarKind::Ethioaa => {
+        AnyCalendarKind::EthiopianAmeteAlem => {
             DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()

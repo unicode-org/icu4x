@@ -394,10 +394,10 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Ethiopian => {
-                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret))
-            }
-            AnyCalendarKind::Ethioaa => {
+            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
+                EthiopianEraStyle::AmeteMihret,
+            )),
+            AnyCalendarKind::EthiopianAmeteAlem => {
                 AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
             }
         })
@@ -433,10 +433,10 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Ethiopian => {
-                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret))
-            }
-            AnyCalendarKind::Ethioaa => {
+            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
+                EthiopianEraStyle::AmeteMihret,
+            )),
+            AnyCalendarKind::EthiopianAmeteAlem => {
                 AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
             }
         })
@@ -468,10 +468,10 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Ethiopian => {
-                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteMihret))
-            }
-            AnyCalendarKind::Ethioaa => {
+            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
+                EthiopianEraStyle::AmeteMihret,
+            )),
+            AnyCalendarKind::EthiopianAmeteAlem => {
                 AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
             }
         })
@@ -598,7 +598,7 @@ pub enum AnyCalendarKind {
     /// The kind of an [`Ethiopian`] calendar, with Amete Mihret era
     Ethiopian,
     /// The kind of an [`Ethiopian`] calendar, with Amete Alem era
-    Ethioaa,
+    EthiopianAmeteAlem,
     /// The kind of a [`Indian`] calendar
     Indian,
     /// The kind of a [`Coptic`] calendar
@@ -620,8 +620,8 @@ impl AnyCalendarKind {
             "indian" => AnyCalendarKind::Indian,
             "coptic" => AnyCalendarKind::Coptic,
             "iso" => AnyCalendarKind::Iso,
-            "ethiopian" => AnyCalendarKind::Ethiopian,
-            "ethioaa" => AnyCalendarKind::Ethioaa,
+            "ethiopic" => AnyCalendarKind::Ethiopian,
+            "ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
             _ => return None,
         })
     }
@@ -644,10 +644,10 @@ impl AnyCalendarKind {
             AnyCalendarKind::Coptic
         } else if *x == value!("iso") {
             AnyCalendarKind::Iso
-        } else if *x == value!("ethiopian") {
+        } else if *x == value!("ethiopic") {
             AnyCalendarKind::Ethiopian
         } else if *x == value!("ethioaa") {
-            AnyCalendarKind::Ethioaa
+            AnyCalendarKind::EthiopianAmeteAlem
         } else {
             let mut string = x.to_string();
             string.truncate(16);
@@ -666,8 +666,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Indian => "indian",
             AnyCalendarKind::Coptic => "coptic",
             AnyCalendarKind::Iso => "iso",
-            AnyCalendarKind::Ethiopian => "ethiopian",
-            AnyCalendarKind::Ethioaa => "ethioaa",
+            AnyCalendarKind::Ethiopian => "ethiopic",
+            AnyCalendarKind::EthiopianAmeteAlem => "ethioaa",
         }
     }
 
@@ -681,8 +681,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Indian => value!("indian"),
             AnyCalendarKind::Coptic => value!("coptic"),
             AnyCalendarKind::Iso => value!("iso"),
-            AnyCalendarKind::Ethiopian => value!("ethiopian"),
-            AnyCalendarKind::Ethioaa => value!("ethioaa"),
+            AnyCalendarKind::Ethiopian => value!("ethiopic"),
+            AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
         }
     }
 
@@ -947,9 +947,11 @@ mod tests {
         let ethiopian =
             AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethiopian)
                 .expect("Calendar construction must succeed");
-        let ethioaa =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethioaa)
-                .expect("Calendar construction must succeed");
+        let ethioaa = AnyCalendar::try_new_with_buffer_provider(
+            &provider,
+            AnyCalendarKind::EthiopianAmeteAlem,
+        )
+        .expect("Calendar construction must succeed");
         let gregorian =
             AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Gregorian)
                 .expect("Calendar construction must succeed");

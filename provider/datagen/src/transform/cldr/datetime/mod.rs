@@ -27,7 +27,7 @@ lazy_static! {
         (value!("japanext"), "japanese"),
         (value!("coptic"), "coptic"),
         (value!("indian"), "indian"),
-        (value!("ethiopian"), "ethiopian"),
+        (value!("ethiopic"), "ethiopic"),
     ]
     .into_iter()
     .collect();
@@ -76,39 +76,39 @@ macro_rules! impl_data_provider {
                 // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
                 // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
                 // ethiopian.
-                if calendar == value!("ethiopian") {
+                if calendar == value!("ethiopic") {
                     let ethioaa: &cldr_serde::ca::Resource = self
                         .source
                         .cldr()?
-                        .dates("ethiopian")
-                        .read_and_parse(&langid, "ca-ethiopian-amete-alem.json")?;
+                        .dates("ethiopic")
+                        .read_and_parse(&langid, "ca-ethiopic-amete-alem.json")?;
 
                     let ethioaa_data = ethioaa
                         .main
                         .0
                         .get(&langid)
-                        .expect("CLDR ca-ethiopian-amete-alem.json contains the expected language")
+                        .expect("CLDR ca-ethiopic-amete-alem.json contains the expected language")
                         .dates
                         .calendars
-                        .get("ethiopian-amete-alem")
-                        .expect("CLDR ca-ethiopian-amete-alem.json contains the expected calendar")
+                        .get("ethiopic-amete-alem")
+                        .expect("CLDR ca-ethiopic-amete-alem.json contains the expected calendar")
                         .clone();
 
                     let mundi_name = ethioaa_data
                         .eras
                         .names
                         .get("0")
-                        .expect("ethiopian-amete-alem calendar must have 0 era");
+                        .expect("ethiopic-amete-alem calendar must have 0 era");
                     let mundi_abbr = ethioaa_data
                         .eras
                         .abbr
                         .get("0")
-                        .expect("ethiopian-amete-alem calendar must have 0 era");
+                        .expect("ethiopic-amete-alem calendar must have 0 era");
                     let mundi_narrow = ethioaa_data
                         .eras
                         .narrow
                         .get("0")
-                        .expect("ethiopian-amete-alem calendar must have 0 era");
+                        .expect("ethiopic-amete-alem calendar must have 0 era");
 
                     data.eras.names.insert("2".to_string(), mundi_name.clone());
                     data.eras.abbr.insert("2".to_string(), mundi_abbr.clone());
@@ -306,7 +306,7 @@ impl_data_provider!(
 impl_data_provider!(
     EthiopianDateSymbolsV1Marker,
     symbols::convert_dates,
-    calendared = "ethiopian"
+    calendared = "ethiopic"
 );
 impl_data_provider!(
     TimeSymbolsV1Marker,
@@ -352,7 +352,7 @@ impl_data_provider!(
 impl_data_provider!(
     EthiopianDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
-    calendared = "ethiopian"
+    calendared = "ethiopic"
 );
 impl_data_provider!(
     TimeLengthsV1Marker,

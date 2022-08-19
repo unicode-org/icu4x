@@ -272,9 +272,9 @@ where
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
         use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
         let mut locale = self.locale.clone();
-        // Skeleton data for ethioaa is stored under ethiopian
+        // Skeleton data for ethioaa is stored under ethiopic
         if self.cal_val == &value!("ethioaa") {
-            locale.set_unicode_ext(key!("ca"), value!("ethiopian"));
+            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         } else {
             locale.set_unicode_ext(key!("ca"), self.cal_val.clone());
         };

@@ -203,7 +203,7 @@ impl Calendar for Ethiopian {
 
     fn any_calendar_kind(&self) -> Option<AnyCalendarKind> {
         if self.0 {
-            Some(AnyCalendarKind::Ethioaa)
+            Some(AnyCalendarKind::EthiopianAmeteAlem)
         } else {
             Some(AnyCalendarKind::Ethiopian)
         }
