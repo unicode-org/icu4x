@@ -119,6 +119,18 @@ impl SupplementPayloadHolder {
     }
 }
 
+/// Number of iterations allowed on the fast path before flushing.
+/// Since a typical UTF-16 iteration advances over a 2-byte BMP
+/// character, this means two memory pages.
+/// Intel Core i7-4770 had the best results between 2 and 4 pages
+/// when testing powers of two. Apple M1 didn't seem to care
+/// about 1, 2, 4, or 8 pages.
+///
+/// Curiously, the `str` case does not appear to benefit from
+/// similar flushing, though the tested monomorpization never
+/// pass an error through from `Write`.
+const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
+
 /// Marker for starters that decompose to themselves but may
 /// combine backwards under canonical composition.
 /// (Main trie only; not used in the supplementary trie.)
@@ -702,7 +714,11 @@ where
     }
 
     #[inline(never)]
-    fn attach_supplementary_trie_value(&self, c: char, supplementary: &CodePointTrie<u32>) -> Option<CharacterAndTrieValue> {
+    fn attach_supplementary_trie_value(
+        &self,
+        c: char,
+        supplementary: &CodePointTrie<u32>,
+    ) -> Option<CharacterAndTrieValue> {
         let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
         if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
             return Some(CharacterAndTrieValue::new(
@@ -1901,9 +1917,7 @@ impl DecomposingNormalizer {
             // too much, there is too much flushing overhead. If we flush too rarely,
             // the flush starts reading from too far behind compared to the hot
             // recently-read memory.
-            // Haswell min: 0b1000000000000usize (one page)
-            // Haswell max: 0b10000000000000usize (two pages)
-            let mut counter = 0b1000000000000usize;
+            let mut counter = UTF16_FAST_PATH_FLUSH_THRESHOLD;
             'fast: loop {
                 counter -= 1;
                 if let Some(&upcoming_code_unit) = code_unit_iter.next() {
@@ -2325,19 +2339,15 @@ impl ComposingNormalizer {
             let mut code_unit_iter = composition.decomposition.delegate.as_slice().iter();
             let mut upcoming32;
             // This is basically an `Option` discriminant for `undecomposed_starter`,
-            // but making it a boolean so that writes in the tightest loop are as
-            // simple as possible (and potentially as peel-hoistable as possible).
-            // Furthermore, this reduces `unwrap()` later.
+            // but making it a boolean so that writes to it are  are as
+            // simple as possible.
+            // Furthermore, this removes the need for `unwrap()` later.
             let mut undecomposed_starter_valid;
             // The purpose of the counter is to flush once in a while. If we flush
             // too much, there is too much flushing overhead. If we flush too rarely,
             // the flush starts reading from too far behind compared to the hot
             // recently-read memory.
-            // Haswell min: 0b1000000000000usize (one page)
-            // Haswell max: 0b10000000000000usize (two pages)
-            // Apple M1 seems indifferent to the two values that work for Haswell
-            // and also the adjacent powers of two.
-            let mut counter = 0b1000000000000usize;
+            let mut counter = UTF16_FAST_PATH_FLUSH_THRESHOLD;
             // The purpose of this trickiness is to avoid writing to
             // `undecomposed_starter_valid` from the tightest loop. Writing to it
             // from there destroys performance.
