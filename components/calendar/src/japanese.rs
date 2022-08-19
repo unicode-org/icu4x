@@ -58,6 +58,8 @@ use tinystr::{tinystr, TinyStr16};
 /// The months and days are identical to that of the Gregorian calendar, however the years are counted
 /// differently using the Japanese era system.
 ///
+/// This calendar only contains eras after Meiji, for all historical eras, check out [`JapaneseExtended`].
+///
 /// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
 ///
 /// [Japanese calendar]: https://en.wikipedia.org/wiki/Japanese_calendar

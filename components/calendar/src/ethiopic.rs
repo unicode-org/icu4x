@@ -62,7 +62,8 @@ pub enum EthiopicEraStyle {
 ///
 /// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
 ///
-/// It can be constructed in two modes: using the Amete Alem era scheme, or the Amete Mihret era scheme (the default)
+/// It can be constructed in two modes: using the Amete Alem era scheme, or the Amete Mihret era scheme (the default),
+/// see [`EthiopicEraStyle`] for more info.
 ///
 /// [Ethiopian calendar]: https://en.wikipedia.org/wiki/Ethiopian_calendar
 ///
