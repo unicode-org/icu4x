@@ -131,7 +131,7 @@ impl<'data> PluralPattern<'data> {
     }
 }
 
-/// Either a [`Pattern`] single pattern or a [`PluralPattern`] collection of 
+/// Either a [`Pattern`] single pattern or a [`PluralPattern`] collection of
 /// patterns when there are plural variants.
 ///
 /// Currently, the plural forms are only based on the week number.

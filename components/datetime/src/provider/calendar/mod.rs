@@ -140,7 +140,7 @@ pub mod patterns {
         pub short: GenericPattern<'data>,
     }
 
-    /// 
+    ///
     #[icu_provider::data_struct]
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]

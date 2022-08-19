@@ -13,7 +13,7 @@ use tinystr::{tinystr, TinyStr4};
 use zerovec::ZeroMap;
 
 /// Symbol data for the months, weekdays, and eras needed to format a date.
-/// 
+///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 #[icu_provider::data_struct(
     marker(GregorianDateSymbolsV1Marker, "datetime/gregory/datesymbols@1"),
@@ -45,7 +45,7 @@ pub struct DateSymbolsV1<'data> {
 }
 
 /// Symbol data for the day periods needed to format a time.
-/// 
+///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 pub(crate) struct ErasedDateSymbolsV1Marker;
 
@@ -69,7 +69,7 @@ pub struct TimeSymbolsV1<'data> {
 }
 
 /// String data for the name, abbrevation, and narrow form of a date's era.
-/// 
+///
 /// For more information on date time symbols, see [`FieldSymbol`](crate::fields::FieldSymbol).
 #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
@@ -91,12 +91,11 @@ pub struct Eras<'data> {
     pub narrow: ZeroMap<'data, str, str>,
 }
 
-
-// Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to 
+// Note: the SymbolsV* struct doc strings metadata are attached to `$name` in the macro invocation to
 // avoid macro parsing ambiguity caused by other metadata already attached to `$symbols`.
 macro_rules! symbols {
     ($(#[$symbols_attr:meta])*  $name: ident, $field_id: ident, $symbols: item) => {
-        
+
         $(#[$symbols_attr])*
         #[doc = concat!("Formatting symbols for [`",
                 stringify!($field_id),
@@ -128,7 +127,7 @@ macro_rules! symbols {
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
-            #[doc = concat!("Symbol data for the \"format\" style formatting of ", stringify!($field_id), 
+            #[doc = concat!("Symbol data for the \"format\" style formatting of ", stringify!($field_id),
                 ".\n\nThe format style is used in contexts where it is different from the stand-alone form, ex: ",
                 "a case inflected form where the stand-alone form is the nominative case.")]
             pub struct FormatWidthsV1<'data> {
@@ -155,7 +154,7 @@ macro_rules! symbols {
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
-            #[doc = concat!("Symbol data for the \"stand-alone\" style formatting of ", stringify!($field_id), 
+            #[doc = concat!("Symbol data for the \"stand-alone\" style formatting of ", stringify!($field_id),
                 ".\n\nThe stand-alone style is used in contexts where the field is displayed by itself.")]
             pub struct StandAloneWidthsV1<'data> {
                 #[doc = concat!("Abbreviated length symbol for \"stand-alone\" style symbol for ", stringify!($name), ".")]
@@ -180,7 +179,7 @@ macro_rules! symbols {
             )]
             #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
             #[yoke(prove_covariance_manually)]
-            #[doc = concat!("The struct containing the symbol data for ", stringify!($field_id), 
+            #[doc = concat!("The struct containing the symbol data for ", stringify!($field_id),
                 " that contains the \"format\" style symbol data ([`FormatWidthsV1`]) and \"stand-alone\" style symbol data ([`StandAloneWidthsV1`]).")]
             pub struct ContextsV1<'data> {
                 /// The symbol data for "format" style symbols.
