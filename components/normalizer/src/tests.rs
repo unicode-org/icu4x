@@ -1399,4 +1399,81 @@ fn test_is_normalized() {
     assert!(nfkd.is_normalized(aaa));
     assert!(nfc.is_normalized(aaa));
     assert!(nfkc.is_normalized(aaa));
+
+    assert!(nfd.is_normalized_utf8(aaa.as_bytes()));
+    assert!(nfkd.is_normalized_utf8(aaa.as_bytes()));
+    assert!(nfc.is_normalized_utf8(aaa.as_bytes()));
+    assert!(nfkc.is_normalized_utf8(aaa.as_bytes()));
+
+    let aaa16 = [0x0061u16, 0x0061u16, 0x0061u16].as_slice();
+    assert!(nfd.is_normalized_utf16(aaa16));
+    assert!(nfkd.is_normalized_utf16(aaa16));
+    assert!(nfc.is_normalized_utf16(aaa16));
+    assert!(nfkc.is_normalized_utf16(aaa16));
+
+    let affa = b"a\xFFa";
+    assert!(nfd.is_normalized_utf8(affa));
+    assert!(nfkd.is_normalized_utf8(affa));
+    assert!(nfc.is_normalized_utf8(affa));
+    assert!(nfkc.is_normalized_utf8(affa));
+
+    let a_surrogate_a = [0x0061u16, 0xD800u16, 0x0061u16].as_slice();
+    assert!(nfd.is_normalized_utf16(a_surrogate_a));
+    assert!(nfkd.is_normalized_utf16(a_surrogate_a));
+    assert!(nfc.is_normalized_utf16(a_surrogate_a));
+    assert!(nfkc.is_normalized_utf16(a_surrogate_a));
+
+    let note = "a𝅗\u{1D165}a";
+    assert!(nfd.is_normalized(note));
+    assert!(nfkd.is_normalized(note));
+    assert!(nfc.is_normalized(note));
+    assert!(nfkc.is_normalized(note));
+
+    assert!(nfd.is_normalized_utf8(note.as_bytes()));
+    assert!(nfkd.is_normalized_utf8(note.as_bytes()));
+    assert!(nfc.is_normalized_utf8(note.as_bytes()));
+    assert!(nfkc.is_normalized_utf8(note.as_bytes()));
+
+    let note16 = [
+        0x0061u16, 0xD834u16, 0xDD57u16, 0xD834u16, 0xDD65u16, 0x0061u16,
+    ]
+    .as_slice();
+    assert!(nfd.is_normalized_utf16(note16));
+    assert!(nfkd.is_normalized_utf16(note16));
+    assert!(nfc.is_normalized_utf16(note16));
+    assert!(nfkc.is_normalized_utf16(note16));
+
+    let umlaut = "aäa";
+    assert!(!nfd.is_normalized(umlaut));
+    assert!(!nfkd.is_normalized(umlaut));
+    assert!(nfc.is_normalized(umlaut));
+    assert!(nfkc.is_normalized(umlaut));
+
+    assert!(!nfd.is_normalized_utf8(umlaut.as_bytes()));
+    assert!(!nfkd.is_normalized_utf8(umlaut.as_bytes()));
+    assert!(nfc.is_normalized_utf8(umlaut.as_bytes()));
+    assert!(nfkc.is_normalized_utf8(umlaut.as_bytes()));
+
+    let umlaut16 = [0x0061u16, 0x00E4u16, 0x0061u16].as_slice();
+    assert!(!nfd.is_normalized_utf16(umlaut16));
+    assert!(!nfkd.is_normalized_utf16(umlaut16));
+    assert!(nfc.is_normalized_utf16(umlaut16));
+    assert!(nfkc.is_normalized_utf16(umlaut16));
+
+    let fraction = "a½a";
+    assert!(nfd.is_normalized(fraction));
+    assert!(!nfkd.is_normalized(fraction));
+    assert!(nfc.is_normalized(fraction));
+    assert!(!nfkc.is_normalized(fraction));
+
+    assert!(nfd.is_normalized_utf8(fraction.as_bytes()));
+    assert!(!nfkd.is_normalized_utf8(fraction.as_bytes()));
+    assert!(nfc.is_normalized_utf8(fraction.as_bytes()));
+    assert!(!nfkc.is_normalized_utf8(fraction.as_bytes()));
+
+    let fraction16 = [0x0061u16, 0x00BDu16, 0x0061u16].as_slice();
+    assert!(nfd.is_normalized_utf16(fraction16));
+    assert!(!nfkd.is_normalized_utf16(fraction16));
+    assert!(nfc.is_normalized_utf16(fraction16));
+    assert!(!nfkc.is_normalized_utf16(fraction16));
 }
