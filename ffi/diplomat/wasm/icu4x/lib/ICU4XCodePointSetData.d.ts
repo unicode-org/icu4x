@@ -24,7 +24,7 @@ export class ICU4XCodePointSetData {
 
    * Checks whether the code point is in the set.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointinvlist/struct.CodePointSet.html#method.contains Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains Rust documentation} for more information.
    */
   contains(cp: char): boolean;
 }
