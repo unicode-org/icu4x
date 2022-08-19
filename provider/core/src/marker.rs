@@ -10,7 +10,7 @@ use crate::yoke::Yokeable;
 /// Trait marker for data structs. All types delivered by the data provider must be associated with
 /// something implementing this trait.
 ///
-/// Structs implementing this trait are normally generated with the [`data_struct!`] macro.
+/// Structs implementing this trait are normally generated with the [`data_struct`] macro.
 ///
 /// By convention, the non-standard `Marker` suffix is used by types implementing DataMarker.
 ///
@@ -52,7 +52,7 @@ use crate::yoke::Yokeable;
 /// assert_eq!(payload.get().message, "Hello World");
 /// ```
 ///
-/// [`data_struct!`]: crate::data_struct
+/// [`data_struct`]: crate::data_struct
 pub trait DataMarker {
     /// A type that implements [`Yokeable`]. This should typically be the `'static` version of a
     /// data struct.
