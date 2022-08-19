@@ -693,24 +693,32 @@ where
     #[inline(always)]
     fn attach_trie_value(&self, c: char) -> CharacterAndTrieValue {
         if let Some(supplementary) = self.supplementary_trie {
-            let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
-            if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
-                return CharacterAndTrieValue::new(
-                    if voicing_mark == 0 {
-                        '\u{3099}'
-                    } else {
-                        '\u{309A}'
-                    },
-                    0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
-                );
-            }
-            let trie_value = supplementary.get(u32::from(c));
-            if trie_value != 0 {
-                return CharacterAndTrieValue::new_from_supplement(c, trie_value);
+            if let Some(value) = self.attach_supplementary_trie_value(c, supplementary) {
+                return value;
             }
         }
 
         CharacterAndTrieValue::new(c, self.trie.get(u32::from(c)))
+    }
+
+    #[inline(never)]
+    fn attach_supplementary_trie_value(&self, c: char, supplementary: &CodePointTrie<u32>) -> Option<CharacterAndTrieValue> {
+        let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
+        if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
+            return Some(CharacterAndTrieValue::new(
+                if voicing_mark == 0 {
+                    '\u{3099}'
+                } else {
+                    '\u{309A}'
+                },
+                0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
+            ));
+        }
+        let trie_value = supplementary.get(u32::from(c));
+        if trie_value != 0 {
+            return Some(CharacterAndTrieValue::new_from_supplement(c, trie_value));
+        }
+        None
     }
 
     fn delegate_next_no_pending(&mut self) -> Option<CharacterAndTrieValue> {
