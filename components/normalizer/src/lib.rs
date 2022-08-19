@@ -1889,8 +1889,12 @@ impl DecomposingNormalizer {
         as_slice,
         {
             let mut code_unit_iter = decomposition.delegate.as_slice().iter();
-            // Haswell min: 0b1000000000000usize
-            // Haswell max: 0b10000000000000usize
+            // The purpose of the counter is to flush once in a while. If we flush
+            // too much, there is too much flushing overhead. If we flush too rarely,
+            // the flush starts reading from too far behind compared to the hot
+            // recently-read memory.
+            // Haswell min: 0b1000000000000usize (one page)
+            // Haswell max: 0b10000000000000usize (two pages)
             let mut counter = 0b1000000000000usize;
             'fast: loop {
                 counter -= 1;
@@ -2317,14 +2321,16 @@ impl ComposingNormalizer {
             // simple as possible (and potentially as peel-hoistable as possible).
             // Furthermore, this reduces `unwrap()` later.
             let mut undecomposed_starter_valid;
-            // The pursose of the counter is to flush once in a while. If we flush
+            // The purpose of the counter is to flush once in a while. If we flush
             // too much, there is too much flushing overhead. If we flush too rarely,
             // the flush starts reading from too far behind compared to the hot
             // recently-read memory.
             // Haswell min: 0b1000000000000usize (one page)
             // Haswell max: 0b10000000000000usize (two pages)
+            // Apple M1 seems indifferent to the two values that work for Haswell
+            // and also the adjacent powers of two.
             let mut counter = 0b1000000000000usize;
-            // The purpose of this trickiness is to avoid writing to 
+            // The purpose of this trickiness is to avoid writing to
             // `undecomposed_starter_valid` from the tightest loop. Writing to it
             // from there destroys performance.
             let mut counter_reference = counter - 1;
@@ -2380,9 +2386,11 @@ impl ComposingNormalizer {
 
                         // Fast-track succeeded!
                         undecomposed_starter = upcoming_with_trie_value;
-                        // Logically, to get `undecomposed_starter_valid` set to true
-                        // we should do `counter_reference = counter - 1;` here.
-                        // However, doing so destroys performance.
+                        // Cause `undecomposed_starter_valid` to be set to true.
+                        // This regresses English performance on Haswell by 11%
+                        // compared to commenting out this assignment to
+                        // `counter_reference`.
+                        counter_reference = counter - 1;
                         continue 'fast;
                     }
                     // We need to fall off the fast path.
