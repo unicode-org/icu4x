@@ -196,14 +196,10 @@ icuexportdata_glob = [
     "collation/implicithan/zh_zhuyin_reord.toml",
     "norm/small/compositions.toml",
     "norm/small/decompositionex.toml",
-    "norm/small/nfc.toml",
     "norm/small/nfd.toml",
     "norm/small/nfdex.toml",
-    "norm/small/nfkc.toml",
     "norm/small/nfkd.toml",
     "norm/small/nfkdex.toml",
-    "norm/small/passthroughnop.toml",
-    "norm/small/uts46.toml",
     "norm/small/uts46d.toml",
     "ucase/small/ucase.toml",
     "uprops/small/AHex.toml",
@@ -267,7 +263,7 @@ icuexportdata_glob = [
     "uprops/small/XIDS.toml",
 ]
 
-icuexportdata_gitref = "icu4x/2022-07-25/71.x"
+icuexportdata_gitref = "icu4x/2022-08-17/71.x"
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
@@ -280,6 +276,7 @@ icu_provider = { version = "1.0.0-beta1", path = "../core" }
 icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters", optional = true }
 icu_provider_blob = { version = "1.0.0-beta1", path = "../blob", optional = true }
 icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", optional = true }
+lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
 
 # bin feature
 bytes = {version = "1.1.0", optional = true }
@@ -305,7 +302,7 @@ writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar", optional = true }
 icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", optional = true }
 icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", optional = true }
-icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", optional = true }
+icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", features = ["experimental"], optional = true }
 icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal", optional = true }
 icu_list = { version = "1.0.0-beta1", path = "../../components/list", optional = true }
 icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_transform", optional = true }
@@ -324,7 +321,8 @@ icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals" }
 
 [features]
 default = ["static"]
-# Enables programmatic access to this Cargo.toml file
+# Enables programmatic access to this Cargo.toml file.
+# If you want this to be made public stable, file an issue on the ICU4X repository.
 metadata = [
     "cargo_metadata",
     "icu_locid/serde",
@@ -334,14 +332,14 @@ metadata = [
     "writeable",
     "std"
 ]
-fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std"]
+fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std", "lazy_static"]
 static = [
     "icu_provider_blob",
     "icu_provider_adapters",
     "icu_provider_adapters/serde",
+    "lazy_static",
 ]
 baked = [
-    "icu_list",
     "icu_calendar",
     "icu_casemapping",
     "icu_collator",

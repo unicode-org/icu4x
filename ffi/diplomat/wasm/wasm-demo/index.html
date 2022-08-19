@@ -30,7 +30,19 @@
         </style>
     </head>
     <body>
+        <!-- With Webpack -->
         <script src='index.js'></script>
+        <!-- Without Webpack -->
+        <!--
+        <script type="importmap">
+            {
+                "imports": {
+                    "icu4x": "../icu4x/lib/index.js"
+                }
+            }
+        </script>
+        <script type="module" src='./dist/app.js'></script>
+        -->
 
         <div id="main" class="container">
 
@@ -128,13 +140,16 @@
                 <div class="tab-pane" id="pills-dtf" role="tabpanel" aria-labelledby="pills-dtf-tab" tabindex="0">
                     <div class="vstack gap-2">
                         Locale
+
                         <div class="btn-toolbar" role="toolbar" aria-label="DateTime Formatting options">
-                            <div class="btn-group" role="group" aria-label="DateTime Formatting Locale">
+                            <div class="btn-group me-2" role="group" aria-label="DateTime Formatting Locale">
                                 <input type="radio" class="btn-check" name="dtf-locale" id="dtf-locale-en" value="en" checked>
                                 <label class="btn btn-outline-primary" for="dtf-locale-en">en</label>
 
                                 <input type="radio" class="btn-check" name="dtf-locale" id="dtf-locale-bn" value="bn">
                                 <label class="btn btn-outline-primary" for="dtf-locale-bn">bn</label>
+                                <input type="radio" class="btn-check" name="dtf-locale" id="dtf-locale-ja" value="ja">
+                                <label class="btn btn-outline-primary" for="dtf-locale-ja">ja</label>
 
                                 <div class="input-group">
                                     <input type="radio" class="btn-check" name="dtf-locale" id="dtf-locale-other" value="other">
@@ -142,6 +157,22 @@
                                     <input type="text" id="dtf-locale-other-input" class="form-control" placeholder="Locale ID">
                                 </div>
                             </div>
+                            <div class="input-group" role="group" aria-label="DateTime Formatting Locale">
+                                  <div class="input-group-prepend">
+                                    <span class="input-group-text">Calendar</span>
+                                  </div>
+                                  <select name="dtf-calendar" class="form-select">
+                                      <option value="gregory" selected>Gregorian</option>
+                                      <option value="japanese">Japanese</option>
+                                      <option value="japanext">Japanese (historical eras)</option>
+                                      <option value="buddhist">Buddhist</option>
+                                      <option value="indian">Indian national</option>
+                                      <option value="coptic">Coptic</option>
+                                      <option value="ethiopic">Ethiopic</option>
+                                      <option value="from-locale">Use from locale</option>
+                                    </select>
+                            </div>
+
                         </div>
 
                         Date length
@@ -163,11 +194,12 @@
 
                         Time length
                         <div class="btn-toolbar" role="toolbar" aria-label="DateTime Formatting options">
-                            <div class="btn-group" role="group" aria-label="DateTime Formatting Locale">
-                                <input type="radio" class="btn-check" name="dtf-time-length" id="dtf-time-length-full" value="Full">
+                            <div class="btn-group" role="group" aria-label="DateTime Formatting Locale"
+                                 title="Demo doesn't currently support full/long time styles as they need timezone support, which is available in ICU4X but not this demo">
+                                <input type="radio" class="btn-check" name="dtf-time-length" id="dtf-time-length-full" value="Full" disabled>
                                 <label class="btn btn-outline-primary" for="dtf-time-length-full">Full</label>
 
-                                <input type="radio" class="btn-check" name="dtf-time-length" id="dtf-time-length-long" value="Long">
+                                <input type="radio" class="btn-check" name="dtf-time-length" id="dtf-time-length-long" value="Long" disabled>
                                 <label class="btn btn-outline-primary" for="dtf-time-length-long">Long</label>
 
                                 <input type="radio" class="btn-check" name="dtf-time-length" id="dtf-time-length-medium" value="Medium">

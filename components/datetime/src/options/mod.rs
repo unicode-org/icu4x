@@ -23,6 +23,7 @@
 //! At the moment only the [`length::Bag`] works, and we plan to extend that to support
 //! `ECMA402`-like components bag later.
 
+#[cfg(feature = "experimental_skeleton_matching")]
 pub mod components;
 pub mod length;
 pub mod preferences;
@@ -49,6 +50,9 @@ pub enum DateTimeFormatterOptions {
     /// Bag of lengths for date and time.
     Length(length::Bag),
     /// Bag of components describing which fields and how should be displayed.
+    ///
+    /// Enabled with the `"experimental"` feature. This option is subject to breaking changes.
+    #[cfg(feature = "experimental")]
     Components(components::Bag),
 }
 
@@ -64,6 +68,7 @@ impl From<length::Bag> for DateTimeFormatterOptions {
     }
 }
 
+#[cfg(feature = "experimental")]
 impl From<components::Bag> for DateTimeFormatterOptions {
     fn from(input: components::Bag) -> Self {
         Self::Components(input)

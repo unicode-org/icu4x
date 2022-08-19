@@ -672,7 +672,7 @@ impl Default for NonPrimary {
 /// trie lookups, we don't need `trie_value`, as it is implied
 /// by ccc.
 ///
-/// TODO: This struct carries redundant information, and
+/// TODO(#2386): This struct carries redundant information, and
 /// `upcoming` should be split into a buffer of `CharacterAndClass`
 ///  and an `Option<CharacterAndTrieValue>`, but that refactoring
 /// isn't 100% necessary, so focusing on data format stability

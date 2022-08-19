@@ -52,13 +52,12 @@ fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu = { path = "../icu", default-features = false, features = ["experimental"] }
+icu = { path = "../icu" }
 icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
-icu_testdata = { path = "../../provider/testdata", features = ["baked"] }
+icu_testdata = { path = "../../provider/testdata" }
 icu_calendar = { version = "1.0.0-beta1", path = "../calendar", features = ["serde"] }
-icu_datetime = { path = "../../components/datetime", features = ["datagen"] }
 
 serde = { version = "1.0", features = ["derive"] }
 serde_json = "1.0"
@@ -72,8 +71,12 @@ bench = false  # This option is required for Benchmark CI
 std = ["icu_provider/std", "icu_locid/std", "icu_calendar/std"]
 default = []
 bench = ["serde"]
+# experimental_skeleton_matching is the minimal set of skeleton features required for datagen.
+experimental_skeleton_matching = []
+# experimental is the full set of skeleton and component APIs.
+experimental = ["experimental_skeleton_matching"]
 serde = ["dep:serde", "litemap/serde", "zerovec/serde", "tinystr/serde", "smallvec/serde", "icu_calendar/serde", "icu_decimal/serde", "icu_provider/serde", "icu_plurals/serde", "icu_timezone/serde"]
-datagen = ["serde", "icu_calendar/datagen", "icu_timezone/datagen", "icu_provider/datagen", "std", "databake"]
+datagen = ["serde", "experimental_skeleton_matching", "icu_calendar/datagen", "icu_timezone/datagen", "icu_provider/datagen", "std", "databake"]
 
 [[bench]]
 name = "datetime"
@@ -88,6 +91,14 @@ required-features = ["bench"]
 [[test]]
 name = "datetime"
 required-features = ["serde"]
+
+[[test]]
+name = "resolved_components"
+required-features = ["experimental"]
+
+[[test]]
+name = "skeleton_serialization"
+required-features = ["experimental"]
 
 [[example]]
 name = "work_log"

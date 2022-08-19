@@ -8,6 +8,9 @@
 //! Applications should generally use the full normalizers that are
 //! provided at the top level of this crate. However, the APIs in this
 //! module are provided for callers such as HarfBuzz that specifically
+//! want access to the raw canonical composition operation e.g. for use in a
+//! glyph-availability-guided custom normalizer.
+
 use crate::char_from_u16;
 use crate::char_from_u24;
 use crate::error::NormalizerError;
@@ -372,7 +375,7 @@ impl CanonicalCombiningClassMap {
     }
 
     /// Look up the canonical combining class for a scalar value
-    /// represented as `u32`. If the argument is outside the scaler
+    /// represented as `u32`. If the argument is outside the scalar
     /// value range, `CanonicalCombiningClass::NotReordered` is returned.
     pub fn get_u32(&self, c: u32) -> CanonicalCombiningClass {
         let trie_value = self.decompositions.get().trie.get(c);

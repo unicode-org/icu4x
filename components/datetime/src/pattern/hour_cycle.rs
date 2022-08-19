@@ -4,7 +4,7 @@
 
 use super::{reference, runtime, PatternItem};
 use crate::{fields, options::preferences};
-#[cfg(feature = "datagen")]
+#[cfg(all(feature = "datagen"))]
 use crate::{provider, skeleton};
 use icu_provider::{yoke, zerofrom};
 
@@ -56,7 +56,7 @@ impl CoarseHourCycle {
     /// Invoke the pattern matching machinery to transform the hour cycle of a pattern. This provides
     /// a safe mapping from a h11/h12 to h23/h24 for transforms.
     #[doc(hidden)]
-    #[cfg(feature = "datagen")]
+    #[cfg(all(feature = "datagen"))]
     pub fn apply_on_pattern<'data>(
         &self,
         date_time: &provider::calendar::patterns::GenericLengthPatternsV1<'data>,

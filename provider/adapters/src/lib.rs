@@ -23,6 +23,7 @@
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 

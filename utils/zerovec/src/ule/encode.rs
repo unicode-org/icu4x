@@ -5,6 +5,7 @@
 use crate::ule::*;
 use crate::varzerovec::VarZeroVecFormat;
 use crate::{VarZeroSlice, VarZeroVec, ZeroSlice, ZeroVec};
+use alloc::borrow::{Cow, ToOwned};
 use alloc::boxed::Box;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -107,6 +108,15 @@ unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for T {
 unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for &'_ T {
     fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
         cb(&[T::as_byte_slice(self)])
+    }
+}
+
+unsafe impl<T: VarULE + ?Sized> EncodeAsVarULE<T> for Cow<'_, T>
+where
+    T: ToOwned,
+{
+    fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
+        cb(&[T::as_byte_slice(self.as_ref())])
     }
 }
 

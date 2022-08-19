@@ -108,7 +108,16 @@ export enum ICU4XError {
   DateTimeOutOfRangeError = 'DateTimeOutOfRangeError',
   /**
    */
+  DateTimeUnknownEraError = 'DateTimeUnknownEraError',
+  /**
+   */
+  DateTimeUnknownMonthCodeError = 'DateTimeUnknownMonthCodeError',
+  /**
+   */
   DateTimeMissingInputError = 'DateTimeMissingInputError',
+  /**
+   */
+  DateTimeUnknownAnyCalendarKindError = 'DateTimeUnknownAnyCalendarKindError',
   /**
    */
   DateTimeFormatPatternError = 'DateTimeFormatPatternError',

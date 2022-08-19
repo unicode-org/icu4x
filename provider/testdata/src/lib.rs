@@ -69,10 +69,13 @@
         clippy::exhaustive_enums
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
+// If you want this to be made public stable, file an issue on the ICU4X repository.
 #[cfg(feature = "metadata")]
+#[doc(hidden)]
 pub mod metadata;
 
 #[cfg(feature = "std")]
@@ -98,41 +101,60 @@ use icu_provider_fs::FsDataProvider;
 #[allow(clippy::panic)]
 #[cfg(feature = "fs")]
 pub fn get_json_provider() -> FsDataProvider {
-    let path = match std::env::var_os("ICU4X_TESTDATA_DIR") {
-        Some(val) => val.into(),
-        None => paths::data_root().join("json"),
+    lazy_static::lazy_static! {
+        static ref JSON: FsDataProvider = {
+            let path = match std::env::var_os("ICU4X_TESTDATA_DIR") {
+                Some(val) => val.into(),
+                None => paths::data_root().join("json"),
+            };
+            // The statically compiled data file is valid.
+            #[allow(clippy::unwrap_used)]
+            FsDataProvider::try_new(&path).unwrap_or_else(|err| {
+                panic!(
+                    "The test data directory was unable to be opened: {}: {:?}",
+                    err, path
+                )
+            })
+        };
+    }
+    (*JSON).clone()
+}
+
+#[cfg(feature = "static")]
+lazy_static::lazy_static! {
+    static ref POSTCARD: StaticDataProvider = {
+        // The statically compiled data file is valid.
+        #[allow(clippy::unwrap_used)]
+        StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+            env!("CARGO_MANIFEST_DIR"),
+            "/data/testdata.postcard"
+        )))
+        .unwrap()
     };
-    FsDataProvider::try_new(&path).unwrap_or_else(|err| {
-        panic!(
-            "The test data directory was unable to be opened: {}: {:?}",
-            err, path
-        )
-    })
 }
 
 /// Get a data provider, loading from the statically initialized postcard blob.
 #[cfg(feature = "static")]
 pub fn get_postcard_provider() -> StaticDataProvider {
-    // The statically compiled data file is valid.
-    #[allow(clippy::unwrap_used)]
-    StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/data/testdata.postcard"
-    )))
-    .unwrap()
+    *POSTCARD
 }
 
 /// Get a small data provider that only contains the `decimal/symbols@1[u-nu]` key
 /// for `en` and `bn`.
 #[cfg(feature = "static")]
 pub fn get_smaller_postcard_provider() -> StaticDataProvider {
-    // The statically compiled data file is valid.
-    #[allow(clippy::unwrap_used)]
-    StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
-        env!("CARGO_MANIFEST_DIR"),
-        "/data/decimal-bn-en.postcard"
-    )))
-    .unwrap()
+    lazy_static::lazy_static! {
+        static ref SMALLER_POSTCARD: StaticDataProvider = {
+            // The statically compiled data file is valid.
+            #[allow(clippy::unwrap_used)]
+            StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/data/decimal-bn-en.postcard"
+            )))
+            .unwrap()
+        };
+    }
+    *SMALLER_POSTCARD
 }
 
 #[cfg(feature = "baked")]
@@ -153,5 +175,5 @@ pub fn get_baked_provider() -> BakedDataProvider {
 pub fn get_provider() -> LocaleFallbackProvider<StaticDataProvider> {
     // The statically compiled data file is valid.
     #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new_unstable(get_postcard_provider()).unwrap()
+    LocaleFallbackProvider::try_new_unstable(*POSTCARD).unwrap()
 }
