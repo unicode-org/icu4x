@@ -1495,7 +1495,6 @@ impl DataProvider<::icu_properties::provider::XidStartV1Marker> for BakedDataPro
         })
     }
 }
-#[cfg(feature = "icu_provider")]
 impl DataProvider<::icu_provider::hello_world::HelloWorldV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_provider::hello_world::HelloWorldV1Marker>, DataError> {
         Ok(DataResponse {

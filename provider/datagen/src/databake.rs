@@ -271,7 +271,7 @@ impl DataExporter for BakedDataExporter {
             quote!(#module_path).to_string(),
             if self.insert_feature_gates {
                 let feature = marker.segments.iter().next().unwrap().ident.to_string();
-                if feature != "icu_provider_adapters" {
+                if !feature.starts_with("icu_provider") {
                     quote! { #[cfg(feature = #feature)] }.to_string()
                 } else {
                     String::new()
@@ -285,6 +285,8 @@ impl DataExporter for BakedDataExporter {
 
     fn close(&mut self) -> Result<(), DataError> {
         self.dependencies.insert("icu_provider");
+        // TODO: make locale fallback cfg'ed
+        self.dependencies.insert("icu_provider_adapters");
         let mut deps = move_out!(self.dependencies)
             .into_iter()
             .collect::<BTreeSet<_>>();

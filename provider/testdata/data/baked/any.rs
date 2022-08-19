@@ -333,7 +333,6 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_properties")]
         const XIDSTARTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_properties::provider::XidStartV1Marker::KEY.get_hash();
-        #[cfg(feature = "icu_provider")]
         const HELLOWORLDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider::hello_world::HelloWorldV1Marker::KEY.get_hash();
         const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
@@ -920,7 +919,6 @@ impl AnyProvider for BakedDataProvider {
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_provider")]
                 HELLOWORLDV1MARKER => core::helloworld_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
