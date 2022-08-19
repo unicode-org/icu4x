@@ -82,13 +82,6 @@
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_canonical_combining_class(const ICU4XDataProvider& provider)
-
-        Gets a map for Unicode property Canonical_Combining_Class from a :cpp:class:`ICU4XDataProvider`.
-
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_canonical_combining_class.html>`__ for more information.
-
-
     .. cpp:function:: uint8_t get(char32_t cp) const
 
         Gets the value for a code point.

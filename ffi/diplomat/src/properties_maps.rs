@@ -81,14 +81,6 @@ pub mod ffi {
             Self::try_get_prop_inner(provider, |p| maps::load_sentence_break(p))
         }
 
-        /// Gets a map for Unicode property Canonical_Combining_Class from a [`ICU4XDataProvider`].
-        #[diplomat::rust_link(icu::properties::maps::load_canonical_combining_class, Fn)]
-        pub fn try_get_canonical_combining_class(
-            provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::try_get_prop_inner(provider, |p| maps::load_canonical_combining_class(p))
-        }
-
         fn try_get_prop_inner<P, F>(
             provider: &ICU4XDataProvider,
             f: F,

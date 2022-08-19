@@ -82,13 +82,6 @@
         See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_get_canonical_combining_class(provider)
-
-        Gets a map for Unicode property Canonical_Combining_Class from a :js:class:`ICU4XDataProvider`.
-
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_canonical_combining_class.html>`__ for more information.
-
-
     .. js:function:: get(cp)
 
         Gets the value for a code point.
