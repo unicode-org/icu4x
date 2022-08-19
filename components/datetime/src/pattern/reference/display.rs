@@ -105,13 +105,7 @@ impl fmt::Display for GenericPattern {
                 GenericPatternItem::Placeholder(idx) => {
                     dump_buffer_into_formatter(&buffer, formatter)?;
                     buffer.clear();
-                    #[allow(clippy::expect_used)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
-                    let idx = char::from_digit(*idx as u32, 10)
-                        .expect("Failed to convert placeholder idx to char");
-                    formatter.write_char('{')?;
-                    formatter.write_char(idx)?;
-                    formatter.write_char('}')?;
+                    write!(formatter, "{{{idx}}}")?;
                 }
                 GenericPatternItem::Literal(ch) => {
                     buffer.push(*ch);

@@ -6,8 +6,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs)]
 
@@ -60,19 +58,17 @@ pub struct JapaneseErasV1<'data> {
 impl FromStr for EraStartDate {
     type Err = ();
     fn from_str(mut s: &str) -> Result<Self, ()> {
-        let mut sign = 1;
-        #[allow(clippy::indexing_slicing)]
-        if s.starts_with('-') {
-            // TODO(#1668) Clippy exceptions need docs or fixing.
-            s = &s[1..];
-            sign = -1;
-        }
+        let sign = if let Some(suffix) = s.strip_prefix('-') {
+            s = suffix;
+            -1
+        } else {
+            1
+        };
 
         let mut split = s.split('-');
-        let mut year: i32 = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        year *= sign;
-        let month: u8 = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        let day: u8 = split.next().ok_or(())?.parse().map_err(|_| ())?;
+        let year = split.next().ok_or(())?.parse::<i32>().map_err(|_| ())? * sign;
+        let month = split.next().ok_or(())?.parse().map_err(|_| ())?;
+        let day = split.next().ok_or(())?.parse().map_err(|_| ())?;
 
         Ok(EraStartDate { year, month, day })
     }

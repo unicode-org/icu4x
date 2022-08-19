@@ -211,10 +211,11 @@ impl<'p> Parser<'p> {
                     Self::collect_generic_segment(self.state, &mut result)?;
 
                     let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
-                    let idx: u32 = ch
+                    let idx = ch
                         .to_digit(10)
-                        .ok_or(PatternError::UnknownSubstitution(ch))?;
-                    result.push(GenericPatternItem::Placeholder(idx as u8));
+                        .ok_or(PatternError::UnknownSubstitution(ch))?
+                        as u8;
+                    result.push(GenericPatternItem::Placeholder(idx));
                     let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
                     if ch != '}' {
                         return Err(PatternError::UnclosedPlaceholder);

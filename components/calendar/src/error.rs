@@ -47,6 +47,9 @@ pub enum DateTimeError {
     /// No support for a given calendar in AnyCalendar
     #[displaydoc("AnyCalendar does not support calendar {0}")]
     UnknownAnyCalendarKind(TinyStr16),
+    /// TODO
+    #[displaydoc("TODO")]
+    MissingCalendar,
 }
 
 impl From<core::num::ParseIntError> for DateTimeError {

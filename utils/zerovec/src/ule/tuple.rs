@@ -46,16 +46,16 @@ macro_rules! tuple_ule {
         unsafe impl<$($t: ULE),+> ULE for $name<$($t),+> {
             fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
                 // expands to: 0size + mem::size_of::<A>() + mem::size_of::<B>();
-                let ule_bytes: usize = 0usize $(+ mem::size_of::<$t>())+;
+                let ule_bytes = 0usize $(+ mem::size_of::<$t>())+;
                 if bytes.len() % ule_bytes != 0 {
                     return Err(ZeroVecError::length::<Self>(bytes.len()));
                 }
                 for chunk in bytes.chunks(ule_bytes) {
-                    let mut i: usize = 0;
+                    let mut i = 0;
                     $(
                         let j = i;
                         i += mem::size_of::<$t>();
-                        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                        #[allow(clippy::indexing_slicing)] // length checked
                         <$t>::validate_byte_slice(&chunk[j..i])?;
                     )+
                 }

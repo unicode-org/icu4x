@@ -35,7 +35,6 @@ use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
-use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
@@ -79,7 +78,7 @@ impl CalendarArithmetic for Julian {
     }
 
     fn is_leap_year(year: i32) -> bool {
-        year % 4 == 0
+        Self::is_leap_year_const(year)
     }
 }
 
@@ -193,12 +192,17 @@ impl Julian {
         Self
     }
 
+    #[inline(always)]
+    const fn is_leap_year_const(year: i32) -> bool {
+        year % 4 == 0
+    }
+
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
     // The fixed date algorithms are from
     // Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1689-L1709
-    pub(crate) fn fixed_from_julian(date: ArithmeticDate<Julian>) -> i32 {
+    pub(crate) const fn fixed_from_julian(date: ArithmeticDate<Julian>) -> i32 {
         let year = if date.year < 0 {
             date.year + 1
         } else {
@@ -208,7 +212,7 @@ impl Julian {
         fixed += (367 * (date.month as i32) - 362) / 12;
         fixed += if date.month <= 2 {
             0
-        } else if Self::is_leap_year(date.year) {
+        } else if Self::is_leap_year_const(date.year) {
             -1
         } else {
             -2
@@ -217,12 +221,11 @@ impl Julian {
         fixed + (date.day as i32)
     }
 
-    pub(crate) fn fixed_from_julian_integers(year: i32, month: i32, day: i32) -> i32 {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    pub(crate) const fn fixed_from_julian_integers(year: i32, month: u8, day: u8) -> i32 {
         Self::fixed_from_julian(ArithmeticDate {
             year,
-            month: month.try_into().unwrap(),
-            day: day.try_into().unwrap(),
+            month,
+            day,
             marker: PhantomData,
         })
     }
@@ -249,13 +252,11 @@ impl Julian {
         } else {
             2
         };
-        let month = (12 * (prior_days + correction) + 373) / 367;
-        let day = date - Self::fixed_from_julian_integers(year, month, 1) + 1;
+        let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // this expression is in 1..=12
+        let day = (date - Self::fixed_from_julian_integers(year, month, 1) + 1) as u8; // as days_in_month is < u8::MAX
 
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        *Date::new_julian_date(year, month as u8, day as u8)
-            .unwrap()
-            .inner()
+        #[allow(clippy::unwrap_used)] // day and month have the correct bounds
+        *Date::new_julian_date(year, month, day).unwrap().inner()
     }
 }
 

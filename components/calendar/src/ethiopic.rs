@@ -210,6 +210,9 @@ impl Calendar for Ethiopic {
     }
 }
 
+const ETHIOPIC_TO_COPTIC_OFFSET: i32 =
+    super::coptic::COPTIC_EPOCH - Julian::fixed_from_julian_integers(8, 8, 29);
+
 impl Ethiopic {
     /// Construct a new Ethiopic Calendar for the Amete Mihret era naming scheme
     pub fn new() -> Self {
@@ -239,17 +242,13 @@ impl Ethiopic {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2017
     fn fixed_from_ethiopic(date: ArithmeticDate<Ethiopic>) -> i32 {
-        let coptic_epoch = Julian::fixed_from_julian_integers(284, 8, 29);
-        let ethiopic_epoch = Julian::fixed_from_julian_integers(8, 8, 29);
-        ethiopic_epoch - coptic_epoch
-            + Coptic::fixed_from_coptic_integers(date.year, date.month as i32, date.day as i32)
+        Coptic::fixed_from_coptic_integers(date.year, date.month, date.day)
+            - ETHIOPIC_TO_COPTIC_OFFSET
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L2028
     fn ethiopic_from_fixed(date: i32) -> EthiopicDateInner {
-        let coptic_epoch = Julian::fixed_from_julian_integers(284, 8, 29);
-        let ethiopic_epoch = Julian::fixed_from_julian_integers(8, 8, 29);
-        let coptic_date = Coptic::coptic_from_fixed(date + coptic_epoch - ethiopic_epoch);
+        let coptic_date = Coptic::coptic_from_fixed(date + ETHIOPIC_TO_COPTIC_OFFSET);
 
         #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         *Date::new_ethiopic_date(

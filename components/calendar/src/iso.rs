@@ -32,7 +32,6 @@
 use crate::any_calendar::AnyCalendarKind;
 use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
-use core::convert::TryInto;
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
@@ -427,14 +426,13 @@ impl Iso {
         fixed + (date.0.day as i32)
     }
 
-    fn fixed_from_iso_integers(year: i32, month: i32, day: i32) -> i32 {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Self::fixed_from_iso(
-            *Date::new_iso_date(year, month as u8, day as u8)
-                .unwrap()
-                .inner(),
-        )
+    fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<i32> {
+        Date::new_iso_date(year, month, day)
+            .ok()
+            .map(|d| *d.inner())
+            .map(Self::fixed_from_iso)
     }
+
     pub(crate) fn iso_from_year_day(year: i32, year_day: u32) -> Date<Iso> {
         let mut month = 1;
         let mut day = year_day as i32;
@@ -443,13 +441,15 @@ impl Iso {
             if day <= month_days {
                 break;
             } else {
+                debug_assert!(month < 12); // don't try going to month 13
                 day -= month_days;
                 month += 1;
             }
         }
+        let day = day as u8; // day <= month_days < u8::MAX
 
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Date::new_iso_date(year, month, day.try_into().unwrap()).unwrap()
+        #[allow(clippy::unwrap_used)] // month in 1..=12, day <= month_days
+        Date::new_iso_date(year, month, day).unwrap()
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
@@ -478,31 +478,34 @@ impl Iso {
     }
 
     fn iso_new_year(year: i32) -> i32 {
-        Self::fixed_from_iso_integers(year, 1, 1)
+        #[allow(clippy::unwrap_used)] // valid day and month
+        Self::fixed_from_iso_integers(year, 1, 1).unwrap()
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
         let prior_days = date - Self::iso_new_year(year);
-        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1) {
+        #[allow(clippy::unwrap_used)] // valid day and month
+        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1).unwrap() {
             0
         } else if Self::is_leap_year(year) {
             1
         } else {
             2
         };
-        let month = (12 * (prior_days + correction) + 373) / 367;
-        let day = date - Self::fixed_from_iso_integers(year, month, 1) + 1;
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Date::new_iso_date(year, month as u8, day as u8).unwrap()
+        let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
+        #[allow(clippy::unwrap_used)] // valid day and month
+        let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
+        #[allow(clippy::unwrap_used)] // valid day and month
+        Date::new_iso_date(year, month, day).unwrap()
     }
 
     pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
         // Cumulatively how much are dates in each month
         // offset from "30 days in each month" (in non leap years)
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
         let mut offset = month_offset[date.0.month as usize - 1];
         if Self::is_leap_year(date.0.year) && date.0.month > 2 {
             // Months after February in a leap year are offset by one less

@@ -46,8 +46,7 @@ pub(crate) mod internal {
         let frac_part = if n.fract() == 0.0 {
             ""
         } else {
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // fract output shape
             &raw_frac_part[2..]
         };
 
