@@ -252,40 +252,6 @@ const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
 
 #[inline(always)]
-fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
-    if let Some(slice) = s {
-        if let Some(first) = slice.first() {
-            return (
-                char_from_u16(first),
-                // `unwrap()` must succeed, because `first()` returned `Some`.
-                #[allow(clippy::unwrap_used)]
-                slice.get_subslice(1..slice.len()).unwrap(),
-            );
-        }
-    }
-    // GIGO case
-    debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U16)
-}
-
-#[inline(always)]
-fn split_first_u24(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
-    if let Some(slice) = s {
-        if let Some(first) = slice.first() {
-            return (
-                char_from_u24(first),
-                // `unwrap()` must succeed, because `first()` returned `Some`.
-                #[allow(clippy::unwrap_used)]
-                slice.get_subslice(1..slice.len()).unwrap(),
-            );
-        }
-    }
-    // GIGO case
-    debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U24)
-}
-
-#[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
 }
@@ -639,7 +605,17 @@ where
         slice16: &ZeroSlice<u16>,
     ) -> (char, usize) {
         let len = usize::from(low >> 13) + 2;
-        let (starter, tail) = split_first_u16(slice16.get_subslice(offset..offset + len));
+        let (starter, tail) = slice16
+            .get_subslice(offset..offset + len)
+            .and_then(|slice| slice.split_first())
+            .map_or_else(
+                || {
+                    // GIGO case
+                    debug_assert!(false);
+                    (REPLACEMENT_CHARACTER, EMPTY_U16)
+                },
+                |(first, trail)| (char_from_u16(first), trail),
+            );
         if low & 0x1000 != 0 {
             // All the rest are combining
             for u in tail.iter() {
@@ -674,7 +650,17 @@ where
         slice32: &ZeroSlice<U24>,
     ) -> (char, usize) {
         let len = usize::from(low >> 13) + 1;
-        let (starter, tail) = split_first_u24(slice32.get_subslice(offset..offset + len));
+        let (starter, tail) = slice32
+            .get_subslice(offset..offset + len)
+            .and_then(|slice| slice.split_first())
+            .map_or_else(
+                || {
+                    // GIGO case
+                    debug_assert!(false);
+                    (REPLACEMENT_CHARACTER, EMPTY_U24)
+                },
+                |(first, trail)| (char_from_u24(first), trail),
+            );
         if low & 0x1000 != 0 {
             // All the rest are combining
             for u in tail.iter() {
