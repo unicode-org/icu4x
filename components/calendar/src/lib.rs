@@ -13,7 +13,10 @@
 //! can represent dates for arbitrary calendars.
 //!
 //! The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
-//! Gregorian calendars respectively.
+//! Gregorian calendars respectively. Further calendars can be found in modules like
+//! [`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopic`].
+//!
+//! Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
 //!
 //! Some of the algorithms implemented here are based on
 //! Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.
@@ -146,11 +149,11 @@
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
 pub mod any_calendar;
-pub mod arithmetic;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
@@ -167,10 +170,10 @@ pub mod japanese;
 pub mod julian;
 pub mod provider;
 pub mod types;
+pub mod week_of;
 
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
-pub use calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 pub use date::{AsCalendar, Date, Ref};
 pub use datetime::DateTime;
 pub use duration::{DateDuration, DateDurationUnit};

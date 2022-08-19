@@ -3,10 +3,12 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XPluralRules.h"
+#include "../../include/ICU4XLogger.h"
 #include <string.h>
 #include <stdio.h>
 
 int main() {
+    ICU4XLogger_init_simple_logger();
     diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create("ar", 2);
     if (!locale_result.is_ok) {
         return 1;

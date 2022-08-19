@@ -515,20 +515,6 @@ impl DataProvider<::icu_locid_transform::provider::LikelySubtagsV1Marker> for Ba
         })
     }
 }
-impl DataProvider<::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *normalizer::nfc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY, req)
-                    })?,
-            ))),
-        })
-    }
-}
 impl DataProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CanonicalCompositionsV1Marker>, DataError> {
         Ok(DataResponse {
@@ -562,20 +548,6 @@ impl DataProvider<::icu_normalizer::provider::CanonicalDecompositionTablesV1Mark
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
                         DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY, req)
-                    })?,
-            ))),
-        })
-    }
-}
-impl DataProvider<::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *normalizer::nfkc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY, req)
                     })?,
             ))),
         })
@@ -618,20 +590,6 @@ impl DataProvider<::icu_normalizer::provider::NonRecursiveDecompositionSupplemen
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
                         DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY, req)
-                    })?,
-            ))),
-        })
-    }
-}
-impl DataProvider<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *normalizer::uts46_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY, req)
                     })?,
             ))),
         })

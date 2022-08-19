@@ -16,7 +16,7 @@ $(ALL_HEADERS):
 
 
 ../../../../../target/debug/libicu_capi_staticlib.a: $(ALL_RUST)
-	cargo build -p icu_capi_staticlib -p icu_capi_staticlib
+	cargo build -p icu_capi_staticlib -p icu_capi_staticlib --features cpp_default
 
 a.out: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.cpp
 	$(CXX) -std=c++17 test.cpp ../../../../../target/debug/libicu_capi_staticlib.a -ldl -lpthread -lm -g

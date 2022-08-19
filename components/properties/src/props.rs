@@ -785,6 +785,9 @@ impl SentenceBreak {
 /// Property Canonical_Combining_Class.
 /// See UAX #15:
 /// <https://www.unicode.org/reports/tr15/>.
+///
+/// See `icu_normalizer::properties::CanonicalCombiningClassMap` for the API
+/// to look up the Canonical_Combining_Class property by scalar value.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]

@@ -77,6 +77,7 @@ impl IcuExportDataDownloader<'_> {
             self.tag,
             self.tag.replace('/', "-")
         );
+        log::info!("Downloading {url}");
         let bytes = client
             .get(&url)
             .send()
@@ -236,7 +237,6 @@ async fn main() -> eyre::Result<()> {
             )
         })?;
 
-    log::info!("Downloading icuexportdata.zip");
     let mut icued_unzipper = icued_downloader.download(&client).await?;
 
     let all_paths = metadata.package_metadata.get_all_icuexportdata_paths();

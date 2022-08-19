@@ -4,6 +4,8 @@
 
 #include "../../include/ICU4XCodePointSetData.hpp"
 #include "../../include/ICU4XCodePointMapData16.hpp"
+#include "../../include/ICU4XCodePointMapData8.hpp"
+#include "../../include/ICU4XLogger.hpp"
 
 #include <iostream>
 
@@ -32,7 +34,20 @@ int test_map_16_property(ICU4XCodePointMapData16 data, char32_t sample, uint32_t
     return 0;
 }
 
+int test_map_8_property(ICU4XCodePointMapData8 data, char32_t sample, uint32_t expected) {
+    uint32_t actual = data.get(sample);
+    std::cout << std::hex; // print hex for U+####
+    if (actual == expected) {
+        std::cout << "Code point U+" << sample << " correctly mapped to 0x" << actual << std::endl;
+    } else {
+        std::cout << "Code point U+" << sample << " incorrectly mapped to 0x" << actual << std::endl;
+        return 1;
+    }
+    return 0;
+}
+
 int main() {
+    ICU4XLogger::init_simple_logger();
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
     int result;
 
@@ -49,6 +64,24 @@ int main() {
         ICU4XCodePointMapData16::try_get_script(dp).ok().value(),
         u'木',
         17 // Script::Han
+    );
+    if (result != 0) {
+        return result;
+    }
+
+    result = test_map_8_property(
+        ICU4XCodePointMapData8::try_get_general_category(dp).ok().value(),
+        u'木',
+        5 // GeneralCategory::OtherLetter
+    );
+    if (result != 0) {
+        return result;
+    }
+
+    result = test_map_8_property(
+        ICU4XCodePointMapData8::try_get_bidi_class(dp).ok().value(),
+        u'ع',
+        13 // GeneralCategory::ArabicLetter
     );
     if (result != 0) {
         return result;

@@ -45,7 +45,9 @@ impl<C: Calendar> AsCalendar for Arc<C> {
 }
 
 /// This exists as a wrapper around `&'a T` so that
-/// `Date<&'a C>` is possible for calendar `C`. Unfortunately,
+/// `Date<&'a C>` is possible for calendar `C`.
+///
+/// Unfortunately,
 /// [`AsCalendar`] cannot be implemented on `&'a T` directly because
 /// `&'a T` is `#[fundamental]` and the impl would clash with the one above with
 /// `AsCalendar` for `C: Calendar`.

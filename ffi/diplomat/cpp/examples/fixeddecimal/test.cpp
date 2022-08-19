@@ -4,11 +4,13 @@
 
 #include "../../include/ICU4XFixedDecimalFormatter.hpp"
 #include "../../include/ICU4XDataStruct.hpp"
+#include "../../include/ICU4XLogger.hpp"
 
 #include <iostream>
 #include <array>
 
 int main() {
+    ICU4XLogger::init_simple_logger();
     ICU4XLocale locale = ICU4XLocale::create_bn();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();

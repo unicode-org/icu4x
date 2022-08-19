@@ -30,21 +30,34 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
-use crate::{ArithmeticDate, CalendarArithmetic};
 use core::convert::TryInto;
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
 const EPOCH: i32 = 1;
 
+/// The [ISO Calendar]
+///
+/// The [ISO Calendar] is a standardized solar calendar with twelve months.
+/// It is identical to the Gregorian calendar, except it uses negative years for years before 1 CE,
+/// and may have differing formatting data for a given locale.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [ISO Calendar]: https://en.wikipedia.org/wiki/ISO_calendar
+///
+/// # Era codes
+///
+/// This calendar supports one era, `"default"`
+
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-/// The ISO Calendar
 pub struct Iso;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-/// The inner date type used for representing Date<Iso>
+/// The inner date type used for representing [`Date`]s of [`Iso`]. See [`Date`] and [`Iso`] for more details.
 pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 
 impl CalendarArithmetic for Iso {

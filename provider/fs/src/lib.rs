@@ -102,6 +102,7 @@
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
 mod fs_data_provider;
 mod manifest;

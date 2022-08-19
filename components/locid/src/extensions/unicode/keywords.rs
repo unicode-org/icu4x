@@ -9,6 +9,7 @@ use litemap::LiteMap;
 
 use super::Key;
 use super::Value;
+use crate::helpers::ShortVec;
 use crate::ordering::SubtagOrderingResult;
 
 /// A list of [`Key`]-[`Value`] pairs representing functional information
@@ -62,7 +63,7 @@ use crate::ordering::SubtagOrderingResult;
 ///
 /// [`Locale`]: crate::Locale
 #[derive(Clone, PartialEq, Eq, Debug, Default, Hash, PartialOrd, Ord)]
-pub struct Keywords(LiteMap<Key, Value>);
+pub struct Keywords(LiteMap<Key, Value, ShortVec<(Key, Value)>>);
 
 impl Keywords {
     /// Returns a new empty list of key-value pairs. Same as [`default()`](Default::default()), but is `const`.
@@ -77,6 +78,14 @@ impl Keywords {
     #[inline]
     pub const fn new() -> Self {
         Self(LiteMap::new())
+    }
+
+    /// Create a new list of key-value pairs having exactly one pair, callable in a `const` context.
+    #[inline]
+    pub const fn new_single(key: Key, value: Value) -> Self {
+        Self(LiteMap::from_sorted_store_unchecked(ShortVec::new_single(
+            (key, value),
+        )))
     }
 
     /// Returns `true` if there are no keywords.
@@ -380,8 +389,8 @@ impl Keywords {
     }
 }
 
-impl From<LiteMap<Key, Value>> for Keywords {
-    fn from(map: LiteMap<Key, Value>) -> Self {
+impl From<LiteMap<Key, Value, ShortVec<(Key, Value)>>> for Keywords {
+    fn from(map: LiteMap<Key, Value, ShortVec<(Key, Value)>>) -> Self {
         Self(map)
     }
 }

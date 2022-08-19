@@ -18,10 +18,9 @@
 //! - [`StoreIterable`] for methods that return iterators
 //! - [`StoreFromIterator`] to enable `FromIterator` for LiteMap
 //!
-//! To test your implementation, enable the `"testing"` feature and then pass an empty instance
-//! of `LiteMap` with your store into [`check_litemap()`].
+//! To test your implementation, enable the `"testing"` feature and use [`check_store()`].
 //!
-//! [`check_litemap()`]: crate::testing::check_litemap
+//! [`check_store()`]: crate::testing::check_store
 
 mod slice_impl;
 #[cfg(feature = "alloc")]
@@ -31,6 +30,12 @@ use core::cmp::Ordering;
 use core::iter::DoubleEndedIterator;
 use core::iter::FromIterator;
 use core::iter::Iterator;
+
+/// Trait to enable const construction of empty store.
+pub trait StoreConstEmpty<K: ?Sized, V: ?Sized> {
+    /// An empty store
+    const EMPTY: Self;
+}
 
 /// Trait to enable pluggable backends for LiteMap.
 ///

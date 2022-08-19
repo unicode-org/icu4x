@@ -32,19 +32,28 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{
-    types, ArithmeticDate, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError,
-};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use tinystr::tinystr;
 
 /// The Gregorian Calendar
+///
+/// The [Gregorian calendar] is a solar calendar used by most of the world, with twelve months.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Gregorian calendar]: https://en.wikipedia.org/wiki/Gregorian_calendar
+///
+/// # Era codes
+///
+/// This calendar supports two era codes: `"bce"`, and `"ce"`, corresponding to the BCE and CE eras
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-/// The inner date type used for representing Date<Gregorian>
+/// The inner date type used for representing [`Date`]s of [`Gregorian`]. See [`Date`] and [`Gregorian`] for more details.
 pub struct GregorianDateInner(IsoDateInner);
 
 impl Calendar for Gregorian {

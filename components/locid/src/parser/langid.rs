@@ -3,10 +3,13 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 pub use super::errors::ParserError;
+use crate::extensions::unicode::{Attribute, Key, Value};
+use crate::extensions::ExtensionType;
 use crate::parser::{get_subtag_iterator, SubtagIterator};
-use crate::subtags;
 use crate::LanguageIdentifier;
+use crate::{extensions, subtags};
 use alloc::vec::Vec;
+use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Clone, Copy)]
 pub enum ParserMode {
@@ -105,7 +108,7 @@ pub fn parse_language_identifier(
 }
 
 #[allow(clippy::type_complexity)]
-pub const fn parse_language_identifier_with_single_variant_from_iter(
+pub const fn parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter(
     mut iter: SubtagIterator,
     mode: ParserMode,
 ) -> Result<
@@ -114,6 +117,7 @@ pub const fn parse_language_identifier_with_single_variant_from_iter(
         Option<subtags::Script>,
         Option<subtags::Region>,
         Option<subtags::Variant>,
+        Option<(extensions::unicode::Key, Option<TinyAsciiStr<8>>)>,
     ),
     ParserError,
 > {
@@ -121,6 +125,7 @@ pub const fn parse_language_identifier_with_single_variant_from_iter(
     let mut script = None;
     let mut region = None;
     let mut variant = None;
+    let mut keyword = None;
 
     if let (i, Some((t, start, end))) = iter.next_manual() {
         iter = i;
@@ -135,7 +140,7 @@ pub const fn parse_language_identifier_with_single_variant_from_iter(
     let mut position = ParserPosition::Script;
 
     while let Some((t, start, end)) = iter.peek_manual() {
-        if !matches!(mode, ParserMode::LanguageIdentifier) && start - end == 1 {
+        if !matches!(mode, ParserMode::LanguageIdentifier) && end - start == 1 {
             break;
         }
 
@@ -186,7 +191,61 @@ pub const fn parse_language_identifier_with_single_variant_from_iter(
         iter = iter.next_manual().0;
     }
 
-    Ok((language, script, region, variant))
+    if matches!(mode, ParserMode::Locale) {
+        if let Some((bytes, start, end)) = iter.peek_manual() {
+            match ExtensionType::from_bytes_manual_slice(bytes, start, end) {
+                Ok(ExtensionType::Unicode) => {
+                    iter = iter.next_manual().0;
+                    if let Some((bytes, start, end)) = iter.peek_manual() {
+                        if Attribute::from_bytes_manual_slice(bytes, start, end).is_ok() {
+                            // We cannot handle Attributes in a const context
+                            return Err(ParserError::InvalidSubtag);
+                        }
+                    }
+
+                    let mut key = None;
+                    let mut current_type = None;
+
+                    while let Some((bytes, start, end)) = iter.peek_manual() {
+                        let slen = end - start;
+                        if slen == 2 {
+                            if key.is_some() {
+                                // We cannot handle more than one Key in a const context
+                                return Err(ParserError::InvalidSubtag);
+                            }
+                            match Key::from_bytes_manual_slice(bytes, start, end) {
+                                Ok(k) => key = Some(k),
+                                Err(e) => return Err(e),
+                            };
+                        } else if key.is_some() {
+                            match Value::parse_subtag_from_bytes_manual_slice(bytes, start, end) {
+                                Ok(Some(t)) => {
+                                    if current_type.is_some() {
+                                        // We cannot handle more than one type in a const context
+                                        return Err(ParserError::InvalidSubtag);
+                                    }
+                                    current_type = Some(t);
+                                }
+                                Ok(None) => {}
+                                Err(e) => return Err(e),
+                            }
+                        } else {
+                            break;
+                        }
+                        iter = iter.next_manual().0
+                    }
+                    if let Some(k) = key {
+                        keyword = Some((k, current_type));
+                    }
+                }
+                // We cannot handle Transform, Private, Other extensions in a const context
+                Ok(_) => return Err(ParserError::InvalidSubtag),
+                Err(e) => return Err(e),
+            }
+        }
+    }
+
+    Ok((language, script, region, variant, keyword))
 }
 
 #[allow(clippy::type_complexity)]
@@ -203,5 +262,8 @@ pub const fn parse_language_identifier_with_single_variant(
     ParserError,
 > {
     let iter = get_subtag_iterator(t);
-    parse_language_identifier_with_single_variant_from_iter(iter, mode)
+    match parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter(iter, mode) {
+        Ok((l, s, r, v, _)) => Ok((l, s, r, v)),
+        Err(e) => Err(e),
+    }
 }

@@ -7,6 +7,7 @@
 #include "../../include/ICU4XLineBreakSegmenter.hpp"
 #include "../../include/ICU4XSentenceBreakSegmenter.hpp"
 #include "../../include/ICU4XWordBreakSegmenter.hpp"
+#include "../../include/ICU4XLogger.hpp"
 
 #include <iostream>
 #include <string_view>
@@ -88,6 +89,7 @@ void test_sentence(const std::string_view& str) {
 }
 
 int main(int argc, char* argv[]) {
+    ICU4XLogger::init_simple_logger();
     std::string_view str;
     if (argc >= 2) {
         str = argv[1];

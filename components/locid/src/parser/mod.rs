@@ -9,9 +9,13 @@ mod locale;
 pub use errors::ParserError;
 pub use langid::{
     parse_language_identifier, parse_language_identifier_from_iter,
-    parse_language_identifier_with_single_variant, ParserMode,
+    parse_language_identifier_with_single_variant,
+    parse_locale_with_single_variant_single_keyword_unicode_extension_from_iter, ParserMode,
 };
-pub use locale::parse_locale;
+
+pub use locale::{
+    parse_locale, parse_locale_with_single_variant_single_keyword_unicode_keyword_extension,
+};
 
 pub const fn get_subtag_iterator(slice: &[u8]) -> SubtagIterator {
     let mut current_start = 0;
