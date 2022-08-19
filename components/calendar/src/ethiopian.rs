@@ -95,7 +95,7 @@ impl CalendarArithmetic for Ethiopian {
         }
     }
 
-    fn months_for_every_year() -> u8 {
+    fn months_for_every_year(_: i32) -> u8 {
         13
     }
 

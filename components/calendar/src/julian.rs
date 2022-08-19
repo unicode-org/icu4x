@@ -74,7 +74,7 @@ impl CalendarArithmetic for Julian {
         }
     }
 
-    fn months_for_every_year() -> u8 {
+    fn months_for_every_year(_: i32) -> u8 {
         12
     }
 
