@@ -2321,6 +2321,8 @@ impl ComposingNormalizer {
             // too much, there is too much flushing overhead. If we flush too rarely,
             // the flush starts reading from too far behind compared to the hot
             // recently-read memory.
+            // Haswell min: 0b1000000000000usize (one page)
+            // Haswell max: 0b10000000000000usize (two pages)
             let mut counter = 0b1000000000000usize;
             // The purpose of this trickiness is to avoid writing to 
             // `undecomposed_starter_valid` from the tightest loop. Writing to it
