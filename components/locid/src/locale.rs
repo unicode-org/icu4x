@@ -3,12 +3,17 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::ordering::SubtagOrderingResult;
-use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
+use crate::parser::{
+    get_subtag_iterator, parse_locale,
+    parse_locale_with_single_variant_single_keyword_unicode_keyword_extension, ParserError,
+    ParserMode,
+};
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
 use alloc::string::ToString;
 use core::cmp::Ordering;
 use core::str::FromStr;
+use tinystr::TinyAsciiStr;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
 ///
@@ -308,6 +313,26 @@ impl Locale {
             }
         }
         iter.next() == None
+    }
+
+    #[doc(hidden)]
+    #[allow(clippy::type_complexity)]
+    pub const fn from_bytes_with_single_variant_single_keyword_unicode_extension(
+        v: &[u8],
+    ) -> Result<
+        (
+            subtags::Language,
+            Option<subtags::Script>,
+            Option<subtags::Region>,
+            Option<subtags::Variant>,
+            Option<(extensions::unicode::Key, Option<TinyAsciiStr<8>>)>,
+        ),
+        ParserError,
+    > {
+        parse_locale_with_single_variant_single_keyword_unicode_keyword_extension(
+            v,
+            ParserMode::Locale,
+        )
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>

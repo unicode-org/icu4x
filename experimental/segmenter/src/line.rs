@@ -104,7 +104,47 @@ pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTy
 pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf16>;
 
 /// Supports loading line break data, and creating line break iterators for different string
-/// encodings. Please see the [module-level documentation](crate) for its usages.
+/// encodings.
+///
+/// # Examples
+///
+/// Segment a string with default options:
+///
+/// ```rust
+/// use icu_segmenter::LineBreakSegmenter;
+///
+/// let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// assert_eq!(&breakpoints, &[6, 11]);
+/// ```
+///
+/// Segment a string with CSS option overrides:
+///
+/// ```rust
+/// use icu_segmenter::{LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule};
+///
+/// let mut options = LineBreakOptions::default();
+/// options.line_break_rule = LineBreakRule::Strict;
+/// options.word_break_rule = WordBreakRule::BreakAll;
+/// options.ja_zh = false;
+/// let segmenter =
+///     LineBreakSegmenter::try_new_with_options(&icu_testdata::unstable(), options).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// assert_eq!(&breakpoints, &[1, 2, 3, 4, 6, 7, 8, 9, 10, 11]);
+/// ```
+///
+/// Segment a Latin1 byte string:
+///
+/// ```rust
+/// use icu_segmenter::LineBreakSegmenter;
+///
+/// let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// assert_eq!(&breakpoints, &[6, 11]);
+/// ```
 pub struct LineBreakSegmenter {
     options: LineBreakOptions,
     payload: DataPayload<LineBreakDataV1Marker>,
@@ -113,6 +153,7 @@ pub struct LineBreakSegmenter {
 }
 
 impl LineBreakSegmenter {
+    /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
@@ -121,6 +162,7 @@ impl LineBreakSegmenter {
         Self::try_new_with_options(provider, Default::default())
     }
 
+    /// Construct a [`LineBreakSegmenter`] with default [`LineBreakOptions`].
     #[cfg(not(feature = "lstm"))]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
@@ -131,6 +173,7 @@ impl LineBreakSegmenter {
         Self::try_new_with_options(provider, Default::default())
     }
 
+    /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(feature = "lstm")]
     pub fn try_new_with_options<D>(
         provider: &D,
@@ -159,6 +202,7 @@ impl LineBreakSegmenter {
         })
     }
 
+    /// Construct a [`LineBreakSegmenter`] with custom [`LineBreakOptions`].
     #[cfg(not(feature = "lstm"))]
     pub fn try_new_with_options<D>(
         provider: &D,
@@ -479,14 +523,12 @@ pub trait LineBreakType<'l, 's> {
 }
 
 /// Implements the [`Iterator`] trait over the line break opportunities of the given string. Please
-/// see the [module-level documentation](crate) for its usages.
+/// see the examples in [`LineBreakSegmenter`] for its usages.
 ///
 /// Lifetimes:
 ///
 /// - `'l` = lifetime of the [`LineBreakSegmenter`] object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
-///
-/// [`Iterator`]: core::iter::Iterator
 pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     iter: Y::IterAttr,
     len: usize,

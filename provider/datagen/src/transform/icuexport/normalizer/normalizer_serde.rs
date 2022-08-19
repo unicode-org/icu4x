@@ -13,6 +13,7 @@ pub struct DecompositionData {
 pub struct DecompositionSupplement {
     pub trie: CodePointTrieToml,
     pub flags: u8,
+    pub cap: u16,
 }
 
 #[derive(serde::Deserialize)]

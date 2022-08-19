@@ -3,7 +3,7 @@
 type DataStruct =
     <::icu_properties::provider::GraphemeBaseV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+    litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);
 static UND: &DataStruct =
     &::icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
         #[allow(unused_unsafe)]

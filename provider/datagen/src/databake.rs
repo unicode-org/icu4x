@@ -259,7 +259,7 @@ impl DataExporter for BakedDataExporter {
                 type DataStruct = #struct_type;
 
                 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-                    litemap::LiteMap::from_sorted_slice_unchecked(&[#(#data),*]);
+                    litemap::LiteMap::from_sorted_store_unchecked(&[#(#data),*]);
 
                 #(#statics)*
             },

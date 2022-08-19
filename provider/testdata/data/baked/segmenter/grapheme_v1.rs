@@ -2,7 +2,7 @@
 #![cfg(feature = "icu_segmenter")]
 type DataStruct = < :: icu_segmenter :: provider :: GraphemeClusterBreakDataV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+    litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_segmenter::provider::RuleBreakDataV1 {
     property_table: ::icu_segmenter::provider::RuleBreakPropertyTable(
         ::icu_collections::codepointtrie::CodePointTrie::from_parts(

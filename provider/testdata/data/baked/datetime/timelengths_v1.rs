@@ -2,7 +2,7 @@
 #![cfg(feature = "icu_datetime")]
 type DataStruct = < :: icu_datetime :: provider :: calendar :: TimeLengthsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[
+    litemap::LiteMap::from_sorted_store_unchecked(&[
         ("ar", AR_AR_EG_BN_CCP_EN_EN_001_FIL),
         ("ar-EG", AR_AR_EG_BN_CCP_EN_EN_001_FIL),
         ("bn", AR_AR_EG_BN_CCP_EN_EN_001_FIL),

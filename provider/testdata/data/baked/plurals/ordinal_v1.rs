@@ -3,7 +3,7 @@
 type DataStruct =
     <::icu_plurals::provider::OrdinalV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[
+    litemap::LiteMap::from_sorted_store_unchecked(&[
         ("ar", AR_ES_JA_RU_SR_TH_TR_UND),
         ("bn", BN),
         ("en", EN),

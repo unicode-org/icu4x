@@ -81,6 +81,6 @@ fn rkyv_deserialize() {
     let archived = unsafe { archived_root::<TupleVecOfStrings>(&RKYV.0) };
     let deserialized = archived.deserialize(&mut Infallible).unwrap();
     // Safe because we are deserializing a buffer from a trusted source
-    let deserialized: LiteMapOfStrings = unsafe { LiteMap::from_tuple_vec_unchecked(deserialized) };
+    let deserialized: LiteMapOfStrings = LiteMap::from_sorted_store_unchecked(deserialized);
     assert_eq!(deserialized.get("tr"), Some(&"Turkish".to_string()));
 }

@@ -3,7 +3,7 @@
 type DataStruct =
     <::icu_calendar::provider::JapaneseErasV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+    litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_calendar::provider::JapaneseErasV1 {
     dates_to_eras: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[

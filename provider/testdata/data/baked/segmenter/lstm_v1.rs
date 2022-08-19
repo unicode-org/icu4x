@@ -3,7 +3,7 @@
 type DataStruct =
     <::icu_segmenter::provider::LstmDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[("th", TH)]);
+    litemap::LiteMap::from_sorted_store_unchecked(&[("th", TH)]);
 static TH: &DataStruct = &::icu_segmenter::provider::LstmDataV1 {
     model: alloc::borrow::Cow::Borrowed("Thai_codepoints_exclusive_model4_heavy"),
     dic: unsafe {

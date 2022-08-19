@@ -49,22 +49,19 @@ pub struct DecompositionSupplementV1<'data> {
     ///        LETTER IOTA).
     /// (Other bits unused.)
     pub flags: u8,
+    /// The passthrough bounds of NFD/NFC are lowered to this
+    /// maximum instead. (16-bit, because cannot be higher
+    /// than 0x0300, which is the bound for NFC.)
+    pub passthrough_cap: u16,
 }
 
 impl DecompositionSupplementV1<'_> {
     const HALF_WIDTH_VOICING_MARK_MASK: u8 = 1;
-    const IOTA_SUBSCRIPT_MASK: u8 = (1 << 1);
 
     /// Whether half-width kana voicing marks decompose into non-starters
     /// (their full-width combining counterparts).
     pub fn half_width_voicing_marks_become_non_starters(&self) -> bool {
         (self.flags & DecompositionSupplementV1::HALF_WIDTH_VOICING_MARK_MASK) != 0
-    }
-
-    /// Whether U+0345 COMBINING GREEK YPOGEGRAMMENI decomposes into a
-    /// starter (U+03B9 GREEK SMALL LETTER IOTA).
-    pub fn iota_subscript_becomes_starter(&self) -> bool {
-        (self.flags & DecompositionSupplementV1::IOTA_SUBSCRIPT_MASK) != 0
     }
 }
 
@@ -98,25 +95,6 @@ pub struct CanonicalCompositionsV1<'data> {
     /// (non-Hangul) canonical composition.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub canonical_compositions: Char16Trie<'data>,
-}
-
-/// Passthrough set
-#[icu_provider::data_struct(
-    CanonicalCompositionPassthroughV1Marker = "normalizer/nfc@1",
-    CompatibilityCompositionPassthroughV1Marker = "normalizer/nfkc@1",
-    Uts46CompositionPassthroughV1Marker = "normalizer/uts46@1"
-)]
-#[derive(Debug, PartialEq, Clone)]
-#[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_normalizer::provider))]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct CompositionPassthroughV1<'data> {
-    /// The first non-passthrough code point
-    pub first: u32,
-    /// The set of characters that are starters that normalize to themselves
-    /// if the next character doesn't combine backwards and that themselves
-    /// never combine backwards.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub trie: CodePointTrie<'data, u8>,
 }
 
 /// Non-recursive canonical decompositions that differ from

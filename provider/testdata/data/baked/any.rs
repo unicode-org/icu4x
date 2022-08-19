@@ -120,9 +120,6 @@ impl AnyProvider for BakedDataProvider {
         const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_normalizer")]
-        const CANONICALCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CanonicalCompositionPassthroughV1Marker::KEY.get_hash();
-        #[cfg(feature = "icu_normalizer")]
         const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_normalizer")]
@@ -131,9 +128,6 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_normalizer")]
         const CANONICALDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY.get_hash();
-        #[cfg(feature = "icu_normalizer")]
-        const COMPATIBILITYCOMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CompatibilityCompositionPassthroughV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_normalizer")]
         const COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY
@@ -144,9 +138,6 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_normalizer")]
         const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.get_hash();
-        #[cfg(feature = "icu_normalizer")]
-        const UTS46COMPOSITIONPASSTHROUGHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::Uts46CompositionPassthroughV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_normalizer")]
         const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY.get_hash();
@@ -565,11 +556,6 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_normalizer")]
-                CANONICALCOMPOSITIONPASSTHROUGHV1MARKER => normalizer::nfc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
                 CANONICALCOMPOSITIONSV1MARKER => normalizer::comp_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
@@ -585,11 +571,6 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_normalizer")]
-                COMPATIBILITYCOMPOSITIONPASSTHROUGHV1MARKER => normalizer::nfkc_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
                 COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::nfkd_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
@@ -601,11 +582,6 @@ impl AnyProvider for BakedDataProvider {
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_normalizer")]
                 NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER => normalizer::decomp_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_normalizer")]
-                UTS46COMPOSITIONPASSTHROUGHV1MARKER => normalizer::uts46_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
