@@ -35,39 +35,24 @@ impl<K, V> LiteMap<K, V> {
     }
 }
 
-impl<K, V> LiteMap<K, V, Vec<(K, V)>> {
-    /// Convert a `Vec<(K, V)>` into a [`LiteMap`].
+impl<K, V, S> LiteMap<K, V, S> {
+    /// Construct a new [`LiteMap`] using the given values
     ///
-    /// # Safety
-    ///
-    /// The vec must be sorted and have no duplicate keys.
-    #[inline]
-    pub unsafe fn from_tuple_vec_unchecked(values: Vec<(K, V)>) -> Self {
+    /// The store must be sorted and have no duplicate keys.
+    pub const fn from_sorted_store_unchecked(values: S) -> Self {
         Self {
             values,
             _key_type: PhantomData,
             _value_type: PhantomData,
         }
     }
+}
 
+impl<K, V> LiteMap<K, V, Vec<(K, V)>> {
     /// Convert a [`LiteMap`] into a sorted `Vec<(K, V)>`.
     #[inline]
     pub fn into_tuple_vec(self) -> Vec<(K, V)> {
         self.values
-    }
-}
-
-impl<'a, K, V> LiteMap<K, V, &'a [(K, V)]> {
-    /// Convert a `&'a [(K, V)]` into a [`LiteMap`].
-    ///
-    /// The slice must be sorted and have no duplicate keys.
-    #[inline]
-    pub const fn from_sorted_slice_unchecked(values: &'a [(K, V)]) -> Self {
-        Self {
-            values,
-            _key_type: PhantomData,
-            _value_type: PhantomData,
-        }
     }
 }
 

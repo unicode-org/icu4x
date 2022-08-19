@@ -27,9 +27,6 @@ use icu_locid::extensions_unicode_value as value;
 use icu_normalizer::provider::CanonicalDecompositionDataV1Marker;
 use icu_normalizer::provider::CanonicalDecompositionTablesV1Marker;
 use icu_normalizer::Decomposition;
-use icu_properties::maps::CodePointMapData;
-use icu_properties::provider::CanonicalCombiningClassV1Marker;
-use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 use smallvec::SmallVec;
 use utf16_iter::Utf16CharsEx;
@@ -66,7 +63,6 @@ pub struct Collator {
     reordering: Option<DataPayload<CollationReorderingV1Marker>>,
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
-    ccc: CodePointMapData<CanonicalCombiningClass>,
     lithuanian_dot_above: bool,
 }
 
@@ -86,7 +82,6 @@ impl Collator {
             + DataProvider<CollationReorderingV1Marker>
             + DataProvider<CanonicalDecompositionDataV1Marker>
             + DataProvider<CanonicalDecompositionTablesV1Marker>
-            + DataProvider<CanonicalCombiningClassV1Marker>
             + ?Sized,
     {
         let locale = {
@@ -185,8 +180,6 @@ impl Collator {
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
 
-        let ccc = icu_properties::maps::load_canonical_combining_class(data_provider)?;
-
         let mut altered_defaults = CollatorOptions::new();
 
         if metadata.alternate_shifted() {
@@ -227,7 +220,6 @@ impl Collator {
             reordering,
             decompositions,
             tables,
-            ccc,
             lithuanian_dot_above: metadata.lithuanian_dot_above(),
         })
     }
@@ -244,18 +236,12 @@ impl Collator {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
         if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(
-                left.chars(),
-                self.decompositions.get(),
-                self.tables.get(),
-                self.ccc.as_borrowed(),
-            )
-            .cmp(Decomposition::new(
-                right.chars(),
-                self.decompositions.get(),
-                self.tables.get(),
-                self.ccc.as_borrowed(),
-            ));
+            return Decomposition::new(left.chars(), self.decompositions.get(), self.tables.get())
+                .cmp(Decomposition::new(
+                    right.chars(),
+                    self.decompositions.get(),
+                    self.tables.get(),
+                ));
         }
         ret
     }
@@ -265,18 +251,12 @@ impl Collator {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
         if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(
-                left.chars(),
-                self.decompositions.get(),
-                self.tables.get(),
-                self.ccc.as_borrowed(),
-            )
-            .cmp(Decomposition::new(
-                right.chars(),
-                self.decompositions.get(),
-                self.tables.get(),
-                self.ccc.as_borrowed(),
-            ));
+            return Decomposition::new(left.chars(), self.decompositions.get(), self.tables.get())
+                .cmp(Decomposition::new(
+                    right.chars(),
+                    self.decompositions.get(),
+                    self.tables.get(),
+                ));
         }
         ret
     }
@@ -288,18 +268,12 @@ impl Collator {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
         if self.options.strength() == Strength::Identical && ret == Ordering::Equal {
-            return Decomposition::new(
-                left.chars(),
-                self.decompositions.get(),
-                self.tables.get(),
-                self.ccc.as_borrowed(),
-            )
-            .cmp(Decomposition::new(
-                right.chars(),
-                self.decompositions.get(),
-                self.tables.get(),
-                self.ccc.as_borrowed(),
-            ));
+            return Decomposition::new(left.chars(), self.decompositions.get(), self.tables.get())
+                .cmp(Decomposition::new(
+                    right.chars(),
+                    self.decompositions.get(),
+                    self.tables.get(),
+                ));
         }
         ret
     }
@@ -387,7 +361,6 @@ impl Collator {
             &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
-            self.ccc.as_borrowed(),
             numeric_primary,
             self.lithuanian_dot_above,
         );
@@ -403,7 +376,6 @@ impl Collator {
             &self.diacritics.get().secondaries,
             self.decompositions.get(),
             self.tables.get(),
-            self.ccc.as_borrowed(),
             numeric_primary,
             self.lithuanian_dot_above,
         );

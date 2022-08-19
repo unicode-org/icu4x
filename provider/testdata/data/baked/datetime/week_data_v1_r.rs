@@ -2,7 +2,7 @@
 type DataStruct =
     <::icu_datetime::provider::week_data::WeekDataV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[
+    litemap::LiteMap::from_sorted_store_unchecked(&[
         ("und", UND_UND_AI_UND_AL_UND_AM_UND_AR_UND_AU),
         ("und-AD", UND_AD_UND_AN_UND_AT_UND_AX_UND_BE_UND_BG),
         ("und-AE", UND_AE_UND_AF_UND_BH_UND_DJ_UND_DZ_UND_EG),
@@ -160,42 +160,32 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("und-ZW", UND_AG_UND_AS_UND_BD_UND_BR_UND_BS_UND_BT),
     ]);
 static UND_AD_UND_AN_UND_AT_UND_AX_UND_BE_UND_BG: &DataStruct =
-    &::icu_datetime::provider::week_data::WeekDataV1(
-        ::icu_calendar::arithmetic::week_of::CalendarInfo {
-            first_weekday: ::icu_calendar::types::IsoWeekday::Monday,
-            min_week_days: 4u8,
-        },
-    );
+    &::icu_datetime::provider::week_data::WeekDataV1(::icu_calendar::week_of::CalendarInfo {
+        first_weekday: ::icu_calendar::types::IsoWeekday::Monday,
+        min_week_days: 4u8,
+    });
 static UND_AE_UND_AF_UND_BH_UND_DJ_UND_DZ_UND_EG: &DataStruct =
-    &::icu_datetime::provider::week_data::WeekDataV1(
-        ::icu_calendar::arithmetic::week_of::CalendarInfo {
-            first_weekday: ::icu_calendar::types::IsoWeekday::Saturday,
-            min_week_days: 1u8,
-        },
-    );
+    &::icu_datetime::provider::week_data::WeekDataV1(::icu_calendar::week_of::CalendarInfo {
+        first_weekday: ::icu_calendar::types::IsoWeekday::Saturday,
+        min_week_days: 1u8,
+    });
 static UND_AG_UND_AS_UND_BD_UND_BR_UND_BS_UND_BT: &DataStruct =
-    &::icu_datetime::provider::week_data::WeekDataV1(
-        ::icu_calendar::arithmetic::week_of::CalendarInfo {
-            first_weekday: ::icu_calendar::types::IsoWeekday::Sunday,
-            min_week_days: 1u8,
-        },
-    );
-static UND_MV: &DataStruct = &::icu_datetime::provider::week_data::WeekDataV1(
-    ::icu_calendar::arithmetic::week_of::CalendarInfo {
+    &::icu_datetime::provider::week_data::WeekDataV1(::icu_calendar::week_of::CalendarInfo {
+        first_weekday: ::icu_calendar::types::IsoWeekday::Sunday,
+        min_week_days: 1u8,
+    });
+static UND_MV: &DataStruct =
+    &::icu_datetime::provider::week_data::WeekDataV1(::icu_calendar::week_of::CalendarInfo {
         first_weekday: ::icu_calendar::types::IsoWeekday::Friday,
         min_week_days: 1u8,
-    },
-);
-static UND_PT: &DataStruct = &::icu_datetime::provider::week_data::WeekDataV1(
-    ::icu_calendar::arithmetic::week_of::CalendarInfo {
+    });
+static UND_PT: &DataStruct =
+    &::icu_datetime::provider::week_data::WeekDataV1(::icu_calendar::week_of::CalendarInfo {
         first_weekday: ::icu_calendar::types::IsoWeekday::Sunday,
         min_week_days: 4u8,
-    },
-);
+    });
 static UND_UND_AI_UND_AL_UND_AM_UND_AR_UND_AU: &DataStruct =
-    &::icu_datetime::provider::week_data::WeekDataV1(
-        ::icu_calendar::arithmetic::week_of::CalendarInfo {
-            first_weekday: ::icu_calendar::types::IsoWeekday::Monday,
-            min_week_days: 1u8,
-        },
-    );
+    &::icu_datetime::provider::week_data::WeekDataV1(::icu_calendar::week_of::CalendarInfo {
+        first_weekday: ::icu_calendar::types::IsoWeekday::Monday,
+        min_week_days: 1u8,
+    });

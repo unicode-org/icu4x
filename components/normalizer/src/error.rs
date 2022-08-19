@@ -16,6 +16,8 @@ pub enum NormalizerError {
     DataProvider(DataError),
     /// The data uses a planned but unsupported feature.
     FutureExtension,
+    /// Data failed manual validation
+    ValidationError,
 }
 
 #[cfg(feature = "std")]

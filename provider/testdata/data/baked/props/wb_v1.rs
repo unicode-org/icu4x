@@ -2,7 +2,7 @@
 type DataStruct =
     <::icu_properties::provider::WordBreakV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[("und", UND)]);
+    litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);
 static UND: &DataStruct = &::icu_properties::provider::PropertyCodePointMapV1::CodePointTrie(
     ::icu_collections::codepointtrie::CodePointTrie::from_parts(
         ::icu_collections::codepointtrie::CodePointTrieHeader {

@@ -86,8 +86,8 @@ impl CldrCalendar for Ethiopic {
     }
 }
 
-pub(crate) fn potentially_fixup_calendar<C: CldrCalendar>(
-    locale: &mut DataLocale,
+pub(crate) fn check_locale<C: CldrCalendar>(
+    locale: &DataLocale,
 ) -> Result<(), DateTimeFormatterError> {
     let cal = locale.get_unicode_ext(&key!("ca"));
 
@@ -101,8 +101,6 @@ pub(crate) fn potentially_fixup_calendar<C: CldrCalendar>(
                 tiny,
             ));
         }
-    } else {
-        locale.set_unicode_ext(key!("ca"), C::DEFAULT_BCP_47_IDENTIFIER);
     }
 
     Ok(())

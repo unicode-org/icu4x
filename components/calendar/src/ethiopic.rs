@@ -32,13 +32,11 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::coptic::Coptic;
 use crate::iso::Iso;
 use crate::julian::Julian;
-use crate::{
-    types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
-    DateTime, DateTimeError,
-};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
@@ -56,11 +54,29 @@ pub enum EthiopicEraStyle {
     /// in this calendar
     AmeteAlem,
 }
-/// The Ethiopic Calendar
+
+/// The [Ethiopian Calendar]
+///
+/// The [Ethiopian calendar] is a solar calendar used by the Coptic Orthodox Church, with twelve normal months
+/// and a thirteenth small epagomenal month.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// It can be constructed in two modes: using the Amete Alem era scheme, or the Amete Mihret era scheme (the default),
+/// see [`EthiopicEraStyle`] for more info.
+///
+/// [Ethiopian calendar]: https://en.wikipedia.org/wiki/Ethiopian_calendar
+///
+/// # Era codes
+///
+/// This calendar supports three era codes, based on what mode it is in. In the Amete Mihret scheme it has
+/// the `"incar"` and `"pre-incar"` eras, 1 Incarnation is 9 CE. In the Amete Alem scheme, it instead has a single era,
+/// `"mundi`, where 1 Anno Mundi is 5493 BCE. Dates before that use negative year numbers.
 // The bool specifies whether dates should be in the Amete Alem era scheme
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 pub struct Ethiopic(pub(crate) bool);
 
+/// The inner date type used for representing [`Date`]s of [`Ethiopic`]. See [`Date`] and [`Ethiopic`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct EthiopicDateInner(ArithmeticDate<Ethiopic>);
 
@@ -79,7 +95,7 @@ impl CalendarArithmetic for Ethiopic {
         }
     }
 
-    fn months_for_every_year() -> u8 {
+    fn months_for_every_year(_: i32) -> u8 {
         13
     }
 

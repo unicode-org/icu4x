@@ -16,7 +16,7 @@ use icu_provider::prelude::*;
 /// [`ForkByErrorProvider`] does not support forking between [`DataProvider`]s. However, it
 /// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
 #[derive(Debug, PartialEq, Eq)]
-pub struct ForkByErrorProvider<P0, P1, F>(pub P0, pub P1, F);
+pub struct ForkByErrorProvider<P0, P1, F>(P0, P1, F);
 
 impl<P0, P1, F> ForkByErrorProvider<P0, P1, F> {
     /// Create a new provider that forks between the two children.
@@ -25,6 +25,16 @@ impl<P0, P1, F> ForkByErrorProvider<P0, P1, F> {
     /// [`ForkByErrorPredicate`].
     pub fn new_with_predicate(p0: P0, p1: P1, predicate: F) -> Self {
         Self(p0, p1, predicate)
+    }
+
+    /// Returns references to the inner providers.
+    pub fn inner(&self) -> (&P0, &P1) {
+        (&self.0, &self.1)
+    }
+
+    /// Returns ownership of the inner providers to the caller.
+    pub fn into_inner(self) -> (P0, P1) {
+        (self.0, self.1)
     }
 }
 
@@ -111,7 +121,7 @@ where
 /// [`MultiForkByErrorProvider`] does not support forking between [`DataProvider`]s. However, it
 /// supports forking between [`AnyProvider`], [`BufferProvider`], and [`DynamicDataProvider`].
 pub struct MultiForkByErrorProvider<P, F> {
-    pub providers: Vec<P>,
+    providers: Vec<P>,
     predicate: F,
 }
 
@@ -125,6 +135,16 @@ impl<P, F> MultiForkByErrorProvider<P, F> {
             providers,
             predicate,
         }
+    }
+
+    /// Returns a slice of the inner providers.
+    pub fn inner(&self) -> &[P] {
+        &self.providers
+    }
+
+    /// Returns ownership of the inner providers to the caller.
+    pub fn into_inner(self) -> Vec<P> {
+        self.providers
     }
 }
 

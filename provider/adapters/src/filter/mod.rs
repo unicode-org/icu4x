@@ -209,6 +209,9 @@ where
     }
 }
 
+/// A blanket-implemented trait exposing the [`Self::filterable()`] function.
+///
+/// For more details, see [`icu_provider_adapters::filter`](crate::filter).
 pub trait Filterable: Sized {
     /// Creates a filterable data provider with the given name for debugging.
     ///

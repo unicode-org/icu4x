@@ -243,7 +243,10 @@ pub enum Out {
         pretty: bool,
         /// Whether to gate each key on its crate name. This allows using the module
         /// even if some keys are not required and their dependencies are not included.
+        /// Requires use_separate_crates.
         insert_feature_gates: bool,
+        /// Whether to use separate crates to name types instead of the `icu` metacrate
+        use_separate_crates: bool,
     },
 }
 
@@ -274,12 +277,11 @@ pub fn datagen(
                     overwrite,
                     fingerprint,
                 } => {
-                    let mut options =
-                        icu_provider_fs::export::fs_exporter::ExporterOptions::default();
+                    let mut options = icu_provider_fs::export::ExporterOptions::default();
                     options.root = output_path;
                     if overwrite {
                         options.overwrite =
-                            icu_provider_fs::export::fs_exporter::OverwriteOption::RemoveAndReplace
+                            icu_provider_fs::export::OverwriteOption::RemoveAndReplace
                     }
                     options.fingerprint = fingerprint;
                     Box::new(icu_provider_fs::export::FilesystemExporter::try_new(
@@ -293,10 +295,12 @@ pub fn datagen(
                     mod_directory,
                     pretty,
                     insert_feature_gates,
+                    use_separate_crates,
                 } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
                     pretty,
                     insert_feature_gates,
+                    use_separate_crates,
                 )),
             })
         })

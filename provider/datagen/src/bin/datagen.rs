@@ -206,9 +206,13 @@ fn main() -> eyre::Result<()> {
                 .takes_value(true),
         )
         .arg(Arg::with_name("INSERT_FEATURE_GATES")
-            .long("insert-feature_gates")
+            .long("insert-feature-gates")
             .help("Module-mode only: Insert per-key feature gates for each key's crate.")
-    )
+        )
+        .arg(Arg::with_name("USE_SEPARATE_CRATES")
+            .long("use-separate-crates")
+            .help("Module-mode only: Use types from individual crates instead of the `icu` meta-crate.")
+        )
         .get_matches();
 
     if matches.is_present("VERBOSE") {
@@ -318,6 +322,7 @@ fn main() -> eyre::Result<()> {
                 .ok_or_else(|| eyre::eyre!("--out must be specified for --format=mod"))?,
             pretty: matches.is_present("PRETTY"),
             insert_feature_gates: matches.is_present("INSERT_FEATURE_GATES"),
+            use_separate_crates: matches.is_present("USE_SEPARATE_CRATES"),
         },
         _ => unreachable!(),
     };

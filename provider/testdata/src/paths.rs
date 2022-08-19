@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Get paths to the test data directories.
+
 use std::path::PathBuf;
 
 /// Returns the absolute path to the top-level data directory.
