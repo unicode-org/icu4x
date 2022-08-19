@@ -610,25 +610,43 @@ mod test {
         let today_minus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -1));
         assert_eq!(offset, today_minus_1);
+    }
 
+    #[test]
+    fn test_offset_handles_negative_month_offset() {
         let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_1 = Date::new_iso_date(2020, 1, 1).unwrap();
+        let today_minus_2_months = Date::new_iso_date(2020, 1, 1).unwrap();
         let offset = today.added(DateDuration::new(0, -2, 0, 0));
-        assert_eq!(offset, today_minus_1);
+        assert_eq!(offset, today_minus_2_months);
 
         let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_1 = Date::new_iso_date(2019, 11, 1).unwrap();
+        let today_minus_4_months = Date::new_iso_date(2019, 11, 1).unwrap();
         let offset = today.added(DateDuration::new(0, -4, 0, 0));
-        assert_eq!(offset, today_minus_1);
+        assert_eq!(offset, today_minus_4_months);
 
         let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_1 = Date::new_iso_date(2018, 3, 1).unwrap();
+        let today_minus_24_months = Date::new_iso_date(2018, 3, 1).unwrap();
         let offset = today.added(DateDuration::new(0, -24, 0, 0));
-        assert_eq!(offset, today_minus_1);
+        assert_eq!(offset, today_minus_24_months);
 
         let today = Date::new_iso_date(2020, 3, 1).unwrap();
-        let today_minus_1 = Date::new_iso_date(2017, 12, 1).unwrap();
+        let today_minus_27_months = Date::new_iso_date(2017, 12, 1).unwrap();
         let offset = today.added(DateDuration::new(0, -27, 0, 0));
-        assert_eq!(offset, today_minus_1);
+        assert_eq!(offset, today_minus_27_months);
+    }
+
+    #[test]
+    fn test_offset_handles_out_of_bound_month_offset() {
+        let today = Date::new_iso_date(2021, 1, 31).unwrap();
+        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
+        let today_plus_1_month = Date::new_iso_date(2021, 3, 3).unwrap();
+        let offset = today.added(DateDuration::new(0, 1, 0, 0));
+        assert_eq!(offset, today_plus_1_month);
+
+        let today = Date::new_iso_date(2021, 1, 31).unwrap();
+        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
+        let today_plus_1_month_1_day = Date::new_iso_date(2021, 3, 4).unwrap();
+        let offset = today.added(DateDuration::new(0, 1, 0, 1));
+        assert_eq!(offset, today_plus_1_month_1_day);
     }
 }

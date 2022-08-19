@@ -36,7 +36,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn offset_days(&mut self, mut day_offset: i32) {
+    fn offset_days(&mut self, mut day_offset: i32) {
         while day_offset != 0 {
             let month_days = C::month_days(self.year, self.month);
             if self.day as i32 + day_offset > month_days as i32 {
@@ -53,7 +53,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
     }
 
     #[inline]
-    pub fn offset_months(&mut self, mut month_offset: i32) {
+    fn offset_months(&mut self, mut month_offset: i32) {
         while month_offset != 0 {
             let year_months = C::months_for_every_year(self.year);
             if self.month as i32 + month_offset > year_months as i32 {
@@ -71,9 +71,14 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn offset_date(&mut self, offset: DateDuration<C>) {
+        // For offset_date to work with lunar calendars, need to handle an edge case where the original month is not valid in the future year.
         self.year += offset.years;
+
         self.offset_months(offset.months);
-        self.offset_days(offset.days + offset.weeks * 7);
+
+        let day_offset = offset.days + offset.weeks * 7 + self.day as i32 - 1;
+        self.day = 1;
+        self.offset_days(day_offset);
     }
 
     #[inline]
