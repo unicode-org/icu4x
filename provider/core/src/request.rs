@@ -55,7 +55,7 @@ pub struct DataRequestMetadata;
 /// use icu_provider::DataLocale;
 ///
 /// let locale1 = locale!("en-u-ca-buddhist");
-/// let data_locale: DataLocale = locale1.into();
+/// let data_locale = DataLocale::from(locale1);
 /// let locale2 = data_locale.into_locale();
 ///
 /// assert_eq!(locale2.to_string(), "en-u-ca-buddhist");
@@ -83,7 +83,7 @@ pub struct DataRequestMetadata;
 /// use icu_provider::DataLocale;
 ///
 /// let langid1 = langid!("es-CA-valencia");
-/// let data_locale: DataLocale = langid1.into();
+/// let data_locale = DataLocale::from(langid1);
 /// let langid2 = data_locale.get_langid();
 ///
 /// assert_eq!(langid2.to_string(), "es-CA-valencia");
