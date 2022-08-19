@@ -51,10 +51,10 @@ pub struct DataRequestMetadata;
 /// Convert a [`Locale`] to a [`DataLocale`] and back:
 ///
 /// ```
-/// use icu_locid::Locale;
+/// use icu_locid::locale;
 /// use icu_provider::DataLocale;
 ///
-/// let locale1 = "en-u-ca-buddhist".parse::<Locale>().unwrap();
+/// let locale1 = locale!("en-u-ca-buddhist");
 /// let data_locale: DataLocale = locale1.into();
 /// let locale2 = data_locale.into_locale();
 ///
@@ -62,14 +62,15 @@ pub struct DataRequestMetadata;
 /// ```
 ///
 /// You can alternatively create a [`DataLocale`] from a borrowed [`Locale`], which is more
-/// efficient than cloning the [`Locale`]:
+/// efficient than cloning the [`Locale`], but less efficient than converting an owned
+/// [`Locale`]:
 ///
 /// ```
-/// use icu_locid::Locale;
+/// use icu_locid::locale;
 /// use icu_provider::DataLocale;
 ///
-/// let locale1 = "en-u-ca-buddhist".parse::<Locale>().unwrap();
-/// let data_locale: DataLocale = (&locale1).into();
+/// let locale1 = locale!("en-u-ca-buddhist");
+/// let data_locale = DataLocale::from(&locale);
 /// let locale2 = data_locale.into_locale();
 ///
 /// assert_eq!(locale1, locale2);
