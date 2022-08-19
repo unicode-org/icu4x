@@ -4,9 +4,9 @@
 
 use super::ForkByErrorPredicate;
 use alloc::vec::Vec;
-use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
-use icu_provider::{datagen};
+use icu_provider::datagen;
+use icu_provider::prelude::*;
 
 /// A provider that returns data from one of two child providers based on a predicate function.
 ///
@@ -233,10 +233,7 @@ where
                 }
             };
         }
-        Err((
-            from,
-            DataErrorKind::MissingDataKey.with_key(key),
-        ))
+        Err((from, DataErrorKind::MissingDataKey.with_key(key)))
     }
 }
 

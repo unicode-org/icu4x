@@ -38,9 +38,9 @@ mod impls;
 
 pub use impls::*;
 
-use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
-use icu_provider::{datagen};
+use icu_provider::datagen;
+use icu_provider::prelude::*;
 
 /// A data provider that selectively filters out data requests.
 ///
