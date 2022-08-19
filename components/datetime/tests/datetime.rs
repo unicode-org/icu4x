@@ -145,7 +145,7 @@ fn test_fixture(fixture_name: &str) {
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::EthiopicAmeteAlem => assert_fixture_element(
+                    AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
                         &locale,
                         &input_ethioaa,
                         &input_iso,
