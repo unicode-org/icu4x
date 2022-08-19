@@ -8,7 +8,7 @@ use alloc::string::ToString;
 use core::any;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::{
-    buddhist::Buddhist, coptic::Coptic, ethiopic::Ethiopic, indian::Indian, japanese::Japanese,
+    buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
     japanese::JapaneseExtended, Gregorian,
 };
 use icu_locid::extensions::unicode::Value;
@@ -77,12 +77,12 @@ impl CldrCalendar for Indian {
     type DateLengthsV1Marker = IndianDateLengthsV1Marker;
 }
 
-impl CldrCalendar for Ethiopic {
-    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopic");
-    type DateSymbolsV1Marker = EthiopicDateSymbolsV1Marker;
-    type DateLengthsV1Marker = EthiopicDateLengthsV1Marker;
+impl CldrCalendar for Ethiopian {
+    const DEFAULT_BCP_47_IDENTIFIER: Value = value!("ethiopian");
+    type DateSymbolsV1Marker = EthiopianDateSymbolsV1Marker;
+    type DateLengthsV1Marker = EthiopianDateLengthsV1Marker;
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
-        *value == value!("ethiopic") || *value == value!("ethioaa")
+        *value == value!("ethiopian") || *value == value!("ethioaa")
     }
 }
 
@@ -152,7 +152,7 @@ where
         + DataProvider<JapaneseExtendedDateLengthsV1Marker>
         + DataProvider<CopticDateLengthsV1Marker>
         + DataProvider<IndianDateLengthsV1Marker>
-        + DataProvider<EthiopicDateLengthsV1Marker>
+        + DataProvider<EthiopianDateLengthsV1Marker>
         + ?Sized,
 {
     let req = DataRequest {
@@ -190,13 +190,13 @@ where
                 .take_payload()?
                 .cast()
         }
-        AnyCalendarKind::Ethiopic => {
-            DataProvider::<<Ethiopic as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+        AnyCalendarKind::Ethiopian => {
+            DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }
         AnyCalendarKind::Ethioaa => {
-            DataProvider::<<Ethiopic as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
+            DataProvider::<<Ethiopian as CldrCalendar>::DateLengthsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }
@@ -222,7 +222,7 @@ where
         + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
         + DataProvider<CopticDateSymbolsV1Marker>
         + DataProvider<IndianDateSymbolsV1Marker>
-        + DataProvider<EthiopicDateSymbolsV1Marker>
+        + DataProvider<EthiopianDateSymbolsV1Marker>
         + ?Sized,
 {
     let req = DataRequest {
@@ -260,13 +260,13 @@ where
                 .take_payload()?
                 .cast()
         }
-        AnyCalendarKind::Ethiopic => {
-            DataProvider::<<Ethiopic as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+        AnyCalendarKind::Ethiopian => {
+            DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }
         AnyCalendarKind::Ethioaa => {
-            DataProvider::<<Ethiopic as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
+            DataProvider::<<Ethiopian as CldrCalendar>::DateSymbolsV1Marker>::load(provider, req)?
                 .take_payload()?
                 .cast()
         }

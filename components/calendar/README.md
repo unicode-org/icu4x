@@ -12,7 +12,7 @@ can represent dates for arbitrary calendars.
 
 The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
 Gregorian calendars respectively. Further calendars can be found in modules like
-[`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopic`].
+[`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopian`].
 
 Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
 

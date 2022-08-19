@@ -86,12 +86,12 @@ fn date_benches(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     bench_calendar(
         &mut group,
-        "calendar/ethiopic",
+        "calendar/ethiopian",
         &fxs,
-        icu::calendar::ethiopic::Ethiopic::new(),
+        icu::calendar::ethiopian::Ethiopian::new(),
         |y, m, d| {
-            Date::new_ethiopic_date(
-                icu::calendar::ethiopic::EthiopicEraStyle::AmeteMihret,
+            Date::new_ethiopian_date(
+                icu::calendar::ethiopian::EthiopianEraStyle::AmeteMihret,
                 y,
                 m,
                 d,
