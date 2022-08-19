@@ -89,8 +89,8 @@ impl DataPayload<BufferMarker> {
     /// Deserialize a [`DataPayload`]`<`[`BufferMarker`]`>` into a [`DataPayload`] of a
     /// specific concrete type.
     ///
-    /// The buffer format must be known externally to this function; it is normally carried
-    /// in the [`DataResponseMetadata`].
+    /// This function takes the buffer format as an argument. When a buffer payload is returned
+    /// from a data provider, the buffer format is stored in the [`DataResponseMetadata`].
     ///
     /// # Examples
     ///
