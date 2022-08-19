@@ -99,7 +99,7 @@ macro_rules! make_exportable_provider {
         }
 
         impl $crate::datagen::DataConverter<$crate::buf::BufferMarker, $crate::datagen::HeapStatsMarker> for $provider {
-            fn convert(&self, key: $crate::DataKey, from: $crate::DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, $crate::DataErrorWithPayload<$crate::buf::BufferMarker>> {
+            fn convert(&self, key: $crate::DataKey, from: $crate::DataPayload<$crate::buf::BufferMarker>) -> Result<$crate::DataPayload<$crate::datagen::HeapStatsMarker>, ($crate::DataPayload<$crate::buf::BufferMarker>, $crate::DataError)> {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
@@ -112,7 +112,7 @@ macro_rules! make_exportable_provider {
                             return Ok($crate::DataPayload::from_owned(heap_stats));
                         }
                     )+,
-                    _ => Err($crate::DataErrorWithPayload(from, $crate::DataErrorKind::MissingDataKey.with_key(key)))
+                    _ => Err((from, $crate::DataErrorKind::MissingDataKey.with_key(key)))
                 }
             }
         }

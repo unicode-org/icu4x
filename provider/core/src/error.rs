@@ -265,28 +265,3 @@ impl From<std::io::Error> for DataError {
         DataErrorKind::Io(e.kind()).into_error()
     }
 }
-
-/// A [`DataError`] that also returns a [`DataPayload`] to the caller.
-#[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct DataErrorWithPayload<M: DataMarker>(pub DataPayload<M>, pub DataError);
-
-impl<M: DataMarker> From<DataErrorWithPayload<M>> for DataError {
-    fn from(other: DataErrorWithPayload<M>) -> Self {
-        other.1
-    }
-}
-
-impl<M: DataMarker> fmt::Debug for DataErrorWithPayload<M> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.1.fmt(f)
-    }
-}
-
-impl<M: DataMarker> fmt::Display for DataErrorWithPayload<M> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.1.fmt(f)
-    }
-}
-
-#[cfg(feature = "std")]
-impl<M: DataMarker> std::error::Error for DataErrorWithPayload<M> {}

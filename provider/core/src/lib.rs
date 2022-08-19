@@ -209,7 +209,6 @@ pub mod prelude {
 pub use prelude::*;
 
 // Less important non-prelude items
-pub use crate::error::DataErrorWithPayload;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::FallbackPriority;
 pub use crate::response::RcWrap;

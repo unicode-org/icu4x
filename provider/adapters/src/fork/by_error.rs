@@ -6,7 +6,7 @@ use super::ForkByErrorPredicate;
 use alloc::vec::Vec;
 use icu_provider::prelude::*;
 #[cfg(feature = "datagen")]
-use icu_provider::{datagen, DataErrorWithPayload};
+use icu_provider::{datagen};
 
 /// A provider that returns data from one of two child providers based on a predicate function.
 ///
@@ -219,21 +219,21 @@ where
         &self,
         key: DataKey,
         mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, DataErrorWithPayload<MFrom>> {
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
         for provider in self.providers.iter() {
             let result = provider.convert(key, from);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(e) => {
-                    let DataErrorWithPayload(returned, err) = e;
+                    let (returned, err) = e;
                     if !self.predicate.test(key, None, err) {
-                        return Err(DataErrorWithPayload(returned, err));
+                        return Err((returned, err));
                     }
                     from = returned;
                 }
             };
         }
-        Err(DataErrorWithPayload(
+        Err((
             from,
             DataErrorKind::MissingDataKey.with_key(key),
         ))
@@ -253,14 +253,14 @@ where
         &self,
         key: DataKey,
         mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, DataErrorWithPayload<MFrom>> {
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
         let result = self.0.convert(key, from);
         match result {
             Ok(ok) => return Ok(ok),
             Err(e) => {
-                let DataErrorWithPayload(returned, err) = e;
+                let (returned, err) = e;
                 if !self.2.test(key, None, err) {
-                    return Err(DataErrorWithPayload(returned, err));
+                    return Err((returned, err));
                 }
                 from = returned;
             }

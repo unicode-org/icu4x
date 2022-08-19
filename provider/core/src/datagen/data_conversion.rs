@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use crate::DataErrorWithPayload;
 use crate::DataKey;
 use alloc::boxed::Box;
 
@@ -30,7 +29,7 @@ pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
         &self,
         key: DataKey,
         from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, DataErrorWithPayload<MFrom>>;
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)>;
 }
 
 impl<MFrom, MTo, P> DataConverter<MFrom, MTo> for Box<P>
@@ -43,7 +42,7 @@ where
         &self,
         key: DataKey,
         from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, DataErrorWithPayload<MFrom>> {
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
         (**self).convert(key, from)
     }
 }
