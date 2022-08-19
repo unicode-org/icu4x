@@ -11,7 +11,10 @@ The [`types`] module has a lot of common types for dealing with dates and times.
 can represent dates for arbitrary calendars.
 
 The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
-Gregorian calendars respectively.
+Gregorian calendars respectively. Further calendars can be found in modules like
+[`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopic`].
+
+Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
 
 Some of the algorithms implemented here are based on
 Dershowitz, Nachum, and Edward M. Reingold. _Calendrical calculations_. Cambridge University Press, 2008.

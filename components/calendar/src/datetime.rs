@@ -29,11 +29,14 @@ use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
+    /// The date
     pub date: Date<A>,
+    /// The time
     pub time: Time,
 }
 
 impl<A: AsCalendar> DateTime<A> {
+    /// Construct a [`DateTime`] for a given [`Date`] and [`Time`]
     pub fn new(date: Date<A>, time: Time) -> Self {
         DateTime { date, time }
     }

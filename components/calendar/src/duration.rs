@@ -6,8 +6,8 @@ use crate::Calendar;
 use core::fmt;
 use core::marker::PhantomData;
 
-#[derive(Copy, Clone, Eq, PartialEq)]
 /// A duration between two dates
+#[derive(Copy, Clone, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type should be stable (and is intended to be constructed manually)
 pub struct DateDuration<C: Calendar + ?Sized> {
     /// The number of years

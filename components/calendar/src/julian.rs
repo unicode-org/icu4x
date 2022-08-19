@@ -32,11 +32,9 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
-use crate::{
-    types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
-    DateTime, DateTimeError,
-};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::convert::TryInto;
 use core::marker::PhantomData;
 use tinystr::tinystr;
@@ -45,11 +43,22 @@ use tinystr::tinystr;
 // 1st Jan of 1st year Julian is equivalent to December 30th of 0th year of ISO year
 const JULIAN_EPOCH: i32 = -1;
 
-/// The Julian calendar
+/// The [Julian Calendar]
+///
+/// The [Julian calendar] is a solar calendar that was used commonly historically, with twelve months.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Julian calendar]: https://en.wikipedia.org/wiki/Julian_calendar
+///
+/// # Era codes
+///
+/// This calendar supports two era codes: `"bc"`, and `"ad"`, corresponding to the BC and AD eras
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Julian;
 
+/// The inner date type used for representing [`Date`]s of [`Julian`]. See [`Date`] and [`Julian`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 // The inner date type used for representing Date<Julian>
 pub struct JulianDateInner(pub(crate) ArithmeticDate<Julian>);
@@ -83,12 +92,12 @@ impl Calendar for Julian {
         month_code: types::MonthCode,
         day: u8,
     ) -> Result<Self::DateInner, DateTimeError> {
-        let year = if era.0 == tinystr!(16, "ce") {
+        let year = if era.0 == tinystr!(16, "ad") {
             if year <= 0 {
                 return Err(DateTimeError::OutOfRange);
             }
             year
-        } else if era.0 == tinystr!(16, "bce") {
+        } else if era.0 == tinystr!(16, "bc") {
             if year <= 0 {
                 return Err(DateTimeError::OutOfRange);
             }
