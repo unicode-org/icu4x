@@ -1768,13 +1768,13 @@ impl DecomposingNormalizer {
                             // Fast-track succeeded!
                             continue 'fastest;
                         }
+                        decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
                         break 'fastest;
                     }
                     // End of stream
                     sink.write_str(pending_slice)?;
                     return Ok(());
                 }
-                decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
 
                 // `unwrap()` OK, because the slice is valid UTF-8 and we know there
                 // is an upcoming byte.
@@ -2192,13 +2192,13 @@ impl ComposingNormalizer {
                             undecomposed_starter_valid = false;
                             continue 'fastest;
                         }
+                        composition.decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
                         break 'fastest;
                     }
                     // End of stream
                     sink.write_str(pending_slice)?;
                     return Ok(());
                 }
-                composition.decomposition.delegate = pending_slice[pending_slice.len() - code_unit_iter.as_slice().len() - 1..].chars();
                 // `unwrap()` OK, because the slice is valid UTF-8 and we know there
                 // is an upcoming byte.
                 let upcoming = composition.decomposition.delegate.next().unwrap();
