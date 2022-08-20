@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660953056188,
+  "lastUpdate": 1660958041065,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24713,6 +24713,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8c497c3955d5cd32548af134b9c9599c305eaa95"
         },
         "date": 1660953013967,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e96059c75c707a3d20d26147384f21460f0bb28",
+          "message": "Rename ethiopic -> ethiopian (#2416)\n\n* Rename ethiopic -> ethiopian",
+          "timestamp": "2022-08-20T01:11:51Z",
+          "tree_id": "3b4cc3958936721c7b4da0f784f6416dd8158ec8",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e96059c75c707a3d20d26147384f21460f0bb28"
+        },
+        "date": 1660957997952,
         "tool": "ndjson",
         "benches": [
           {
