@@ -16,7 +16,7 @@ use icu_datetime::provider::time_zones::{
     MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
 use icu_timezone::provider::MetaZonePeriodV1;
-use icu_timezone::TimeVariant;
+use icu_timezone::ZoneVariant;
 use std::borrow::Cow;
 use std::collections::HashMap;
 use tinystr::TinyStr8;
@@ -426,33 +426,33 @@ long_short_impls!(
     short_metazone_names
 );
 
-fn convert_cldr_time_variant(cldr_time_variant: &str) -> TimeVariant {
-    match cldr_time_variant {
-        "standard" => TimeVariant::standard(),
-        "daylight" => TimeVariant::daylight(),
+fn convert_cldr_zone_variant(cldr_zone_variant: &str) -> ZoneVariant {
+    match cldr_zone_variant {
+        "standard" => ZoneVariant::standard(),
+        "daylight" => ZoneVariant::daylight(),
         _ => panic!(
-            "Time-zone variant was not compatible with TimeVariant: {}",
-            cldr_time_variant
+            "Time-zone variant was not compatible with ZoneVariant: {}",
+            cldr_zone_variant
         ),
     }
 }
 
 fn iterate_zone_format_for_meta_zone_id(
     pair: (MetaZoneId, ZoneFormat),
-) -> impl Iterator<Item = (MetaZoneId, TimeVariant, String)> {
+) -> impl Iterator<Item = (MetaZoneId, ZoneVariant, String)> {
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .map(move |(key, value)| (key1, convert_cldr_time_variant(&key), value))
+        .map(move |(key, value)| (key1, convert_cldr_zone_variant(&key), value))
 }
 
 fn iterate_zone_format_for_time_zone_id(
     pair: (TimeZoneBcp47Id, ZoneFormat),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, TimeVariant, String)> {
+) -> impl Iterator<Item = (TimeZoneBcp47Id, ZoneVariant, String)> {
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .map(move |(key, value)| (key1, convert_cldr_time_variant(&key), value))
+        .map(move |(key, value)| (key1, convert_cldr_zone_variant(&key), value))
 }
 
 fn metazone_periods_iter(

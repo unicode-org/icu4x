@@ -1035,7 +1035,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
             .and_then(|metazones| {
                 time_zone.time_zone_id().and_then(|tz| {
                     time_zone
-                        .time_variant()
+                        .zone_variant()
                         .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
                 })
             })
@@ -1047,7 +1047,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
                     .and_then(|metazones| {
                         time_zone.metazone_id().and_then(|mz| {
                             time_zone
-                                .time_variant()
+                                .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
                         })
                     })
@@ -1077,7 +1077,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
             .and_then(|metazones| {
                 time_zone.time_zone_id().and_then(|tz| {
                     time_zone
-                        .time_variant()
+                        .zone_variant()
                         .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
                 })
             })
@@ -1089,7 +1089,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
                     .and_then(|metazones| {
                         time_zone.metazone_id().and_then(|mz| {
                             time_zone
-                                .time_variant()
+                                .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
                         })
                     })
