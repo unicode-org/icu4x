@@ -11,7 +11,7 @@ use icu_calendar::{
     any_calendar::{AnyCalendarKind, IncludedInAnyCalendar},
     buddhist::Buddhist,
     coptic::Coptic,
-    ethiopic::{Ethiopic, EthiopicEraStyle},
+    ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
     AsCalendar, DateTime, Gregorian, Iso,
@@ -73,10 +73,10 @@ fn test_fixture(fixture_name: &str) {
         let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
-        let input_ethiopic = input_value.to_calendar(Ethiopic::new());
+        let input_ethiopian = input_value.to_calendar(Ethiopian::new());
 
         let input_ethioaa =
-            input_value.to_calendar(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem));
+            input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
         let description = match fx.description {
             Some(description) => {
                 format!(
@@ -136,16 +136,16 @@ fn test_fixture(fixture_name: &str) {
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::Ethiopic => assert_fixture_element(
+                    AnyCalendarKind::Ethiopian => assert_fixture_element(
                         &locale,
-                        &input_ethiopic,
+                        &input_ethiopian,
                         &input_iso,
                         &output_value,
                         &provider,
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::Ethioaa => assert_fixture_element(
+                    AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
                         &locale,
                         &input_ethioaa,
                         &input_iso,

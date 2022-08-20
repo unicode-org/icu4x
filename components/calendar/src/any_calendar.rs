@@ -6,7 +6,7 @@
 
 use crate::buddhist::Buddhist;
 use crate::coptic::Coptic;
-use crate::ethiopic::{Ethiopic, EthiopicEraStyle};
+use crate::ethiopian::{Ethiopian, EthiopianEraStyle};
 use crate::gregorian::Gregorian;
 use crate::indian::Indian;
 use crate::iso::Iso;
@@ -85,8 +85,8 @@ pub enum AnyCalendar {
     Japanese(Japanese),
     /// A [`JapaneseExtended`] calendar
     JapaneseExtended(JapaneseExtended),
-    /// An [`Ethiopic`] calendar
-    Ethiopic(Ethiopic),
+    /// An [`Ethiopian`] calendar
+    Ethiopian(Ethiopian),
     /// An [`Indian`] calendar
     Indian(Indian),
     /// A [`Coptic`] calendar
@@ -107,8 +107,8 @@ pub enum AnyDateInner {
     Japanese(<Japanese as Calendar>::DateInner),
     /// A date for a [`JapaneseExtended`] calendar
     JapaneseExtended(<JapaneseExtended as Calendar>::DateInner),
-    /// A date for an [`Ethiopic`] calendar
-    Ethiopic(<Ethiopic as Calendar>::DateInner),
+    /// A date for an [`Ethiopian`] calendar
+    Ethiopian(<Ethiopian as Calendar>::DateInner),
     /// A date for an [`Indian`] calendar
     Indian(<Indian as Calendar>::DateInner),
     /// A date for a [`Coptic`] calendar
@@ -127,7 +127,7 @@ macro_rules! match_cal_and_date {
                 &Self::JapaneseExtended(ref $cal_matched),
                 &AnyDateInner::JapaneseExtended(ref $date_matched),
             ) => $e,
-            (&Self::Ethiopic(ref $cal_matched), &AnyDateInner::Ethiopic(ref $date_matched)) => $e,
+            (&Self::Ethiopian(ref $cal_matched), &AnyDateInner::Ethiopian(ref $date_matched)) => $e,
             (&Self::Indian(ref $cal_matched), &AnyDateInner::Indian(ref $date_matched)) => $e,
             (&Self::Coptic(ref $cal_matched), &AnyDateInner::Coptic(ref $date_matched)) => $e,
             (&Self::Iso(ref $cal_matched), &AnyDateInner::Iso(ref $date_matched)) => $e,
@@ -162,8 +162,8 @@ impl Calendar for AnyCalendar {
             Self::JapaneseExtended(ref c) => {
                 AnyDateInner::JapaneseExtended(c.date_from_codes(era, year, month_code, day)?)
             }
-            Self::Ethiopic(ref c) => {
-                AnyDateInner::Ethiopic(c.date_from_codes(era, year, month_code, day)?)
+            Self::Ethiopian(ref c) => {
+                AnyDateInner::Ethiopian(c.date_from_codes(era, year, month_code, day)?)
             }
             Self::Indian(ref c) => {
                 AnyDateInner::Indian(c.date_from_codes(era, year, month_code, day)?)
@@ -181,7 +181,7 @@ impl Calendar for AnyCalendar {
             Self::Buddhist(ref c) => AnyDateInner::Buddhist(c.date_from_iso(iso)),
             Self::Japanese(ref c) => AnyDateInner::Japanese(c.date_from_iso(iso)),
             Self::JapaneseExtended(ref c) => AnyDateInner::JapaneseExtended(c.date_from_iso(iso)),
-            Self::Ethiopic(ref c) => AnyDateInner::Ethiopic(c.date_from_iso(iso)),
+            Self::Ethiopian(ref c) => AnyDateInner::Ethiopian(c.date_from_iso(iso)),
             Self::Indian(ref c) => AnyDateInner::Indian(c.date_from_iso(iso)),
             Self::Coptic(ref c) => AnyDateInner::Coptic(c.date_from_iso(iso)),
             Self::Iso(ref c) => AnyDateInner::Iso(c.date_from_iso(iso)),
@@ -218,7 +218,7 @@ impl Calendar for AnyCalendar {
             (&Self::JapaneseExtended(ref c), &mut AnyDateInner::JapaneseExtended(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
-            (&Self::Ethiopic(ref c), &mut AnyDateInner::Ethiopic(ref mut d)) => {
+            (&Self::Ethiopian(ref c), &mut AnyDateInner::Ethiopian(ref mut d)) => {
                 c.offset_date(d, offset.cast_unit())
             }
             (&Self::Indian(ref c), &mut AnyDateInner::Indian(ref mut d)) => {
@@ -282,10 +282,10 @@ impl Calendar for AnyCalendar {
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
             (
-                &Self::Ethiopic(ref c1),
-                &Self::Ethiopic(ref c2),
-                &AnyDateInner::Ethiopic(ref d1),
-                &AnyDateInner::Ethiopic(ref d2),
+                &Self::Ethiopian(ref c1),
+                &Self::Ethiopian(ref c2),
+                &AnyDateInner::Ethiopian(ref d1),
+                &AnyDateInner::Ethiopian(ref d2),
             ) => c1
                 .until(d1, d2, c2, largest_unit, smallest_unit)
                 .cast_unit(),
@@ -354,7 +354,7 @@ impl Calendar for AnyCalendar {
             Self::Buddhist(_) => "AnyCalendar (Buddhist)",
             Self::Japanese(_) => "AnyCalendar (Japanese)",
             Self::JapaneseExtended(_) => "AnyCalendar (Japanese, Historical Era Data)",
-            Self::Ethiopic(_) => "AnyCalendar (Ethiopic)",
+            Self::Ethiopian(_) => "AnyCalendar (Ethiopian)",
             Self::Indian(_) => "AnyCalendar (Indian)",
             Self::Coptic(_) => "AnyCalendar (Coptic)",
             Self::Iso(_) => "AnyCalendar (Iso)",
@@ -394,11 +394,11 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
-            }
-            AnyCalendarKind::Ethioaa => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
+                EthiopianEraStyle::AmeteMihret,
+            )),
+            AnyCalendarKind::EthiopianAmeteAlem => {
+                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
             }
         })
     }
@@ -433,11 +433,11 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
-            }
-            AnyCalendarKind::Ethioaa => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
+                EthiopianEraStyle::AmeteMihret,
+            )),
+            AnyCalendarKind::EthiopianAmeteAlem => {
+                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
             }
         })
     }
@@ -468,11 +468,11 @@ impl AnyCalendar {
             AnyCalendarKind::Indian => AnyCalendar::Indian(Indian),
             AnyCalendarKind::Coptic => AnyCalendar::Coptic(Coptic),
             AnyCalendarKind::Iso => AnyCalendar::Iso(Iso),
-            AnyCalendarKind::Ethiopic => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteMihret))
-            }
-            AnyCalendarKind::Ethioaa => {
-                AnyCalendar::Ethiopic(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem))
+            AnyCalendarKind::Ethiopian => AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(
+                EthiopianEraStyle::AmeteMihret,
+            )),
+            AnyCalendarKind::EthiopianAmeteAlem => {
+                AnyCalendar::Ethiopian(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem))
             }
         })
     }
@@ -515,7 +515,7 @@ impl AnyCalendar {
             Self::Buddhist(_) => "Buddhist",
             Self::Japanese(_) => "Japanese",
             Self::JapaneseExtended(_) => "Japanese (Historical era data)",
-            Self::Ethiopic(_) => "Ethiopic",
+            Self::Ethiopian(_) => "Ethiopian",
             Self::Indian(_) => "Indian",
             Self::Coptic(_) => "Coptic",
             Self::Iso(_) => "Iso",
@@ -530,9 +530,9 @@ impl AnyCalendar {
             Self::Japanese(_) => AnyCalendarKind::Japanese,
             Self::JapaneseExtended(_) => AnyCalendarKind::JapaneseExtended,
             #[allow(clippy::expect_used)] // Invariant known at compile time
-            Self::Ethiopic(ref e) => e
+            Self::Ethiopian(ref e) => e
                 .any_calendar_kind()
-                .expect("Ethiopic calendar known to have an AnyCalendarKind"),
+                .expect("Ethiopian calendar known to have an AnyCalendarKind"),
             Self::Indian(_) => AnyCalendarKind::Indian,
             Self::Coptic(_) => AnyCalendarKind::Coptic,
             Self::Iso(_) => AnyCalendarKind::Iso,
@@ -575,7 +575,7 @@ impl AnyDateInner {
             AnyDateInner::Buddhist(_) => "Buddhist",
             AnyDateInner::Japanese(_) => "Japanese",
             AnyDateInner::JapaneseExtended(_) => "Japanese (Historical era data)",
-            AnyDateInner::Ethiopic(_) => "Ethiopic",
+            AnyDateInner::Ethiopian(_) => "Ethiopian",
             AnyDateInner::Indian(_) => "Indian",
             AnyDateInner::Coptic(_) => "Coptic",
             AnyDateInner::Iso(_) => "Iso",
@@ -595,10 +595,10 @@ pub enum AnyCalendarKind {
     Japanese,
     /// The kind of a [`JapaneseExtended`] calendar
     JapaneseExtended,
-    /// The kind of an [`Ethiopic`] calendar, with Amete Mihret era
-    Ethiopic,
-    /// The kind of an [`Ethiopic`] calendar, with Amete Alem era
-    Ethioaa,
+    /// The kind of an [`Ethiopian`] calendar, with Amete Mihret era
+    Ethiopian,
+    /// The kind of an [`Ethiopian`] calendar, with Amete Alem era
+    EthiopianAmeteAlem,
     /// The kind of a [`Indian`] calendar
     Indian,
     /// The kind of a [`Coptic`] calendar
@@ -620,8 +620,8 @@ impl AnyCalendarKind {
             "indian" => AnyCalendarKind::Indian,
             "coptic" => AnyCalendarKind::Coptic,
             "iso" => AnyCalendarKind::Iso,
-            "ethiopic" => AnyCalendarKind::Ethiopic,
-            "ethioaa" => AnyCalendarKind::Ethioaa,
+            "ethiopic" => AnyCalendarKind::Ethiopian,
+            "ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
             _ => return None,
         })
     }
@@ -645,9 +645,9 @@ impl AnyCalendarKind {
         } else if *x == value!("iso") {
             AnyCalendarKind::Iso
         } else if *x == value!("ethiopic") {
-            AnyCalendarKind::Ethiopic
+            AnyCalendarKind::Ethiopian
         } else if *x == value!("ethioaa") {
-            AnyCalendarKind::Ethioaa
+            AnyCalendarKind::EthiopianAmeteAlem
         } else {
             let mut string = x.to_string();
             string.truncate(16);
@@ -666,8 +666,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Indian => "indian",
             AnyCalendarKind::Coptic => "coptic",
             AnyCalendarKind::Iso => "iso",
-            AnyCalendarKind::Ethiopic => "ethiopic",
-            AnyCalendarKind::Ethioaa => "ethioaa",
+            AnyCalendarKind::Ethiopian => "ethiopic",
+            AnyCalendarKind::EthiopianAmeteAlem => "ethioaa",
         }
     }
 
@@ -681,8 +681,8 @@ impl AnyCalendarKind {
             AnyCalendarKind::Indian => value!("indian"),
             AnyCalendarKind::Coptic => value!("coptic"),
             AnyCalendarKind::Iso => value!("iso"),
-            AnyCalendarKind::Ethiopic => value!("ethiopic"),
-            AnyCalendarKind::Ethioaa => value!("ethioaa"),
+            AnyCalendarKind::Ethiopian => value!("ethiopic"),
+            AnyCalendarKind::EthiopianAmeteAlem => value!("ethioaa"),
         }
     }
 
@@ -813,16 +813,16 @@ impl IncludedInAnyCalendar for JapaneseExtended {
     }
 }
 
-impl IncludedInAnyCalendar for Ethiopic {
+impl IncludedInAnyCalendar for Ethiopian {
     // Amete Mihret calendars are the default
     fn to_any(self) -> AnyCalendar {
-        AnyCalendar::Ethiopic(self)
+        AnyCalendar::Ethiopian(self)
     }
     fn to_any_cloned(&self) -> AnyCalendar {
-        AnyCalendar::Ethiopic(*self)
+        AnyCalendar::Ethiopian(*self)
     }
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner {
-        AnyDateInner::Ethiopic(*d)
+        AnyDateInner::Ethiopian(*d)
     }
 }
 
@@ -944,12 +944,14 @@ mod tests {
                 .expect("Calendar construction must succeed");
         let coptic = AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Coptic)
             .expect("Calendar construction must succeed");
-        let ethiopic =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethiopic)
+        let ethiopian =
+            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethiopian)
                 .expect("Calendar construction must succeed");
-        let ethioaa =
-            AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Ethioaa)
-                .expect("Calendar construction must succeed");
+        let ethioaa = AnyCalendar::try_new_with_buffer_provider(
+            &provider,
+            AnyCalendarKind::EthiopianAmeteAlem,
+        )
+        .expect("Calendar construction must succeed");
         let gregorian =
             AnyCalendar::try_new_with_buffer_provider(&provider, AnyCalendarKind::Gregorian)
                 .expect("Calendar construction must succeed");
@@ -963,7 +965,7 @@ mod tests {
                 .expect("Calendar construction must succeed");
         let buddhist = Ref(&buddhist);
         let coptic = Ref(&coptic);
-        let ethiopic = Ref(&ethiopic);
+        let ethiopian = Ref(&ethiopian);
         let ethioaa = Ref(&ethioaa);
         let gregorian = Ref(&gregorian);
         let indian = Ref(&indian);
@@ -998,14 +1000,14 @@ mod tests {
         single_test_error(coptic, "ad", 0, "M03", 1, DateTimeError::OutOfRange);
         single_test_error(coptic, "bd", 0, "M03", 1, DateTimeError::OutOfRange);
 
-        single_test_roundtrip(ethiopic, "incar", 100, "M03", 1);
-        single_test_roundtrip(ethiopic, "incar", 2000, "M03", 1);
-        single_test_roundtrip(ethiopic, "incar", 2000, "M13", 1);
+        single_test_roundtrip(ethiopian, "incar", 100, "M03", 1);
+        single_test_roundtrip(ethiopian, "incar", 2000, "M03", 1);
+        single_test_roundtrip(ethiopian, "incar", 2000, "M13", 1);
         // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
-        // single_test_roundtrip(ethiopic, "pre-incar", 100, "M03", 1);
-        single_test_error(ethiopic, "incar", 0, "M03", 1, DateTimeError::OutOfRange);
+        // single_test_roundtrip(ethiopian, "pre-incar", 100, "M03", 1);
+        single_test_error(ethiopian, "incar", 0, "M03", 1, DateTimeError::OutOfRange);
         single_test_error(
-            ethiopic,
+            ethiopian,
             "pre-incar",
             0,
             "M03",
@@ -1013,12 +1015,12 @@ mod tests {
             DateTimeError::OutOfRange,
         );
         single_test_error(
-            ethiopic,
+            ethiopian,
             "incar",
             100,
             "M14",
             1,
-            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Ethiopic"),
+            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Ethiopian"),
         );
 
         single_test_roundtrip(ethioaa, "mundi", 7000, "M13", 1);
@@ -1026,12 +1028,12 @@ mod tests {
         // Fails ISO roundtrip due to https://github.com/unicode-org/icu4x/issues/2254
         // single_test_roundtrip(ethioaa, "mundi", 100, "M03", 1);
         single_test_error(
-            ethiopic,
+            ethiopian,
             "mundi",
             100,
             "M14",
             1,
-            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Ethiopic"),
+            DateTimeError::UnknownMonthCode("M14".parse().unwrap(), "Ethiopian"),
         );
 
         single_test_roundtrip(gregorian, "ce", 100, "M03", 1);
