@@ -8,7 +8,7 @@ mod fixtures;
 mod patterns;
 
 use icu_calendar::{
-    any_calendar::{AnyCalendarKind, IncludedInAnyCalendar},
+    any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     buddhist::Buddhist,
     coptic::Coptic,
     ethiopic::{Ethiopic, EthiopicEraStyle},
@@ -182,7 +182,7 @@ fn assert_fixture_element<A, D>(
 ) where
     A: AsCalendar,
     A::Calendar: CldrCalendar,
-    A::Calendar: IncludedInAnyCalendar,
+    A::Calendar: IntoAnyCalendar,
     D: BufferProvider,
 {
     let any_input = input_value.to_any();
