@@ -6,6 +6,10 @@
 
 use crate::prelude::*;
 
+/// [`DataMarker`] for raw buffers. Returned by [`BufferProvider`].
+///
+/// The data is expected to be deserialized before it can be used; see
+/// [`DataPayload::into_deserialized`].
 #[allow(clippy::exhaustive_structs)] // marker type
 pub struct BufferMarker;
 
@@ -50,6 +54,7 @@ impl DataMarker for BufferMarker {
 ///
 /// [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 pub trait BufferProvider {
+    /// Loads a [`DataPayload`]`<`[`BufferMarker`]`>` according to the key and request.
     fn load_buffer(
         &self,
         key: DataKey,

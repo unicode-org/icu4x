@@ -203,7 +203,7 @@ where
         &self,
         key: DataKey,
         from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
         // Conversions are type-agnostic
         self.inner.convert(key, from)
     }
