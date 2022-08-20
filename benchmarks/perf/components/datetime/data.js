@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660933141004,
+  "lastUpdate": 1660953909833,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -62561,6 +62561,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6211,
             "range": "± 110",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "yzhang1994@gmail.com",
+            "name": "Yvonne Z",
+            "username": "yzhang1994"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "8c497c3955d5cd32548af134b9c9599c305eaa95",
+          "message": "Make offset_date handle wraparounds for months (#2373)\n\n* Make offset_date handle wraparounds for months\r\n\r\n* Handle edge case where original day is invalid in future month.",
+          "timestamp": "2022-08-19T23:44:47Z",
+          "tree_id": "0e9d4c7a0c2d48713ad1981a03137ef8ce9b228b",
+          "url": "https://github.com/unicode-org/icu4x/commit/8c497c3955d5cd32548af134b9c9599c305eaa95"
+        },
+        "date": 1660953866752,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 92657,
+            "range": "± 283",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 186885,
+            "range": "± 251",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 84918,
+            "range": "± 132",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 93208,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 92691,
+            "range": "± 377",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 101012,
+            "range": "± 263",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 177172,
+            "range": "± 905",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 190781,
+            "range": "± 148",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 186935,
+            "range": "± 137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 201261,
+            "range": "± 256",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5218,
+            "range": "± 11",
             "unit": "ns/iter"
           }
         ]
