@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660958041065,
+  "lastUpdate": 1660965795806,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24743,6 +24743,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5e96059c75c707a3d20d26147384f21460f0bb28"
         },
         "date": 1660957997952,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0485e61824cb3b1710bcedaf4accc43f5ef1737f",
+          "message": "TimeVariant -> ZoneVariant with a few more docs (#2427)",
+          "timestamp": "2022-08-19T22:21:00-05:00",
+          "tree_id": "09839bcd6cb66272e6a289dfefb106404b0f6bd3",
+          "url": "https://github.com/unicode-org/icu4x/commit/0485e61824cb3b1710bcedaf4accc43f5ef1737f"
+        },
+        "date": 1660965747728,
         "tool": "ndjson",
         "benches": [
           {
