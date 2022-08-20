@@ -426,13 +426,13 @@ long_short_impls!(
     short_metazone_names
 );
 
-fn convert_cldr_time_variant(cldr_time_variant: &str) -> ZoneVariant {
-    match cldr_time_variant {
+fn convert_cldr_zone_variant(cldr_zone_variant: &str) -> ZoneVariant {
+    match cldr_zone_variant {
         "standard" => ZoneVariant::standard(),
         "daylight" => ZoneVariant::daylight(),
         _ => panic!(
             "Time-zone variant was not compatible with ZoneVariant: {}",
-            cldr_time_variant
+            cldr_zone_variant
         ),
     }
 }
@@ -443,7 +443,7 @@ fn iterate_zone_format_for_meta_zone_id(
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .map(move |(key, value)| (key1, convert_cldr_time_variant(&key), value))
+        .map(move |(key, value)| (key1, convert_cldr_zone_variant(&key), value))
 }
 
 fn iterate_zone_format_for_time_zone_id(
@@ -452,7 +452,7 @@ fn iterate_zone_format_for_time_zone_id(
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
-        .map(move |(key, value)| (key1, convert_cldr_time_variant(&key), value))
+        .map(move |(key, value)| (key1, convert_cldr_zone_variant(&key), value))
 }
 
 fn metazone_periods_iter(
