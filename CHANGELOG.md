@@ -11,7 +11,7 @@
     - Turn all errors into Copy types (#1657)
   - Components
     - `calendar`:
-      - Coptic, Indian and Ethiopic calendars (#1660, #1715, #1779)
+      - Coptic, Indian and Ethiopian calendars (#1660, #1715, #1779)
       - Calendar arithmetic (#1614)
     - `datetime`:
       - Formatting for fractional seconds (#1813, #1801)

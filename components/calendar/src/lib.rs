@@ -14,7 +14,7 @@
 //!
 //! The [`iso`] and [`gregorian`] modules contain implementations for the ISO and
 //! Gregorian calendars respectively. Further calendars can be found in modules like
-//! [`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopic`].
+//! [`japanese`], [`julian`], [`coptic`], [`indian`], [`buddhist`], and [`ethiopian`].
 //!
 //! Most interaction with this crate will be done via the [`Date`] and [`DateTime`] types.
 //!
@@ -121,7 +121,7 @@ mod date;
 mod datetime;
 mod duration;
 mod error;
-pub mod ethiopic;
+pub mod ethiopian;
 pub mod gregorian;
 pub mod indian;
 pub mod iso;

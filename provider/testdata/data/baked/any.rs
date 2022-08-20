@@ -29,10 +29,10 @@ impl AnyProvider for BakedDataProvider {
             ::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY.get_hash();
         const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
-        const ETHIOPICDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker::KEY.get_hash();
-        const ETHIOPICDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker::KEY.get_hash();
+        const ETHIOPIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY.get_hash();
+        const ETHIOPIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY.get_hash();
         const GREGORIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY.get_hash();
         const GREGORIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
@@ -289,10 +289,10 @@ impl AnyProvider for BakedDataProvider {
                             zerofrom::ZeroFrom::zero_from(data),
                         )))
                     }),
-                ETHIOPICDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
+                ETHIOPIANDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                ETHIOPICDATESYMBOLSV1MARKER => datetime::ethiopic::datesymbols_v1::DATA
+                ETHIOPIANDATESYMBOLSV1MARKER => datetime::ethiopic::datesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 GREGORIANDATELENGTHSV1MARKER => datetime::gregory::datelengths_v1::DATA
