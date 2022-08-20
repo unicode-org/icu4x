@@ -742,14 +742,14 @@ impl fmt::Display for AnyCalendarKind {
     }
 }
 
-impl<C: IncludedInAnyCalendar> From<C> for AnyCalendar {
+impl<C: IntoAnyCalendar> From<C> for AnyCalendar {
     fn from(c: C) -> AnyCalendar {
         c.to_any()
     }
 }
 
 /// Trait for calendars that may be converted to [`AnyCalendar`]
-pub trait IncludedInAnyCalendar: Calendar + Sized {
+pub trait IntoAnyCalendar: Calendar + Sized {
     /// Convert this calendar into an [`AnyCalendar`], moving it
     ///
     /// You should not need to call this method directly
@@ -765,7 +765,7 @@ pub trait IncludedInAnyCalendar: Calendar + Sized {
     fn date_to_any(&self, d: &Self::DateInner) -> AnyDateInner;
 }
 
-impl IncludedInAnyCalendar for Gregorian {
+impl IntoAnyCalendar for Gregorian {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Gregorian(Gregorian)
     }
@@ -777,7 +777,7 @@ impl IncludedInAnyCalendar for Gregorian {
     }
 }
 
-impl IncludedInAnyCalendar for Buddhist {
+impl IntoAnyCalendar for Buddhist {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Buddhist(Buddhist)
     }
@@ -789,7 +789,7 @@ impl IncludedInAnyCalendar for Buddhist {
     }
 }
 
-impl IncludedInAnyCalendar for Japanese {
+impl IntoAnyCalendar for Japanese {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Japanese(self)
     }
@@ -801,7 +801,7 @@ impl IncludedInAnyCalendar for Japanese {
     }
 }
 
-impl IncludedInAnyCalendar for JapaneseExtended {
+impl IntoAnyCalendar for JapaneseExtended {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::JapaneseExtended(self)
     }
@@ -813,7 +813,7 @@ impl IncludedInAnyCalendar for JapaneseExtended {
     }
 }
 
-impl IncludedInAnyCalendar for Ethiopian {
+impl IntoAnyCalendar for Ethiopian {
     // Amete Mihret calendars are the default
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Ethiopian(self)
@@ -826,7 +826,7 @@ impl IncludedInAnyCalendar for Ethiopian {
     }
 }
 
-impl IncludedInAnyCalendar for Indian {
+impl IntoAnyCalendar for Indian {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Indian(Indian)
     }
@@ -838,7 +838,7 @@ impl IncludedInAnyCalendar for Indian {
     }
 }
 
-impl IncludedInAnyCalendar for Coptic {
+impl IntoAnyCalendar for Coptic {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Coptic(Coptic)
     }
@@ -850,7 +850,7 @@ impl IncludedInAnyCalendar for Coptic {
     }
 }
 
-impl IncludedInAnyCalendar for Iso {
+impl IntoAnyCalendar for Iso {
     fn to_any(self) -> AnyCalendar {
         AnyCalendar::Iso(Iso)
     }
