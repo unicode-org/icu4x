@@ -2459,7 +2459,10 @@ impl<'a> IsNormalizedSinkUtf16<'a> {
 impl<'a> Write16 for IsNormalizedSinkUtf16<'a> {
     fn write_slice(&mut self, s: &[u16]) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
-        // so we can compare addresses.
+        // so we can compare addresses. Indexing is OK, because
+        // an indexing failure would be a code bug rather than
+        // an input or data issue.
+        #[allow(clippy::indexing_slicing)]
         if s.as_ptr() == self.expect.as_ptr() {
             self.expect = &self.expect[s.len()..];
             Ok(())
@@ -2495,7 +2498,10 @@ impl<'a> IsNormalizedSinkUtf8<'a> {
 impl<'a> core::fmt::Write for IsNormalizedSinkUtf8<'a> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
-        // so we can compare addresses.
+        // so we can compare addresses. Indexing is OK, because
+        // an indexing failure would be a code bug rather than
+        // an input or data issue.
+        #[allow(clippy::indexing_slicing)]
         if s.as_ptr() == self.expect.as_ptr() {
             self.expect = &self.expect[s.len()..];
             Ok(())
@@ -2531,7 +2537,10 @@ impl<'a> IsNormalizedSinkStr<'a> {
 impl<'a> core::fmt::Write for IsNormalizedSinkStr<'a> {
     fn write_str(&mut self, s: &str) -> core::fmt::Result {
         // We know that if we get a slice, it's a pass-through,
-        // so we can compare addresses.
+        // so we can compare addresses. Indexing is OK, because
+        // an indexing failure would be a code bug rather than
+        // an input or data issue.
+        #[allow(clippy::indexing_slicing)]
         if s.as_ptr() == self.expect.as_ptr() {
             self.expect = &self.expect[s.len()..];
             Ok(())
