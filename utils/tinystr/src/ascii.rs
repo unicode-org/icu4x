@@ -95,7 +95,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         }
 
         Ok(Self {
-            // SAFETY: All bytes are ascii
+            // SAFETY: `out` only contains ASCII bytes and has same size as `self.bytes`
             bytes: unsafe { *(&out as *const [u8; N] as *const [AsciiByte; N]) },
         })
     }
@@ -114,9 +114,9 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[must_use]
     pub fn len(&self) -> usize {
         if N <= 4 {
-            Aligned4::from_asciibytes(&self.bytes).len()
+            Aligned4::from_ascii_bytes(&self.bytes).len()
         } else if N <= 8 {
-            Aligned8::from_asciibytes(&self.bytes).len()
+            Aligned8::from_ascii_bytes(&self.bytes).len()
         } else {
             self.bytes
                 .iter()
@@ -134,12 +134,14 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[inline]
     #[must_use]
     pub fn as_bytes(&self) -> &[u8] {
+        // SAFETY: `self.bytes` has same size as [u8; N]
         unsafe { core::mem::transmute(&self.bytes[0..self.len()]) }
     }
 
     #[inline]
     #[must_use]
     pub const fn all_bytes(&self) -> &[u8; N] {
+        // SAFETY: `self.bytes` has same size as [u8; N]
         unsafe { core::mem::transmute(&self.bytes) }
     }
 
@@ -177,9 +179,9 @@ impl<const N: usize> TinyAsciiStr<N> {
 macro_rules! check_is {
     ($self:ident, $check_int:ident, $check_u8:ident) => {
         if N <= 4 {
-            Aligned4::from_asciibytes(&$self.bytes).$check_int()
+            Aligned4::from_ascii_bytes(&$self.bytes).$check_int()
         } else if N <= 8 {
-            Aligned8::from_asciibytes(&$self.bytes).$check_int()
+            Aligned8::from_ascii_bytes(&$self.bytes).$check_int()
         } else {
             let mut i = 0;
             // Won't panic because self.bytes has length N
@@ -195,9 +197,9 @@ macro_rules! check_is {
     };
     ($self:ident, $check_int:ident, !$check_u8_0_inv:ident, !$check_u8_1_inv:ident) => {
         if N <= 4 {
-            Aligned4::from_asciibytes(&$self.bytes).$check_int()
+            Aligned4::from_ascii_bytes(&$self.bytes).$check_int()
         } else if N <= 8 {
-            Aligned8::from_asciibytes(&$self.bytes).$check_int()
+            Aligned8::from_ascii_bytes(&$self.bytes).$check_int()
         } else {
             // Won't panic because N is > 8
             if ($self.bytes[0] as u8).$check_u8_0_inv() {
@@ -217,9 +219,9 @@ macro_rules! check_is {
     };
     ($self:ident, $check_int:ident, $check_u8_0_inv:ident, $check_u8_1_inv:ident) => {
         if N <= 4 {
-            Aligned4::from_asciibytes(&$self.bytes).$check_int()
+            Aligned4::from_ascii_bytes(&$self.bytes).$check_int()
         } else if N <= 8 {
-            Aligned8::from_asciibytes(&$self.bytes).$check_int()
+            Aligned8::from_ascii_bytes(&$self.bytes).$check_int()
         } else {
             // Won't panic because N is > 8
             if !($self.bytes[0] as u8).$check_u8_0_inv() {
@@ -490,7 +492,7 @@ macro_rules! to {
     ($self:ident, $to:ident, $later_char_to:ident $(,$first_char_to:ident)?) => {{
         let mut i = 0;
         if N <= 4 {
-            let aligned = Aligned4::from_asciibytes(&$self.bytes).$to().to_ascii_bytes();
+            let aligned = Aligned4::from_ascii_bytes(&$self.bytes).$to().to_ascii_bytes();
             // Won't panic because self.bytes has length N and aligned has length >= N
             #[allow(clippy::indexing_slicing)]
             while i < N {
@@ -498,7 +500,7 @@ macro_rules! to {
                 i += 1;
             }
         } else if N <= 8 {
-            let aligned = Aligned8::from_asciibytes(&$self.bytes).$to().to_ascii_bytes();
+            let aligned = Aligned8::from_ascii_bytes(&$self.bytes).$to().to_ascii_bytes();
             // Won't panic because self.bytes has length N and aligned has length >= N
             #[allow(clippy::indexing_slicing)]
             while i < N {
@@ -509,6 +511,7 @@ macro_rules! to {
             // Won't panic because self.bytes has length N
             #[allow(clippy::indexing_slicing)]
             while i < N && $self.bytes[i] as u8 != AsciiByte::B0 as u8 {
+                // SAFETY: AsciiByte is repr(u8) and has same size as u8
                 unsafe {
                     $self.bytes[i] = core::mem::transmute(
                         ($self.bytes[i] as u8).$later_char_to()
@@ -516,6 +519,7 @@ macro_rules! to {
                 }
                 i += 1;
             }
+            // SAFETY: AsciiByte is repr(u8) and has same size as u8
             $(
                 $self.bytes[0] = unsafe {
                     core::mem::transmute(($self.bytes[0] as u8).$first_char_to())
