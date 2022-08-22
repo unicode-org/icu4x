@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661141496592,
+  "lastUpdate": 1661183729565,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24863,6 +24863,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/19dd573757f95fa808aa5ea0c4175b2fd17e85c3"
         },
         "date": 1661141444647,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d3bc694b7b8bf2c49bb54d3fd1a6778e8e9357d2",
+          "message": "First pass at lints (#2411)",
+          "timestamp": "2022-08-22T17:53:23+02:00",
+          "tree_id": "d3fcca55550473f6d7610734166f0ab8400605cb",
+          "url": "https://github.com/unicode-org/icu4x/commit/d3bc694b7b8bf2c49bb54d3fd1a6778e8e9357d2"
+        },
+        "date": 1661183685548,
         "tool": "ndjson",
         "benches": [
           {
