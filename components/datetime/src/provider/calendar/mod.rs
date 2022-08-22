@@ -121,12 +121,11 @@ pub mod patterns {
         pub short: GenericPattern<'data>,
     }
 
-    ///
     #[icu_provider::data_struct]
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub struct PatternPluralsV1<'data>(
+    pub(crate) struct PatternPluralsV1<'data>(
         #[cfg_attr(feature = "serde", serde(borrow))] pub PatternPlurals<'data>,
     );
 
