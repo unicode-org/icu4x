@@ -1237,6 +1237,7 @@ macro_rules! composing_normalize_to {
      $composition_passthrough_bound:ident,
      $undecomposed_starter:ident,
      $pending_slice:ident,
+     $len_utf:ident,
     ) => {
         $(#[$meta])*
         pub fn $normalize_to<W: $write + ?Sized>(
@@ -1266,15 +1267,11 @@ macro_rules! composing_normalize_to {
                 if u32::from($undecomposed_starter.character) < $composition_passthrough_bound ||
                     $undecomposed_starter.potential_passthrough()
                 {
-                    let mut already_read =
-                        $text[..$text.len() - $composition.decomposition.delegate.$as_slice().len()].chars();
-                    let back = already_read.next_back();
-                    debug_assert_eq!(back, Some($undecomposed_starter.character));
                     // We don't know if a REPLACEMENT CHARACTER occurred in the slice or
                     // was returned in response to an error by the iterator. Assume the
                     // latter for correctness even though it pessimizes the former.
-                    if $always_valid_utf || back != Some(REPLACEMENT_CHARACTER) {
-                        let $pending_slice = &$text[already_read.$as_slice().len()..];
+                    if $always_valid_utf || $undecomposed_starter.character != REPLACEMENT_CHARACTER {
+                        let $pending_slice = &$text[$text.len() - $composition.decomposition.delegate.$as_slice().len() - $undecomposed_starter.character.$len_utf()..];
                         // The `$fast` block must either:
                         // 1. Return due to reaching EOF
                         // 2. Leave a starter with its trie value in `$undecomposed_starter`
@@ -2232,6 +2229,7 @@ impl ComposingNormalizer {
         composition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
+        len_utf8,
     );
 
     composing_normalize_to!(
@@ -2316,6 +2314,7 @@ impl ComposingNormalizer {
         composition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
+        len_utf8,
     );
 
     composing_normalize_to!(
@@ -2440,6 +2439,7 @@ impl ComposingNormalizer {
         composition_passthrough_bound,
         undecomposed_starter,
         pending_slice,
+        len_utf16,
     );
 }
 
