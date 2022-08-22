@@ -10,21 +10,20 @@
 icu_benchmark_macros::static_setup!();
 
 use icu_calendar::{DateTime, Gregorian};
-use icu_datetime::mock::parse_gregorian_from_str;
 use icu_datetime::{options::length, TypedDateTimeFormatter};
 use icu_locid::locale;
 
-const DATES_ISO: &[&str] = &[
-    "2001-09-08T18:46:40.000",
-    "2017-07-13T19:40:00.000",
-    "2020-09-13T05:26:40.000",
-    "2021-01-06T22:13:20.000",
-    "2021-05-02T17:00:00.000",
-    "2021-08-26T10:46:40.000",
-    "2021-11-20T03:33:20.000",
-    "2022-04-14T22:20:00.000",
-    "2022-08-08T16:06:40.000",
-    "2033-05-17T20:33:20.000",
+const DATES_ISO: &[(i32, u8, u8, u8, u8, u8)] = &[
+    (2001, 9, 8, 18, 46, 40),
+    (2017, 7, 13, 19, 40, 0),
+    (2020, 9, 13, 5, 26, 40),
+    (2021, 1, 6, 22, 13, 20),
+    (2021, 5, 2, 17, 0, 0),
+    (2021, 8, 26, 10, 46, 40),
+    (2021, 11, 20, 3, 33, 20),
+    (2022, 4, 14, 22, 20, 0),
+    (2022, 8, 8, 16, 6, 40),
+    (2033, 5, 17, 20, 33, 20),
 ];
 
 fn print(_input: &str, _value: Option<usize>) {
@@ -45,7 +44,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     let dates = DATES_ISO
         .iter()
         .copied()
-        .map(parse_gregorian_from_str)
+        .map(|(y, m, d, h, min, s)| DateTime::new_gregorian_datetime(y, m, d, h, min, s))
         .collect::<Result<Vec<DateTime<Gregorian>>, _>>()
         .expect("Failed to parse dates.");
 

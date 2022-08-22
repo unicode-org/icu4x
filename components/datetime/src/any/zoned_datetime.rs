@@ -83,12 +83,12 @@ impl ZonedDateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
@@ -103,8 +103,8 @@ impl ZonedDateTimeFormatter {
     ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///     .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_gregorian_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
@@ -256,12 +256,12 @@ impl ZonedDateTimeFormatter {
     /// we do not have one in `icu_testdata`
     ///
     /// ```ignore
-    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_baked_provider();
@@ -276,8 +276,8 @@ impl ZonedDateTimeFormatter {
     ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///     .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_gregorian_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");
@@ -312,12 +312,12 @@ impl ZonedDateTimeFormatter {
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     ///
     /// ```rust
-    /// use icu::calendar::Gregorian;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::Locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
@@ -332,8 +332,8 @@ impl ZonedDateTimeFormatter {
     ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) = parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///     .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_gregorian_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_eq!(zdtf.format_to_string(&any_datetime, &time_zone).unwrap(), "Apr 8, 2021, 4:12:37 PM GMT-07:00");

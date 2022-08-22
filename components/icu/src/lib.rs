@@ -37,7 +37,8 @@
 //! # Example
 //!
 //! ```
-//! use icu::datetime::{mock::parse_gregorian_from_str, options::length, TypedDateTimeFormatter};
+//! use icu::calendar::DateTime;
+//! use icu::datetime::{options::length, DateTimeFormatter};
 //! use icu::locid::locale;
 //!
 //! let provider = icu_testdata::get_provider();
@@ -45,12 +46,13 @@
 //! let options =
 //!     length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 //!
-//! let dtf = TypedDateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("es").into(), options)
+//! let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("es").into(), options)
 //!     .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
-//! let date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
+//! let date = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
+//! let date = date.to_any();
 //!
-//! let formatted_date = dtf.format(&date);
+//! let formatted_date = dtf.format(&date).expect("Formatting failed");
 //! assert_eq!(
 //!     formatted_date.to_string(),
 //!     "12 de septiembre de 2020, 12:35:00"
