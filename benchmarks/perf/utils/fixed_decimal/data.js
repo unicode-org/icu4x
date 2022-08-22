@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660980878451,
+  "lastUpdate": 1661142070365,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -46288,6 +46288,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 89,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "distinct": true,
+          "id": "19dd573757f95fa808aa5ea0c4175b2fd17e85c3",
+          "message": "tinystr 0.6.2: Add zerovec 0.7 compatibility",
+          "timestamp": "2022-08-21T23:06:13-05:00",
+          "tree_id": "512d6a7f5fdf945ae95d6bda246884d5e957311c",
+          "url": "https://github.com/unicode-org/icu4x/commit/19dd573757f95fa808aa5ea0c4175b2fd17e85c3"
+        },
+        "date": 1661142023795,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 106726,
+            "range": "± 447",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21248,
+            "range": "± 97",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66163,
+            "range": "± 290",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 175,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 70,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 75,
             "range": "± 0",
             "unit": "ns/iter"
           }
