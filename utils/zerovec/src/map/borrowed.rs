@@ -220,7 +220,7 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized + Ord,
+    K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
 {
     /// Produce an ordered iterator over key-value pairs
@@ -252,8 +252,8 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a> + AsULE + ?Sized + Ord,
-    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + AsULE + ?Sized + Copy + 'static,
+    K: ZeroMapKV<'a> + Ord + ?Sized,
+    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + AsULE + Copy + 'static,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K) -> Option<V> {
@@ -279,8 +279,8 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a, Slice = ZeroSlice<K>> + AsULE + ?Sized + Copy + Ord + 'static,
-    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + AsULE + ?Sized + Copy + 'static,
+    K: ZeroMapKV<'a, Slice = ZeroSlice<K>> + AsULE + Copy + Ord + 'static,
+    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + AsULE + Copy + 'static,
 {
     /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
     /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
