@@ -132,12 +132,23 @@ where
                         let func = Self::get_function(&annotation.function, scope).unwrap();
                         let v: VariableType<&'varsv str> = var.as_ref();
                         let result = func(&v, scope.mf);
-                        match result {
-                            MessagePart::Literal(s) => {
-                                let s: Cow<str> = Cow::Owned(s);
-                                collector.push_part(MessagePart::Literal(MPV::from_cow(s)))
+                        for item in result {
+                            match item {
+                                MessagePart::Literal(s) => {
+                                    let s: Cow<str> = Cow::Owned(s);
+                                    collector.push_part(MessagePart::Literal(MPV::from_cow(s)))
+                                }
+                                MessagePart::Markup { name } => {
+                                    collector.push_part(MessagePart::Markup {
+                                        name: MPV::from_slice(&name.to_owned()),
+                                    });
+                                }
+                                MessagePart::MarkupEnd { name } => {
+                                    collector.push_part(MessagePart::MarkupEnd {
+                                        name: MPV::from_slice(&name.to_owned()),
+                                    });
+                                }
                             }
-                            _ => todo!(),
                         }
                     } else {
                         Self::resolve_variable(var, scope, collector);
@@ -162,12 +173,13 @@ where
         scope.mf.functions.get(function.as_str())
     }
 
-    fn resolve_variable<C>(
-        var: &VariableType<VARSV>,
+    fn resolve_variable<C, V>(
+        var: &VariableType<V>,
         scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
         collector: &mut C,
     ) where
         C: MessagePartCollector<MPV>,
+        V: Slice<'varsv>,
     {
         match var {
             VariableType::String(s) => {

@@ -13,7 +13,7 @@ use std::collections::HashMap;
 use types::{MessagePart, VariableType};
 
 pub type MF2Function<'b> =
-    Box<dyn for<'s> Fn(&VariableType<&'s str>, &MessageFormat) -> MessagePart<String> + 'b>;
+    Box<dyn for<'s> Fn(&VariableType<&'s str>, &MessageFormat) -> Vec<MessagePart<String>> + 'b>;
 
 #[derive(Default)]
 pub struct MessageFormat<'b> {
@@ -94,7 +94,7 @@ mod test {
     fn sanity_check() {
         let mf = MessageFormat::new(locale!("und"));
 
-        let result = mf.format_from_source::<&str, &str>("{Hello World}", None);
+        let result = mf.format_from_source::<_, &str>("{Hello World}", None);
         assert_eq!(result, "Hello World");
     }
 
@@ -107,6 +107,34 @@ mod test {
 
         let result = mf.format_from_source("{{$name}}", Some(&variables));
         assert_eq!(result, "John");
+    }
+
+    #[test]
+    fn function_check() {
+        let mut mf = MessageFormat::new(locale!("und"));
+        mf.functions.insert(
+            "number".to_string(),
+            Box::new(
+                |input: &VariableType<&str>, mf: &MessageFormat| -> Vec<MessagePart<String>> {
+                    match input {
+                        VariableType::Number(n) => {
+                            let result = format!("{n}");
+                            vec![MessagePart::Literal(result)]
+                        }
+                        _ => todo!(),
+                    }
+                },
+            ),
+        );
+
+        let mut variables: HashMap<_, VariableType<&str>> = HashMap::new();
+        variables.insert("emailCount".into(), VariableType::Number(5.0));
+
+        let result = mf.format_from_source(
+            "{You have {$emailCount :number} unread emails.}",
+            Some(&variables),
+        );
+        assert_eq!(result, "You have 5 unread emails.");
     }
 
     #[test]
@@ -126,14 +154,14 @@ mod test {
         let mut mf = MessageFormat::new(locale!("und"));
 
         let message_function =
-            |input: &VariableType<&str>, mf: &MessageFormat| -> MessagePart<String> {
+            |input: &VariableType<&str>, mf: &MessageFormat| -> Vec<MessagePart<String>> {
                 let id: &str = match input {
                     VariableType::MessageReference(s) => *s,
                     _ => todo!(),
                 };
                 let msg = msg_ref.get(id).unwrap();
                 let result = mf.format_to_string::<_, &str>(msg, None);
-                MessagePart::Literal(result.to_string())
+                vec![MessagePart::Literal(result.to_string())]
             };
 
         mf.functions
@@ -150,31 +178,34 @@ mod test {
     }
 
     #[test]
-    fn function_check() {
+    fn function_preserve_parts() {
         let mut mf = MessageFormat::new(locale!("und"));
         mf.functions.insert(
-            "number".to_string(),
+            "emphasis".to_string(),
             Box::new(
-                |input: &VariableType<&str>, mf: &MessageFormat| -> MessagePart<String> {
-                    match input {
-                        VariableType::Number(n) => {
-                            let result = format!("{n}");
-                            MessagePart::Literal(result)
-                        }
+                |input: &VariableType<&str>, mf: &MessageFormat| -> Vec<MessagePart<String>> {
+                    let v = match input {
+                        VariableType::String(s) => s,
                         _ => todo!(),
-                    }
+                    };
+                    vec![
+                        MessagePart::Markup {
+                            name: "strong".to_string(),
+                        },
+                        MessagePart::Literal(v.to_string()),
+                        MessagePart::MarkupEnd {
+                            name: "strong".to_string(),
+                        },
+                    ]
                 },
             ),
         );
 
-        let mut variables: HashMap<_, VariableType<&str>> = HashMap::new();
-        variables.insert("emailCount".into(), VariableType::Number(5.0));
+        let mut variables = HashMap::new();
+        variables.insert("userName".into(), VariableType::String("John"));
 
-        let result = mf.format_from_source(
-            "{You have {$emailCount :number} unread emails.}",
-            Some(&variables),
-        );
-        assert_eq!(result, "You have 5 unread emails.");
+        let result = mf.format_from_source("{Hello {$userName :emphasis}.}", Some(&variables));
+        assert_eq!(result, "Hello {+strong}John{-strong}.");
     }
 
     #[test]
@@ -184,7 +215,6 @@ mod test {
         let mut variables = HashMap::new();
         variables.insert(
             "input-markup".into(),
-            // VariableType::String("foo"),
             VariableType::List(vec![
                 VariableType::Markup { name: "strong" },
                 VariableType::String("Hello World!"),
@@ -208,24 +238,5 @@ mod test {
                 },
             ]
         );
-    }
-
-    #[test]
-    fn function_preserve_parts() {
-        let mut mf = MessageFormat::new(locale!("und"));
-        mf.functions.insert(
-            "number".to_string(),
-            Box::new(
-                |input: &VariableType<&str>, mf: &MessageFormat| -> MessagePart<String> {
-                    MessagePart::Literal("from function".to_string())
-                },
-            ),
-        );
-
-        let mut variables = HashMap::new();
-        variables.insert("emailCount".into(), VariableType::String("test"));
-
-        let result = mf.format_from_source("{Hello {$emailCount :number}.}", Some(&variables));
-        assert_eq!(result, "Hello from function.");
     }
 }
