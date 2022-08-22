@@ -36,4 +36,5 @@ pub enum MessagePart<S> {
     Literal(S),
     Markup { name: S },
     MarkupEnd { name: S },
+    // Custom
 }
