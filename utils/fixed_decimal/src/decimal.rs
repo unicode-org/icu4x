@@ -1638,6 +1638,7 @@ impl FixedDecimal {
     ///
     /// Example: `debug_assert!(self.check_invariants())`
     #[cfg(debug_assertions)]
+    #[allow(clippy::indexing_slicing)]
     fn check_invariants(&self) {
         // magnitude invariants:
         debug_assert!(
@@ -1661,26 +1662,21 @@ impl FixedDecimal {
             self
         );
 
-        #[cfg(debug_assertions)]
-        {
-            // digits invariants:
-            #![allow(clippy::indexing_slicing)] // verified
-            assert!(
-                self.digits.len()
-                    <= (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize,
-                "{:?}",
-                self
+        // digits invariants:
+        debug_assert!(
+            self.digits.len() <= (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize,
+            "{:?}",
+            self
+        );
+        if !self.digits.is_empty() {
+            debug_assert_ne!(self.digits[0], 0, "Starts with a zero {self:?}");
+            debug_assert_ne!(
+                self.digits[self.digits.len() - 1],
+                0,
+                "Ends with a zero {self:?}",
             );
-            if !self.digits.is_empty() {
-                assert_ne!(self.digits[0], 0, "Starts with a zero {self:?}");
-                assert_ne!(
-                    self.digits[self.digits.len() - 1],
-                    0,
-                    "Ends with a zero {self:?}",
-                );
-            } else {
-                assert_eq!(self.magnitude, 0);
-            }
+        } else {
+            debug_assert_eq!(self.magnitude, 0);
         }
     }
 }
