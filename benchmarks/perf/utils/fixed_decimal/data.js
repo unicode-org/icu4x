@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661142070365,
+  "lastUpdate": 1661184602630,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -46349,6 +46349,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 75,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d3bc694b7b8bf2c49bb54d3fd1a6778e8e9357d2",
+          "message": "First pass at lints (#2411)",
+          "timestamp": "2022-08-22T17:53:23+02:00",
+          "tree_id": "d3fcca55550473f6d7610734166f0ab8400605cb",
+          "url": "https://github.com/unicode-org/icu4x/commit/d3bc694b7b8bf2c49bb54d3fd1a6778e8e9357d2"
+        },
+        "date": 1661184549750,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 131297,
+            "range": "± 5581",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25762,
+            "range": "± 802",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72707,
+            "range": "± 2563",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 235,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 82,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 92,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
