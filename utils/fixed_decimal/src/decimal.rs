@@ -239,8 +239,7 @@ impl FixedDecimal {
             if i != 0 || d != 0 {
                 i += 1;
                 match X.checked_sub(i) {
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
+                    #[allow(clippy::indexing_slicing)] // X - i < X
                     Some(v) => mem[v] = d,
                     // This error should be obsolete after X is made generic
                     None => return Err(Error::Limit),
@@ -256,8 +255,7 @@ impl FixedDecimal {
             result.magnitude = magnitude as i16;
             result.upper_magnitude = result.magnitude;
             debug_assert!(i <= X);
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // X - i < X
             result.digits.extend_from_slice(&mem[(X - i)..]);
         }
         #[cfg(debug_assertions)]
@@ -1640,6 +1638,7 @@ impl FixedDecimal {
     ///
     /// Example: `debug_assert!(self.check_invariants())`
     #[cfg(debug_assertions)]
+    #[allow(clippy::indexing_slicing)]
     fn check_invariants(&self) {
         // magnitude invariants:
         debug_assert!(
@@ -1664,16 +1663,17 @@ impl FixedDecimal {
         );
 
         // digits invariants:
-        let max_len = (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize;
-        debug_assert!(self.digits.len() <= max_len, "{:?}", self);
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        debug_assert!(
+            self.digits.len() <= (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize,
+            "{:?}",
+            self
+        );
         if !self.digits.is_empty() {
-            debug_assert_ne!(self.digits[0], 0, "Starts with a zero {:?}", self);
+            debug_assert_ne!(self.digits[0], 0, "Starts with a zero {self:?}");
             debug_assert_ne!(
                 self.digits[self.digits.len() - 1],
                 0,
-                "Ends with a zero {:?}",
-                self
+                "Ends with a zero {self:?}",
             );
         } else {
             debug_assert_eq!(self.magnitude, 0);

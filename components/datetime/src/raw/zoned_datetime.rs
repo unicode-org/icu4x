@@ -167,9 +167,7 @@ impl ZonedDateTimeFormatter {
         time_zone: &impl TimeZoneInput,
     ) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, date, time_zone)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, date, time_zone);
         s
     }
 }

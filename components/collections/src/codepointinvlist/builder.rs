@@ -14,6 +14,7 @@ use zerovec::{ule::AsULE, ZeroVec};
 /// Provides exposure to builder functions and conversion to [`CodePointInversionList`]
 #[derive(Default)]
 pub struct CodePointInversionListBuilder {
+    // A sorted list of even length, with values <= char::MAX + 1
     intervals: Vec<u32>,
 }
 
@@ -26,7 +27,7 @@ impl CodePointInversionListBuilder {
     /// Returns a [`CodePointInversionList`] and consumes the [`CodePointInversionListBuilder`]
     pub fn build(self) -> CodePointInversionList<'static> {
         let inv_list: ZeroVec<u32> = ZeroVec::alloc_from_slice(&self.intervals);
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // by invariant
         CodePointInversionList::from_inversion_list(inv_list).unwrap()
     }
 
@@ -34,6 +35,9 @@ impl CodePointInversionListBuilder {
     ///
     /// If add is true add, else remove
     fn add_remove_middle(&mut self, start: u32, end: u32, add: bool) {
+        if start >= end || end > char::MAX as u32 + 1 {
+            return;
+        }
         let start_res = self.intervals.binary_search(&start);
         let end_res = self.intervals.binary_search(&end);
         let mut start_ind = start_res.unwrap_or_else(|x| x);
@@ -42,20 +46,17 @@ impl CodePointInversionListBuilder {
         let end_pos_check = (end_ind % 2 == 0) == add;
         let start_eq_end = start_ind == end_ind;
 
+        #[allow(clippy::indexing_slicing)] // all indices are binary search results
         if start_eq_end && start_pos_check && end_res.is_err() {
             let ins = &[start, end];
             self.intervals
                 .splice(start_ind..end_ind, ins.iter().copied());
         } else {
-            #[allow(clippy::indexing_slicing)]
             if start_pos_check {
-                // TODO(#1668) Clippy exceptions need docs or fixing.
                 self.intervals[start_ind] = start;
                 start_ind += 1;
             }
             if end_pos_check {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
                 if end_res.is_ok() {
                     end_ind += 1;
                 } else {
@@ -172,16 +173,13 @@ impl CodePointInversionListBuilder {
     /// ```
     #[allow(unused_assignments)]
     pub fn add_set(&mut self, set: &CodePointInversionList) {
+        #[allow(clippy::indexing_slicing)] // chunks
         set.as_inversion_list()
             .as_ule_slice()
             .chunks(2)
             .for_each(|pair| {
                 self.add(
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     AsULE::from_unaligned(pair[0]),
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     AsULE::from_unaligned(pair[1]),
                 )
             });
@@ -195,9 +193,10 @@ impl CodePointInversionListBuilder {
         if start >= end || self.intervals.is_empty() {
             return;
         }
-        if let Some(last) = self.intervals.last() {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            if start <= self.intervals[0] && end >= *last {
+        if let Some(&last) = self.intervals.last() {
+            #[allow(clippy::indexing_slicing)]
+            // by invariant, if we have a last we have a (different) first
+            if start <= self.intervals[0] && end >= last {
                 self.intervals.clear();
             } else {
                 self.add_remove_middle(start, end, false);
@@ -249,18 +248,14 @@ impl CodePointInversionListBuilder {
     /// builder.remove_set(&set); // removes 'A'..='E'
     /// let check = builder.build();
     /// assert_eq!(check.iter_chars().next(), Some('F'));
-    #[allow(unused_assignments)]
+    #[allow(clippy::indexing_slicing)] // chunks
     pub fn remove_set(&mut self, set: &CodePointInversionList) {
         set.as_inversion_list()
             .as_ule_slice()
             .chunks(2)
             .for_each(|pair| {
                 self.remove(
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     AsULE::from_unaligned(pair[0]),
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
                     AsULE::from_unaligned(pair[1]),
                 )
             });
@@ -321,13 +316,11 @@ impl CodePointInversionListBuilder {
     /// assert!(check.contains('A'));
     /// assert!(!check.contains('G'));
     /// ```
-    #[allow(unused_assignments)]
+    #[allow(clippy::indexing_slicing)] // chunks
     pub fn retain_set(&mut self, set: &CodePointInversionList) {
         let mut prev = 0;
         for pair in set.as_inversion_list().as_ule_slice().chunks(2) {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let range_start = AsULE::from_unaligned(pair[0]);
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let range_limit = AsULE::from_unaligned(pair[1]);
             self.remove(prev, range_start);
             prev = range_limit;
@@ -391,16 +384,16 @@ impl CodePointInversionListBuilder {
     /// ```
     pub fn complement(&mut self) {
         if !self.intervals.is_empty() {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // by invariant
             if self.intervals[0] == 0 {
                 self.intervals.drain(0..1);
             } else {
                 self.intervals.insert(0, 0);
             }
-            if self.intervals.last() == Some(&((char::MAX as u32) + 1)) {
+            if self.intervals.last() == Some(&(char::MAX as u32 + 1)) {
                 self.intervals.pop();
             } else {
-                self.intervals.push((char::MAX as u32) + 1);
+                self.intervals.push(char::MAX as u32 + 1);
             }
         } else {
             self.intervals

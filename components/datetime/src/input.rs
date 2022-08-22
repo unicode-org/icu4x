@@ -356,19 +356,15 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithCal
     fn year_week(&self) -> Result<FormattableYear, DateTimeError> {
         year_week(
             self.data,
-            #[allow(clippy::expect_used)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
-            self.calendar
-                .expect("calendar must be provided when using week of methods"),
+            self.calendar.ok_or(DateTimeError::MissingCalendar)?,
         )
     }
 
     fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         week_of_month(
             self.data,
             self.calendar
-                .expect("calendar must be provided when using week of methods")
+                .ok_or(DateTimeError::MissingCalendar)?
                 .first_weekday,
         )
     }
@@ -376,10 +372,7 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithCal
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
         week_of_year(
             self.data,
-            #[allow(clippy::expect_used)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
-            self.calendar
-                .expect("calendar must be provided when using week of methods"),
+            self.calendar.ok_or(DateTimeError::MissingCalendar)?,
         )
     }
 

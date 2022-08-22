@@ -73,54 +73,61 @@ impl FromStr for GmtOffset {
     /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let offset_sign = match input.chars().next() {
+        let mut chars = input.chars();
+        let offset_sign = match chars.next() {
             Some('+') => 1,
-            /* ASCII */ Some('-') => -1,
-            /* U+2212 */ Some('−') => -1,
+            Some('-' | '\u{2212}') => -1,
             Some('Z') => return Ok(Self(0)),
             _ => return Err(TimeZoneError::InvalidOffset),
         };
 
-        let seconds = match input.chars().count() {
+        let input = chars.as_str();
+
+        let seconds = match input.len() {
             /* ±hh */
-            3 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3]
-                    .parse()
+            2 => {
+                let hour = input
+                    .parse::<u8>()
                     .map_err(|_| TimeZoneError::InvalidOffset)?;
+                if hour > 24 {
+                    return Err(TimeZoneError::InvalidOffset);
+                }
                 offset_sign * (hour as i32 * 60 * 60)
             }
             /* ±hhmm */
-            5 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3]
-                    .parse()
-                    .map_err(|_| TimeZoneError::InvalidOffset)?;
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let minute: u8 = input[3..5]
-                    .parse()
-                    .map_err(|_| TimeZoneError::InvalidOffset)?;
-                offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+            4 if input.is_char_boundary(2) => {
+                #[allow(clippy::indexing_slicing)] // validated
+                {
+                    let hour = input[0..2]
+                        .parse::<u8>()
+                        .map_err(|_| TimeZoneError::InvalidOffset)?;
+                    let minute = input[2..4]
+                        .parse::<u8>()
+                        .map_err(|_| TimeZoneError::InvalidOffset)?;
+                    offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+                }
             }
             /* ±hh:mm */
-            6 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3]
-                    .parse()
-                    .map_err(|_| TimeZoneError::InvalidOffset)?;
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let minute: u8 = input[4..6]
-                    .parse()
-                    .map_err(|_| TimeZoneError::InvalidOffset)?;
-                offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+            5 => {
+                if let Some((hour, minute)) = input.split_once(':') {
+                    let hour = hour
+                        .parse::<u8>()
+                        .map_err(|_| TimeZoneError::InvalidOffset)?;
+                    if hour > 24 {
+                        return Err(TimeZoneError::InvalidOffset);
+                    }
+                    let minute = minute
+                        .parse::<u8>()
+                        .map_err(|_| TimeZoneError::InvalidOffset)?;
+                    if minute > 60 {
+                        return Err(TimeZoneError::InvalidOffset);
+                    }
+                    offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+                } else {
+                    return Err(TimeZoneError::InvalidOffset);
+                }
             }
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            _ => panic!("Invalid time-zone designator"),
+            _ => return Err(TimeZoneError::InvalidOffset),
         };
 
         Self::try_new(seconds)

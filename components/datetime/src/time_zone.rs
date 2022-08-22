@@ -700,9 +700,7 @@ impl TimeZoneFormatter {
     /// ```
     pub fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, value);
         s
     }
 

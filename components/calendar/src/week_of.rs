@@ -205,7 +205,7 @@ pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday)
         min_week_days: 1,
     };
 
-    #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    #[allow(clippy::unwrap_used)] // week_of should can't fail with MIN_UNIT_DAYS
     week_of(
         &calendar,
         // The duration of the current and previous unit does not influence the result if min_week_days = 1
@@ -215,7 +215,7 @@ pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday)
         day,
         week_day,
     )
-    .expect("week_of should can't fail with MIN_UNIT_DAYS")
+    .unwrap()
     .week
 }
 

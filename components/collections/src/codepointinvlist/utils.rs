@@ -10,18 +10,16 @@ use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
 
 /// Returns whether the vector is sorted ascending non inclusive, of even length,
-/// and within the bounds of `0x0 -> 0x10FFFF` inclusive.
-#[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+/// and within the bounds of `0x0 -> 0x10FFFF + 1` inclusive.
+#[allow(clippy::indexing_slicing)] // windows
+#[allow(clippy::unwrap_used)] // by is_empty check
 pub fn is_valid_zv(inv_list_zv: &ZeroVec<'_, u32>) -> bool {
-    let slice = inv_list_zv.as_ule_slice();
-    slice.is_empty()
-        || (slice.len() % 2 == 0
-            && slice.windows(2).all(|chunk| {
+    inv_list_zv.is_empty()
+        || (inv_list_zv.len() % 2 == 0
+            && inv_list_zv.as_ule_slice().windows(2).all(|chunk| {
                 <u32 as AsULE>::from_unaligned(chunk[0]) < <u32 as AsULE>::from_unaligned(chunk[1])
             })
-            && slice.last().map_or(false, |e| {
-                <u32 as AsULE>::from_unaligned(*e) <= ((char::MAX as u32) + 1)
-            }))
+            && inv_list_zv.last().unwrap() <= char::MAX as u32 + 1)
 }
 
 /// Returns start (inclusive) and end (exclusive) bounds of [`RangeBounds`]
