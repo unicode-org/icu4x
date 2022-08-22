@@ -68,6 +68,7 @@
 mod macros;
 
 mod ascii;
+mod asciibyte;
 mod error;
 mod int_ops;
 
@@ -96,6 +97,17 @@ pub type TinyStr8 = TinyAsciiStr<8>;
 /// in a future version.
 pub type TinyStr16 = TinyAsciiStr<16>;
 
+#[test]
+fn test_size() {
+    assert_eq!(
+        core::mem::size_of::<TinyStr4>(),
+        core::mem::size_of::<Option<TinyStr4>>()
+    );
+    assert_eq!(
+        core::mem::size_of::<TinyStr8>(),
+        core::mem::size_of::<Option<TinyStr8>>()
+    );
+}
 // /// Allows unit tests to use the macro
 // #[cfg(test)]
 // mod tinystr {
