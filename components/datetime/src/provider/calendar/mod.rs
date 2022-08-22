@@ -102,25 +102,6 @@ pub mod patterns {
         pub short: runtime::Pattern<'data>,
     }
 
-    /// Data struct for date/time patterns based on plural category, broken down by pattern length.
-    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(serde::Serialize, databake::Bake),
-        databake(path = icu_datetime::provider::calendar::patterns),
-    )]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub struct LengthPatternPluralsV1<'data> {
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        pub full: PatternPlurals<'data>,
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        pub long: PatternPlurals<'data>,
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        pub medium: PatternPlurals<'data>,
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        pub short: PatternPlurals<'data>,
-    }
-
     /// Data struct for generic date/time patterns, broken down by pattern length.
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
