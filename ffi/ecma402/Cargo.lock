@@ -378,7 +378,7 @@ dependencies = [
 
 [[package]]
 name = "crlify"
-version = "1.0.0"
+version = "1.0.1"
 
 [[package]]
 name = "crossbeam-channel"
@@ -471,7 +471,7 @@ dependencies = [
 
 [[package]]
 name = "databake"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "databake-derive",
  "proc-macro2",
@@ -491,7 +491,7 @@ dependencies = [
 
 [[package]]
 name = "deduplicating_array"
-version = "0.1.1"
+version = "0.1.2"
 dependencies = [
  "serde",
 ]
@@ -690,7 +690,7 @@ dependencies = [
 
 [[package]]
 name = "fixed_decimal"
-version = "0.3.0"
+version = "0.4.0"
 dependencies = [
  "displaydoc",
  "smallvec",
@@ -995,23 +995,25 @@ dependencies = [
 
 [[package]]
 name = "icu"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "icu_calendar",
  "icu_collator",
+ "icu_collections",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
- "icu_locid_transform",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
+ "icu_timezone",
 ]
 
 [[package]]
 name = "icu4x_ecma402"
-version = "0.6.0"
+version = "0.7.0"
 dependencies = [
  "ecma402_traits",
  "icu",
@@ -1019,13 +1021,14 @@ dependencies = [
  "icu_list",
  "icu_plurals",
  "icu_provider",
+ "litemap",
  "writeable",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_calendar"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1033,37 +1036,14 @@ dependencies = [
  "icu_provider",
  "serde",
  "tinystr",
- "zerovec",
-]
-
-[[package]]
-name = "icu_collections"
-version = "0.1.0"
-dependencies = [
- "databake",
- "serde",
- "zerofrom",
- "zerovec",
-]
-
-[[package]]
-name = "icu_codepointtrie"
-version = "0.4.0"
-dependencies = [
- "databake",
- "displaydoc",
- "icu_uniset",
- "serde",
- "yoke",
- "zerofrom",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_codepointtrie_builder"
 version = "0.3.3"
 dependencies = [
- "icu_codepointtrie",
+ "icu_collections",
  "lazy_static",
  "toml",
  "wasmer",
@@ -1072,28 +1052,38 @@ dependencies = [
 
 [[package]]
 name = "icu_collator"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
  "icu_collections",
- "icu_codepointtrie",
  "icu_locid",
  "icu_normalizer",
  "icu_properties",
  "icu_provider",
- "icu_uniset",
  "serde",
  "smallvec",
  "utf16_iter",
  "utf8_iter",
- "zerofrom",
- "zerovec",
+ "zerofrom 0.1.1",
+ "zerovec 0.8.1",
+]
+
+[[package]]
+name = "icu_collections"
+version = "1.0.0-beta1"
+dependencies = [
+ "databake",
+ "displaydoc",
+ "serde",
+ "yoke",
+ "zerofrom 0.1.1",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_datagen"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "cached-path",
  "crlify",
@@ -1101,15 +1091,14 @@ dependencies = [
  "displaydoc",
  "elsa",
  "icu_calendar",
- "icu_collections",
- "icu_codepointtrie",
  "icu_codepointtrie_builder",
  "icu_collator",
+ "icu_collections",
  "icu_datetime",
  "icu_decimal",
  "icu_list",
- "icu_locid_transform",
  "icu_locid",
+ "icu_locid_transform",
  "icu_normalizer",
  "icu_plurals",
  "icu_properties",
@@ -1117,7 +1106,7 @@ dependencies = [
  "icu_provider_adapters",
  "icu_provider_blob",
  "icu_provider_fs",
- "icu_uniset",
+ "icu_timezone",
  "itertools",
  "lazy_static",
  "log",
@@ -1132,13 +1121,13 @@ dependencies = [
  "tinystr",
  "toml",
  "writeable",
- "zerovec",
+ "zerovec 0.8.1",
  "zip 0.6.2",
 ]
 
 [[package]]
 name = "icu_datetime"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1149,17 +1138,18 @@ dependencies = [
  "icu_locid",
  "icu_plurals",
  "icu_provider",
+ "icu_timezone",
  "litemap",
  "serde",
  "smallvec",
  "tinystr",
  "writeable",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_decimal"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1172,7 +1162,7 @@ dependencies = [
 
 [[package]]
 name = "icu_list"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "deduplicating_array",
@@ -1182,24 +1172,12 @@ dependencies = [
  "regex-automata",
  "serde",
  "writeable",
- "zerovec",
-]
-
-[[package]]
-name = "icu_locid_transform"
-version = "0.6.0"
-dependencies = [
- "databake",
- "icu_locid",
- "icu_provider",
- "serde",
- "tinystr",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_locid"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1207,32 +1185,42 @@ dependencies = [
  "serde",
  "tinystr",
  "writeable",
- "zerovec",
+ "zerovec 0.8.1",
+]
+
+[[package]]
+name = "icu_locid_transform"
+version = "1.0.0-beta1"
+dependencies = [
+ "databake",
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "tinystr",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_normalizer"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
  "icu_collections",
- "icu_codepointtrie",
  "icu_properties",
  "icu_provider",
- "icu_uniset",
  "serde",
  "smallvec",
  "utf16_iter",
  "utf8_iter",
  "write16",
- "zerofrom",
- "zerovec",
+ "zerofrom 0.1.1",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_plurals"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
@@ -1240,25 +1228,24 @@ dependencies = [
  "icu_locid",
  "icu_provider",
  "serde",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_properties"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_provider",
- "icu_uniset",
  "serde",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_provider"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "bincode",
  "databake",
@@ -1274,13 +1261,13 @@ dependencies = [
  "stable_deref_trait",
  "writeable",
  "yoke",
- "zerofrom",
- "zerovec",
+ "zerofrom 0.1.1",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_provider_adapters"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "icu_locid",
@@ -1288,12 +1275,12 @@ dependencies = [
  "serde",
  "tinystr",
  "yoke",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_provider_blob"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "icu_provider",
  "log",
@@ -1301,12 +1288,12 @@ dependencies = [
  "serde",
  "writeable",
  "yoke",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
 name = "icu_provider_fs"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "bincode",
  "crlify",
@@ -1323,7 +1310,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -1331,16 +1318,17 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_uniset"
-version = "0.5.0"
+name = "icu_timezone"
+version = "1.0.0-beta1"
 dependencies = [
  "databake",
  "displaydoc",
+ "icu_calendar",
+ "icu_locid",
+ "icu_provider",
  "serde",
  "tinystr",
- "yoke",
- "zerofrom",
- "zerovec",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
@@ -1461,7 +1449,7 @@ dependencies = [
 
 [[package]]
 name = "litemap"
-version = "0.4.0"
+version = "0.5.0"
 dependencies = [
  "serde",
 ]
@@ -2581,12 +2569,13 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.6.0"
+version = "0.6.2"
 dependencies = [
  "databake",
  "displaydoc",
  "serde",
- "zerovec",
+ "zerovec 0.7.0",
+ "zerovec 0.8.1",
 ]
 
 [[package]]
@@ -3300,7 +3289,7 @@ checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
 
 [[package]]
 name = "writeable"
-version = "0.4.0"
+version = "0.4.1"
 
 [[package]]
 name = "xattr"
@@ -3313,17 +3302,17 @@ dependencies = [
 
 [[package]]
 name = "yoke"
-version = "0.6.0"
+version = "0.6.1"
 dependencies = [
  "serde",
  "stable_deref_trait",
  "yoke-derive",
- "zerofrom",
+ "zerofrom 0.1.1",
 ]
 
 [[package]]
 name = "yoke-derive"
-version = "0.6.0"
+version = "0.6.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3333,14 +3322,20 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
+name = "zerofrom"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "79e9355fccf72b04b7deaa99ce7a0f6630530acf34045391b74460fcd714de54"
+
+[[package]]
 name = "zerofrom-derive"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -3351,17 +3346,26 @@ dependencies = [
 [[package]]
 name = "zerovec"
 version = "0.7.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7c1b475ff48237bf7281cfa1721a52f0ad7f95ede1a46385e555870a354afc45"
+dependencies = [
+ "zerofrom 0.1.1 (registry+https://github.com/rust-lang/crates.io-index)",
+]
+
+[[package]]
+name = "zerovec"
+version = "0.8.1"
 dependencies = [
  "databake",
  "serde",
  "yoke",
- "zerofrom",
+ "zerofrom 0.1.1",
  "zerovec-derive",
 ]
 
 [[package]]
 name = "zerovec-derive"
-version = "0.6.0"
+version = "0.8.0"
 dependencies = [
  "proc-macro2",
  "quote",
