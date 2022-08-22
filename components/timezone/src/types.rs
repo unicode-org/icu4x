@@ -134,34 +134,38 @@ impl FromStr for GmtOffset {
     }
 }
 
-/// A time variant, e.g. "daylight" or "standard"
+/// A time zone variant: currently either daylight time or standard time.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ULE)]
 #[repr(transparent)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct TimeVariant(pub TinyAsciiStr<2>);
+pub struct ZoneVariant(pub TinyAsciiStr<2>);
 
-impl FromStr for TimeVariant {
+impl FromStr for ZoneVariant {
     type Err = <TinyAsciiStr<2> as FromStr>::Err;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        input.parse().map(TimeVariant)
+        input.parse().map(ZoneVariant)
     }
 }
 
-impl TimeVariant {
-    /// Return the `"standard"` `TimeVariant`
+impl ZoneVariant {
+    /// Return the standard time `ZoneVariant`.
+    ///
+    /// Corresponds to the `"standard"` variant string in CLDR.
     pub const fn standard() -> Self {
         Self(tinystr!(2, "st"))
     }
-    /// Return the `"daylight"` `TimeVariant`
+    /// Return the daylight time `ZoneVariant`
+    ///
+    /// Corresponds to the `"daylight"` variant string in CLDR.
     pub const fn daylight() -> Self {
         Self(tinystr!(2, "dt"))
     }
 }
 
-impl AsULE for TimeVariant {
+impl AsULE for ZoneVariant {
     type ULE = Self;
 
     #[inline]
@@ -175,9 +179,9 @@ impl AsULE for TimeVariant {
     }
 }
 
-impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeVariant {
-    type Container = ZeroVec<'a, TimeVariant>;
-    type Slice = ZeroSlice<TimeVariant>;
-    type GetType = TimeVariant;
-    type OwnedType = TimeVariant;
+impl<'a> zerovec::maps::ZeroMapKV<'a> for ZoneVariant {
+    type Container = ZeroVec<'a, ZoneVariant>;
+    type Slice = ZeroSlice<ZoneVariant>;
+    type GetType = ZoneVariant;
+    type OwnedType = ZoneVariant;
 }

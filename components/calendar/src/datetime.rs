@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
+use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::types::{self, Time};
 use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
 
@@ -85,7 +85,7 @@ impl<A: AsCalendar> DateTime<A> {
     }
 }
 
-impl<C: IncludedInAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
     /// Type-erase the date, converting it to a date for [`AnyCalendar`]
     pub fn to_any(&self) -> DateTime<AnyCalendar> {
         DateTime {

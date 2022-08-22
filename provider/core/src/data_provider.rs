@@ -86,7 +86,7 @@ mod test {
         const KEY: DataKey = HELLO_ALT_KEY;
     }
 
-    #[derive(Serialize, Deserialize, Debug, Clone, Default, PartialEq)]
+    #[derive(Deserialize, Debug, Clone, Default, PartialEq)]
     struct HelloCombined<'data> {
         #[serde(borrow)]
         pub hello_v1: HelloWorldV1<'data>,

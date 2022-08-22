@@ -50,9 +50,11 @@ pub trait Calendar {
     }
     // fn week_of_year(&self, date: &Self::DateInner) -> u8;
 
+    #[doc(hidden)] // unstable
     /// Add `offset` to `date`
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>);
 
+    #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
     /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects

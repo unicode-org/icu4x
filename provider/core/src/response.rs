@@ -570,6 +570,28 @@ where
         })
     }
 
+    /// Convert between two [`DataMarker`] types that are compatible with each other.
+    ///
+    /// This happens if they both have the same [`DataMarker::Yokeable`] type.
+    ///
+    /// Can be used to erase the key of a data payload in cases where multiple keys correspond
+    /// to the same data struct.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use icu_locid::locale;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::prelude::*;
+    ///
+    /// struct CustomHelloWorldV1Marker;
+    /// impl DataMarker for CustomHelloWorldV1Marker {
+    ///     type Yokeable = HelloWorldV1<'static>;
+    /// }
+    ///
+    /// let hello_world: DataPayload<HelloWorldV1Marker> = todo!();
+    /// let custom: DataPayload<CustomHelloWorldV1Marker> = hello_world.cast();
+    /// ```
     #[inline]
     pub fn cast<M2>(self) -> DataPayload<M2>
     where
