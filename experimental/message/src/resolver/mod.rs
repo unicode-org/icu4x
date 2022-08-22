@@ -133,12 +133,11 @@ where
                         let v: VariableType<&'varsv str> = var.as_ref();
                         let result = func(&v, scope.mf);
                         match result {
-                            VariableType::String(s) => {
-                                let s: String = s.to_string();
+                            MessagePart::Literal(s) => {
                                 let s: Cow<str> = Cow::Owned(s);
                                 collector.push_part(MessagePart::Literal(MPV::from_cow(s)))
                             }
-                            VariableType::MessageReference(_) => todo!(),
+                            _ => todo!(),
                         }
                     } else {
                         Self::resolve_variable(var, scope, collector);
@@ -174,6 +173,10 @@ where
             VariableType::String(s) => {
                 collector.push_part(MessagePart::Literal(MPV::from_slice(s.to_owned())))
             }
+            VariableType::Number(n) => {
+                let result = format!("{n}");
+                collector.push_part(MessagePart::Literal(MPV::from_slice(&result)))
+            }
             VariableType::MessageReference(id) => {
                 // if let Some(messages) = scope.messages {
                 //     if let Some(msg) = messages.get(id.as_str()) {
@@ -185,6 +188,22 @@ where
                 //     todo!()
                 // }
             }
+            VariableType::List(v) => {
+                for item in v {
+                    Self::resolve_variable(item, scope, collector);
+                }
+            }
+            VariableType::Markup { name } => {
+                collector.push_part(MessagePart::Markup {
+                    name: MPV::from_slice(name.to_owned()),
+                });
+            }
+            VariableType::MarkupEnd { name } => {
+                collector.push_part(MessagePart::MarkupEnd {
+                    name: MPV::from_slice(name.to_owned()),
+                });
+            }
+            _ => todo!(),
         }
     }
 }
@@ -196,13 +215,14 @@ mod test {
     use super::ast;
     use super::{Resolver, Scope};
     use crate::MessageFormat;
+    use icu_locid::locale;
     use smallvec::SmallVec;
     use std::borrow::Cow;
     use std::collections::HashMap;
 
     #[test]
     fn sanity_check() {
-        let mf = MessageFormat::new();
+        let mf = MessageFormat::new(locale!("en-US"));
         let source = "{Hello World}";
         let parser = Parser::new(source);
         let msg = parser.parse().unwrap();
@@ -217,7 +237,7 @@ mod test {
 
     #[test]
     fn stay_borrowed_check() {
-        let mf = MessageFormat::new();
+        let mf = MessageFormat::new(locale!("en-US"));
 
         let msg = ast::Message {
             declarations: Default::default(),
@@ -282,7 +302,7 @@ mod test {
 
     #[test]
     fn allocate_check() {
-        let mf = MessageFormat::new();
+        let mf = MessageFormat::new(locale!("en-US"));
 
         let msg = ast::Message {
             declarations: Default::default(),
@@ -313,7 +333,7 @@ mod test {
 
     #[test]
     fn variable_check() {
-        let mf = MessageFormat::new();
+        let mf = MessageFormat::new(locale!("en-US"));
 
         let source = "{{$name}}";
         let parser = Parser::new(source);

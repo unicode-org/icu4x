@@ -8,6 +8,7 @@ edition = "2021"
 [dependencies]
 smallvec = "1.6"
 intl-memoizer = "0.5"
+icu_locid = { path = "../../components/locid" }
 
 [dev-dependencies]
 iai = "0.1"

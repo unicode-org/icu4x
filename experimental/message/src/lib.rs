@@ -4,6 +4,7 @@ pub mod parser;
 pub mod resolver;
 pub mod types;
 
+use icu_locid::Locale;
 use intl_memoizer::IntlMemoizer;
 use parser::{slice::Slice, Parser};
 use resolver::{Resolver, Scope};
@@ -12,7 +13,7 @@ use std::collections::HashMap;
 use types::{MessagePart, VariableType};
 
 pub type MF2Function<'b> =
-    Box<dyn for<'s> Fn(&VariableType<&'s str>, &MessageFormat) -> VariableType<String> + 'b>;
+    Box<dyn for<'s> Fn(&VariableType<&'s str>, &MessageFormat) -> MessagePart<String> + 'b>;
 
 #[derive(Default)]
 pub struct MessageFormat<'b> {
@@ -21,7 +22,7 @@ pub struct MessageFormat<'b> {
 }
 
 impl<'b> MessageFormat<'b> {
-    pub fn new() -> Self {
+    pub fn new(_locale: Locale) -> Self {
         Self {
             intls: IntlMemoizer::default(),
             functions: HashMap::default(),
@@ -85,12 +86,13 @@ mod test {
     use super::types::{MessagePart, VariableType};
     use super::MessageFormat;
     use crate::ast;
+    use icu_locid::locale;
     use std::borrow::Cow;
     use std::collections::HashMap;
 
     #[test]
     fn sanity_check() {
-        let mf = MessageFormat::new();
+        let mf = MessageFormat::new(locale!("und"));
 
         let result = mf.format_from_source::<&str, &str>("{Hello World}", None);
         assert_eq!(result, "Hello World");
@@ -98,7 +100,7 @@ mod test {
 
     #[test]
     fn variable_check() {
-        let mf = MessageFormat::new();
+        let mf = MessageFormat::new(locale!("und"));
 
         let mut variables = HashMap::new();
         variables.insert("name".into(), VariableType::String("John"));
@@ -121,17 +123,17 @@ mod test {
 
         let msg_ref = &messages;
 
-        let mut mf = MessageFormat::new();
+        let mut mf = MessageFormat::new(locale!("und"));
 
         let message_function =
-            move |input: &VariableType<&str>, mf: &MessageFormat| -> VariableType<String> {
+            |input: &VariableType<&str>, mf: &MessageFormat| -> MessagePart<String> {
                 let id: &str = match input {
-                    VariableType::String(_) => todo!(),
                     VariableType::MessageReference(s) => *s,
+                    _ => todo!(),
                 };
                 let msg = msg_ref.get(id).unwrap();
                 let result = mf.format_to_string::<_, &str>(msg, None);
-                VariableType::String(result.to_string())
+                MessagePart::Literal(result.to_string())
             };
 
         mf.functions
@@ -149,12 +151,73 @@ mod test {
 
     #[test]
     fn function_check() {
-        let mut mf = MessageFormat::new();
+        let mut mf = MessageFormat::new(locale!("und"));
         mf.functions.insert(
             "number".to_string(),
             Box::new(
-                |input: &VariableType<&str>, mf: &MessageFormat| -> VariableType<String> {
-                    VariableType::String("from function".to_string())
+                |input: &VariableType<&str>, mf: &MessageFormat| -> MessagePart<String> {
+                    match input {
+                        VariableType::Number(n) => {
+                            let result = format!("{n}");
+                            MessagePart::Literal(result)
+                        }
+                        _ => todo!(),
+                    }
+                },
+            ),
+        );
+
+        let mut variables: HashMap<_, VariableType<&str>> = HashMap::new();
+        variables.insert("emailCount".into(), VariableType::Number(5.0));
+
+        let result = mf.format_from_source(
+            "{You have {$emailCount :number} unread emails.}",
+            Some(&variables),
+        );
+        assert_eq!(result, "You have 5 unread emails.");
+    }
+
+    #[test]
+    fn markup_passthrough_check() {
+        let mf = MessageFormat::new(locale!("en-US"));
+
+        let mut variables = HashMap::new();
+        variables.insert(
+            "input-markup".into(),
+            // VariableType::String("foo"),
+            VariableType::List(vec![
+                VariableType::Markup { name: "strong" },
+                VariableType::String("Hello World!"),
+                VariableType::MarkupEnd { name: "strong" },
+            ]),
+        );
+
+        let parser = Parser::new("{{$input-markup}}");
+        let msg = parser.parse().unwrap();
+
+        let result = mf.format_to_parts(&msg, Some(&variables));
+        assert_eq!(
+            result,
+            vec![
+                MessagePart::Markup {
+                    name: Cow::Borrowed("strong")
+                },
+                MessagePart::Literal(Cow::Borrowed("Hello World!")),
+                MessagePart::MarkupEnd {
+                    name: Cow::Borrowed("strong")
+                },
+            ]
+        );
+    }
+
+    #[test]
+    fn function_preserve_parts() {
+        let mut mf = MessageFormat::new(locale!("und"));
+        mf.functions.insert(
+            "number".to_string(),
+            Box::new(
+                |input: &VariableType<&str>, mf: &MessageFormat| -> MessagePart<String> {
+                    MessagePart::Literal("from function".to_string())
                 },
             ),
         );
@@ -165,40 +228,4 @@ mod test {
         let result = mf.format_from_source("{Hello {$emailCount :number}.}", Some(&variables));
         assert_eq!(result, "Hello from function.");
     }
-
-    // #[test]
-    // fn markup_passthrough_check() {
-    //     let mf = MessageFormat::new();
-    //
-    //     let mut variables = HashMap::new();
-    //     variables.insert(
-    //         "input-markup".into(),
-    //         VariableType::List(vec![
-    //             VariableType::Markup {
-    //                 name: "strong",
-    //             },
-    //             VariableType::String(String::from("Hello World!")),
-    //             VariableType::MarkupEnd {
-    //                 name: "strong",
-    //             },
-    //         ]),
-    //     );
-    //
-    //     let parser = Parser::new("{{$input-markup}}");
-    //     let msg = parser.parse().unwrap();
-    //
-    //     let result = mf.format_to_parts(&msg, Some(variables));
-    //     assert_eq!(
-    //         result,
-    //         vec![
-    //             MessagePart::Markup {
-    //                 name: Cow::Borrowed("strong")
-    //             },
-    //             MessagePart::Literal(Cow::Borrowed("Hello World!")),
-    //             MessagePart::MarkupEnd {
-    //                 name: Cow::Borrowed("strong")
-    //             },
-    //         ]
-    //     );
-    // }
 }
