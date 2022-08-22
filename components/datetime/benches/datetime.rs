@@ -10,12 +10,14 @@ use std::fmt::Write;
 use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{
-    mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     time_zone::TimeZoneFormatterOptions,
     TypedZonedDateTimeFormatter,
 };
 use icu_locid::Locale;
 use icu_timezone::CustomTimeZone;
+
+#[path = "../tests/mock.rs"]
+mod mock;
 
 fn datetime_benches(c: &mut Criterion) {
     let provider = icu_testdata::get_provider();
@@ -30,7 +32,7 @@ fn datetime_benches(c: &mut Criterion) {
                         .values
                         .iter()
                         .map(|value| {
-                            parse_gregorian_from_str(value).expect("Failed to parse value.")
+                            mock::parse_gregorian_from_str(value).expect("Failed to parse value.")
                         })
                         .collect();
                     for setup in &fx.setups {
@@ -69,7 +71,7 @@ fn datetime_benches(c: &mut Criterion) {
                 let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
                     .values
                     .iter()
-                    .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
+                    .map(|value| mock::parse_zoned_gregorian_from_str(value).unwrap())
                     .collect();
                 for setup in &fx.setups {
                     let locale: Locale = setup.locale.parse().unwrap();
@@ -107,7 +109,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| parse_gregorian_from_str(value).unwrap())
+                        .map(|value| mock::parse_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -137,7 +139,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| parse_gregorian_from_str(value).unwrap())
+                        .map(|value| mock::parse_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -164,7 +166,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| parse_gregorian_from_str(value).unwrap())
+                        .map(|value| mock::parse_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -195,7 +197,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let datetimes: Vec<DateTime<Gregorian>> = fx
                         .values
                         .iter()
-                        .map(|value| parse_gregorian_from_str(value).unwrap())
+                        .map(|value| mock::parse_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -224,7 +226,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
                         .values
                         .iter()
-                        .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
+                        .map(|value| mock::parse_zoned_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -255,7 +257,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
                         .values
                         .iter()
-                        .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
+                        .map(|value| mock::parse_zoned_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -283,7 +285,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
                         .values
                         .iter()
-                        .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
+                        .map(|value| mock::parse_zoned_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
@@ -315,7 +317,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let datetimes: Vec<(DateTime<Gregorian>, CustomTimeZone)> = fx
                         .values
                         .iter()
-                        .map(|value| parse_zoned_gregorian_from_str(value).unwrap())
+                        .map(|value| mock::parse_zoned_gregorian_from_str(value).unwrap())
                         .collect();
 
                     for setup in &fx.setups {
