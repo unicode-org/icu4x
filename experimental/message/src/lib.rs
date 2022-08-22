@@ -1,63 +1,77 @@
 pub mod ast;
+pub mod functions;
 pub mod parser;
 pub mod resolver;
 pub mod types;
+
+use intl_memoizer::IntlMemoizer;
 use parser::{slice::Slice, Parser};
 use resolver::{Resolver, Scope};
 use std::borrow::Cow;
 use std::collections::HashMap;
 use types::{MessagePart, VariableType};
 
+pub type MF2Function<'b> =
+    Box<dyn for<'s> Fn(&VariableType<&'s str>, &MessageFormat) -> VariableType<String> + 'b>;
+
 #[derive(Default)]
-pub struct MessageFormat<'msgsmv, MSGSV> {
-    pub messages: HashMap<String, &'msgsmv ast::Message<MSGSV>>,
+pub struct MessageFormat<'b> {
+    pub intls: IntlMemoizer,
+    pub functions: HashMap<String, MF2Function<'b>>,
 }
 
-impl<'msgsmv, MSGSV> MessageFormat<'msgsmv, MSGSV> {
+impl<'b> MessageFormat<'b> {
     pub fn new() -> Self {
         Self {
-            messages: Default::default(),
+            intls: IntlMemoizer::default(),
+            functions: HashMap::default(),
         }
     }
 
-    pub fn format_to_string<'m, 'mv, 'varsv, 'varsm, 'msgsm, 'msgsv, 'mpv, MV, VARSV>(
-        &'msgsm self,
+    pub fn format_to_string<'m, 'mv, 'varsv, 'varsm, 'mf, 'mpv, MV, VARSV>(
+        &'mf self,
         msg: &'m ast::Message<MV>,
         variables: Option<&'varsm HashMap<String, VariableType<VARSV>>>,
     ) -> Cow<'mpv, str>
     where
         MV: Slice<'mv>,
         VARSV: Slice<'varsv>,
-        MSGSV: Slice<'msgsv>,
         'mv: 'mpv,
-        'msgsv: 'mpv,
         'varsv: 'mpv,
+        'varsm: 'varsv,
     {
-        let scope = Scope::new(variables, Some(&self.messages));
-        Resolver::<_, _, _, &str>::resolve_to_string(msg, &scope)
+        let scope = Scope::new(self, variables);
+        Resolver::<_, _, Cow<str>>::resolve_to_string(msg, &scope)
     }
-    //
-    // pub fn format_to_parts(
-    //     &self,
-    //     msg: &ast::Message<S>,
-    //     variables: Option<HashMap<String, VariableType>>,
-    // ) -> Vec<MessagePart<S>> {
-    //     let scope = Scope::new(variables, Some(&self.messages));
-    //     Resolver::resolve_to_parts(msg, &scope)
-    // }
 
-    pub fn format_from_source<'m, 'mv, 'varsv, 'varsm, 'msgsm, 'msgsv, 'mpv, MV, VARSV>(
-        &'msgsm self,
+    pub fn format_to_parts<'m, 'mv, 'varsv, 'varsm, 'mf, 'mpv, MV, VARSV, MPV>(
+        &self,
+        msg: &ast::Message<MV>,
+        variables: Option<&'varsm HashMap<String, VariableType<VARSV>>>,
+    ) -> Vec<MessagePart<MPV>>
+    where
+        MV: Slice<'mv>,
+        VARSV: Slice<'varsv>,
+        MPV: 'mpv + Slice<'mpv>,
+        'mv: 'mpv,
+        'varsv: 'mpv,
+        'varsm: 'varsv,
+    {
+        let scope = Scope::new(self, variables);
+        Resolver::resolve_to_parts(msg, &scope)
+    }
+
+    pub fn format_from_source<'m, 'mv, 'varsv, 'varsm, 'mf, 'mpv, MV, VARSV>(
+        &'mf self,
         source: MV,
         variables: Option<&'varsm HashMap<String, VariableType<VARSV>>>,
     ) -> Cow<'mpv, str>
     where
         MV: 'm + Slice<'mv>,
         VARSV: Slice<'varsv>,
-        MSGSV: Slice<'msgsv>,
         'mv: 'mpv,
-        'msgsv: 'mpv,
         'varsv: 'mpv,
+        'varsm: 'varsv,
     {
         let parser = Parser::new(source);
         let msg: ast::Message<MV> = parser.parse().unwrap();
@@ -70,12 +84,13 @@ mod test {
     use super::parser::Parser;
     use super::types::{MessagePart, VariableType};
     use super::MessageFormat;
+    use crate::ast;
     use std::borrow::Cow;
     use std::collections::HashMap;
 
     #[test]
     fn sanity_check() {
-        let mf = MessageFormat::<&str>::new();
+        let mf = MessageFormat::new();
 
         let result = mf.format_from_source::<&str, &str>("{Hello World}", None);
         assert_eq!(result, "Hello World");
@@ -83,7 +98,7 @@ mod test {
 
     #[test]
     fn variable_check() {
-        let mf = MessageFormat::<&str>::new();
+        let mf = MessageFormat::new();
 
         let mut variables = HashMap::new();
         variables.insert("name".into(), VariableType::String("John"));
@@ -93,17 +108,34 @@ mod test {
     }
 
     #[test]
-    fn ref_msg_check() {
-        let mut mf = MessageFormat::new();
+    fn dynamic_msg_check() {
+        let mut messages = HashMap::new();
 
         let parser = Parser::new("{Dragon}");
         let dragon_msg = parser.parse().unwrap();
         let parser = Parser::new("{Golem}");
         let golem_msg = parser.parse().unwrap();
 
-        mf.messages
-            .insert("creature-dragon".to_string(), &dragon_msg);
-        mf.messages.insert("creature-golem".to_string(), &golem_msg);
+        messages.insert("creature-dragon".to_string(), &dragon_msg);
+        messages.insert("creature-golem".to_string(), &golem_msg);
+
+        let msg_ref = &messages;
+
+        let mut mf = MessageFormat::new();
+
+        let message_function =
+            move |input: &VariableType<&str>, mf: &MessageFormat| -> VariableType<String> {
+                let id: &str = match input {
+                    VariableType::String(_) => todo!(),
+                    VariableType::MessageReference(s) => *s,
+                };
+                let msg = msg_ref.get(id).unwrap();
+                let result = mf.format_to_string::<_, &str>(msg, None);
+                VariableType::String(result.to_string())
+            };
+
+        mf.functions
+            .insert("message".to_string(), Box::new(message_function));
 
         let mut variables = HashMap::new();
         variables.insert(
@@ -111,8 +143,27 @@ mod test {
             VariableType::MessageReference("creature-dragon"),
         );
 
-        let result = mf.format_from_source("{{$monster} killed you.}", Some(&variables));
+        let result = mf.format_from_source("{{$monster :message} killed you.}", Some(&variables));
         assert_eq!(result, "Dragon killed you.");
+    }
+
+    #[test]
+    fn function_check() {
+        let mut mf = MessageFormat::new();
+        mf.functions.insert(
+            "number".to_string(),
+            Box::new(
+                |input: &VariableType<&str>, mf: &MessageFormat| -> VariableType<String> {
+                    VariableType::String("from function".to_string())
+                },
+            ),
+        );
+
+        let mut variables = HashMap::new();
+        variables.insert("emailCount".into(), VariableType::String("test"));
+
+        let result = mf.format_from_source("{Hello {$emailCount :number}.}", Some(&variables));
+        assert_eq!(result, "Hello from function.");
     }
 
     // #[test]

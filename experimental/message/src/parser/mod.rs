@@ -219,9 +219,14 @@ where
 
     fn parse_expression(&mut self) -> ParserResult<ast::Expression<S>> {
         let operand = self.parse_operand()?;
+        let annotation = if self.next_if(b' ') {
+            Some(self.parse_annotation()?)
+        } else {
+            None
+        };
         Ok(ast::Expression::Operand {
             operand,
-            annotation: None,
+            annotation,
         })
     }
 
@@ -234,6 +239,15 @@ where
             }
         };
         Ok(op)
+    }
+
+    fn parse_annotation(&mut self) -> ParserResult<ast::Annotation<S>> {
+        assert_eq!(self.next(), Some(&b':'));
+        let name = self.parse_name()?;
+        Ok(ast::Annotation {
+            function: name,
+            options: SmallVec::new(),
+        })
     }
 
     fn parse_name(&mut self) -> ParserResult<S> {

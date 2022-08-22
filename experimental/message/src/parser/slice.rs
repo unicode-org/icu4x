@@ -89,3 +89,42 @@ impl<'s> Slice<'s> for &'s str {
         Cow::Borrowed(self)
     }
 }
+
+impl<'s> Slice<'s> for Cow<'s, str> {
+    fn from_cow(input: Cow<'s, str>) -> Self {
+        input
+    }
+
+    fn as_cow(&self) -> Cow<'s, str> {
+        self.clone()
+    }
+
+    fn from_slice<'m, S: Slice<'m>>(input: &S) -> Self
+    where
+        'm: 's,
+    {
+        Self::from_cow(input.as_cow())
+    }
+
+    #[inline]
+    fn slice(&self, range: Range<usize>) -> Self {
+        todo!()
+        // match self {
+        //     Cow::Borrowed(s) => Cow::Borrowed(&self[range]),
+        //     Cow::Owned(_) => todo!(),
+        // }
+    }
+
+    #[inline]
+    fn byte_at(&self, ptr: usize) -> Option<&u8> {
+        self.as_bytes().get(ptr)
+    }
+
+    fn as_str(&self) -> &str {
+        self.as_ref()
+    }
+
+    fn into_cow(self) -> Cow<'s, str> {
+        self
+    }
+}

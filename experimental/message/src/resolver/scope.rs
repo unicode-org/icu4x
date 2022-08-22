@@ -1,3 +1,4 @@
+use crate::MessageFormat;
 use crate::{ast, types::VariableType};
 use std::collections::HashMap;
 
@@ -6,19 +7,16 @@ use std::collections::HashMap;
 // 'msgsv - lifetime of message values
 // VARSV - variable value type
 // MSGSV - messages value type
-pub struct Scope<'vars, 'msgs, 'msgsv, VARSV, MSGSV> {
+pub struct Scope<'b, 'mf, 'vars, VARSV> {
+    pub mf: &'mf MessageFormat<'b>,
     pub variables: Option<&'vars HashMap<String, VariableType<VARSV>>>,
-    pub messages: Option<&'msgs HashMap<String, &'msgsv ast::Message<MSGSV>>>,
 }
 
-impl<'vars, 'msgs, 'msgsv, VARSV, MSGSV> Scope<'vars, 'msgs, 'msgsv, VARSV, MSGSV> {
+impl<'b, 'mf, 'vars, VARSV> Scope<'b, 'mf, 'vars, VARSV> {
     pub fn new(
+        mf: &'mf MessageFormat<'b>,
         variables: Option<&'vars HashMap<String, VariableType<VARSV>>>,
-        messages: Option<&'msgs HashMap<String, &'msgsv ast::Message<MSGSV>>>,
     ) -> Self {
-        Self {
-            variables,
-            messages,
-        }
+        Self { mf, variables }
     }
 }

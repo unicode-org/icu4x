@@ -7,16 +7,16 @@ pub use scope::Scope;
 use super::ast;
 use super::parser::slice::Slice;
 use super::types::{MessagePart, VariableType};
+use crate::MF2Function;
 use std::borrow::Cow;
 
 // MV - message value type
 // VARSV - variables value type
 // MSGSV - messages value type
 // MPV - message parts value type
-pub struct Resolver<MV, VARSV, MSGSV, MPV> {
+pub struct Resolver<MV, VARSV, MPV> {
     p1: std::marker::PhantomData<MV>,
     p2: std::marker::PhantomData<VARSV>,
-    p3: std::marker::PhantomData<MSGSV>,
     p4: std::marker::PhantomData<MPV>,
 }
 
@@ -29,20 +29,18 @@ pub struct Resolver<MV, VARSV, MSGSV, MPV> {
 // 'msgsv - messages value lifetime
 // 'scope - scope lifetime
 // 'mpv - message parts value lifetime
-impl<'m, 'mv, 'varsm, 'varsv, 'msgsm, 'msgsmv, 'msgsv, 'scope, 'mpv, MV, VARSV, MSGSV, MPV>
-    Resolver<MV, VARSV, MSGSV, MPV>
+impl<'b, 'm, 'mv, 'varsm, 'varsv, 'mf, 'scope, 'mpv, MV, VARSV, MPV> Resolver<MV, VARSV, MPV>
 where
     MV: Slice<'mv>,
     VARSV: Slice<'varsv>,
-    MSGSV: Slice<'msgsv>,
     MPV: 'mpv + Slice<'mpv>,
     'mv: 'mpv,
-    'msgsv: 'mpv,
     'varsv: 'mpv,
+    'varsm: 'varsv,
 {
     pub fn resolve_to_parts(
         msg: &'m ast::Message<MV>,
-        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
     ) -> Vec<MessagePart<MPV>> {
         let mut collector = MessagePartsList::new();
         Self::resolve_message_to_collector(msg, scope, &mut collector);
@@ -51,7 +49,7 @@ where
 
     pub fn resolve_to_string(
         msg: &'m ast::Message<MV>,
-        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
     ) -> Cow<'mpv, str> {
         let mut collector = MessageString::new();
         Self::resolve_message_to_collector(msg, scope, &mut collector);
@@ -60,7 +58,7 @@ where
 
     pub fn resolve_to_sink<W: std::fmt::Write>(
         msg: &'m ast::Message<MV>,
-        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
         sink: W,
     ) {
         let mut collector = MessageSink::new(sink);
@@ -69,7 +67,7 @@ where
 
     fn resolve_message_to_collector<C>(
         msg: &'m ast::Message<MV>,
-        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
         collector: &mut C,
     ) where
         C: MessagePartCollector<MPV>,
@@ -86,7 +84,7 @@ where
 
     fn resolve_pattern_element<C>(
         pe: &'m ast::PatternElement<MV>,
-        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
         collector: &mut C,
     ) where
         C: MessagePartCollector<MPV>,
@@ -101,7 +99,7 @@ where
 
     fn resolve_placeholder<C>(
         placeholder: &'m ast::Placeholder<MV>,
-        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
         collector: &mut C,
     ) where
         C: MessagePartCollector<MPV>,
@@ -115,7 +113,7 @@ where
 
     fn resolve_expression<C>(
         exp: &'m ast::Expression<MV>,
-        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
         collector: &mut C,
     ) where
         C: MessagePartCollector<MPV>,
@@ -128,42 +126,65 @@ where
                 ast::Operand::Literal(l) => {
                     collector.push_part(MessagePart::Literal(MPV::from_slice(&l.value)))
                 }
-                ast::Operand::Variable(v) => Self::resolve_variable(v, scope, collector),
+                ast::Operand::Variable(v) => {
+                    let var = Self::get_variable(v, scope).unwrap();
+                    if let Some(annotation) = annotation {
+                        let func = Self::get_function(&annotation.function, scope).unwrap();
+                        let v: VariableType<&'varsv str> = var.as_ref();
+                        let result = func(&v, scope.mf);
+                        match result {
+                            VariableType::String(s) => {
+                                let s: String = s.to_string();
+                                let s: Cow<str> = Cow::Owned(s);
+                                collector.push_part(MessagePart::Literal(MPV::from_cow(s)))
+                            }
+                            VariableType::MessageReference(_) => todo!(),
+                        }
+                    } else {
+                        Self::resolve_variable(var, scope, collector);
+                    }
+                }
             },
             ast::Expression::Annotation(_) => todo!(),
         }
     }
 
-    fn resolve_variable<C>(
+    fn get_variable(
         variable: &'m MV,
-        scope: &'scope Scope<'varsm, 'msgsm, 'msgsmv, VARSV, MSGSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
+    ) -> Option<&'varsm VariableType<VARSV>> {
+        scope.variables.and_then(|vars| vars.get(variable.as_str()))
+    }
+
+    fn get_function(
+        function: &'m MV,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
+    ) -> Option<&'mf MF2Function<'b>> {
+        scope.mf.functions.get(function.as_str())
+    }
+
+    fn resolve_variable<C>(
+        var: &VariableType<VARSV>,
+        scope: &'scope Scope<'b, 'mf, 'varsm, VARSV>,
         collector: &mut C,
     ) where
         C: MessagePartCollector<MPV>,
     {
-        if let Some(variables) = scope.variables {
-            if let Some(v) = variables.get(variable.as_str()) {
-                match v {
-                    VariableType::String(s) => {
-                        collector.push_part(MessagePart::Literal(MPV::from_slice(s)))
-                    }
-                    VariableType::MessageReference(id) => {
-                        if let Some(messages) = scope.messages {
-                            if let Some(msg) = messages.get(id.as_str()) {
-                                Resolver::resolve_message_to_collector(*msg, scope, collector);
-                            } else {
-                                todo!()
-                            }
-                        } else {
-                            todo!()
-                        }
-                    }
-                }
-            } else {
-                todo!()
+        match var {
+            VariableType::String(s) => {
+                collector.push_part(MessagePart::Literal(MPV::from_slice(s.to_owned())))
             }
-        } else {
-            todo!()
+            VariableType::MessageReference(id) => {
+                // if let Some(messages) = scope.messages {
+                //     if let Some(msg) = messages.get(id.as_str()) {
+                //         Resolver::resolve_message_to_collector(*msg, scope, collector);
+                //     } else {
+                //         todo!()
+                //     }
+                // } else {
+                //     todo!()
+                // }
+            }
         }
     }
 }
@@ -174,26 +195,30 @@ mod test {
     use super::super::types::{MessagePart, VariableType};
     use super::ast;
     use super::{Resolver, Scope};
+    use crate::MessageFormat;
     use smallvec::SmallVec;
     use std::borrow::Cow;
     use std::collections::HashMap;
 
     #[test]
     fn sanity_check() {
+        let mf = MessageFormat::new();
         let source = "{Hello World}";
         let parser = Parser::new(source);
         let msg = parser.parse().unwrap();
 
         let mut variables = HashMap::new();
         variables.insert("name".into(), VariableType::String("John"));
-        let scope = Scope::new(Some(&variables), None);
-        let string = Resolver::<_, _, &str, &str>::resolve_to_string(&msg, &scope);
+        let scope = Scope::new(&mf, Some(&variables));
+        let string = Resolver::<_, _, &str>::resolve_to_string(&msg, &scope);
 
         assert_eq!(string, "Hello World");
     }
 
     #[test]
     fn stay_borrowed_check() {
+        let mf = MessageFormat::new();
+
         let msg = ast::Message {
             declarations: Default::default(),
             value: ast::MessageValue::Pattern(ast::Pattern {
@@ -201,60 +226,64 @@ mod test {
             }),
         };
 
-        let scope = Scope::new(None, None);
-        let string = Resolver::<_, &str, &str, &str>::resolve_to_string(&msg, &scope);
+        let scope = Scope::new(&mf, None);
+        let string = Resolver::<_, &str, &str>::resolve_to_string(&msg, &scope);
 
         assert!(matches!(string, Cow::Borrowed("Hello World")));
 
-        let scope = Scope::<&str, &str>::new(None, None);
-        let parts = Resolver::<_, _, &str, _>::resolve_to_parts(&msg, &scope);
+        let scope = Scope::<&str>::new(&mf, None);
+        let parts = Resolver::<_, _, &str>::resolve_to_parts(&msg, &scope);
 
         assert_eq!(parts, vec![MessagePart::Literal("Hello World"),]);
 
         let mut sink = String::new();
-        let scope = Scope::new(None, None);
-        Resolver::<_, &str, &str, &str>::resolve_to_sink(&msg, &scope, &mut sink);
+        let scope = Scope::<&str>::new(&mf, None);
+        Resolver::<_, _, &str>::resolve_to_sink(&msg, &scope, &mut sink);
 
         assert_eq!(sink, "Hello World");
     }
 
-    #[test]
-    fn lifetimes_check() {
-        let parser = Parser::new("{Hello World{$name}{$creature}}");
-        let msg = parser.parse().unwrap();
-        let parser = Parser::new("{Dragon}");
-        let creature_msg = parser.parse().unwrap();
-        let mut msgs = HashMap::new();
-        msgs.insert("dragon".to_string(), &creature_msg);
-
-        let mut variables = HashMap::new();
-        variables.insert("name".into(), VariableType::String("John"));
-        variables.insert("creature".into(), VariableType::MessageReference("dragon"));
-        let scope = Scope::new(Some(&variables), Some(&msgs));
-        let parts = Resolver::resolve_to_parts(&msg, &scope);
-
-        assert_eq!(
-            parts,
-            vec![
-                MessagePart::Literal("Hello World"),
-                MessagePart::Literal("John"),
-                MessagePart::Literal("Dragon"),
-            ]
-        );
-
-        let parser = Parser::new("{{$name}}");
-        let msg = parser.parse().unwrap();
-        let string = Resolver::<_, _, _, &str>::resolve_to_string(&msg, &scope);
-        assert!(matches!(string, Cow::Borrowed("John")));
-
-        let parser = Parser::new("{{$creature}}");
-        let msg = parser.parse().unwrap();
-        let string = Resolver::<_, _, _, &str>::resolve_to_string(&msg, &scope);
-        assert!(matches!(string, Cow::Borrowed("Dragon")));
-    }
+    // #[test]
+    // fn lifetimes_check() {
+    //     let mf = MessageFormat::new();
+    //
+    //     let parser = Parser::new("{Hello World{$name}{$creature}}");
+    //     let msg = parser.parse().unwrap();
+    //     // let parser = Parser::new("{Dragon}");
+    //     // let creature_msg = parser.parse().unwrap();
+    //     // let mut msgs = HashMap::new();
+    //     // msgs.insert("dragon".to_string(), &creature_msg);
+    //
+    //     let mut variables = HashMap::new();
+    //     variables.insert("name".into(), VariableType::String("John"));
+    //     variables.insert("creature".into(), VariableType::MessageReference("dragon"));
+    //     let scope = Scope::new(&mf, Some(&variables));
+    //     let parts = Resolver::resolve_to_parts(&msg, &scope);
+    //
+    //     assert_eq!(
+    //         parts,
+    //         vec![
+    //             MessagePart::Literal("Hello World"),
+    //             MessagePart::Literal("John"),
+    //             MessagePart::Literal("Dragon"),
+    //         ]
+    //     );
+    //
+    //     let parser = Parser::new("{{$name}}");
+    //     let msg = parser.parse().unwrap();
+    //     let string = Resolver::<_, _, &str>::resolve_to_string(&msg, &scope);
+    //     assert!(matches!(string, Cow::Borrowed("John")));
+    //
+    //     let parser = Parser::new("{{$creature}}");
+    //     let msg = parser.parse().unwrap();
+    //     let string = Resolver::<_, _, &str>::resolve_to_string(&msg, &scope);
+    //     assert!(matches!(string, Cow::Borrowed("Dragon")));
+    // }
 
     #[test]
     fn allocate_check() {
+        let mf = MessageFormat::new();
+
         let msg = ast::Message {
             declarations: Default::default(),
             value: ast::MessageValue::Pattern(ast::Pattern {
@@ -265,12 +294,12 @@ mod test {
             }),
         };
 
-        let scope = Scope::<&str, &str>::new(None, None);
-        let string = Resolver::<_, _, _, &str>::resolve_to_string(&msg, &scope);
+        let scope = Scope::<&str>::new(&mf, None);
+        let string = Resolver::<_, _, &str>::resolve_to_string(&msg, &scope);
 
         assert_eq!(string, Cow::<str>::Owned(String::from("Hello World")));
 
-        let scope = Scope::<&str, &str>::new(None, None);
+        let scope = Scope::<&str>::new(&mf, None);
         let parts = Resolver::resolve_to_parts(&msg, &scope);
 
         assert_eq!(
@@ -284,43 +313,17 @@ mod test {
 
     #[test]
     fn variable_check() {
+        let mf = MessageFormat::new();
+
         let source = "{{$name}}";
         let parser = Parser::new(source);
         let msg = parser.parse().unwrap();
 
         let mut variables = HashMap::new();
         variables.insert("name".into(), VariableType::String("John"));
-        let scope = Scope::new(Some(&variables), None);
-        let string = Resolver::<_, _, &str, &str>::resolve_to_string(&msg, &scope);
+        let scope = Scope::new(&mf, Some(&variables));
+        let string = Resolver::<_, _, &str>::resolve_to_string(&msg, &scope);
 
         assert_eq!(string, "John");
-    }
-
-    #[test]
-    fn ref_msg_check() {
-        let parser = Parser::new("{Dragon}");
-        let dragon_msg = parser.parse().unwrap();
-
-        let parser = Parser::new("{Golem}");
-        let golem_msg = parser.parse().unwrap();
-
-        let source = "{{$monster} killed you.}";
-        let parser = Parser::new(source);
-        let msg = parser.parse().unwrap();
-
-        let mut msgs = HashMap::new();
-        msgs.insert("creature-dragon".to_string(), &dragon_msg);
-        msgs.insert("creature-golem".to_string(), &golem_msg);
-
-        let mut variables = HashMap::new();
-        variables.insert(
-            "monster".into(),
-            VariableType::MessageReference("creature-dragon"),
-        );
-
-        let scope = Scope::new(Some(&variables), Some(&msgs));
-        let string = Resolver::<_, _, _, &str>::resolve_to_string(&msg, &scope);
-
-        assert_eq!(string, "Dragon killed you.");
     }
 }

@@ -70,8 +70,8 @@ pub enum Operand<S> {
 
 #[derive(Debug, PartialEq)]
 pub struct Annotation<S> {
-    function: S,
-    options: SmallVec<[Option<S>; 1]>,
+    pub function: S,
+    pub options: SmallVec<[Option<S>; 1]>,
 }
 
 #[derive(Debug, PartialEq)]

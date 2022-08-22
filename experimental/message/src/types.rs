@@ -10,6 +10,18 @@ pub enum VariableType<S> {
     // List(Vec<VariableType>),
 }
 
+impl<'a: 's, 's, S> VariableType<S>
+where
+    S: Slice<'s>,
+{
+    pub fn as_ref(&'a self) -> VariableType<&'s str> {
+        match self {
+            VariableType::String(s) => VariableType::String(s.as_str()),
+            VariableType::MessageReference(s) => VariableType::MessageReference(s.as_str()),
+        }
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub enum MessagePart<S> {
     Literal(S),
