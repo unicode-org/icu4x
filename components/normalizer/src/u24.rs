@@ -18,6 +18,7 @@ use zerovec::{
     databake(path = icu_normalizer::u24),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // newtype
 pub struct U24(pub [u8; 3]);
 
 impl U24 {
@@ -55,6 +56,7 @@ impl From<U24> for u32 {
 }
 
 /// Conversion input out of `U24` range
+#[allow(clippy::exhaustive_structs)] // stable
 pub struct U24Error;
 
 impl TryFrom<u32> for U24 {

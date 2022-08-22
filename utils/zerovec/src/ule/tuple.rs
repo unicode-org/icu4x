@@ -31,6 +31,7 @@ macro_rules! tuple_ule {
     ($name:ident, $len:literal, [ $($t:ident $i:tt),+ ]) => {
         #[doc = concat!("ULE type for tuples with ", $len, " elements.")]
         #[repr(packed)]
+        #[allow(clippy::exhaustive_structs)] // newtype
         pub struct $name<$($t),+>($(pub $t),+);
 
         // Safety (based on the safety checklist on the ULE trait):

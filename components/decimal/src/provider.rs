@@ -8,6 +8,7 @@
 
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs)]
+#![allow(clippy::exhaustive_enums)]
 
 use alloc::borrow::Cow;
 use icu_provider::{yoke, zerofrom};

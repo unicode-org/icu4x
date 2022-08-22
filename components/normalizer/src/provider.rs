@@ -4,6 +4,9 @@
 
 //! Data structs for the normalizer
 
+// Provider structs must be stable
+#![allow(clippy::exhaustive_structs, exhaustive_enums)]
+
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};

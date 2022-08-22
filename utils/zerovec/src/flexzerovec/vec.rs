@@ -72,6 +72,7 @@ use core::ops::Deref;
 /// assert_eq!(zm.get_copied(&usize::MAX), None);
 /// ```
 #[derive(Debug)]
+#[non_exhaustive]
 pub enum FlexZeroVec<'a> {
     Owned(FlexZeroVecOwned),
     Borrowed(&'a FlexZeroSlice),
