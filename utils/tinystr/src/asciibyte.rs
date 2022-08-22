@@ -135,3 +135,11 @@ pub enum AsciiByte {
     B126 = 126,
     B127 = 127,
 }
+
+impl AsciiByte {
+    // Convert [u8; N] to [AsciiByte; N]
+    // SAFETY: AsciiByte is repr(u8) and same size as u8
+    pub const fn to_ascii_byte_array<const N: usize>(bytes: &[u8; N]) -> [AsciiByte; N] {
+        unsafe { *(bytes as *const [u8; N] as *const [AsciiByte; N]) }
+    }
+}

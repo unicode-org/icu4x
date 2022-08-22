@@ -95,8 +95,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         }
 
         Ok(Self {
-            // SAFETY: `out` only contains ASCII bytes and has same size as `self.bytes`
-            bytes: unsafe { *(&out as *const [u8; N] as *const [AsciiByte; N]) },
+            // `out` only contains ASCII bytes and has same size as `self.bytes`
+            bytes: AsciiByte::to_ascii_byte_array(&out),
         })
     }
 
@@ -171,7 +171,7 @@ impl<const N: usize> TinyAsciiStr<N> {
     #[must_use]
     pub const unsafe fn from_bytes_unchecked(bytes: [u8; N]) -> Self {
         Self {
-            bytes: *(&bytes as *const [u8; N] as *const [AsciiByte; N]),
+            bytes: AsciiByte::to_ascii_byte_array(&bytes),
         }
     }
 }
