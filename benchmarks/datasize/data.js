@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1660980304239,
+  "lastUpdate": 1661141496592,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24833,6 +24833,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/35b33e934de5c2e8a996b27267170ecd1f3fc05a"
         },
         "date": 1660980260864,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "distinct": true,
+          "id": "19dd573757f95fa808aa5ea0c4175b2fd17e85c3",
+          "message": "tinystr 0.6.2: Add zerovec 0.7 compatibility",
+          "timestamp": "2022-08-21T23:06:13-05:00",
+          "tree_id": "512d6a7f5fdf945ae95d6bda246884d5e957311c",
+          "url": "https://github.com/unicode-org/icu4x/commit/19dd573757f95fa808aa5ea0c4175b2fd17e85c3"
+        },
+        "date": 1661141444647,
         "tool": "ndjson",
         "benches": [
           {
