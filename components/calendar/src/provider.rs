@@ -7,7 +7,7 @@
 //! Read more about data providers: [`icu_provider`]
 
 // Provider structs must be stable
-#![allow(clippy::exhaustive_structs, exhaustive_enums)]
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};

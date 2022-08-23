@@ -55,16 +55,19 @@ impl From<U24> for u32 {
     }
 }
 
-/// Conversion input out of `U24` range
-#[allow(clippy::exhaustive_structs)] // stable
-pub struct U24Error;
+#[derive(Debug, Copy, Clone, PartialEq, Eq)]
+#[non_exhaustive]
+pub struct U24Error {
+    /// Value is out of range of a U24
+    Limit
+}
 
 impl TryFrom<u32> for U24 {
     type Error = U24Error;
 
     fn try_from(value: u32) -> Result<Self, Self::Error> {
         if (value & 0xFF000000) != 0 {
-            Err(U24Error)
+            Err(U24Error::Limit)
         } else {
             Ok(Self([
                 (value as u8),

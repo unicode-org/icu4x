@@ -8,7 +8,7 @@
 //! Data structs for the collator
 
 // Provider structs must be stable
-#![allow(clippy::exhaustive_structs, exhaustive_enums)]
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::codepointtrie::CodePointTrie;

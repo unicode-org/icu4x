@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // Provider structs must be stable
-#![allow(clippy::exhaustive_structs, exhaustive_enums)]
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 //! Data provider struct definitions for this ICU4X component.
 //!
