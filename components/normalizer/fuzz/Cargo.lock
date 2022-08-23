@@ -127,6 +127,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "cobs"
+version = "0.2.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "67ba02a97a2bd10f4b59b25c7973101c79642302776489e030cd13cdab09ed15"
+
+[[package]]
 name = "displaydoc"
 version = "0.2.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -184,11 +190,10 @@ dependencies = [
 ]
 
 [[package]]
-name = "icu_codepointtrie"
-version = "0.4.0"
+name = "icu_collections"
+version = "1.0.0-beta1"
 dependencies = [
  "displaydoc",
- "icu_uniset",
  "serde",
  "yoke",
  "zerofrom",
@@ -197,26 +202,30 @@ dependencies = [
 
 [[package]]
 name = "icu_locid"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "displaydoc",
  "litemap",
+ "serde",
  "tinystr",
  "writeable",
+ "zerovec",
 ]
 
 [[package]]
 name = "icu_normalizer"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "displaydoc",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_properties",
  "icu_provider",
- "icu_uniset",
  "serde",
  "smallvec",
+ "utf16_iter",
  "utf8_iter",
+ "write16",
+ "zerofrom",
  "zerovec",
 ]
 
@@ -231,29 +240,31 @@ dependencies = [
  "rust_icu_sys",
  "rust_icu_unorm2",
  "rust_icu_ustring",
+ "utf16_iter",
+ "utf8_iter",
 ]
 
 [[package]]
 name = "icu_properties"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "displaydoc",
- "icu_codepointtrie",
+ "icu_collections",
  "icu_provider",
- "icu_uniset",
+ "serde",
  "zerovec",
 ]
 
 [[package]]
 name = "icu_provider"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "displaydoc",
  "icu_locid",
  "icu_provider_macros",
- "litemap",
  "postcard",
  "serde",
+ "stable_deref_trait",
  "writeable",
  "yoke",
  "zerofrom",
@@ -261,8 +272,20 @@ dependencies = [
 ]
 
 [[package]]
+name = "icu_provider_adapters"
+version = "1.0.0-beta1"
+dependencies = [
+ "icu_locid",
+ "icu_provider",
+ "serde",
+ "tinystr",
+ "yoke",
+ "zerovec",
+]
+
+[[package]]
 name = "icu_provider_blob"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "icu_provider",
  "postcard",
@@ -274,7 +297,7 @@ dependencies = [
 
 [[package]]
 name = "icu_provider_macros"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -283,22 +306,12 @@ dependencies = [
 
 [[package]]
 name = "icu_testdata"
-version = "0.6.0"
+version = "1.0.0-beta1"
 dependencies = [
  "icu_provider",
+ "icu_provider_adapters",
  "icu_provider_blob",
-]
-
-[[package]]
-name = "icu_uniset"
-version = "0.5.0"
-dependencies = [
- "displaydoc",
- "serde",
- "tinystr",
- "yoke",
- "zerofrom",
- "zerovec",
+ "lazy_static",
 ]
 
 [[package]]
@@ -306,6 +319,9 @@ name = "lazy_static"
 version = "1.4.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e2abad23fbc42b3700f2f279844dc832adb2b2eb069b2df918f455c4e18cc646"
+dependencies = [
+ "spin",
+]
 
 [[package]]
 name = "lazycell"
@@ -342,7 +358,7 @@ dependencies = [
 
 [[package]]
 name = "litemap"
-version = "0.4.0"
+version = "0.5.0"
 
 [[package]]
 name = "log"
@@ -389,19 +405,13 @@ checksum = "19b17cddbe7ec3f8bc800887bab5e717348c95ea2ca0b1bf0837fb964dc67099"
 
 [[package]]
 name = "postcard"
-version = "0.7.3"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "a25c0b0ae06fcffe600ad392aabfa535696c8973f2253d9ac83171924c58a858"
+checksum = "1c2b180dc0bade59f03fd005cb967d3f1e5f69b13922dad0cd6e047cb8af2363"
 dependencies = [
- "postcard-cobs",
+ "cobs",
  "serde",
 ]
-
-[[package]]
-name = "postcard-cobs"
-version = "0.1.5-pre"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "7c68cb38ed13fd7bc9dd5db8f165b7c8d9c1a315104083a2b10f11354c2af97f"
 
 [[package]]
 name = "proc-macro2"
@@ -562,6 +572,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "f2dd574626839106c320a323308629dcb1acfc96e32a8cba364ddc61ac23ee83"
 
 [[package]]
+name = "spin"
+version = "0.5.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
+
+[[package]]
 name = "stable_deref_trait"
 version = "1.2.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -636,9 +652,11 @@ dependencies = [
 
 [[package]]
 name = "tinystr"
-version = "0.6.0"
+version = "0.6.1"
 dependencies = [
  "displaydoc",
+ "serde",
+ "zerovec",
 ]
 
 [[package]]
@@ -654,10 +672,16 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "8ccb82d61f80a663efe1f787a51b16b5a51e3314d6ac365b08639f52387b33f3"
 
 [[package]]
-name = "utf8_iter"
-version = "1.0.0"
+name = "utf16_iter"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0504000636d0ee2fdd46b28a0078b0a232b76d05f13d9c5e041827ee257c41da"
+checksum = "6a246759e66403993abca5a7165eebc0735d7781e178f03fe9ab255fae1747b5"
+
+[[package]]
+name = "utf8_iter"
+version = "1.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "59e6dbc4923e5a3d7b88c78500d0e389fd202601a671b4914580071bdb931188"
 
 [[package]]
 name = "vec_map"
@@ -712,12 +736,18 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "712e227841d057c1ee1cd2fb22fa7e5a5461ae8e48fa2ca79ec42cfc1931183f"
 
 [[package]]
+name = "write16"
+version = "1.0.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d1890f4022759daae28ed4fe62859b1236caebfc61ede2f63ed4e695f3f6d936"
+
+[[package]]
 name = "writeable"
-version = "0.4.0"
+version = "0.4.1"
 
 [[package]]
 name = "yoke"
-version = "0.5.0"
+version = "0.6.1"
 dependencies = [
  "serde",
  "stable_deref_trait",
@@ -727,7 +757,7 @@ dependencies = [
 
 [[package]]
 name = "yoke-derive"
-version = "0.5.0"
+version = "0.6.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -737,14 +767,14 @@ dependencies = [
 
 [[package]]
 name = "zerofrom"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "zerofrom-derive",
 ]
 
 [[package]]
 name = "zerofrom-derive"
-version = "0.1.0"
+version = "0.1.1"
 dependencies = [
  "proc-macro2",
  "quote",
@@ -754,7 +784,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec"
-version = "0.7.0"
+version = "0.8.1"
 dependencies = [
  "serde",
  "yoke",
@@ -764,7 +794,7 @@ dependencies = [
 
 [[package]]
 name = "zerovec-derive"
-version = "0.6.0"
+version = "0.8.0"
 dependencies = [
  "proc-macro2",
  "quote",
