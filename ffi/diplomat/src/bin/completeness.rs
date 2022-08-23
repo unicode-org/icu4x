@@ -5,14 +5,27 @@
 use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum, Type};
 use std::collections::{BTreeSet, HashSet};
+use std::fmt;
 use std::fs::File;
 use std::path::PathBuf;
+/// RustLink but without display information
+#[derive(PartialEq, Eq, Debug, Clone, PartialOrd, Ord, Hash)]
+struct RustLinkInfo {
+    path: ast::Path,
+    typ: ast::DocType,
+}
+
+impl fmt::Display for RustLinkInfo {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}#{:?}", self.path, self.typ)
+    }
+}
 
 fn main() {
     let doc_types = ["icu", "fixed_decimal"]
         .into_iter()
         .flat_map(collect_public_types)
-        .map(|(path, typ)| ast::RustLink {
+        .map(|(path, typ)| RustLinkInfo {
             path: ast::Path {
                 elements: path
                     .into_iter()
@@ -37,6 +50,10 @@ fn main() {
     .all_rust_links()
     .into_iter()
     .cloned()
+    .map(|rl| RustLinkInfo {
+        path: rl.path,
+        typ: rl.typ,
+    })
     .collect::<BTreeSet<_>>();
 
     doc_types
