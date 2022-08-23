@@ -59,7 +59,7 @@ impl From<U24> for u32 {
 #[non_exhaustive]
 pub enum U24Error {
     /// Value is out of range of a U24
-    Limit
+    Limit,
 }
 
 impl TryFrom<u32> for U24 {
