@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661273790558,
+  "lastUpdate": 1661276683628,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -46648,6 +46648,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eedfa41b65cad8e646f07d692fad8638538e306b",
+          "message": "inline(always) trie accessors that are macros in ICU4C (#2410)",
+          "timestamp": "2022-08-23T20:31:54+03:00",
+          "tree_id": "cc8f2b7d5058272d8f907ca9f3d3e412a3f0599f",
+          "url": "https://github.com/unicode-org/icu4x/commit/eedfa41b65cad8e646f07d692fad8638538e306b"
+        },
+        "date": 1661276628746,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 146572,
+            "range": "± 1627",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 30209,
+            "range": "± 311",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 86541,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 243,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 114,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 107,
             "range": "± 0",
             "unit": "ns/iter"
           }
