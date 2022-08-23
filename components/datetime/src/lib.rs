@@ -55,7 +55,8 @@
 //!     .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
 //! let typed_date = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
-//! let date = typed_date.to_any();
+//! // prefer using ISO dates with DateTimeFormatter
+//! let date = typed_date.to_iso().to_any();
 //!
 //! let formatted_date = dtf.format(&date).expect("Formatting should succeed");
 //! let typed_formatted_date = typed_dtf.format(&typed_date);

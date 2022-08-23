@@ -320,7 +320,8 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             None => continue,
         };
 
-        let (input_date, mut time_zone) = mock::parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
+        let (input_date, mut time_zone) =
+            mock::parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
         time_zone.zone_variant = config.zone_variant.map(ZoneVariant);
@@ -588,7 +589,8 @@ fn test_time_zone_patterns() {
             metadata: Default::default(),
         };
         let mut config = test.config;
-        let (datetime, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
+        let (datetime, mut time_zone) =
+            mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
