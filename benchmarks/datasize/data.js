@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661245209563,
+  "lastUpdate": 1661273147264,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -24983,6 +24983,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/59b17253f117e0a927e7e55ce39feecd016a32e0"
         },
         "date": 1661245165374,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7abc21b21f1ff358712234f172bb2331b19d7f28",
+          "message": "Expose RuleBreakIterator as a public interface (#2408)\n\nAll the UAX 29 break iterators (grapheme cluster, sentence, and word) are type\r\ndefines of RuleBreakIterator. Expose RuleBreakIterator so that users can refer\r\nto RuleBreakIterator's documentation for APIs.",
+          "timestamp": "2022-08-23T09:43:34-07:00",
+          "tree_id": "aab46c93818a4bc744e6b2d4806ee85541ef7a91",
+          "url": "https://github.com/unicode-org/icu4x/commit/7abc21b21f1ff358712234f172bb2331b19d7f28"
+        },
+        "date": 1661273100449,
         "tool": "ndjson",
         "benches": [
           {
