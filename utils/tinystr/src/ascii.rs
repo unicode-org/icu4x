@@ -95,8 +95,8 @@ impl<const N: usize> TinyAsciiStr<N> {
         }
 
         Ok(Self {
-            // `out` only contains ASCII bytes and has same size as `self.bytes`
-            bytes: AsciiByte::to_ascii_byte_array(&out),
+            // SAFETY: `out` only contains ASCII bytes and has same size as `self.bytes`
+            bytes: unsafe { AsciiByte::to_ascii_byte_array(&out) },
         })
     }
 
