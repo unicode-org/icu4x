@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661207743866,
+  "lastUpdate": 1661243162265,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -46469,6 +46469,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 96,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7c6b6487277c2faef308a40ebad381ee35493203",
+          "message": "Fixing ecma402 crate (#2434)",
+          "timestamp": "2022-08-23T10:14:05+02:00",
+          "tree_id": "64ee2c9edeb08614ebbe9ad71390379a221c9434",
+          "url": "https://github.com/unicode-org/icu4x/commit/7c6b6487277c2faef308a40ebad381ee35493203"
+        },
+        "date": 1661243120219,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 121798,
+            "range": "± 510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24910,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63964,
+            "range": "± 774",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 202,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 79,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
