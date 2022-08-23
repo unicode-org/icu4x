@@ -69,11 +69,11 @@ pub struct TimeSymbolsV1<'data> {
 }
 
 /// String data for the name, abbrevation, and narrow form of a date's era.
-/// 
+///
 /// Keys of the map represent era codes, and the values are the display names.
-/// 
-/// Era codes are derived from CLDR data, and are calendar specific. 
-/// Some examples include: `"be"`, `"0"` / `"1"`, `"bce"` / `"ce"`, 
+///
+/// Era codes are derived from CLDR data, and are calendar specific.
+/// Some examples include: `"be"`, `"0"` / `"1"`, `"bce"` / `"ce"`,
 /// `"heisei"` / `"meiji"` / `"reiwa"` / ...  Not all era codes are inherited as-is,
 /// such as for the extended Japanese calendar.
 ///
@@ -88,7 +88,7 @@ pub struct TimeSymbolsV1<'data> {
 #[yoke(prove_covariance_manually)]
 pub struct Eras<'data> {
     /// Symbol data for era names.
-    /// 
+    ///
     /// Keys are era codes, and values are display names. See [`Eras`].
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub names: ZeroMap<'data, str, str>,

@@ -1,4 +1,4 @@
-import { u8, usize } from "./diplomat-runtime"
+import { u8, u32 } from "./diplomat-runtime"
 import { ICU4XBidiParagraph } from "./ICU4XBidiParagraph";
 
 /**

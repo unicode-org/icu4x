@@ -12,7 +12,7 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
 
     #[diplomat::opaque]
-    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. For properties whose values fit into 16 bits.
+    /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property. For properties whose values fit into 16 bits.
     #[diplomat::rust_link(icu::properties, Mod)]
     pub struct ICU4XCodePointMapData16(maps::CodePointMapData<Script>);
 
