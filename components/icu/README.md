@@ -47,7 +47,7 @@ let options =
 let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("es").into(), options)
     .expect("Failed to create TypedDateTimeFormatter instance.");
 
-let date = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
+let date = DateTime::new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
 let date = date.to_any();
 
 let formatted_date = dtf.format(&date).expect("Formatting failed");
