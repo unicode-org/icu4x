@@ -2473,9 +2473,9 @@ dependencies = [
 
 [[package]]
 name = "postcard"
-version = "1.0.0-alpha.4"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b6cf96c947e1a6261e1493877b196db7d4dcbeaabc4ba0f45be149dc885442b"
+checksum = "1c2b180dc0bade59f03fd005cb967d3f1e5f69b13922dad0cd6e047cb8af2363"
 dependencies = [
  "cobs",
  "heapless",
