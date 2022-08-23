@@ -735,9 +735,9 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae#d49289af387b9803c90e46139fe95dd0d6f324ae"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=373d7d5e157ce5c4beff4779658813d456387b35#373d7d5e157ce5c4beff4779658813d456387b35"
 dependencies = [
- "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae)",
+ "diplomat_core",
  "proc-macro2",
  "quote",
  "syn",
@@ -746,12 +746,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae#d49289af387b9803c90e46139fe95dd0d6f324ae"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=373d7d5e157ce5c4beff4779658813d456387b35#373d7d5e157ce5c4beff4779658813d456387b35"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa#be4f3aa9da018b05296f0d3b1777e1f3806054fa"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=373d7d5e157ce5c4beff4779658813d456387b35#373d7d5e157ce5c4beff4779658813d456387b35"
 dependencies = [
  "impls",
  "lazy_static",
@@ -759,20 +759,8 @@ dependencies = [
  "quote",
  "rustdoc-types",
  "serde",
- "syn",
-]
-
-[[package]]
-name = "diplomat_core"
-version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae#d49289af387b9803c90e46139fe95dd0d6f324ae"
-dependencies = [
- "impls",
- "lazy_static",
- "proc-macro2",
- "quote",
- "rustdoc-types",
- "serde",
+ "smallvec",
+ "strck_ident",
  "syn",
 ]
 
@@ -1383,7 +1371,7 @@ version = "1.0.0-alpha1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
- "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa)",
+ "diplomat_core",
  "elsa",
  "fixed_decimal",
  "icu_calendar",
@@ -3085,9 +3073,9 @@ checksum = "9def91fd1e018fe007022791f865d0ccc9b3a0d5001e01aabb8b40e46000afb5"
 
 [[package]]
 name = "smallvec"
-version = "1.7.0"
+version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ecab6c735a6bb4139c0caafd0cc3635748bbb3acf4550e8138122099251f309"
+checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
 dependencies = [
  "serde",
 ]
@@ -3186,6 +3174,20 @@ name = "stdweb-internal-runtime"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "213701ba3370744dcd1a12960caa4843b3d68b4d1c0a5d575e0d65b2ee9d16c0"
+
+[[package]]
+name = "strck"
+version = "0.1.0"
+source = "git+https://github.com/QnnOkabayashi/strck?rev=a57d391d8f028cca28fb51d1dd8cf49578fb6cd5#a57d391d8f028cca28fb51d1dd8cf49578fb6cd5"
+
+[[package]]
+name = "strck_ident"
+version = "0.1.0"
+source = "git+https://github.com/QnnOkabayashi/strck?rev=a57d391d8f028cca28fb51d1dd8cf49578fb6cd5#a57d391d8f028cca28fb51d1dd8cf49578fb6cd5"
+dependencies = [
+ "strck",
+ "unicode-ident",
+]
 
 [[package]]
 name = "strsim"
@@ -3594,6 +3596,12 @@ name = "unicode-bidi"
 version = "0.3.8"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "099b7128301d285f79ddd55b9a83d5e6b9e97c92e0ea0daebee7263e932de992"
+
+[[package]]
+name = "unicode-ident"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4f5b37a154999a8f3f98cc23a628d850e154479cd94decf3414696e12e31aaf"
 
 [[package]]
 name = "unicode-normalization"
