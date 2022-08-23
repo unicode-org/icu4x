@@ -41,10 +41,15 @@ pub enum DateTimeError {
     /// Unknown month code for a given calendar
     #[displaydoc("No month code named {0} for calendar {1}")]
     UnknownMonthCode(TinyStr4, &'static str),
+    /// Missing required input field for formatting
     #[displaydoc("No value for {0}")]
     MissingInput(&'static str),
+    /// No support for a given calendar in AnyCalendar
     #[displaydoc("AnyCalendar does not support calendar {0}")]
     UnknownAnyCalendarKind(TinyStr16),
+    /// An operation required a calendar but a calendar was not provided.
+    #[displaydoc("An operation required a calendar but a calendar was not provided")]
+    MissingCalendar,
 }
 
 impl From<core::num::ParseIntError> for DateTimeError {

@@ -110,6 +110,10 @@
 #[doc(inline)]
 pub use icu_calendar as calendar;
 
+#[cfg(feature = "experimental")]
+#[doc(inline)]
+pub use icu_casemapping as casemapping;
+
 #[doc(inline)]
 pub use icu_collator as collator;
 

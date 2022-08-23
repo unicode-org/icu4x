@@ -211,6 +211,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
 
     /// Returns the position in the data array containing the trie's stored
     /// error value.
+    #[inline(always)]
     fn trie_error_val_index(&self) -> u32 {
         self.data.len() as u32 - ERROR_VALUE_NEG_DATA_OFFSET
     }
@@ -300,6 +301,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// array for each block of code points in [0, `fastMax`), which in
     /// turn guarantees that those code points are represented and only need 1
     /// lookup.
+    #[inline(always)]
     fn fast_index(&self, code_point: u32) -> u32 {
         let index_array_pos: u32 = code_point >> FAST_TYPE_SHIFT;
         let index_array_val: u16 =
@@ -324,7 +326,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(0, trie.get(0x13E0)); // 'Ꮰ' as u32
     /// assert_eq!(1, trie.get(0x10044)); // '𐁄' as u32
     /// ```
-    #[inline]
+    #[inline(always)]
     pub fn get(&self, code_point: u32) -> T {
         // If we cannot read from the data array, then return the sentinel value
         // self.error_value() for the instance type for T: TrieValue.
@@ -345,6 +347,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(Some(&0), trie.get_ule(0x13E0)); // 'Ꮰ' as u32
     /// assert_eq!(Some(&1), trie.get_ule(0x10044)); // '𐁄' as u32
     /// ```
+    #[inline(always)]
     pub fn get_ule(&self, code_point: u32) -> Option<&T::ULE> {
         // All code points up to the fast max limit are represented
         // individually in the `index` array to hold their `data` array position, and

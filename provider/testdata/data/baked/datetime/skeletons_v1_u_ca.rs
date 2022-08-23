@@ -4,7 +4,7 @@ type DataStruct = [(
     ::icu_datetime::pattern::runtime::PatternPlurals<'static>,
 )];
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
-    litemap::LiteMap::from_sorted_slice_unchecked(&[
+    litemap::LiteMap::from_sorted_store_unchecked(&[
         ("ar-EG-u-ca-buddhist", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
         ("ar-EG-u-ca-coptic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),
         ("ar-EG-u-ca-ethiopic", AR_EG_U_CA_BUDDHIST_AR_EG_U_CA_COPTIC),

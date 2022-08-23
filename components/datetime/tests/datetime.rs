@@ -8,10 +8,10 @@ mod fixtures;
 mod patterns;
 
 use icu_calendar::{
-    any_calendar::{AnyCalendarKind, IncludedInAnyCalendar},
+    any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     buddhist::Buddhist,
     coptic::Coptic,
-    ethiopic::{Ethiopic, EthiopicEraStyle},
+    ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
     AsCalendar, DateTime, Gregorian, Iso,
@@ -37,7 +37,7 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByKeyProvider;
-use icu_timezone::{CustomTimeZone, TimeVariant};
+use icu_timezone::{CustomTimeZone, ZoneVariant};
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -73,10 +73,10 @@ fn test_fixture(fixture_name: &str) {
         let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
-        let input_ethiopic = input_value.to_calendar(Ethiopic::new());
+        let input_ethiopian = input_value.to_calendar(Ethiopian::new());
 
         let input_ethioaa =
-            input_value.to_calendar(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem));
+            input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
         let description = match fx.description {
             Some(description) => {
                 format!(
@@ -136,16 +136,16 @@ fn test_fixture(fixture_name: &str) {
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::Ethiopic => assert_fixture_element(
+                    AnyCalendarKind::Ethiopian => assert_fixture_element(
                         &locale,
-                        &input_ethiopic,
+                        &input_ethiopian,
                         &input_iso,
                         &output_value,
                         &provider,
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::Ethioaa => assert_fixture_element(
+                    AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
                         &locale,
                         &input_ethioaa,
                         &input_iso,
@@ -182,7 +182,7 @@ fn assert_fixture_element<A, D>(
 ) where
     A: AsCalendar,
     A::Calendar: CldrCalendar,
-    A::Calendar: IncludedInAnyCalendar,
+    A::Calendar: IntoAnyCalendar,
     D: BufferProvider,
 {
     let any_input = input_value.to_any();
@@ -322,7 +322,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let (input_date, mut time_zone) = parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.map(TimeVariant);
+        time_zone.zone_variant = config.zone_variant.map(ZoneVariant);
 
         let description = match fx.description {
             Some(description) => {
@@ -482,7 +482,7 @@ fn test_time_zone_format_configs() {
         let (_, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.take().map(TimeVariant);
+        time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
         for TimeZoneExpectation {
             patterns: _,
             configs,
@@ -531,7 +531,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         None,
         Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
         Some(MetaZoneId(tinystr!(4, "ampa"))),
-        Some(TimeVariant::daylight()),
+        Some(ZoneVariant::daylight()),
     );
     let tzf = TimeZoneFormatter::try_from_config_unstable(
         &zone_provider,
@@ -590,7 +590,7 @@ fn test_time_zone_patterns() {
         let (datetime, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.take().map(TimeVariant);
+        time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
 
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
@@ -727,7 +727,7 @@ fn test_length_fixtures() {
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
             metazone_id: Some(tinystr!(4, "ampa")),
-            time_variant: Some(tinystr!(2, "dt")),
+            zone_variant: Some(tinystr!(2, "dt")),
             ..TimeZoneConfig::default()
         },
     );
@@ -813,4 +813,34 @@ fn constructing_datetime_format_with_time_zone_pattern_symbols_is_err() {
     );
 
     assert!(result.is_err());
+}
+
+#[test]
+fn test_vertical_fallback_disabled() {
+    use icu_datetime::{
+        options::length::{Bag, Date, Time},
+        DateTimeFormatterOptions,
+    };
+    use icu_locid::locale;
+
+    // Use a provider with no vertical fallback:
+    let provider = icu_testdata::get_postcard_provider();
+
+    let mut length_bag = Bag::default();
+    length_bag.date = Some(Date::Full);
+    length_bag.time = Some(Time::Short);
+    let options = DateTimeFormatterOptions::Length(length_bag);
+
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+        &provider,
+        &locale!("fr").into(),
+        options,
+    )
+    .unwrap();
+
+    // This should work for length bag. It doesn't currently work for components bag.
+    assert_eq!(
+        "mardi 5 avril 2022 à 12:33",
+        dtf.format_to_string(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap())
+    );
 }

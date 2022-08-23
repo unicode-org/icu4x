@@ -50,7 +50,7 @@ impl ZonedDateTimeFormatter {
         provider: &P,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: DataLocale,
+        locale: &DataLocale,
         time_zone_format_options: TimeZoneFormatterOptions,
     ) -> Result<Self, DateTimeFormatterError>
     where
@@ -71,7 +71,7 @@ impl ZonedDateTimeFormatter {
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale: &locale,
+            locale,
             metadata: Default::default(),
         };
 
@@ -82,7 +82,7 @@ impl ZonedDateTimeFormatter {
         };
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal_unstable(provider, &locale)?)
+            Some(PluralRules::try_new_ordinal_unstable(provider, locale)?)
         } else {
             None
         };
@@ -102,12 +102,9 @@ impl ZonedDateTimeFormatter {
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
 
-        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            provider,
-            &locale,
-            fixed_decimal_format_options,
-        )
-        .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
+                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
         let datetime_format = raw::DateTimeFormatter::new(
             patterns,
@@ -120,7 +117,7 @@ impl ZonedDateTimeFormatter {
 
         let time_zone_format = TimeZoneFormatter::try_new(
             provider,
-            &locale,
+            locale,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns
@@ -170,9 +167,7 @@ impl ZonedDateTimeFormatter {
         time_zone: &impl TimeZoneInput,
     ) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, date, time_zone)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, date, time_zone);
         s
     }
 }

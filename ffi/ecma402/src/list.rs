@@ -62,18 +62,24 @@ impl ListFormat {
         };
 
         Ok(Self(match opts.in_type {
-            Type::Conjunction => icu::list::ListFormatter::try_new_and(&locale, provider, style),
-            Type::Disjunction => icu::list::ListFormatter::try_new_or(&locale, provider, style),
+            Type::Conjunction => {
+                icu::list::ListFormatter::try_new_and_unstable(provider, &locale, style)
+            }
+            Type::Disjunction => {
+                icu::list::ListFormatter::try_new_or_unstable(provider, &locale, style)
+            }
         }?))
     }
 }
 
 #[test]
 fn test() {
+    use ecma402_traits::listformat::Format;
+
     let mut buf = String::new();
 
     ListFormat::try_new(
-        crate::Locale::FromLangid(icu::locid::langid!("es")),
+        crate::testing::TestLocale("es"),
         Options {
             in_type: Type::Conjunction,
             style: Style::Long,

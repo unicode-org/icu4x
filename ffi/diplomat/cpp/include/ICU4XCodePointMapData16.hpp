@@ -25,7 +25,9 @@ struct ICU4XCodePointMapData16Deleter {
 };
 
 /**
- * An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property. For properties whose values fit into 16 bits.
+ * An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
+ * 
+ * For properties whose values fit into 16 bits.
  * 
  * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html) for more information.
  */
@@ -42,7 +44,7 @@ class ICU4XCodePointMapData16 {
   /**
    * Gets the value for a code point.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
+   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
    */
   uint16_t get(char32_t cp) const;
   inline const capi::ICU4XCodePointMapData16* AsFFI() const { return this->inner.get(); }

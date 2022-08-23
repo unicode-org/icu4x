@@ -44,17 +44,25 @@ impl Attribute {
     ///
     /// Notice: No attribute subtags are defined by the current CLDR specification.
     pub fn from_bytes(v: &[u8]) -> Result<Self, ParserError> {
-        if !ATTR_LENGTH.contains(&v.len()) {
+        Self::from_bytes_manual_slice(v, 0, v.len())
+    }
+
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes) but callable in `const`
+    /// context.
+    pub const fn from_bytes_manual_slice(
+        bytes: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        let slice_len = end - start;
+        if slice_len < *ATTR_LENGTH.start() || slice_len > *ATTR_LENGTH.end() {
             return Err(ParserError::InvalidExtension);
         }
 
-        let s = TinyAsciiStr::from_bytes(v).map_err(|_| ParserError::InvalidExtension)?;
-
-        if !s.is_ascii_alphanumeric() {
-            return Err(ParserError::InvalidExtension);
+        match TinyAsciiStr::from_bytes_manual_slice(bytes, start, end) {
+            Ok(s) if s.is_ascii_alphanumeric() => Ok(Self(s.to_ascii_lowercase())),
+            _ => Err(ParserError::InvalidExtension),
         }
-
-        Ok(Self(s.to_ascii_lowercase()))
     }
 
     /// A helper function for displaying

@@ -73,88 +73,99 @@ impl FromStr for GmtOffset {
     /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let offset_sign = match input.chars().next() {
+        let mut chars = input.chars();
+        let offset_sign = match chars.next() {
             Some('+') => 1,
-            /* ASCII */ Some('-') => -1,
-            /* U+2212 */ Some('−') => -1,
+            Some('-' | '\u{2212}') => -1,
             Some('Z') => return Ok(Self(0)),
             _ => return Err(TimeZoneError::InvalidOffset),
         };
 
-        let seconds = match input.chars().count() {
+        let input = chars.as_str();
+
+        let seconds = match input.len() {
             /* ±hh */
-            3 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3]
-                    .parse()
+            2 => {
+                let hour = input
+                    .parse::<u8>()
                     .map_err(|_| TimeZoneError::InvalidOffset)?;
+                if hour > 24 {
+                    return Err(TimeZoneError::InvalidOffset);
+                }
                 offset_sign * (hour as i32 * 60 * 60)
             }
             /* ±hhmm */
-            5 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3]
-                    .parse()
-                    .map_err(|_| TimeZoneError::InvalidOffset)?;
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let minute: u8 = input[3..5]
-                    .parse()
-                    .map_err(|_| TimeZoneError::InvalidOffset)?;
-                offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+            4 if input.is_char_boundary(2) => {
+                #[allow(clippy::indexing_slicing)] // validated
+                {
+                    let hour = input[0..2]
+                        .parse::<u8>()
+                        .map_err(|_| TimeZoneError::InvalidOffset)?;
+                    let minute = input[2..4]
+                        .parse::<u8>()
+                        .map_err(|_| TimeZoneError::InvalidOffset)?;
+                    offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+                }
             }
             /* ±hh:mm */
-            6 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3]
-                    .parse()
-                    .map_err(|_| TimeZoneError::InvalidOffset)?;
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let minute: u8 = input[4..6]
-                    .parse()
-                    .map_err(|_| TimeZoneError::InvalidOffset)?;
-                offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+            5 => {
+                if let Some((hour, minute)) = input.split_once(':') {
+                    let hour = hour
+                        .parse::<u8>()
+                        .map_err(|_| TimeZoneError::InvalidOffset)?;
+                    if hour > 24 {
+                        return Err(TimeZoneError::InvalidOffset);
+                    }
+                    let minute = minute
+                        .parse::<u8>()
+                        .map_err(|_| TimeZoneError::InvalidOffset)?;
+                    if minute > 60 {
+                        return Err(TimeZoneError::InvalidOffset);
+                    }
+                    offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
+                } else {
+                    return Err(TimeZoneError::InvalidOffset);
+                }
             }
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            _ => panic!("Invalid time-zone designator"),
+            _ => return Err(TimeZoneError::InvalidOffset),
         };
 
         Self::try_new(seconds)
     }
 }
 
-/// A time variant, e.g. "daylight" or "standard"
+/// A time zone variant: currently either daylight time or standard time.
 #[derive(Copy, Clone, Debug, Eq, PartialEq, Ord, PartialOrd, Hash, ULE)]
 #[repr(transparent)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct TimeVariant(pub TinyAsciiStr<2>);
+pub struct ZoneVariant(pub TinyAsciiStr<2>);
 
-impl FromStr for TimeVariant {
+impl FromStr for ZoneVariant {
     type Err = <TinyAsciiStr<2> as FromStr>::Err;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        input.parse().map(TimeVariant)
+        input.parse().map(ZoneVariant)
     }
 }
 
-impl TimeVariant {
-    /// Return the `"standard"` `TimeVariant`
+impl ZoneVariant {
+    /// Return the standard time `ZoneVariant`.
+    ///
+    /// Corresponds to the `"standard"` variant string in CLDR.
     pub const fn standard() -> Self {
         Self(tinystr!(2, "st"))
     }
-    /// Return the `"daylight"` `TimeVariant`
+    /// Return the daylight time `ZoneVariant`
+    ///
+    /// Corresponds to the `"daylight"` variant string in CLDR.
     pub const fn daylight() -> Self {
         Self(tinystr!(2, "dt"))
     }
 }
 
-impl AsULE for TimeVariant {
+impl AsULE for ZoneVariant {
     type ULE = Self;
 
     #[inline]
@@ -168,9 +179,9 @@ impl AsULE for TimeVariant {
     }
 }
 
-impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeVariant {
-    type Container = ZeroVec<'a, TimeVariant>;
-    type Slice = ZeroSlice<TimeVariant>;
-    type GetType = TimeVariant;
-    type OwnedType = TimeVariant;
+impl<'a> zerovec::maps::ZeroMapKV<'a> for ZoneVariant {
+    type Container = ZeroVec<'a, ZoneVariant>;
+    type Slice = ZeroSlice<ZoneVariant>;
+    type GetType = ZoneVariant;
+    type OwnedType = ZoneVariant;
 }

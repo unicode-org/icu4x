@@ -5,7 +5,6 @@
 //! A collection of temporary structs and utilities to input data for tests, benchmarks,
 //! and examples.
 
-use core::str::FromStr;
 use either::Either;
 use icu_calendar::{DateTime, DateTimeError, Gregorian};
 use icu_timezone::{CustomTimeZone, TimeZoneError};
@@ -34,34 +33,37 @@ use icu_timezone::{CustomTimeZone, TimeZoneError};
 /// assert_eq!(u32::from(date.time.nanosecond), 101_000_000);
 /// ```
 pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, DateTimeError> {
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let year: i32 = input[0..4].parse()?;
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let month: u8 = input[5..7].parse()?;
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let day: u8 = input[8..10].parse()?;
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let hour: u8 = input[11..13].parse()?;
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let minute: u8 = input[14..16].parse()?;
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let second: u8 = input[17..19].parse()?;
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    let fraction: u32 = if input.len() > 20 {
-        // Extract fractional input and trim any trailing zeros
-        let mut fraction = input[20..].trim_end_matches('0');
-        // Truncate to at most 9 digits
-        if fraction.len() > 9 {
-            fraction = &fraction[0..9];
+    #![allow(clippy::indexing_slicing)] // all indexing is gated
+    let validate = |c, i| -> Result<(), DateTimeError> {
+        if input.as_bytes()[i] != c {
+            Err(DateTimeError::Parse)
+        } else {
+            Ok(())
         }
-        let as_int: u32 = fraction.parse().unwrap_or(0);
-        // Convert fraction to nanoseconds
-        as_int * (10u32.pow(9 - fraction.len() as u32))
-    } else {
-        0
     };
+
+    if input.len() < 19 || input.len() == 20 {
+        return Err(DateTimeError::Parse);
+    }
+    let year: i32 = input[0..4].parse()?;
+    validate(b'-', 4)?;
+    let month: u8 = input[5..7].parse()?;
+    validate(b'-', 7)?;
+    let day: u8 = input[8..10].parse()?;
+    validate(b'T', 10)?;
+    let hour: u8 = input[11..13].parse()?;
+    validate(b':', 13)?;
+    let minute: u8 = input[14..16].parse()?;
+    validate(b':', 16)?;
+    let second: u8 = input[17..19].parse()?;
     let mut datetime = DateTime::new_gregorian_datetime(year, month, day, hour, minute, second)?;
-    datetime.time = icu_calendar::types::Time::try_new(hour, minute, second, fraction)?;
+    if input.len() > 20 {
+        validate(b'.', 19)?;
+        let fraction_str = &input[20..29.min(input.len())];
+        let fraction = fraction_str.parse::<u32>()?;
+        let nanoseconds = fraction * (10u32.pow(9 - fraction_str.len() as u32));
+        datetime.time = icu_calendar::types::Time::try_new(hour, minute, second, nanoseconds)?;
+    };
 
     Ok(datetime)
 }
@@ -86,16 +88,14 @@ pub fn parse_gregorian_from_str(input: &str) -> Result<DateTime<Gregorian>, Date
 pub fn parse_zoned_gregorian_from_str(
     input: &str,
 ) -> Result<(DateTime<Gregorian>, CustomTimeZone), Either<DateTimeError, TimeZoneError>> {
-    let datetime = parse_gregorian_from_str(input).map_err(Either::Left)?;
-    let time_zone = match input
-        .rfind(|c| c == '+' || /* ASCII */ c == '-' || /* U+2212 */ c == '−' || c == 'Z')
-    {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Some(index) => FromStr::from_str(&input[index..]).map_err(Either::Right)?,
-        None => return Err(Either::Right(TimeZoneError::InvalidOffset)),
-    };
-
-    Ok((datetime, time_zone))
+    match input.rfind(&['+', '-', '\u{2212}', 'Z']) {
+        #[allow(clippy::indexing_slicing)] // valid index
+        Some(index) => Ok((
+            parse_gregorian_from_str(&input[..index]).map_err(Either::Left)?,
+            input[index..].parse().map_err(Either::Right)?,
+        )),
+        None => Err(Either::Right(TimeZoneError::InvalidOffset)),
+    }
 }
 
 #[test]

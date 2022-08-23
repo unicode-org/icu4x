@@ -700,9 +700,7 @@ impl TimeZoneFormatter {
     /// ```
     pub fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, value);
         s
     }
 
@@ -1035,7 +1033,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
             .and_then(|metazones| {
                 time_zone.time_zone_id().and_then(|tz| {
                     time_zone
-                        .time_variant()
+                        .zone_variant()
                         .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
                 })
             })
@@ -1047,7 +1045,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
                     .and_then(|metazones| {
                         time_zone.metazone_id().and_then(|mz| {
                             time_zone
-                                .time_variant()
+                                .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
                         })
                     })
@@ -1077,7 +1075,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
             .and_then(|metazones| {
                 time_zone.time_zone_id().and_then(|tz| {
                     time_zone
-                        .time_variant()
+                        .zone_variant()
                         .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
                 })
             })
@@ -1089,7 +1087,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
                     .and_then(|metazones| {
                         time_zone.metazone_id().and_then(|mz| {
                             time_zone
-                                .time_variant()
+                                .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
                         })
                     })

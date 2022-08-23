@@ -79,10 +79,14 @@ impl AsULE for char {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         // Safe because the bytes of CharULE are defined to represent a valid Unicode code point.
-        let u = u32::from_le_bytes([unaligned.0[0], unaligned.0[1], unaligned.0[2], 0]);
-        // TODO: Use char::from_u32_unchecked() when stabilized
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Self::try_from(u).unwrap()
+        unsafe {
+            Self::from_u32_unchecked(u32::from_le_bytes([
+                unaligned.0[0],
+                unaligned.0[1],
+                unaligned.0[2],
+                0,
+            ]))
+        }
     }
 }
 

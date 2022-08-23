@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
+use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
@@ -45,7 +45,9 @@ impl<C: Calendar> AsCalendar for Arc<C> {
 }
 
 /// This exists as a wrapper around `&'a T` so that
-/// `Date<&'a C>` is possible for calendar `C`. Unfortunately,
+/// `Date<&'a C>` is possible for calendar `C`.
+///
+/// Unfortunately,
 /// [`AsCalendar`] cannot be implemented on `&'a T` directly because
 /// `&'a T` is `#[fundamental]` and the impl would clash with the one above with
 /// `AsCalendar` for `C: Calendar`.
@@ -251,7 +253,7 @@ impl<A: AsCalendar> Date<A> {
     }
 }
 
-impl<C: IncludedInAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
     /// Type-erase the date, converting it to a date for [`AnyCalendar`]
     pub fn to_any(&self) -> Date<AnyCalendar> {
         let cal = self.calendar();

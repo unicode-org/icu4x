@@ -15,6 +15,7 @@ use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
+use zerovec::ZeroVecError;
 
 /// A set of characters with a particular property.
 ///
@@ -123,6 +124,20 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     pub(crate) fn get_u32(&self, ch: u32) -> T {
         match *self {
             Self::CodePointTrie(ref t) => t.get(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn try_into_converted<P>(
+        self,
+    ) -> Result<PropertyCodePointMapV1<'data, P>, ZeroVecError>
+    where
+        P: TrieValue,
+    {
+        match self {
+            Self::CodePointTrie(t) => t
+                .try_into_converted()
+                .map(PropertyCodePointMapV1::CodePointTrie),
         }
     }
 

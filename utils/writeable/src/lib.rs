@@ -242,9 +242,7 @@ pub trait Writeable {
     /// ```
     fn write_to_string(&self) -> Cow<str> {
         let mut output = String::with_capacity(self.write_len().capacity());
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.write_to(&mut output)
-            .expect("impl Write for String is infallible");
+        let _ = self.write_to(&mut output);
         Cow::Owned(output)
     }
 }

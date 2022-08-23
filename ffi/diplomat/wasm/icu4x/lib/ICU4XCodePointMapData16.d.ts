@@ -5,7 +5,9 @@ import { ICU4XError } from "./ICU4XError";
 
 /**
 
- * An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property. For properties whose values fit into 16 bits.
+ * An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
+
+ * For properties whose values fit into 16 bits.
 
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html Rust documentation} for more information.
  */
@@ -24,7 +26,7 @@ export class ICU4XCodePointMapData16 {
 
    * Gets the value for a code point.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointtrie/struct.CodePointTrie.html#method.get_u32 Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get Rust documentation} for more information.
    */
   get(cp: char): u16;
 }

@@ -167,10 +167,8 @@ impl<'data> PatternPlurals<'data> {
                     Week::WeekOfMonth => loc_datetime.week_of_month()?.0,
                     Week::WeekOfYear => loc_datetime.week_of_year()?.0,
                 };
-                #[allow(clippy::expect_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let category = ordinal_rules
-                    .expect("ordinal_rules must be set with PatternPlurals::MultipleVariants")
+                    .ok_or(DateTimeFormatterError::MissingOrdinalRules)?
                     .category_for(week_number);
                 Ok(plural_pattern.variant(category))
             }

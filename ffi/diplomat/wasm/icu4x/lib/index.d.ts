@@ -5,7 +5,7 @@ export { ICU4XBidiInfo } from './ICU4XBidiInfo.js';
 export { ICU4XBidiParagraph } from './ICU4XBidiParagraph.js';
 export { ICU4XCalendar } from './ICU4XCalendar.js';
 export { ICU4XCodePointMapData16 } from './ICU4XCodePointMapData16.js';
-export { ICU4XCodePointMapData16Response } from './ICU4XCodePointMapData16Response.js';
+export { ICU4XCodePointMapData8 } from './ICU4XCodePointMapData8.js';
 export { ICU4XCodePointSetData } from './ICU4XCodePointSetData.js';
 export { ICU4XCreateDataProviderResult } from './ICU4XCreateDataProviderResult.js';
 export { ICU4XDataProvider } from './ICU4XDataProvider.js';

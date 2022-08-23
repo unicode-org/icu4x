@@ -68,6 +68,15 @@ pub enum DateTimeFormatterError {
         "TypedDateTimeFormatter<{0}> was given a locale asking for incompatible calendar u-ca-{1}"
     )]
     MismatchedCalendarLocale(&'static str, TinyStr16),
+    /// Missing date symbols
+    #[displaydoc("Missing date symbols")]
+    MissingDateSymbols,
+    /// Missing time symbols
+    #[displaydoc("Missing time symbols")]
+    MissingTimeSymbols,
+    /// ordinal_rules must be set for PatternPlurals::MultipleVariants
+    #[displaydoc("ordinal_rules must be set for PatternPlurals::MultipleVariants")]
+    MissingOrdinalRules,
 }
 
 #[cfg(feature = "std")]

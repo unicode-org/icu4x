@@ -41,15 +41,25 @@ impl Key {
     /// assert_eq!(key.as_str(), "ca");
     /// ```
     pub const fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        if key.len() != KEY_LENGTH
-            || !key[0].is_ascii_alphanumeric()
-            || !key[1].is_ascii_alphabetic()
+        Self::from_bytes_manual_slice(key, 0, key.len())
+    }
+
+    /// Equivalent to [`from_bytes(bytes[start..end])`](Self::from_bytes) but callable in `const`
+    /// context.
+    pub const fn from_bytes_manual_slice(
+        bytes: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        #[allow(clippy::indexing_slicing)] // length checked
+        if end - start != KEY_LENGTH
+            || !bytes[start].is_ascii_alphanumeric()
+            || !bytes[start + 1].is_ascii_alphabetic()
         {
             return Err(ParserError::InvalidExtension);
         }
 
-        let key = match TinyAsciiStr::from_bytes(key) {
+        let key = match TinyAsciiStr::from_bytes_manual_slice(bytes, start, end) {
             Ok(k) => k,
             Err(_) => return Err(ParserError::InvalidSubtag),
         };

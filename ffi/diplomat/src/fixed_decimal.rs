@@ -121,8 +121,7 @@ pub mod ffi {
         /// Format the [`ICU4XFixedDecimal`] as a string.
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::write_to, FnInStruct)]
         pub fn to_string(&self, to: &mut diplomat_runtime::DiplomatWriteable) {
-            #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            self.0.write_to(to).unwrap();
+            let _ = self.0.write_to(to);
         }
     }
 }

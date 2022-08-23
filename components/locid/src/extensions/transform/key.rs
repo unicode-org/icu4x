@@ -40,7 +40,7 @@ impl Key {
     /// assert_eq!(key.as_str(), "i0");
     /// ```
     pub const fn from_bytes(key: &[u8]) -> Result<Self, ParserError> {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // length checked
         if key.len() != KEY_LENGTH || !key[0].is_ascii_alphabetic() || !key[1].is_ascii_digit() {
             return Err(ParserError::InvalidExtension);
         }

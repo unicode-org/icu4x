@@ -46,7 +46,7 @@ impl TimeFormatter {
     #[inline(never)]
     pub fn try_new<D>(
         data_provider: &D,
-        locale: DataLocale,
+        locale: &DataLocale,
         length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<Self, DateTimeFormatterError>
@@ -58,7 +58,7 @@ impl TimeFormatter {
     {
         let patterns = provider::date_time::pattern_for_time_length(
             data_provider,
-            &locale,
+            locale,
             length,
             preferences,
         )?;
@@ -70,7 +70,7 @@ impl TimeFormatter {
             Some(
                 data_provider
                     .load(DataRequest {
-                        locale: &locale,
+                        locale,
                         metadata: Default::default(),
                     })?
                     .take_payload()?,
@@ -84,7 +84,7 @@ impl TimeFormatter {
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
             data_provider,
-            &locale,
+            locale,
             fixed_decimal_format_options,
         )
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
@@ -149,9 +149,7 @@ impl TimeFormatter {
     #[inline]
     pub fn format_to_string(&self, value: &impl IsoTimeInput) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, value);
         s
     }
 }
@@ -173,7 +171,7 @@ impl DateFormatter {
         data_provider: &D,
         patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: DataLocale,
+        locale: &DataLocale,
         length: length::Date,
     ) -> Result<Self, DateTimeFormatterError>
     where
@@ -191,7 +189,7 @@ impl DateFormatter {
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale: &locale,
+            locale,
             metadata: Default::default(),
         };
 
@@ -204,7 +202,7 @@ impl DateFormatter {
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal_unstable(
                 data_provider,
-                &locale,
+                locale,
             )?)
         } else {
             None
@@ -221,7 +219,7 @@ impl DateFormatter {
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
             data_provider,
-            &locale,
+            locale,
             fixed_decimal_format_options,
         )
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
@@ -299,9 +297,7 @@ impl DateFormatter {
     #[inline]
     pub fn format_to_string(&self, value: &impl DateInput) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, value);
         s
     }
 }
@@ -366,7 +362,7 @@ impl DateTimeFormatter {
         data_provider: &D,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
         symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
-        locale: DataLocale,
+        locale: &DataLocale,
     ) -> Result<Self, DateTimeFormatterError>
     where
         D: DataProvider<TimeSymbolsV1Marker>
@@ -380,7 +376,7 @@ impl DateTimeFormatter {
             .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
 
         let req = DataRequest {
-            locale: &locale,
+            locale,
             metadata: Default::default(),
         };
 
@@ -393,7 +389,7 @@ impl DateTimeFormatter {
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
             Some(PluralRules::try_new_ordinal_unstable(
                 data_provider,
-                &locale,
+                locale,
             )?)
         } else {
             None
@@ -416,7 +412,7 @@ impl DateTimeFormatter {
 
         let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
             data_provider,
-            &locale,
+            locale,
             fixed_decimal_format_options,
         )
         .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
@@ -494,9 +490,7 @@ impl DateTimeFormatter {
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, value);
         s
     }
 

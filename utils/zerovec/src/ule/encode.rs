@@ -69,8 +69,7 @@ pub unsafe trait EncodeAsVarULE<T: VarULE + ?Sized> {
     fn encode_var_ule_write(&self, mut dst: &mut [u8]) {
         debug_assert_eq!(self.encode_var_ule_len(), dst.len());
         self.encode_var_ule_as_slices(move |slices| {
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // by debug_assert
             for slice in slices {
                 dst[..slice.len()].copy_from_slice(slice);
                 dst = &mut dst[slice.len()..];
@@ -216,12 +215,11 @@ where
 {
     fn encode_var_ule_as_slices<R>(&self, _: impl FnOnce(&[&[u8]]) -> R) -> R {
         // unnecessary if the other two are implemented
-        unreachable!()
+        unimplemented!()
     }
 
-    #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.i
+    #[allow(clippy::unwrap_used)] // TODO(#1410): Rethink length errors in VZV.
     fn encode_var_ule_len(&self) -> usize {
-        // TODO(#1410): Rethink length errors in VZV.
         crate::varzerovec::components::compute_serializable_len::<T, E, F>(self).unwrap() as usize
     }
 
