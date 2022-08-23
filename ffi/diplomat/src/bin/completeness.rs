@@ -108,6 +108,10 @@ lazy_static::lazy_static! {
         "Yokeable",
         "ZeroFrom",
     ].into_iter().collect();
+
+    static ref ALLOWLISTED_MODULES: HashSet<Vec<String>> = [
+        "icu::calendar::week_of"
+    ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 
 fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::DocType)> {
@@ -163,6 +167,22 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         path_already_extended: bool,
         inside: Option<In>,
     ) {
+        /// Helper function that ensures that ALLOWLISTED_MODULES
+        /// is respected for every type inserted
+        ///
+        /// (We have a check at the beginning of recurse() but that won't catch leaf nodes)
+        fn insert_ty(
+            types: &mut HashSet<(Vec<String>, ast::DocType)>,
+            path: Vec<String>,
+            ty: ast::DocType,
+        ) {
+            if !ALLOWLISTED_MODULES.contains(&path) {
+                types.insert((path, ty));
+            }
+        }
+        if ALLOWLISTED_MODULES.contains(&path) {
+            return;
+        }
         match &item.inner {
             ItemEnum::Import(import) => {
                 if !import.glob {
@@ -215,7 +235,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         for id in &module.items {
                             recurse(&krate.index[id], krate, types, path.clone(), false, None);
                         }
-                        types.insert((path, ast::DocType::Mod));
+                        insert_ty(types, path, ast::DocType::Mod);
                     }
                     ItemEnum::Struct(structt) => {
                         for id in &structt.impls {
@@ -238,7 +258,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                 for name in &inner.provided_trait_methods {
                                     let mut path = path.clone();
                                     path.push(name.to_string());
-                                    types.insert((path, ast::DocType::FnInStruct));
+                                    insert_ty(types, path, ast::DocType::FnInStruct);
                                 }
                             }
                         }
@@ -270,12 +290,12 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                 for name in &inner.provided_trait_methods {
                                     let mut path = path.clone();
                                     path.push(name.to_string());
-                                    types.insert((path, ast::DocType::FnInEnum));
+                                    insert_ty(types, path, ast::DocType::FnInEnum);
                                 }
                             }
                         }
 
-                        types.insert((path, ast::DocType::Enum));
+                        insert_ty(types, path, ast::DocType::Enum);
                     }
                     ItemEnum::Trait(inner) => {
                         for id in &inner.items {
@@ -288,22 +308,23 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                 Some(In::Trait),
                             );
                         }
-                        types.insert((path, ast::DocType::Trait));
+                        insert_ty(types, path, ast::DocType::Trait);
                     }
                     ItemEnum::Constant(_) => {
-                        types.insert((path, ast::DocType::Constant));
+                        insert_ty(types, path, ast::DocType::Constant);
                     }
                     ItemEnum::Function(_) => {
-                        types.insert((path, ast::DocType::Fn));
+                        insert_ty(types, path, ast::DocType::Fn);
                     }
                     ItemEnum::Macro(_) => {
-                        types.insert((path, ast::DocType::Macro));
+                        insert_ty(types, path, ast::DocType::Macro);
                     }
                     ItemEnum::Typedef(_) => {
-                        types.insert((path, ast::DocType::Typedef));
+                        insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Method(_) => {
-                        types.insert((
+                        insert_ty(
+                            types,
                             path,
                             match inside {
                                 Some(In::Enum) => ast::DocType::FnInEnum,
@@ -311,13 +332,14 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                 Some(In::Struct) => ast::DocType::FnInStruct,
                                 _ => panic!("Method needs In"),
                             },
-                        ));
+                        );
                     }
                     ItemEnum::Variant(_) => {
-                        types.insert((path, ast::DocType::EnumVariant));
+                        insert_ty(types, path, ast::DocType::EnumVariant);
                     }
                     ItemEnum::AssocConst { .. } => {
-                        types.insert((
+                        insert_ty(
+                            types,
                             path,
                             match inside {
                                 Some(In::Enum) => ast::DocType::AssociatedConstantInEnum,
@@ -325,10 +347,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                 Some(In::Struct) => ast::DocType::AssociatedConstantInStruct,
                                 _ => panic!("AssocConst needs In"),
                             },
-                        ));
+                        );
                     }
                     ItemEnum::AssocType { .. } => {
-                        types.insert((
+                        insert_ty(
+                            types,
                             path,
                             match inside {
                                 Some(In::Enum) => ast::DocType::AssociatedTypeInEnum,
@@ -336,7 +359,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                 Some(In::Struct) => ast::DocType::AssociatedTypeInStruct,
                                 _ => panic!("AssocType needs In"),
                             },
-                        ));
+                        );
                     }
                     _ => todo!("{:?}", item),
                 }
