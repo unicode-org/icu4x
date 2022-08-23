@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661273147264,
+  "lastUpdate": 1661276064542,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25013,6 +25013,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7abc21b21f1ff358712234f172bb2331b19d7f28"
         },
         "date": 1661273100449,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "eedfa41b65cad8e646f07d692fad8638538e306b",
+          "message": "inline(always) trie accessors that are macros in ICU4C (#2410)",
+          "timestamp": "2022-08-23T20:31:54+03:00",
+          "tree_id": "cc8f2b7d5058272d8f907ca9f3d3e412a3f0599f",
+          "url": "https://github.com/unicode-org/icu4x/commit/eedfa41b65cad8e646f07d692fad8638538e306b"
+        },
+        "date": 1661276014457,
         "tool": "ndjson",
         "benches": [
           {
