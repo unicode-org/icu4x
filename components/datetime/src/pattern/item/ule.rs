@@ -72,16 +72,12 @@ impl PatternItemULE {
 
     #[inline]
     fn bytes_in_range(value: (&u8, &u8, &u8)) -> bool {
-        match Self::determine_field_from_u8(*value.0) {
+        if Self::determine_field_from_u8(*value.0) {
             // ensure that unused bytes are all zero
-            true => {
-                fields::FieldULE::validate_bytes((*value.1, *value.2)).is_ok()
-                    && *value.0 == 0b1000_0000
-            }
-            false => {
-                let u = u32::from_be_bytes([0x00, *value.0, *value.1, *value.2]);
-                char::try_from(u).is_ok()
-            }
+            fields::FieldULE::validate_bytes((*value.1, *value.2)).is_ok()
+                && *value.0 == 0b1000_0000
+        } else {
+            char::try_from(u32::from_be_bytes([0x00, *value.0, *value.1, *value.2])).is_ok()
         }
     }
 }
@@ -97,15 +93,16 @@ impl PatternItemULE {
 //  6. PatternItemULE byte equality is semantic equality.
 unsafe impl ULE for PatternItemULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let mut chunks = bytes.chunks_exact(3);
-
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2]))) {
-            return Err(ZeroVecError::parse::<Self>());
+        if bytes.len() % 3 != 0 {
+            return Err(ZeroVecError::length::<Self>(bytes.len()));
         }
 
-        if !chunks.remainder().is_empty() {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
+        #[allow(clippy::indexing_slicing)] // chunks
+        if !bytes
+            .chunks(3)
+            .all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
+        {
+            return Err(ZeroVecError::parse::<Self>());
         }
         Ok(())
     }
@@ -131,23 +128,16 @@ impl AsULE for PatternItem {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let value = unaligned.0;
-        match PatternItemULE::determine_field_from_u8(value[0]) {
-            false => {
-                let u = u32::from_be_bytes([0x00, value[0], value[1], value[2]]);
-                #[allow(clippy::unwrap_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                PatternItem::Literal(char::try_from(u).unwrap())
-            }
-            true => {
-                #[allow(clippy::unwrap_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let symbol = fields::FieldSymbol::from_idx(value[1]).unwrap();
-                #[allow(clippy::unwrap_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let length = fields::FieldLength::from_idx(value[2]).unwrap();
-                let field = fields::Field { symbol, length };
-                PatternItem::Field(field)
-            }
+        #[allow(clippy::unwrap_used)] // validated
+        if PatternItemULE::determine_field_from_u8(value[0]) {
+            let symbol = fields::FieldSymbol::from_idx(value[1]).unwrap();
+            let length = fields::FieldLength::from_idx(value[2]).unwrap();
+            PatternItem::Field(fields::Field { symbol, length })
+        } else {
+            // validated
+            PatternItem::Literal(unsafe {
+                char::from_u32_unchecked(u32::from_be_bytes([0x00, value[0], value[1], value[2]]))
+            })
         }
     }
 }
@@ -217,13 +207,12 @@ impl GenericPatternItemULE {
 
     #[inline]
     fn bytes_in_range(value: (&u8, &u8, &u8)) -> bool {
-        match Self::determine_field_from_u8(*value.0) {
+        if Self::determine_field_from_u8(*value.0) {
             // ensure that unused bytes are all zero
-            true => *value.0 == 0b1000_0000 && *value.1 == 0,
-            false => {
-                let u = u32::from_be_bytes([0x00, *value.0, *value.1, *value.2]);
-                char::try_from(u).is_ok()
-            }
+            *value.0 == 0b1000_0000 && *value.1 == 0 && *value.2 < 10
+        } else {
+            let u = u32::from_be_bytes([0x00, *value.0, *value.1, *value.2]);
+            char::try_from(u).is_ok()
         }
     }
 }
@@ -239,14 +228,15 @@ impl GenericPatternItemULE {
 //  6. GenericPatternItemULE byte equality is semantic equality.
 unsafe impl ULE for GenericPatternItemULE {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let mut chunks = bytes.chunks_exact(3);
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        if !chunks.all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2]))) {
-            return Err(ZeroVecError::parse::<Self>());
-        }
-
-        if !chunks.remainder().is_empty() {
+        if bytes.len() % 3 != 0 {
             return Err(ZeroVecError::length::<Self>(bytes.len()));
+        }
+        #[allow(clippy::indexing_slicing)] // chunks
+        if !bytes
+            .chunks_exact(3)
+            .all(|c| Self::bytes_in_range((&c[0], &c[1], &c[2])))
+        {
+            return Err(ZeroVecError::parse::<Self>());
         }
         Ok(())
     }
@@ -270,14 +260,13 @@ impl AsULE for GenericPatternItem {
     #[inline]
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let value = unaligned.0;
-        match GenericPatternItemULE::determine_field_from_u8(value[0]) {
-            false => {
-                let u = u32::from_be_bytes([0x00, value[0], value[1], value[2]]);
-                #[allow(clippy::unwrap_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                Self::Literal(char::try_from(u).unwrap())
-            }
-            true => Self::Placeholder(value[2]),
+        if GenericPatternItemULE::determine_field_from_u8(value[0]) {
+            Self::Placeholder(value[2])
+        } else {
+            #[allow(clippy::unwrap_used)] // validated
+            Self::Literal(
+                char::try_from(u32::from_be_bytes([0x00, value[0], value[1], value[2]])).unwrap(),
+            )
         }
     }
 }

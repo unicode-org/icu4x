@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use icu_calendar::arithmetic::week_of::CalendarInfo;
+use icu_calendar::week_of::CalendarInfo;
 use icu_datetime::provider::week_data::*;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;

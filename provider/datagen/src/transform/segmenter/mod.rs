@@ -48,7 +48,7 @@ struct SegmenterProperty {
 
 // state machine break result define
 // The follow is "Double_Quote x Double_Quote".
-// [[tables]]
+// [[rules]]
 // left = [ "Double_Qoute" ]
 // right = [ "Double_Qoute" ]
 // break_state = true # true if break opportunity.

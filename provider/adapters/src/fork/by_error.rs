@@ -239,26 +239,21 @@ where
         &self,
         key: DataKey,
         mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
-        use datagen::ReturnedPayloadError;
-
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
         for provider in self.providers.iter() {
             let result = provider.convert(key, from);
             match result {
                 Ok(ok) => return Ok(ok),
                 Err(e) => {
-                    let ReturnedPayloadError(returned, err) = e;
+                    let (returned, err) = e;
                     if !self.predicate.test(key, None, err) {
-                        return Err(ReturnedPayloadError(returned, err));
+                        return Err((returned, err));
                     }
                     from = returned;
                 }
             };
         }
-        Err(ReturnedPayloadError(
-            from,
-            DataErrorKind::MissingDataKey.with_key(key),
-        ))
+        Err((from, DataErrorKind::MissingDataKey.with_key(key)))
     }
 }
 
@@ -275,15 +270,14 @@ where
         &self,
         key: DataKey,
         mut from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, datagen::ReturnedPayloadError<MFrom>> {
-        use datagen::ReturnedPayloadError;
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
         let result = self.0.convert(key, from);
         match result {
             Ok(ok) => return Ok(ok),
             Err(e) => {
-                let ReturnedPayloadError(returned, err) = e;
+                let (returned, err) = e;
                 if !self.2.test(key, None, err) {
-                    return Err(ReturnedPayloadError(returned, err));
+                    return Err((returned, err));
                 }
                 from = returned;
             }

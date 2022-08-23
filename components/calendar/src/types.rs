@@ -13,6 +13,10 @@ use tinystr::{TinyStr16, TinyStr4};
 use zerovec::maps::ZeroMapKV;
 use zerovec::ule::AsULE;
 
+/// The era of a particular date
+///
+/// Different calendars use different era codes, see their documentation
+/// for details.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
@@ -64,6 +68,13 @@ impl FormattableYear {
         }
     }
 }
+
+/// Representation of a month in a year
+///
+/// Month codes typically look like `M01`, `M02`, etc, but can handle leap months
+/// (`M03L`) in lunar calendars. Solar calendars will have codes between `M01` and `M12`
+/// potentially with an `M13` for epagomenal months. Check the docs for a particular calendar
+/// for details on what its month codes are.
 #[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 #[cfg_attr(
@@ -412,6 +423,7 @@ fn test_iso_nano_second_arithmetic() {
     assert_eq!(nano_second.try_sub(1 + NANO_SECOND_VALUE), None);
 }
 
+/// A representation of a time in hours, minutes, seconds, and nanoseconds
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
@@ -429,7 +441,7 @@ pub struct Time {
 }
 
 impl Time {
-    /// Do not validate the numeric input for this component.
+    /// Construct a new [`Time`], without validating that all components are in range
     pub const fn new(
         hour: IsoHour,
         minute: IsoMinute,
@@ -444,6 +456,7 @@ impl Time {
         }
     }
 
+    /// Construct a new [`Time`], whilst validating that all components are in range
     pub fn try_new(
         hour: u8,
         minute: u8,

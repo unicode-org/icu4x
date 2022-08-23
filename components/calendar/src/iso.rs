@@ -30,21 +30,33 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
-use crate::{ArithmeticDate, CalendarArithmetic};
-use core::convert::TryInto;
 use tinystr::tinystr;
 
 // The georgian epoch is equivalent to first day in fixed day measurement
 const EPOCH: i32 = 1;
 
+/// The [ISO Calendar]
+///
+/// The [ISO Calendar] is a standardized solar calendar with twelve months.
+/// It is identical to the Gregorian calendar, except it uses negative years for years before 1 CE,
+/// and may have differing formatting data for a given locale.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [ISO Calendar]: https://en.wikipedia.org/wiki/ISO_calendar
+///
+/// # Era codes
+///
+/// This calendar supports one era, `"default"`
+
 #[derive(Copy, Clone, Debug, Default, PartialEq, Eq, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-/// The ISO Calendar
 pub struct Iso;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-/// The inner date type used for representing Date<Iso>
+/// The inner date type used for representing [`Date`]s of [`Iso`]. See [`Date`] and [`Iso`] for more details.
 pub struct IsoDateInner(pub(crate) ArithmeticDate<Iso>);
 
 impl CalendarArithmetic for Iso {
@@ -58,7 +70,7 @@ impl CalendarArithmetic for Iso {
         }
     }
 
-    fn months_for_every_year() -> u8 {
+    fn months_for_every_year(_: i32) -> u8 {
         12
     }
 
@@ -149,42 +161,8 @@ impl Calendar for Iso {
         types::IsoWeekday::from((day_offset + 1) as usize)
     }
 
-    fn offset_date(&self, date: &mut Self::DateInner, mut offset: DateDuration<Self>) {
-        date.0.year += offset.years;
-        date.add_months(offset.months);
-        offset.months = 0;
-
-        offset.days += offset.weeks * 7;
-
-        // Normalize date to beginning of month
-        offset.days += date.0.day as i32 - 1;
-        date.0.day = 1;
-
-        while offset.days != 0 {
-            if offset.days < 0 {
-                date.add_months(-1);
-                let month_days = self.days_in_month(date);
-                if (-offset.days) > month_days as i32 {
-                    offset.days += month_days as i32;
-                } else {
-                    // Add 1 since we are subtracting from the first day of the
-                    // *next* month
-                    date.0.day = 1 + (month_days as i8 + offset.days as i8) as u8;
-                    offset.days = 0;
-                }
-            } else {
-                let month_days = self.days_in_month(date);
-                // >= because we date.day is 1, so adding the number of days in the month
-                // will still have the same effect
-                if offset.days >= month_days as i32 {
-                    date.add_months(1);
-                    offset.days -= month_days as i32;
-                } else {
-                    date.0.day += offset.days as u8;
-                    offset.days = 0;
-                }
-            }
-        }
+    fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>) {
+        date.0.offset_date(offset);
     }
 
     #[allow(clippy::field_reassign_with_default)]
@@ -414,14 +392,13 @@ impl Iso {
         fixed + (date.0.day as i32)
     }
 
-    fn fixed_from_iso_integers(year: i32, month: i32, day: i32) -> i32 {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Self::fixed_from_iso(
-            *Date::new_iso_date(year, month as u8, day as u8)
-                .unwrap()
-                .inner(),
-        )
+    fn fixed_from_iso_integers(year: i32, month: u8, day: u8) -> Option<i32> {
+        Date::new_iso_date(year, month, day)
+            .ok()
+            .map(|d| *d.inner())
+            .map(Self::fixed_from_iso)
     }
+
     pub(crate) fn iso_from_year_day(year: i32, year_day: u32) -> Date<Iso> {
         let mut month = 1;
         let mut day = year_day as i32;
@@ -430,13 +407,15 @@ impl Iso {
             if day <= month_days {
                 break;
             } else {
+                debug_assert!(month < 12); // don't try going to month 13
                 day -= month_days;
                 month += 1;
             }
         }
+        let day = day as u8; // day <= month_days < u8::MAX
 
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Date::new_iso_date(year, month, day.try_into().unwrap()).unwrap()
+        #[allow(clippy::unwrap_used)] // month in 1..=12, day <= month_days
+        Date::new_iso_date(year, month, day).unwrap()
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1191-L1217
@@ -465,31 +444,34 @@ impl Iso {
     }
 
     fn iso_new_year(year: i32) -> i32 {
-        Self::fixed_from_iso_integers(year, 1, 1)
+        #[allow(clippy::unwrap_used)] // valid day and month
+        Self::fixed_from_iso_integers(year, 1, 1).unwrap()
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1237-L1258
     pub(crate) fn iso_from_fixed(date: i32) -> Date<Iso> {
         let year = Self::iso_year_from_fixed(date);
         let prior_days = date - Self::iso_new_year(year);
-        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1) {
+        #[allow(clippy::unwrap_used)] // valid day and month
+        let correction = if date < Self::fixed_from_iso_integers(year, 3, 1).unwrap() {
             0
         } else if Self::is_leap_year(year) {
             1
         } else {
             2
         };
-        let month = (12 * (prior_days + correction) + 373) / 367;
-        let day = date - Self::fixed_from_iso_integers(year, month, 1) + 1;
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Date::new_iso_date(year, month as u8, day as u8).unwrap()
+        let month = ((12 * (prior_days + correction) + 373) / 367) as u8; // in 1..12 < u8::MAX
+        #[allow(clippy::unwrap_used)] // valid day and month
+        let day = (date - Self::fixed_from_iso_integers(year, month, 1).unwrap() + 1) as u8; // <= days_in_month < u8::MAX
+        #[allow(clippy::unwrap_used)] // valid day and month
+        Date::new_iso_date(year, month, day).unwrap()
     }
 
     pub(crate) fn day_of_year(date: IsoDateInner) -> u32 {
         // Cumulatively how much are dates in each month
         // offset from "30 days in each month" (in non leap years)
         let month_offset = [0, 1, -1, 0, 0, 1, 1, 2, 3, 3, 4, 4];
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // date.0.month in 1..=12
         let mut offset = month_offset[date.0.month as usize - 1];
         if Self::is_leap_year(date.0.year) && date.0.month > 2 {
             // Months after February in a leap year are offset by one less
@@ -516,22 +498,6 @@ impl IsoDateInner {
     }
     pub(crate) fn dec_31(year: i32) -> Self {
         Self(ArithmeticDate::new(year, 12, 1))
-    }
-
-    fn add_months(&mut self, months: i32) {
-        // Get a zero-indexed new month
-        let new_month = (self.0.month as i32 - 1) + months;
-        if new_month >= 0 {
-            self.0.year += new_month / 12;
-            self.0.month = ((new_month % 12) + 1) as u8;
-        } else {
-            // subtract full years
-            self.0.year -= (-new_month) / 12;
-            // subtract a partial year
-            self.0.year -= 1;
-            // adding 13 since months are 1-indexed
-            self.0.month = (13 + (new_month % 12)) as u8
-        }
     }
 }
 
@@ -660,5 +626,43 @@ mod test {
         let today_minus_1 = Date::new_iso_date(2020, 2, 29).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -1));
         assert_eq!(offset, today_minus_1);
+    }
+
+    #[test]
+    fn test_offset_handles_negative_month_offset() {
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_2_months = Date::new_iso_date(2020, 1, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, -2, 0, 0));
+        assert_eq!(offset, today_minus_2_months);
+
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_4_months = Date::new_iso_date(2019, 11, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, -4, 0, 0));
+        assert_eq!(offset, today_minus_4_months);
+
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_24_months = Date::new_iso_date(2018, 3, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, -24, 0, 0));
+        assert_eq!(offset, today_minus_24_months);
+
+        let today = Date::new_iso_date(2020, 3, 1).unwrap();
+        let today_minus_27_months = Date::new_iso_date(2017, 12, 1).unwrap();
+        let offset = today.added(DateDuration::new(0, -27, 0, 0));
+        assert_eq!(offset, today_minus_27_months);
+    }
+
+    #[test]
+    fn test_offset_handles_out_of_bound_month_offset() {
+        let today = Date::new_iso_date(2021, 1, 31).unwrap();
+        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
+        let today_plus_1_month = Date::new_iso_date(2021, 3, 3).unwrap();
+        let offset = today.added(DateDuration::new(0, 1, 0, 0));
+        assert_eq!(offset, today_plus_1_month);
+
+        let today = Date::new_iso_date(2021, 1, 31).unwrap();
+        // since 2021/02/31 isn't a valid date, `offset_date` auto-adjusts by adding 3 days to 2021/02/28
+        let today_plus_1_month_1_day = Date::new_iso_date(2021, 3, 4).unwrap();
+        let offset = today.added(DateDuration::new(0, 1, 0, 1));
+        assert_eq!(offset, today_plus_1_month_1_day);
     }
 }

@@ -206,9 +206,8 @@ where
                 .year()
                 .ok_or(Error::MissingInputField(Some("year")))?
                 .era;
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = date_symbols
-                .expect("Expect date symbols to be present")
+                .ok_or(Error::MissingDateSymbols)?
                 .get_symbol_for_era(field.length, &era);
             w.write_str(symbol)?
         }
@@ -246,9 +245,8 @@ where
                 field.length,
             )?,
             length => {
-                #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
                 let symbol = date_symbols
-                    .expect("Expect date symbols to be present")
+                    .ok_or(Error::MissingDateSymbols)?
                     .get_symbol_for_month(
                         month,
                         length,
@@ -280,9 +278,8 @@ where
                 .datetime()
                 .iso_weekday()
                 .ok_or(Error::MissingInputField(Some("iso_weekday")))?;
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = date_symbols
-                .expect("Expect date symbols to be present")
+                .ok_or(Error::MissingDateSymbols)?
                 .get_symbol_for_weekday(weekday, field.length, dow)?;
             w.write_str(symbol)?
         }
@@ -392,9 +389,8 @@ where
             return Err(Error::UnsupportedField(field))
         }
         FieldSymbol::DayPeriod(period) => {
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
             let symbol = time_symbols
-                .expect("Expect time symbols to be present")
+                .ok_or(Error::MissingTimeSymbols)?
                 .get_symbol_for_day_period(
                     period,
                     field.length,

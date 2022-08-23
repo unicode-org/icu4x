@@ -19,5 +19,5 @@
 
         Checks whether the code point is in the set.
 
-        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/collections/codepointinvlist/struct.CodePointSet.html#method.contains>`__ for more information.
+        See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains>`__ for more information.
 

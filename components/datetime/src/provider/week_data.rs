@@ -18,4 +18,4 @@ use icu_provider::prelude::*;
     databake(path = icu_datetime::provider::week_data),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct WeekDataV1(pub icu_calendar::arithmetic::week_of::CalendarInfo);
+pub struct WeekDataV1(pub icu_calendar::week_of::CalendarInfo);

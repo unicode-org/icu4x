@@ -293,7 +293,8 @@ where
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> T {
         let vec = self.to_mut();
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        debug_assert!(index < vec.len());
+        #[allow(clippy::indexing_slicing)]
         T::from_unaligned(mem::replace(&mut vec[index], value.to_unaligned()))
     }
     fn zvl_push(&mut self, value: &T) {
@@ -443,15 +444,17 @@ where
     }
     fn zvl_remove(&mut self, index: usize) -> Box<T> {
         let vec = self.make_mut();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let old = vec.get(index).expect("invalid index").to_boxed();
+        debug_assert!(index < vec.len());
+        #[allow(clippy::unwrap_used)]
+        let old = vec.get(index).unwrap().to_boxed();
         vec.remove(index);
         old
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> Box<T> {
         let vec = self.make_mut();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let old = vec.get(index).expect("invalid index").to_boxed();
+        debug_assert!(index < vec.len());
+        #[allow(clippy::unwrap_used)]
+        let old = vec.get(index).unwrap().to_boxed();
         vec.replace(index, value);
         old
     }

@@ -81,6 +81,9 @@ mod databake;
 #[cfg(feature = "zerovec")]
 mod ule;
 
+#[cfg(feature = "zerovec")]
+mod ule_07;
+
 #[cfg(any(feature = "serde", feature = "alloc"))]
 extern crate alloc;
 

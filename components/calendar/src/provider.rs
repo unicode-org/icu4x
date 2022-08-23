@@ -6,8 +6,6 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs)]
 
@@ -30,11 +28,16 @@ use zerovec::ZeroVec;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct EraStartDate {
+    /// The year the era started in
     pub year: i32,
+    /// The month the era started in
     pub month: u8,
+    /// The day the era started in
     pub day: u8,
 }
 
+/// A data structure containing the necessary era data for constructing a
+/// [`Japanese`](crate::japanese::Japanese) calendar object
 #[icu_provider::data_struct(
     marker(JapaneseErasV1Marker, "calendar/japanese@1"),
     marker(JapaneseExtendedErasV1Marker, "calendar/japanext@1")
@@ -47,6 +50,7 @@ pub struct EraStartDate {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct JapaneseErasV1<'data> {
+    /// A map from era start dates to their era codes
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub dates_to_eras: ZeroVec<'data, (EraStartDate, TinyStr16)>,
 }
@@ -54,19 +58,17 @@ pub struct JapaneseErasV1<'data> {
 impl FromStr for EraStartDate {
     type Err = ();
     fn from_str(mut s: &str) -> Result<Self, ()> {
-        let mut sign = 1;
-        #[allow(clippy::indexing_slicing)]
-        if s.starts_with('-') {
-            // TODO(#1668) Clippy exceptions need docs or fixing.
-            s = &s[1..];
-            sign = -1;
-        }
+        let sign = if let Some(suffix) = s.strip_prefix('-') {
+            s = suffix;
+            -1
+        } else {
+            1
+        };
 
         let mut split = s.split('-');
-        let mut year: i32 = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        year *= sign;
-        let month: u8 = split.next().ok_or(())?.parse().map_err(|_| ())?;
-        let day: u8 = split.next().ok_or(())?.parse().map_err(|_| ())?;
+        let year = split.next().ok_or(())?.parse::<i32>().map_err(|_| ())? * sign;
+        let month = split.next().ok_or(())?.parse().map_err(|_| ())?;
+        let day = split.next().ok_or(())?.parse().map_err(|_| ())?;
 
         Ok(EraStartDate { year, month, day })
     }
