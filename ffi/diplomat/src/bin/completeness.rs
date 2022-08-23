@@ -109,8 +109,39 @@ lazy_static::lazy_static! {
         "ZeroFrom",
     ].into_iter().collect();
 
-    static ref ALLOWLISTED_MODULES: HashSet<Vec<String>> = [
-        "icu::calendar::week_of"
+    static ref ALLOWLISTED_PATHS: HashSet<Vec<String>> = [
+        // Stuff that could be exposed over FFI but is not currently planned
+        // =========================
+        // Largely for use by datetimeformat, not super public
+        "icu::calendar::week_of",
+
+
+        // Individual calendars: Currently the main entry point is AnyCalendar
+        "icu::calendar::iso",
+        "icu::calendar::buddhist",
+        "icu::calendar::coptic",
+        "icu::calendar::ethiopian",
+        "icu::calendar::indian",
+        "icu::calendar::japanese",
+        "icu::calendar::julian",
+        "icu::calendar::any_calendar::IncludedInAnyCalendar",
+
+
+        // Stuff that does not need to be exposed over FFI
+        // =========================
+
+        // "Internal" trait that should never be called directly
+        "icu::calendar::Calendar",
+        // Used for rust-specific type transforms
+        "icu::calendar::AsCalendar",
+
+        // FFI largely deals with primitives rather than Rust's nice wrapper types
+        // (which are hard to do in a zero-cost way over FFI)
+        "icu::calendar::types",
+
+        // Provider modules
+        "icu::calendar::provider",
+        "icu::datetime::provider",
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 
@@ -167,7 +198,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         path_already_extended: bool,
         inside: Option<In>,
     ) {
-        /// Helper function that ensures that ALLOWLISTED_MODULES
+        /// Helper function that ensures that ALLOWLISTED_PATHS
         /// is respected for every type inserted
         ///
         /// (We have a check at the beginning of recurse() but that won't catch leaf nodes)
@@ -176,11 +207,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             path: Vec<String>,
             ty: ast::DocType,
         ) {
-            if !ALLOWLISTED_MODULES.contains(&path) {
+            if !ALLOWLISTED_PATHS.contains(&path) {
                 types.insert((path, ty));
             }
         }
-        if ALLOWLISTED_MODULES.contains(&path) {
+        if ALLOWLISTED_PATHS.contains(&path) {
             return;
         }
         match &item.inner {
