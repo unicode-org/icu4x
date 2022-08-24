@@ -2,13 +2,17 @@
 
 `icu` is the main meta-crate of the `ICU4X` project.
 
-It provides a comprehensive selection of
-[Unicode Internationalization Components](http://site.icu-project.org/)
+It provides a comprehensive selection of functionality found in
+[International Components for Unicode](http://icu.unicode.org/)
 in their canonical configurations intended to enable software
 internationalization capabilities.
 
-This crate does not bring any unique functionality. Each module is also
-available as a stand-alone crate, i.e. `icu::list` as `icu_list`.
+This crate exists to collect the most important functionality for users
+together in one place.
+It does not bring any unique functionality, but rather,
+it re-exports the relevant crates as modules.
+The exported crate corresponding to each module is also
+available in a stand-alone manner, i.e. `icu::list` as `icu_list`.
 
 ## Data Management
 

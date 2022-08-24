@@ -1099,11 +1099,11 @@ jobs:
         <html>
           <head>
             <meta charset="utf-8">
-            <meta http-equiv="refresh" content="0;url=./doc/icu4x" />
+            <meta http-equiv="refresh" content="0;url=./doc/icu" />
             <title>ICU4X Developer Docs</title>
           </head>
           <body>
-            <p><a href="./doc/icu4x">Redirect to icu4x crate doc</a></p>
+            <p><a href="./doc/icu">Redirect to the <tt>icu</tt> crate of ICU4X</a></p>
           </body>
         </html>
         EOL

@@ -5,7 +5,7 @@ import { ICU4XError } from "./ICU4XError";
 
 /**
 
- * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+ * An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
 
  * For properties whose values fit into 8 bits.
 

@@ -17,6 +17,7 @@ use icu_provider::{yoke, zerofrom};
 pub use skeletons::*;
 pub use symbols::*;
 
+/// Pattern data for dates.
 #[icu_provider::data_struct(
     marker(GregorianDateLengthsV1Marker, "datetime/gregory/datelengths@1"),
     marker(BuddhistDateLengthsV1Marker, "datetime/buddhist/datelengths@1"),
@@ -34,6 +35,7 @@ pub use symbols::*;
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct DateLengthsV1<'data> {
+    /// Date pattern data, broken down by pattern length.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub date: patterns::LengthPatternsV1<'data>,
 
@@ -48,6 +50,7 @@ impl DataMarker for ErasedDateLengthsV1Marker {
     type Yokeable = DateLengthsV1<'static>;
 }
 
+/// Pattern data for times.
 #[icu_provider::data_struct(marker(TimeLengthsV1Marker, "datetime/timelengths@1",))]
 #[derive(Debug, PartialEq, Clone, Default)]
 #[cfg_attr(
@@ -73,11 +76,14 @@ pub struct TimeLengthsV1<'data> {
     pub preferred_hour_cycle: pattern::CoarseHourCycle,
 }
 
+/// Data structs for date / time patterns that store data corresponding to pattern lengths
+/// and/or plural forms.
 pub mod patterns {
     use super::*;
     use crate::pattern::runtime::{self, GenericPattern, PatternPlurals};
     use icu_provider::{yoke, zerofrom};
 
+    /// Data struct for date/time patterns broken down by pattern length.
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
@@ -96,24 +102,7 @@ pub mod patterns {
         pub short: runtime::Pattern<'data>,
     }
 
-    #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
-    #[cfg_attr(
-        feature = "datagen",
-        derive(serde::Serialize, databake::Bake),
-        databake(path = icu_datetime::provider::calendar::patterns),
-    )]
-    #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub struct LengthPatternPluralsV1<'data> {
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        pub full: PatternPlurals<'data>,
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        pub long: PatternPlurals<'data>,
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        pub medium: PatternPlurals<'data>,
-        #[cfg_attr(feature = "serde", serde(borrow))]
-        pub short: PatternPlurals<'data>,
-    }
-
+    /// Data struct for generic date/time patterns, broken down by pattern length.
     #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(
         feature = "datagen",
@@ -136,7 +125,7 @@ pub mod patterns {
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-    pub struct PatternPluralsV1<'data>(
+    pub(crate) struct PatternPluralsV1<'data>(
         #[cfg_attr(feature = "serde", serde(borrow))] pub PatternPlurals<'data>,
     );
 

@@ -176,7 +176,8 @@ impl From<ScriptWithExt> for Script {
     }
 }
 
-/// A data structure that wraps ScriptExtensions array return value.
+/// A struct that wraps a [`Script`] array, such as in the return value for
+/// [`get_script_extensions_val`](ScriptWithExtensions::get_script_extensions_val).
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct ScriptExtensionsSet<'a> {
     values: &'a ZeroSlice<Script>,
@@ -576,7 +577,7 @@ impl<'data> ScriptWithExtensions<'data> {
     }
 }
 
-#[allow(missing_docs)] // TODO(1239): Remove/replace this type, or else document it.
+/// The return type `Result` for any of the `load_script_with_extensions_`* functions.
 pub type ScriptWithExtensionsResult =
     Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
 
