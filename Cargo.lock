@@ -735,7 +735,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=373d7d5e157ce5c4beff4779658813d456387b35#373d7d5e157ce5c4beff4779658813d456387b35"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -746,12 +746,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=373d7d5e157ce5c4beff4779658813d456387b35#373d7d5e157ce5c4beff4779658813d456387b35"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=373d7d5e157ce5c4beff4779658813d456387b35#373d7d5e157ce5c4beff4779658813d456387b35"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 dependencies = [
  "impls",
  "lazy_static",
@@ -3177,13 +3177,15 @@ checksum = "213701ba3370744dcd1a12960caa4843b3d68b4d1c0a5d575e0d65b2ee9d16c0"
 
 [[package]]
 name = "strck"
-version = "0.1.0"
-source = "git+https://github.com/QnnOkabayashi/strck?rev=a57d391d8f028cca28fb51d1dd8cf49578fb6cd5#a57d391d8f028cca28fb51d1dd8cf49578fb6cd5"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42b99bb054f5dcde86a98558e47aeeaa334cedc523728dff80a4c2824a5a54ad"
 
 [[package]]
 name = "strck_ident"
-version = "0.1.0"
-source = "git+https://github.com/QnnOkabayashi/strck?rev=a57d391d8f028cca28fb51d1dd8cf49578fb6cd5#a57d391d8f028cca28fb51d1dd8cf49578fb6cd5"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7af2d128f1161e1356e1f9a5cc32e58c62ccbdb79287a2269fc2aaaacf8ff27b"
 dependencies = [
  "strck",
  "unicode-ident",

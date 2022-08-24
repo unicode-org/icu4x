@@ -16,7 +16,7 @@
 /**
  * FFI version of `TransformResult`.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/enum.TransformResult.html) for more information.
+ * See the [Rust documentation for `TransformResult`](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/enum.TransformResult.html) for more information.
  */
 enum struct ICU4XTransformResult {
   Modified = 0,

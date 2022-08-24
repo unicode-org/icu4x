@@ -27,7 +27,7 @@ struct ICU4XDateTimeDeleter {
 /**
  * An ICU4X DateTime object capable of containing a date and time for any calendar.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html) for more information.
+ * See the [Rust documentation for `DateTime`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html) for more information.
  */
 class ICU4XDateTime {
  public:
@@ -36,14 +36,14 @@ class ICU4XDateTime {
    * Creates a new [`ICU4XDateTime`] representing the ISO date and time
    * given but in a given calendar
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime) for more information.
+   * See the [Rust documentation for `new_iso_datetime`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime) for more information.
    */
   static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, const ICU4XCalendar& calendar);
 
   /**
    * Sets the fractional seconds field of this datetime, in nanoseconds
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
+   * See the [Rust documentation for `nanosecond`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_ns(uint32_t ns);
   inline const capi::ICU4XDateTime* AsFFI() const { return this->inner.get(); }
