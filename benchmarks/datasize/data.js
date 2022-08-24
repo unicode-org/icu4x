@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661288184188,
+  "lastUpdate": 1661350920336,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25073,6 +25073,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/b01a716fd0a953bb9acb6ac1db8558750e8b8137"
         },
         "date": 1661288137275,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "64a4d74411aeaa92e91a41027ca35cb4503f2576",
+          "message": "Add comment about inline(always) in CodePointTrie (#2443)",
+          "timestamp": "2022-08-24T07:19:41-07:00",
+          "tree_id": "f7cbef6a919a1cbdfe969a573e98fa72423fb9fa",
+          "url": "https://github.com/unicode-org/icu4x/commit/64a4d74411aeaa92e91a41027ca35cb4503f2576"
+        },
+        "date": 1661350872789,
         "tool": "ndjson",
         "benches": [
           {
