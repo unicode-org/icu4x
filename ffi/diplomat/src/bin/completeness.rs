@@ -112,19 +112,18 @@ lazy_static::lazy_static! {
     static ref ALLOWLISTED_PATHS: HashSet<Vec<String>> = [
         // Stuff that could be exposed over FFI but is not currently planned
         // =========================
-        // Largely for use by datetimeformat, not super public
+        // Largely for use by datetimeformat, not super public (#2421)
         "icu::calendar::week_of",
 
 
         // Individual calendars: Currently the main entry point is AnyCalendar
-        "icu::calendar::iso",
         "icu::calendar::buddhist",
         "icu::calendar::coptic",
         "icu::calendar::ethiopian",
         "icu::calendar::indian",
         "icu::calendar::japanese",
         "icu::calendar::julian",
-        "icu::calendar::any_calendar::IncludedInAnyCalendar",
+        "icu::calendar::any_calendar::IntoAnyCalendar",
 
 
         // Stuff that does not need to be exposed over FFI
