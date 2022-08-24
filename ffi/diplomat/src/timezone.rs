@@ -10,8 +10,9 @@ use icu_timezone::ZoneVariant;
 
 #[diplomat::bridge]
 pub mod ffi {
+    use crate::calendar::ffi::ICU4XIsoDateTime;
+    use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
-use crate::errors::ffi::ICU4XError;
     use crate::tinystr::ffi::TinyAsciiStr2;
     use crate::tinystr::ffi::TinyAsciiStr4;
     use crate::tinystr::ffi::TinyAsciiStr8;
@@ -20,8 +21,8 @@ use crate::errors::ffi::ICU4XError;
     use diplomat_runtime::DiplomatResult;
     use icu_timezone::CustomTimeZone;
     use icu_timezone::GmtOffset;
-    use icu_timezone::ZoneVariant;
     use icu_timezone::MetaZoneCalculator;
+    use icu_timezone::ZoneVariant;
 
     #[diplomat::rust_link(icu::timezone::GmtOffset, Struct)]
     pub struct ICU4XGmtOffset {
@@ -124,7 +125,16 @@ use crate::errors::ffi::ICU4XError;
                 .into()
         }
 
-        // TODO: Add maybe_set_metazone once DateTime has FFI
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_set_metazone, FnInStruct)]
+        pub fn maybe_set_metazone(
+            &mut self,
+            local_datetime: &ICU4XIsoDateTime,
+            metazone_calculator: &ICU4XMetaZoneCalculator,
+        ) {
+            let mut rust = CustomTimeZone::from(&*self);
+            rust.maybe_set_metazone(&local_datetime.0, &metazone_calculator.0);
+            *self = rust.into();
+        }
     }
 
     impl ICU4XMetaZoneCalculator {
@@ -141,7 +151,19 @@ use crate::errors::ffi::ICU4XError;
                 .into()
         }
 
-        // TODO: Add compute_metazone_from_timezone once DateTime has FFI
+        #[diplomat::rust_link(
+            icu::timezone::MetaZoneCalculator::compute_metazone_from_timezone,
+            FnInStruct
+        )]
+        pub fn compute_metazone_from_timezone(
+            &self,
+            time_zone_id: &ICU4XTimeZoneBcp47Id,
+            local_datetime: &ICU4XIsoDateTime,
+        ) -> Option<ICU4XMetaZoneId> {
+            self.0
+                .compute_metazone_from_timezone(time_zone_id.into(), &local_datetime.0)
+                .map(Into::into)
+        }
     }
 }
 
@@ -157,9 +179,7 @@ impl From<ffi::ICU4XGmtOffset> for GmtOffset {
     fn from(other: ffi::ICU4XGmtOffset) -> Self {
         // Safety: The data field is private, and the only way to construct
         // one of these is the From impl above
-        unsafe {
-            Self::from_offset_seconds_unchecked(other.data)
-        }
+        unsafe { Self::from_offset_seconds_unchecked(other.data) }
     }
 }
 
@@ -167,9 +187,7 @@ impl From<&ffi::ICU4XGmtOffset> for GmtOffset {
     fn from(other: &ffi::ICU4XGmtOffset) -> Self {
         // Safety: The data field is private, and the only way to construct
         // one of these is the From impl above
-        unsafe {
-            Self::from_offset_seconds_unchecked(other.data)
-        }
+        unsafe { Self::from_offset_seconds_unchecked(other.data) }
     }
 }
 

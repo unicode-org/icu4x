@@ -9,7 +9,7 @@ pub mod ffi {
     use core::convert::TryInto;
     use diplomat_runtime::DiplomatResult;
     use icu_calendar::AnyCalendar;
-    use icu_calendar::{DateTime, Gregorian};
+    use icu_calendar::{DateTime, Gregorian, Iso};
 
     use crate::errors::ffi::ICU4XError;
     use crate::locale::ffi::ICU4XLocale;
@@ -33,6 +33,29 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XGregorianDateTime>, ICU4XError> {
             DateTime::new_gregorian_datetime(year, month, day, hour, minute, second)
                 .map(|dt| Box::new(ICU4XGregorianDateTime(dt)))
+                .map_err(Into::into)
+                .into()
+        }
+    }
+
+    #[diplomat::opaque]
+    /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+    #[diplomat::rust_link(icu::calendar::DateTime, Struct)]
+    pub struct ICU4XIsoDateTime(pub DateTime<Iso>);
+
+    impl ICU4XIsoDateTime {
+        /// Creates a new [`ICU4XIsoDateTime`] from the specified date and time.
+        #[diplomat::rust_link(icu::calendar::DateTime::new_gregorian_datetime, FnInStruct)]
+        pub fn try_new(
+            year: i32,
+            month: u8,
+            day: u8,
+            hour: u8,
+            minute: u8,
+            second: u8,
+        ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
+            DateTime::new_iso_datetime(year, month, day, hour, minute, second)
+                .map(|dt| Box::new(ICU4XIsoDateTime(dt)))
                 .map_err(Into::into)
                 .into()
         }
