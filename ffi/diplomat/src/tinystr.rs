@@ -39,9 +39,17 @@ pub mod ffi {
                 .into()
         }
 
-        // pub fn as_str(&self) -> &str {
-        //     TinyAsciiStr::from(self).as_str()
-        // }
+        pub fn as_str(&self) -> &str {
+            <&TinyAsciiStr<1>>::from(self).as_str()
+        }
+
+        pub fn len(&self) -> usize {
+            TinyAsciiStr::<1>::from(self).len()
+        }
+
+        pub fn is_empty(&self) -> bool {
+            TinyAsciiStr::<1>::from(self).is_empty()
+        }
     }
 
     impl TinyAsciiStr2 {
@@ -50,6 +58,18 @@ pub mod ffi {
                 .map(Into::into)
                 .map_err(Into::into)
                 .into()
+        }
+
+        pub fn as_str(&self) -> &str {
+            <&TinyAsciiStr<2>>::from(self).as_str()
+        }
+
+        pub fn len(&self) -> usize {
+            TinyAsciiStr::<2>::from(self).len()
+        }
+
+        pub fn is_empty(&self) -> bool {
+            TinyAsciiStr::<2>::from(self).is_empty()
         }
     }
 
@@ -60,6 +80,18 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
+
+        pub fn as_str(&self) -> &str {
+            <&TinyAsciiStr<4>>::from(self).as_str()
+        }
+
+        pub fn len(&self) -> usize {
+            TinyAsciiStr::<4>::from(self).len()
+        }
+
+        pub fn is_empty(&self) -> bool {
+            TinyAsciiStr::<4>::from(self).is_empty()
+        }
     }
 
     impl TinyAsciiStr8 {
@@ -69,6 +101,18 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
+
+        pub fn as_str(&self) -> &str {
+            <&TinyAsciiStr<8>>::from(self).as_str()
+        }
+
+        pub fn len(&self) -> usize {
+            TinyAsciiStr::<8>::from(self).len()
+        }
+
+        pub fn is_empty(&self) -> bool {
+            TinyAsciiStr::<8>::from(self).is_empty()
+        }
     }
 }
 
@@ -77,7 +121,7 @@ macro_rules! impl_tinystr_convert {
         impl From<TinyAsciiStr<$n>> for $ffi_t {
             fn from(other: TinyAsciiStr<$n>) -> Self {
                 Self {
-                    data: <$utype>::from_le_bytes(*other.all_bytes()),
+                    data: <$utype>::from_ne_bytes(*other.all_bytes()),
                 }
             }
         }
@@ -85,14 +129,20 @@ macro_rules! impl_tinystr_convert {
             fn from(other: $ffi_t) -> Self {
                 // Safety: The data field is private, and the only way to construct
                 // one of these is the From impl above
-                unsafe { TinyAsciiStr::from_bytes_unchecked(other.data.to_le_bytes()) }
+                unsafe { TinyAsciiStr::from_bytes_unchecked(other.data.to_ne_bytes()) }
             }
         }
         impl From<&$ffi_t> for TinyAsciiStr<$n> {
             fn from(other: &$ffi_t) -> Self {
                 // Safety: The data field is private, and the only way to construct
                 // one of these is the From impl above
-                unsafe { TinyAsciiStr::from_bytes_unchecked(other.data.to_le_bytes()) }
+                unsafe { TinyAsciiStr::from_bytes_unchecked(other.data.to_ne_bytes()) }
+            }
+        }
+        impl From<&$ffi_t> for &TinyAsciiStr<$n> {
+            fn from(other: &$ffi_t) -> Self {
+                // Safety: other.data is based on from_ne_bytes, which is always a cast
+                unsafe { core::mem::transmute(&other.data) }
             }
         }
     };
