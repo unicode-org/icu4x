@@ -12,6 +12,7 @@ use icu_locid::ParserError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
+use tinystr::TinyStrError;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -95,6 +96,11 @@ pub mod ffi {
         DateTimeFormatFixedDecimalError = 0x8_07,
         DateTimeFormatMismatchedAnyCalendarError = 0x8_08,
         DateTimeFormatMismatchedCalendarLocaleError = 0x8_09,
+
+        // tinystr errors
+        TinyStrTooLargeError = 0x9_00,
+        TinyStrContainsNullError = 0x9_01,
+        TinyStrNonAsciiError = 0x9_02,
     }
 }
 
@@ -265,6 +271,19 @@ impl From<ParserError> for ICU4XError {
             ParserError::InvalidLanguage => ICU4XError::LocaleParserLanguageError,
             ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
             ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<TinyStrError> for ICU4XError {
+    fn from(e: TinyStrError) -> Self {
+        let ret = match e {
+            TinyStrError::TooLarge { .. } => ICU4XError::TinyStrTooLargeError,
+            TinyStrError::ContainsNull => ICU4XError::TinyStrContainsNullError,
+            TinyStrError::NonAscii => ICU4XError::TinyStrNonAsciiError,
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
