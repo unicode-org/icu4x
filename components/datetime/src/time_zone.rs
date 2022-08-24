@@ -720,7 +720,7 @@ impl TimeZoneFormatter {
     ) -> Result<String, DateTimeFormatterError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(TimeZoneFormatter::format_time_segment(
-                (gmt_offset.raw_offset_seconds() / 3600).abs() as u8,
+                (gmt_offset.offset_seconds() / 3600).abs() as u8,
                 padding,
             ))
         } else {
@@ -736,7 +736,7 @@ impl TimeZoneFormatter {
     ) -> Result<String, DateTimeFormatterError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(TimeZoneFormatter::format_time_segment(
-                (gmt_offset.raw_offset_seconds() % 3600 / 60).abs() as u8,
+                (gmt_offset.offset_seconds() % 3600 / 60).abs() as u8,
                 ZeroPadding::On,
             ))
         } else {
@@ -753,7 +753,7 @@ impl TimeZoneFormatter {
     ) -> Result<fmt::Result, DateTimeFormatterError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(sink.write_str(&TimeZoneFormatter::format_time_segment(
-                (gmt_offset.raw_offset_seconds() % 3600 % 60).abs() as u8,
+                (gmt_offset.offset_seconds() % 3600 % 60).abs() as u8,
                 ZeroPadding::On,
             )))
         } else {

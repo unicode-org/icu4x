@@ -88,6 +88,13 @@ macro_rules! impl_tinystr_convert {
                 unsafe { TinyAsciiStr::from_bytes_unchecked(other.data.to_le_bytes()) }
             }
         }
+        impl From<&$ffi_t> for TinyAsciiStr<$n> {
+            fn from(other: &$ffi_t) -> Self {
+                // Safety: The data field is private, and the only way to construct
+                // one of these is the From impl above
+                unsafe { TinyAsciiStr::from_bytes_unchecked(other.data.to_le_bytes()) }
+            }
+        }
     };
 }
 

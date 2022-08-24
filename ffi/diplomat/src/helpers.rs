@@ -16,6 +16,11 @@ macro_rules! impl_newtype_convert {
                 $rust_t(other.$ffi_f.into())
             }
         }
+        impl From<&$ffi_t> for $rust_t {
+            fn from(other: &$ffi_t) -> Self {
+                $rust_t((&other.$ffi_f).into())
+            }
+        }
     };
 }
 
