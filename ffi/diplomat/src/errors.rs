@@ -12,6 +12,7 @@ use icu_locid::ParserError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
+use icu_timezone::TimeZoneError;
 use tinystr::TinyStrError;
 
 #[diplomat::bridge]
@@ -101,6 +102,10 @@ pub mod ffi {
         TinyStrTooLargeError = 0x9_00,
         TinyStrContainsNullError = 0x9_01,
         TinyStrNonAsciiError = 0x9_02,
+
+        // timezone errors
+        TimeZoneOffsetOutOfBoundsError = 0xA_00,
+        TimeZoneInvalidOffsetError = 0xA_01,
     }
 }
 
@@ -284,6 +289,19 @@ impl From<TinyStrError> for ICU4XError {
             TinyStrError::TooLarge { .. } => ICU4XError::TinyStrTooLargeError,
             TinyStrError::ContainsNull => ICU4XError::TinyStrContainsNullError,
             TinyStrError::NonAscii => ICU4XError::TinyStrNonAsciiError,
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<TimeZoneError> for ICU4XError {
+    fn from(e: TimeZoneError) -> Self {
+        let ret = match e {
+            TimeZoneError::OffsetOutOfBounds => ICU4XError::TimeZoneOffsetOutOfBoundsError,
+            TimeZoneError::InvalidOffset => ICU4XError::TimeZoneInvalidOffsetError,
+            TimeZoneError::DataProvider(err) => err.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);

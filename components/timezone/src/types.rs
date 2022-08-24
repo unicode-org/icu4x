@@ -24,6 +24,16 @@ impl GmtOffset {
         }
     }
 
+    /// Create a [`GmtOffset`] from a seconds input without checking bounds.
+    ///
+    /// # Safety
+    ///
+    /// The seconds must be a valid value as returned by [`Self::raw_offset_seconds`].
+    #[inline]
+    pub unsafe fn from_raw_unchecked(seconds: i32) -> Self {
+        Self(seconds)
+    }
+
     /// Returns the raw offset value in seconds.
     pub fn raw_offset_seconds(&self) -> i32 {
         self.0

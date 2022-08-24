@@ -30,3 +30,4 @@ pub use error::TimeZoneError;
 pub use metazone::MetaZoneCalculator;
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};
+pub use provider::{MetaZoneId, TimeZoneBcp47Id};

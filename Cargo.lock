@@ -1400,6 +1400,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_testdata",
+ "icu_timezone",
  "lazy_static",
  "log",
  "rustdoc-types",
