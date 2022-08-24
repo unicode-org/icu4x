@@ -13,9 +13,9 @@ pub mod ffi {
     use crate::calendar::ffi::ICU4XIsoDateTime;
     use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
-    use crate::tinystr::ffi::TinyAsciiStr2;
-    use crate::tinystr::ffi::TinyAsciiStr4;
-    use crate::tinystr::ffi::TinyAsciiStr8;
+    use crate::tinystr::ffi::ICU4XTinyAsciiStr2;
+    use crate::tinystr::ffi::ICU4XTinyAsciiStr4;
+    use crate::tinystr::ffi::ICU4XTinyAsciiStr8;
     use alloc::boxed::Box;
     use core::str::FromStr;
     use diplomat_runtime::DiplomatResult;
@@ -31,17 +31,17 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct)]
     pub struct ICU4XTimeZoneBcp47Id {
-        pub id: TinyAsciiStr8,
+        pub id: ICU4XTinyAsciiStr8,
     }
 
     #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct)]
     pub struct ICU4XMetaZoneId {
-        pub id: TinyAsciiStr4,
+        pub id: ICU4XTinyAsciiStr4,
     }
 
     #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct)]
     pub struct ICU4XZoneVariant {
-        pub id: TinyAsciiStr2,
+        pub id: ICU4XTinyAsciiStr2,
     }
 
     #[diplomat::rust_link(icu::timezone::CustomTimeZone, Struct)]

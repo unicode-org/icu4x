@@ -12,43 +12,43 @@ pub mod ffi {
     use tinystr::TinyAsciiStr;
 
     #[diplomat::rust_link(tinystr::TinyAsciiStr, Struct)]
-    pub struct TinyAsciiStr1 {
+    pub struct ICU4XTinyAsciiStr1 {
         pub(super) _private_data: u8,
     }
 
-    pub struct OptionTinyAsciiStr1 {
+    pub struct ICU4XOptionalTinyAsciiStr1 {
         pub(super) _private_data: u8,
     }
 
     #[diplomat::rust_link(tinystr::TinyAsciiStr, Struct)]
-    pub struct TinyAsciiStr2 {
+    pub struct ICU4XTinyAsciiStr2 {
         pub(super) _private_data: u16,
     }
 
-    pub struct OptionTinyAsciiStr2 {
+    pub struct ICU4XOptionalTinyAsciiStr2 {
         pub(super) _private_data: u16,
     }
 
     #[diplomat::rust_link(tinystr::TinyAsciiStr, Struct)]
-    pub struct TinyAsciiStr4 {
+    pub struct ICU4XTinyAsciiStr4 {
         pub(super) _private_data: u32,
     }
 
-    pub struct OptionTinyAsciiStr4 {
+    pub struct ICU4XOptionalTinyAsciiStr4 {
         pub(super) _private_data: u32,
     }
 
     #[diplomat::rust_link(tinystr::TinyAsciiStr, Struct)]
-    pub struct TinyAsciiStr8 {
+    pub struct ICU4XTinyAsciiStr8 {
         pub(super) _private_data: u64,
     }
 
-    pub struct OptionTinyAsciiStr8 {
+    pub struct ICU4XOptionalTinyAsciiStr8 {
         pub(super) _private_data: u64,
     }
 
-    impl TinyAsciiStr1 {
-        pub fn create_from_str(s: &str) -> DiplomatResult<TinyAsciiStr1, ICU4XError> {
+    impl ICU4XTinyAsciiStr1 {
+        pub fn create_from_str(s: &str) -> DiplomatResult<ICU4XTinyAsciiStr1, ICU4XError> {
             TinyAsciiStr::<1>::from_str(s)
                 .map(Into::into)
                 .map_err(Into::into)
@@ -68,8 +68,8 @@ pub mod ffi {
         }
     }
 
-    impl OptionTinyAsciiStr1 {
-        pub fn create_some(value: TinyAsciiStr1) -> Self {
+    impl ICU4XOptionalTinyAsciiStr1 {
+        pub fn create_some(value: ICU4XTinyAsciiStr1) -> Self {
             Self {
                 _private_data: value._private_data,
             }
@@ -89,11 +89,11 @@ pub mod ffi {
             self._private_data == u8::MAX
         }
 
-        pub fn get_value(&self) -> DiplomatResult<TinyAsciiStr1, ()> {
+        pub fn get_value(&self) -> DiplomatResult<ICU4XTinyAsciiStr1, ()> {
             if self._private_data == u8::MAX {
                 Err(()).into()
             } else {
-                Ok(TinyAsciiStr1 {
+                Ok(ICU4XTinyAsciiStr1 {
                     _private_data: self._private_data,
                 })
                 .into()
@@ -101,8 +101,8 @@ pub mod ffi {
         }
     }
 
-    impl TinyAsciiStr2 {
-        pub fn create_from_str(s: &str) -> DiplomatResult<TinyAsciiStr2, ICU4XError> {
+    impl ICU4XTinyAsciiStr2 {
+        pub fn create_from_str(s: &str) -> DiplomatResult<ICU4XTinyAsciiStr2, ICU4XError> {
             TinyAsciiStr::<2>::from_str(s)
                 .map(Into::into)
                 .map_err(Into::into)
@@ -122,8 +122,8 @@ pub mod ffi {
         }
     }
 
-    impl OptionTinyAsciiStr2 {
-        pub fn create_some(value: TinyAsciiStr2) -> Self {
+    impl ICU4XOptionalTinyAsciiStr2 {
+        pub fn create_some(value: ICU4XTinyAsciiStr2) -> Self {
             Self {
                 _private_data: value._private_data,
             }
@@ -143,11 +143,11 @@ pub mod ffi {
             self._private_data == u16::MAX
         }
 
-        pub fn get_value(&self) -> DiplomatResult<TinyAsciiStr2, ()> {
+        pub fn get_value(&self) -> DiplomatResult<ICU4XTinyAsciiStr2, ()> {
             if self._private_data == u16::MAX {
                 Err(()).into()
             } else {
-                Ok(TinyAsciiStr2 {
+                Ok(ICU4XTinyAsciiStr2 {
                     _private_data: self._private_data,
                 })
                 .into()
@@ -155,8 +155,8 @@ pub mod ffi {
         }
     }
 
-    impl TinyAsciiStr4 {
-        pub fn create_from_str(s: &str) -> DiplomatResult<TinyAsciiStr4, ICU4XError> {
+    impl ICU4XTinyAsciiStr4 {
+        pub fn create_from_str(s: &str) -> DiplomatResult<ICU4XTinyAsciiStr4, ICU4XError> {
             TinyAsciiStr::<4>::from_str(s)
                 .map(Into::into)
                 .map_err(Into::into)
@@ -176,8 +176,8 @@ pub mod ffi {
         }
     }
 
-    impl OptionTinyAsciiStr4 {
-        pub fn create_some(value: TinyAsciiStr4) -> Self {
+    impl ICU4XOptionalTinyAsciiStr4 {
+        pub fn create_some(value: ICU4XTinyAsciiStr4) -> Self {
             Self {
                 _private_data: value._private_data,
             }
@@ -197,11 +197,11 @@ pub mod ffi {
             self._private_data == u32::MAX
         }
 
-        pub fn get_value(&self) -> DiplomatResult<TinyAsciiStr4, ()> {
+        pub fn get_value(&self) -> DiplomatResult<ICU4XTinyAsciiStr4, ()> {
             if self._private_data == u32::MAX {
                 Err(()).into()
             } else {
-                Ok(TinyAsciiStr4 {
+                Ok(ICU4XTinyAsciiStr4 {
                     _private_data: self._private_data,
                 })
                 .into()
@@ -209,8 +209,8 @@ pub mod ffi {
         }
     }
 
-    impl TinyAsciiStr8 {
-        pub fn create_from_str(s: &str) -> DiplomatResult<TinyAsciiStr8, ICU4XError> {
+    impl ICU4XTinyAsciiStr8 {
+        pub fn create_from_str(s: &str) -> DiplomatResult<ICU4XTinyAsciiStr8, ICU4XError> {
             TinyAsciiStr::<8>::from_str(s)
                 .map(Into::into)
                 .map_err(Into::into)
@@ -230,8 +230,8 @@ pub mod ffi {
         }
     }
 
-    impl OptionTinyAsciiStr8 {
-        pub fn create_some(value: TinyAsciiStr8) -> Self {
+    impl ICU4XOptionalTinyAsciiStr8 {
+        pub fn create_some(value: ICU4XTinyAsciiStr8) -> Self {
             Self {
                 _private_data: value._private_data,
             }
@@ -251,11 +251,11 @@ pub mod ffi {
             self._private_data == u64::MAX
         }
 
-        pub fn get_value(&self) -> DiplomatResult<TinyAsciiStr8, ()> {
+        pub fn get_value(&self) -> DiplomatResult<ICU4XTinyAsciiStr8, ()> {
             if self._private_data == u64::MAX {
                 Err(()).into()
             } else {
-                Ok(TinyAsciiStr8 {
+                Ok(ICU4XTinyAsciiStr8 {
                     _private_data: self._private_data,
                 })
                 .into()
@@ -296,10 +296,10 @@ macro_rules! impl_tinystr_convert {
     };
 }
 
-impl_tinystr_convert!(1, ffi::TinyAsciiStr1, u8);
-impl_tinystr_convert!(2, ffi::TinyAsciiStr2, u16);
-impl_tinystr_convert!(4, ffi::TinyAsciiStr4, u32);
-impl_tinystr_convert!(8, ffi::TinyAsciiStr8, u64);
+impl_tinystr_convert!(1, ffi::ICU4XTinyAsciiStr1, u8);
+impl_tinystr_convert!(2, ffi::ICU4XTinyAsciiStr2, u16);
+impl_tinystr_convert!(4, ffi::ICU4XTinyAsciiStr4, u32);
+impl_tinystr_convert!(8, ffi::ICU4XTinyAsciiStr8, u64);
 
 macro_rules! impl_option_tinystr_convert {
     ($n:literal, $ffi_t:path, $utype: ident) => {
@@ -324,7 +324,7 @@ macro_rules! impl_option_tinystr_convert {
     };
 }
 
-impl_option_tinystr_convert!(1, ffi::OptionTinyAsciiStr1, u8);
-impl_option_tinystr_convert!(2, ffi::OptionTinyAsciiStr2, u16);
-impl_option_tinystr_convert!(4, ffi::OptionTinyAsciiStr4, u32);
-impl_option_tinystr_convert!(8, ffi::OptionTinyAsciiStr8, u64);
+impl_option_tinystr_convert!(1, ffi::ICU4XOptionalTinyAsciiStr1, u8);
+impl_option_tinystr_convert!(2, ffi::ICU4XOptionalTinyAsciiStr2, u16);
+impl_option_tinystr_convert!(4, ffi::ICU4XOptionalTinyAsciiStr4, u32);
+impl_option_tinystr_convert!(8, ffi::ICU4XOptionalTinyAsciiStr8, u64);
