@@ -57,6 +57,7 @@ impl From<U24> for u32 {
 
 #[derive(Debug, Copy, Clone, PartialEq, Eq)]
 #[non_exhaustive]
+/// Error
 pub enum U24Error {
     /// Value is out of range of a U24
     Limit,
