@@ -109,7 +109,9 @@ lazy_static::lazy_static! {
         "ZeroFrom",
     ].into_iter().collect();
 
-    static ref ALLOWLISTED_PATHS: HashSet<Vec<String>> = [
+    // Paths which are not checked for FFI coverage. Naming a type or module here
+    // will include all type methods and module contents.
+    static ref IGNORED_PATHS: HashSet<Vec<String>> = [
         // Stuff that could be exposed over FFI but is not currently planned
         // =========================
         // Largely for use by datetimeformat, not super public (#2421)
@@ -201,7 +203,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         path_already_extended: bool,
         inside: Option<In>,
     ) {
-        /// Helper function that ensures that ALLOWLISTED_PATHS
+        /// Helper function that ensures that IGNORED_PATHS
         /// is respected for every type inserted
         ///
         /// (We have a check at the beginning of recurse() but that won't catch leaf nodes)
@@ -210,11 +212,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             path: Vec<String>,
             ty: ast::DocType,
         ) {
-            if !ALLOWLISTED_PATHS.contains(&path) {
+            if !IGNORED_PATHS.contains(&path) {
                 types.insert((path, ty));
             }
         }
-        if ALLOWLISTED_PATHS.contains(&path) {
+        if IGNORED_PATHS.contains(&path) {
             return;
         }
         match &item.inner {
