@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661373354342,
+  "lastUpdate": 1661373363752,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25223,6 +25223,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/58e0bfa5aef0774581a388070fdcfaacb3155f93"
         },
         "date": 1661373301275,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df54446afc4b9f154edc92882e6e42dd26b05a5c",
+          "message": "Better rust_link handling; add module-based allowlist (#2440)\n\n* update diplomat\r\n\r\n* Update smallvec\r\n\r\n* Update completeness test\r\n\r\n* Add module allowlist to completeness test\r\n\r\n* prepopulate\r\n\r\n* diplomatup again\r\n\r\n* regen\r\n\r\n* fix list\r\n\r\n* name",
+          "timestamp": "2022-08-24T20:33:49Z",
+          "tree_id": "fbf38a655fbd52e910e62b3603d4179cc4574242",
+          "url": "https://github.com/unicode-org/icu4x/commit/df54446afc4b9f154edc92882e6e42dd26b05a5c"
+        },
+        "date": 1661373317910,
         "tool": "ndjson",
         "benches": [
           {
