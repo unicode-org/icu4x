@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661364125959,
+  "lastUpdate": 1661373997821,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -64091,6 +64091,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4493,
             "range": "± 1089",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "df54446afc4b9f154edc92882e6e42dd26b05a5c",
+          "message": "Better rust_link handling; add module-based allowlist (#2440)\n\n* update diplomat\r\n\r\n* Update smallvec\r\n\r\n* Update completeness test\r\n\r\n* Add module allowlist to completeness test\r\n\r\n* prepopulate\r\n\r\n* diplomatup again\r\n\r\n* regen\r\n\r\n* fix list\r\n\r\n* name",
+          "timestamp": "2022-08-24T20:33:49Z",
+          "tree_id": "fbf38a655fbd52e910e62b3603d4179cc4574242",
+          "url": "https://github.com/unicode-org/icu4x/commit/df54446afc4b9f154edc92882e6e42dd26b05a5c"
+        },
+        "date": 1661373954055,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 95170,
+            "range": "± 746",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 187569,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 87088,
+            "range": "± 1519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 93612,
+            "range": "± 739",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 95700,
+            "range": "± 362",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 102475,
+            "range": "± 354",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 178927,
+            "range": "± 1184",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 190555,
+            "range": "± 410",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 187575,
+            "range": "± 782",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 201259,
+            "range": "± 877",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5037,
+            "range": "± 17",
             "unit": "ns/iter"
           }
         ]
