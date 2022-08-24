@@ -3,7 +3,7 @@
 
  * The sign of a FixedDecimal, as shown in formatting.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/enum.Sign.html Rust documentation} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/enum.Sign.html Rust documentation for `Sign`} for more information.
  */
 export enum ICU4XFixedDecimalSign {
   /**

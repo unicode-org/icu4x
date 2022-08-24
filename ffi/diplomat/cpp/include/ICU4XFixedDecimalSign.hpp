@@ -16,7 +16,7 @@
 /**
  * The sign of a FixedDecimal, as shown in formatting.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/enum.Sign.html) for more information.
+ * See the [Rust documentation for `Sign`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/enum.Sign.html) for more information.
  */
 enum struct ICU4XFixedDecimalSign {
 

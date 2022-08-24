@@ -5,7 +5,7 @@ import { ICU4XLocale } from "./ICU4XLocale";
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html Rust documentation} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html Rust documentation for `AnyCalendar`} for more information.
  */
 export class ICU4XCalendar {
 
@@ -13,7 +13,7 @@ export class ICU4XCalendar {
 
    * Creates a new {@link ICU4XCalendar `ICU4XCalendar`} from the specified date and time.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale): ICU4XCalendar | never;
