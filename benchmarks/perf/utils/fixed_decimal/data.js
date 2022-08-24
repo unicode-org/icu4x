@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661374010603,
+  "lastUpdate": 1661374017982,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -47062,6 +47062,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/write_to/908070605040302010",
             "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "58e0bfa5aef0774581a388070fdcfaacb3155f93",
+          "message": "Move mock datetime parsing code to test modules (#2436)\n\n* rm parse_gregorian usage\r\n\r\n* update work_log.wasm\r\n\r\n* Move mock over to tests\r\n\r\n* gregorian -> iso\r\n\r\n* revert work_log\r\n\r\n* fmt\r\n\r\n* readme\r\n\r\n* fix",
+          "timestamp": "2022-08-24T20:33:24Z",
+          "tree_id": "f14945dfe3610e0eb7ac69435d626368a7addb28",
+          "url": "https://github.com/unicode-org/icu4x/commit/58e0bfa5aef0774581a388070fdcfaacb3155f93"
+        },
+        "date": 1661373970605,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 107519,
+            "range": "± 708",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21552,
+            "range": "± 98",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66359,
+            "range": "± 349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 171,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 70,
             "range": "± 0",
             "unit": "ns/iter"
           },
