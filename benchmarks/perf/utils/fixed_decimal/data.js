@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661288762510,
+  "lastUpdate": 1661351511778,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -46769,6 +46769,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 78,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "64a4d74411aeaa92e91a41027ca35cb4503f2576",
+          "message": "Add comment about inline(always) in CodePointTrie (#2443)",
+          "timestamp": "2022-08-24T07:19:41-07:00",
+          "tree_id": "f7cbef6a919a1cbdfe969a573e98fa72423fb9fa",
+          "url": "https://github.com/unicode-org/icu4x/commit/64a4d74411aeaa92e91a41027ca35cb4503f2576"
+        },
+        "date": 1661351461485,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105604,
+            "range": "± 464",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 21269,
+            "range": "± 101",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66280,
+            "range": "± 229",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 171,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 66,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
