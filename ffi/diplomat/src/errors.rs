@@ -67,9 +67,9 @@ pub mod ffi {
         PropertyUnknownScriptIdError = 0x4_00,
         PropertyUnknownGeneralCategoryGroupError = 0x4_01,
 
-        // decimal errors
-        DecimalLimitError = 0x5_00,
-        DecimalSyntaxError = 0x5_01,
+        // fixed_decimal errors
+        FixedDecimalLimitError = 0x5_00,
+        FixedDecimalSyntaxError = 0x5_01,
 
         // plural errors
         PluralParserError = 0x6_00,
@@ -228,8 +228,8 @@ impl From<DateTimeFormatterError> for ICU4XError {
 impl From<DecimalError> for ICU4XError {
     fn from(e: DecimalError) -> Self {
         let ret = match e {
-            DecimalError::Limit => ICU4XError::DecimalLimitError,
-            DecimalError::Syntax => ICU4XError::DecimalSyntaxError,
+            DecimalError::Limit => ICU4XError::FixedDecimalLimitError,
+            DecimalError::Syntax => ICU4XError::FixedDecimalSyntaxError,
         };
         log_conversion(&e, ret);
         ret
