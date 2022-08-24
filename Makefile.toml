@@ -83,7 +83,7 @@ dependencies = [
 description = "Run all tests for the CI 'verify-ffi' job"
 category = "CI"
 dependencies = [
-    "test-verify-ffi",
+    "verify-ffi",
 ]
 
 
