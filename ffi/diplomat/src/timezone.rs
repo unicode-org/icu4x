@@ -10,7 +10,8 @@ use icu_timezone::ZoneVariant;
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::errors::ffi::ICU4XError;
+    use crate::provider::ffi::ICU4XDataProvider;
+use crate::errors::ffi::ICU4XError;
     use crate::tinystr::ffi::TinyAsciiStr2;
     use crate::tinystr::ffi::TinyAsciiStr4;
     use crate::tinystr::ffi::TinyAsciiStr8;
@@ -20,19 +21,24 @@ pub mod ffi {
     use icu_timezone::CustomTimeZone;
     use icu_timezone::GmtOffset;
     use icu_timezone::ZoneVariant;
+    use icu_timezone::MetaZoneCalculator;
 
+    #[diplomat::rust_link(icu::timezone::GmtOffset, Struct)]
     pub struct ICU4XGmtOffset {
         pub(super) data: i32,
     }
 
+    #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct)]
     pub struct ICU4XTimeZoneBcp47Id {
         pub id: TinyAsciiStr8,
     }
 
+    #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct)]
     pub struct ICU4XMetaZoneId {
         pub id: TinyAsciiStr4,
     }
 
+    #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct)]
     pub struct ICU4XZoneVariant {
         pub id: TinyAsciiStr2,
     }
@@ -44,6 +50,10 @@ pub mod ffi {
         pub metazone_id: Option<ICU4XMetaZoneId>,
         pub zone_variant: Option<ICU4XZoneVariant>,
     }
+
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu::timezone::MetaZoneCalculator, Struct)]
+    pub struct ICU4XMetaZoneCalculator(pub MetaZoneCalculator);
 
     impl ICU4XGmtOffset {
         pub fn create_from_str(s: &str) -> DiplomatResult<ICU4XGmtOffset, ICU4XError> {
@@ -113,6 +123,25 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
+
+        // TODO: Add maybe_set_metazone once DateTime has FFI
+    }
+
+    impl ICU4XMetaZoneCalculator {
+        #[diplomat::rust_link(icu::timezone::MetaZoneCalculator::try_new_unstable, FnInStruct)]
+        pub fn try_new(
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<Box<ICU4XMetaZoneCalculator>, ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+
+            MetaZoneCalculator::try_new_unstable(&provider)
+                .map(|tf| Box::new(ICU4XMetaZoneCalculator(tf)))
+                .map_err(Into::into)
+                .into()
+        }
+
+        // TODO: Add compute_metazone_from_timezone once DateTime has FFI
     }
 }
 
