@@ -9,12 +9,18 @@ description = "Run FFI tests"
 category = "ICU4X Development"
 dependencies = [
     "cargo-make-min-version",
-    "verify-diplomat-gen",
     "test-c",
     "test-c-tiny",
     "test-cpp",
     "build-wearos-ffi",
     "test-nostd",
+]
+
+[tasks.verify-ffi]
+description = "Run FFI tests that verify checked in code is up to date"
+category = "ICU4X Development"
+dependencies = [
+    "verify-diplomat-gen",
     "verify-diplomat-coverage",
 ]
 
