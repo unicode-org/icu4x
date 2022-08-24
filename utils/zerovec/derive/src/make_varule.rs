@@ -311,7 +311,7 @@ fn make_encode_impl(
             let ty = &field.field.ty;
             let accessor = &field.accessor;
             quote!(
-                #[allow(clippy::indexing_slicing)] // TODO explain
+                #[allow(clippy::indexing_slicing)] // generate_per_field_offsets produces valid indices
                 let out = &mut dst[#prev_offset_ident .. #prev_offset_ident + #size_ident];
                 let unaligned = zerovec::ule::AsULE::to_unaligned(self.#accessor);
                 let unaligned_slice = &[unaligned];
@@ -322,9 +322,8 @@ fn make_encode_impl(
     );
 
     let last_encode_len = unsized_field_info.encode_len();
-    let last_encode_write = unsized_field_info.encode_write(quote!(dst[#remaining_offset..]));
+    let last_encode_write = unsized_field_info.encode_write(quote!(out));
     quote!(
-        #[allow(clippy::indexing_slicing)] // known to be in range
         unsafe impl #maybe_lt_bound zerovec::ule::EncodeAsVarULE<#ule_name> for #name #maybe_lt_bound {
             // Safety: unimplemented as the other two are implemented
             fn encode_var_ule_as_slices<R>(&self, cb: impl FnOnce(&[&[u8]]) -> R) -> R {
@@ -341,6 +340,8 @@ fn make_encode_impl(
                 debug_assert_eq!(self.encode_var_ule_len(), dst.len());
                 #encoders
 
+                #[allow(clippy::indexing_slicing)] // generate_per_field_offsets produces valid remainder
+                let out = &mut dst[#remaining_offset..];
                 #last_encode_write
             }
         }
@@ -456,7 +457,7 @@ impl<'a> UnsizedFields<'a> {
     // Takes all unsized fields on self and encodes them into a byte slice `out`
     fn encode_write(&self, out: TokenStream2) -> TokenStream2 {
         if self.fields.len() == 1 {
-            self.fields[0].encode_func(quote!(encode_var_ule_write), quote!(&mut #out))
+            self.fields[0].encode_func(quote!(encode_var_ule_write), quote!(#out))
         } else {
             let mut lengths = vec![];
             let mut writers = vec![];
@@ -470,8 +471,7 @@ impl<'a> UnsizedFields<'a> {
 
             quote!(
                 let lengths = [#(#lengths),*];
-                #[allow(clippy::indexing_slicing)] // TODO explain
-                let mut multi = zerovec::ule::MultiFieldsULE::new_from_lengths_partially_initialized(&lengths, &mut #out);
+                let mut multi = zerovec::ule::MultiFieldsULE::new_from_lengths_partially_initialized(&lengths, #out);
                 unsafe {
                     #(#writers;)*
                 }

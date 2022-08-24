@@ -11,8 +11,8 @@
         clippy::unwrap_used,
         clippy::expect_used,
         clippy::panic,
-        // TODO(#1668): enable clippy::exhaustive_structs,
-        // TODO(#1668): enable clippy::exhaustive_enums,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]

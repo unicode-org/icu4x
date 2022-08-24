@@ -47,6 +47,7 @@ use stable_deref_trait::StableDeref;
 /// assert_eq!(*y5.get(), "borrowed hello world");
 /// ```
 #[derive(Clone, PartialEq, Eq)]
+#[allow(clippy::exhaustive_enums)] // stable
 pub enum EitherCart<C0, C1> {
     A(C0),
     B(C1),
