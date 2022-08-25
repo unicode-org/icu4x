@@ -741,7 +741,6 @@ where
         debug_assert!(self.pending.is_none());
         let c = self.delegate.next()?;
 
-        // TODO: Measure if this check is actually an optimization even in the
         // TODO(#2384): Measure if this check is actually an optimization even in the
         // non-supplementary case of if this should go inside the supplementary
         // `if` below.
