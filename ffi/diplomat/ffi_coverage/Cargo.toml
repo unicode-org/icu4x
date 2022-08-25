@@ -5,7 +5,8 @@
 [package]
 name = "icu_ffi_coverage"
 description = "C interface to ICU4X"
-version = "1.0.0-alpha1"
+version = "0.0.1"
+publish = false
 authors = ["The ICU4X Project Developers"]
 edition = "2021"
 resolver = "2"
@@ -23,7 +24,6 @@ include = [
     "LICENSE",
     "README.md"
 ]
-publish = false
 
 [package.metadata.docs.rs]
 all-features = true
