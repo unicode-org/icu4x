@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661374008508,
+  "lastUpdate": 1661410116220,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -64271,6 +64271,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5047,
             "range": "± 28",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "832401abdb7f0d878f94949d9075504110796407",
+          "message": "Optimize normalizers for contiguous-memory input/output case (#2378)",
+          "timestamp": "2022-08-25T09:34:48+03:00",
+          "tree_id": "7ef0559b171700fc26fc23a7c0957d9abbd18f7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/832401abdb7f0d878f94949d9075504110796407"
+        },
+        "date": 1661410064996,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 121029,
+            "range": "± 11008",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 223164,
+            "range": "± 30207",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 111882,
+            "range": "± 8707",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 115692,
+            "range": "± 10267",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 120456,
+            "range": "± 9102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 141146,
+            "range": "± 10009",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 223987,
+            "range": "± 18182",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 255347,
+            "range": "± 22315",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 221228,
+            "range": "± 20786",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 254788,
+            "range": "± 22674",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5765,
+            "range": "± 721",
             "unit": "ns/iter"
           }
         ]
