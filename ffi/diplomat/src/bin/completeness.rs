@@ -176,7 +176,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 .join("../../target/doc")
                 .join(krate)
                 .with_extension("json");
-            println!("Attempting to load {:?}", path);
+            eprintln!("Attempting to load {:?}", path);
             CRATES.insert(
                 krate.to_string(),
                 serde_json::from_reader(File::open(&path).unwrap()).unwrap(),
