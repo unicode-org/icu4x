@@ -172,7 +172,6 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 ])
                 .output()
                 .expect("failed to execute rustdoc");
-            eprintln!("{:?}", output);
             let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
                 .join("../../target/doc")
                 .join(krate)
