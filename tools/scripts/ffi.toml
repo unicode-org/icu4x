@@ -84,7 +84,6 @@ dependencies = [
 [tasks.test-c]
 description = "Run C API tests"
 category = "ICU4X Development"
-dependencies = [ "diplomat-gen-c" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -99,7 +98,6 @@ exec --fail-on-error make
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
-dependencies = [ "diplomat-gen-c" ]
 install_crate = { rustup_component_name = "rust-src" }
 script_runner = "@duckscript"
 script = '''
@@ -112,7 +110,6 @@ exec ls -l
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
-dependencies = [ "diplomat-gen-cpp" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
