@@ -1595,7 +1595,7 @@ dependencies = [
 
 [[package]]
 name = "icu_ffi_coverage"
-version = "1.0.0-alpha1"
+version = "0.0.1"
 dependencies = [
  "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat)",
  "elsa",
