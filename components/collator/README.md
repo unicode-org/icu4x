@@ -9,113 +9,194 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 which allow it to collect necessary data from the data provider, and once
 instantiated, can be used to compare strings.
 
-### Development environment (on Linux) for fuzzing and generating data
+Refer to the ICU User Guide sections for Collation that give an
+[introduction](https://unicode-org.github.io/icu/userguide/collation/) and explain
+[basic concepts](https://unicode-org.github.io/icu/userguide/collation/concepts.html).
 
-These notes assume that ICU4X itself has been cloned to `$PROJECTS/icu4x`.
+## Examples
 
-Clone ICU4C from <https://github.com/hsivonen/icu> to `$PROJECTS/icu` and switch
-to the branch `icu4x-collator`.
+As its most basic purpose, `Collator` offers locale-aware ordering:
 
-Create a directory `$PROJECTS/localicu`
+```rust
+use core::cmp::Ordering;
+use icu_collator::*;
+use icu_locid::{Locale, langid};
 
-Create a directory `$PROJECTS/icu-build` and `cd` into it.
+let data_provider = icu_testdata::get_provider();
 
-Run `../icu/icu4c/source/runConfigureICU --enable-debug Linux --prefix $PROJECTS/localicu --enable-static`
+let locale_es: Locale = langid!("es").into();
+let mut options = CollatorOptions::new();
+options.set_strength(Some(Strength::Primary));
+let collator_es: Collator =
+    Collator::try_new_unstable(&data_provider, &locale_es.into(), options).unwrap();
 
-Run `make`
+assert_eq!(collator_es.compare("manna", "mañana"), Ordering::Less);
 
-#### Generating data
+let locale_en: Locale = langid!("en").into();
+let mut options = CollatorOptions::new();
+options.set_strength(Some(Strength::Primary));
+let collator_en: Collator =
+    Collator::try_new_unstable(&data_provider, &locale_en.into(), options).unwrap();
+
+assert_eq!(collator_en.compare("manna", "mañana"), Ordering::Greater);
+
+```
+
+### Examples of [`CollatorOptions`]
+
+The [`CollatorOptions`] struct configures specific custom behavior for the `Collator`.  See docs
+for [`CollatorOptions`] for more details.  Some basic descriptions and examples are below.
+
+### Strength
+
+The degree of sensitivity in how to determine that strings are distinct.
+
+```rust
+use core::cmp::Ordering;
+use icu_collator::*;
+
+let data_provider = icu_testdata::get_provider();
+
+// Primary Level
+
+let mut options_l1 = CollatorOptions::new();
+options_l1.set_strength(Some(Strength::Primary));
+let collator_l1: Collator =
+    Collator::try_new_unstable(&data_provider, &Default::default(), options_l1).unwrap();
+
+assert_eq!(collator_l1.compare("a", "b"), Ordering::Less);  // primary
+assert_eq!(collator_l1.compare("as", "às"), Ordering::Equal);  // secondary
+assert_eq!(collator_l1.compare("às", "at"), Ordering::Less);
+assert_eq!(collator_l1.compare("ao", "Ao"), Ordering::Equal);  // tertiary
+assert_eq!(collator_l1.compare("Ao", "aò"), Ordering::Equal);
+assert_eq!(collator_l1.compare("A", "Ⓐ"), Ordering::Equal);
+
+// Secondary Level
+
+let mut options_l2 = CollatorOptions::new();
+options_l2.set_strength(Some(Strength::Secondary));
+let collator_l2: Collator =
+    Collator::try_new_unstable(&data_provider, &Default::default(), options_l2).unwrap();
+
+assert_eq!(collator_l2.compare("a", "b"), Ordering::Less);  // primary
+assert_eq!(collator_l2.compare("as", "às"), Ordering::Less);  // secondary
+assert_eq!(collator_l2.compare("às", "at"), Ordering::Less);
+assert_eq!(collator_l2.compare("ao", "Ao"), Ordering::Equal);  // tertiary
+assert_eq!(collator_l2.compare("Ao", "aò"), Ordering::Less);
+assert_eq!(collator_l2.compare("A", "Ⓐ"), Ordering::Equal);
+
+// Tertiary Level
+
+let mut options_l3 = CollatorOptions::new();
+options_l3.set_strength(Some(Strength::Tertiary));
+let collator_l3: Collator =
+    Collator::try_new_unstable(&data_provider, &Default::default(), options_l3).unwrap();
+
+assert_eq!(collator_l3.compare("a", "b"), Ordering::Less);  // primary
+assert_eq!(collator_l3.compare("as", "às"), Ordering::Less);  // secondary
+assert_eq!(collator_l3.compare("às", "at"), Ordering::Less);
+assert_eq!(collator_l3.compare("ao", "Ao"), Ordering::Less);  // tertiary
+assert_eq!(collator_l3.compare("Ao", "aò"), Ordering::Less);
+assert_eq!(collator_l3.compare("A", "Ⓐ"), Ordering::Less);
+```
+
+### Alternate Handling
+
+Allows alternate handling for certain customized collation orderings, including the option to
+ignore the special handling for the strings of such customizations.
+
+### Case Level
+
+Whether to distinguish case in sorting, even for sorting levels higher than tertiary,
+without having to use tertiary level just to enable case level differences.
+
+```rust
+use core::cmp::Ordering;
+use icu_collator::*;
+
+// Primary
+
+let data_provider = icu_testdata::get_provider();
+let mut options = CollatorOptions::new();
+options.set_strength(Some(Strength::Primary));
+options.set_case_level(Some(false));
+let primary =
+  Collator::try_new_with_buffer_provider(&data_provider,
+                    &Default::default(),
+                    options).unwrap();
+
+assert_eq!(primary.compare("DEAL", "ⓓⓔⓐⓛ"), Ordering::Equal);
+assert_eq!(primary.compare("ⓓⓔⓐⓛ", "déjavu"), Ordering::Less);
+assert_eq!(primary.compare("déjavu", "dent"), Ordering::Less);
+assert_eq!(primary.compare("dent", "develop"), Ordering::Less);
+
+// Primary with case level on
+
+options.set_strength(Some(Strength::Primary));
+options.set_case_level(Some(true));
+let primary_and_case =
+  Collator::try_new_with_buffer_provider(&data_provider,
+                    &Default::default(),
+                    options).unwrap();
+
+assert_eq!(primary_and_case.compare("DEAL", "ⓓⓔⓐⓛ"), Ordering::Equal);
+assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "déjavu"), Ordering::Less);
+assert_eq!(primary_and_case.compare("déjavu", "dent"), Ordering::Less);
+assert_eq!(primary_and_case.compare("dent", "develop"), Ordering::Less);
+
+// Tertiary
+
+options.set_strength(Some(Strength::Tertiary));
+options.set_case_level(Some(false));
+let tertiary =
+  Collator::try_new_with_buffer_provider(&data_provider,
+                    &Default::default(),
+                    options).unwrap();
+
+assert_eq!(tertiary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
+assert_eq!(tertiary.compare("DEAL", "déjavu"), Ordering::Less);
+assert_eq!(tertiary.compare("déjavu", "dent"), Ordering::Less);
+assert_eq!(tertiary.compare("dent", "develop"), Ordering::Less);
 
 
+```
 
-#### Testing
+### Case First
 
-`cargo test --features serde`
+Whether to swap the ordering of uppercase and lowercase.
 
-#### Fuzzing
+### Backward second level
 
-`cargo install cargo-fuzz`
+Compare the second level in backward order.
 
-Clone `rust_icu` from <https://github.com/google/rust_icu> to `$PROJECTS/rust_icu`.
+### Numeric
 
-In `$PROJECTS/icu-build` run `make install`.
+When set to `true` (on), any sequence of decimal
+digits is sorted at a primary level accoding to the
+numeric value.
 
-`cd $PROJECTS/icu4x/components/collator`
+```rust
+use core::cmp::Ordering;
+use icu_collator::*;
 
-Run the fuzzer until a panic:
+let data_provider = icu_testdata::get_provider();
 
-`PKG_CONFIG_PATH="$PROJECTS/localicu/lib/pkgconfig" PATH="$PROJECTS/localicu/bin:$PATH" LD_LIBRARY_PATH="/$PROJECTS/localicu/lib" RUSTC_BOOTSTRAP=1 cargo +stable fuzz run compare_utf16`
+// Numerical sorting off
 
-Once there is a panic, recompile with debug symbols by adding `--dev`:
+let mut options_num_off = CollatorOptions::new();
+options_num_off.set_numeric(Some(false));
+let collator_num_off: Collator =
+    Collator::try_new_unstable(&data_provider, &Default::default(), options_num_off).unwrap();
+assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 
-`PKG_CONFIG_PATH="$PROJECTS/localicu/lib/pkgconfig" PATH="$PROJECTS/localicu/bin:$PATH" LD_LIBRARY_PATH="$PROJECTS/localicu/lib" RUSTC_BOOTSTRAP=1 cargo +stable fuzz run --dev compare_utf16 fuzz/artifacts/compare_utf16/crash-$ARTIFACTHASH`
+// Numerical sorting on
 
-Record with
-
-`LD_LIBRARY_PATH="$PROJECTS/localicu/lib" rr fuzz/target/x86_64-unknown-linux-gnu/debug/compare_utf16 -artifact_prefix=$PROJECTS/icu4x/components/collator/fuzz/artifacts/compare_utf16/ fuzz/artifacts/compare_utf16/crash-$ARTIFACTHASH`
-
-## Design notes
-
-* The collation element design comes from ICU4C. Some parts of the ICU4C design, notably,
-  `Tag::BuilderDataTag`, `Tag::LeadSurrogateTag`, `Tag::LatinExpansionTag`, `Tag::U0000Tag`,
-  and `Tag::HangulTag` are unused.
-  - `Tag::LatinExpansionTag` might be reallocated to search expansions for archaic jamo
-    in the future.
-  - `Tag::HangulTag` might be reallocated to compressed hanja expansions in the future.
-    See [issue 1315](https://github.com/unicode-org/icu4x/issues/1315).
-* The key design difference between ICU4C and ICU4X is that ICU4C puts the canonical
-  closure in the data (larger data) to enable lookup directly by precomposed characters
-  while ICU4X always omits the canonical closure and always normalizes to NFD on the fly.
-* Compared to ICU4C, normalization cannot be turned off. There also isn't a separate
-  "Fast Latin" mode.
-* The normalization is fused into the collation element lookup algorithm to optimize the
-  case where an input character decomposes into two BMP characters: a base letter and a
-  diacritic.
-  - To optimize away a trie lookup when the combining diacritic doesn't contract,
-    there is a linear lookup table for the combining diacritics block. Three languages
-    tailor diacritics: Ewe, Lithuanian, and Vietnamese. Vietnamese and Ewe load an
-    alternative table. The Lithuanian special cases are hard-coded and activatable by
-    a metadata bit.
-* Unfortunately, contractions that contract starters don't fit this model nicely. Therefore,
-  there's duplicated normalization code for normalizing the lookahead for contractions.
-  This code can, in principle, do duplicative work, but it shouldn't be excessive with
-  real-world inputs.
-* As a result, in terms of code provenance, the algorithms come from ICU4C, except the
-  normalization part of the code is novel to ICU4X, and the contraction code is custom
-  to ICU4X despite being informed by ICU4C.
-* The way input characters are iterated over and resulting collation elements are
-  buffered is novel to ICU4X.
-* ICU4C can iterate backwards but ICU4X cannot. ICU4X keeps a buffer of the two most
-  recent characters for handling prefixes. As of CLDR 40, there were only two kinds
-  of prefixes: a single starter and a starter followed by a kana voicing mark.
-* ICU4C sorts unpaired surrogates in their lexical order. ICU4X operates on Unicode
-  [scalar values](https://unicode.org/glossary/#unicode_scalar_value) (any Unicode
-  code point except high-surrogate and low-surrogate code points), so unpaired
-  surrogates sort as REPLACEMENT CHARACTERs. Therefore, all unpaired
-  surrogates are equal with each other.
-* Skipping over a bit-identical prefix and then going back over "backward-unsafe"
-  characters is currently unimplemented but isn't architecturally precluded.
-* Hangul is handled specially:
-  - Precomposed syllables are checked for as the first step of processing an
-    incoming character.
-  - Individual jamo are lookup up from a linear table instead of a trie. Unlike
-    in ICU4C, this table covers the whole Unicode block whereas in ICU4C it covers
-    only modern jamo for use in decomposing the precomposed syllables. The point
-    is that search collations have a lot of duplicative (across multiple search)
-    collations data for making archaic jamo searchable by modern jamo.
-    Unfortunately, the shareable part isn't currently actually shareable, because
-    the tailored CE32s refer to the expansions table in each collation. To make
-    them truly shareable, the archaic jamo expansions need to become self-contained
-    the way Latin mini expansions in ICU4C are self-contained.
-
-    One possible alternative to loading a different table for "search" would be
-    performing the mapping of archaic jamo to the modern approximations as a
-    special preprocessing step for the incoming characters, which would allow
-    the lookup of the resulting modern jamo from the normal root jamo table.
-
-    "searchjl" is even more problematic than "search", since "searchjl" uses
-    prefixes matches with jamo, and currently Hangul is assumed not to participate
-    in prefix or contraction matching.
+let mut options_num_on = CollatorOptions::new();
+options_num_on.set_numeric(Some(true));
+let collator_num_on: Collator =
+    Collator::try_new_unstable(&data_provider, &Default::default(), options_num_on).unwrap();
+assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
+```
 
 ## More Information
 
