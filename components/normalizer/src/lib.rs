@@ -127,8 +127,8 @@ impl SupplementPayloadHolder {
 /// about 1, 2, 4, or 8 pages.
 ///
 /// Curiously, the `str` case does not appear to benefit from
-/// similar flushing, though the tested monomorpization never
-/// pass an error through from `Write`.
+/// similar flushing, though the tested monomorphization never
+/// passes an error through from `Write`.
 const UTF16_FAST_PATH_FLUSH_THRESHOLD: usize = 4096;
 
 /// Marker for starters that decompose to themselves but may
