@@ -737,7 +737,7 @@ name = "diplomat"
 version = "0.3.0"
 source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 dependencies = [
- "diplomat_core",
+ "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356)",
  "proc-macro2",
  "quote",
  "syn",
@@ -752,6 +752,22 @@ source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0b
 name = "diplomat_core"
 version = "0.3.0"
 source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
+dependencies = [
+ "impls",
+ "lazy_static",
+ "proc-macro2",
+ "quote",
+ "rustdoc-types 0.11.0",
+ "serde",
+ "smallvec",
+ "strck_ident",
+ "syn",
+]
+
+[[package]]
+name = "diplomat_core"
+version = "0.3.0"
+source = "git+https://github.com/rust-diplomat/diplomat#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 dependencies = [
  "impls",
  "lazy_static",
@@ -1371,8 +1387,6 @@ version = "1.0.0-alpha1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
- "diplomat_core",
- "elsa",
  "fixed_decimal",
  "icu_calendar",
  "icu_collections",
@@ -1388,12 +1402,8 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_testdata",
- "lazy_static",
  "log",
- "rustdoc-types 0.10.0",
- "serde_json",
  "simple_logger",
- "syn-inline-mod",
  "tinystr 0.6.2",
  "unicode-bidi",
  "writeable",
@@ -1581,6 +1591,18 @@ dependencies = [
  "rand_pcg",
  "serde",
  "writeable",
+]
+
+[[package]]
+name = "icu_ffi_coverage"
+version = "1.0.0-alpha1"
+dependencies = [
+ "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat)",
+ "elsa",
+ "lazy_static",
+ "rustdoc-types 0.10.0",
+ "serde_json",
+ "syn-inline-mod",
 ]
 
 [[package]]

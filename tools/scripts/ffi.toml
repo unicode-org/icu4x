@@ -39,7 +39,7 @@ install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make
 description = "Produces the list of ICU APIs that are not exported through Diplomat"
 category = "ICU4X Development"
 script = '''
-cargo run --bin completeness --all-features > ffi/diplomat/tests/missing_apis.txt
+cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/tests/missing_apis.txt
 '''
 
 [tasks.verify-diplomat-coverage]
