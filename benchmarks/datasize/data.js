@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661373363752,
+  "lastUpdate": 1661409420181,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25253,6 +25253,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/df54446afc4b9f154edc92882e6e42dd26b05a5c"
         },
         "date": 1661373317910,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "832401abdb7f0d878f94949d9075504110796407",
+          "message": "Optimize normalizers for contiguous-memory input/output case (#2378)",
+          "timestamp": "2022-08-25T09:34:48+03:00",
+          "tree_id": "7ef0559b171700fc26fc23a7c0957d9abbd18f7e",
+          "url": "https://github.com/unicode-org/icu4x/commit/832401abdb7f0d878f94949d9075504110796407"
+        },
+        "date": 1661409372559,
         "tool": "ndjson",
         "benches": [
           {
