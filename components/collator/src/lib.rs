@@ -129,7 +129,59 @@
 //!
 //! ## Case Level
 //!
-//! Whether to distinguish case in sorting, even for sorting levels higher than tertiary.
+//! Whether to distinguish case in sorting, even for sorting levels higher than tertiary,
+//! without having to use tertiary level just to enable case level differences.
+//!
+//! ```
+//! use core::cmp::Ordering;
+//! use icu_collator::*;
+//!
+//! // Primary
+//! 
+//! let data_provider = icu_testdata::get_provider();
+//! let mut options = CollatorOptions::new();
+//! options.set_strength(Some(Strength::Primary));
+//! options.set_case_level(Some(false));
+//! let primary =
+//!   Collator::try_new_with_buffer_provider(&data_provider,
+//!                     &Default::default(),
+//!                     options).unwrap();
+//! 
+//! assert_eq!(primary.compare("DEAL", "ⓓⓔⓐⓛ"), Ordering::Equal);
+//! assert_eq!(primary.compare("ⓓⓔⓐⓛ", "déjavu"), Ordering::Less);
+//! assert_eq!(primary.compare("déjavu", "dent"), Ordering::Less);
+//! assert_eq!(primary.compare("dent", "develop"), Ordering::Less);
+//! 
+//! // Primary with case level on
+//!
+//! options.set_strength(Some(Strength::Primary));
+//! options.set_case_level(Some(true));
+//! let primary_and_case =
+//!   Collator::try_new_with_buffer_provider(&data_provider,
+//!                     &Default::default(),
+//!                     options).unwrap();
+//!
+//! assert_eq!(primary_and_case.compare("DEAL", "ⓓⓔⓐⓛ"), Ordering::Equal);
+//! assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "déjavu"), Ordering::Less);
+//! assert_eq!(primary_and_case.compare("déjavu", "dent"), Ordering::Less);
+//! assert_eq!(primary_and_case.compare("dent", "develop"), Ordering::Less);
+//!
+//! // Tertiary
+//!
+//! options.set_strength(Some(Strength::Tertiary));
+//! options.set_case_level(Some(false));
+//! let tertiary =
+//!   Collator::try_new_with_buffer_provider(&data_provider,
+//!                     &Default::default(),
+//!                     options).unwrap();
+//!
+//! assert_eq!(tertiary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
+//! assert_eq!(tertiary.compare("DEAL", "déjavu"), Ordering::Less);
+//! assert_eq!(tertiary.compare("déjavu", "dent"), Ordering::Less);
+//! assert_eq!(tertiary.compare("dent", "develop"), Ordering::Less);
+//! 
+//! 
+//! ```
 //!
 //! ## Case First
 //!

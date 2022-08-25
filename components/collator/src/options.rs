@@ -436,29 +436,6 @@ impl CollatorOptions {
     /// "case".
     ///
     /// See [the ICU guide](https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel).
-    ///
-    /// ```
-    /// use icu_collator::*;
-    ///
-    /// let data_provider = icu_testdata::get_provider();
-    /// let mut options = CollatorOptions::new();
-    /// options.set_strength(Some(Strength::Tertiary));
-    /// let tertiary =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
-    ///                     &Default::default(),
-    ///                     options).unwrap();
-    /// // The first string starts with full-width a
-    /// assert_eq!(tertiary.compare("ａa", "aA"),
-    ///            core::cmp::Ordering::Greater);
-    ///
-    /// options.set_case_level(Some(true));
-    /// let tertiary_and_case =
-    ///   Collator::try_new_with_buffer_provider(&data_provider,
-    ///                     &Default::default(),
-    ///                     options).unwrap();
-    /// // The first string starts with full-width a
-    /// // TODO!!!!
-    /// ```
     pub fn set_case_level(&mut self, case_level: Option<bool>) {
         self.0 &= !CollatorOptions::CASE_LEVEL_MASK;
         if let Some(case_level) = case_level {
