@@ -44,8 +44,10 @@ fn main() {
         })
         .collect::<BTreeSet<_>>();
 
+    let diplomat_crate = PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/../src/lib.rs"));
+    eprintln!("Loading Diplomat crate from {:?}", diplomat_crate);
     let diplomat_types = ast::File::from(&syn_inline_mod::parse_and_inline_modules(
-        &PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "../src/lib.rs")),
+        &diplomat_crate,
     ))
     .all_rust_links()
     .into_iter()
