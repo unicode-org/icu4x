@@ -88,6 +88,31 @@
 //! assert_eq!(collator_l3.compare("A", "Ⓐ"), Ordering::Less);
 //! ```
 //! 
+//! ## Numeric sorting on/off
+//! 
+//! ```
+//! use core::cmp::Ordering;
+//! use icu_collator::*;
+//! 
+//! let data_provider = icu_testdata::get_provider();
+//! 
+//! // Numerical sorting off
+//! 
+//! let mut options_num_off = CollatorOptions::new();
+//! options_num_off.set_numeric(Some(false));
+//! let collator_num_off: Collator =
+//!     Collator::try_new_unstable(&data_provider, &Default::default(), options_num_off).unwrap();
+//! assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
+//! 
+//! // Numerical sorting on
+//! 
+//! let mut options_num_on = CollatorOptions::new();
+//! options_num_on.set_numeric(Some(true));
+//! let collator_num_on: Collator =
+//!     Collator::try_new_unstable(&data_provider, &Default::default(), options_num_on).unwrap();
+//! assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
+//! ```
+//! 
 //! # Contributor Notes
 //!
 //! ## Development environment (on Linux) for fuzzing and generating data

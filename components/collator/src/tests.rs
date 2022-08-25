@@ -1117,30 +1117,6 @@ fn test_basics() {
 }
 
 #[test]
-fn test_numeric_off() {
-    let data_provider = icu_testdata::get_provider();
-
-    let mut options = CollatorOptions::new();
-    options.set_numeric(Some(false));
-
-    let collator: Collator =
-        Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
-    assert_eq!(collator.compare("a10b", "a2b"), Ordering::Less);
-}
-
-#[test]
-fn test_numeric_on() {
-    let data_provider = icu_testdata::get_provider();
-
-    let mut options = CollatorOptions::new();
-    options.set_numeric(Some(true));
-
-    let collator: Collator =
-        Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
-    assert_eq!(collator.compare("a10b", "a2b"), Ordering::Greater);
-}
-
-#[test]
 fn test_numeric_long() {
     let data_provider = icu_testdata::get_provider();
 
