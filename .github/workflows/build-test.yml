@@ -361,9 +361,6 @@ jobs:
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        # Part of the task needs a nightly build anyway; this makes
-        # the task faster by running it all on our pinned nightly
-        toolchain: nightly-2022-04-05
         args: ci-job-verify-ffi
 
 
