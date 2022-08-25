@@ -274,6 +274,290 @@ fn test_nfc_utf16_to() {
     assert_eq!(&buf, [0x1EC7u16].as_slice());
 }
 
+#[test]
+fn test_nfc_utf8_to_errors() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+
+    let mut buf = StackString::new();
+    assert!(normalizer
+        .normalize_utf8_to(b"\xFFa\xCC\x88\xFF", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "\u{FFFD}ä\u{FFFD}");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"\x80e\xCC\xA3\xCC\x82\x80", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "\u{FFFD}ệ\u{FFFD}");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"aaa\xFFaaa\xFFaaa", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "aaa\u{FFFD}aaa\u{FFFD}aaa");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"aaa\xE2\x98aaa\xE2\x98aaa", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "aaa\u{FFFD}aaa\u{FFFD}aaa");
+}
+
+#[test]
+fn test_nfd_utf8_to_errors() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+
+    let mut buf = StackString::new();
+    assert!(normalizer
+        .normalize_utf8_to(b"\xFF\xC3\xA4\xFF", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "\u{FFFD}a\u{0308}\u{FFFD}");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"\x80\xE1\xBB\x87\x80", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "\u{FFFD}e\u{0323}\u{0302}\u{FFFD}");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"aaa\xFFaaa\xFFaaa", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "aaa\u{FFFD}aaa\u{FFFD}aaa");
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf8_to(b"aaa\xE2\x98aaa\xE2\x98aaa", &mut buf)
+        .is_ok());
+    assert_eq!(&buf, "aaa\u{FFFD}aaa\u{FFFD}aaa");
+}
+
+#[test]
+fn test_nfc_utf16_to_errors() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+
+    let mut buf = StackVec::new();
+    assert!(normalizer
+        .normalize_utf16_to([0xD800u16, 0x0061u16, 0x0308u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0xFFFDu16, 0x00E4u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0xDC00u16, 0x0061u16, 0x0308u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0xFFFDu16, 0x00E4u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x0061u16, 0x0308u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(&buf, [0x0061u16, 0xFFFDu16, 0x00E4u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x0061u16, 0x0308u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(&buf, [0x0061u16, 0xFFFDu16, 0x00E4u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x0061u16, 0x0308u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x00E4u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x0061u16, 0x0308u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x00E4u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x0061u16, 0x0061u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0061u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x0061u16, 0x0061u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0061u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x0308u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x0308u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+}
+
+#[test]
+fn test_nfd_utf16_to_errors() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+
+    let mut buf = StackVec::new();
+    assert!(normalizer
+        .normalize_utf16_to([0xD800u16, 0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0xFFFDu16, 0x0061u16, 0x0308u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0xDC00u16, 0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(&buf, [0xFFFDu16, 0x0061u16, 0x0308u16].as_slice());
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0x0061u16, 0xD800u16, 0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0308u16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to([0x0061u16, 0xDC00u16, 0x00E4u16].as_slice(), &mut buf)
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0308u16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x00E4u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x00E4u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x0061u16, 0x0061u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0061u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x0061u16, 0x0061u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0061u16, 0x0061u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xD800u16, 0x0308u16, 0xD800u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+
+    buf.clear();
+    assert!(normalizer
+        .normalize_utf16_to(
+            [0x0061u16, 0xDC00u16, 0x0308u16, 0xDC00u16].as_slice(),
+            &mut buf
+        )
+        .is_ok());
+    assert_eq!(
+        &buf,
+        [0x0061u16, 0xFFFDu16, 0x0308u16, 0xFFFDu16].as_slice()
+    );
+}
+
 use atoi::FromRadix16;
 
 /// Parse five semicolon-terminated strings consisting of space-separated hexadecimal scalar values
@@ -485,6 +769,526 @@ fn test_conformance() {
 //     }
 // }
 
+fn str_to_utf16(s: &str, sink: &mut StackVec) {
+    sink.clear();
+    let mut buf = [0u16; 2];
+    for c in s.chars() {
+        sink.try_extend_from_slice(c.encode_utf16(&mut buf))
+            .unwrap();
+    }
+}
+
+fn char_to_utf16(c: char, sink: &mut StackVec) {
+    sink.clear();
+    let mut buf = [0u16; 2];
+    sink.try_extend_from_slice(c.encode_utf16(&mut buf))
+        .unwrap();
+}
+
+fn str_to_str(s: &str, sink: &mut StackString) {
+    sink.clear();
+    sink.try_push_str(s).unwrap();
+}
+
+fn char_to_str(c: char, sink: &mut StackString) {
+    sink.clear();
+    sink.try_push(c).unwrap();
+}
+
+#[test]
+fn test_conformance_utf16() {
+    let data_provider = icu_testdata::get_provider();
+
+    let nfd: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+    let nfkd: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfkd_unstable(&data_provider).unwrap();
+    let nfc: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+    let nfkc: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfkc_unstable(&data_provider).unwrap();
+
+    let mut input = StackVec::new();
+    let mut normalized = StackVec::new();
+    let mut expected = StackVec::new();
+
+    let mut prev = 0u32;
+    let mut part = 0u8;
+    let data = include_bytes!("../testdata/NormalizationTest.txt");
+    let lines = data.split(|b| b == &b'\n');
+    for line in lines {
+        if line.is_empty() {
+            continue;
+        }
+        if line.starts_with(b"#") {
+            continue;
+        }
+        if line.starts_with(&b"@Part"[..]) {
+            part = line[5] - b'0';
+            if part == 2 {
+                for u in prev + 1..=0x10FFFF {
+                    if let Some(c) = char::from_u32(u) {
+                        normalized.clear();
+                        char_to_utf16(c, &mut input);
+                        assert!(nfd.normalize_utf16_to(&input, &mut normalized).is_ok());
+                        assert_eq!(&normalized, &input);
+
+                        normalized.clear();
+                        char_to_utf16(c, &mut input);
+                        assert!(nfkd.normalize_utf16_to(&input, &mut normalized).is_ok());
+                        assert_eq!(&normalized, &input);
+
+                        normalized.clear();
+                        char_to_utf16(c, &mut input);
+                        assert!(nfc.normalize_utf16_to(&input, &mut normalized).is_ok());
+                        assert_eq!(&normalized, &input);
+
+                        normalized.clear();
+                        char_to_utf16(c, &mut input);
+                        assert!(nfkc.normalize_utf16_to(&input, &mut normalized).is_ok());
+                        assert_eq!(&normalized, &input);
+                    }
+                }
+            }
+            continue;
+        }
+        let strings = parse_hex(line);
+        // 0: source
+        // 1: NFC
+        // 2: NFD
+        // 3: NFKC
+        // 4: NFKD
+        if part == 1 {
+            let mut iter = strings[0].chars();
+            let current = iter.next().unwrap();
+            assert_eq!(iter.next(), None);
+            let current_u = u32::from(current);
+            for u in prev + 1..current_u {
+                if let Some(c) = char::from_u32(u) {
+                    normalized.clear();
+                    char_to_utf16(c, &mut input);
+                    assert!(nfd.normalize_utf16_to(&input, &mut normalized).is_ok());
+                    assert_eq!(&normalized, &input);
+
+                    normalized.clear();
+                    char_to_utf16(c, &mut input);
+                    assert!(nfkd.normalize_utf16_to(&input, &mut normalized).is_ok());
+                    assert_eq!(&normalized, &input);
+
+                    normalized.clear();
+                    char_to_utf16(c, &mut input);
+                    assert!(nfc.normalize_utf16_to(&input, &mut normalized).is_ok());
+                    assert_eq!(&normalized, &input);
+
+                    normalized.clear();
+                    char_to_utf16(c, &mut input);
+                    assert!(nfkc.normalize_utf16_to(&input, &mut normalized).is_ok());
+                    assert_eq!(&normalized, &input);
+                }
+            }
+            prev = current_u;
+        }
+        // NFC
+        normalized.clear();
+        str_to_utf16(&strings[0], &mut input);
+        str_to_utf16(&strings[1], &mut expected);
+        assert!(nfc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[1], &mut input);
+        str_to_utf16(&strings[1], &mut expected);
+        assert!(nfc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[2], &mut input);
+        str_to_utf16(&strings[1], &mut expected);
+        assert!(nfc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[3], &mut input);
+        str_to_utf16(&strings[3], &mut expected);
+        assert!(nfc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[4], &mut input);
+        str_to_utf16(&strings[3], &mut expected);
+        assert!(nfc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        // NFD
+        normalized.clear();
+        str_to_utf16(&strings[0], &mut input);
+        str_to_utf16(&strings[2], &mut expected);
+        assert!(nfd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[1], &mut input);
+        str_to_utf16(&strings[2], &mut expected);
+        assert!(nfd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[2], &mut input);
+        str_to_utf16(&strings[2], &mut expected);
+        assert!(nfd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[3], &mut input);
+        str_to_utf16(&strings[4], &mut expected);
+        assert!(nfd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[4], &mut input);
+        str_to_utf16(&strings[4], &mut expected);
+        assert!(nfd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        // NFKC
+        normalized.clear();
+        str_to_utf16(&strings[0], &mut input);
+        str_to_utf16(&strings[3], &mut expected);
+        assert!(nfkc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[1], &mut input);
+        str_to_utf16(&strings[3], &mut expected);
+        assert!(nfkc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[2], &mut input);
+        str_to_utf16(&strings[3], &mut expected);
+        assert!(nfkc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[3], &mut input);
+        str_to_utf16(&strings[3], &mut expected);
+        assert!(nfkc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[4], &mut input);
+        str_to_utf16(&strings[3], &mut expected);
+        assert!(nfkc.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        // NFKD
+        normalized.clear();
+        str_to_utf16(&strings[0], &mut input);
+        str_to_utf16(&strings[4], &mut expected);
+        assert!(nfkd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[1], &mut input);
+        str_to_utf16(&strings[4], &mut expected);
+        assert!(nfkd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[2], &mut input);
+        str_to_utf16(&strings[4], &mut expected);
+        assert!(nfkd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[3], &mut input);
+        str_to_utf16(&strings[4], &mut expected);
+        assert!(nfkd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_utf16(&strings[4], &mut input);
+        str_to_utf16(&strings[4], &mut expected);
+        assert!(nfkd.normalize_utf16_to(&input, &mut normalized).is_ok());
+        assert_eq!(&normalized, &expected);
+    }
+}
+
+#[test]
+fn test_conformance_utf8() {
+    let data_provider = icu_testdata::get_provider();
+
+    let nfd: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+    let nfkd: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfkd_unstable(&data_provider).unwrap();
+    let nfc: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+    let nfkc: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfkc_unstable(&data_provider).unwrap();
+
+    let mut input = StackString::new();
+    let mut normalized = StackString::new();
+    let mut expected = StackString::new();
+
+    let mut prev = 0u32;
+    let mut part = 0u8;
+    let data = include_bytes!("../testdata/NormalizationTest.txt");
+    let lines = data.split(|b| b == &b'\n');
+    for line in lines {
+        if line.is_empty() {
+            continue;
+        }
+        if line.starts_with(b"#") {
+            continue;
+        }
+        if line.starts_with(&b"@Part"[..]) {
+            part = line[5] - b'0';
+            if part == 2 {
+                for u in prev + 1..=0x10FFFF {
+                    if let Some(c) = char::from_u32(u) {
+                        normalized.clear();
+                        char_to_str(c, &mut input);
+                        assert!(nfd
+                            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+                            .is_ok());
+                        assert_eq!(&normalized, &input);
+
+                        normalized.clear();
+                        char_to_str(c, &mut input);
+                        assert!(nfkd
+                            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+                            .is_ok());
+                        assert_eq!(&normalized, &input);
+
+                        normalized.clear();
+                        char_to_str(c, &mut input);
+                        assert!(nfc
+                            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+                            .is_ok());
+                        assert_eq!(&normalized, &input);
+
+                        normalized.clear();
+                        char_to_str(c, &mut input);
+                        assert!(nfkc
+                            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+                            .is_ok());
+                        assert_eq!(&normalized, &input);
+                    }
+                }
+            }
+            continue;
+        }
+        let strings = parse_hex(line);
+        // 0: source
+        // 1: NFC
+        // 2: NFD
+        // 3: NFKC
+        // 4: NFKD
+        if part == 1 {
+            let mut iter = strings[0].chars();
+            let current = iter.next().unwrap();
+            assert_eq!(iter.next(), None);
+            let current_u = u32::from(current);
+            for u in prev + 1..current_u {
+                if let Some(c) = char::from_u32(u) {
+                    normalized.clear();
+                    char_to_str(c, &mut input);
+                    assert!(nfd
+                        .normalize_utf8_to(input.as_bytes(), &mut normalized)
+                        .is_ok());
+                    assert_eq!(&normalized, &input);
+
+                    normalized.clear();
+                    char_to_str(c, &mut input);
+                    assert!(nfkd
+                        .normalize_utf8_to(input.as_bytes(), &mut normalized)
+                        .is_ok());
+                    assert_eq!(&normalized, &input);
+
+                    normalized.clear();
+                    char_to_str(c, &mut input);
+                    assert!(nfc
+                        .normalize_utf8_to(input.as_bytes(), &mut normalized)
+                        .is_ok());
+                    assert_eq!(&normalized, &input);
+
+                    normalized.clear();
+                    char_to_str(c, &mut input);
+                    assert!(nfkc
+                        .normalize_utf8_to(input.as_bytes(), &mut normalized)
+                        .is_ok());
+                    assert_eq!(&normalized, &input);
+                }
+            }
+            prev = current_u;
+        }
+        // NFC
+        normalized.clear();
+        str_to_str(&strings[0], &mut input);
+        str_to_str(&strings[1], &mut expected);
+        assert!(nfc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[1], &mut input);
+        str_to_str(&strings[1], &mut expected);
+        assert!(nfc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[2], &mut input);
+        str_to_str(&strings[1], &mut expected);
+        assert!(nfc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[3], &mut input);
+        str_to_str(&strings[3], &mut expected);
+        assert!(nfc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[4], &mut input);
+        str_to_str(&strings[3], &mut expected);
+        assert!(nfc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        // NFD
+        normalized.clear();
+        str_to_str(&strings[0], &mut input);
+        str_to_str(&strings[2], &mut expected);
+        assert!(nfd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[1], &mut input);
+        str_to_str(&strings[2], &mut expected);
+        assert!(nfd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[2], &mut input);
+        str_to_str(&strings[2], &mut expected);
+        assert!(nfd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[3], &mut input);
+        str_to_str(&strings[4], &mut expected);
+        assert!(nfd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[4], &mut input);
+        str_to_str(&strings[4], &mut expected);
+        assert!(nfd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        // NFKC
+        normalized.clear();
+        str_to_str(&strings[0], &mut input);
+        str_to_str(&strings[3], &mut expected);
+        assert!(nfkc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[1], &mut input);
+        str_to_str(&strings[3], &mut expected);
+        assert!(nfkc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[2], &mut input);
+        str_to_str(&strings[3], &mut expected);
+        assert!(nfkc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[3], &mut input);
+        str_to_str(&strings[3], &mut expected);
+        assert!(nfkc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[4], &mut input);
+        str_to_str(&strings[3], &mut expected);
+        assert!(nfkc
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        // NFKD
+        normalized.clear();
+        str_to_str(&strings[0], &mut input);
+        str_to_str(&strings[4], &mut expected);
+        assert!(nfkd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[1], &mut input);
+        str_to_str(&strings[4], &mut expected);
+        assert!(nfkd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[2], &mut input);
+        str_to_str(&strings[4], &mut expected);
+        assert!(nfkd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[3], &mut input);
+        str_to_str(&strings[4], &mut expected);
+        assert!(nfkd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+
+        normalized.clear();
+        str_to_str(&strings[4], &mut input);
+        str_to_str(&strings[4], &mut expected);
+        assert!(nfkd
+            .normalize_utf8_to(input.as_bytes(), &mut normalized)
+            .is_ok());
+        assert_eq!(&normalized, &expected);
+    }
+}
+
 #[test]
 fn test_canonical_composition() {
     let data_provider = icu_testdata::get_provider();
@@ -558,4 +1362,118 @@ fn test_ccc() {
     for u in 0..=0x10FFFF {
         assert_eq!(map.get_u32(u), sb.get_u32(u));
     }
+}
+
+#[test]
+fn test_utf16_basic() {
+    let data_provider = icu_testdata::get_provider();
+
+    let normalizer: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+
+    assert_eq!(
+        normalizer.normalize_utf16(&[0x0061]).as_slice(),
+        [0x0061].as_slice()
+    );
+    assert_eq!(
+        normalizer.normalize_utf16(&[0x0300, 0x0323]).as_slice(),
+        [0x0323, 0x0300].as_slice()
+    );
+}
+
+#[test]
+fn test_is_normalized() {
+    let data_provider = icu_testdata::get_provider();
+
+    let nfd: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfd_unstable(&data_provider).unwrap();
+    let nfkd: DecomposingNormalizer =
+        DecomposingNormalizer::try_new_nfkd_unstable(&data_provider).unwrap();
+    let nfc: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfc_unstable(&data_provider).unwrap();
+    let nfkc: ComposingNormalizer =
+        ComposingNormalizer::try_new_nfkc_unstable(&data_provider).unwrap();
+
+    let aaa = "aaa";
+    assert!(nfd.is_normalized(aaa));
+    assert!(nfkd.is_normalized(aaa));
+    assert!(nfc.is_normalized(aaa));
+    assert!(nfkc.is_normalized(aaa));
+
+    assert!(nfd.is_normalized_utf8(aaa.as_bytes()));
+    assert!(nfkd.is_normalized_utf8(aaa.as_bytes()));
+    assert!(nfc.is_normalized_utf8(aaa.as_bytes()));
+    assert!(nfkc.is_normalized_utf8(aaa.as_bytes()));
+
+    let aaa16 = [0x0061u16, 0x0061u16, 0x0061u16].as_slice();
+    assert!(nfd.is_normalized_utf16(aaa16));
+    assert!(nfkd.is_normalized_utf16(aaa16));
+    assert!(nfc.is_normalized_utf16(aaa16));
+    assert!(nfkc.is_normalized_utf16(aaa16));
+
+    let affa = b"a\xFFa";
+    assert!(nfd.is_normalized_utf8(affa));
+    assert!(nfkd.is_normalized_utf8(affa));
+    assert!(nfc.is_normalized_utf8(affa));
+    assert!(nfkc.is_normalized_utf8(affa));
+
+    let a_surrogate_a = [0x0061u16, 0xD800u16, 0x0061u16].as_slice();
+    assert!(nfd.is_normalized_utf16(a_surrogate_a));
+    assert!(nfkd.is_normalized_utf16(a_surrogate_a));
+    assert!(nfc.is_normalized_utf16(a_surrogate_a));
+    assert!(nfkc.is_normalized_utf16(a_surrogate_a));
+
+    let note = "a𝅗\u{1D165}a";
+    assert!(nfd.is_normalized(note));
+    assert!(nfkd.is_normalized(note));
+    assert!(nfc.is_normalized(note));
+    assert!(nfkc.is_normalized(note));
+
+    assert!(nfd.is_normalized_utf8(note.as_bytes()));
+    assert!(nfkd.is_normalized_utf8(note.as_bytes()));
+    assert!(nfc.is_normalized_utf8(note.as_bytes()));
+    assert!(nfkc.is_normalized_utf8(note.as_bytes()));
+
+    let note16 = [
+        0x0061u16, 0xD834u16, 0xDD57u16, 0xD834u16, 0xDD65u16, 0x0061u16,
+    ]
+    .as_slice();
+    assert!(nfd.is_normalized_utf16(note16));
+    assert!(nfkd.is_normalized_utf16(note16));
+    assert!(nfc.is_normalized_utf16(note16));
+    assert!(nfkc.is_normalized_utf16(note16));
+
+    let umlaut = "aäa";
+    assert!(!nfd.is_normalized(umlaut));
+    assert!(!nfkd.is_normalized(umlaut));
+    assert!(nfc.is_normalized(umlaut));
+    assert!(nfkc.is_normalized(umlaut));
+
+    assert!(!nfd.is_normalized_utf8(umlaut.as_bytes()));
+    assert!(!nfkd.is_normalized_utf8(umlaut.as_bytes()));
+    assert!(nfc.is_normalized_utf8(umlaut.as_bytes()));
+    assert!(nfkc.is_normalized_utf8(umlaut.as_bytes()));
+
+    let umlaut16 = [0x0061u16, 0x00E4u16, 0x0061u16].as_slice();
+    assert!(!nfd.is_normalized_utf16(umlaut16));
+    assert!(!nfkd.is_normalized_utf16(umlaut16));
+    assert!(nfc.is_normalized_utf16(umlaut16));
+    assert!(nfkc.is_normalized_utf16(umlaut16));
+
+    let fraction = "a½a";
+    assert!(nfd.is_normalized(fraction));
+    assert!(!nfkd.is_normalized(fraction));
+    assert!(nfc.is_normalized(fraction));
+    assert!(!nfkc.is_normalized(fraction));
+
+    assert!(nfd.is_normalized_utf8(fraction.as_bytes()));
+    assert!(!nfkd.is_normalized_utf8(fraction.as_bytes()));
+    assert!(nfc.is_normalized_utf8(fraction.as_bytes()));
+    assert!(!nfkc.is_normalized_utf8(fraction.as_bytes()));
+
+    let fraction16 = [0x0061u16, 0x00BDu16, 0x0061u16].as_slice();
+    assert!(nfd.is_normalized_utf16(fraction16));
+    assert!(!nfkd.is_normalized_utf16(fraction16));
+    assert!(nfc.is_normalized_utf16(fraction16));
+    assert!(!nfkc.is_normalized_utf16(fraction16));
 }

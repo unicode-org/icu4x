@@ -3646,15 +3646,15 @@ dependencies = [
 
 [[package]]
 name = "utf16_iter"
-version = "1.0.0"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8fd690b5b39c6d4c161145f56f1e346e379c0a68a56a65bb927866200eef621"
+checksum = "6a246759e66403993abca5a7165eebc0735d7781e178f03fe9ab255fae1747b5"
 
 [[package]]
 name = "utf8_iter"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0504000636d0ee2fdd46b28a0078b0a232b76d05f13d9c5e041827ee257c41da"
+checksum = "59e6dbc4923e5a3d7b88c78500d0e389fd202601a671b4914580071bdb931188"
 
 [[package]]
 name = "vcell"
