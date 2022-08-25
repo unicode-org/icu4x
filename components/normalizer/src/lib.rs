@@ -1261,7 +1261,7 @@ macro_rules! composing_normalize_to {
                     } else {
                         return Ok(());
                     };
-                // Allowing indexed slicing, because the a failure would be a code bug and
+                // Allowing indexed slicing, because a failure would be a code bug and
                 // not a data issue.
                 #[allow(clippy::indexing_slicing)]
                 if u32::from($undecomposed_starter.character) < $composition_passthrough_bound ||
