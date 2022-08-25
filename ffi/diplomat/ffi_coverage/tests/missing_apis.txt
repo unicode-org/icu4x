@@ -1,5 +1,4 @@
 fixed_decimal::DoublePrecision#Enum
-fixed_decimal::Error#Enum
 fixed_decimal::FixedDecimal#Struct
 fixed_decimal::FixedDecimal::Err#Typedef
 fixed_decimal::FixedDecimal::apply_sign_display#FnInStruct
@@ -54,9 +53,6 @@ fixed_decimal::Sign#Enum
 fixed_decimal::SignDisplay#Enum
 icu::calendar::AnyCalendarKind#Enum
 icu::calendar::Date#Struct
-icu::calendar::DateDuration#Struct
-icu::calendar::DateDurationUnit#Enum
-icu::calendar::DateTimeError#Enum
 icu::calendar::Gregorian#Struct
 icu::calendar::Iso#Struct
 icu::calendar::Ref#Struct
@@ -118,7 +114,6 @@ icu::datetime::CldrCalendar::DateLengthsV1Marker#AssociatedTypeInTrait
 icu::datetime::CldrCalendar::DateSymbolsV1Marker#AssociatedTypeInTrait
 icu::datetime::CldrCalendar::is_identifier_allowed_for_calendar#FnInTrait
 icu::datetime::DateFormatter#Struct
-icu::datetime::DateTimeFormatterError#Enum
 icu::datetime::DateTimeFormatterOptions#Enum
 icu::datetime::FormattedDateTime#Struct
 icu::datetime::FormattedTimeZone#Struct
@@ -237,7 +232,6 @@ icu::list::provider::SpecialCasePattern#Struct
 icu::list::provider::StringMatcher#Struct
 icu::list::provider::UnitListV1Marker#Struct
 icu::locid::LanguageIdentifier#Struct
-icu::locid::ParserError#Enum
 icu::locid::extensions::ExtensionType#Enum
 icu::locid::extensions::Extensions#Struct
 icu::locid::extensions::Other#Struct
@@ -337,7 +331,6 @@ icu::properties::GeneralCategory#Enum
 icu::properties::GeneralCategoryGroup#Struct
 icu::properties::GraphemeClusterBreak#Struct
 icu::properties::LineBreak#Struct
-icu::properties::PropertiesError#Enum
 icu::properties::Script#Struct
 icu::properties::SentenceBreak#Struct
 icu::properties::WordBreak#Struct

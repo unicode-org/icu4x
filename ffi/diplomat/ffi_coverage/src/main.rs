@@ -128,6 +128,10 @@ lazy_static::lazy_static! {
         "icu::calendar::julian",
         "icu::calendar::any_calendar::IntoAnyCalendar",
 
+        // Arithmetic APIs are still experimental/hidden for 1.0
+        "icu::calendar::DateDuration",
+        "icu::calendar::DateDurationUnit",
+
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
