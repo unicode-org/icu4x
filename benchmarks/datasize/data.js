@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661416199706,
+  "lastUpdate": 1661457886512,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25313,6 +25313,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/6b98f3b5eb35b6b02ba33ec778a45f5a2ec58ec1"
         },
         "date": 1661416154309,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "66f13f6985f9389ca9e4b5e1360fd3d4c436f8f2",
+          "message": "Check in FFI coverage list (#2446)\n\n* checkin\r\n\r\n* Split CI tasks into ffi and verify-ffi\r\n\r\n* regen\r\n\r\n* fix task name\r\n\r\n* remove diplomat-gen deps\r\n\r\n* path\r\n\r\n* e\r\n\r\n* nightly\r\n\r\n* nightly\r\n\r\n* print output\r\n\r\n* rm py\r\n\r\n* undo\r\n\r\n* unpin nightly\r\n\r\n* undo\r\n\r\n* reset rustdoc-types\r\n\r\n* Make new completeness module\r\n\r\n* no need for nightly when building\r\n\r\n* fix path\r\n\r\n* check in cargo\r\n\r\n* log\r\n\r\n* Move generated file\r\n\r\n* license\r\n\r\n* publish = false\r\n\r\n* publish\r\n\r\n* lockfile\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2022-08-25T20:02:11Z",
+          "tree_id": "11181601e466674553562acf5d20c8da04f6a092",
+          "url": "https://github.com/unicode-org/icu4x/commit/66f13f6985f9389ca9e4b5e1360fd3d4c436f8f2"
+        },
+        "date": 1661457833493,
         "tool": "ndjson",
         "benches": [
           {
