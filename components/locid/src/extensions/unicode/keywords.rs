@@ -95,9 +95,10 @@ impl Keywords {
     /// ```
     /// use icu::locid::extensions::unicode::Keywords;
     /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     ///
     /// let loc1 = Locale::from_bytes(b"und-t-h0-hybrid").unwrap();
-    /// let loc2 = Locale::from_bytes(b"und-u-ca-buddhist").unwrap();
+    /// let loc2 = locale!("und-u-ca-buddhist");
     ///
     /// assert!(loc1.extensions.unicode.keywords.is_empty());
     /// assert!(!loc2.extensions.unicode.keywords.is_empty());
@@ -327,25 +328,25 @@ impl Keywords {
     /// # Examples
     ///
     /// ```
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu::locid::extensions::unicode::Keywords;
     /// use std::cmp::Ordering;
     ///
     /// let subtags: &[&[u8]] = &[&*b"ca", &*b"buddhist"];
     ///
-    /// let kwds = "und-u-ca-buddhist".parse::<Locale>().unwrap().extensions.unicode.keywords;
+    /// let kwds = locale!("und-u-ca-buddhist").extensions.unicode.keywords;
     /// assert_eq!(
     ///     Ordering::Equal,
     ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
     /// );
     ///
-    /// let kwds = "und".parse::<Locale>().unwrap().extensions.unicode.keywords;
+    /// let kwds = locale!("und").extensions.unicode.keywords;
     /// assert_eq!(
     ///     Ordering::Less,
     ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()
     /// );
     ///
-    /// let kwds = "und-u-nu-latn".parse::<Locale>().unwrap().extensions.unicode.keywords;
+    /// let kwds = locale!("und-u-nu-latn").extensions.unicode.keywords;
     /// assert_eq!(
     ///     Ordering::Greater,
     ///     kwds.strict_cmp_iter(subtags.iter().copied()).end()

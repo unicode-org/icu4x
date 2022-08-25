@@ -86,7 +86,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
@@ -94,7 +94,7 @@ impl ZonedDateTimeFormatter {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
     ///     &provider,
@@ -259,7 +259,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
@@ -267,7 +267,7 @@ impl ZonedDateTimeFormatter {
     /// let provider = icu_testdata::get_baked_provider();
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
     ///     &provider,
@@ -315,7 +315,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
@@ -323,7 +323,7 @@ impl ZonedDateTimeFormatter {
     /// let provider = icu_testdata::get_provider();
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
-    /// let locale = Locale::from_str("en").unwrap();
+    /// let locale = locale!("en");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
     ///     &provider,

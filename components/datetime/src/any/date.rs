@@ -33,14 +33,14 @@ use icu_provider::DataLocale;
 /// ```
 /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
 /// use icu::datetime::{options::length, DateFormatter};
-/// use icu::locid::Locale;
+/// use icu::locid::locale;
 /// use std::str::FromStr;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
 /// let length = length::Date::Medium;
 ///
-/// let df = DateFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), length)
+/// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale!("en-u-ca-gregory").into(), length)
 ///     .expect("Failed to create TypedDateFormatter instance.");
 ///
 /// let date = Date::new_iso_date(2020, 9, 1)
@@ -101,14 +101,14 @@ impl DateFormatter {
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
     /// use icu::datetime::{options::length, DateFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
     /// let length = length::Date::Medium;
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
@@ -149,14 +149,14 @@ impl DateFormatter {
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
     /// use icu::datetime::{options::length, DateFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
     /// let length = length::Date::Medium;
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let df = DateFormatter::try_new_unstable(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
