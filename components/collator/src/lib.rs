@@ -35,7 +35,34 @@
 //! [introduction](https://unicode-org.github.io/icu/userguide/collation/) and explain 
 //! [basic concepts](https://unicode-org.github.io/icu/userguide/collation/concepts.html).
 //! 
-//! # Examples
+//! # Example
+//! 
+//! As its most basic purpose, Collator offers locale-aware ordering:
+//! 
+//! ```
+//! use core::cmp::Ordering;
+//! use icu_collator::*;
+//! use icu_locid::{Locale, langid};
+//! 
+//! let data_provider = icu_testdata::get_provider();
+//! 
+//! let locale_es: Locale = langid!("es").into();
+//! let mut options = CollatorOptions::new();
+//! options.set_strength(Some(Strength::Primary));
+//! let collator_es: Collator =
+//!     Collator::try_new_unstable(&data_provider, &locale_es.into(), options).unwrap();
+//! 
+//! assert_eq!(collator_es.compare("manna", "mañana"), Ordering::Less);
+//! 
+//! let locale_en: Locale = langid!("en").into();
+//! let mut options = CollatorOptions::new();
+//! options.set_strength(Some(Strength::Primary));
+//! let collator_en: Collator =
+//!     Collator::try_new_unstable(&data_provider, &locale_en.into(), options).unwrap();
+//! 
+//! assert_eq!(collator_en.compare("manna", "mañana"), Ordering::Greater);
+//! 
+//! ```
 //! 
 //! ## Sort levels / strengths
 //! 
