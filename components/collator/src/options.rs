@@ -247,6 +247,8 @@ pub enum MaxVariable {
 /// The setters take an `Option` so that `None` can be used to go back to default.
 ///
 /// # Options
+/// 
+/// Examples for using the different options below can be found in the [crate-level docs](crate).
 ///
 /// ## Strength
 ///
@@ -276,7 +278,7 @@ pub enum MaxVariable {
 /// is prohibited by ECMA 402. The default is `false` (off), except for Canadian
 /// French.
 ///
-/// # Numeric
+/// ## Numeric
 ///
 /// This is the BCP47 key `kn`. When set to `true` (on), any sequence of decimal
 /// digits (General_Category = Nd) is sorted at a primary level accoding to the

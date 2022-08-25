@@ -35,9 +35,9 @@
 //! [introduction](https://unicode-org.github.io/icu/userguide/collation/) and explain 
 //! [basic concepts](https://unicode-org.github.io/icu/userguide/collation/concepts.html).
 //! 
-//! # Example
+//! # Examples
 //! 
-//! As its most basic purpose, Collator offers locale-aware ordering:
+//! As its most basic purpose, `Collator` offers locale-aware ordering:
 //! 
 //! ```
 //! use core::cmp::Ordering;
@@ -64,7 +64,14 @@
 //! 
 //! ```
 //! 
-//! ## Sort levels / strengths
+//! ## Examples of [`CollatorOptions`]
+//! 
+//! The [`CollatorOptions`] struct configures specific custom behavior for the `Collator`.  See docs
+//! for [`CollatorOptions`] for more details.  Some basic descriptions and examples are below.
+//! 
+//! ## Strength
+//!
+//! The degree of sensitivity in how to determine that strings are distinct.
 //! 
 //! ```
 //! use core::cmp::Ordering;
@@ -114,8 +121,29 @@
 //! assert_eq!(collator_l3.compare("Ao", "aò"), Ordering::Less);
 //! assert_eq!(collator_l3.compare("A", "Ⓐ"), Ordering::Less);
 //! ```
+//!
+//! ## Alternate Handling
+//!
+//! Allows alternate handling for certain customized collation orderings, including the option to
+//! ignore the special handling for the strings of such customizations.
+//!
+//! ## Case Level
+//!
+//! Whether to distinguish case in sorting, even for sorting levels higher than tertiary.
+//!
+//! ## Case First
+//!
+//! Whether to swap the ordering of uppercase and lowercase.
 //! 
-//! ## Numeric sorting on/off
+//! ## Backward second level
+//!
+//! Compare the second level in backward order.
+//!
+//! ## Numeric
+//!
+//! When set to `true` (on), any sequence of decimal
+//! digits is sorted at a primary level accoding to the
+//! numeric value.
 //! 
 //! ```
 //! use core::cmp::Ordering;
