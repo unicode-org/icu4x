@@ -966,7 +966,7 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
                     .map(|p| p.get())
                     .and_then(|metazones| {
                         time_zone
-                            .metazone_id()
+                            .meta_zone_id()
                             .and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
@@ -1004,7 +1004,7 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
                     .map(|p| p.get())
                     .and_then(|metazones| {
                         time_zone
-                            .metazone_id()
+                            .meta_zone_id()
                             .and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
@@ -1043,7 +1043,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
                     .as_ref()
                     .map(|p| p.get())
                     .and_then(|metazones| {
-                        time_zone.metazone_id().and_then(|mz| {
+                        time_zone.meta_zone_id().and_then(|mz| {
                             time_zone
                                 .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
@@ -1085,7 +1085,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
                     .as_ref()
                     .map(|p| p.get())
                     .and_then(|metazones| {
-                        time_zone.metazone_id().and_then(|mz| {
+                        time_zone.meta_zone_id().and_then(|mz| {
                             time_zone
                                 .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
