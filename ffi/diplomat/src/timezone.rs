@@ -7,23 +7,12 @@ use icu_timezone::GmtOffset;
 use icu_timezone::MetaZoneId;
 use icu_timezone::TimeZoneBcp47Id;
 use icu_timezone::ZoneVariant;
-use tinystr::TinyAsciiStr;
-
-use crate::tinystr::ffi::ICU4XOptionalTinyAsciiStr2;
-use crate::tinystr::ffi::ICU4XOptionalTinyAsciiStr4;
-use crate::tinystr::ffi::ICU4XOptionalTinyAsciiStr8;
-use crate::tinystr::ffi::ICU4XTinyAsciiStr4;
 
 #[diplomat::bridge]
 pub mod ffi {
     use crate::calendar::ffi::ICU4XIsoDateTime;
     use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
-    use crate::tinystr::ffi::ICU4XOptionalTinyAsciiStr2;
-    use crate::tinystr::ffi::ICU4XOptionalTinyAsciiStr4;
-    use crate::tinystr::ffi::ICU4XOptionalTinyAsciiStr8;
-    use crate::tinystr::ffi::ICU4XTinyAsciiStr2;
-    use crate::tinystr::ffi::ICU4XTinyAsciiStr8;
     use alloc::boxed::Box;
     use core::str::FromStr;
     use diplomat_runtime::DiplomatResult;
@@ -33,143 +22,123 @@ pub mod ffi {
     use icu_timezone::TimeZoneBcp47Id;
     use icu_timezone::ZoneVariant;
 
-    #[diplomat::rust_link(icu::timezone::GmtOffset, Struct)]
-    pub struct ICU4XGmtOffset {
-        pub(super) _private_data: i32,
-    }
-
-    pub struct ICU4XOptionalGmtOffset {
-        pub(super) _private_data: i32,
-    }
-
+    #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::CustomTimeZone, Struct)]
-    pub struct ICU4XCustomTimeZone {
-        pub gmt_offset: ICU4XOptionalGmtOffset,
-        pub time_zone_id: ICU4XOptionalTinyAsciiStr8,
-        pub metazone_id: ICU4XOptionalTinyAsciiStr4,
-        pub zone_variant: ICU4XOptionalTinyAsciiStr2,
-    }
+    pub struct ICU4XCustomTimeZone(pub CustomTimeZone);
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::timezone::MetaZoneCalculator, Struct)]
     pub struct ICU4XMetaZoneCalculator(pub MetaZoneCalculator);
 
-    impl ICU4XGmtOffset {
-        pub fn create_from_str(s: &str) -> DiplomatResult<ICU4XGmtOffset, ICU4XError> {
-            GmtOffset::from_str(s)
-                .map(Into::into)
+    impl ICU4XCustomTimeZone {
+        pub fn create_from_str(s: &str) -> DiplomatResult<Box<ICU4XCustomTimeZone>, ICU4XError> {
+            CustomTimeZone::from_str(s)
+                .map(ICU4XCustomTimeZone::from)
+                .map(Box::from)
                 .map_err(Into::into)
                 .into()
         }
 
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_offset_seconds, FnInStruct)]
-        pub fn try_from_offset_seconds(seconds: i32) -> DiplomatResult<ICU4XGmtOffset, ICU4XError> {
-            GmtOffset::try_from_offset_seconds(seconds)
-                .map(Into::into)
-                .map_err(Into::into)
-                .into()
+        pub fn try_set_gmt_offset_seconds(
+            &mut self,
+            offset_seconds: i32,
+        ) -> DiplomatResult<(), ICU4XError> {
+            match GmtOffset::try_from_offset_seconds(offset_seconds) {
+                Ok(v) => {
+                    self.0.gmt_offset = Some(v);
+                    Ok(())
+                }
+                Err(e) => Err(ICU4XError::from(e)),
+            }
+            .into()
         }
 
-        #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
-        pub fn offset_seconds(&self) -> i32 {
-            GmtOffset::from(self).offset_seconds()
+        pub fn gmt_offset_seconds(&self) -> DiplomatResult<i32, ()> {
+            self.0
+                .gmt_offset
+                .map(|v| v.offset_seconds())
+                .ok_or(())
+                .into()
         }
 
         #[diplomat::rust_link(icu::timezone::GmtOffset::is_positive, FnInStruct)]
-        pub fn is_positive(&self) -> bool {
-            GmtOffset::from(self).is_positive()
+        pub fn is_gmt_offset_positive(&self) -> DiplomatResult<bool, ()> {
+            self.0.gmt_offset.map(|v| v.is_positive()).ok_or(()).into()
         }
 
         #[diplomat::rust_link(icu::timezone::GmtOffset::is_zero, FnInStruct)]
-        pub fn is_zero(&self) -> bool {
-            GmtOffset::from(self).is_zero()
+        pub fn is_gmt_offset_zero(&self) -> DiplomatResult<bool, ()> {
+            self.0.gmt_offset.map(|v| v.is_zero()).ok_or(()).into()
         }
 
         #[diplomat::rust_link(icu::timezone::GmtOffset::has_minutes, FnInStruct)]
-        pub fn has_minutes(&self) -> bool {
-            GmtOffset::from(self).has_minutes()
+        pub fn gmt_offset_has_minutes(&self) -> DiplomatResult<bool, ()> {
+            self.0.gmt_offset.map(|v| v.has_minutes()).ok_or(()).into()
         }
 
         #[diplomat::rust_link(icu::timezone::GmtOffset::has_seconds, FnInStruct)]
-        pub fn has_seconds(&self) -> bool {
-            GmtOffset::from(self).has_seconds()
-        }
-    }
-
-    impl ICU4XOptionalGmtOffset {
-        pub fn create_some(value: ICU4XGmtOffset) -> Self {
-            Self {
-                _private_data: value._private_data,
-            }
+        pub fn gmt_offset_has_seconds(&self) -> DiplomatResult<bool, ()> {
+            self.0.gmt_offset.map(|v| v.has_seconds()).ok_or(()).into()
         }
 
-        pub fn create_none() -> Self {
-            Self {
-                _private_data: i32::MAX,
-            }
+        pub fn try_set_time_zone_id(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
+            todo!()
         }
 
-        pub fn is_some(&self) -> bool {
-            self._private_data != i32::MAX
+        pub fn time_zone_id<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
+            todo!()
         }
 
-        pub fn is_none(&self) -> bool {
-            self._private_data == i32::MAX
+        pub fn try_set_meta_zone_id(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
+            todo!()
         }
 
-        pub fn get_value(&self) -> DiplomatResult<ICU4XGmtOffset, ()> {
-            if self._private_data == i32::MAX {
-                Err(()).into()
-            } else {
-                Ok(ICU4XGmtOffset {
-                    _private_data: self._private_data,
-                })
-                .into()
-            }
-        }
-    }
-
-    /// Not currently a real struct; used to hold static methods
-    #[diplomat::opaque]
-    pub struct ICU4XZoneVariant;
-
-    impl ICU4XZoneVariant {
-        pub fn create_from_str(s: &str) -> DiplomatResult<ICU4XTinyAsciiStr2, ICU4XError> {
-            ZoneVariant::from_str(s)
-                .map(|v| v.0)
-                .map(Into::into)
-                .map_err(Into::into)
-                .into()
+        pub fn meta_zone_id<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
+            todo!()
         }
 
-        #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
-        pub fn daylight() -> ICU4XTinyAsciiStr2 {
-            ZoneVariant::daylight().0.into()
+        pub fn try_set_zone_variant(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
+            todo!()
+        }
+
+        pub fn zone_variant<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
+            todo!()
         }
 
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
-        pub fn standard() -> ICU4XTinyAsciiStr2 {
-            ZoneVariant::standard().0.into()
+        pub fn set_standard_time(&mut self) {
+            todo!()
         }
-    }
 
-    impl ICU4XCustomTimeZone {
-        pub fn create_from_str(s: &str) -> DiplomatResult<ICU4XCustomTimeZone, ICU4XError> {
-            CustomTimeZone::from_str(s)
-                .map(Into::into)
-                .map_err(Into::into)
-                .into()
+        #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
+        pub fn set_daylight_time(&mut self) {
+            todo!()
+        }
+
+        #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
+        pub fn is_standard_time(&self) -> bool {
+            todo!()
+        }
+
+        #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
+        pub fn is_daylight_time(&self) -> bool {
+            todo!()
         }
 
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_set_metazone, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::timezone::MetaZoneCalculator::compute_metazone_from_timezone,
+            FnInStruct,
+            compact
+        )]
         pub fn maybe_set_metazone(
             &mut self,
             local_datetime: &ICU4XIsoDateTime,
             metazone_calculator: &ICU4XMetaZoneCalculator,
         ) {
-            let mut rust = CustomTimeZone::from(&*self);
-            rust.maybe_set_metazone(&local_datetime.0, &metazone_calculator.0);
-            *self = rust.into();
+            self.0
+                .maybe_set_meta_zone(&local_datetime.0, &metazone_calculator.0);
         }
     }
 
@@ -186,103 +155,17 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-
-        #[diplomat::rust_link(
-            icu::timezone::MetaZoneCalculator::compute_metazone_from_timezone,
-            FnInStruct
-        )]
-        pub fn compute_metazone_from_timezone(
-            &self,
-            time_zone_id: &ICU4XTinyAsciiStr8,
-            local_datetime: &ICU4XIsoDateTime,
-        ) -> ICU4XOptionalTinyAsciiStr4 {
-            self.0
-                .compute_metazone_from_timezone(
-                    TimeZoneBcp47Id(time_zone_id.into()),
-                    &local_datetime.0,
-                )
-                .into()
-        }
     }
 }
-
-impl From<GmtOffset> for ffi::ICU4XGmtOffset {
-    fn from(other: GmtOffset) -> Self {
-        Self {
-            _private_data: other.offset_seconds().into(),
-        }
-    }
-}
-
-impl From<ffi::ICU4XGmtOffset> for GmtOffset {
-    fn from(other: ffi::ICU4XGmtOffset) -> Self {
-        Self::from(&other)
-    }
-}
-
-impl From<&ffi::ICU4XGmtOffset> for GmtOffset {
-    fn from(other: &ffi::ICU4XGmtOffset) -> Self {
-        // Safety: The _private_data field is only manipulated in this file
-        // (or by FFI users wrongly accessing the field).
-        unsafe { Self::from_offset_seconds_unchecked(other._private_data) }
-    }
-}
-
-crate::helpers::impl_optional_convert!(GmtOffset, ffi::ICU4XOptionalGmtOffset);
-
-crate::helpers::impl_optional_newtype_convert!(
-    TimeZoneBcp47Id,
-    TinyAsciiStr::<8>,
-    ICU4XOptionalTinyAsciiStr8
-);
-
-crate::helpers::impl_optional_newtype_convert!(
-    MetaZoneId,
-    TinyAsciiStr::<4>,
-    ICU4XOptionalTinyAsciiStr4
-);
-
-crate::helpers::impl_optional_newtype_convert!(
-    ZoneVariant,
-    TinyAsciiStr::<2>,
-    ICU4XOptionalTinyAsciiStr2
-);
-
-crate::helpers::impl_newtype_convert!(
-    MetaZoneId,
-    TinyAsciiStr::<4>,
-    ICU4XTinyAsciiStr4
-);
 
 impl From<CustomTimeZone> for ffi::ICU4XCustomTimeZone {
     fn from(other: CustomTimeZone) -> Self {
-        Self {
-            gmt_offset: other.gmt_offset.into(),
-            time_zone_id: other.time_zone_id.into(),
-            metazone_id: other.metazone_id.into(),
-            zone_variant: other.zone_variant.into(),
-        }
+        Self(other)
     }
 }
 
 impl From<ffi::ICU4XCustomTimeZone> for CustomTimeZone {
     fn from(other: ffi::ICU4XCustomTimeZone) -> Self {
-        Self {
-            gmt_offset: other.gmt_offset.into(),
-            time_zone_id: other.time_zone_id.into(),
-            metazone_id: other.metazone_id.into(),
-            zone_variant: other.zone_variant.into(),
-        }
-    }
-}
-
-impl From<&ffi::ICU4XCustomTimeZone> for CustomTimeZone {
-    fn from(other: &ffi::ICU4XCustomTimeZone) -> Self {
-        Self {
-            gmt_offset: (&other.gmt_offset).into(),
-            time_zone_id: (&other.time_zone_id).into(),
-            metazone_id: (&other.metazone_id).into(),
-            zone_variant: (&other.zone_variant).into(),
-        }
+        other.0
     }
 }
