@@ -304,6 +304,9 @@ jobs:
     - uses: actions/checkout@v2
     - name: Load the default Rust toolchain via the rust-toolchain file.
       run: rustup show
+    - name: Load nightly for rustdoc-json
+      run: |
+        rustup install nightly-2022-04-05
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
