@@ -1600,7 +1600,7 @@ dependencies = [
  "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat)",
  "elsa",
  "lazy_static",
- "rustdoc-types 0.10.0",
+ "rustdoc-types 0.14.0",
  "serde_json",
  "syn-inline-mod",
 ]
@@ -2831,18 +2831,18 @@ dependencies = [
 
 [[package]]
 name = "rustdoc-types"
-version = "0.10.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5cd93f56979d38715bf1012600fd3253525d4069b37282425e32a789a3b55748"
+checksum = "fa792ee5551052d6e577cedadec6f7eae744b26db967e8e9fb4c1b604a608c7f"
 dependencies = [
  "serde",
 ]
 
 [[package]]
 name = "rustdoc-types"
-version = "0.11.0"
+version = "0.14.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "fa792ee5551052d6e577cedadec6f7eae744b26db967e8e9fb4c1b604a608c7f"
+checksum = "eb8ae6df9a4006b7968781abb9a2ea2983b5f3cad2ca9294d195781618194c28"
 dependencies = [
  "serde",
 ]

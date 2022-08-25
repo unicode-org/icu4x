@@ -297,7 +297,7 @@ jobs:
       run: rustup show
     - name: Load nightly for rustdoc-json
       run: |
-        rustup install nightly-2022-04-05
+        rustup install nightly-2022-08-25
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
