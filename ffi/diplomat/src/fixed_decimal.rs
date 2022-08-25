@@ -252,15 +252,22 @@ pub mod ffi {
             self.0.half_even(position)
         }
 
+        /// Concatenates `other` to the end of `self`.
+        /// 
+        /// If successful, `other` will be set to 0 and a successful status is returned.
+        /// 
+        /// If not successful, `other` will be unchanged and an error is returned.
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::concatenate_end, FnInStruct)]
-        pub fn concatenate_end(
-            &mut self,
-            other: Box<ICU4XFixedDecimal>,
-        ) -> DiplomatResult<(), Box<ICU4XFixedDecimal>> {
-            self.0
-                .concatenate_end(other.0)
-                .map_err(|e| Box::new(ICU4XFixedDecimal(e)))
-                .into()
+        pub fn concatenate_end(&mut self, other: &mut ICU4XFixedDecimal) -> DiplomatResult<(), ()> {
+            let x = core::mem::replace(&mut other.0, FixedDecimal::default());
+            match self.0.concatenate_end(x) {
+                Ok(()) => Ok(()),
+                Err(y) => {
+                    other.0 = y;
+                    Err(())
+                }
+            }
+            .into()
         }
 
         /// Format the [`ICU4XFixedDecimal`] as a string.
