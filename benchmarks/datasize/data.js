@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661409420181,
+  "lastUpdate": 1661416199706,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25283,6 +25283,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/832401abdb7f0d878f94949d9075504110796407"
         },
         "date": 1661409372559,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6b98f3b5eb35b6b02ba33ec778a45f5a2ec58ec1",
+          "message": "Switch from runtime to compile time Locale parsing (#2406)",
+          "timestamp": "2022-08-25T10:27:44+02:00",
+          "tree_id": "34b4141348260d09f8c4b7d09f2f6d9b3ba70d91",
+          "url": "https://github.com/unicode-org/icu4x/commit/6b98f3b5eb35b6b02ba33ec778a45f5a2ec58ec1"
+        },
+        "date": 1661416154309,
         "tool": "ndjson",
         "benches": [
           {
