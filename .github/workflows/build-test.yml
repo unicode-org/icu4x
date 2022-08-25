@@ -297,7 +297,7 @@ jobs:
       run: rustup show
     - name: Load nightly for rustdoc-json
       run: |
-        rustup install nightly-2022-04-05
+        rustup install nightly
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -362,8 +362,8 @@ jobs:
       with:
         command: make
         # Part of the task needs a nightly build anyway; this makes
-        # the task faster by running it all on our pinned nightly
-        toolchain: nightly-2022-04-05
+        # the task faster by running it all on nightly
+        toolchain: nightly
         args: ci-job-verify-ffi
 
 

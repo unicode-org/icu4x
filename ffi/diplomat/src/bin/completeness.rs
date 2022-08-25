@@ -160,7 +160,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             eprintln!("Parsing crate {krate}");
             let output = std::process::Command::new("cargo")
                 .args(&[
-                    "+nightly-2022-04-05",
+                    // Unpinned nightly because of rustdoc-json's format
+                    "+nightly",
                     "rustdoc",
                     "-p",
                     krate,
