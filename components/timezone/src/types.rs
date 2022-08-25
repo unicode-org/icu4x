@@ -175,6 +175,18 @@ impl ZoneVariant {
     }
 }
 
+impl From<TinyAsciiStr<2>> for ZoneVariant {
+    fn from(other: TinyAsciiStr<2>) -> Self {
+        Self(other)
+    }
+}
+
+impl From<ZoneVariant> for TinyAsciiStr<2> {
+    fn from(other: ZoneVariant) -> Self {
+        other.0
+    }
+}
+
 impl AsULE for ZoneVariant {
     type ULE = Self;
 

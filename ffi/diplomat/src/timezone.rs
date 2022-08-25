@@ -23,7 +23,6 @@ pub mod ffi {
     use crate::tinystr::ffi::ICU4XOptionalTinyAsciiStr4;
     use crate::tinystr::ffi::ICU4XOptionalTinyAsciiStr8;
     use crate::tinystr::ffi::ICU4XTinyAsciiStr2;
-    use crate::tinystr::ffi::ICU4XTinyAsciiStr4;
     use crate::tinystr::ffi::ICU4XTinyAsciiStr8;
     use alloc::boxed::Box;
     use core::str::FromStr;
@@ -196,13 +195,13 @@ pub mod ffi {
             &self,
             time_zone_id: &ICU4XTinyAsciiStr8,
             local_datetime: &ICU4XIsoDateTime,
-        ) -> Option<ICU4XTinyAsciiStr4> {
+        ) -> ICU4XOptionalTinyAsciiStr4 {
             self.0
                 .compute_metazone_from_timezone(
                     TimeZoneBcp47Id(time_zone_id.into()),
                     &local_datetime.0,
                 )
-                .map(Into::into)
+                .into()
         }
     }
 }
