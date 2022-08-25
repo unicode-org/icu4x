@@ -78,7 +78,7 @@ icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", opti
 # completeness feature
 syn-inline-mod = { version =  "0.4.0", optional = true }
 serde_json = { version =  "1", optional = true }
-rustdoc-types = { version =  "0.11", optional = true }
+rustdoc-types = { version =  "0.10", optional = true }
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "3fe1337b940a6940bf0bd79899ef431cfbc73356", optional = true }
 lazy_static = { version =  "1", optional = true }
 elsa = { version = "1", optional = true }
