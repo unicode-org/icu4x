@@ -1267,7 +1267,7 @@ macro_rules! composing_normalize_to {
                 if u32::from($undecomposed_starter.character) < $composition_passthrough_bound ||
                     $undecomposed_starter.potential_passthrough()
                 {
-                    // We don't know if a REPLACEMENT CHARACTER occurred in the slice or
+                    // We don't know if a `REPLACEMENT_CHARACTER` occurred in the slice or
                     // was returned in response to an error by the iterator. Assume the
                     // latter for correctness even though it pessimizes the former.
                     if $always_valid_utf || $undecomposed_starter.character != REPLACEMENT_CHARACTER {
