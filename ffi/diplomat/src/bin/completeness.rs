@@ -172,18 +172,14 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 ])
                 .output()
                 .expect("failed to execute rustdoc");
+            let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
+                .join("../../target/doc")
+                .join(krate)
+                .with_extension("json");
+            println!("Attempting to load {:?}", path);
             CRATES.insert(
                 krate.to_string(),
-                serde_json::from_reader(
-                    File::open(
-                        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-                            .join("../../target/doc")
-                            .join(krate)
-                            .with_extension("json"),
-                    )
-                    .unwrap(),
-                )
-                .unwrap(),
+                serde_json::from_reader(File::open(&path).unwrap()).unwrap(),
             );
         }
         CRATES.get(krate).unwrap()
