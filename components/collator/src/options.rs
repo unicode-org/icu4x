@@ -247,7 +247,7 @@ pub enum MaxVariable {
 /// The setters take an `Option` so that `None` can be used to go back to default.
 ///
 /// # Options
-/// 
+///
 /// Examples for using the different options below can be found in the [crate-level docs](crate).
 ///
 /// ## Strength

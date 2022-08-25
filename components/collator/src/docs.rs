@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! This module exists to contain implementation docs and notes for people who want to contribute.
-//! 
+//!
 //!  # Contributor Notes
 //!
 //! ## Development environment (on Linux) for fuzzing and generating data
