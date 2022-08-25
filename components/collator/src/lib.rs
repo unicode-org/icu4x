@@ -30,6 +30,65 @@
 //! `Collator` is the main structure of the component. It accepts a set of arguments
 //! which allow it to collect necessary data from the data provider, and once
 //! instantiated, can be used to compare strings.
+//! 
+//! Refer to the ICU User Guide sections for Collation that give an
+//! [introduction](https://unicode-org.github.io/icu/userguide/collation/) and explain 
+//! [basic concepts](https://unicode-org.github.io/icu/userguide/collation/concepts.html).
+//! 
+//! # Examples
+//! 
+//! ## Sort levels / strengths
+//! 
+//! ```
+//! use core::cmp::Ordering;
+//! use icu_collator::*;
+//! 
+//! let data_provider = icu_testdata::get_provider();
+//!  
+//! // Primary Level
+//! 
+//! let mut options_l1 = CollatorOptions::new();
+//! options_l1.set_strength(Some(Strength::Primary));
+//! let collator_l1: Collator =
+//!     Collator::try_new_unstable(&data_provider, &Default::default(), options_l1).unwrap();
+//! 
+//! assert_eq!(collator_l1.compare("a", "b"), Ordering::Less);  // primary
+//! assert_eq!(collator_l1.compare("as", "às"), Ordering::Equal);  // secondary
+//! assert_eq!(collator_l1.compare("às", "at"), Ordering::Less);
+//! assert_eq!(collator_l1.compare("ao", "Ao"), Ordering::Equal);  // tertiary
+//! assert_eq!(collator_l1.compare("Ao", "aò"), Ordering::Equal);
+//! assert_eq!(collator_l1.compare("A", "Ⓐ"), Ordering::Equal);
+//! 
+//! // Secondary Level
+//! 
+//! let mut options_l2 = CollatorOptions::new();
+//! options_l2.set_strength(Some(Strength::Secondary));
+//! let collator_l2: Collator =
+//!     Collator::try_new_unstable(&data_provider, &Default::default(), options_l2).unwrap();
+//! 
+//! assert_eq!(collator_l2.compare("a", "b"), Ordering::Less);  // primary
+//! assert_eq!(collator_l2.compare("as", "às"), Ordering::Less);  // secondary
+//! assert_eq!(collator_l2.compare("às", "at"), Ordering::Less);
+//! assert_eq!(collator_l2.compare("ao", "Ao"), Ordering::Equal);  // tertiary
+//! assert_eq!(collator_l2.compare("Ao", "aò"), Ordering::Less);
+//! assert_eq!(collator_l2.compare("A", "Ⓐ"), Ordering::Equal);
+//! 
+//! // Tertiary Level
+//! 
+//! let mut options_l3 = CollatorOptions::new();
+//! options_l3.set_strength(Some(Strength::Tertiary));
+//! let collator_l3: Collator =
+//!     Collator::try_new_unstable(&data_provider, &Default::default(), options_l3).unwrap();
+//! 
+//! assert_eq!(collator_l3.compare("a", "b"), Ordering::Less);  // primary
+//! assert_eq!(collator_l3.compare("as", "às"), Ordering::Less);  // secondary
+//! assert_eq!(collator_l3.compare("às", "at"), Ordering::Less);
+//! assert_eq!(collator_l3.compare("ao", "Ao"), Ordering::Less);  // tertiary
+//! assert_eq!(collator_l3.compare("Ao", "aò"), Ordering::Less);
+//! assert_eq!(collator_l3.compare("A", "Ⓐ"), Ordering::Less);
+//! ```
+//! 
+//! # Contributor Notes
 //!
 //! ## Development environment (on Linux) for fuzzing and generating data
 //!
