@@ -2,12 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use fixed_decimal::decimal::Sign;
+use fixed_decimal::Sign;
 
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
-    use fixed_decimal::decimal::{DoublePrecision, FixedDecimal};
+    use fixed_decimal::{DoublePrecision, FixedDecimal};
     use writeable::Writeable;
 
     use crate::errors::ffi::ICU4XError;
