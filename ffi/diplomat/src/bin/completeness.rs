@@ -158,10 +158,9 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
-            let output = std::process::Command::new("cargo")
+            std::process::Command::new("cargo")
                 .args(&[
-                    // Unpinned nightly because of rustdoc-json's format
-                    "+nightly",
+                    "+nightly-2022-04-05",
                     "rustdoc",
                     "-p",
                     krate,
