@@ -23,6 +23,7 @@ include = [
     "LICENSE",
     "README.md"
 ]
+publish = false
 
 [package.metadata.docs.rs]
 all-features = true
