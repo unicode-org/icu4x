@@ -275,15 +275,15 @@ macro_rules! impl_tinystr_convert {
         }
         impl From<$ffi_t> for TinyAsciiStr<$n> {
             fn from(other: $ffi_t) -> Self {
-                // Safety: The _private_data field is private, and the only way to construct
-                // one of these is the From impl above
+                // Safety: The _private_data field is only manipulated in this file
+                // (or by FFI users wrongly accessing the field).
                 unsafe { TinyAsciiStr::from_bytes_unchecked(other._private_data.to_ne_bytes()) }
             }
         }
         impl From<&$ffi_t> for TinyAsciiStr<$n> {
             fn from(other: &$ffi_t) -> Self {
-                // Safety: The _private_data field is private, and the only way to construct
-                // one of these is the From impl above
+                // Safety: The _private_data field is only manipulated in this file
+                // (or by FFI users wrongly accessing the field).
                 unsafe { TinyAsciiStr::from_bytes_unchecked(other._private_data.to_ne_bytes()) }
             }
         }
