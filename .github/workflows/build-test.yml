@@ -269,15 +269,6 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-
-    - name: Install Python
-      uses: actions/setup-python@v1
-    - name: Install Sphinx
-      uses: BSFishy/pip-action@v1
-      with:
-        packages: |
-          sphinx
-          sphinx-rtd-theme
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
