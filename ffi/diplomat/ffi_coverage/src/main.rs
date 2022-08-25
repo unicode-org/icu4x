@@ -44,17 +44,18 @@ fn main() {
         })
         .collect::<BTreeSet<_>>();
 
-    let diplomat_types = ast::File::from(&syn_inline_mod::parse_and_inline_modules(
-        &PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/src/lib.rs")),
-    ))
-    .all_rust_links()
-    .into_iter()
-    .cloned()
-    .map(|rl| RustLinkInfo {
-        path: rl.path,
-        typ: rl.typ,
-    })
-    .collect::<BTreeSet<_>>();
+    let diplomat_crate = PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/../src/lib.rs"));
+    eprintln!("Loading Diplomat crate from {:?}", diplomat_crate);
+    let diplomat_types =
+        ast::File::from(&syn_inline_mod::parse_and_inline_modules(&diplomat_crate))
+            .all_rust_links()
+            .into_iter()
+            .cloned()
+            .map(|rl| RustLinkInfo {
+                path: rl.path,
+                typ: rl.typ,
+            })
+            .collect::<BTreeSet<_>>();
 
     doc_types
         .difference(&diplomat_types)
@@ -160,7 +161,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             eprintln!("Parsing crate {krate}");
             std::process::Command::new("cargo")
                 .args(&[
-                    "+nightly",
+                    "+nightly-2022-04-05",
                     "rustdoc",
                     "-p",
                     krate,
@@ -172,18 +173,14 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 ])
                 .output()
                 .expect("failed to execute rustdoc");
+            let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
+                .join("../../../target/doc")
+                .join(krate)
+                .with_extension("json");
+            eprintln!("Attempting to load {:?}", path);
             CRATES.insert(
                 krate.to_string(),
-                serde_json::from_reader(
-                    File::open(
-                        &PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
-                            .join("../../target/doc")
-                            .join(krate)
-                            .with_extension("json"),
-                    )
-                    .unwrap(),
-                )
-                .unwrap(),
+                serde_json::from_reader(File::open(&path).unwrap()).unwrap(),
             );
         }
         CRATES.get(krate).unwrap()
@@ -259,7 +256,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     }
                     recurse(item, external_crate, types, path, true, None);
                 } else {
-                    unreachable!("id should be in either index or paths")
+                    eprintln!("{:?} should be in either index or paths", path);
                 }
             }
             _ => {

@@ -48,8 +48,6 @@ logging = ["icu_provider/log_error_context", "log"]
 # Use the env_logger functionality to log based on environment variables
 simple_logger = ["dep:simple_logger"]
 
-completeness = ["syn-inline-mod", "serde_json", "rustdoc-types", "diplomat_core", "lazy_static", "elsa"]
-
 [dependencies]
 fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar"}
@@ -75,15 +73,6 @@ diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "3fe1337b9
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "3fe1337b940a6940bf0bd79899ef431cfbc73356" }
 icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", optional = true }
 
-# completeness feature
-syn-inline-mod = { version =  "0.4.0", optional = true }
-serde_json = { version =  "1", optional = true }
-rustdoc-types = { version =  "0.11", optional = true }
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "3fe1337b940a6940bf0bd79899ef431cfbc73356", optional = true }
-lazy_static = { version =  "1", optional = true }
-elsa = { version = "1", optional = true }
-
-
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Logging is automagical in wasm, we only need this for native
@@ -95,8 +84,3 @@ log = { version = "0.4" }
 
 [target.'cfg(not(any(target_arch = "wasm32", target_os = "none")))'.dependencies]
 icu_provider_fs = { version = "1.0.0-beta1", path = "../../provider/fs/", optional = true }
-
-[[bin]]
-name = "completeness"
-path = "src/bin/completeness.rs"
-required-features = ["completeness"]

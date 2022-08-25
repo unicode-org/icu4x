@@ -27,6 +27,7 @@ members = [
     "experimental/segmenter",
     "ffi/capi_cdylib",
     "ffi/diplomat",
+    "ffi/diplomat/ffi_coverage",
     "ffi/capi_staticlib",
     "ffi/freertos",
     "provider/adapters",

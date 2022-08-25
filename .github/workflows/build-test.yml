@@ -269,6 +269,54 @@ jobs:
       with:
         crate: cargo-make
         version: latest
+    - name: Build
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --all-targets --all-features
+    - name: Run `cargo make ci-job-ffi`
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-ffi
+      env:
+        CXX: "g++-10"
+
+
+  # FFI job - runs all "cargo make" FFI verification tests
+  verify-ffi:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+    - name: Load nightly for rustdoc-json
+      run: |
+        rustup install nightly-2022-04-05
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
 
     - name: Install Python
       uses: actions/setup-python@v1
@@ -309,18 +357,11 @@ jobs:
         command: install
         args: --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
-    - name: Build
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: build
-        args: --all-targets --all-features
-    - name: Run `cargo make ci-job-ffi`
+    - name: Run `cargo make ci-job-verify-ffi`
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        args: ci-job-ffi
-      env:
-        CXX: "g++-10"
+        args: ci-job-verify-ffi
 
 
   # Feature coverage job - builds all permutations of features
