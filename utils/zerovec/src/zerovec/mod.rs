@@ -81,6 +81,7 @@ use core::ops::Deref;
 ///
 /// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 #[derive(Clone)]
+#[non_exhaustive]
 pub enum ZeroVec<'a, T>
 where
     T: AsULE + ?Sized,

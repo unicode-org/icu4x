@@ -230,6 +230,7 @@ impl From<DecimalError> for ICU4XError {
         let ret = match e {
             DecimalError::Limit => ICU4XError::DecimalLimitError,
             DecimalError::Syntax => ICU4XError::DecimalSyntaxError,
+            _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
         ret

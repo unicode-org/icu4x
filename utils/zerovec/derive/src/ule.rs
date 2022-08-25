@@ -83,11 +83,12 @@ pub(crate) fn generate_ule_validators(
     fields: &[FieldInfo],
     // (validators, remaining_offset)
 ) -> (TokenStream2, syn::Ident) {
-    // This won't panic because the function returns if the byte slice is not the right length
-    #[allow(clippy::indexing_slicing)]
     utils::generate_per_field_offsets(fields, false, |field, prev_offset_ident, size_ident| {
         let ty = &field.field.ty;
-        quote!(<#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;)
+        quote! {
+            #[allow(clippy::indexing_slicing)] // generate_per_field_offsets produces valid indices
+            <#ty as zerovec::ule::ULE>::validate_byte_slice(&bytes[#prev_offset_ident .. #prev_offset_ident + #size_ident])?;
+        }
     })
 }
 

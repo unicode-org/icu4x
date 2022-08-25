@@ -28,7 +28,7 @@ struct ICU4XCalendarDeleter {
 /**
  * 
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html) for more information.
+ * See the [Rust documentation for `AnyCalendar`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html) for more information.
  */
 class ICU4XCalendar {
  public:
@@ -36,7 +36,7 @@ class ICU4XCalendar {
   /**
    * Creates a new [`ICU4XCalendar`] from the specified date and time.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XCalendar, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
   inline const capi::ICU4XCalendar* AsFFI() const { return this->inner.get(); }

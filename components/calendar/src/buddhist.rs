@@ -32,10 +32,9 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::iso::{Iso, IsoDateInner};
-use crate::{
-    types, ArithmeticDate, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError,
-};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use tinystr::tinystr;
 
 /// The number of years the Buddhist Era is ahead of C.E. by
@@ -46,10 +45,18 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 #[derive(Copy, Clone, Debug, Default)]
 /// The [Thai Solar Buddhist Calendar][cal]
 ///
-/// This is basically the same as the Gregorian calendar,
-/// however it has a different zero year: 1 AD = 544 BE
+/// The [Thai Solar Buddhist Calendar][cal] is a solar calendar used in Thailand, with twelve months.
+/// The months and days are identical to that of the Gregorian calendar, however the years are counted
+/// differently using the Buddhist Era.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
 ///
 /// [cal]: https://en.wikipedia.org/wiki/Thai_solar_calendar
+///
+/// # Era codes
+///
+/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE
+
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 

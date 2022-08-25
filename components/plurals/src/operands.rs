@@ -140,11 +140,8 @@ impl From<std::io::Error> for OperandsError {
 }
 
 fn get_exponent(input: &str) -> Result<(&str, usize), OperandsError> {
-    if let Some(e_idx) = input.find('e') {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let e = usize::from_str(&input[e_idx + 1..])?;
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        Ok((&input[..e_idx], e))
+    if let Some((base, exponent)) = input.split_once('e') {
+        Ok((base, exponent.parse()?))
     } else {
         Ok((input, 0))
     }
@@ -167,11 +164,8 @@ impl FromStr for PluralOperands {
             fraction_digits0,
             fraction_digits,
             exponent,
-        ) = if let Some(sep_idx) = abs_str.find('.') {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            let int_str = &abs_str[..sep_idx];
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            let (dec_str, exponent) = get_exponent(&abs_str[(sep_idx + 1)..])?;
+        ) = if let Some((int_str, rest)) = abs_str.split_once('.') {
+            let (dec_str, exponent) = get_exponent(rest)?;
 
             let integer_digits = u64::from_str(int_str)?;
 

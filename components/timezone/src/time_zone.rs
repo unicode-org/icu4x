@@ -5,7 +5,7 @@
 use crate::provider::{MetaZoneId, TimeZoneBcp47Id};
 
 use crate::metazone::MetaZoneCalculator;
-use crate::{GmtOffset, TimeVariant, TimeZoneError};
+use crate::{GmtOffset, TimeZoneError, ZoneVariant};
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
 
@@ -35,7 +35,7 @@ pub struct CustomTimeZone {
     /// The CLDR metazone identifier
     pub metazone_id: Option<MetaZoneId>,
     /// The time variant e.g. "daylight" or "standard"
-    pub time_variant: Option<TimeVariant>,
+    pub zone_variant: Option<ZoneVariant>,
 }
 
 impl CustomTimeZone {
@@ -46,13 +46,13 @@ impl CustomTimeZone {
         gmt_offset: Option<GmtOffset>,
         time_zone_id: Option<TimeZoneBcp47Id>,
         metazone_id: Option<MetaZoneId>,
-        time_variant: Option<TimeVariant>,
+        zone_variant: Option<ZoneVariant>,
     ) -> Self {
         Self {
             gmt_offset,
             time_zone_id,
             metazone_id,
-            time_variant,
+            zone_variant,
         }
     }
 
@@ -126,7 +126,7 @@ impl FromStr for CustomTimeZone {
             gmt_offset,
             time_zone_id: None,
             metazone_id: None,
-            time_variant: None,
+            zone_variant: None,
         })
     }
 }

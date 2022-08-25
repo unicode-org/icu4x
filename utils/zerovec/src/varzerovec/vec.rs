@@ -128,6 +128,7 @@ use super::*;
 /// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 ///
 /// [`ule`]: crate::ule
+#[non_exhaustive]
 pub enum VarZeroVec<'a, T: ?Sized, F = Index16> {
     /// An allocated VarZeroVec, allowing for mutations.
     ///
@@ -396,7 +397,7 @@ where
 {
     #[inline]
     fn from(elements: &Vec<A>) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
         VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }
@@ -409,7 +410,7 @@ where
 {
     #[inline]
     fn from(elements: &[A]) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
         VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }
@@ -422,7 +423,7 @@ where
 {
     #[inline]
     fn from(elements: &[A; N]) -> Self {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // TODO(#1410) Better story for fallibility
         VarZeroVecOwned::try_from_elements(elements).unwrap().into()
     }
 }

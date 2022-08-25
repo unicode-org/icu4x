@@ -4,7 +4,6 @@
 
 //! A collection of enums for enumerated properties.
 
-#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 
@@ -441,7 +440,7 @@ impl Script {
     pub const EgyptianHieroglyphs: Script = Script(71);
     pub const Elbasan: Script = Script(136);
     pub const Elymaic: Script = Script(185);
-    pub const Ethiopic: Script = Script(11);
+    pub const Ethiopian: Script = Script(11);
     pub const Georgian: Script = Script(12);
     pub const Glagolitic: Script = Script(56);
     pub const Gothic: Script = Script(13);

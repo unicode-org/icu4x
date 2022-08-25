@@ -259,7 +259,7 @@ impl TrieValue for CaseMappingData {
 #[yoke(prove_covariance_manually)]
 pub struct CaseMappingUnfoldData<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
-    #[allow(missing_docs)]
+    #[allow(missing_docs)] // This field of a single-field struct doesn't need documentation
     pub map: ZeroMap<'data, str, str>,
 }
 

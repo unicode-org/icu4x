@@ -27,7 +27,7 @@ include = [
 all-features = true
 
 [dependencies]
-smallvec = "1.6"
+smallvec = "1.9"
 static_assertions = "1.1"
 writeable = { version = "0.4", path = "../../utils/writeable" }
 displaydoc = { version = "0.2.3", default-features = false }

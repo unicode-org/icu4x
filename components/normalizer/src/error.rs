@@ -10,6 +10,7 @@ use icu_provider::prelude::DataError;
 
 /// Normalizer-specific error
 #[derive(Display, Debug)]
+#[non_exhaustive]
 pub enum NormalizerError {
     /// Error coming from the data provider
     #[displaydoc("{0}")]

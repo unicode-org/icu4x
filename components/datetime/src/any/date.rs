@@ -43,7 +43,7 @@ use icu_provider::DataLocale;
 /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), length)
 ///     .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let date = Date::new_gregorian_date(2020, 9, 1)
+/// let date = Date::new_iso_date(2020, 9, 1)
 ///     .expect("Failed to construct Date.");
 /// let any_date = date.to_any();
 ///
@@ -113,7 +113,7 @@ impl DateFormatter {
     /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::new_gregorian_date(2020, 9, 1)
+    /// let datetime = Date::new_iso_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -161,7 +161,7 @@ impl DateFormatter {
     /// let df = DateFormatter::try_new_unstable(&provider, &locale.into(), length)
     ///     .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::new_gregorian_date(2020, 9, 1)
+    /// let datetime = Date::new_iso_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -186,14 +186,14 @@ impl DateFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,

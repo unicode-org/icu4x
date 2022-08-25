@@ -17,6 +17,7 @@
         clippy::exhaustive_enums
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
@@ -29,4 +30,4 @@ mod types;
 pub use error::TimeZoneError;
 pub use metazone::MetaZoneCalculator;
 pub use time_zone::CustomTimeZone;
-pub use types::{GmtOffset, TimeVariant};
+pub use types::{GmtOffset, ZoneVariant};

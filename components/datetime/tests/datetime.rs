@@ -8,10 +8,10 @@ mod fixtures;
 mod patterns;
 
 use icu_calendar::{
-    any_calendar::{AnyCalendarKind, IncludedInAnyCalendar},
+    any_calendar::{AnyCalendarKind, IntoAnyCalendar},
     buddhist::Buddhist,
     coptic::Coptic,
-    ethiopic::{Ethiopic, EthiopicEraStyle},
+    ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
     AsCalendar, DateTime, Gregorian, Iso,
@@ -23,7 +23,6 @@ use icu_datetime::provider::time_zones::{
 };
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
-    mock::{parse_gregorian_from_str, parse_zoned_gregorian_from_str},
     pattern::runtime,
     provider::{calendar::*, week_data::WeekDataV1Marker},
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
@@ -37,7 +36,7 @@ use icu_locid::{
 use icu_provider::prelude::*;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
 use icu_provider_adapters::fork::MultiForkByKeyProvider;
-use icu_timezone::{CustomTimeZone, TimeVariant};
+use icu_timezone::{CustomTimeZone, ZoneVariant};
 use patterns::{
     get_dayperiod_tests, get_time_zone_tests,
     structs::{
@@ -48,6 +47,8 @@ use patterns::{
 use std::fmt::Write;
 use std::str::FromStr;
 use tinystr::tinystr;
+
+mod mock;
 
 fn test_fixture(fixture_name: &str) {
     let provider = icu_testdata::get_provider();
@@ -66,17 +67,17 @@ fn test_fixture(fixture_name: &str) {
             #[cfg(not(feature = "experimental"))]
             None => continue,
         };
-        let input_value = parse_gregorian_from_str(&fx.input.value).unwrap();
+        let input_value = mock::parse_gregorian_from_str(&fx.input.value).unwrap();
         let input_iso = input_value.to_calendar(Iso);
         let input_buddhist = input_value.to_calendar(Buddhist);
         let input_japanese = input_value.to_calendar(japanese);
         let input_japanext = input_value.to_calendar(japanext);
         let input_coptic = input_value.to_calendar(Coptic);
         let input_indian = input_value.to_calendar(Indian);
-        let input_ethiopic = input_value.to_calendar(Ethiopic::new());
+        let input_ethiopian = input_value.to_calendar(Ethiopian::new());
 
         let input_ethioaa =
-            input_value.to_calendar(Ethiopic::new_with_era_style(EthiopicEraStyle::AmeteAlem));
+            input_value.to_calendar(Ethiopian::new_with_era_style(EthiopianEraStyle::AmeteAlem));
         let description = match fx.description {
             Some(description) => {
                 format!(
@@ -136,16 +137,16 @@ fn test_fixture(fixture_name: &str) {
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::Ethiopic => assert_fixture_element(
+                    AnyCalendarKind::Ethiopian => assert_fixture_element(
                         &locale,
-                        &input_ethiopic,
+                        &input_ethiopian,
                         &input_iso,
                         &output_value,
                         &provider,
                         options,
                         &description,
                     ),
-                    AnyCalendarKind::Ethioaa => assert_fixture_element(
+                    AnyCalendarKind::EthiopianAmeteAlem => assert_fixture_element(
                         &locale,
                         &input_ethioaa,
                         &input_iso,
@@ -182,7 +183,7 @@ fn assert_fixture_element<A, D>(
 ) where
     A: AsCalendar,
     A::Calendar: CldrCalendar,
-    A::Calendar: IncludedInAnyCalendar,
+    A::Calendar: IntoAnyCalendar,
     D: BufferProvider,
 {
     let any_input = input_value.to_any();
@@ -319,10 +320,11 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             None => continue,
         };
 
-        let (input_date, mut time_zone) = parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
+        let (input_date, mut time_zone) =
+            mock::parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.map(TimeVariant);
+        time_zone.zone_variant = config.zone_variant.map(ZoneVariant);
 
         let description = match fx.description {
             Some(description) => {
@@ -408,7 +410,7 @@ fn test_dayperiod_patterns() {
             .unwrap();
         for test_case in &test.test_cases {
             for dt_input in &test_case.datetimes {
-                let datetime = parse_gregorian_from_str(dt_input).unwrap();
+                let datetime = mock::parse_gregorian_from_str(dt_input).unwrap();
                 for DayPeriodExpectation { patterns, expected } in &test_case.expectations {
                     for pattern_input in patterns {
                         let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
@@ -479,10 +481,10 @@ fn test_time_zone_format_configs() {
     for test in get_time_zone_tests("time_zones").unwrap().0 {
         let data_locale: DataLocale = test.locale.parse::<LanguageIdentifier>().unwrap().into();
         let mut config = test.config;
-        let (_, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
+        let (_, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.take().map(TimeVariant);
+        time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
         for TimeZoneExpectation {
             patterns: _,
             configs,
@@ -531,7 +533,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         None,
         Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
         Some(MetaZoneId(tinystr!(4, "ampa"))),
-        Some(TimeVariant::daylight()),
+        Some(ZoneVariant::daylight()),
     );
     let tzf = TimeZoneFormatter::try_from_config_unstable(
         &zone_provider,
@@ -587,10 +589,11 @@ fn test_time_zone_patterns() {
             metadata: Default::default(),
         };
         let mut config = test.config;
-        let (datetime, mut time_zone) = parse_zoned_gregorian_from_str(&test.datetime).unwrap();
+        let (datetime, mut time_zone) =
+            mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
         time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
-        time_zone.time_variant = config.time_variant.take().map(TimeVariant);
+        time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
 
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
             date_provider.load(req).unwrap().take_payload().unwrap();
@@ -727,7 +730,7 @@ fn test_length_fixtures() {
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
             metazone_id: Some(tinystr!(4, "ampa")),
-            time_variant: Some(tinystr!(2, "dt")),
+            zone_variant: Some(tinystr!(2, "dt")),
             ..TimeZoneConfig::default()
         },
     );

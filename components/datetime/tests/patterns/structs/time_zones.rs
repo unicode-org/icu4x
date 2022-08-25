@@ -10,7 +10,7 @@ use tinystr::TinyAsciiStr;
 pub struct TimeZoneConfig {
     pub time_zone_id: Option<TinyAsciiStr<8>>,
     pub metazone_id: Option<TinyAsciiStr<4>>,
-    pub time_variant: Option<TinyAsciiStr<2>>,
+    pub zone_variant: Option<TinyAsciiStr<2>>,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]

@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-#![allow(clippy::exhaustive_enums, clippy::exhaustive_structs)] // TODO(#1668) Clippy exceptions need docs or fixing.
-
 use crate::rules::reference;
 use core::{convert::TryInto, fmt, str::FromStr};
 use icu_provider::{yoke, zerofrom};
@@ -19,6 +16,7 @@ use zerovec::{
     derive(databake::Bake),
     databake(path = icu_plurals::rules::runtime::ast),
 )]
+#[allow(clippy::exhaustive_structs)] // TODO(#1668): This is both a runtime as well as a data struct...
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]

@@ -73,9 +73,9 @@ macro_rules! impl_data_provider {
                     .expect("CLDR file contains the expected calendar")
                     .clone();
 
-                // CLDR treats ethiopic and ethioaa as separate calendars; however we treat them as a single resource key that
+                // CLDR treats ethiopian and ethioaa as separate calendars; however we treat them as a single resource key that
                 // supports symbols for both era patterns based on the settings on the date. Load in ethioaa data as well when dealing with
-                // ethiopic.
+                // ethiopian.
                 if calendar == value!("ethiopic") {
                     let ethioaa: &cldr_serde::ca::Resource = self
                         .source
@@ -304,7 +304,7 @@ impl_data_provider!(
     calendared = "indian"
 );
 impl_data_provider!(
-    EthiopicDateSymbolsV1Marker,
+    EthiopianDateSymbolsV1Marker,
     symbols::convert_dates,
     calendared = "ethiopic"
 );
@@ -350,7 +350,7 @@ impl_data_provider!(
     calendared = "indian"
 );
 impl_data_provider!(
-    EthiopicDateLengthsV1Marker,
+    EthiopianDateLengthsV1Marker,
     |dates, _| DateLengthsV1::from(dates),
     calendared = "ethiopic"
 );

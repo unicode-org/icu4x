@@ -45,7 +45,7 @@ use icu_provider::DataLocale;
 /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &Locale::from_str("en-u-ca-gregory").unwrap().into(), options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
@@ -161,7 +161,7 @@ impl DateTimeFormatter {
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -209,7 +209,7 @@ impl DateTimeFormatter {
     /// let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -236,14 +236,14 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
@@ -290,14 +290,14 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
@@ -352,7 +352,7 @@ impl DateTimeFormatter {
     ///
     /// let dtf = DateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
