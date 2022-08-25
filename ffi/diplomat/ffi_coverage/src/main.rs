@@ -46,17 +46,16 @@ fn main() {
 
     let diplomat_crate = PathBuf::from(concat!(std::env!("CARGO_MANIFEST_DIR"), "/../src/lib.rs"));
     eprintln!("Loading Diplomat crate from {:?}", diplomat_crate);
-    let diplomat_types = ast::File::from(&syn_inline_mod::parse_and_inline_modules(
-        &diplomat_crate,
-    ))
-    .all_rust_links()
-    .into_iter()
-    .cloned()
-    .map(|rl| RustLinkInfo {
-        path: rl.path,
-        typ: rl.typ,
-    })
-    .collect::<BTreeSet<_>>();
+    let diplomat_types =
+        ast::File::from(&syn_inline_mod::parse_and_inline_modules(&diplomat_crate))
+            .all_rust_links()
+            .into_iter()
+            .cloned()
+            .map(|rl| RustLinkInfo {
+                path: rl.path,
+                typ: rl.typ,
+            })
+            .collect::<BTreeSet<_>>();
 
     doc_types
         .difference(&diplomat_types)
