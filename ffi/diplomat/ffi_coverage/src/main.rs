@@ -296,7 +296,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             }
                         }
 
-                        types.insert((path, ast::DocType::Struct));
+                        insert_ty(types, path, ast::DocType::Struct);
                     }
                     ItemEnum::Enum(enumm) => {
                         for id in &enumm.variants {
