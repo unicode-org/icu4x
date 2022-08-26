@@ -112,13 +112,15 @@
 
 extern crate alloc;
 
+// Make sure inherent docs go first
+mod date;
+mod datetime;
+
 pub mod any_calendar;
 pub mod buddhist;
 mod calendar;
 mod calendar_arithmetic;
 pub mod coptic;
-mod date;
-mod datetime;
 mod duration;
 mod error;
 pub mod ethiopian;

@@ -31,7 +31,7 @@ all-features = true
 [dependencies]
 syn-inline-mod = { version =  "0.4.0" }
 serde_json = { version =  "1" }
-rustdoc-types = { version =  "0.10" }
+rustdoc-types = { version =  "0.14" }
 # Rely on cargo unifying the revision with the rest of the workspace
 diplomat_core = { git = "https://github.com/rust-diplomat/diplomat" }
 lazy_static = { version =  "1" }

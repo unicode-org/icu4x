@@ -22,6 +22,13 @@ pub mod ffi {
     /// A common enum for errors that ICU4X may return, organized by API
     ///
     /// The error names are stable and can be checked against as strings in the JS API
+    #[diplomat::rust_link(fixed_decimal::Error, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::DateTimeError, Enum, compact)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatterError, Enum, compact)]
+    #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
+    #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
+    #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
+    #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     pub enum ICU4XError {
         // general errors
         /// The error is not currently categorized as ICU4XError.

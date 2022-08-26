@@ -52,7 +52,7 @@
     )
 )]
 
-pub mod decimal;
+mod decimal;
 mod ops;
 mod uint_iterator;
 

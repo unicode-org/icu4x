@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use diplomat_core::*;
-use rustdoc_types::{Crate, Item, ItemEnum, Type};
+use rustdoc_types::{Crate, Item, ItemEnum};
 use std::collections::{BTreeSet, HashSet};
 use std::fmt;
 use std::fs::File;
@@ -128,6 +128,10 @@ lazy_static::lazy_static! {
         "icu::calendar::julian",
         "icu::calendar::any_calendar::IntoAnyCalendar",
 
+        // Arithmetic APIs are still experimental/hidden for 1.0
+        "icu::calendar::DateDuration",
+        "icu::calendar::DateDurationUnit",
+
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
@@ -159,9 +163,9 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
         if CRATES.get(krate).is_none() {
             eprintln!("Parsing crate {krate}");
-            std::process::Command::new("cargo")
+            let output = std::process::Command::new("cargo")
                 .args(&[
-                    "+nightly-2022-04-05",
+                    "+nightly-2022-08-25",
                     "rustdoc",
                     "-p",
                     krate,
@@ -173,6 +177,9 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 ])
                 .output()
                 .expect("failed to execute rustdoc");
+            if !output.status.success() {
+                panic!("Rustdoc build failed with {:?}", output);
+            }
             let path = PathBuf::from(std::env!("CARGO_MANIFEST_DIR"))
                 .join("../../../target/doc")
                 .join(krate)
@@ -221,6 +228,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 if !import.glob {
                     path.push(import.name.to_string());
                 }
+
                 if let Some(item) = &krate.index.get(import.id.as_ref().unwrap()) {
                     recurse(item, krate, types, path, true, None);
                 } else if let Some(item) = &krate.paths.get(import.id.as_ref().unwrap()) {
@@ -273,7 +281,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     ItemEnum::Struct(structt) => {
                         for id in &structt.impls {
                             if let ItemEnum::Impl(inner) = &krate.index[id].inner {
-                                if let Some(Type::ResolvedPath { name, .. }) = &inner.trait_ {
+                                if let Some(path) = &inner.trait_ {
+                                    let name = &path.name;
                                     if IGNORED_TRAITS.contains(name.as_str()) {
                                         continue;
                                     }
@@ -296,7 +305,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                             }
                         }
 
-                        types.insert((path, ast::DocType::Struct));
+                        insert_ty(types, path, ast::DocType::Struct);
                     }
                     ItemEnum::Enum(enumm) => {
                         for id in &enumm.variants {
@@ -305,7 +314,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
                         for id in &enumm.impls {
                             if let ItemEnum::Impl(inner) = &krate.index[id].inner {
-                                if let Some(Type::ResolvedPath { name, .. }) = &inner.trait_ {
+                                if let Some(path) = &inner.trait_ {
+                                    let name = &path.name;
                                     if IGNORED_TRAITS.contains(name.as_str()) {
                                         continue;
                                     }
