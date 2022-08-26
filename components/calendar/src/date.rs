@@ -248,8 +248,11 @@ impl<A: AsCalendar> Date<A> {
     /// assert_eq!(date.week_of_month(first_weekday), 2);
     /// ```
     pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> u16 {
-        let day_of_month = self.day_of_month();
-        week_of::simple_week_of(first_weekday, day_of_month.0 as u16, self.day_of_week())
+        let config = WeekOfYearConfig {
+            first_weekday,
+            min_week_days: 0, // ignored
+        };
+        config.week_of_month(self.day_of_month(), self.day_of_week())
     }
 
     /// The week of the year containing this date.
@@ -280,14 +283,7 @@ impl<A: AsCalendar> Date<A> {
     /// );
     /// ```
     pub fn week_of_year(&self, config: &WeekOfYearConfig) -> Result<WeekOf, DateTimeError> {
-        let doy_info = self.day_of_year_info();
-        week_of::week_of(
-            config,
-            doy_info.days_in_prev_year as u16,
-            doy_info.days_in_year as u16,
-            doy_info.day_of_year as u16,
-            self.day_of_week(),
-        )
+        config.week_of_year(self.day_of_year_info(), self.day_of_week())
     }
 
     /// Construct a date from raw values for a given calendar. This does not check any

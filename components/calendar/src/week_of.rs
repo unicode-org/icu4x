@@ -7,7 +7,7 @@
 //! The main functionality of this module is found in the [`week_of()`] (and [`simple_week_of()`])
 //! functions.
 
-use crate::{error::DateTimeError, types::IsoWeekday, provider::WeekDataV1};
+use crate::{error::DateTimeError, provider::WeekDataV1, types::{IsoWeekday, DayOfYearInfo, DayOfMonth}};
 
 /// Minimum number of days in a month unit required for using this module
 pub const MIN_UNIT_DAYS: u16 = 14;
@@ -38,6 +38,20 @@ impl WeekOfYearConfig {
     /// Returns the zero based index of `weekday` vs this calendar's start of week.
     fn weekday_index(&self, weekday: IsoWeekday) -> i8 {
         (7 + (weekday as i8) - (self.first_weekday as i8)) % 7
+    }
+
+    pub fn week_of_month(&self, day_of_month: DayOfMonth, weekday: IsoWeekday) -> u16 {
+        simple_week_of(self.first_weekday, day_of_month.0 as u16, weekday)
+    }
+
+    pub fn week_of_year(&self, day_of_year_info: DayOfYearInfo, weekday: IsoWeekday) -> Result<WeekOf, DateTimeError> {
+        week_of(
+            self,
+            day_of_year_info.days_in_prev_year as u16,
+            day_of_year_info.days_in_year as u16,
+            day_of_year_info.day_of_year as u16,
+            weekday,
+        )
     }
 }
 
