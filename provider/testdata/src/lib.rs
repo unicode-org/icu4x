@@ -95,6 +95,7 @@ pub mod versions {
     /// ```
     /// assert_eq!("41.0.0", icu_testdata::versions::cldr_tag());
     /// ```
+    #[allow(clippy::unwrap_used)] // documented
     pub fn cldr_tag() -> String {
         crate::metadata::load()
             .unwrap()
@@ -115,6 +116,7 @@ pub mod versions {
     /// ```
     /// assert_eq!("icu4x/2022-08-17/71.x", icu_testdata::versions::icu_tag());
     /// ```
+    #[allow(clippy::unwrap_used)] // documented
     pub fn icu_tag() -> String {
         crate::metadata::load()
             .unwrap()
