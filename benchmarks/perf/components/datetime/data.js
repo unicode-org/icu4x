@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661458512154,
+  "lastUpdate": 1661474958649,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -64541,6 +64541,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5254,
             "range": "± 12",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e17ab458aa39467946dadab33d2d3cb37a622646",
+          "message": "FFI coverage whack-a-mole part 1 (#2455)\n\n* Make fixed_decimal::decimal private (fixes #2449)\r\n\r\n* regen coverage\r\n\r\n* fix insert_ty\r\n\r\n* Handle errors and duration apis\r\n\r\n* Improve datetime docs display\r\n\r\n* Fixes\r\n\r\n* Update to newer nightly\r\n\r\n* regen\r\n\r\n* regen diplomat\r\n\r\n* fix imports\r\n\r\n* fmt",
+          "timestamp": "2022-08-26T00:35:34Z",
+          "tree_id": "330d545ed674bac5071780a2f83549710fb3063e",
+          "url": "https://github.com/unicode-org/icu4x/commit/e17ab458aa39467946dadab33d2d3cb37a622646"
+        },
+        "date": 1661474902024,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 133644,
+            "range": "± 10695",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 252537,
+            "range": "± 17405",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 115129,
+            "range": "± 8033",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 140720,
+            "range": "± 10496",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 130324,
+            "range": "± 15486",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 141594,
+            "range": "± 7822",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 243735,
+            "range": "± 21231",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 255034,
+            "range": "± 14086",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 237912,
+            "range": "± 15281",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 277351,
+            "range": "± 22083",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6479,
+            "range": "± 396",
             "unit": "ns/iter"
           }
         ]
