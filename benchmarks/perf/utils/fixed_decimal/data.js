@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661484007570,
+  "lastUpdate": 1661543387745,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -47429,6 +47429,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 86,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2bb80b85fd57db13c3f570f4cde1fe20a7744ef",
+          "message": "FFI coverage whack-a-mole part 2 (#2457)\n\n* Update diplomat\r\n\r\n* include calendar trait\r\n\r\n* Add AnyCalendarKind; calendar cleanups\r\n\r\n* Mention broken links\r\n\r\n* regen\r\n\r\n* fix tests\r\n\r\n* Fixup fixed decimal links\r\n\r\n* regen diplomat\r\n\r\n* bump diplomat to main\r\n\r\n* remove broken links test (it doesn't work since IGNORED_TRAITS bails early",
+          "timestamp": "2022-08-26T19:37:01Z",
+          "tree_id": "92efaab472136d7d269ede672d69c85f4935106d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2bb80b85fd57db13c3f570f4cde1fe20a7744ef"
+        },
+        "date": 1661543333168,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 138556,
+            "range": "± 714",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27993,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 73282,
+            "range": "± 122",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 246,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 114,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 88,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
