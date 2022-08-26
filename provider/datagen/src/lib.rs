@@ -383,7 +383,7 @@ fn test_keys_from_file() {
             icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
-            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_calendar::provider::WeekDataV1Marker::KEY,
         ]
     );
 }
@@ -403,7 +403,7 @@ fn test_keys_from_bin() {
             icu_plurals::provider::OrdinalV1Marker::KEY,
             icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY,
             icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
-            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
+            icu_calendar::provider::WeekDataV1Marker::KEY,
         ]
     );
 }

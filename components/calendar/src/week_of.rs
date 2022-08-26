@@ -7,35 +7,41 @@
 //! The main functionality of this module is found in the [`week_of()`] (and [`simple_week_of()`])
 //! functions.
 
-use crate::{error::DateTimeError, types::IsoWeekday};
+use crate::{error::DateTimeError, types::IsoWeekday, provider::WeekDataV1};
 
 /// Minimum number of days in a month unit required for using this module
 pub const MIN_UNIT_DAYS: u16 = 14;
 
 /// Information about how a given calendar assigns weeks to a year or month.
 #[derive(Clone, Copy, Debug)]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::week_of),
-)]
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[allow(clippy::exhaustive_structs)] // used in data provider
-pub struct WeekOfYearConfigV1 {
+#[non_exhaustive]
+pub struct WeekOfYearConfig {
     /// The first day of a week.
     pub first_weekday: IsoWeekday,
     /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
     pub min_week_days: u8,
 }
 
-impl WeekOfYearConfigV1 {
+impl From<WeekDataV1> for WeekOfYearConfig {
+    fn from(other: WeekDataV1) -> Self {
+        Self { first_weekday: other.first_weekday, min_week_days: other.min_week_days }
+    }
+}
+
+impl From<&WeekDataV1> for WeekOfYearConfig {
+    fn from(other: &WeekDataV1) -> Self {
+        Self { first_weekday: other.first_weekday, min_week_days: other.min_week_days }
+    }
+}
+
+impl WeekOfYearConfig {
     /// Returns the zero based index of `weekday` vs this calendar's start of week.
     fn weekday_index(&self, weekday: IsoWeekday) -> i8 {
         (7 + (weekday as i8) - (self.first_weekday as i8)) % 7
     }
 }
 
-impl Default for WeekOfYearConfigV1 {
+impl Default for WeekOfYearConfig {
     fn default() -> Self {
         Self {
             first_weekday: IsoWeekday::Monday,
@@ -90,7 +96,7 @@ impl UnitInfo {
     ///
     /// The returned value can be negative if this unit's first week started during the previous
     /// unit.
-    fn first_week_offset(&self, calendar: &WeekOfYearConfigV1) -> i8 {
+    fn first_week_offset(&self, calendar: &WeekOfYearConfig) -> i8 {
         let first_day_index = calendar.weekday_index(self.first_day);
         if 7 - first_day_index >= calendar.min_week_days as i8 {
             -first_day_index
@@ -100,7 +106,7 @@ impl UnitInfo {
     }
 
     /// Returns the number of weeks in this unit according to `calendar`.
-    fn num_weeks(&self, calendar: &WeekOfYearConfigV1) -> u16 {
+    fn num_weeks(&self, calendar: &WeekOfYearConfig) -> u16 {
         let first_week_offset = self.first_week_offset(calendar);
         let num_days_including_first_week =
             (self.duration_days as i32) - (first_week_offset as i32);
@@ -112,7 +118,7 @@ impl UnitInfo {
     }
 
     /// Returns the week number for the given day in this unit.
-    fn relative_week(&self, calendar: &WeekOfYearConfigV1, day: u16) -> RelativeWeek {
+    fn relative_week(&self, calendar: &WeekOfYearConfig, day: u16) -> RelativeWeek {
         let days_since_first_week =
             i32::from(day) - i32::from(self.first_week_offset(calendar)) - 1;
         if days_since_first_week < 0 {
@@ -158,7 +164,7 @@ pub struct WeekOf {
 ///  - day: 1-based day of month/year.
 ///  - week_day: The weekday of `day`..
 pub fn week_of(
-    calendar: &WeekOfYearConfigV1,
+    calendar: &WeekOfYearConfig,
     num_days_in_previous_unit: u16,
     num_days_in_unit: u16,
     day: u16,
@@ -200,7 +206,7 @@ pub fn week_of(
 ///  - day: 1-based day of the month or year.
 ///  - week_day: The weekday of `day`.
 pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday) -> u16 {
-    let calendar = WeekOfYearConfigV1 {
+    let calendar = WeekOfYearConfig {
         first_weekday,
         min_week_days: 1,
     };
@@ -221,20 +227,20 @@ pub fn simple_week_of(first_weekday: IsoWeekday, day: u16, week_day: IsoWeekday)
 
 #[cfg(test)]
 mod tests {
-    use super::{week_of, WeekOfYearConfigV1, RelativeUnit, RelativeWeek, UnitInfo, WeekOf};
+    use super::{week_of, WeekOfYearConfig, RelativeUnit, RelativeWeek, UnitInfo, WeekOf};
     use crate::{error::DateTimeError, types::IsoWeekday, Date, DateDuration};
 
-    static ISO_CALENDAR: WeekOfYearConfigV1 = WeekOfYearConfigV1 {
+    static ISO_CALENDAR: WeekOfYearConfig = WeekOfYearConfig {
         first_weekday: IsoWeekday::Monday,
         min_week_days: 4,
     };
 
-    static AE_CALENDAR: WeekOfYearConfigV1 = WeekOfYearConfigV1 {
+    static AE_CALENDAR: WeekOfYearConfig = WeekOfYearConfig {
         first_weekday: IsoWeekday::Saturday,
         min_week_days: 4,
     };
 
-    static US_CALENDAR: WeekOfYearConfigV1 = WeekOfYearConfigV1 {
+    static US_CALENDAR: WeekOfYearConfig = WeekOfYearConfig {
         first_weekday: IsoWeekday::Sunday,
         min_week_days: 1,
     };
@@ -308,7 +314,7 @@ mod tests {
     /// This alternative implementation serves as an exhaustive safety check
     /// of relative_week() (in addition to the manual test points used
     /// for testing week_of()).
-    fn classify_days_of_unit(calendar: &WeekOfYearConfigV1, unit: &UnitInfo) -> Vec<RelativeWeek> {
+    fn classify_days_of_unit(calendar: &WeekOfYearConfig, unit: &UnitInfo) -> Vec<RelativeWeek> {
         let mut weeks: Vec<Vec<IsoWeekday>> = Vec::new();
         for day_index in 0..unit.duration_days {
             let day = super::add_to_weekday(unit.first_day, i32::from(day_index));
@@ -341,7 +347,7 @@ mod tests {
     fn test_relative_week_of_month() -> Result<(), DateTimeError> {
         for min_week_days in 1..7 {
             for start_of_week in 1..7 {
-                let calendar = WeekOfYearConfigV1 {
+                let calendar = WeekOfYearConfig {
                     first_weekday: IsoWeekday::from(start_of_week),
                     min_week_days,
                 };
@@ -370,7 +376,7 @@ mod tests {
     }
 
     fn week_of_month_from_iso_date(
-        calendar: &WeekOfYearConfigV1,
+        calendar: &WeekOfYearConfig,
         yyyymmdd: u32,
     ) -> Result<WeekOf, DateTimeError> {
         let year = (yyyymmdd / 10000) as i32;

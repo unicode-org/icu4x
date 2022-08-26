@@ -14,11 +14,11 @@ use crate::pattern::{
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::provider::date_time::{DateSymbols, TimeSymbols};
-use crate::provider::week_data::WeekDataV1;
 
 use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
+use icu_calendar::provider::{WeekDataV1, WeekDataV1Marker};
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 use writeable::Writeable;
@@ -167,7 +167,7 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_datetime = DateTimeInputWithCalendar::new(datetime, week_data.map(|d| &d.0));
+    let loc_datetime = DateTimeInputWithCalendar::new(datetime, week_data.map(|v| v.into()));
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(
         pattern,

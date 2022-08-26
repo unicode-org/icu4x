@@ -431,7 +431,7 @@ impl DataProvider<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>
         })
     }
 }
-impl DataProvider<::icu_datetime::provider::week_data::WeekDataV1Marker> for BakedDataProvider {
+impl DataProvider<::icu_calendar::provider::WeekDataV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::week_data::WeekDataV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),

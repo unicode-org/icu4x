@@ -8,11 +8,11 @@ use alloc::string::String;
 use icu_provider::prelude::*;
 
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
-use crate::provider::{self, calendar::*, date_time::PatternSelector, week_data::WeekDataV1Marker};
+use crate::provider::{self, calendar::*, date_time::PatternSelector};
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
+use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;

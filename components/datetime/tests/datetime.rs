@@ -15,6 +15,7 @@ use icu_calendar::{
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
     AsCalendar, DateTime, Gregorian, Iso,
+    provider::WeekDataV1Marker
 };
 use icu_datetime::provider::time_zones::{
     ExemplarCitiesV1Marker, MetaZoneGenericNamesLongV1Marker, MetaZoneGenericNamesShortV1Marker,
@@ -24,7 +25,7 @@ use icu_datetime::provider::time_zones::{
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
     pattern::runtime,
-    provider::{calendar::*, week_data::WeekDataV1Marker},
+    provider::{calendar::*},
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
     CldrCalendar, DateTimeFormatter, DateTimeFormatterOptions, TimeFormatter, TypedDateFormatter,
     TypedDateTimeFormatter, TypedZonedDateTimeFormatter,

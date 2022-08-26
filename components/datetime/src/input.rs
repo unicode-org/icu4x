@@ -127,7 +127,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
 
 pub(crate) struct DateTimeInputWithCalendar<'data, T: DateTimeInput> {
     data: &'data T,
-    calendar: Option<&'data week_of::WeekOfYearConfigV1>,
+    calendar: Option<week_of::WeekOfYearConfig>,
 }
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
@@ -268,7 +268,7 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
 
 fn compute_week_of_year<T: DateInput>(
     datetime: &T,
-    calendar: &week_of::WeekOfYearConfigV1,
+    calendar: &week_of::WeekOfYearConfig,
 ) -> Result<(DayOfYearInfo, week_of::WeekOf), DateTimeError> {
     let doy_info = datetime
         .day_of_year_info()
@@ -289,7 +289,7 @@ fn compute_week_of_year<T: DateInput>(
 
 fn year_week<T: DateInput>(
     datetime: &T,
-    calendar: &week_of::WeekOfYearConfigV1,
+    calendar: &week_of::WeekOfYearConfig,
 ) -> Result<FormattableYear, DateTimeError> {
     let (doy_info, week) = compute_week_of_year(datetime, calendar)?;
     Ok(match week.unit {
@@ -303,7 +303,7 @@ fn year_week<T: DateInput>(
 
 fn week_of_year<T: DateInput>(
     datetime: &T,
-    calendar: &week_of::WeekOfYearConfigV1,
+    calendar: &week_of::WeekOfYearConfig,
 ) -> Result<WeekOfYear, DateTimeError> {
     let (_, week) = compute_week_of_year(datetime, calendar)?;
     Ok(WeekOfYear(u32::from(week.week)))
@@ -343,7 +343,7 @@ fn day_of_week_in_month<T: DateInput>(datetime: &T) -> Result<DayOfWeekInMonth, 
 }
 
 impl<'data, T: DateTimeInput> DateTimeInputWithCalendar<'data, T> {
-    pub(crate) fn new(data: &'data T, calendar: Option<&'data week_of::WeekOfYearConfigV1>) -> Self {
+    pub(crate) fn new(data: &'data T, calendar: Option<week_of::WeekOfYearConfig>) -> Self {
         Self { data, calendar }
     }
 }
@@ -356,7 +356,7 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithCal
     fn year_week(&self) -> Result<FormattableYear, DateTimeError> {
         year_week(
             self.data,
-            self.calendar.ok_or(DateTimeError::MissingCalendar)?,
+            self.calendar.as_ref().ok_or(DateTimeError::MissingCalendar)?,
         )
     }
 
@@ -372,7 +372,7 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithCal
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
         week_of_year(
             self.data,
-            self.calendar.ok_or(DateTimeError::MissingCalendar)?,
+            self.calendar.as_ref().ok_or(DateTimeError::MissingCalendar)?,
         )
     }
 

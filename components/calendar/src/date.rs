@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
-use crate::week_of::{self, WeekOfYearConfigV1, WeekOf};
+use crate::week_of::{self, WeekOf, WeekOfYearConfig};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
@@ -279,10 +279,10 @@ impl<A: AsCalendar> Date<A> {
     ///     })
     /// );
     /// ```
-    pub fn week_of_year(&self, calendar_info: &WeekOfYearConfigV1) -> Result<WeekOf, DateTimeError> {
+    pub fn week_of_year(&self, config: &WeekOfYearConfig) -> Result<WeekOf, DateTimeError> {
         let doy_info = self.day_of_year_info();
         week_of::week_of(
-            calendar_info,
+            config,
             doy_info.days_in_prev_year as u16,
             doy_info.days_in_year as u16,
             doy_info.day_of_year as u16,

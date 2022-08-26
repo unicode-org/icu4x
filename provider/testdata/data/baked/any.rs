@@ -67,7 +67,7 @@ impl AnyProvider for BakedDataProvider {
         const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.get_hash();
         const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::week_data::WeekDataV1Marker::KEY.get_hash();
+            ::icu_calendar::provider::WeekDataV1Marker::KEY.get_hash();
         const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.get_hash();
         const ANDLISTV1MARKER: ::icu_provider::DataKeyHash =

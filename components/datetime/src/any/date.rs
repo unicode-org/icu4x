@@ -7,10 +7,10 @@ use alloc::string::String;
 
 use icu_provider::prelude::*;
 
-use crate::provider::{calendar::*, week_data::WeekDataV1Marker};
+use crate::provider::{calendar::*};
 use crate::{input::DateInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
+use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker};
 use icu_calendar::Date;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;

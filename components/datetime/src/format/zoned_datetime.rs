@@ -68,7 +68,7 @@ where
             .datetime_format
             .week_data
             .as_ref()
-            .map(|d| &d.get().0),
+            .map(|d| d.get().into()),
     );
 
     let pattern = patterns.get().0.select(

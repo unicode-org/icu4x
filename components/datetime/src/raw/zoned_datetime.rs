@@ -10,6 +10,7 @@ use icu_decimal::{
 };
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
+use icu_calendar::provider::WeekDataV1Marker;
 
 use crate::{
     format::{
@@ -25,7 +26,6 @@ use crate::{
             patterns::PatternPluralsFromPatternsV1Marker, ErasedDateSymbolsV1Marker,
             TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
-        week_data::WeekDataV1Marker,
     },
     raw,
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
