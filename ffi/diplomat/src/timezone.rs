@@ -10,6 +10,7 @@ pub mod ffi {
     use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
+    use core::fmt::Write;
     use core::str::FromStr;
     use diplomat_runtime::DiplomatResult;
     use icu_timezone::CustomTimeZone;
@@ -57,7 +58,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
         pub fn clear_gmt_offset(&mut self) {
-            self.gmt_offset.clear()
+            self.0.gmt_offset.take();
         }
 
         /// Returns the value of the `gmt_offset` field as offset seconds.
@@ -125,21 +126,23 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         pub fn clear_time_zone_id(&mut self) {
-            self.time_zone_id.clear()
+            self.0.time_zone_id.take();
         }
 
-        /// Returns the value of the `time_zone_id` field as a string.
+        /// Writes the value of the `time_zone_id` field as a string.
         ///
         /// Errors if the `time_zone_id` field is empty.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
-        pub fn time_zone_id<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
-            self.0
-                .time_zone_id
-                .as_ref()
-                .map(|v| v.0.as_str())
-                .ok_or(())
-                .into()
+        pub fn time_zone_id(
+            &self,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ()> {
+            match self.0.time_zone_id {
+                Some(v) => write.write_str(v.0.as_str()).map_err(|_| ()),
+                None => Err(()),
+            }
+            .into()
         }
 
         /// Sets the `meta_zone_id` field from a string.
@@ -162,21 +165,23 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
         pub fn clear_meta_zone_id(&mut self) {
-            self.meta_zone_id.clear()
+            self.0.meta_zone_id.take();
         }
 
-        /// Returns the value of the `meta_zone_id` field as a string.
+        /// Writes the value of the `meta_zone_id` field as a string.
         ///
         /// Errors if the `meta_zone_id` field is empty.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
-        pub fn meta_zone_id<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
-            self.0
-                .meta_zone_id
-                .as_ref()
-                .map(|v| v.0.as_str())
-                .ok_or(())
-                .into()
+        pub fn meta_zone_id(
+            &self,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ()> {
+            match self.0.meta_zone_id {
+                Some(v) => write.write_str(v.0.as_str()).map_err(|_| ()),
+                None => Err(()),
+            }
+            .into()
         }
 
         /// Sets the `zone_variant` field from a string.
@@ -199,21 +204,23 @@ pub mod ffi {
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         pub fn clear_zone_variant(&mut self) {
-            self.zone_variant.clear()
+            self.0.zone_variant.take();
         }
 
-        /// Returns the value of the `zone_variant` field as a string.
+        /// Writes the value of the `zone_variant` field as a string.
         ///
         /// Errors if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
-        pub fn zone_variant<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
-            self.0
-                .zone_variant
-                .as_ref()
-                .map(|v| v.0.as_str())
-                .ok_or(())
-                .into()
+        pub fn zone_variant(
+            &self,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ()> {
+            match self.0.zone_variant {
+                Some(v) => write.write_str(v.0.as_str()).map_err(|_| ()),
+                None => Err(()),
+            }
+            .into()
         }
 
         /// Sets the `zone_variant` field to standard time.
