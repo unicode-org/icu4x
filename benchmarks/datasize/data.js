@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661543526132,
+  "lastUpdate": 1661557839373,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25463,6 +25463,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/dd09074425b825f4ca696922e58280722d986454"
         },
         "date": 1661543481163,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "bf9012336256c01512374518f2ff90f25d45a998",
+          "message": "Add icu_testdata::versions module and fix metadata lookup (#2463)",
+          "timestamp": "2022-08-26T16:48:04-07:00",
+          "tree_id": "b3050de32c50319d1bbaa67b37aaf415515ec963",
+          "url": "https://github.com/unicode-org/icu4x/commit/bf9012336256c01512374518f2ff90f25d45a998"
+        },
+        "date": 1661557783947,
         "tool": "ndjson",
         "benches": [
           {
