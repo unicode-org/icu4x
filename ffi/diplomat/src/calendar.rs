@@ -79,6 +79,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
+    #[diplomat::transparent_convert]
     #[diplomat::rust_link(icu::calendar::AnyCalendar, Enum)]
     pub struct ICU4XCalendar(pub Arc<AnyCalendar>);
 

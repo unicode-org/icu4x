@@ -119,6 +119,7 @@ lazy_static::lazy_static! {
         "Calendar",
         // Rust-specific conversion trait
         "AsCalendar",
+        "IntoAnyCalendar",
     ].into_iter().collect();
 
     // Paths which are not checked for FFI coverage. Naming a type or module here
@@ -153,6 +154,22 @@ lazy_static::lazy_static! {
         "icu::calendar::japanese",
         "icu::calendar::julian",
         "icu::calendar::any_calendar::IntoAnyCalendar",
+        "icu::calendar::Date::to_any",
+        "icu::calendar::DateTime::to_any",
+        "icu::calendar::Date::new_buddhist_date",
+        "icu::calendar::Date::new_coptic_date",
+        "icu::calendar::Date::new_ethiopian_date",
+        "icu::calendar::Date::new_indian_date",
+        "icu::calendar::Date::new_japanese_date",
+        "icu::calendar::Date::new_japanese_extended_date",
+        "icu::calendar::Date::new_julian_date",
+        "icu::calendar::DateTime::new_buddhist_datetime",
+        "icu::calendar::DateTime::new_coptic_datetime",
+        "icu::calendar::DateTime::new_ethiopian_datetime",
+        "icu::calendar::DateTime::new_indian_datetime",
+        "icu::calendar::DateTime::new_japanese_datetime",
+        "icu::calendar::DateTime::new_japanese_extended_datetime",
+        "icu::calendar::DateTime::new_julian_datetime",
 
         // Arithmetic APIs are still experimental/hidden for 1.0
         "icu::calendar::DateDuration",
@@ -166,8 +183,24 @@ lazy_static::lazy_static! {
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
-        // Used for rust-specific type transforms
+        // Rust-specific calendar wrapper stuff
         "icu::calendar::AsCalendar",
+        "icu::calendar::Ref",
+        "icu::calendar::Date::wrap_calendar_in_rc",
+        "icu::calendar::Date::wrap_calendar_in_arc",
+        "icu::calendar::DateTime::wrap_calendar_in_rc",
+        "icu::calendar::DateTime::wrap_calendar_in_arc",
+        // Individual markerlike calendar types and inner types
+        // inner types are only public for associated type reasons, and the markerlike
+        // calendar types exist to implement the trait
+        "icu::calendar::Date::from_raw",
+        "icu::calendar::Date::inner",
+        "icu::calendar::Iso",
+        "icu::calendar::iso::Iso",
+        "icu::calendar::iso::IsoDateInner",
+        "icu::calendar::Gregorian",
+        "icu::calendar::gregorian::Gregorian",
+        "icu::calendar::gregorian::GregorianDateInner",
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
@@ -178,6 +211,12 @@ lazy_static::lazy_static! {
         // uniformly especially for complex types
         "icu::calendar::provider",
         "icu::datetime::provider",
+
+        // Error helpers
+        "icu::calendar::DateTimeError::provide",
+
+        // Reexports (tool doesn't currently handle these)
+        "icu::calendar::any_calendar",
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 

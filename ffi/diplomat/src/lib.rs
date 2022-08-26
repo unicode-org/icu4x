@@ -34,6 +34,9 @@ extern crate std as rust_std;
 
 extern crate alloc;
 
+#[macro_use]
+mod utils;
+
 pub mod bidi;
 pub mod calendar;
 pub mod data_struct;

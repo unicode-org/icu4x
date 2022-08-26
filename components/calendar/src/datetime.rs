@@ -5,6 +5,8 @@
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::types::{self, Time};
 use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
+use alloc::rc::Rc;
+use alloc::sync::Arc;
 
 /// A date+time for a given calendar.
 ///
@@ -94,6 +96,28 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
     pub fn to_any(&self) -> DateTime<AnyCalendar> {
         DateTime {
             date: self.date.to_any(),
+            time: self.time,
+        }
+    }
+}
+
+impl<C: Calendar> DateTime<C> {
+    /// Wrap the calendar type in `Rc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `DateTime<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_rc(self) -> DateTime<Rc<C>> {
+        DateTime {
+            date: self.date.wrap_calendar_in_rc(),
+            time: self.time,
+        }
+    }
+
+    /// Wrap the calendar type in `Arc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `DateTime<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_arc(self) -> DateTime<Arc<C>> {
+        DateTime {
+            date: self.date.wrap_calendar_in_arc(),
             time: self.time,
         }
     }

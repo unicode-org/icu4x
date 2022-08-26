@@ -9,10 +9,12 @@ pub mod ffi {
     use core::convert::TryInto;
 
     use diplomat_runtime::DiplomatResult;
+    use icu_calendar::types::Time;
     use icu_calendar::AnyCalendar;
     use icu_calendar::{DateTime, Gregorian, Iso};
 
     use crate::calendar::ffi::ICU4XCalendar;
+    use crate::date::ffi::{ICU4XDate, ICU4XIsoDate};
     use crate::errors::ffi::ICU4XError;
 
     #[diplomat::opaque]
@@ -59,6 +61,40 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
+
+        /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
+        #[diplomat::rust_link(
+            icu::calendar::DateTime::from_minutes_since_local_unix_epoch,
+            FnInStruct
+        )]
+        pub fn from_minutes_since_local_unix_epoch(
+            minutes: i32,
+        ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
+            DateTime::from_minutes_since_local_unix_epoch(minutes)
+                .map(|dt| Box::new(ICU4XIsoDateTime(dt)))
+                .map_err(Into::into)
+                .into()
+        }
+
+        /// Gets the date contained in this object
+        #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
+        pub fn date(&self) -> Box<ICU4XIsoDate> {
+            Box::new(ICU4XIsoDate(self.0.date.clone()))
+        }
+
+        /// Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
+        /// other calendars
+        #[diplomat::rust_link(icu::calendar::DateTime::to_any, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::new_from_iso, FnInStruct, hidden)]
+        pub fn to_any(&self) -> Box<ICU4XDateTime> {
+            Box::new(ICU4XDateTime(self.0.to_any().wrap_calendar_in_arc()))
+        }
+
+        /// Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
+        #[diplomat::rust_link(icu::calendar::DateTime::minutes_since_local_unix_epoch, FnInStruct)]
+        pub fn minutes_since_local_unix_epoch(&self) -> i32 {
+            self.0.minutes_since_local_unix_epoch()
+        }
     }
 
     #[diplomat::opaque]
@@ -84,6 +120,56 @@ pub mod ffi {
                 .map(|dt| Box::new(ICU4XDateTime(dt.to_calendar(cal))))
                 .map_err(Into::into)
                 .into()
+        }
+        /// Creates a new [`ICU4XDateTime`] representing the ISO date and time
+        /// given but in a given calendar
+        #[diplomat::rust_link(icu::calendar::DateTime::new_from_codes, FnInStruct)]
+        pub fn try_new_from_codes_in_calendar(
+            era_code: &str,
+            year: i32,
+            month_code: &str,
+            day: u8,
+            hour: u8,
+            minute: u8,
+            second: u8,
+            nanosecond: u32,
+            calendar: &ICU4XCalendar,
+        ) -> DiplomatResult<Box<ICU4XDateTime>, ICU4XError> {
+            let era = try_icu4x!(era_code.parse());
+            let month = try_icu4x!(month_code.parse());
+            let cal = calendar.0.clone();
+            let hour = try_icu4x!(hour.try_into());
+            let minute = try_icu4x!(minute.try_into());
+            let second = try_icu4x!(second.try_into());
+            let nanosecond = try_icu4x!(nanosecond.try_into());
+            let time = Time {
+                hour,
+                minute,
+                second,
+                nanosecond,
+            };
+            DateTime::new_from_codes(era, year, month, day, time, cal)
+                .map(|dt| Box::new(ICU4XDateTime(dt)))
+                .map_err(Into::into)
+                .into()
+        }
+
+        /// Gets a copy of the date contained in this object
+        #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
+        pub fn date(&self) -> Box<ICU4XDate> {
+            Box::new(ICU4XDate(self.0.date.clone()))
+        }
+
+        /// Converts this date to ISO
+        #[diplomat::rust_link(icu::calendar::DateTime::to_iso, FnInStruct)]
+        pub fn to_iso(&self) -> Box<ICU4XIsoDateTime> {
+            Box::new(ICU4XIsoDateTime(self.0.to_iso()))
+        }
+
+        /// Convert this datetime to one in a different calendar
+        #[diplomat::rust_link(icu::calendar::DateTime::to_calendar, FnInStruct)]
+        pub fn to_calendar(&self, calendar: &ICU4XCalendar) -> Box<ICU4XDateTime> {
+            Box::new(ICU4XDateTime(self.0.to_calendar(calendar.0.clone())))
         }
 
         /// Sets the fractional seconds field of this datetime, in nanoseconds

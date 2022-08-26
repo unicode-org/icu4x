@@ -255,6 +255,14 @@ impl<A: AsCalendar> Date<A> {
     pub fn calendar(&self) -> &A::Calendar {
         self.calendar.as_calendar()
     }
+
+    /// Get a reference to the contained calendar wrapper
+    ///
+    /// (Useful in case the user wishes to e.g. clone an Rc)
+    #[inline]
+    pub fn calendar_wrapper(&self) -> &A {
+        &self.calendar
+    }
 }
 
 impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
@@ -271,6 +279,13 @@ impl<C: Calendar> Date<C> {
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
     pub fn wrap_calendar_in_rc(self) -> Date<Rc<C>> {
         Date::from_raw(self.inner, Rc::new(self.calendar))
+    }
+
+    /// Wrap the calendar type in `Arc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_arc(self) -> Date<Arc<C>> {
+        Date::from_raw(self.inner, Arc::new(self.calendar))
     }
 }
 
