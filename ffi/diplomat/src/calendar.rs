@@ -7,6 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::convert::TryInto;
+    use core::fmt::Write;
     use diplomat_runtime::DiplomatResult;
     use icu_calendar::{AnyCalendar, AnyCalendarKind};
     use icu_calendar::{DateTime, Gregorian, Iso};
@@ -61,6 +62,7 @@ pub mod ffi {
         }
     }
 
+    /// The various calendar types currently supported by [`ICU4XCalendar`]
     #[diplomat::enum_convert(AnyCalendarKind, needs_wildcard)]
     #[diplomat::rust_link(icu::calendar::AnyCalendarKind, Enum)]
     pub enum ICU4XAnyCalendarKind {
@@ -82,6 +84,45 @@ pub mod ffi {
         Indian = 7,
         /// The kind of a Coptic calendar
         Coptic = 8,
+    }
+
+    impl ICU4XAnyCalendarKind {
+        /// Read the calendar type off of the -u-ca- extension on a locale
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_locale, FnInEnum)]
+        pub fn from_locale(
+            locale: &ICU4XLocale,
+        ) -> DiplomatResult<ICU4XAnyCalendarKind, ICU4XError> {
+            AnyCalendarKind::from_locale(&locale.0)
+                .map(Into::into)
+                .map_err(ICU4XError::from)
+                .into()
+        }
+
+        /// Obtain the calendar type given a BCP-47 -u-ca- extension string
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_bcp47, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_bcp47_string, FnInEnum, hidden)]
+        pub fn from_bcp47(s: &str) -> DiplomatResult<ICU4XAnyCalendarKind, ICU4XError> {
+            AnyCalendarKind::from_bcp47_string(s)
+                .map(Into::into)
+                .ok_or(ICU4XError::DateTimeUnknownAnyCalendarKindError)
+                .into()
+        }
+
+        /// Obtain the string suitable for use in the -u-ca- extension in a BCP47 locale
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_string, FnInEnum)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::as_bcp47_value, FnInEnum, hidden)]
+        pub fn bcp47(
+            self,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let kind = AnyCalendarKind::from(self);
+            let result = write
+                .write_str(kind.as_bcp47_string())
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
     }
 
     #[diplomat::opaque]

@@ -3,11 +3,6 @@ fixed_decimal::FixedDecimal::Err#AssociatedTypeInStruct
 fixed_decimal::FixedDecimal::write_len#FnInStruct
 fixed_decimal::FixedDecimal::write_to_parts#FnInStruct
 fixed_decimal::FixedDecimal::write_to_string#FnInStruct
-icu::calendar::AnyCalendarKind::as_bcp47_string#FnInEnum
-icu::calendar::AnyCalendarKind::as_bcp47_value#FnInEnum
-icu::calendar::AnyCalendarKind::from_bcp47#FnInEnum
-icu::calendar::AnyCalendarKind::from_bcp47_string#FnInEnum
-icu::calendar::AnyCalendarKind::from_locale#FnInEnum
 icu::calendar::Date#Struct
 icu::calendar::Date::calendar#FnInStruct
 icu::calendar::Date::day_of_month#FnInStruct
