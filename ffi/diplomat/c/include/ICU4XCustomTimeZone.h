@@ -18,7 +18,7 @@ typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
 #include "diplomat_result_void_ICU4XError.h"
 #include "diplomat_result_int32_t_void.h"
 #include "diplomat_result_bool_void.h"
-#include "diplomat_result_str_ref_void.h"
+#include "diplomat_result_void_void.h"
 #include "ICU4XIsoDateTime.h"
 #include "ICU4XMetaZoneCalculator.h"
 #ifdef __cplusplus
@@ -46,19 +46,19 @@ diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_time_zone_id(ICU4XCu
 
 void ICU4XCustomTimeZone_clear_time_zone_id(ICU4XCustomTimeZone* self);
 
-diplomat_result_str_ref_void ICU4XCustomTimeZone_time_zone_id(const ICU4XCustomTimeZone* self);
+diplomat_result_void_void ICU4XCustomTimeZone_time_zone_id(const ICU4XCustomTimeZone* self, DiplomatWriteable* write);
 
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_meta_zone_id(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 
 void ICU4XCustomTimeZone_clear_meta_zone_id(ICU4XCustomTimeZone* self);
 
-diplomat_result_str_ref_void ICU4XCustomTimeZone_meta_zone_id(const ICU4XCustomTimeZone* self);
+diplomat_result_void_void ICU4XCustomTimeZone_meta_zone_id(const ICU4XCustomTimeZone* self, DiplomatWriteable* write);
 
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_zone_variant(ICU4XCustomTimeZone* self, const char* id_data, size_t id_len);
 
 void ICU4XCustomTimeZone_clear_zone_variant(ICU4XCustomTimeZone* self);
 
-diplomat_result_str_ref_void ICU4XCustomTimeZone_zone_variant(const ICU4XCustomTimeZone* self);
+diplomat_result_void_void ICU4XCustomTimeZone_zone_variant(const ICU4XCustomTimeZone* self, DiplomatWriteable* write);
 
 void ICU4XCustomTimeZone_set_standard_time(ICU4XCustomTimeZone* self);
 

@@ -97,7 +97,7 @@
 
     .. js:function:: time_zone_id()
 
-        Returns the value of the ``time_zone_id`` field as a string.
+        Writes the value of the ``time_zone_id`` field as a string.
 
         Errors if the ``time_zone_id`` field is empty.
 
@@ -128,7 +128,7 @@
 
     .. js:function:: meta_zone_id()
 
-        Returns the value of the ``meta_zone_id`` field as a string.
+        Writes the value of the ``meta_zone_id`` field as a string.
 
         Errors if the ``meta_zone_id`` field is empty.
 
@@ -159,7 +159,7 @@
 
     .. js:function:: zone_variant()
 
-        Returns the value of the ``zone_variant`` field as a string.
+        Writes the value of the ``zone_variant`` field as a string.
 
         Errors if the ``zone_variant`` field is empty.
 

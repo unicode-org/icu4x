@@ -122,7 +122,7 @@ class ICU4XCustomTimeZone {
   void clear_time_zone_id();
 
   /**
-   * Returns the value of the `time_zone_id` field as a string.
+   * Writes the value of the `time_zone_id` field as a string.
    * 
    * Errors if the `time_zone_id` field is empty.
    * 
@@ -130,7 +130,18 @@ class ICU4XCustomTimeZone {
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
-  diplomat::result<const std::string_view, std::monostate> time_zone_id() const;
+  template<typename W> diplomat::result<std::monostate, std::monostate> time_zone_id_to_writeable(W& write) const;
+
+  /**
+   * Writes the value of the `time_zone_id` field as a string.
+   * 
+   * Errors if the `time_zone_id` field is empty.
+   * 
+   * See the [Rust documentation for `time_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html)
+   */
+  diplomat::result<std::string, std::monostate> time_zone_id() const;
 
   /**
    * Sets the `meta_zone_id` field from a string.
@@ -153,7 +164,7 @@ class ICU4XCustomTimeZone {
   void clear_meta_zone_id();
 
   /**
-   * Returns the value of the `meta_zone_id` field as a string.
+   * Writes the value of the `meta_zone_id` field as a string.
    * 
    * Errors if the `meta_zone_id` field is empty.
    * 
@@ -161,7 +172,18 @@ class ICU4XCustomTimeZone {
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
    */
-  diplomat::result<const std::string_view, std::monostate> meta_zone_id() const;
+  template<typename W> diplomat::result<std::monostate, std::monostate> meta_zone_id_to_writeable(W& write) const;
+
+  /**
+   * Writes the value of the `meta_zone_id` field as a string.
+   * 
+   * Errors if the `meta_zone_id` field is empty.
+   * 
+   * See the [Rust documentation for `meta_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
+   */
+  diplomat::result<std::string, std::monostate> meta_zone_id() const;
 
   /**
    * Sets the `zone_variant` field from a string.
@@ -184,7 +206,7 @@ class ICU4XCustomTimeZone {
   void clear_zone_variant();
 
   /**
-   * Returns the value of the `zone_variant` field as a string.
+   * Writes the value of the `zone_variant` field as a string.
    * 
    * Errors if the `zone_variant` field is empty.
    * 
@@ -192,7 +214,18 @@ class ICU4XCustomTimeZone {
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html)
    */
-  diplomat::result<const std::string_view, std::monostate> zone_variant() const;
+  template<typename W> diplomat::result<std::monostate, std::monostate> zone_variant_to_writeable(W& write) const;
+
+  /**
+   * Writes the value of the `zone_variant` field as a string.
+   * 
+   * Errors if the `zone_variant` field is empty.
+   * 
+   * See the [Rust documentation for `zone_variant`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html)
+   */
+  diplomat::result<std::string, std::monostate> zone_variant() const;
 
   /**
    * Sets the `zone_variant` field to standard time.
@@ -341,17 +374,28 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
 inline void ICU4XCustomTimeZone::clear_time_zone_id() {
   capi::ICU4XCustomTimeZone_clear_time_zone_id(this->inner.get());
 }
-inline diplomat::result<const std::string_view, std::monostate> ICU4XCustomTimeZone::time_zone_id() const {
-  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_time_zone_id(this->inner.get());
-  diplomat::result<const std::string_view, std::monostate> diplomat_result_out_value;
+template<typename W> inline diplomat::result<std::monostate, std::monostate> ICU4XCustomTimeZone::time_zone_id_to_writeable(W& write) const {
+  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_time_zone_id(this->inner.get(), &write_writer);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-  capi::DiplomatStringView diplomat_str_raw_out_value = diplomat_result_raw_out_value.ok;
-  std::string_view str(diplomat_str_raw_out_value.data, diplomat_str_raw_out_value.len);
-    diplomat_result_out_value = diplomat::Ok<const std::string_view>(std::move(str));
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err(std::monostate());
   }
   return diplomat_result_out_value;
+}
+inline diplomat::result<std::string, std::monostate> ICU4XCustomTimeZone::time_zone_id() const {
+  std::string diplomat_writeable_string;
+  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_time_zone_id(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err(std::monostate());
+  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_meta_zone_id(const std::string_view id) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_meta_zone_id(this->inner.get(), id.data(), id.size());
@@ -366,17 +410,28 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
 inline void ICU4XCustomTimeZone::clear_meta_zone_id() {
   capi::ICU4XCustomTimeZone_clear_meta_zone_id(this->inner.get());
 }
-inline diplomat::result<const std::string_view, std::monostate> ICU4XCustomTimeZone::meta_zone_id() const {
-  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_meta_zone_id(this->inner.get());
-  diplomat::result<const std::string_view, std::monostate> diplomat_result_out_value;
+template<typename W> inline diplomat::result<std::monostate, std::monostate> ICU4XCustomTimeZone::meta_zone_id_to_writeable(W& write) const {
+  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_meta_zone_id(this->inner.get(), &write_writer);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-  capi::DiplomatStringView diplomat_str_raw_out_value = diplomat_result_raw_out_value.ok;
-  std::string_view str(diplomat_str_raw_out_value.data, diplomat_str_raw_out_value.len);
-    diplomat_result_out_value = diplomat::Ok<const std::string_view>(std::move(str));
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err(std::monostate());
   }
   return diplomat_result_out_value;
+}
+inline diplomat::result<std::string, std::monostate> ICU4XCustomTimeZone::meta_zone_id() const {
+  std::string diplomat_writeable_string;
+  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_meta_zone_id(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err(std::monostate());
+  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_zone_variant(const std::string_view id) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_zone_variant(this->inner.get(), id.data(), id.size());
@@ -391,17 +446,28 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
 inline void ICU4XCustomTimeZone::clear_zone_variant() {
   capi::ICU4XCustomTimeZone_clear_zone_variant(this->inner.get());
 }
-inline diplomat::result<const std::string_view, std::monostate> ICU4XCustomTimeZone::zone_variant() const {
-  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_zone_variant(this->inner.get());
-  diplomat::result<const std::string_view, std::monostate> diplomat_result_out_value;
+template<typename W> inline diplomat::result<std::monostate, std::monostate> ICU4XCustomTimeZone::zone_variant_to_writeable(W& write) const {
+  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_zone_variant(this->inner.get(), &write_writer);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-  capi::DiplomatStringView diplomat_str_raw_out_value = diplomat_result_raw_out_value.ok;
-  std::string_view str(diplomat_str_raw_out_value.data, diplomat_str_raw_out_value.len);
-    diplomat_result_out_value = diplomat::Ok<const std::string_view>(std::move(str));
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err(std::monostate());
   }
   return diplomat_result_out_value;
+}
+inline diplomat::result<std::string, std::monostate> ICU4XCustomTimeZone::zone_variant() const {
+  std::string diplomat_writeable_string;
+  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_zone_variant(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, std::monostate> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err(std::monostate());
+  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
 inline void ICU4XCustomTimeZone::set_standard_time() {
   capi::ICU4XCustomTimeZone_set_standard_time(this->inner.get());

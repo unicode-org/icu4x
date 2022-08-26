@@ -167,23 +167,14 @@ export class ICU4XCustomTimeZone {
   }
 
   time_zone_id() {
-    return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
-      wasm.ICU4XCustomTimeZone_time_zone_id(diplomat_receive_buffer, this.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 8);
-      if (is_ok) {
-        const ok_value = (() => {
-          const [ptr, size] = new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 2);
-          return diplomatRuntime.readString(wasm, ptr, size);
-        })();
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        return ok_value;
-      } else {
-        const throw_value = {};
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
-    })();
+    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return (() => {
+        const is_ok = wasm.ICU4XCustomTimeZone_time_zone_id(this.underlying, writeable) == 1;
+        if (!is_ok) {
+          throw new diplomatRuntime.FFIError(undefined);
+        }
+      })();
+    });
   }
 
   try_set_meta_zone_id(arg_id) {
@@ -211,23 +202,14 @@ export class ICU4XCustomTimeZone {
   }
 
   meta_zone_id() {
-    return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
-      wasm.ICU4XCustomTimeZone_meta_zone_id(diplomat_receive_buffer, this.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 8);
-      if (is_ok) {
-        const ok_value = (() => {
-          const [ptr, size] = new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 2);
-          return diplomatRuntime.readString(wasm, ptr, size);
-        })();
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        return ok_value;
-      } else {
-        const throw_value = {};
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
-    })();
+    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return (() => {
+        const is_ok = wasm.ICU4XCustomTimeZone_meta_zone_id(this.underlying, writeable) == 1;
+        if (!is_ok) {
+          throw new diplomatRuntime.FFIError(undefined);
+        }
+      })();
+    });
   }
 
   try_set_zone_variant(arg_id) {
@@ -255,23 +237,14 @@ export class ICU4XCustomTimeZone {
   }
 
   zone_variant() {
-    return (() => {
-      const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
-      wasm.ICU4XCustomTimeZone_zone_variant(diplomat_receive_buffer, this.underlying);
-      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 8);
-      if (is_ok) {
-        const ok_value = (() => {
-          const [ptr, size] = new Uint32Array(wasm.memory.buffer, diplomat_receive_buffer, 2);
-          return diplomatRuntime.readString(wasm, ptr, size);
-        })();
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        return ok_value;
-      } else {
-        const throw_value = {};
-        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
-        throw new diplomatRuntime.FFIError(throw_value);
-      }
-    })();
+    return diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return (() => {
+        const is_ok = wasm.ICU4XCustomTimeZone_zone_variant(this.underlying, writeable) == 1;
+        if (!is_ok) {
+          throw new diplomatRuntime.FFIError(undefined);
+        }
+      })();
+    });
   }
 
   set_standard_time() {

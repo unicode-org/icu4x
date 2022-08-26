@@ -95,9 +95,9 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
-    .. cpp:function:: diplomat::result<const std::string_view, std::monostate> time_zone_id() const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> time_zone_id_to_writeable(W& write) const
 
-        Returns the value of the ``time_zone_id`` field as a string.
+        Writes the value of the ``time_zone_id`` field as a string.
 
         Errors if the ``time_zone_id`` field is empty.
 
@@ -106,7 +106,16 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
-        Lifetimes: ``this`` must live at least as long as the output.
+    .. cpp:function:: diplomat::result<std::string, std::monostate> time_zone_id() const
+
+        Writes the value of the ``time_zone_id`` field as a string.
+
+        Errors if the ``time_zone_id`` field is empty.
+
+        See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
+
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_meta_zone_id(const std::string_view id)
 
@@ -128,9 +137,9 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
 
 
-    .. cpp:function:: diplomat::result<const std::string_view, std::monostate> meta_zone_id() const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> meta_zone_id_to_writeable(W& write) const
 
-        Returns the value of the ``meta_zone_id`` field as a string.
+        Writes the value of the ``meta_zone_id`` field as a string.
 
         Errors if the ``meta_zone_id`` field is empty.
 
@@ -139,7 +148,16 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
 
 
-        Lifetimes: ``this`` must live at least as long as the output.
+    .. cpp:function:: diplomat::result<std::string, std::monostate> meta_zone_id() const
+
+        Writes the value of the ``meta_zone_id`` field as a string.
+
+        Errors if the ``meta_zone_id`` field is empty.
+
+        See the `Rust documentation for meta_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
+
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_zone_variant(const std::string_view id)
 
@@ -161,9 +179,9 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
 
 
-    .. cpp:function:: diplomat::result<const std::string_view, std::monostate> zone_variant() const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> zone_variant_to_writeable(W& write) const
 
-        Returns the value of the ``zone_variant`` field as a string.
+        Writes the value of the ``zone_variant`` field as a string.
 
         Errors if the ``zone_variant`` field is empty.
 
@@ -172,7 +190,16 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
 
 
-        Lifetimes: ``this`` must live at least as long as the output.
+    .. cpp:function:: diplomat::result<std::string, std::monostate> zone_variant() const
+
+        Writes the value of the ``zone_variant`` field as a string.
+
+        Errors if the ``zone_variant`` field is empty.
+
+        See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
+
 
     .. cpp:function:: void set_standard_time()
 

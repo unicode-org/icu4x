@@ -120,7 +120,7 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Returns the value of the `time_zone_id` field as a string.
+   * Writes the value of the `time_zone_id` field as a string.
 
    * Errors if the `time_zone_id` field is empty.
 
@@ -156,7 +156,7 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Returns the value of the `meta_zone_id` field as a string.
+   * Writes the value of the `meta_zone_id` field as a string.
 
    * Errors if the `meta_zone_id` field is empty.
 
@@ -192,7 +192,7 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Returns the value of the `zone_variant` field as a string.
+   * Writes the value of the `zone_variant` field as a string.
 
    * Errors if the `zone_variant` field is empty.
 
