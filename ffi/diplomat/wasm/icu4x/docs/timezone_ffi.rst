@@ -8,6 +8,8 @@
 
     .. js:staticfunction:: create_from_str(s)
 
+    .. js:staticfunction:: create_empty()
+
     .. js:function:: try_set_gmt_offset_seconds(offset_seconds)
 
         Sets the ``gmt_offset`` field from offset seconds.

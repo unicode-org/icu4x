@@ -28,6 +28,8 @@ extern "C" {
 
 diplomat_result_box_ICU4XCustomTimeZone_ICU4XError ICU4XCustomTimeZone_create_from_str(const char* s_data, size_t s_len);
 
+ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_empty();
+
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_gmt_offset_seconds(ICU4XCustomTimeZone* self, int32_t offset_seconds);
 
 void ICU4XCustomTimeZone_clear_gmt_offset(ICU4XCustomTimeZone* self);
