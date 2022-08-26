@@ -5,7 +5,7 @@
 use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{
-    DateTimeInput, DateTimeInputWithCalendar, ExtractedDateTimeInput, LocalizedDateTimeInput,
+    DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, LocalizedDateTimeInput,
 };
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -167,7 +167,7 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_datetime = DateTimeInputWithCalendar::new(datetime, week_data.map(|v| v.into()));
+    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data.map(|v| v.into()));
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(
         pattern,
@@ -546,7 +546,7 @@ mod tests {
                 .unwrap();
 
         let mut sink = String::new();
-        let loc_datetime = DateTimeInputWithCalendar::new(&datetime, None);
+        let loc_datetime = DateTimeInputWithWeekConfig::new(&datetime, None);
         write_pattern(
             &pattern,
             Some(date_data.get()),
