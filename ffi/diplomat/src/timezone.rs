@@ -3,10 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_timezone::CustomTimeZone;
-use icu_timezone::GmtOffset;
-use icu_timezone::MetaZoneId;
-use icu_timezone::TimeZoneBcp47Id;
-use icu_timezone::ZoneVariant;
 
 #[diplomat::bridge]
 pub mod ffi {
@@ -19,7 +15,6 @@ pub mod ffi {
     use icu_timezone::CustomTimeZone;
     use icu_timezone::GmtOffset;
     use icu_timezone::MetaZoneCalculator;
-    use icu_timezone::TimeZoneBcp47Id;
     use icu_timezone::ZoneVariant;
 
     #[diplomat::opaque]

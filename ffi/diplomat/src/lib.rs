@@ -15,6 +15,7 @@
     )
 )]
 #![allow(clippy::upper_case_acronyms)]
+#![allow(clippy::needless_lifetimes)]
 
 //! This module contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! FFI bindings. This generates the C, C++ and Wasm bindings. This module also contains the C
@@ -52,9 +53,6 @@ pub mod segmenter_line;
 pub mod segmenter_sentence;
 pub mod segmenter_word;
 pub mod timezone;
-
-#[macro_use]
-mod helpers;
 
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;

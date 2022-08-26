@@ -259,7 +259,7 @@ pub mod ffi {
         /// If not successful, `other` will be unchanged and an error is returned.
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::concatenate_end, FnInStruct)]
         pub fn concatenate_end(&mut self, other: &mut ICU4XFixedDecimal) -> DiplomatResult<(), ()> {
-            let x = core::mem::replace(&mut other.0, FixedDecimal::default());
+            let x = core::mem::take(&mut other.0);
             match self.0.concatenate_end(x) {
                 Ok(()) => Ok(()),
                 Err(y) => {
