@@ -47,12 +47,12 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        // TODO(#1668): enable clippy::exhaustive_enums,
+        clippy::exhaustive_enums,
         missing_debug_implementations,
     )
 )]
 
-pub mod decimal;
+mod decimal;
 mod ops;
 mod uint_iterator;
 
@@ -65,6 +65,7 @@ pub use decimal::SignDisplay;
 use displaydoc::Display;
 
 #[derive(Display, Debug, PartialEq)]
+#[non_exhaustive]
 pub enum Error {
     /// The magnitude or number of digits exceeds the limit of the FixedDecimal. The highest
     /// magnitude of the most significant digit is core::i16::MAX, and the lowest magnitude of the

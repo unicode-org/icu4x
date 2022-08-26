@@ -128,6 +128,7 @@ use super::*;
 /// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 ///
 /// [`ule`]: crate::ule
+#[non_exhaustive]
 pub enum VarZeroVec<'a, T: ?Sized, F = Index16> {
     /// An allocated VarZeroVec, allowing for mutations.
     ///

@@ -477,8 +477,11 @@ where
 {
     type Output = V;
     fn index(&self, key: &K) -> &V {
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.get(key).expect("LiteMap could not find key")
+        #[allow(clippy::panic)] // documented
+        match self.get(key) {
+            Some(v) => v,
+            None => panic!("no entry found for key"),
+        }
     }
 }
 impl<K, V, S> IndexMut<&'_ K> for LiteMap<K, V, S>
@@ -487,8 +490,11 @@ where
     S: StoreMut<K, V>,
 {
     fn index_mut(&mut self, key: &K) -> &mut V {
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.get_mut(key).expect("LiteMap could not find key")
+        #[allow(clippy::panic)] // documented
+        match self.get_mut(key) {
+            Some(v) => v,
+            None => panic!("no entry found for key"),
+        }
     }
 }
 impl<K, V, S> FromIterator<(K, V)> for LiteMap<K, V, S>

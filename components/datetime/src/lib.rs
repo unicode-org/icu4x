@@ -30,9 +30,9 @@
 //! # Examples
 //!
 //! ```
-//! use icu::calendar::Gregorian;
+//! use icu::calendar::{DateTime, Gregorian};
 //! use icu::datetime::{
-//!     mock::parse_gregorian_from_str, options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
+//!     options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
 //! };
 //! use icu::locid::{Locale, locale};
 //! use std::str::FromStr;
@@ -54,14 +54,15 @@
 //! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale!("en").into(), options)
 //!     .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
-//! let typed_date = parse_gregorian_from_str("2020-09-12T12:35:00").expect("Failed to parse date.");
-//! let date = typed_date.to_any();
+//! let typed_date = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+//! // prefer using ISO dates with DateTimeFormatter
+//! let date = typed_date.to_iso().to_any();
 //!
 //! let formatted_date = dtf.format(&date).expect("Formatting should succeed");
 //! let typed_formatted_date = typed_dtf.format(&typed_date);
 //!
-//! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
-//! assert_eq!(typed_formatted_date.to_string(), "Sep 12, 2020, 12:35 PM");
+//! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
+//! assert_eq!(typed_formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");
 //! ```
 //!
 //! The options can be created more ergonomically using the `Into` trait to automatically
@@ -112,7 +113,6 @@ mod error;
 pub mod fields;
 mod format;
 pub mod input;
-pub mod mock;
 pub mod options;
 #[doc(hidden)]
 pub mod pattern;

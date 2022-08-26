@@ -2,8 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! A collection of temporary structs and utilities to input data for tests, benchmarks,
-//! and examples.
+//! Some useful parsing functions for tests.
 
 use either::Either;
 use icu_calendar::{DateTime, DateTimeError, Gregorian};
@@ -96,35 +95,4 @@ pub fn parse_zoned_gregorian_from_str(
         )),
         None => Err(Either::Right(TimeZoneError::InvalidOffset)),
     }
-}
-
-#[test]
-fn test_parsing_fractional_seconds() {
-    use icu::datetime::mock::parse_gregorian_from_str;
-    use icu_calendar::{DateTime, Gregorian};
-
-    // Milliseconds
-    let date: DateTime<Gregorian> =
-        parse_gregorian_from_str("2020-10-14T13:21:00.123").expect("Failed to parse a datetime.");
-    assert_eq!(u32::from(date.time.nanosecond), 123_000_000);
-
-    // All zeros
-    let date: DateTime<Gregorian> =
-        parse_gregorian_from_str("2020-10-14T13:21:00.000").expect("Failed to parse a datetime.");
-    assert_eq!(u32::from(date.time.nanosecond), 0);
-
-    // Leading zeros
-    let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00.000123")
-        .expect("Failed to parse a datetime.");
-    assert_eq!(u32::from(date.time.nanosecond), 123_000);
-
-    // Trailing zeros
-    let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00.123000000000000")
-        .expect("Failed to parse a datetime.");
-    assert_eq!(u32::from(date.time.nanosecond), 123_000_000);
-
-    // Too much precision, should truncate to nanoseconds
-    let date: DateTime<Gregorian> = parse_gregorian_from_str("2020-10-14T13:21:00.123456789999999")
-        .expect("Failed to parse a datetime.");
-    assert_eq!(u32::from(date.time.nanosecond), 123_456_789);
 }

@@ -12,6 +12,10 @@ use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait, much like
 /// [`Date`].
 ///
+/// This can be constructed manually from a [`Date`] and [`Time`], or can be constructed
+/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
+///
 /// ```rust
 /// use icu::calendar::DateTime;
 ///

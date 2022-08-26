@@ -30,7 +30,7 @@ struct ICU4XTimeFormatterDeleter {
 /**
  * An ICU4X TimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html) for more information.
+ * See the [Rust documentation for `TimeFormatter`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html) for more information.
  */
 class ICU4XTimeFormatter {
  public:
@@ -38,21 +38,21 @@ class ICU4XTimeFormatter {
   /**
    * Creates a new [`ICU4XTimeFormatter`] from locale data.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length);
 
   /**
    * Formats a [`ICU4XGregorianDateTime`] to a string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write) for more information.
+   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_gregorian_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const;
 
   /**
    * Formats a [`ICU4XGregorianDateTime`] to a string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write) for more information.
+   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_gregorian_datetime(const ICU4XGregorianDateTime& value) const;
   inline const capi::ICU4XTimeFormatter* AsFFI() const { return this->inner.get(); }

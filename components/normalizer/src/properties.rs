@@ -10,6 +10,7 @@
 //! module are provided for callers such as HarfBuzz that specifically
 //! want access to the raw canonical composition operation e.g. for use in a
 //! glyph-availability-guided custom normalizer.
+
 use crate::char_from_u16;
 use crate::char_from_u24;
 use crate::error::NormalizerError;

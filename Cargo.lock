@@ -735,9 +735,9 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae#d49289af387b9803c90e46139fe95dd0d6f324ae"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 dependencies = [
- "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae)",
+ "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356)",
  "proc-macro2",
  "quote",
  "syn",
@@ -746,33 +746,37 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae#d49289af387b9803c90e46139fe95dd0d6f324ae"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa#be4f3aa9da018b05296f0d3b1777e1f3806054fa"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 dependencies = [
  "impls",
  "lazy_static",
  "proc-macro2",
  "quote",
- "rustdoc-types",
+ "rustdoc-types 0.11.0",
  "serde",
+ "smallvec",
+ "strck_ident",
  "syn",
 ]
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=d49289af387b9803c90e46139fe95dd0d6f324ae#d49289af387b9803c90e46139fe95dd0d6f324ae"
+source = "git+https://github.com/rust-diplomat/diplomat#3fe1337b940a6940bf0bd79899ef431cfbc73356"
 dependencies = [
  "impls",
  "lazy_static",
  "proc-macro2",
  "quote",
- "rustdoc-types",
+ "rustdoc-types 0.11.0",
  "serde",
+ "smallvec",
+ "strck_ident",
  "syn",
 ]
 
@@ -1383,8 +1387,6 @@ version = "1.0.0-alpha1"
 dependencies = [
  "diplomat",
  "diplomat-runtime",
- "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=be4f3aa9da018b05296f0d3b1777e1f3806054fa)",
- "elsa",
  "fixed_decimal",
  "icu_calendar",
  "icu_collections",
@@ -1400,13 +1402,8 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_testdata",
- "icu_timezone",
- "lazy_static",
  "log",
- "rustdoc-types",
- "serde_json",
  "simple_logger",
- "syn-inline-mod",
  "tinystr 0.6.2",
  "unicode-bidi",
  "writeable",
@@ -1594,6 +1591,18 @@ dependencies = [
  "rand_pcg",
  "serde",
  "writeable",
+]
+
+[[package]]
+name = "icu_ffi_coverage"
+version = "0.0.1"
+dependencies = [
+ "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat)",
+ "elsa",
+ "lazy_static",
+ "rustdoc-types 0.14.0",
+ "serde_json",
+ "syn-inline-mod",
 ]
 
 [[package]]
@@ -2474,9 +2483,9 @@ dependencies = [
 
 [[package]]
 name = "postcard"
-version = "1.0.0-alpha.4"
+version = "1.0.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "5b6cf96c947e1a6261e1493877b196db7d4dcbeaabc4ba0f45be149dc885442b"
+checksum = "1c2b180dc0bade59f03fd005cb967d3f1e5f69b13922dad0cd6e047cb8af2363"
 dependencies = [
  "cobs",
  "heapless",
@@ -2830,6 +2839,15 @@ dependencies = [
 ]
 
 [[package]]
+name = "rustdoc-types"
+version = "0.14.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "eb8ae6df9a4006b7968781abb9a2ea2983b5f3cad2ca9294d195781618194c28"
+dependencies = [
+ "serde",
+]
+
+[[package]]
 name = "rustversion"
 version = "1.0.6"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3086,9 +3104,9 @@ checksum = "9def91fd1e018fe007022791f865d0ccc9b3a0d5001e01aabb8b40e46000afb5"
 
 [[package]]
 name = "smallvec"
-version = "1.7.0"
+version = "1.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1ecab6c735a6bb4139c0caafd0cc3635748bbb3acf4550e8138122099251f309"
+checksum = "2fd0db749597d91ff862fd1d55ea87f7855a744a8425a64695b6fca237d1dad1"
 dependencies = [
  "serde",
 ]
@@ -3187,6 +3205,22 @@ name = "stdweb-internal-runtime"
 version = "0.1.5"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "213701ba3370744dcd1a12960caa4843b3d68b4d1c0a5d575e0d65b2ee9d16c0"
+
+[[package]]
+name = "strck"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "42b99bb054f5dcde86a98558e47aeeaa334cedc523728dff80a4c2824a5a54ad"
+
+[[package]]
+name = "strck_ident"
+version = "0.1.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7af2d128f1161e1356e1f9a5cc32e58c62ccbdb79287a2269fc2aaaacf8ff27b"
+dependencies = [
+ "strck",
+ "unicode-ident",
+]
 
 [[package]]
 name = "strsim"
@@ -3597,6 +3631,12 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "099b7128301d285f79ddd55b9a83d5e6b9e97c92e0ea0daebee7263e932de992"
 
 [[package]]
+name = "unicode-ident"
+version = "1.0.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "c4f5b37a154999a8f3f98cc23a628d850e154479cd94decf3414696e12e31aaf"
+
+[[package]]
 name = "unicode-normalization"
 version = "0.1.19"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -3637,15 +3677,15 @@ dependencies = [
 
 [[package]]
 name = "utf16_iter"
-version = "1.0.0"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8fd690b5b39c6d4c161145f56f1e346e379c0a68a56a65bb927866200eef621"
+checksum = "6a246759e66403993abca5a7165eebc0735d7781e178f03fe9ab255fae1747b5"
 
 [[package]]
 name = "utf8_iter"
-version = "1.0.0"
+version = "1.0.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0504000636d0ee2fdd46b28a0078b0a232b76d05f13d9c5e041827ee257c41da"
+checksum = "59e6dbc4923e5a3d7b88c78500d0e389fd202601a671b4914580071bdb931188"
 
 [[package]]
 name = "vcell"

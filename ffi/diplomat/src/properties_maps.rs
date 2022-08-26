@@ -16,7 +16,7 @@ pub mod ffi {
     use icu_provider::serde::{AsDeserializingBufferProvider, DeserializingBufferProvider};
 
     #[diplomat::opaque]
-    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+    /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
     ///
     /// For properties whose values fit into 8 bits.
     #[diplomat::rust_link(icu::properties, Mod)]
@@ -112,7 +112,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    /// An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property.
+    /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
     ///
     /// For properties whose values fit into 16 bits.
     #[diplomat::rust_link(icu::properties, Mod)]

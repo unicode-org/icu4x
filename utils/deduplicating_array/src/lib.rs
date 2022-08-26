@@ -38,7 +38,7 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        // TODO(#1668): enable clippy::exhaustive_enums,
+        clippy::exhaustive_enums,
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]
@@ -161,12 +161,14 @@ enum MachineSer<'a, T> {
 #[derive(serde::Deserialize)]
 #[serde(untagged)]
 #[doc(hidden)]
+#[allow(clippy::exhaustive_enums)] // internal type
 pub enum HumanDe<T> {
     Value(T),
     Fallback([usize; 1]),
 }
 
 #[doc(hidden)]
+#[allow(clippy::exhaustive_enums)] // internal type
 pub enum MachineDe<T> {
     Value(T),
     Fallback(usize),

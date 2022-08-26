@@ -14,7 +14,7 @@ export class ICU4XDataStruct {
 
    * Construct a new DecimalSymbolsV1 data struct.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/provider/struct.DecimalSymbolsV1.html Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/provider/struct.DecimalSymbolsV1.html Rust documentation for `DecimalSymbolsV1`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_decimal_symbols_v1(plus_sign_prefix: string, plus_sign_suffix: string, minus_sign_prefix: string, minus_sign_suffix: string, decimal_separator: string, grouping_separator: string, primary_group_size: u8, secondary_group_size: u8, min_group_size: u8, digits: Uint32Array): ICU4XDataStruct | never;

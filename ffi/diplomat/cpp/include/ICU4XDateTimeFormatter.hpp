@@ -32,7 +32,7 @@ struct ICU4XDateTimeFormatterDeleter {
  * An ICU4X DateFormatter object capable of formatting a [`ICU4XDateTime`] as a string,
  * using some calendar specified at runtime in the locale.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html) for more information.
+ * See the [Rust documentation for `DateTimeFormatter`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html) for more information.
  */
 class ICU4XDateTimeFormatter {
  public:
@@ -40,21 +40,21 @@ class ICU4XDateTimeFormatter {
   /**
    * Creates a new [`ICU4XDateTimeFormatter`] from locale data.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
 
   /**
    * Formats a [`ICU4XDateTime`] to a string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write) for more information.
+   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XDateTime& value, W& write) const;
 
   /**
    * Formats a [`ICU4XDateTime`] to a string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write) for more information.
+   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XDateTime& value) const;
   inline const capi::ICU4XDateTimeFormatter* AsFFI() const { return this->inner.get(); }
