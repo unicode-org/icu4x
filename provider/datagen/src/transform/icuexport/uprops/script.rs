@@ -255,80 +255,80 @@ mod tests {
         let swe: &ScriptWithExtensions = &payload.get().data;
 
         let grantha = swe.get_script_extensions_set(Script::Grantha);
-        assert!(!grantha.contains_u32(0x0BE5)); // unknown with unknown script in Tamil block
-        assert!(grantha.contains_u32(0x0BE6)); // TAMIL DIGIT ZERO
-        assert!(grantha.contains_u32(0x0BEB)); // TAMIL DIGIT FIVE
-        assert!(grantha.contains_u32(0x0BEF)); // TAMIL DIGIT NINE
-        assert!(grantha.contains_u32(0x0BF2)); // TAMIL NUMBER ONE THOUSAND
-        assert!(grantha.contains_u32(0x0BF3)); // TAMIL DAY SIGN
-        assert!(!grantha.contains_u32(0x0BF4)); // TAMIL MONTH SIGN
-        assert!(grantha.contains_u32(0x11300)); // GRANTHA SIGN COMBINING ANUSVARA ABOVE
-        assert!(grantha.contains_u32(0x11301)); // GRANTHA SIGN CANDRABINDU
-        assert!(grantha.contains_u32(0x11302)); // GRANTHA SIGN ANUSVARA
-        assert!(grantha.contains_u32(0x11303)); // GRANTHA SIGN VISARGA
-        assert!(!grantha.contains_u32(0x11304)); // unknown with unknown script in Grantha block
-        assert!(grantha.contains_u32(0x11305)); // GRANTHA LETTER A
+        assert!(!grantha.contains32(0x0BE5)); // unknown with unknown script in Tamil block
+        assert!(grantha.contains32(0x0BE6)); // TAMIL DIGIT ZERO
+        assert!(grantha.contains32(0x0BEB)); // TAMIL DIGIT FIVE
+        assert!(grantha.contains32(0x0BEF)); // TAMIL DIGIT NINE
+        assert!(grantha.contains32(0x0BF2)); // TAMIL NUMBER ONE THOUSAND
+        assert!(grantha.contains32(0x0BF3)); // TAMIL DAY SIGN
+        assert!(!grantha.contains32(0x0BF4)); // TAMIL MONTH SIGN
+        assert!(grantha.contains32(0x11300)); // GRANTHA SIGN COMBINING ANUSVARA ABOVE
+        assert!(grantha.contains32(0x11301)); // GRANTHA SIGN CANDRABINDU
+        assert!(grantha.contains32(0x11302)); // GRANTHA SIGN ANUSVARA
+        assert!(grantha.contains32(0x11303)); // GRANTHA SIGN VISARGA
+        assert!(!grantha.contains32(0x11304)); // unknown with unknown script in Grantha block
+        assert!(grantha.contains32(0x11305)); // GRANTHA LETTER A
 
         let tamil = swe.get_script_extensions_set(Script::Tamil);
-        assert!(!tamil.contains_u32(0x0BE5)); // unknown with unknown script in Tamil block
-        assert!(tamil.contains_u32(0x0BE6)); // TAMIL DIGIT ZERO
-        assert!(tamil.contains_u32(0x0BEB)); // TAMIL DIGIT FIVE
-        assert!(tamil.contains_u32(0x0BEF)); // TAMIL DIGIT NINE
-        assert!(tamil.contains_u32(0x0BF2)); // TAMIL NUMBER ONE THOUSAND
-        assert!(tamil.contains_u32(0x0BF3)); // TAMIL DAY SIGN
-        assert!(tamil.contains_u32(0x0BF4)); // TAMIL MONTH SIGN
-        assert!(!tamil.contains_u32(0x11300)); // GRANTHA SIGN COMBINING ANUSVARA ABOVE
-        assert!(tamil.contains_u32(0x11301)); // GRANTHA SIGN CANDRABINDU
-        assert!(!tamil.contains_u32(0x11302)); // GRANTHA SIGN ANUSVARA
-        assert!(tamil.contains_u32(0x11303)); // GRANTHA SIGN VISARGA
-        assert!(!tamil.contains_u32(0x11304)); // unknown with unknown script in Grantha block
-        assert!(!tamil.contains_u32(0x11305)); // GRANTHA LETTER A
+        assert!(!tamil.contains32(0x0BE5)); // unknown with unknown script in Tamil block
+        assert!(tamil.contains32(0x0BE6)); // TAMIL DIGIT ZERO
+        assert!(tamil.contains32(0x0BEB)); // TAMIL DIGIT FIVE
+        assert!(tamil.contains32(0x0BEF)); // TAMIL DIGIT NINE
+        assert!(tamil.contains32(0x0BF2)); // TAMIL NUMBER ONE THOUSAND
+        assert!(tamil.contains32(0x0BF3)); // TAMIL DAY SIGN
+        assert!(tamil.contains32(0x0BF4)); // TAMIL MONTH SIGN
+        assert!(!tamil.contains32(0x11300)); // GRANTHA SIGN COMBINING ANUSVARA ABOVE
+        assert!(tamil.contains32(0x11301)); // GRANTHA SIGN CANDRABINDU
+        assert!(!tamil.contains32(0x11302)); // GRANTHA SIGN ANUSVARA
+        assert!(tamil.contains32(0x11303)); // GRANTHA SIGN VISARGA
+        assert!(!tamil.contains32(0x11304)); // unknown with unknown script in Grantha block
+        assert!(!tamil.contains32(0x11305)); // GRANTHA LETTER A
 
         let hiragana = swe.get_script_extensions_set(Script::Hiragana);
-        assert!(hiragana.contains_u32(0x3046)); // HIRAGANA LETTER U
-        assert!(hiragana.contains_u32(0x309F)); // HIRAGANA DIGRAPH YORI
-        assert!(hiragana.contains_u32(0x30A0)); // KATAKANA-HIRAGANA DOUBLE HYPHEN
-        assert!(!hiragana.contains_u32(0x30A1)); // KATAKANA LETTER SMALL A
-        assert!(hiragana.contains_u32(0x30FB)); // KATAKANA MIDDLE DOT
-        assert!(hiragana.contains_u32(0x30FC)); // KATAKANA-HIRAGANA PROLONGED SOUND MARK
-        assert!(!hiragana.contains_u32(0x30FD)); // KATAKANA ITERATION MARK
+        assert!(hiragana.contains32(0x3046)); // HIRAGANA LETTER U
+        assert!(hiragana.contains32(0x309F)); // HIRAGANA DIGRAPH YORI
+        assert!(hiragana.contains32(0x30A0)); // KATAKANA-HIRAGANA DOUBLE HYPHEN
+        assert!(!hiragana.contains32(0x30A1)); // KATAKANA LETTER SMALL A
+        assert!(hiragana.contains32(0x30FB)); // KATAKANA MIDDLE DOT
+        assert!(hiragana.contains32(0x30FC)); // KATAKANA-HIRAGANA PROLONGED SOUND MARK
+        assert!(!hiragana.contains32(0x30FD)); // KATAKANA ITERATION MARK
 
         let katakana = swe.get_script_extensions_set(Script::Katakana);
-        assert!(!katakana.contains_u32(0x3046)); // HIRAGANA LETTER U
-        assert!(!katakana.contains_u32(0x309F)); // HIRAGANA DIGRAPH YORI
-        assert!(katakana.contains_u32(0x30A0)); // KATAKANA-HIRAGANA DOUBLE HYPHEN
-        assert!(katakana.contains_u32(0x30A1)); // KATAKANA LETTER SMALL A
-        assert!(katakana.contains_u32(0x30FB)); // KATAKANA MIDDLE DOT
-        assert!(katakana.contains_u32(0x30FC)); // KATAKANA-HIRAGANA PROLONGED SOUND MARK
-        assert!(katakana.contains_u32(0x30FD)); // KATAKANA ITERATION MARK
+        assert!(!katakana.contains32(0x3046)); // HIRAGANA LETTER U
+        assert!(!katakana.contains32(0x309F)); // HIRAGANA DIGRAPH YORI
+        assert!(katakana.contains32(0x30A0)); // KATAKANA-HIRAGANA DOUBLE HYPHEN
+        assert!(katakana.contains32(0x30A1)); // KATAKANA LETTER SMALL A
+        assert!(katakana.contains32(0x30FB)); // KATAKANA MIDDLE DOT
+        assert!(katakana.contains32(0x30FC)); // KATAKANA-HIRAGANA PROLONGED SOUND MARK
+        assert!(katakana.contains32(0x30FD)); // KATAKANA ITERATION MARK
 
         let common = swe.get_script_extensions_set(Script::Common);
         assert!(common.contains('🥳'));
-        assert!(!common.contains_u32(0x200D));
-        assert!(!common.contains_u32(0x30A0));
+        assert!(!common.contains32(0x200D));
+        assert!(!common.contains32(0x30A0));
 
         let inherited = swe.get_script_extensions_set(Script::Inherited);
         assert!(!inherited.contains('🥳'));
-        assert!(inherited.contains_u32(0x200D));
-        assert!(!inherited.contains_u32(0x30A0));
+        assert!(inherited.contains32(0x200D));
+        assert!(!inherited.contains32(0x30A0));
 
         // inspired by https://github.com/unicode-org/unicodetools/issues/192
 
         let bengali = swe.get_script_extensions_set(Script::Bengali);
-        assert!(bengali.contains_u32(0x09E7)); // BENGALI DIGIT ONE
-        assert!(!bengali.contains_u32(0x0963)); // DEVANAGARI VOWEL SIGN VOCALIC LL
-        assert!(bengali.contains_u32(0x0964)); // DEVANAGARI DANDA
-        assert!(bengali.contains_u32(0x0965)); // DEVANAGARI DOUBLE DANDA
-        assert!(!bengali.contains_u32(0x0966)); // DEVANAGARI DIGIT ZERO
+        assert!(bengali.contains32(0x09E7)); // BENGALI DIGIT ONE
+        assert!(!bengali.contains32(0x0963)); // DEVANAGARI VOWEL SIGN VOCALIC LL
+        assert!(bengali.contains32(0x0964)); // DEVANAGARI DANDA
+        assert!(bengali.contains32(0x0965)); // DEVANAGARI DOUBLE DANDA
+        assert!(!bengali.contains32(0x0966)); // DEVANAGARI DIGIT ZERO
 
         let devanagari = swe.get_script_extensions_set(Script::Devanagari);
-        assert!(!devanagari.contains_u32(0x09E7)); // BENGALI DIGIT ONE
-        assert!(devanagari.contains_u32(0x0963)); // DEVANAGARI VOWEL SIGN VOCALIC LL
-        assert!(devanagari.contains_u32(0x0964)); // DEVANAGARI DANDA
-        assert!(devanagari.contains_u32(0x0965)); // DEVANAGARI DOUBLE DANDA
-        assert!(devanagari.contains_u32(0x0966)); // DEVANAGARI DIGIT ZERO
+        assert!(!devanagari.contains32(0x09E7)); // BENGALI DIGIT ONE
+        assert!(devanagari.contains32(0x0963)); // DEVANAGARI VOWEL SIGN VOCALIC LL
+        assert!(devanagari.contains32(0x0964)); // DEVANAGARI DANDA
+        assert!(devanagari.contains32(0x0965)); // DEVANAGARI DOUBLE DANDA
+        assert!(devanagari.contains32(0x0966)); // DEVANAGARI DIGIT ZERO
 
-        assert!(!common.contains_u32(0x0964)); // DEVANAGARI DANDA
-        assert!(!common.contains_u32(0x0965)); // DEVANAGARI DOUBLE DANDA
+        assert!(!common.contains32(0x0964)); // DEVANAGARI DANDA
+        assert!(!common.contains32(0x0965)); // DEVANAGARI DOUBLE DANDA
     }
 }

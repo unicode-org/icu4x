@@ -343,9 +343,9 @@ impl GeneralCategoryGroup {
     /// assert!(!GeneralCategoryGroup::CasedLetter.contains(gc.get('ଞ')));
     ///
     /// // U+0301 COMBINING ACUTE ACCENT
-    /// assert_eq!(gc.get_u32(0x0301), GeneralCategory::NonspacingMark);
-    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get_u32(0x0301)));
-    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get_u32(0x0301)));
+    /// assert_eq!(gc.get32(0x0301), GeneralCategory::NonspacingMark);
+    /// assert!(GeneralCategoryGroup::Mark.contains(gc.get32(0x0301)));
+    /// assert!(!GeneralCategoryGroup::Letter.contains(gc.get32(0x0301)));
     ///
     /// assert_eq!(gc.get('0'), GeneralCategory::DecimalNumber);
     /// assert!(GeneralCategoryGroup::Number.contains(gc.get('0')));
@@ -365,9 +365,9 @@ impl GeneralCategoryGroup {
     /// assert!(!GeneralCategoryGroup::Symbol.contains(gc.get(' ')));
     ///
     /// // U+E007F CANCEL TAG
-    /// assert_eq!(gc.get_u32(0xE007F), GeneralCategory::Format);
-    /// assert!(GeneralCategoryGroup::Other.contains(gc.get_u32(0xE007F)));
-    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get_u32(0xE007F)));
+    /// assert_eq!(gc.get32(0xE007F), GeneralCategory::Format);
+    /// assert!(GeneralCategoryGroup::Other.contains(gc.get32(0xE007F)));
+    /// assert!(!GeneralCategoryGroup::Separator.contains(gc.get32(0xE007F)));
     /// ```
     pub fn contains(&self, val: GeneralCategory) -> bool {
         0 != (1 << (val as u32)) & self.0

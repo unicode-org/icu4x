@@ -1360,7 +1360,7 @@ fn test_ccc() {
     let props = icu_properties::maps::load_canonical_combining_class(&data_provider).unwrap();
     let sb = props.as_borrowed();
     for u in 0..=0x10FFFF {
-        assert_eq!(map.get_u32(u), sb.get_u32(u));
+        assert_eq!(map.get32(u), sb.get32(u));
     }
 }
 

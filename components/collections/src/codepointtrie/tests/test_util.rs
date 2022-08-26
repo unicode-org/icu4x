@@ -41,7 +41,7 @@ pub fn check_trie<T: TrieValue + Into<u32>>(trie: &CodePointTrie<T>, check_range
         let range_value = range_tuple[1];
         // Check all values in this range, one-by-one
         while i < range_limit {
-            assert_eq!(range_value, trie.get_u32(i), "trie_get({})", i,);
+            assert_eq!(range_value, trie.get32(i), "trie_get({})", i,);
             i += 1;
         }
     }

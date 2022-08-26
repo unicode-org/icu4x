@@ -846,10 +846,10 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// let start = plane_val * 0x1_0000;
     /// let end = start + 0xffff;
     ///
-    /// assert!(!sip.contains_u32(start - 1));
-    /// assert!(sip.contains_u32(start));
-    /// assert!(sip.contains_u32(end));
-    /// assert!(!sip.contains_u32(end + 1));
+    /// assert!(!sip.contains32(start - 1));
+    /// assert!(sip.contains32(start));
+    /// assert!(sip.contains32(end));
+    /// assert!(!sip.contains32(end + 1));
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
         let value_ranges = self.get_ranges_for_value(value);
@@ -888,11 +888,11 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// assert_eq!(cp, 0x1158E);
     ///
     /// let plane_num: u8 = trie.get(cp);
-    /// assert_eq!(trie.get_u32(cp), plane_num as u32);
+    /// assert_eq!(trie.get32(cp), plane_num as u32);
     /// ```
     // Note: This API method maintains consistency with the corresponding
     // original ICU APIs.
-    pub fn get_u32(&self, code_point: u32) -> u32 {
+    pub fn get32(&self, code_point: u32) -> u32 {
         self.get(code_point).into()
     }
 }

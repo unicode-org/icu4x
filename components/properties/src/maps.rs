@@ -173,7 +173,7 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
     pub fn get(&self, ch: char) -> T {
-        self.map.get_u32(ch as u32)
+        self.map.get32(ch as u32)
     }
 
     /// Get the value this map has associated with code point `ch`
@@ -191,11 +191,11 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
-    /// assert_eq!(gc.get_u32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
-    /// assert_eq!(gc.get_u32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
+    /// assert_eq!(gc.get32(0x6728), GeneralCategory::OtherLetter);  // U+6728 (木)
+    /// assert_eq!(gc.get32(0x1F383), GeneralCategory::OtherSymbol);  // U+1F383 JACK-O-LANTERN
     /// ```
-    pub fn get_u32(&self, ch: u32) -> T {
-        self.map.get_u32(ch)
+    pub fn get32(&self, ch: u32) -> T {
+        self.map.get32(ch)
     }
 
     /// Get a [`CodePointSetData`] for all elements corresponding to a particular value
@@ -520,7 +520,7 @@ make_map_property! {
     /// let sb = data.as_borrowed();;
     ///
     /// assert_eq!(sb.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
-    /// assert_eq!(sb.get_u32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+    /// assert_eq!(sb.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie

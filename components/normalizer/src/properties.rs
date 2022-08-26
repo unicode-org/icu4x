@@ -360,7 +360,7 @@ impl CanonicalDecomposition {
 /// let provider = icu_testdata::get_provider();
 /// let map = CanonicalCombiningClassMap::try_new_unstable(&provider).unwrap();
 /// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
-/// assert_eq!(map.get_u32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+/// assert_eq!(map.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
 /// ```
 pub struct CanonicalCombiningClassMap {
     /// The data trie
@@ -371,13 +371,13 @@ impl CanonicalCombiningClassMap {
     /// Look up the canonical combining class for a scalar value
     #[inline(always)]
     pub fn get(&self, c: char) -> CanonicalCombiningClass {
-        self.get_u32(u32::from(c))
+        self.get32(u32::from(c))
     }
 
     /// Look up the canonical combining class for a scalar value
     /// represented as `u32`. If the argument is outside the scalar
     /// value range, `CanonicalCombiningClass::NotReordered` is returned.
-    pub fn get_u32(&self, c: u32) -> CanonicalCombiningClass {
+    pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
         let trie_value = self.decompositions.get().trie.get(c);
         if trie_value_has_ccc(trie_value) {
             CanonicalCombiningClass(trie_value as u8)

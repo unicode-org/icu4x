@@ -177,11 +177,11 @@ impl<'a> Char16TrieIterator<'a> {
     /// ```
     pub fn next(&mut self, c: char) -> TrieResult {
         if (c as u32) <= 0xffff {
-            self.next_u16(c as u16)
+            self.next16(c as u16)
         } else {
-            match self.next_u16(u16_lead(c as i32)) {
+            match self.next16(u16_lead(c as i32)) {
                 TrieResult::NoValue | TrieResult::Intermediate(_) => {
-                    self.next_u16(u16_tail(c as i32))
+                    self.next16(u16_tail(c as i32))
                 }
                 _ => TrieResult::NoMatch,
             }
@@ -208,13 +208,13 @@ impl<'a> Char16TrieIterator<'a> {
     /// let res = iter.next('c');
     /// assert_eq!(res, TrieResult::NoMatch);
     /// ```
-    pub fn next_u32(&mut self, c: u32) -> TrieResult {
+    pub fn next32(&mut self, c: u32) -> TrieResult {
         if c <= 0xffff {
-            self.next_u16(c as u16)
+            self.next16(c as u16)
         } else {
-            match self.next_u16(u16_lead(c as i32)) {
+            match self.next16(u16_lead(c as i32)) {
                 TrieResult::NoValue | TrieResult::Intermediate(_) => {
-                    self.next_u16(u16_tail(c as i32))
+                    self.next16(u16_tail(c as i32))
                 }
                 _ => TrieResult::NoMatch,
             }
@@ -234,14 +234,14 @@ impl<'a> Char16TrieIterator<'a> {
     /// let trie = Char16Trie::new(ZeroVec::from_slice_or_alloc(trie_data.as_slice()));
     ///
     /// let mut iter = trie.iter();
-    /// let res = iter.next_u16('a' as u16);
+    /// let res = iter.next16('a' as u16);
     /// assert_eq!(res, TrieResult::Intermediate(1));
-    /// let res = iter.next_u16('b' as u16);
+    /// let res = iter.next16('b' as u16);
     /// assert_eq!(res, TrieResult::FinalValue(100));
-    /// let res = iter.next_u16('c' as u16);
+    /// let res = iter.next16('c' as u16);
     /// assert_eq!(res, TrieResult::NoMatch);
     /// ```
-    pub fn next_u16(&mut self, c: u16) -> TrieResult {
+    pub fn next16(&mut self, c: u16) -> TrieResult {
         let mut pos = match self.pos {
             Some(p) => p,
             None => return TrieResult::NoMatch,
