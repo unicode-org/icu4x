@@ -60,6 +60,11 @@ fn main() {
     doc_types
         .difference(&diplomat_types)
         .for_each(|item| println!("{item}"));
+
+    eprintln!("Broken links: ");
+    diplomat_types
+        .difference(&doc_types)
+        .for_each(|item| eprintln!("{item}"));
 }
 
 lazy_static::lazy_static! {
