@@ -37,6 +37,7 @@ extern crate alloc;
 pub mod bidi;
 pub mod calendar;
 pub mod data_struct;
+pub mod datetime;
 pub mod datetime_format;
 pub mod decimal;
 pub mod errors;

@@ -13,7 +13,7 @@ pub mod ffi {
     };
 
     use crate::{
-        calendar::ffi::ICU4XDateTime, calendar::ffi::ICU4XGregorianDateTime,
+        datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XGregorianDateTime,
         errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
     };
 
