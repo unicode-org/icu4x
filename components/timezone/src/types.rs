@@ -15,7 +15,7 @@ pub struct GmtOffset(i32);
 impl GmtOffset {
     /// Attempt to create a [`GmtOffset`] from a seconds input. It returns an error when the seconds
     /// overflows or underflows.
-    pub fn try_new(seconds: i32) -> Result<Self, TimeZoneError> {
+    pub fn try_from_offset_seconds(seconds: i32) -> Result<Self, TimeZoneError> {
         // Valid range is from GMT-12 to GMT+14 in seconds.
         if seconds < -(12 * 60 * 60) || seconds > (14 * 60 * 60) {
             Err(TimeZoneError::OffsetOutOfBounds)
@@ -24,8 +24,18 @@ impl GmtOffset {
         }
     }
 
+    /// Create a [`GmtOffset`] from a seconds input without checking bounds.
+    ///
+    /// # Safety
+    ///
+    /// The seconds must be a valid value as returned by [`Self::offset_seconds`].
+    #[inline]
+    pub unsafe fn from_offset_seconds_unchecked(seconds: i32) -> Self {
+        Self(seconds)
+    }
+
     /// Returns the raw offset value in seconds.
-    pub fn raw_offset_seconds(&self) -> i32 {
+    pub fn offset_seconds(&self) -> i32 {
         self.0
     }
 
@@ -130,7 +140,7 @@ impl FromStr for GmtOffset {
             _ => return Err(TimeZoneError::InvalidOffset),
         };
 
-        Self::try_new(seconds)
+        Self::try_from_offset_seconds(seconds)
     }
 }
 
@@ -162,6 +172,18 @@ impl ZoneVariant {
     /// Corresponds to the `"daylight"` variant string in CLDR.
     pub const fn daylight() -> Self {
         Self(tinystr!(2, "dt"))
+    }
+}
+
+impl From<TinyAsciiStr<2>> for ZoneVariant {
+    fn from(other: TinyAsciiStr<2>) -> Self {
+        Self(other)
+    }
+}
+
+impl From<ZoneVariant> for TinyAsciiStr<2> {
+    fn from(other: ZoneVariant) -> Self {
+        other.0
     }
 }
 

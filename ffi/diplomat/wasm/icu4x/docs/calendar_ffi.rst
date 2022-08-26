@@ -47,3 +47,17 @@
 
         See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
 
+
+.. js:class:: ICU4XIsoDateTime
+
+    An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+
+    See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
+
+
+    .. js:staticfunction:: try_new(year, month, day, hour, minute, second)
+
+        Creates a new :js:class:`ICU4XIsoDateTime` from the specified date and time.
+
+        See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
+

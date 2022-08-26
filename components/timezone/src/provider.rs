@@ -9,6 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
 use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
@@ -20,6 +21,25 @@ use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct TimeZoneBcp47Id(pub TinyAsciiStr<8>);
+
+impl FromStr for TimeZoneBcp47Id {
+    type Err = tinystr::TinyStrError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        TinyAsciiStr::from_str(s).map(Into::into)
+    }
+}
+
+impl From<TinyAsciiStr<8>> for TimeZoneBcp47Id {
+    fn from(s: TinyAsciiStr<8>) -> Self {
+        Self(s)
+    }
+}
+
+impl From<TimeZoneBcp47Id> for TinyAsciiStr<8> {
+    fn from(other: TimeZoneBcp47Id) -> Self {
+        other.0
+    }
+}
 
 impl AsULE for TimeZoneBcp47Id {
     type ULE = Self;
@@ -48,6 +68,25 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct MetaZoneId(pub TinyAsciiStr<4>);
+
+impl From<TinyAsciiStr<4>> for MetaZoneId {
+    fn from(s: TinyAsciiStr<4>) -> Self {
+        Self(s)
+    }
+}
+
+impl From<MetaZoneId> for TinyAsciiStr<4> {
+    fn from(other: MetaZoneId) -> Self {
+        other.0
+    }
+}
+
+impl FromStr for MetaZoneId {
+    type Err = tinystr::TinyStrError;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        TinyAsciiStr::from_str(s).map(Into::into)
+    }
+}
 
 impl AsULE for MetaZoneId {
     type ULE = Self;

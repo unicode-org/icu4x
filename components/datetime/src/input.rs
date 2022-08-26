@@ -85,7 +85,7 @@ pub trait TimeZoneInput {
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id>;
 
     /// The metazone identifier.
-    fn metazone_id(&self) -> Option<MetaZoneId>;
+    fn meta_zone_id(&self) -> Option<MetaZoneId>;
 
     /// The time variant (e.g. "daylight", "standard")
     fn zone_variant(&self) -> Option<ZoneVariant>;
@@ -153,7 +153,7 @@ pub(crate) struct ExtractedDateTimeInput {
 pub(crate) struct ExtractedTimeZoneInput {
     gmt_offset: Option<GmtOffset>,
     time_zone_id: Option<TimeZoneBcp47Id>,
-    metazone_id: Option<MetaZoneId>,
+    meta_zone_id: Option<MetaZoneId>,
     zone_variant: Option<ZoneVariant>,
 }
 
@@ -203,7 +203,7 @@ impl ExtractedTimeZoneInput {
         Self {
             gmt_offset: input.gmt_offset(),
             time_zone_id: input.time_zone_id(),
-            metazone_id: input.metazone_id(),
+            meta_zone_id: input.meta_zone_id(),
             zone_variant: input.zone_variant(),
         }
     }
@@ -258,8 +258,8 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
         self.time_zone_id
     }
-    fn metazone_id(&self) -> Option<MetaZoneId> {
-        self.metazone_id
+    fn meta_zone_id(&self) -> Option<MetaZoneId> {
+        self.meta_zone_id
     }
     fn zone_variant(&self) -> Option<ZoneVariant> {
         self.zone_variant
@@ -487,8 +487,8 @@ impl TimeZoneInput for CustomTimeZone {
         self.time_zone_id
     }
 
-    fn metazone_id(&self) -> Option<MetaZoneId> {
-        self.metazone_id
+    fn meta_zone_id(&self) -> Option<MetaZoneId> {
+        self.meta_zone_id
     }
 
     fn zone_variant(&self) -> Option<ZoneVariant> {

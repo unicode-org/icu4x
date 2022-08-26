@@ -100,6 +100,7 @@ impl<const N: usize> TinyAsciiStr<N> {
         })
     }
 
+    // TODO: This function shadows the FromStr trait. Rename?
     #[inline]
     pub const fn from_str(s: &str) -> Result<Self, TinyStrError> {
         Self::from_bytes_inner(s.as_bytes(), 0, s.len(), false)

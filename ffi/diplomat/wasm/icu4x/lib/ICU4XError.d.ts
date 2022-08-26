@@ -89,10 +89,10 @@ export enum ICU4XError {
   PropertyUnknownGeneralCategoryGroupError = 'PropertyUnknownGeneralCategoryGroupError',
   /**
    */
-  DecimalLimitError = 'DecimalLimitError',
+  FixedDecimalLimitError = 'FixedDecimalLimitError',
   /**
    */
-  DecimalSyntaxError = 'DecimalSyntaxError',
+  FixedDecimalSyntaxError = 'FixedDecimalSyntaxError',
   /**
    */
   PluralParserError = 'PluralParserError',
@@ -150,4 +150,19 @@ export enum ICU4XError {
   /**
    */
   DateTimeFormatMismatchedCalendarLocaleError = 'DateTimeFormatMismatchedCalendarLocaleError',
+  /**
+   */
+  TinyStrTooLargeError = 'TinyStrTooLargeError',
+  /**
+   */
+  TinyStrContainsNullError = 'TinyStrContainsNullError',
+  /**
+   */
+  TinyStrNonAsciiError = 'TinyStrNonAsciiError',
+  /**
+   */
+  TimeZoneOffsetOutOfBoundsError = 'TimeZoneOffsetOutOfBoundsError',
+  /**
+   */
+  TimeZoneInvalidOffsetError = 'TimeZoneInvalidOffsetError',
 }

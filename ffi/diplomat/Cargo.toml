@@ -62,6 +62,7 @@ icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", features
 icu_provider_adapters = { version = "1.0.0-beta1", path = "../../provider/adapters" }
 icu_provider_blob = { version = "1.0.0-beta1", path = "../../provider/blob" }
 icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", features = ["serde"] }
+icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone" }
 tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc"], default-features = false }
 unicode-bidi = { version = "0.3.8", default-features = false }
 writeable = { version = "0.4", path = "../../utils/writeable/" }

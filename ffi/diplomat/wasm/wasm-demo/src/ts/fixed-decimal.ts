@@ -31,12 +31,12 @@ export class FixedDecimalDemo {
     }
 
     setFixedDecimal(digits: string): void {
-        this.#fixedDecimal = digits === "" ? null : result(() => ICU4XFixedDecimal.create_fromstr(digits));
+        this.#fixedDecimal = digits === "" ? null : result(() => ICU4XFixedDecimal.create_from_str(digits));
         this.#render();
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => ICU4XFixedDecimalFormatter.try_new(
+        this.#formatter = result(() => ICU4XFixedDecimalFormatter.try_new_with_grouping_strategy(
             this.#dataProvider,
             unwrap(this.#locale),
             this.#groupingStrategy,

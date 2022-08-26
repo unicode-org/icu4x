@@ -67,8 +67,8 @@ enum struct ICU4XError {
   DataStructValidityError = 768,
   PropertyUnknownScriptIdError = 1024,
   PropertyUnknownGeneralCategoryGroupError = 1025,
-  DecimalLimitError = 1280,
-  DecimalSyntaxError = 1281,
+  FixedDecimalLimitError = 1280,
+  FixedDecimalSyntaxError = 1281,
   PluralParserError = 1536,
   DateTimeParseError = 1792,
   DateTimeOverflowError = 1793,
@@ -88,6 +88,11 @@ enum struct ICU4XError {
   DateTimeFormatFixedDecimalError = 2055,
   DateTimeFormatMismatchedAnyCalendarError = 2056,
   DateTimeFormatMismatchedCalendarLocaleError = 2057,
+  TinyStrTooLargeError = 2304,
+  TinyStrContainsNullError = 2305,
+  TinyStrNonAsciiError = 2306,
+  TimeZoneOffsetOutOfBoundsError = 2560,
+  TimeZoneInvalidOffsetError = 2561,
 };
 
 #endif

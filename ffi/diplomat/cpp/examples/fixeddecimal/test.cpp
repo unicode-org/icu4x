@@ -14,10 +14,10 @@ int main() {
     ICU4XLocale locale = ICU4XLocale::create_bn();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
-    ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::try_new(
+    ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::try_new_with_grouping_strategy(
         dp, locale, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
-    ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create(1000007);
+    ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create_from_u64(1000007);
     std::string out = fdf.format(decimal).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "১০,০০,০০৭") {
@@ -42,7 +42,7 @@ int main() {
         return 1;
     }
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(100.01).ok().value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_floating_precision(100.01).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value is " << out << std::endl;
     if (out != "১০০.০১") {
@@ -96,14 +96,14 @@ int main() {
 
     fdf = ICU4XFixedDecimalFormatter::try_new_from_decimal_symbols_v1(data, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).ok().value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_floating_precision(123456.8901).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
     if (out != "bcdefg/ijab") {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
-    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123451234567.8901).ok().value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_floating_precision(123451234567.8901).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted float value for custom numeric system is " << out << std::endl;
     if (out != "bc_de_fb_cd_efgh/ijab") {
@@ -113,10 +113,10 @@ int main() {
 
     locale = ICU4XLocale::create("th-u-nu-thai").ok().value();
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
-    fdf = ICU4XFixedDecimalFormatter::try_new(
+    fdf = ICU4XFixedDecimalFormatter::try_new_with_grouping_strategy(
         dp, locale, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
-    decimal = ICU4XFixedDecimal::create_from_f64_with_max_precision(123456.8901).ok().value();
+    decimal = ICU4XFixedDecimal::create_from_f64_with_floating_precision(123456.8901).ok().value();
     out = fdf.format(decimal).ok().value();
     std::cout << "Formatted value is " << out << std::endl;
     if (out != "๑๒๓,๔๕๖.๘๙๐๑") {

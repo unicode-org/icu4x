@@ -323,7 +323,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let (input_date, mut time_zone) =
             mock::parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
-        time_zone.metazone_id = config.metazone_id.map(MetaZoneId);
+        time_zone.meta_zone_id = config.meta_zone_id.map(MetaZoneId);
         time_zone.zone_variant = config.zone_variant.map(ZoneVariant);
 
         let description = match fx.description {
@@ -483,7 +483,7 @@ fn test_time_zone_format_configs() {
         let mut config = test.config;
         let (_, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
+        time_zone.meta_zone_id = config.meta_zone_id.take().map(MetaZoneId);
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
         for TimeZoneExpectation {
             patterns: _,
@@ -592,7 +592,7 @@ fn test_time_zone_patterns() {
         let (datetime, mut time_zone) =
             mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        time_zone.metazone_id = config.metazone_id.take().map(MetaZoneId);
+        time_zone.meta_zone_id = config.meta_zone_id.take().map(MetaZoneId);
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
 
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
@@ -729,7 +729,7 @@ fn test_length_fixtures() {
     test_fixture_with_time_zones(
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
-            metazone_id: Some(tinystr!(4, "ampa")),
+            meta_zone_id: Some(tinystr!(4, "ampa")),
             zone_variant: Some(tinystr!(2, "dt")),
             ..TimeZoneConfig::default()
         },
