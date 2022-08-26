@@ -72,7 +72,7 @@
 
     .. cpp:function:: ICU4XAnyCalendarKind kind() const
 
-        Creates a new :cpp:class:`ICU4XCalendar` from the specified date and time.
+        Returns the kind of this calendar
 
         See the `Rust documentation for kind <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.kind>`__ for more information.
 

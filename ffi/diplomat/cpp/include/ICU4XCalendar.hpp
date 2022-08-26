@@ -49,7 +49,7 @@ class ICU4XCalendar {
   static diplomat::result<ICU4XCalendar, ICU4XError> try_new_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind);
 
   /**
-   * Creates a new [`ICU4XCalendar`] from the specified date and time.
+   * Returns the kind of this calendar
    * 
    * See the [Rust documentation for `kind`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
    */

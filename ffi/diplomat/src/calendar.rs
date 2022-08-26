@@ -120,7 +120,7 @@ pub mod ffi {
                 .into()
         }
 
-        /// Creates a new [`ICU4XCalendar`] from the specified date and time.
+        /// Returns the kind of this calendar
         #[diplomat::rust_link(icu::calendar::AnyCalendar::kind, FnInEnum)]
         pub fn kind(&self) -> ICU4XAnyCalendarKind {
             self.0.kind().into()
