@@ -6,6 +6,20 @@
     See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
 
 
+    .. cpp:function:: static ICU4XFixedDecimal create_from_i32(int32_t v)
+
+        Construct an :cpp:class:`ICU4XFixedDecimal` from an integer.
+
+        See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
+
+
+    .. cpp:function:: static ICU4XFixedDecimal create_from_u32(uint32_t v)
+
+        Construct an :cpp:class:`ICU4XFixedDecimal` from an integer.
+
+        See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
+
+
     .. cpp:function:: static ICU4XFixedDecimal create_from_i64(int64_t v)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an integer.

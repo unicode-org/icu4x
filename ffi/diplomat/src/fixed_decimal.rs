@@ -46,6 +46,18 @@ pub mod ffi {
     impl ICU4XFixedDecimal {
         /// Construct an [`ICU4XFixedDecimal`] from an integer.
         #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
+        pub fn create_from_i32(v: i32) -> Box<ICU4XFixedDecimal> {
+            Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
+        }
+
+        /// Construct an [`ICU4XFixedDecimal`] from an integer.
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
+        pub fn create_from_u32(v: u32) -> Box<ICU4XFixedDecimal> {
+            Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
+        }
+
+        /// Construct an [`ICU4XFixedDecimal`] from an integer.
+        #[diplomat::rust_link(fixed_decimal::FixedDecimal, Struct)]
         pub fn create_from_i64(v: i64) -> Box<ICU4XFixedDecimal> {
             Box::new(ICU4XFixedDecimal(FixedDecimal::from(v)))
         }

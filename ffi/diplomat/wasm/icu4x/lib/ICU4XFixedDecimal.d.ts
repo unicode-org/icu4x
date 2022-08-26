@@ -1,4 +1,4 @@
-import { u8, i16, i64, u64, f64 } from "./diplomat-runtime"
+import { u8, i16, i32, u32, i64, u64, f64 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XFixedDecimalSign } from "./ICU4XFixedDecimalSign";
@@ -9,6 +9,22 @@ import { ICU4XFixedDecimalSignDisplay } from "./ICU4XFixedDecimalSignDisplay";
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html Rust documentation for `FixedDecimal`} for more information.
  */
 export class ICU4XFixedDecimal {
+
+  /**
+
+   * Construct an {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} from an integer.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html Rust documentation for `FixedDecimal`} for more information.
+   */
+  static create_from_i32(v: i32): ICU4XFixedDecimal;
+
+  /**
+
+   * Construct an {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} from an integer.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html Rust documentation for `FixedDecimal`} for more information.
+   */
+  static create_from_u32(v: u32): ICU4XFixedDecimal;
 
   /**
 

@@ -6,6 +6,20 @@
     See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
 
 
+    .. js:staticfunction:: create_from_i32(v)
+
+        Construct an :js:class:`ICU4XFixedDecimal` from an integer.
+
+        See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
+
+
+    .. js:staticfunction:: create_from_u32(v)
+
+        Construct an :js:class:`ICU4XFixedDecimal` from an integer.
+
+        See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
+
+
     .. js:staticfunction:: create_from_i64(v)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an integer.

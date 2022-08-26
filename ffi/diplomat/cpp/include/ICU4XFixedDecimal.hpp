@@ -38,6 +38,20 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation for `FixedDecimal`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html) for more information.
    */
+  static ICU4XFixedDecimal create_from_i32(int32_t v);
+
+  /**
+   * Construct an [`ICU4XFixedDecimal`] from an integer.
+   * 
+   * See the [Rust documentation for `FixedDecimal`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html) for more information.
+   */
+  static ICU4XFixedDecimal create_from_u32(uint32_t v);
+
+  /**
+   * Construct an [`ICU4XFixedDecimal`] from an integer.
+   * 
+   * See the [Rust documentation for `FixedDecimal`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html) for more information.
+   */
   static ICU4XFixedDecimal create_from_i64(int64_t v);
 
   /**
@@ -295,6 +309,12 @@ class ICU4XFixedDecimal {
 };
 
 
+inline ICU4XFixedDecimal ICU4XFixedDecimal::create_from_i32(int32_t v) {
+  return ICU4XFixedDecimal(capi::ICU4XFixedDecimal_create_from_i32(v));
+}
+inline ICU4XFixedDecimal ICU4XFixedDecimal::create_from_u32(uint32_t v) {
+  return ICU4XFixedDecimal(capi::ICU4XFixedDecimal_create_from_u32(v));
+}
 inline ICU4XFixedDecimal ICU4XFixedDecimal::create_from_i64(int64_t v) {
   return ICU4XFixedDecimal(capi::ICU4XFixedDecimal_create_from_i64(v));
 }

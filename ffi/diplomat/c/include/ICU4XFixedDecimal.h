@@ -23,6 +23,10 @@ namespace capi {
 extern "C" {
 #endif
 
+ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_i32(int32_t v);
+
+ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_u32(uint32_t v);
+
 ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_i64(int64_t v);
 
 ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_u64(uint64_t v);

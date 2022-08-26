@@ -18,6 +18,14 @@ export class ICU4XFixedDecimal {
     }
   }
 
+  static create_from_i32(arg_v) {
+    return new ICU4XFixedDecimal(wasm.ICU4XFixedDecimal_create_from_i32(arg_v), true, []);
+  }
+
+  static create_from_u32(arg_v) {
+    return new ICU4XFixedDecimal(wasm.ICU4XFixedDecimal_create_from_u32(arg_v), true, []);
+  }
+
   static create_from_i64(arg_v) {
     return new ICU4XFixedDecimal(wasm.ICU4XFixedDecimal_create_from_i64(arg_v), true, []);
   }
