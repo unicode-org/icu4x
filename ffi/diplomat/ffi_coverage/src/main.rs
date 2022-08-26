@@ -124,10 +124,25 @@ lazy_static::lazy_static! {
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
     static ref IGNORED_PATHS: HashSet<Vec<String>> = [
+        // Stuff that we DO plan to expose for 1.0 but we're keeping in the ignorelist
+        // because we plan to solve it all at once.
+        // This section should go away before 1.0
+        // =========================
+
+        // constructor signatures: we need to make them uniform
+        "icu::calendar::AnyCalendar::try_new_for_locale_with_any_provider",
+        "icu::calendar::AnyCalendar::try_new_for_locale_with_buffer_provider",
+        "icu::calendar::AnyCalendar::try_new_with_any_provider",
+        "icu::calendar::AnyCalendar::try_new_with_buffer_provider",
+
         // Stuff that could be exposed over FFI but is not currently planned
         // =========================
+
         // Largely for use by datetimeformat, not super public (#2421)
         "icu::calendar::week_of",
+        // Largely for use by datetimeformat, not generally useful
+        "icu::calendar::AnyCalendar::convert_any_date",
+        "icu::calendar::AnyCalendar::convert_any_datetime",
 
 
         // Individual calendars: Currently the main entry point is AnyCalendar

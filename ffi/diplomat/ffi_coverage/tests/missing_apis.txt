@@ -33,16 +33,6 @@ fixed_decimal::FixedDecimal::write_len#FnInStruct
 fixed_decimal::FixedDecimal::write_to_parts#FnInStruct
 fixed_decimal::FixedDecimal::write_to_string#FnInStruct
 fixed_decimal::SignDisplay#Enum
-icu::calendar::AnyCalendar::convert_any_date#FnInEnum
-icu::calendar::AnyCalendar::convert_any_datetime#FnInEnum
-icu::calendar::AnyCalendar::kind#FnInEnum
-icu::calendar::AnyCalendar::try_new_for_locale_unstable#FnInEnum
-icu::calendar::AnyCalendar::try_new_for_locale_with_any_provider#FnInEnum
-icu::calendar::AnyCalendar::try_new_for_locale_with_buffer_provider#FnInEnum
-icu::calendar::AnyCalendar::try_new_unstable#FnInEnum
-icu::calendar::AnyCalendar::try_new_with_any_provider#FnInEnum
-icu::calendar::AnyCalendar::try_new_with_buffer_provider#FnInEnum
-icu::calendar::AnyCalendarKind#Enum
 icu::calendar::AnyCalendarKind::as_bcp47_string#FnInEnum
 icu::calendar::AnyCalendarKind::as_bcp47_value#FnInEnum
 icu::calendar::AnyCalendarKind::from_bcp47#FnInEnum
