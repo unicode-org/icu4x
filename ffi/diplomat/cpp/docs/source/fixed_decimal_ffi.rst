@@ -65,46 +65,46 @@
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an float, with enough digits to recover the original floating point in IEEE 754 without needing trailing zeros
 
-        See the `Rust documentation for try_from_f64 <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
+        See the `Rust documentation for try_from_f64 <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64>`__ for more information.
 
-        See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/enum.DoublePrecision.html>`__ for more information.
+        See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_str(const std::string_view v)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from a string.
 
-        See the `Rust documentation for FixedDecimal <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html>`__ for more information.
+        See the `Rust documentation for from_str <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.from_str>`__ for more information.
 
 
     .. cpp:function:: uint8_t digit_at(int16_t magnitude) const
 
-        See the `Rust documentation for digit_at <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.digit_at>`__ for more information.
+        See the `Rust documentation for digit_at <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.digit_at>`__ for more information.
 
 
     .. cpp:function:: int16_t magnitude_start() const
 
-        See the `Rust documentation for magnitude_range <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.magnitude_range>`__ for more information.
+        See the `Rust documentation for magnitude_range <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range>`__ for more information.
 
 
     .. cpp:function:: int16_t magnitude_end() const
 
-        See the `Rust documentation for magnitude_range <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.magnitude_range>`__ for more information.
+        See the `Rust documentation for magnitude_range <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range>`__ for more information.
 
 
     .. cpp:function:: int16_t nonzero_magnitude_start() const
 
-        See the `Rust documentation for nonzero_magnitude_start <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start>`__ for more information.
+        See the `Rust documentation for nonzero_magnitude_start <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start>`__ for more information.
 
 
     .. cpp:function:: int16_t nonzero_magnitude_end() const
 
-        See the `Rust documentation for nonzero_magnitude_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end>`__ for more information.
+        See the `Rust documentation for nonzero_magnitude_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end>`__ for more information.
 
 
     .. cpp:function:: bool is_zero() const
 
-        See the `Rust documentation for is_zero <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.is_zero>`__ for more information.
+        See the `Rust documentation for is_zero <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.is_zero>`__ for more information.
 
 
     .. cpp:function:: void multiply_pow10(int16_t power)
@@ -116,7 +116,7 @@
 
     .. cpp:function:: ICU4XFixedDecimalSign sign() const
 
-        See the `Rust documentation for sign <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.sign>`__ for more information.
+        See the `Rust documentation for sign <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.sign>`__ for more information.
 
 
     .. cpp:function:: void set_sign(ICU4XFixedDecimalSign sign)
@@ -128,17 +128,17 @@
 
     .. cpp:function:: void apply_sign_display(ICU4XFixedDecimalSignDisplay sign_display)
 
-        See the `Rust documentation for apply_sign_display <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.apply_sign_display>`__ for more information.
+        See the `Rust documentation for apply_sign_display <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display>`__ for more information.
 
 
     .. cpp:function:: void trim_start()
 
-        See the `Rust documentation for trim_start <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.trim_start>`__ for more information.
+        See the `Rust documentation for trim_start <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trim_start>`__ for more information.
 
 
     .. cpp:function:: void trim_end()
 
-        See the `Rust documentation for trim_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.trim_end>`__ for more information.
+        See the `Rust documentation for trim_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trim_end>`__ for more information.
 
 
     .. cpp:function:: void pad_start(int16_t position)
@@ -152,7 +152,7 @@
 
         Zero-pad the :cpp:class:`ICU4XFixedDecimal` on the right to a particular position
 
-        See the `Rust documentation for pad_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_end>`__ for more information.
+        See the `Rust documentation for pad_end <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.pad_end>`__ for more information.
 
 
     .. cpp:function:: void set_max_position(int16_t position)
@@ -258,7 +258,7 @@
 
     ECMA-402 compatible sign display preference.
 
-    See the `Rust documentation for SignDisplay <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/enum.SignDisplay.html>`__ for more information.
+    See the `Rust documentation for SignDisplay <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.SignDisplay.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto
