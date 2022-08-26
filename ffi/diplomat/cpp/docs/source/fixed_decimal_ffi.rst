@@ -29,7 +29,7 @@
         See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_magnitude(double f, int16_t magnitude)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t magnitude)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from an float, with a given power of 10 for the lower magnitude
 

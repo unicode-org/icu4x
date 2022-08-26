@@ -72,7 +72,7 @@ pub mod ffi {
         /// Construct an [`ICU4XFixedDecimal`] from an float, with a given power of 10 for the lower magnitude
         #[diplomat::rust_link(fixed_decimal::FixedDecimal::try_from_f64, FnInStruct)]
         #[diplomat::rust_link(fixed_decimal::DoublePrecision, Enum)]
-        pub fn create_from_f64_with_magnitude(
+        pub fn create_from_f64_with_lower_magnitude(
             f: f64,
             magnitude: i16,
         ) -> DiplomatResult<Box<ICU4XFixedDecimal>, ICU4XError> {

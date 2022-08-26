@@ -54,7 +54,7 @@ script = '''
 exit_on_error true
 code = exec --get-exit-code git diff --exit-code -- ffi/diplomat/ffi_coverage/tests
 if ${code}
-    trigger_error "Diplomat coverage dump need to be regenerated. Please run `cargo make diplomat-converage` and commit."
+    trigger_error "Diplomat coverage dump need to be regenerated. Please run `cargo make diplomat-coverage` and commit."
 end
 '''
 

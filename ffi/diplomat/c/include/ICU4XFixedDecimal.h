@@ -29,7 +29,7 @@ ICU4XFixedDecimal* ICU4XFixedDecimal_create_from_u64(uint64_t v);
 
 diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f64_with_integer_precision(double f);
 
-diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f64_with_magnitude(double f, int16_t magnitude);
+diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
 
 diplomat_result_box_ICU4XFixedDecimal_ICU4XError ICU4XFixedDecimal_create_from_f64_with_significant_digits(double f, uint8_t digits);
 

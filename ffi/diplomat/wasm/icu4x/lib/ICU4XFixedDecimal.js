@@ -43,10 +43,10 @@ export class ICU4XFixedDecimal {
     })();
   }
 
-  static create_from_f64_with_magnitude(arg_f, arg_magnitude) {
+  static create_from_f64_with_lower_magnitude(arg_f, arg_magnitude) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XFixedDecimal_create_from_f64_with_magnitude(diplomat_receive_buffer, arg_f, arg_magnitude);
+      wasm.ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(diplomat_receive_buffer, arg_f, arg_magnitude);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XFixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

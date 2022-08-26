@@ -46,7 +46,7 @@ export class ICU4XFixedDecimal {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html Rust documentation for `DoublePrecision`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create_from_f64_with_magnitude(f: f64, magnitude: i16): ICU4XFixedDecimal | never;
+  static create_from_f64_with_lower_magnitude(f: f64, magnitude: i16): ICU4XFixedDecimal | never;
 
   /**
 

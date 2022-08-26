@@ -63,7 +63,7 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation for `DoublePrecision`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html) for more information.
    */
-  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_magnitude(double f, int16_t magnitude);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_f64_with_lower_magnitude(double f, int16_t magnitude);
 
   /**
    * Construct an [`ICU4XFixedDecimal`] from an float, for a given number of significant digits
@@ -311,8 +311,8 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_magnitude(double f, int16_t magnitude) {
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_magnitude(f, magnitude);
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_f64_with_lower_magnitude(double f, int16_t magnitude) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_f64_with_lower_magnitude(f, magnitude);
   diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XFixedDecimal>(std::move(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok)));

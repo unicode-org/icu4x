@@ -29,7 +29,7 @@
         See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_from_f64_with_magnitude(f, magnitude)
+    .. js:staticfunction:: create_from_f64_with_lower_magnitude(f, magnitude)
 
         Construct an :js:class:`ICU4XFixedDecimal` from an float, with a given power of 10 for the lower magnitude
 
