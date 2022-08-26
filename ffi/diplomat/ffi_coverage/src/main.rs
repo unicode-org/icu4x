@@ -64,30 +64,25 @@ fn main() {
 
 lazy_static::lazy_static! {
     static ref IGNORED_TRAITS: HashSet<&'static str> = [
+        // Rust and Rust ecosystem types
         "Any",
-        "AsULE",
         "Bake",
         "Borrow",
         "BorrowMut",
         "Clone",
         "Copy",
-        "DataMarker",
         "Debug",
         "Default", // ???
         "Deserialize",
         "DeserializeOwned",
         "Display",
-        "EncodeAsULE",
-        "EncodeAsVarULE",
         "Eq",
         "ErasedDestructor",
         "Error",
         "From",
         "Hash",
         "Into",
-        "IsCovariant",
         "Iterator", // ???
-        "KeyedDataMarker",
         "Ord",
         "PartialEq",
         "PartialOrd",
@@ -102,12 +97,28 @@ lazy_static::lazy_static! {
         "ToString", // ???
         "TryFrom", // ???
         "TryInto", // ???
-        "ULE",
         "Unpin",
         "UnwindSafe",
+
+        // yoke/zerovec/etc internals
+        "ULE",
+        "AsULE",
         "VarULE",
         "Yokeable",
         "ZeroFrom",
+        "ZeroMapKV",
+        "EncodeAsULE",
+        "EncodeAsVarULE",
+        "IsCovariant",
+
+        // provider stuff
+        "DataMarker",
+        "KeyedDataMarker",
+
+        // internal trait , all methods replicated on Date
+        "Calendar",
+        // Rust-specific conversion trait
+        "AsCalendar",
     ].into_iter().collect();
 
     // Paths which are not checked for FFI coverage. Naming a type or module here
