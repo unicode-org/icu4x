@@ -85,7 +85,7 @@ use core::str::from_utf8_unchecked;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
-use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrieBorrow;
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 use provider::CanonicalCompositionsV1Marker;
@@ -465,18 +465,19 @@ impl CharacterAndClass {
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
-    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrie<u32>) {
+    #[inline(always)]
+    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrieBorrow<u32>) {
         if self.0 >> 24 != 0xFF {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 = ((ccc_from_trie_value(trie.get32(scalar)).0 as u32) << 24) | scalar;
     }
 }
 
 // This function exists as a borrow check helper.
 #[inline(always)]
-fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrie<u32>) {
+fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrieBorrow<u32>) {
     // We don't look up the canonical combining class for starters
     // of for single combining characters between starters. When
     // there's more than one combining character between starters,
@@ -508,8 +509,8 @@ where
     // However, when `Decomposition` appears inside a `Composition`, this
     // may become a non-starter before `decomposing_next()` is called.
     pending: Option<CharacterAndTrieValue>, // None at end of stream
-    trie: &'data CodePointTrie<'data, u32>,
-    supplementary_trie: Option<&'data CodePointTrie<'data, u32>>,
+    trie: CodePointTrieBorrow<'data, u32>,
+    supplementary_trie: Option<CodePointTrieBorrow<'data, u32>>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<char>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
@@ -571,8 +572,8 @@ where
             // Initialize with a placeholder starter in case
             // the real stream starts with a non-starter.
             pending: Some(CharacterAndTrieValue::new('\u{FFFF}', 0)),
-            trie: &decompositions.trie,
-            supplementary_trie: supplementary_decompositions.map(|s| &s.trie),
+            trie: ZeroFrom::zero_from(&decompositions.trie),
+            supplementary_trie: supplementary_decompositions.map(|s| ZeroFrom::zero_from(&s.trie)),
             scalars16: &tables.scalars16,
             scalars24: &tables.scalars24,
             supplementary_scalars16: if let Some(supplementary) = supplementary_tables {
@@ -678,8 +679,8 @@ where
 
     #[inline(always)]
     fn attach_trie_value(&self, c: char) -> CharacterAndTrieValue {
-        if let Some(supplementary) = self.supplementary_trie {
-            if let Some(value) = self.attach_supplementary_trie_value(c, supplementary) {
+        if self.supplementary_trie.is_some() {
+            if let Some(value) = self.attach_supplementary_trie_value(c) {
                 return value;
             }
         }
@@ -688,11 +689,7 @@ where
     }
 
     #[inline(never)]
-    fn attach_supplementary_trie_value(
-        &self,
-        c: char,
-        supplementary: &CodePointTrie<u32>,
-    ) -> Option<CharacterAndTrieValue> {
+    fn attach_supplementary_trie_value(&self, c: char) -> Option<CharacterAndTrieValue> {
         let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
         if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
             return Some(CharacterAndTrieValue::new(
@@ -704,7 +701,7 @@ where
                 0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
             ));
         }
-        let trie_value = supplementary.get32(u32::from(c));
+        let trie_value = self.supplementary_trie.unwrap().get(c);
         if trie_value != 0 {
             return Some(CharacterAndTrieValue::new_from_supplement(c, trie_value));
         }
@@ -925,7 +922,7 @@ where
         // Slicing succeeds by construction; we've always ensured that `combining_start`
         // is in permissible range.
         #[allow(clippy::indexing_slicing)]
-        sort_slice_by_ccc(&mut self.buffer[combining_start..], self.trie);
+        sort_slice_by_ccc(&mut self.buffer[combining_start..], &self.trie);
     }
 }
 

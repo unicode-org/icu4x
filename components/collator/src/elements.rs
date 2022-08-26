@@ -20,11 +20,12 @@
 
 use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::TrieResult;
-use icu_collections::codepointtrie::CodePointTrie;
+use icu_collections::codepointtrie::CodePointTrieBorrow;
 use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::CanonicalCombiningClass;
 use smallvec::SmallVec;
+use zerofrom::ZeroFrom;
 use zerovec::ule::AsULE;
 use zerovec::ule::CharULE;
 use zerovec::ule::RawBytesULE;
@@ -740,12 +741,13 @@ impl CharacterAndClass {
     pub fn character_and_ccc(&self) -> (char, CanonicalCombiningClass) {
         (self.character(), self.ccc())
     }
-    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrie<u32>) {
+    #[inline(always)]
+    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrieBorrow<u32>) {
         if self.0 >> 24 != 0xFF {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 = ((ccc_from_trie_value(trie.get32(scalar)).0 as u32) << 24) | scalar;
     }
 }
 
@@ -798,7 +800,7 @@ where
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
     diacritics: &'data ZeroSlice<u16>,
     /// NFD main trie.
-    trie: &'data CodePointTrie<'data, u32>,
+    trie: CodePointTrieBorrow<'data, u32>,
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
     /// NFD complex decompositions on supplementary planes
@@ -841,7 +843,7 @@ where
             tailoring,
             jamo,
             diacritics,
-            trie: &decompositions.trie,
+            trie: ZeroFrom::zero_from(&decompositions.trie),
             scalars16: &tables.scalars16,
             scalars32: &tables.scalars24,
             numeric_primary,
@@ -2258,7 +2260,7 @@ where
             // an item more than once.
             combining_characters
                 .iter_mut()
-                .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(self.trie));
+                .for_each(|cc| cc.set_ccc_from_trie_if_not_already_set(&self.trie));
             combining_characters.sort_by_key(|cc| cc.ccc());
         }
     }

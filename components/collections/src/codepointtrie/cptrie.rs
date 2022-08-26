@@ -13,6 +13,7 @@ use core::num::TryFromIntError;
 use core::ops::RangeInclusive;
 use yoke::Yokeable;
 use zerofrom::ZeroFrom;
+use zerovec::ZeroSlice;
 use zerovec::ZeroVec;
 use zerovec::ZeroVecError;
 
@@ -113,6 +114,28 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
     pub(crate) error_value: T,
 }
 
+/// Borrowed version of `CodePointTrie`. It makes sense to hold this type
+/// by value instead of holding `CodePointTrie` by reference if the reference
+/// is held across multiple lookups.
+#[derive(Debug, Eq, PartialEq, Yokeable, Copy, Clone)]
+pub struct CodePointTrieBorrow<'trie, T: TrieValue> {
+    pub(crate) header: &'trie CodePointTrieHeader,
+    pub(crate) index: &'trie ZeroSlice<u16>,
+    pub(crate) data: &'trie ZeroSlice<T>,
+    pub(crate) error_value: T,
+}
+
+impl<'zf, T: TrieValue> ZeroFrom<'zf, CodePointTrie<'_, T>> for CodePointTrieBorrow<'zf, T> {
+    fn zero_from(other: &'zf CodePointTrie<'_, T>) -> Self {
+        CodePointTrieBorrow {
+            header: &other.header,
+            index: &other.index,
+            data: &other.data,
+            error_value: other.error_value.clone(),
+        }
+    }
+}
+
 /// This struct contains the fixed-length header fields of a [`CodePointTrie`].
 #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
 #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = icu_collections::codepointtrie))]
@@ -164,51 +187,7 @@ impl TryFrom<u8> for TrieType {
     }
 }
 
-impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
-    #[doc(hidden)] // databake internal
-    pub const fn from_parts(
-        header: CodePointTrieHeader,
-        index: ZeroVec<'trie, u16>,
-        data: ZeroVec<'trie, T>,
-        error_value: T,
-    ) -> Self {
-        Self {
-            header,
-            index,
-            data,
-            error_value,
-        }
-    }
-
-    /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
-    /// array and `data` array, whose data values have width `W`.
-    pub fn try_new(
-        header: CodePointTrieHeader,
-        index: ZeroVec<'trie, u16>,
-        data: ZeroVec<'trie, T>,
-    ) -> Result<CodePointTrie<'trie, T>, Error> {
-        // Validation invariants are not needed here when constructing a new
-        // `CodePointTrie` because:
-        //
-        // - Rust includes the size of a slice (or Vec or similar), which allows it
-        //   to prevent lookups at out-of-bounds indices, whereas in C++, it is the
-        //   programmer's responsibility to keep track of length info.
-        // - For lookups into collections, Rust guarantees that a fallback value will
-        //   be returned in the case of `.get()` encountering a lookup error, via
-        //   the `Option` type.
-        // - The `ZeroVec` serializer stores the length of the array along with the
-        //   ZeroVec data, meaning that a deserializer would also see that length info.
-
-        let error_value = data.last().ok_or(Error::EmptyDataVector)?;
-        let trie: CodePointTrie<'trie, T> = CodePointTrie {
-            header,
-            index,
-            data,
-            error_value,
-        };
-        Ok(trie)
-    }
-
+impl<'trie, T: TrieValue> CodePointTrieBorrow<'trie, T> {
     /// Returns the position in the data array containing the trie's stored
     /// error value.
     #[inline(always)] // `always` based on normalizer benchmarking
@@ -330,8 +309,8 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     pub fn get32(&self, code_point: u32) -> T {
         // If we cannot read from the data array, then return the sentinel value
         // self.error_value() for the instance type for T: TrieValue.
-        self.get32_ule(code_point)
-            .map(|t| T::from_unaligned(*t))
+        self.data
+            .get(self.data_pos(code_point))
             .unwrap_or(self.error_value)
     }
 
@@ -347,25 +326,17 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(0, trie.get('Ꮰ')); // 'Ꮰ' as u32
     /// assert_eq!(1, trie.get('𐁄')); // '𐁄' as u32
     /// ```
-    #[inline(always)]
+    #[inline(always)] // `always` based on normalizer benchmarking
     pub fn get(&self, c: char) -> T {
         self.get32(u32::from(c))
     }
 
-    /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_collections::codepointtrie::planes;
-    /// let trie = planes::get_planes_trie();
-    ///
-    /// assert_eq!(Some(&0), trie.get32_ule(0x41)); // 'A' as u32
-    /// assert_eq!(Some(&0), trie.get32_ule(0x13E0)); // 'Ꮰ' as u32
-    /// assert_eq!(Some(&1), trie.get32_ule(0x10044)); // '𐁄' as u32
-    /// ```
+    // Distinct method in order to solve borrow checker complaints
+    // about `CodePointTrie<T>::get32_ule()`. That is, to make it
+    // possible for that method to call this one instead of delegating
+    // to `CodePointTrieBorrow<T>::get32_ule()`.
     #[inline(always)] // `always` based on normalizer benchmarking
-    pub fn get32_ule(&self, code_point: u32) -> Option<&T::ULE> {
+    pub(crate) fn data_pos(&self, code_point: u32) -> usize {
         // All code points up to the fast max limit are represented
         // individually in the `index` array to hold their `data` array position, and
         // thus only need 2 lookups for a [CodePointTrie::get()](`crate::codepointtrie::CodePointTrie::get`).
@@ -381,47 +352,24 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
         } else {
             self.trie_error_val_index()
         };
-        // Returns the trie value (or trie's error value).
-        self.data.as_ule_slice().get(data_pos as usize)
+        data_pos as usize
     }
 
-    /// Converts the CodePointTrie into one that returns another type of the same size.
-    ///
-    /// Borrowed data remains borrowed, and owned data remains owned.
-    ///
-    /// # Panics
-    ///
-    /// Panics if `T` and `P` are different sizes.
-    ///
-    /// More specifically, panics if [ZeroVec::try_into_converted()] panics when converting
-    /// `ZeroVec<T>` into `ZeroVec<P>`, which happens if `T::ULE` and `P::ULE` differ in size.
+    /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
     ///
     /// # Examples
     ///
-    /// ```no_run
-    /// use icu_collections::codepointtrie::CodePointTrie;
-    ///
-    /// let cpt1: CodePointTrie<char> = unimplemented!();
-    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted().expect("infallible");
     /// ```
-    pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
-    where
-        P: TrieValue,
-    {
-        let converted_data = self.data.try_into_converted()?;
-        let error_ule = self.error_value.to_unaligned();
-        let slice = &[error_ule];
-        let error_vec = ZeroVec::<T>::Borrowed(slice);
-        let error_converted = error_vec.try_into_converted::<P>()?;
-        #[allow(clippy::expect_used)] // we know this cannot fail
-        Ok(CodePointTrie {
-            header: self.header,
-            index: self.index,
-            data: converted_data,
-            error_value: error_converted
-                .get(0)
-                .expect("vector known to have one element"),
-        })
+    /// use icu_collections::codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// assert_eq!(Some(&0), trie.get32_ule(0x41)); // 'A' as u32
+    /// assert_eq!(Some(&0), trie.get32_ule(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(Some(&1), trie.get32_ule(0x10044)); // '𐁄' as u32
+    /// ```
+    pub fn get32_ule(&self, code_point: u32) -> Option<&T::ULE> {
+        // Returns the trie value (or trie's error value).
+        self.data.as_ule_slice().get(self.data_pos(code_point))
     }
 
     /// Returns a [`CodePointMapRange`] struct which represents a range of code
@@ -815,7 +763,305 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             value: self.error_value(),
         });
         CodePointMapRangeIterator::<T> {
-            cpt: self,
+            cpt: *self,
+            cpm_range: init_range,
+        }
+    }
+
+    /// Yields an [`Iterator`] returning the ranges of the code points whose values
+    /// match `value` in the [`CodePointTrie`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let plane_val = 2;
+    /// let mut sip_range_iter = trie.get_ranges_for_value(plane_val as u8);
+    ///
+    /// let start = plane_val * 0x1_0000;
+    /// let end = start + 0xffff;
+    ///
+    /// let sip_range = sip_range_iter.next()
+    ///     .expect("Plane 2 (SIP) should exist in planes data");
+    /// assert_eq!(start..=end, sip_range);
+    ///
+    /// assert!(sip_range_iter.next().is_none());
+    pub fn get_ranges_for_value(&self, value: T) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.iter_ranges()
+            .filter(move |cpm_range| cpm_range.value == value)
+            .map(|cpm_range| cpm_range.range)
+    }
+
+    /// Returns a [`CodePointInversionList`] for the code points that have the given
+    /// [`TrieValue`] in the trie.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// let plane_val = 2;
+    /// let sip = trie.get_set_for_value(plane_val as u8);
+    ///
+    /// let start = plane_val * 0x1_0000;
+    /// let end = start + 0xffff;
+    ///
+    /// assert!(!sip.contains32(start - 1));
+    /// assert!(sip.contains32(start));
+    /// assert!(sip.contains32(end));
+    /// assert!(!sip.contains32(end + 1));
+    /// ```
+    pub fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
+        let value_ranges = self.get_ranges_for_value(value);
+        CodePointInversionList::from_iter(value_ranges)
+    }
+
+    /// Returns the value used as an error value for this trie
+    #[inline]
+    pub fn error_value(&self) -> T {
+        self.error_value
+    }
+}
+
+impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
+    #[doc(hidden)] // databake internal
+    pub const fn from_parts(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, T>,
+        error_value: T,
+    ) -> Self {
+        Self {
+            header,
+            index,
+            data,
+            error_value,
+        }
+    }
+
+    /// Returns a new [`CodePointTrie`] backed by borrowed data for the `index`
+    /// array and `data` array, whose data values have width `W`.
+    pub fn try_new(
+        header: CodePointTrieHeader,
+        index: ZeroVec<'trie, u16>,
+        data: ZeroVec<'trie, T>,
+    ) -> Result<CodePointTrie<'trie, T>, Error> {
+        // Validation invariants are not needed here when constructing a new
+        // `CodePointTrie` because:
+        //
+        // - Rust includes the size of a slice (or Vec or similar), which allows it
+        //   to prevent lookups at out-of-bounds indices, whereas in C++, it is the
+        //   programmer's responsibility to keep track of length info.
+        // - For lookups into collections, Rust guarantees that a fallback value will
+        //   be returned in the case of `.get()` encountering a lookup error, via
+        //   the `Option` type.
+        // - The `ZeroVec` serializer stores the length of the array along with the
+        //   ZeroVec data, meaning that a deserializer would also see that length info.
+
+        let error_value = data.last().ok_or(Error::EmptyDataVector)?;
+        let trie: CodePointTrie<'trie, T> = CodePointTrie {
+            header,
+            index,
+            data,
+            error_value,
+        };
+        Ok(trie)
+    }
+
+    /// Returns the value that is associated with `code_point` in this [`CodePointTrie`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// assert_eq!(0, trie.get32(0x41)); // 'A' as u32
+    /// assert_eq!(0, trie.get32(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(1, trie.get32(0x10044)); // '𐁄' as u32
+    /// ```
+    pub fn get32(&self, code_point: u32) -> T {
+        let borrow: CodePointTrieBorrow<T> = ZeroFrom::zero_from(self);
+        borrow.get32(code_point)
+    }
+
+    /// Returns the value that is associated with `char` in this [`CodePointTrie`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// assert_eq!(0, trie.get('A')); // 'A' as u32
+    /// assert_eq!(0, trie.get('Ꮰ')); // 'Ꮰ' as u32
+    /// assert_eq!(1, trie.get('𐁄')); // '𐁄' as u32
+    /// ```
+    pub fn get(&self, c: char) -> T {
+        let borrow: CodePointTrieBorrow<T> = ZeroFrom::zero_from(self);
+        borrow.get(c)
+    }
+
+    /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// assert_eq!(Some(&0), trie.get32_ule(0x41)); // 'A' as u32
+    /// assert_eq!(Some(&0), trie.get32_ule(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(Some(&1), trie.get32_ule(0x10044)); // '𐁄' as u32
+    /// ```
+    pub fn get32_ule(&self, code_point: u32) -> Option<&T::ULE> {
+        let borrow: CodePointTrieBorrow<T> = ZeroFrom::zero_from(self);
+        // Returns the trie value (or trie's error value).
+        self.data.as_ule_slice().get(borrow.data_pos(code_point))
+    }
+
+    /// Converts the CodePointTrie into one that returns another type of the same size.
+    ///
+    /// Borrowed data remains borrowed, and owned data remains owned.
+    ///
+    /// # Panics
+    ///
+    /// Panics if `T` and `P` are different sizes.
+    ///
+    /// More specifically, panics if [ZeroVec::try_into_converted()] panics when converting
+    /// `ZeroVec<T>` into `ZeroVec<P>`, which happens if `T::ULE` and `P::ULE` differ in size.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use icu_collections::codepointtrie::CodePointTrie;
+    ///
+    /// let cpt1: CodePointTrie<char> = unimplemented!();
+    /// let cpt2: CodePointTrie<u32> = cpt1.try_into_converted().expect("infallible");
+    /// ```
+    pub fn try_into_converted<P>(self) -> Result<CodePointTrie<'trie, P>, ZeroVecError>
+    where
+        P: TrieValue,
+    {
+        let converted_data = self.data.try_into_converted()?;
+        let error_ule = self.error_value.to_unaligned();
+        let slice = &[error_ule];
+        let error_vec = ZeroVec::<T>::Borrowed(slice);
+        let error_converted = error_vec.try_into_converted::<P>()?;
+        #[allow(clippy::expect_used)] // we know this cannot fail
+        Ok(CodePointTrie {
+            header: self.header,
+            index: self.index,
+            data: converted_data,
+            error_value: error_converted
+                .get(0)
+                .expect("vector known to have one element"),
+        })
+    }
+
+    /// Returns a [`CodePointMapRange`] struct which represents a range of code
+    /// points associated with the same trie value. The returned range will be
+    /// the longest stretch of consecutive code points starting at `start` that
+    /// share this value.
+    ///
+    /// This method is designed to use the internal details of
+    /// the structure of [`CodePointTrie`] to be optimally efficient. This will
+    /// outperform a naive approach that just uses [`CodePointTrie::get()`].
+    ///
+    /// This method provides lower-level functionality that can be used in the
+    /// implementation of other methods that are more convenient to the user.
+    /// To obtain an optimal partition of the code point space for
+    /// this trie resulting in the fewest number of ranges, see
+    /// [`CodePointTrie::iter_ranges()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    ///
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// const CODE_POINT_MAX: u32 = 0x10ffff;
+    /// let start = 0x1_0000;
+    /// let exp_end = 0x1_ffff;
+    ///
+    /// let start_val = trie.get32(start);
+    /// assert_eq!(trie.get32(exp_end), start_val);
+    /// assert_ne!(trie.get32(exp_end + 1), start_val);
+    ///
+    /// use core::ops::RangeInclusive;
+    /// use icu_collections::codepointtrie::CodePointMapRange;
+    ///
+    /// let cpm_range: CodePointMapRange<u8> = trie.get_range(start).unwrap();
+    ///
+    /// assert_eq!(cpm_range.range.start(), &start);
+    /// assert_eq!(cpm_range.range.end(), &exp_end);
+    /// assert_eq!(cpm_range.value, start_val);
+    ///
+    /// // `start` can be any code point, whether or not it lies on the boundary
+    /// // of a maximally large range that still contains `start`
+    ///
+    /// let submaximal_1_start = start + 0x1234;
+    /// let submaximal_1 = trie.get_range(submaximal_1_start).unwrap();
+    /// assert_eq!(submaximal_1.range.start(), &0x1_1234);
+    /// assert_eq!(submaximal_1.range.end(), &0x1_ffff);
+    /// assert_eq!(submaximal_1.value, start_val);
+    ///
+    /// let submaximal_2_start = start + 0xffff;
+    /// let submaximal_2 = trie.get_range(submaximal_2_start).unwrap();
+    /// assert_eq!(submaximal_2.range.start(), &0x1_ffff);
+    /// assert_eq!(submaximal_2.range.end(), &0x1_ffff);
+    /// assert_eq!(submaximal_2.value, start_val);
+    /// ```
+    pub fn get_range(&self, start: u32) -> Option<CodePointMapRange<T>> {
+        let borrow: CodePointTrieBorrow<T> = ZeroFrom::zero_from(self);
+        borrow.get_range(start)
+    }
+
+    /// Yields an [`Iterator`] returning ranges of consecutive code points that
+    /// share the same value in the [`CodePointTrie`], as given by
+    /// [`CodePointTrie::get_range()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use core::ops::RangeInclusive;
+    /// use icu::collections::codepointtrie::planes;
+    /// use icu_collections::codepointtrie::CodePointMapRange;
+    ///
+    /// let planes_trie = planes::get_planes_trie();
+    ///
+    /// let mut ranges = planes_trie.iter_ranges();
+    ///
+    /// for plane in 0..=16 {
+    ///     let exp_start = plane * 0x1_0000;
+    ///     let exp_end = exp_start + 0xffff;
+    ///     assert_eq!(
+    ///         ranges.next(),
+    ///         Some(CodePointMapRange {
+    ///             range: RangeInclusive::new(exp_start, exp_end),
+    ///             value: plane as u8
+    ///         })
+    ///     );
+    /// }
+    ///
+    /// // Hitting the end of the iterator returns `None`, as will subsequent
+    /// // calls to .next().
+    /// assert_eq!(ranges.next(), None);
+    /// assert_eq!(ranges.next(), None);
+    /// ```
+    pub fn iter_ranges(&self) -> CodePointMapRangeIterator<T> {
+        let init_range = Some(CodePointMapRange {
+            range: RangeInclusive::new(u32::MAX, u32::MAX),
+            value: self.error_value(),
+        });
+        CodePointMapRangeIterator::<T> {
+            cpt: ZeroFrom::zero_from(self),
             cpm_range: init_range,
         }
     }
@@ -942,7 +1188,7 @@ pub struct CodePointMapRange<T: TrieValue> {
 /// A custom [`Iterator`] type specifically for a code point trie that returns
 /// [`CodePointMapRange`]s.
 pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
-    cpt: &'a CodePointTrie<'a, T>,
+    cpt: CodePointTrieBorrow<'a, T>,
     // Initialize `range` to Some(CodePointMapRange{ start: u32::MAX, end: u32::MAX, value: 0}).
     // When `range` is Some(...) and has a start value different from u32::MAX, then we have
     // returned at least one code point range due to a call to `next()`.
