@@ -36,6 +36,10 @@ export class ICU4XCustomTimeZone {
     return diplomat_out;
   }
 
+  static create_empty() {
+    return new ICU4XCustomTimeZone(wasm.ICU4XCustomTimeZone_create_empty(), true, []);
+  }
+
   try_set_gmt_offset_seconds(arg_offset_seconds) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);

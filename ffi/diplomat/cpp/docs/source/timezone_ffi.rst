@@ -8,6 +8,8 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s)
 
+    .. cpp:function:: static ICU4XCustomTimeZone create_empty()
+
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_gmt_offset_seconds(int32_t offset_seconds)
 
         Sets the ``gmt_offset`` field from offset seconds.

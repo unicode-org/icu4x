@@ -33,6 +33,7 @@ struct ICU4XCustomTimeZoneDeleter {
 class ICU4XCustomTimeZone {
  public:
   static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s);
+  static ICU4XCustomTimeZone create_empty();
 
   /**
    * Sets the `gmt_offset` field from offset seconds.
@@ -297,6 +298,9 @@ inline diplomat::result<ICU4XCustomTimeZone, ICU4XError> ICU4XCustomTimeZone::cr
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
+}
+inline ICU4XCustomTimeZone ICU4XCustomTimeZone::create_empty() {
+  return ICU4XCustomTimeZone(capi::ICU4XCustomTimeZone_create_empty());
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_gmt_offset_seconds(int32_t offset_seconds) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_gmt_offset_seconds(this->inner.get(), offset_seconds);

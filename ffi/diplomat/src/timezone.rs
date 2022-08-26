@@ -35,6 +35,10 @@ pub mod ffi {
                 .into()
         }
 
+        pub fn create_empty() -> Box<ICU4XCustomTimeZone> {
+            Box::new(CustomTimeZone::default().into())
+        }
+
         /// Sets the `gmt_offset` field from offset seconds.
         ///
         /// Errors if the offset seconds are out of range.
