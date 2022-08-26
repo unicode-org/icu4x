@@ -8,7 +8,7 @@ pub mod ffi {
     use alloc::sync::Arc;
     use core::convert::TryInto;
     use diplomat_runtime::DiplomatResult;
-    use icu_calendar::AnyCalendar;
+    use icu_calendar::{AnyCalendar, AnyCalendarKind};
     use icu_calendar::{DateTime, Gregorian, Iso};
 
     use crate::errors::ffi::ICU4XError;
@@ -61,14 +61,37 @@ pub mod ffi {
         }
     }
 
+    #[diplomat::enum_convert(AnyCalendarKind, needs_wildcard)]
+    #[diplomat::rust_link(icu::calendar::AnyCalendarKind, Enum)]
+    pub enum ICU4XAnyCalendarKind {
+        /// The kind of an Iso calendar
+        Iso = 0,
+        /// The kind of a Gregorian calendar
+        Gregorian = 1,
+        /// The kind of a Buddhist calendar
+        Buddhist = 2,
+        /// The kind of a Japanese calendar with modern eras
+        Japanese = 3,
+        /// The kind of a Japanese calendar with modern and historic eras
+        JapaneseExtended = 4,
+        /// The kind of an Ethiopian calendar, with Amete Mihret era
+        Ethiopian = 5,
+        /// The kind of an Ethiopian calendar, with Amete Alem era
+        EthiopianAmeteAlem = 6,
+        /// The kind of a Indian calendar
+        Indian = 7,
+        /// The kind of a Coptic calendar
+        Coptic = 8,
+    }
+
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::calendar::AnyCalendar, Enum)]
     pub struct ICU4XCalendar(pub Arc<AnyCalendar>);
 
     impl ICU4XCalendar {
         /// Creates a new [`ICU4XCalendar`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_for_locale_unstable, FnInEnum)]
+        pub fn try_new_for_locale(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XCalendar>, ICU4XError> {
@@ -80,6 +103,27 @@ pub mod ffi {
                 .map(|df| Box::new(ICU4XCalendar(Arc::new(df))))
                 .map_err(Into::into)
                 .into()
+        }
+
+        /// Creates a new [`ICU4XCalendar`] from the specified date and time.
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_unstable, FnInEnum)]
+        pub fn try_new_for_kind(
+            provider: &ICU4XDataProvider,
+            kind: ICU4XAnyCalendarKind,
+        ) -> DiplomatResult<Box<ICU4XCalendar>, ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+
+            AnyCalendar::try_new_unstable(&provider, kind.into())
+                .map(|df| Box::new(ICU4XCalendar(Arc::new(df))))
+                .map_err(Into::into)
+                .into()
+        }
+
+        /// Creates a new [`ICU4XCalendar`] from the specified date and time.
+        #[diplomat::rust_link(icu::calendar::AnyCalendar::kind, FnInEnum)]
+        pub fn kind(&self) -> ICU4XAnyCalendarKind {
+            self.0.kind().into()
         }
     }
 

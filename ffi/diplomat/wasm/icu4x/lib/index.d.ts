@@ -1,4 +1,5 @@
 export { FFIError, i8, u8, i16, u16, i32, u32, i64, u64, f32, f64, char } from './diplomat-runtime.js';
+export { ICU4XAnyCalendarKind } from './ICU4XAnyCalendarKind.js';
 export { ICU4XBidi } from './ICU4XBidi.js';
 export { ICU4XBidiDirection } from './ICU4XBidiDirection.js';
 export { ICU4XBidiInfo } from './ICU4XBidiInfo.js';

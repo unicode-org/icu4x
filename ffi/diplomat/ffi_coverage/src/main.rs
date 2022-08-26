@@ -64,30 +64,25 @@ fn main() {
 
 lazy_static::lazy_static! {
     static ref IGNORED_TRAITS: HashSet<&'static str> = [
+        // Rust and Rust ecosystem types
         "Any",
-        "AsULE",
         "Bake",
         "Borrow",
         "BorrowMut",
         "Clone",
         "Copy",
-        "DataMarker",
         "Debug",
         "Default", // ???
         "Deserialize",
         "DeserializeOwned",
         "Display",
-        "EncodeAsULE",
-        "EncodeAsVarULE",
         "Eq",
         "ErasedDestructor",
         "Error",
         "From",
         "Hash",
         "Into",
-        "IsCovariant",
         "Iterator", // ???
-        "KeyedDataMarker",
         "Ord",
         "PartialEq",
         "PartialOrd",
@@ -102,21 +97,52 @@ lazy_static::lazy_static! {
         "ToString", // ???
         "TryFrom", // ???
         "TryInto", // ???
-        "ULE",
         "Unpin",
         "UnwindSafe",
+
+        // yoke/zerovec/etc internals
+        "ULE",
+        "AsULE",
         "VarULE",
         "Yokeable",
         "ZeroFrom",
+        "ZeroMapKV",
+        "EncodeAsULE",
+        "EncodeAsVarULE",
+        "IsCovariant",
+
+        // provider stuff
+        "DataMarker",
+        "KeyedDataMarker",
+
+        // internal trait , all methods replicated on Date
+        "Calendar",
+        // Rust-specific conversion trait
+        "AsCalendar",
     ].into_iter().collect();
 
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
     static ref IGNORED_PATHS: HashSet<Vec<String>> = [
+        // Stuff that we DO plan to expose for 1.0 but we're keeping in the ignorelist
+        // because we plan to solve it all at once.
+        // This section should go away before 1.0
+        // =========================
+
+        // constructor signatures: we need to make them uniform
+        "icu::calendar::AnyCalendar::try_new_for_locale_with_any_provider",
+        "icu::calendar::AnyCalendar::try_new_for_locale_with_buffer_provider",
+        "icu::calendar::AnyCalendar::try_new_with_any_provider",
+        "icu::calendar::AnyCalendar::try_new_with_buffer_provider",
+
         // Stuff that could be exposed over FFI but is not currently planned
         // =========================
+
         // Largely for use by datetimeformat, not super public (#2421)
         "icu::calendar::week_of",
+        // Largely for use by datetimeformat, not generally useful
+        "icu::calendar::AnyCalendar::convert_any_date",
+        "icu::calendar::AnyCalendar::convert_any_datetime",
 
 
         // Individual calendars: Currently the main entry point is AnyCalendar

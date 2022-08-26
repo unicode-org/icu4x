@@ -735,9 +735,9 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=dd70de7573e1ef30b312de04bb7e9f64e67bd19a#dd70de7573e1ef30b312de04bb7e9f64e67bd19a"
 dependencies = [
- "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356)",
+ "diplomat_core",
  "proc-macro2",
  "quote",
  "syn",
@@ -746,28 +746,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=dd70de7573e1ef30b312de04bb7e9f64e67bd19a#dd70de7573e1ef30b312de04bb7e9f64e67bd19a"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=3fe1337b940a6940bf0bd79899ef431cfbc73356#3fe1337b940a6940bf0bd79899ef431cfbc73356"
-dependencies = [
- "impls",
- "lazy_static",
- "proc-macro2",
- "quote",
- "rustdoc-types 0.11.0",
- "serde",
- "smallvec",
- "strck_ident",
- "syn",
-]
-
-[[package]]
-name = "diplomat_core"
-version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat#3fe1337b940a6940bf0bd79899ef431cfbc73356"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=dd70de7573e1ef30b312de04bb7e9f64e67bd19a#dd70de7573e1ef30b312de04bb7e9f64e67bd19a"
 dependencies = [
  "impls",
  "lazy_static",
@@ -1598,7 +1582,7 @@ dependencies = [
 name = "icu_ffi_coverage"
 version = "0.0.1"
 dependencies = [
- "diplomat_core 0.3.0 (git+https://github.com/rust-diplomat/diplomat)",
+ "diplomat_core",
  "elsa",
  "lazy_static",
  "rustdoc-types 0.14.0",

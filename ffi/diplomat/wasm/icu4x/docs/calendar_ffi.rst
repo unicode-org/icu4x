@@ -1,16 +1,35 @@
 ``calendar::ffi``
 =================
 
+.. js:class:: ICU4XAnyCalendarKind
+
+    See the `Rust documentation for AnyCalendarKind <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html>`__ for more information.
+
+
 .. js:class:: ICU4XCalendar
 
     See the `Rust documentation for AnyCalendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(provider, locale)
+    .. js:staticfunction:: try_new_for_locale(provider, locale)
 
         Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_for_locale_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable>`__ for more information.
+
+
+    .. js:staticfunction:: try_new_for_kind(provider, kind)
+
+        Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
+
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable>`__ for more information.
+
+
+    .. js:function:: kind()
+
+        Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
+
+        See the `Rust documentation for kind <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.kind>`__ for more information.
 
 
 .. js:class:: ICU4XDateTime
