@@ -50,6 +50,15 @@ class ICU4XCustomTimeZone {
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html)
    */
+  void clear_gmt_offset();
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `offset_seconds`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html)
+   */
   diplomat::result<int32_t, std::monostate> gmt_offset_seconds() const;
 
   /**
@@ -96,6 +105,15 @@ class ICU4XCustomTimeZone {
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
+  void clear_time_zone_id();
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `time_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html)
+   */
   diplomat::result<const std::string_view, std::monostate> time_zone_id() const;
 
   /**
@@ -114,6 +132,15 @@ class ICU4XCustomTimeZone {
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
    */
+  void clear_meta_zone_id();
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `meta_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
+   */
   diplomat::result<const std::string_view, std::monostate> meta_zone_id() const;
 
   /**
@@ -124,6 +151,15 @@ class ICU4XCustomTimeZone {
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_zone_variant(const std::string_view id);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `zone_variant`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html)
+   */
+  void clear_zone_variant();
 
   /**
    * 
@@ -211,6 +247,9 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
   }
   return diplomat_result_out_value;
 }
+inline void ICU4XCustomTimeZone::clear_gmt_offset() {
+  capi::ICU4XCustomTimeZone_clear_gmt_offset(this->inner.get());
+}
 inline diplomat::result<int32_t, std::monostate> ICU4XCustomTimeZone::gmt_offset_seconds() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_gmt_offset_seconds(this->inner.get());
   diplomat::result<int32_t, std::monostate> diplomat_result_out_value;
@@ -271,6 +310,9 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
   }
   return diplomat_result_out_value;
 }
+inline void ICU4XCustomTimeZone::clear_time_zone_id() {
+  capi::ICU4XCustomTimeZone_clear_time_zone_id(this->inner.get());
+}
 inline diplomat::result<const std::string_view, std::monostate> ICU4XCustomTimeZone::time_zone_id() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_time_zone_id(this->inner.get());
   diplomat::result<const std::string_view, std::monostate> diplomat_result_out_value;
@@ -293,6 +335,9 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
   }
   return diplomat_result_out_value;
 }
+inline void ICU4XCustomTimeZone::clear_meta_zone_id() {
+  capi::ICU4XCustomTimeZone_clear_meta_zone_id(this->inner.get());
+}
 inline diplomat::result<const std::string_view, std::monostate> ICU4XCustomTimeZone::meta_zone_id() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_meta_zone_id(this->inner.get());
   diplomat::result<const std::string_view, std::monostate> diplomat_result_out_value;
@@ -314,6 +359,9 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
+}
+inline void ICU4XCustomTimeZone::clear_zone_variant() {
+  capi::ICU4XCustomTimeZone_clear_zone_variant(this->inner.get());
 }
 inline diplomat::result<const std::string_view, std::monostate> ICU4XCustomTimeZone::zone_variant() const {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_zone_variant(this->inner.get());

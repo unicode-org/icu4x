@@ -53,6 +53,10 @@ export class ICU4XCustomTimeZone {
     })();
   }
 
+  clear_gmt_offset() {
+    wasm.ICU4XCustomTimeZone_clear_gmt_offset(this.underlying);
+  }
+
   gmt_offset_seconds() {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
@@ -158,6 +162,10 @@ export class ICU4XCustomTimeZone {
     return diplomat_out;
   }
 
+  clear_time_zone_id() {
+    wasm.ICU4XCustomTimeZone_clear_time_zone_id(this.underlying);
+  }
+
   time_zone_id() {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
@@ -198,6 +206,10 @@ export class ICU4XCustomTimeZone {
     return diplomat_out;
   }
 
+  clear_meta_zone_id() {
+    wasm.ICU4XCustomTimeZone_clear_meta_zone_id(this.underlying);
+  }
+
   meta_zone_id() {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
@@ -236,6 +248,10 @@ export class ICU4XCustomTimeZone {
     })();
     buf_arg_id.free();
     return diplomat_out;
+  }
+
+  clear_zone_variant() {
+    wasm.ICU4XCustomTimeZone_clear_zone_variant(this.underlying);
   }
 
   zone_variant() {

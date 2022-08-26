@@ -15,6 +15,13 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
 
 
+    .. js:function:: clear_gmt_offset()
+
+        See the `Rust documentation for offset_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
+
+
     .. js:function:: gmt_offset_seconds()
 
         See the `Rust documentation for offset_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds>`__ for more information.
@@ -49,6 +56,13 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
+    .. js:function:: clear_time_zone_id()
+
+        See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
+
+
     .. js:function:: time_zone_id()
 
         See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
@@ -63,6 +77,13 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
 
 
+    .. js:function:: clear_meta_zone_id()
+
+        See the `Rust documentation for meta_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
+
+
     .. js:function:: meta_zone_id()
 
         See the `Rust documentation for meta_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id>`__ for more information.
@@ -71,6 +92,13 @@
 
 
     .. js:function:: try_set_zone_variant(id)
+
+        See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
+
+
+    .. js:function:: clear_zone_variant()
 
         See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
 

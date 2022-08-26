@@ -29,6 +29,14 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds Rust documentation for `offset_seconds`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html 1}
+   */
+  clear_gmt_offset(): void;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds Rust documentation for `offset_seconds`} for more information.
+
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html 1}
    * @throws {@link FFIError}<void>
    */
   gmt_offset_seconds(): i32 | never;
@@ -75,6 +83,14 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id Rust documentation for `time_zone_id`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html 1}
+   */
+  clear_time_zone_id(): void;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id Rust documentation for `time_zone_id`} for more information.
+
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html 1}
    * @throws {@link FFIError}<void>
    */
   time_zone_id(): string | never;
@@ -93,6 +109,14 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id Rust documentation for `meta_zone_id`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html 1}
+   */
+  clear_meta_zone_id(): void;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id Rust documentation for `meta_zone_id`} for more information.
+
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html 1}
    * @throws {@link FFIError}<void>
    */
   meta_zone_id(): string | never;
@@ -105,6 +129,14 @@ export class ICU4XCustomTimeZone {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   try_set_zone_variant(id: string): void | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant Rust documentation for `zone_variant`} for more information.
+
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html 1}
+   */
+  clear_zone_variant(): void;
 
   /**
 

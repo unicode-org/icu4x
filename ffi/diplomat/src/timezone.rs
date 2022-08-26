@@ -52,6 +52,12 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
+        pub fn clear_gmt_offset(&mut self) {
+            self.gmt_offset.clear()
+        }
+
+        #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
         pub fn gmt_offset_seconds(&self) -> DiplomatResult<i32, ()> {
             self.0
                 .gmt_offset
@@ -95,6 +101,12 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
+        pub fn clear_time_zone_id(&mut self) {
+            self.gmt_offset.clear()
+        }
+
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         pub fn time_zone_id<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
             self.0
                 .time_zone_id
@@ -119,6 +131,12 @@ pub mod ffi {
 
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
+        pub fn clear_meta_zone_id(&mut self) {
+            self.gmt_offset.clear()
+        }
+
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
         pub fn meta_zone_id<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
             self.0
                 .meta_zone_id
@@ -139,6 +157,12 @@ pub mod ffi {
                 Err(e) => Err(ICU4XError::from(e)),
             }
             .into()
+        }
+
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
+        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
+        pub fn clear_zone_variant(&mut self) {
+            self.gmt_offset.clear()
         }
 
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]

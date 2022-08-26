@@ -15,6 +15,13 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
 
 
+    .. cpp:function:: void clear_gmt_offset()
+
+        See the `Rust documentation for offset_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
+
+
     .. cpp:function:: diplomat::result<int32_t, std::monostate> gmt_offset_seconds() const
 
         See the `Rust documentation for offset_seconds <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds>`__ for more information.
@@ -49,6 +56,13 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
+    .. cpp:function:: void clear_time_zone_id()
+
+        See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
+
+
     .. cpp:function:: diplomat::result<const std::string_view, std::monostate> time_zone_id() const
 
         See the `Rust documentation for time_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id>`__ for more information.
@@ -65,6 +79,13 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
 
 
+    .. cpp:function:: void clear_meta_zone_id()
+
+        See the `Rust documentation for meta_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
+
+
     .. cpp:function:: diplomat::result<const std::string_view, std::monostate> meta_zone_id() const
 
         See the `Rust documentation for meta_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id>`__ for more information.
@@ -75,6 +96,13 @@
         Lifetimes: ``this`` must live at least as long as the output.
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_zone_variant(const std::string_view id)
+
+        See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
+
+
+    .. cpp:function:: void clear_zone_variant()
 
         See the `Rust documentation for zone_variant <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__ for more information.
 
