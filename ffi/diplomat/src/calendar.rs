@@ -6,11 +6,10 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
-    
+
     use core::fmt::Write;
     use diplomat_runtime::DiplomatResult;
     use icu_calendar::{AnyCalendar, AnyCalendarKind};
-    
 
     use crate::errors::ffi::ICU4XError;
     use crate::locale::ffi::ICU4XLocale;

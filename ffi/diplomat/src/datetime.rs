@@ -7,15 +7,13 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::convert::TryInto;
-    
+
     use diplomat_runtime::DiplomatResult;
-    use icu_calendar::{AnyCalendar};
+    use icu_calendar::AnyCalendar;
     use icu_calendar::{DateTime, Gregorian, Iso};
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::errors::ffi::ICU4XError;
-    
-    
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a Gregorian date and time.
