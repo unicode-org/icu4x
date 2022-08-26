@@ -1,6 +1,5 @@
 fixed_decimal::DoublePrecision#Enum
 fixed_decimal::Error::provide#FnInEnum
-fixed_decimal::FixedDecimal#Struct
 fixed_decimal::FixedDecimal::Err#AssociatedTypeInStruct
 fixed_decimal::FixedDecimal::apply_sign_display#FnInStruct
 fixed_decimal::FixedDecimal::ceil#FnInStruct
@@ -50,7 +49,6 @@ fixed_decimal::FixedDecimal::write_len#FnInStruct
 fixed_decimal::FixedDecimal::write_to#FnInStruct
 fixed_decimal::FixedDecimal::write_to_parts#FnInStruct
 fixed_decimal::FixedDecimal::write_to_string#FnInStruct
-fixed_decimal::Sign#Enum
 fixed_decimal::SignDisplay#Enum
 icu::calendar::AnyCalendar::DateInner#AssociatedTypeInEnum
 icu::calendar::AnyCalendar::any_calendar_kind#FnInEnum

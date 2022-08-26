@@ -480,7 +480,7 @@ mod test {
             }
         );
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(1);
+        let fd = fixed_decimal::FixedDecimal::from(1);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }
@@ -491,27 +491,27 @@ mod test {
         let ref_rule = reference::parse(input.as_bytes()).unwrap();
         let rule = Rule::from(&ref_rule);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(0);
+        let fd = fixed_decimal::FixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(13);
+        let fd = fixed_decimal::FixedDecimal::from(13);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(103);
+        let fd = fixed_decimal::FixedDecimal::from(103);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(113);
+        let fd = fixed_decimal::FixedDecimal::from(113);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(178);
+        let fd = fixed_decimal::FixedDecimal::from(178);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(0);
+        let fd = fixed_decimal::FixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }
