@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661483400611,
+  "lastUpdate": 1661542754936,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25403,6 +25403,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/259049454dfd5b9d4cbc7d0ded1753b93a8ebb91"
         },
         "date": 1661483343499,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c2bb80b85fd57db13c3f570f4cde1fe20a7744ef",
+          "message": "FFI coverage whack-a-mole part 2 (#2457)\n\n* Update diplomat\r\n\r\n* include calendar trait\r\n\r\n* Add AnyCalendarKind; calendar cleanups\r\n\r\n* Mention broken links\r\n\r\n* regen\r\n\r\n* fix tests\r\n\r\n* Fixup fixed decimal links\r\n\r\n* regen diplomat\r\n\r\n* bump diplomat to main\r\n\r\n* remove broken links test (it doesn't work since IGNORED_TRAITS bails early",
+          "timestamp": "2022-08-26T19:37:01Z",
+          "tree_id": "92efaab472136d7d269ede672d69c85f4935106d",
+          "url": "https://github.com/unicode-org/icu4x/commit/c2bb80b85fd57db13c3f570f4cde1fe20a7744ef"
+        },
+        "date": 1661542709892,
         "tool": "ndjson",
         "benches": [
           {
