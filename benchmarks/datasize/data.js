@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661474293272,
+  "lastUpdate": 1661483400611,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25373,6 +25373,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e17ab458aa39467946dadab33d2d3cb37a622646"
         },
         "date": 1661474237648,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "259049454dfd5b9d4cbc7d0ded1753b93a8ebb91",
+          "message": "FFI coverage for FixedDecimal, TimeZone, TinyStr (#2442)",
+          "timestamp": "2022-08-25T22:07:16-05:00",
+          "tree_id": "182f4b60ea5d797904b1f5e3b3eb2e1ead8cca3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/259049454dfd5b9d4cbc7d0ded1753b93a8ebb91"
+        },
+        "date": 1661483343499,
         "tool": "ndjson",
         "benches": [
           {
