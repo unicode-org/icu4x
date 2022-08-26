@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::week_of::{self, CalendarInfo, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
@@ -229,6 +230,64 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn day_of_year_info(&self) -> types::DayOfYearInfo {
         self.calendar.as_calendar().day_of_year_info(&self.inner)
+    }
+
+    /// The week of the month containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::IsoWeekday;
+    ///
+    /// let date = Date::new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
+    ///
+    /// // The following info is usually locale-specific
+    /// let first_weekday = IsoWeekday::Sunday;
+    ///
+    /// assert_eq!(date.week_of_month(first_weekday), 2);
+    /// ```
+    pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> u16 {
+        let day_of_month = self.day_of_month();
+        week_of::simple_week_of(first_weekday, day_of_month.0 as u16, self.day_of_week())
+    }
+
+    /// The week of the year containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::IsoWeekday;
+    /// use icu::calendar::week_of::CalendarInfo;
+    /// use icu::calendar::week_of::RelativeUnit;
+    /// use icu::calendar::week_of::WeekOf;
+    ///
+    /// let date = Date::new_iso_date(2022, 8, 26).unwrap();
+    ///
+    /// // The following info is usually locale-specific
+    /// let calendar_info = CalendarInfo {
+    ///     first_weekday: IsoWeekday::Sunday,
+    ///     min_week_days: 4
+    /// };
+    ///
+    /// assert_eq!(
+    ///     date.week_of_year(&calendar_info),
+    ///     Ok(WeekOf {
+    ///         week: 34,
+    ///         unit: RelativeUnit::Current
+    ///     })
+    /// );
+    /// ```
+    pub fn week_of_year(&self, calendar_info: &CalendarInfo) -> Result<WeekOf, DateTimeError> {
+        let doy_info = self.day_of_year_info();
+        week_of::week_of(
+            calendar_info,
+            doy_info.days_in_prev_year as u16,
+            doy_info.days_in_year as u16,
+            doy_info.day_of_year as u16,
+            self.day_of_week(),
+        )
     }
 
     /// Construct a date from raw values for a given calendar. This does not check any

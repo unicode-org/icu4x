@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Week-of-year calculations.
+//! Week-of-year and week-of-month calculations.
 //!
 //! The main functionality of this module is found in the [`week_of()`] (and [`simple_week_of()`])
 //! functions.
@@ -13,6 +13,7 @@ use crate::{error::DateTimeError, types::IsoWeekday};
 pub const MIN_UNIT_DAYS: u16 = 14;
 
 /// Information about how a given calendar assigns weeks to a year or month.
+// FIXME: Rename this type
 #[derive(Clone, Copy, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -483,4 +484,11 @@ fn test_simple_week_of() {
         simple_week_of(IsoWeekday::Tuesday, 7, IsoWeekday::Tuesday),
         2
     );
+
+    // The 1st is a Monday and the week starts on Sundays.
+    // TODO(#2461): Enable this test
+    // assert_eq!(
+    //     simple_week_of(IsoWeekday::Sunday, 26, IsoWeekday::Friday),
+    //     4
+    // );
 }
