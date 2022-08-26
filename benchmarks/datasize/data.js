@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661542754936,
+  "lastUpdate": 1661543526132,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25433,6 +25433,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/c2bb80b85fd57db13c3f570f4cde1fe20a7744ef"
         },
         "date": 1661542709892,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dd09074425b825f4ca696922e58280722d986454",
+          "message": "Add test and create_empty on CustomTimeZone (#2456)",
+          "timestamp": "2022-08-26T12:49:56-07:00",
+          "tree_id": "03c41df6277d3db3fcf1fd8390c2912d83007d01",
+          "url": "https://github.com/unicode-org/icu4x/commit/dd09074425b825f4ca696922e58280722d986454"
+        },
+        "date": 1661543481163,
         "tool": "ndjson",
         "benches": [
           {
