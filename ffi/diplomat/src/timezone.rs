@@ -40,6 +40,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_offset_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
         pub fn try_set_gmt_offset_seconds(
             &mut self,
             offset_seconds: i32,
@@ -55,6 +56,7 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
         pub fn gmt_offset_seconds(&self) -> DiplomatResult<i32, ()> {
             self.0
                 .gmt_offset
@@ -83,6 +85,8 @@ pub mod ffi {
             self.0.gmt_offset.map(|v| v.has_seconds()).ok_or(()).into()
         }
 
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         pub fn try_set_time_zone_id(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
             match id.parse() {
                 Ok(v) => {
@@ -94,10 +98,19 @@ pub mod ffi {
             .into()
         }
 
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
         pub fn time_zone_id<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
-            self.0.time_zone_id.as_ref().map(|v| v.0.as_str()).ok_or(()).into()
+            self.0
+                .time_zone_id
+                .as_ref()
+                .map(|v| v.0.as_str())
+                .ok_or(())
+                .into()
         }
 
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
         pub fn try_set_meta_zone_id(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
             match id.parse() {
                 Ok(v) => {
@@ -109,10 +122,19 @@ pub mod ffi {
             .into()
         }
 
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
         pub fn meta_zone_id<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
-            self.0.meta_zone_id.as_ref().map(|v| v.0.as_str()).ok_or(()).into()
+            self.0
+                .meta_zone_id
+                .as_ref()
+                .map(|v| v.0.as_str())
+                .ok_or(())
+                .into()
         }
 
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
+        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         pub fn try_set_zone_variant(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
             match id.parse() {
                 Ok(v) => {
@@ -124,37 +146,58 @@ pub mod ffi {
             .into()
         }
 
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
+        #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
         pub fn zone_variant<'a>(&'a self) -> DiplomatResult<&'a str, ()> {
-            self.0.zone_variant.as_ref().map(|v| v.0.as_str()).ok_or(()).into()
+            self.0
+                .zone_variant
+                .as_ref()
+                .map(|v| v.0.as_str())
+                .ok_or(())
+                .into()
         }
 
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
         pub fn set_standard_time(&mut self) {
             self.0.zone_variant = Some(ZoneVariant::standard())
         }
 
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
         pub fn set_daylight_time(&mut self) {
             self.0.zone_variant = Some(ZoneVariant::daylight())
         }
 
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
         pub fn is_standard_time(&self) -> DiplomatResult<bool, ()> {
-            self.0.zone_variant.as_ref().map(|v| v == &ZoneVariant::standard()).ok_or(()).into()
+            self.0
+                .zone_variant
+                .as_ref()
+                .map(|v| v == &ZoneVariant::standard())
+                .ok_or(())
+                .into()
         }
 
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
         pub fn is_daylight_time(&self) -> DiplomatResult<bool, ()> {
-            self.0.zone_variant.as_ref().map(|v| v == &ZoneVariant::daylight()).ok_or(()).into()
+            self.0
+                .zone_variant
+                .as_ref()
+                .map(|v| v == &ZoneVariant::daylight())
+                .ok_or(())
+                .into()
         }
 
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_set_metazone, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_set_meta_zone, FnInStruct)]
         #[diplomat::rust_link(
             icu::timezone::MetaZoneCalculator::compute_metazone_from_timezone,
             FnInStruct,
             compact
         )]
-        pub fn maybe_set_metazone(
+        pub fn maybe_set_meta_zone(
             &mut self,
             local_datetime: &ICU4XIsoDateTime,
             metazone_calculator: &ICU4XMetaZoneCalculator,
