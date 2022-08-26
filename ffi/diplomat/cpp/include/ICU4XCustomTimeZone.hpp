@@ -28,7 +28,7 @@ struct ICU4XCustomTimeZoneDeleter {
 /**
  * 
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html) for more information.
+ * See the [Rust documentation for `CustomTimeZone`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html) for more information.
  */
 class ICU4XCustomTimeZone {
  public:
@@ -37,119 +37,145 @@ class ICU4XCustomTimeZone {
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.try_from_offset_seconds) for more information.
+   * See the [Rust documentation for `try_from_offset_seconds`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.try_from_offset_seconds) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_gmt_offset_seconds(int32_t offset_seconds);
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
+   * See the [Rust documentation for `offset_seconds`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html)
    */
   diplomat::result<int32_t, std::monostate> gmt_offset_seconds() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_positive) for more information.
+   * See the [Rust documentation for `is_positive`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_positive) for more information.
    */
   diplomat::result<bool, std::monostate> is_gmt_offset_positive() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_zero) for more information.
+   * See the [Rust documentation for `is_zero`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_zero) for more information.
    */
   diplomat::result<bool, std::monostate> is_gmt_offset_zero() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_minutes) for more information.
+   * See the [Rust documentation for `has_minutes`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_minutes) for more information.
    */
   diplomat::result<bool, std::monostate> gmt_offset_has_minutes() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_seconds) for more information.
+   * See the [Rust documentation for `has_seconds`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_seconds) for more information.
    */
   diplomat::result<bool, std::monostate> gmt_offset_has_seconds() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
+   * See the [Rust documentation for `time_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_time_zone_id(const std::string_view id);
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
+   * See the [Rust documentation for `time_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html)
    */
   diplomat::result<const std::string_view, std::monostate> time_zone_id() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * See the [Rust documentation for `meta_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_meta_zone_id(const std::string_view id);
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * See the [Rust documentation for `meta_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
    */
   diplomat::result<const std::string_view, std::monostate> meta_zone_id() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
+   * See the [Rust documentation for `zone_variant`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html)
    */
   diplomat::result<std::monostate, ICU4XError> try_set_zone_variant(const std::string_view id);
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
+   * See the [Rust documentation for `zone_variant`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html)
    */
   diplomat::result<const std::string_view, std::monostate> zone_variant() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
+   * See the [Rust documentation for `standard`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
   void set_standard_time();
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
+   * See the [Rust documentation for `daylight`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
   void set_daylight_time();
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
+   * See the [Rust documentation for `standard`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.standard) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
   diplomat::result<bool, std::monostate> is_standard_time() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
+   * See the [Rust documentation for `daylight`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.daylight) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant)
    */
   diplomat::result<bool, std::monostate> is_daylight_time() const;
 
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_set_meta_zone) for more information.
+   * See the [Rust documentation for `maybe_set_meta_zone`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_set_meta_zone) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone)
    */
   void maybe_set_meta_zone(const ICU4XIsoDateTime& local_datetime, const ICU4XMetaZoneCalculator& metazone_calculator);
   inline const capi::ICU4XCustomTimeZone* AsFFI() const { return this->inner.get(); }

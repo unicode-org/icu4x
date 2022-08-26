@@ -1402,6 +1402,7 @@ dependencies = [
  "icu_provider_fs",
  "icu_segmenter",
  "icu_testdata",
+ "icu_timezone",
  "log",
  "simple_logger",
  "tinystr 0.6.2",

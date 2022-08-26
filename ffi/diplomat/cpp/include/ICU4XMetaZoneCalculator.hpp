@@ -27,7 +27,7 @@ struct ICU4XMetaZoneCalculatorDeleter {
 /**
  * 
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html) for more information.
+ * See the [Rust documentation for `MetaZoneCalculator`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html) for more information.
  */
 class ICU4XMetaZoneCalculator {
  public:
@@ -35,7 +35,7 @@ class ICU4XMetaZoneCalculator {
   /**
    * 
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XMetaZoneCalculator, ICU4XError> try_new(const ICU4XDataProvider& provider);
   inline const capi::ICU4XMetaZoneCalculator* AsFFI() const { return this->inner.get(); }
