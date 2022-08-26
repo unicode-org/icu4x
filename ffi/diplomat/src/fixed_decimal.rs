@@ -253,9 +253,9 @@ pub mod ffi {
         }
 
         /// Concatenates `other` to the end of `self`.
-        /// 
+        ///
         /// If successful, `other` will be set to 0 and a successful status is returned.
-        /// 
+        ///
         /// If not successful, `other` will be unchanged and an error is returned.
         #[diplomat::rust_link(fixed_decimal::decimal::FixedDecimal::concatenate_end, FnInStruct)]
         pub fn concatenate_end(&mut self, other: &mut ICU4XFixedDecimal) -> DiplomatResult<(), ()> {

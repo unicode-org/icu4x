@@ -8,7 +8,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(provider, locale, grouping_strategy)
+    .. js:staticfunction:: try_new_with_grouping_strategy(provider, locale, grouping_strategy)
 
         Creates a new :js:class:`ICU4XFixedDecimalFormatter` from locale data.
 
@@ -30,3 +30,6 @@
 
 
 .. js:class:: ICU4XFixedDecimalGroupingStrategy
+
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/enum.GroupingStrategy.html>`__ for more information.
+

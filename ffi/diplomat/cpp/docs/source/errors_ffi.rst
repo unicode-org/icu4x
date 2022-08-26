@@ -69,9 +69,9 @@
 
     .. cpp:enumerator:: PropertyUnknownGeneralCategoryGroupError
 
-    .. cpp:enumerator:: DecimalLimitError
+    .. cpp:enumerator:: FixedDecimalLimitError
 
-    .. cpp:enumerator:: DecimalSyntaxError
+    .. cpp:enumerator:: FixedDecimalSyntaxError
 
     .. cpp:enumerator:: PluralParserError
 
@@ -110,3 +110,13 @@
     .. cpp:enumerator:: DateTimeFormatMismatchedAnyCalendarError
 
     .. cpp:enumerator:: DateTimeFormatMismatchedCalendarLocaleError
+
+    .. cpp:enumerator:: TinyStrTooLargeError
+
+    .. cpp:enumerator:: TinyStrContainsNullError
+
+    .. cpp:enumerator:: TinyStrNonAsciiError
+
+    .. cpp:enumerator:: TimeZoneOffsetOutOfBoundsError
+
+    .. cpp:enumerator:: TimeZoneInvalidOffsetError

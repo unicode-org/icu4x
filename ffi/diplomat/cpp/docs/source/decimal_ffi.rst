@@ -8,7 +8,7 @@
     See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> try_new_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy)
 
         Creates a new :cpp:class:`ICU4XFixedDecimalFormatter` from locale data.
 
@@ -37,6 +37,9 @@
 
 
 .. cpp:enum-struct:: ICU4XFixedDecimalGroupingStrategy
+
+    See the `Rust documentation <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/enum.GroupingStrategy.html>`__ for more information.
+
 
     .. cpp:enumerator:: Auto
 
