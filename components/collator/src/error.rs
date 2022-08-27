@@ -10,6 +10,7 @@ use icu_provider::prelude::DataError;
 
 /// Error returned by the constructor of `Collator`
 #[derive(Display, Debug)]
+#[non_exhaustive]
 pub enum CollatorError {
     /// The requested collation does not exist
     NotFound,

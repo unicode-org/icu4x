@@ -26,7 +26,7 @@ struct ICU4XGregorianDateTimeDeleter {
 /**
  * An ICU4X DateTime object capable of containing a Gregorian date and time.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html) for more information.
+ * See the [Rust documentation for `DateTime`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html) for more information.
  */
 class ICU4XGregorianDateTime {
  public:
@@ -34,7 +34,7 @@ class ICU4XGregorianDateTime {
   /**
    * Creates a new [`ICU4XGregorianDateTime`] from the specified date and time.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime) for more information.
+   * See the [Rust documentation for `new_gregorian_datetime`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime) for more information.
    */
   static diplomat::result<ICU4XGregorianDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
   inline const capi::ICU4XGregorianDateTime* AsFFI() const { return this->inner.get(); }

@@ -104,3 +104,5 @@ pub use crate::sentence::{
 pub use crate::word::{
     WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordBreakSegmenter,
 };
+
+pub use crate::rule_segmenter::RuleBreakIterator;

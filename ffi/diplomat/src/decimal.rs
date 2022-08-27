@@ -28,6 +28,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter, Struct)]
     pub struct ICU4XFixedDecimalFormatter(pub FixedDecimalFormatter);
 
+    #[diplomat::rust_link(icu::decimal::GroupingStrategy, Enum)]
     pub enum ICU4XFixedDecimalGroupingStrategy {
         Auto,
         Never,
@@ -38,7 +39,7 @@ pub mod ffi {
     impl ICU4XFixedDecimalFormatter {
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
-        pub fn try_new(
+        pub fn try_new_with_grouping_strategy(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,

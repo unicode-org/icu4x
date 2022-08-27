@@ -82,7 +82,7 @@ pub struct PackageInfo {
 }
 
 pub fn load() -> Result<PackageInfo, Error> {
-    let metadata = MetadataCommand::new().no_deps().exec()?;
+    let metadata = MetadataCommand::new().exec()?;
 
     let target_directory = metadata.target_directory;
 

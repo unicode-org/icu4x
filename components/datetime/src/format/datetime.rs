@@ -375,7 +375,7 @@ where
                     fraction.multiply_pow10(-9);
 
                     seconds
-                        .concatenate_right(fraction)
+                        .concatenate_end(fraction)
                         .map_err(|_| Error::FixedDecimal)?;
                     seconds.pad_end(-(precision as i16));
                 }

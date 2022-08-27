@@ -250,7 +250,7 @@ impl Ethiopian {
     fn ethiopian_from_fixed(date: i32) -> EthiopianDateInner {
         let coptic_date = Coptic::coptic_from_fixed(date + ETHIOPIC_TO_COPTIC_OFFSET);
 
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // Coptic and Ethiopic have the same allowed ranges for dates
         *Date::new_ethiopian_date(
             EthiopianEraStyle::AmeteMihret,
             coptic_date.0.year,

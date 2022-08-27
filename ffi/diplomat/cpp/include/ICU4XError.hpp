@@ -17,6 +17,8 @@
  * A common enum for errors that ICU4X may return, organized by API
  * 
  * The error names are stable and can be checked against as strings in the JS API
+ * 
+ *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html), [2](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.DateTimeError.html), [3](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeFormatterError.html), [4](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html), [5](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html), [6](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html), [7](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html)
  */
 enum struct ICU4XError {
 
@@ -65,8 +67,8 @@ enum struct ICU4XError {
   DataStructValidityError = 768,
   PropertyUnknownScriptIdError = 1024,
   PropertyUnknownGeneralCategoryGroupError = 1025,
-  DecimalLimitError = 1280,
-  DecimalSyntaxError = 1281,
+  FixedDecimalLimitError = 1280,
+  FixedDecimalSyntaxError = 1281,
   PluralParserError = 1536,
   DateTimeParseError = 1792,
   DateTimeOverflowError = 1793,
@@ -86,6 +88,11 @@ enum struct ICU4XError {
   DateTimeFormatFixedDecimalError = 2055,
   DateTimeFormatMismatchedAnyCalendarError = 2056,
   DateTimeFormatMismatchedCalendarLocaleError = 2057,
+  TinyStrTooLargeError = 2304,
+  TinyStrContainsNullError = 2305,
+  TinyStrNonAsciiError = 2306,
+  TimeZoneOffsetOutOfBoundsError = 2560,
+  TimeZoneInvalidOffsetError = 2561,
 };
 
 #endif

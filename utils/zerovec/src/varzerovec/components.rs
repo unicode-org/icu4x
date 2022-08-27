@@ -55,12 +55,14 @@ pub unsafe trait VarZeroVecFormat: 'static + Sized {
 ///
 /// This is the default index size used by all [`VarZeroVec`](super::VarZeroVec) tyoes.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // marker
 pub struct Index16;
 
 /// This is a [`VarZeroVecFormat`] that stores u32s in the index array.
 /// Will have a larger data size, but will support large arrays without
 /// problems.
 #[derive(Copy, Clone, Debug, Hash, PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // marker
 pub struct Index32;
 
 unsafe impl VarZeroVecFormat for Index16 {

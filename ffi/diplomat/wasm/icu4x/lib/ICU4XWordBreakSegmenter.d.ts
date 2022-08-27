@@ -9,7 +9,7 @@ import { ICU4XWordBreakIteratorUtf8 } from "./ICU4XWordBreakIteratorUtf8";
 
  * An ICU4X word-break segmenter, capable of finding word breakpoints in strings.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html Rust documentation} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html Rust documentation for `WordBreakSegmenter`} for more information.
  */
 export class ICU4XWordBreakSegmenter {
 
@@ -17,7 +17,7 @@ export class ICU4XWordBreakSegmenter {
 
    * Construct an {@link ICU4XWordBreakSegmenter `ICU4XWordBreakSegmenter`}.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.try_new Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(provider: ICU4XDataProvider): ICU4XWordBreakSegmenter | never;
@@ -26,7 +26,7 @@ export class ICU4XWordBreakSegmenter {
 
    * Segments a UTF-8 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_str Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_str Rust documentation for `segment_str`} for more information.
    */
   segment_utf8(input: string): ICU4XWordBreakIteratorUtf8;
 
@@ -34,7 +34,7 @@ export class ICU4XWordBreakSegmenter {
 
    * Segments a UTF-16 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_utf16 Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_utf16 Rust documentation for `segment_utf16`} for more information.
    */
   segment_utf16(input: Uint16Array): ICU4XWordBreakIteratorUtf16;
 
@@ -42,7 +42,7 @@ export class ICU4XWordBreakSegmenter {
 
    * Segments a Latin-1 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_latin1 Rust documentation} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_latin1 Rust documentation for `segment_latin1`} for more information.
    */
   segment_latin1(input: Uint8Array): ICU4XWordBreakIteratorLatin1;
 }

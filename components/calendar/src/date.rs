@@ -85,6 +85,10 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// This can work with wrappers around [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
 ///
+/// This can be constructed  constructed
+/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
+///
 /// ```rust
 /// use icu::calendar::Date;
 ///
