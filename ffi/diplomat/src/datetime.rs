@@ -48,7 +48,7 @@ pub mod ffi {
         /// Gets the time contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
         pub fn time(&self) -> Box<ICU4XTime> {
-            Box::new(ICU4XTime(self.0.time.clone()))
+            Box::new(ICU4XTime(self.0.time))
         }
 
         /// Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
@@ -92,7 +92,7 @@ pub mod ffi {
             date: &ICU4XIsoDate,
             time: &ICU4XTime,
         ) -> Box<ICU4XIsoDateTime> {
-            let dt = DateTime::new(date.0.clone(), time.0.clone());
+            let dt = DateTime::new(date.0.clone(), time.0);
             Box::new(ICU4XIsoDateTime(dt))
         }
 
@@ -119,7 +119,7 @@ pub mod ffi {
         /// Gets the time contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
         pub fn time(&self) -> Box<ICU4XTime> {
-            Box::new(ICU4XTime(self.0.time.clone()))
+            Box::new(ICU4XTime(self.0.time))
         }
 
         /// Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
@@ -146,6 +146,7 @@ pub mod ffi {
         /// Creates a new [`ICU4XDateTime`] representing the ISO date and time
         /// given but in a given calendar
         #[diplomat::rust_link(icu::calendar::DateTime::new_iso_datetime, FnInStruct)]
+        #[allow(clippy::too_many_arguments)]
         pub fn try_new_from_iso_in_calendar(
             year: i32,
             month: u8,
@@ -169,6 +170,7 @@ pub mod ffi {
         /// Creates a new [`ICU4XDateTime`] representing the ISO date and time
         /// given but in a given calendar
         #[diplomat::rust_link(icu::calendar::DateTime::new_from_codes, FnInStruct)]
+        #[allow(clippy::too_many_arguments)]
         pub fn try_new_from_codes_in_calendar(
             era_code: &str,
             year: i32,
@@ -201,7 +203,7 @@ pub mod ffi {
         /// Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
         pub fn new_from_date_and_time(date: &ICU4XDate, time: &ICU4XTime) -> Box<ICU4XDateTime> {
-            let dt = DateTime::new(date.0.clone(), time.0.clone());
+            let dt = DateTime::new(date.0.clone(), time.0);
             Box::new(ICU4XDateTime(dt))
         }
 
@@ -214,7 +216,7 @@ pub mod ffi {
         /// Gets the time contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
         pub fn time(&self) -> Box<ICU4XTime> {
-            Box::new(ICU4XTime(self.0.time.clone()))
+            Box::new(ICU4XTime(self.0.time))
         }
 
         /// Converts this date to ISO
