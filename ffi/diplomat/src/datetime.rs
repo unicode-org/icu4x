@@ -32,9 +32,14 @@ pub mod ffi {
             hour: u8,
             minute: u8,
             second: u8,
+            nanosecond: u32,
         ) -> DiplomatResult<Box<ICU4XGregorianDateTime>, ICU4XError> {
+            let nanosecond = try_icu4x!(nanosecond.try_into());
             DateTime::new_gregorian_datetime(year, month, day, hour, minute, second)
-                .map(|dt| Box::new(ICU4XGregorianDateTime(dt)))
+                .map(|mut dt| {
+                    dt.time.nanosecond = nanosecond;
+                    Box::new(ICU4XGregorianDateTime(dt))
+                })
                 .map_err(Into::into)
                 .into()
         }
@@ -55,9 +60,14 @@ pub mod ffi {
             hour: u8,
             minute: u8,
             second: u8,
+            nanosecond: u32,
         ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
+            let nanosecond = try_icu4x!(nanosecond.try_into());
             DateTime::new_iso_datetime(year, month, day, hour, minute, second)
-                .map(|dt| Box::new(ICU4XIsoDateTime(dt)))
+                .map(|mut dt| {
+                    dt.time.nanosecond = nanosecond;
+                    Box::new(ICU4XIsoDateTime(dt))
+                })
                 .map_err(Into::into)
                 .into()
         }
@@ -113,11 +123,16 @@ pub mod ffi {
             hour: u8,
             minute: u8,
             second: u8,
+            nanosecond: u32,
             calendar: &ICU4XCalendar,
         ) -> DiplomatResult<Box<ICU4XDateTime>, ICU4XError> {
             let cal = calendar.0.clone();
+            let nanosecond = try_icu4x!(nanosecond.try_into());
             DateTime::new_iso_datetime(year, month, day, hour, minute, second)
-                .map(|dt| Box::new(ICU4XDateTime(dt.to_calendar(cal))))
+                .map(|mut dt| {
+                    dt.time.nanosecond = nanosecond;
+                    Box::new(ICU4XDateTime(dt.to_calendar(cal)))
+                })
                 .map_err(Into::into)
                 .into()
         }
@@ -170,18 +185,6 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::to_calendar, FnInStruct)]
         pub fn to_calendar(&self, calendar: &ICU4XCalendar) -> Box<ICU4XDateTime> {
             Box::new(ICU4XDateTime(self.0.to_calendar(calendar.0.clone())))
-        }
-
-        /// Sets the fractional seconds field of this datetime, in nanoseconds
-        #[diplomat::rust_link(icu::calendar::types::Time::nanosecond, StructField)]
-        pub fn set_ns(&mut self, ns: u32) -> DiplomatResult<(), ICU4XError> {
-            match ns.try_into() {
-                Ok(ns) => {
-                    self.0.time.nanosecond = ns;
-                    Ok(()).into()
-                }
-                Err(e) => Err(e.into()).into(),
-            }
         }
     }
 }
