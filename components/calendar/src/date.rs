@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
-use crate::week_of::{self, WeekOf, WeekCalculator};
+use crate::week::{WeekOf, WeekCalculator};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
@@ -238,6 +238,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// ```
     /// use icu::calendar::Date;
+    /// use icu::calendar::types::WeekOfMonth;
     /// use icu::calendar::types::IsoWeekday;
     ///
     /// let date = Date::new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
@@ -245,7 +246,10 @@ impl<A: AsCalendar> Date<A> {
     /// // The following info is usually locale-specific
     /// let first_weekday = IsoWeekday::Sunday;
     ///
-    /// assert_eq!(date.week_of_month(first_weekday), 2);
+    /// assert_eq!(
+    ///     date.week_of_month(first_weekday),
+    ///     WeekOfMonth(2)
+    /// );
     /// ```
     pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
         let config = WeekCalculator {
@@ -262,22 +266,19 @@ impl<A: AsCalendar> Date<A> {
     /// ```
     /// use icu::calendar::Date;
     /// use icu::calendar::types::IsoWeekday;
-    /// use icu::calendar::week_of::CalendarInfo;
-    /// use icu::calendar::week_of::RelativeUnit;
-    /// use icu::calendar::week_of::WeekOf;
+    /// use icu::calendar::week::WeekCalculator;
+    /// use icu::calendar::week::RelativeUnit;
+    /// use icu::calendar::week::WeekOf;
     ///
     /// let date = Date::new_iso_date(2022, 8, 26).unwrap();
     ///
     /// // The following info is usually locale-specific
-    /// let calendar_info = CalendarInfo {
-    ///     first_weekday: IsoWeekday::Sunday,
-    ///     min_week_days: 4
-    /// };
+    /// let week_calculator = WeekCalculator::default();
     ///
     /// assert_eq!(
-    ///     date.week_of_year(&calendar_info),
+    ///     date.week_of_year(&week_calculator),
     ///     Ok(WeekOf {
-    ///         week: 34,
+    ///         week: 35,
     ///         unit: RelativeUnit::Current
     ///     })
     /// );

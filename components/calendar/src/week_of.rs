@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{error::DateTimeError, provider::WeekDataV1, types::{IsoWeekday, DayOfYearInfo, DayOfMonth, WeekOfMonth, WeekOfYear}};
+use crate::{error::DateTimeError, provider::WeekDataV1, types::{IsoWeekday, DayOfYearInfo, DayOfMonth, WeekOfMonth}};
 use icu_provider::prelude::*;
 
 /// Minimum number of days in a month unit required for using this module
