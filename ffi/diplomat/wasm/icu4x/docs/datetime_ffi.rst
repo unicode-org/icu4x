@@ -1,90 +1,107 @@
 ``datetime::ffi``
 =================
 
-.. js:class:: ICU4XDateLength
+.. js:class:: ICU4XDateTime
 
-.. js:class:: ICU4XDateTimeFormatter
+    An ICU4X DateTime object capable of containing a date and time for any calendar.
 
-    An ICU4X DateFormatter object capable of formatting a :js:class:`ICU4XDateTime` as a string, using some calendar specified at runtime in the locale.
-
-    See the `Rust documentation for DateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html>`__ for more information.
+    See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(provider, locale, date_length, time_length)
+    .. js:staticfunction:: try_new_from_iso_in_calendar(year, month, day, hour, minute, second, calendar)
 
-        Creates a new :js:class:`ICU4XDateTimeFormatter` from locale data.
+        Creates a new :js:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable>`__ for more information.
-
-
-    .. js:function:: format_datetime(value)
-
-        Formats a :js:class:`ICU4XDateTime` to a string.
-
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
 
 
-.. js:class:: ICU4XGregorianDateFormatter
+    .. js:staticfunction:: try_new_from_codes_in_calendar(era_code, year, month_code, day, hour, minute, second, nanosecond, calendar)
 
-    An ICU4X TypedDateFormatter object capable of formatting a :js:class:`ICU4XGregorianDateTime` as a string, using the Gregorian Calendar.
+        Creates a new :js:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
 
-    See the `Rust documentation for TypedDateFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html>`__ for more information.
-
-
-    .. js:staticfunction:: try_new(provider, locale, length)
-
-        Creates a new :js:class:`ICU4XGregorianDateFormatter` from locale data.
-
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes>`__ for more information.
 
 
-    .. js:function:: format_datetime(value)
+    .. js:function:: date()
 
-        Formats a :js:class:`ICU4XGregorianDateTime` to a string.
+        Gets a copy of the date contained in this object
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write>`__ for more information.
-
-
-.. js:class:: ICU4XGregorianDateTimeFormatter
-
-    An ICU4X TypedDateFormatter object capable of formatting a :js:class:`ICU4XGregorianDateTime` as a string, using the Gregorian Calendar.
-
-    See the `Rust documentation for TypedDateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html>`__ for more information.
+        See the `Rust documentation for date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(provider, locale, date_length, time_length)
+    .. js:function:: to_iso()
 
-        Creates a new :js:class:`ICU4XGregorianDateFormatter` from locale data.
+        Converts this date to ISO
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
-
-
-    .. js:function:: format_datetime(value)
-
-        Formats a :js:class:`ICU4XGregorianDateTime` to a string.
-
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for to_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_iso>`__ for more information.
 
 
-.. js:class:: ICU4XTimeFormatter
+    .. js:function:: to_calendar(calendar)
 
-    An ICU4X TimeFormatter object capable of formatting a :js:class:`ICU4XGregorianDateTime` as a string
+        Convert this datetime to one in a different calendar
 
-    See the `Rust documentation for TimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html>`__ for more information.
-
-
-    .. js:staticfunction:: try_new(provider, locale, length)
-
-        Creates a new :js:class:`ICU4XTimeFormatter` from locale data.
-
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
 
-    .. js:function:: format_gregorian_datetime(value)
+    .. js:function:: set_ns(ns)
 
-        Formats a :js:class:`ICU4XGregorianDateTime` to a string.
+        Sets the fractional seconds field of this datetime, in nanoseconds
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for nanosecond <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
 
 
-.. js:class:: ICU4XTimeLength
+.. js:class:: ICU4XGregorianDateTime
+
+    An ICU4X DateTime object capable of containing a Gregorian date and time.
+
+    See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
+
+
+    .. js:staticfunction:: try_new(year, month, day, hour, minute, second)
+
+        Creates a new :js:class:`ICU4XGregorianDateTime` from the specified date and time.
+
+        See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
+
+
+.. js:class:: ICU4XIsoDateTime
+
+    An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+
+    See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
+
+
+    .. js:staticfunction:: try_new(year, month, day, hour, minute, second)
+
+        Creates a new :js:class:`ICU4XIsoDateTime` from the specified date and time.
+
+        See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
+
+
+    .. js:staticfunction:: from_minutes_since_local_unix_epoch(minutes)
+
+        Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
+
+        See the `Rust documentation for from_minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch>`__ for more information.
+
+
+    .. js:function:: date()
+
+        Gets the date contained in this object
+
+        See the `Rust documentation for date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date>`__ for more information.
+
+
+    .. js:function:: to_any()
+
+        Converts this to an :js:class:`ICU4XDateTime` capable of being mixed with dates of other calendars
+
+        See the `Rust documentation for to_any <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any>`__ for more information.
+
+
+    .. js:function:: minutes_since_local_unix_epoch()
+
+        Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
+
+        See the `Rust documentation for minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch>`__ for more information.
+

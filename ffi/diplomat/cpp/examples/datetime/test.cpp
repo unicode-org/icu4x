@@ -19,7 +19,7 @@ int main() {
     std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
 
-    ICU4XGregorianDateTime date = ICU4XGregorianDateTime::try_new(2022, 07, 11, 13, 06, 42).ok().value();
+    ICU4XGregorianDateTime date = ICU4XGregorianDateTime::try_new(2022, 07, 11, 13, 06, 42, 0).ok().value();
 
     ICU4XTimeFormatter tf = ICU4XTimeFormatter::try_new(dp, locale, ICU4XTimeLength::Short).ok().value();
     std::string out = tf.format_gregorian_datetime(date).ok().value();
@@ -47,7 +47,7 @@ int main() {
 
     locale = ICU4XLocale::create("en-u-ca-japanese").ok().value();
     ICU4XCalendar cal = ICU4XCalendar::try_new_for_locale(dp, locale).ok().value();
-    ICU4XDateTime any_date = ICU4XDateTime::try_new_from_iso_in_calendar(2020, 10, 5, 13, 33, 15, cal).ok().value();
+    ICU4XDateTime any_date = ICU4XDateTime::try_new_from_iso_in_calendar(2020, 10, 5, 13, 33, 15, 0, cal).ok().value();
     ICU4XDateTimeFormatter any_dtf = ICU4XDateTimeFormatter::try_new(dp, locale, ICU4XDateLength::Medium, ICU4XTimeLength::Short).ok().value();
     out = any_dtf.format_datetime(any_date).ok().value();
     std::cout << "Formatted value is " << out << std::endl;

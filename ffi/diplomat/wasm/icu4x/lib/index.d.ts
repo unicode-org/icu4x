@@ -12,6 +12,7 @@ export { ICU4XCreateDataProviderResult } from './ICU4XCreateDataProviderResult.j
 export { ICU4XCustomTimeZone } from './ICU4XCustomTimeZone.js';
 export { ICU4XDataProvider } from './ICU4XDataProvider.js';
 export { ICU4XDataStruct } from './ICU4XDataStruct.js';
+export { ICU4XDate } from './ICU4XDate.js';
 export { ICU4XDateLength } from './ICU4XDateLength.js';
 export { ICU4XDateTime } from './ICU4XDateTime.js';
 export { ICU4XDateTimeFormatter } from './ICU4XDateTimeFormatter.js';
@@ -28,7 +29,9 @@ export { ICU4XGraphemeClusterBreakSegmenter } from './ICU4XGraphemeClusterBreakS
 export { ICU4XGregorianDateFormatter } from './ICU4XGregorianDateFormatter.js';
 export { ICU4XGregorianDateTime } from './ICU4XGregorianDateTime.js';
 export { ICU4XGregorianDateTimeFormatter } from './ICU4XGregorianDateTimeFormatter.js';
+export { ICU4XIsoDate } from './ICU4XIsoDate.js';
 export { ICU4XIsoDateTime } from './ICU4XIsoDateTime.js';
+export { ICU4XIsoWeekday } from './ICU4XIsoWeekday.js';
 export { ICU4XLineBreakIteratorLatin1 } from './ICU4XLineBreakIteratorLatin1.js';
 export { ICU4XLineBreakIteratorUtf16 } from './ICU4XLineBreakIteratorUtf16.js';
 export { ICU4XLineBreakIteratorUtf8 } from './ICU4XLineBreakIteratorUtf8.js';

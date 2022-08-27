@@ -8,7 +8,9 @@ Documentation
    bidi_ffi
    calendar_ffi
    data_struct_ffi
+   date_ffi
    datetime_ffi
+   datetime_format_ffi
    decimal_ffi
    errors_ffi
    fixed_decimal_ffi
