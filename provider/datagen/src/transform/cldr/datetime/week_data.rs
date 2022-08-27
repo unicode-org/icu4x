@@ -7,7 +7,6 @@ use crate::transform::cldr::cldr_serde::{
     week_data::{Territory, DEFAULT_TERRITORY},
 };
 use icu_calendar::provider::{WeekDataV1, WeekDataV1Marker};
-use icu_calendar::week_of::WeekCalculator;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -55,7 +54,7 @@ impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(WeekDataV1(WeekCalculator {
+            payload: Some(DataPayload::from_owned(WeekDataV1 {
                 first_weekday: week_data
                     .first_day
                     .get(&territory)
@@ -72,7 +71,7 @@ impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
                         "Missing default entry for minDays in weekData.json",
                     ))?
                     .0,
-            }))),
+            })),
         })
     }
 }
