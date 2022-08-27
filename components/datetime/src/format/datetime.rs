@@ -227,7 +227,7 @@ where
             Year::WeekOf => format_number(
                 w,
                 fixed_decimal_format,
-                FixedDecimal::from(datetime.year_week()?.number),
+                FixedDecimal::from(datetime.week_of_year()?.0.number),
                 field.length,
             )?,
         },
@@ -263,7 +263,7 @@ where
             Week::WeekOfYear => format_number(
                 w,
                 fixed_decimal_format,
-                FixedDecimal::from(datetime.week_of_year()?.0),
+                FixedDecimal::from(datetime.week_of_year()?.1.0),
                 field.length,
             )?,
             Week::WeekOfMonth => format_number(
