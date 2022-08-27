@@ -1,4 +1,4 @@
-import { u8, i32 } from "./diplomat-runtime"
+import { u8, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XDateTime } from "./ICU4XDateTime";
 import { ICU4XError } from "./ICU4XError";
@@ -19,7 +19,7 @@ export class ICU4XIsoDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime Rust documentation for `new_gregorian_datetime`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8): ICU4XIsoDateTime | never;
+  static try_new(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XIsoDateTime | never;
 
   /**
 

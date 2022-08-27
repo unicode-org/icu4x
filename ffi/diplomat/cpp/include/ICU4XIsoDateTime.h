@@ -22,7 +22,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
+diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
 diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_from_minutes_since_local_unix_epoch(int32_t minutes);
 

@@ -20,7 +20,7 @@ export class ICU4XDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime Rust documentation for `new_iso_datetime`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_from_iso_in_calendar(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, calendar: ICU4XCalendar): ICU4XDateTime | never;
+  static try_new_from_iso_in_calendar(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32, calendar: ICU4XCalendar): ICU4XDateTime | never;
 
   /**
 
@@ -54,13 +54,4 @@ export class ICU4XDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar Rust documentation for `to_calendar`} for more information.
    */
   to_calendar(calendar: ICU4XCalendar): ICU4XDateTime;
-
-  /**
-
-   * Sets the fractional seconds field of this datetime, in nanoseconds
-
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond Rust documentation for `nanosecond`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
-   */
-  set_ns(ns: u32): void | never;
 }

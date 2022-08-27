@@ -38,7 +38,7 @@ class ICU4XIsoDateTime {
    * 
    * See the [Rust documentation for `new_gregorian_datetime`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime) for more information.
    */
-  static diplomat::result<ICU4XIsoDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
+  static diplomat::result<ICU4XIsoDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
   /**
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
@@ -81,8 +81,8 @@ class ICU4XIsoDateTime {
 #include "ICU4XIsoDate.hpp"
 #include "ICU4XDateTime.hpp"
 
-inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second) {
-  auto diplomat_result_raw_out_value = capi::ICU4XIsoDateTime_try_new(year, month, day, hour, minute, second);
+inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
+  auto diplomat_result_raw_out_value = capi::ICU4XIsoDateTime_try_new(year, month, day, hour, minute, second, nanosecond);
   diplomat::result<ICU4XIsoDateTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XIsoDateTime>(std::move(ICU4XIsoDateTime(diplomat_result_raw_out_value.ok)));

@@ -8,7 +8,7 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_from_iso_in_calendar(year, month, day, hour, minute, second, calendar)
+    .. js:staticfunction:: try_new_from_iso_in_calendar(year, month, day, hour, minute, second, nanosecond, calendar)
 
         Creates a new :js:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
 
@@ -43,13 +43,6 @@
         See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
 
-    .. js:function:: set_ns(ns)
-
-        Sets the fractional seconds field of this datetime, in nanoseconds
-
-        See the `Rust documentation for nanosecond <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
-
-
 .. js:class:: ICU4XGregorianDateTime
 
     An ICU4X DateTime object capable of containing a Gregorian date and time.
@@ -57,7 +50,7 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(year, month, day, hour, minute, second)
+    .. js:staticfunction:: try_new(year, month, day, hour, minute, second, nanosecond)
 
         Creates a new :js:class:`ICU4XGregorianDateTime` from the specified date and time.
 
@@ -71,7 +64,7 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(year, month, day, hour, minute, second)
+    .. js:staticfunction:: try_new(year, month, day, hour, minute, second, nanosecond)
 
         Creates a new :js:class:`ICU4XIsoDateTime` from the specified date and time.
 

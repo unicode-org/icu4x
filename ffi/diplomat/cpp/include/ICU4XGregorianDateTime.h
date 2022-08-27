@@ -20,7 +20,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XGregorianDateTime_ICU4XError ICU4XGregorianDateTime_try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second);
+diplomat_result_box_ICU4XGregorianDateTime_ICU4XError ICU4XGregorianDateTime_try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 void ICU4XGregorianDateTime_destroy(ICU4XGregorianDateTime* self);
 
 #ifdef __cplusplus

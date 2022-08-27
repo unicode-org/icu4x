@@ -8,7 +8,7 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, const ICU4XCalendar& calendar)
+    .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar)
 
         Creates a new :cpp:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
 
@@ -43,13 +43,6 @@
         See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> set_ns(uint32_t ns)
-
-        Sets the fractional seconds field of this datetime, in nanoseconds
-
-        See the `Rust documentation for nanosecond <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
-
-
 .. cpp:class:: ICU4XGregorianDateTime
 
     An ICU4X DateTime object capable of containing a Gregorian date and time.
@@ -57,7 +50,7 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
+    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond)
 
         Creates a new :cpp:class:`ICU4XGregorianDateTime` from the specified date and time.
 
@@ -71,7 +64,7 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second)
+    .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond)
 
         Creates a new :cpp:class:`ICU4XIsoDateTime` from the specified date and time.
 
