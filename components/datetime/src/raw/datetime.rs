@@ -24,6 +24,7 @@ use crate::{
 };
 use alloc::string::String;
 
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
@@ -31,7 +32,6 @@ use icu_decimal::{
 };
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
-use icu_calendar::provider::WeekDataV1Marker;
 
 pub(crate) struct TimeFormatter {
     pub patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,

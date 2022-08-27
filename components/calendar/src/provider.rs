@@ -9,11 +9,11 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+use crate::types::IsoWeekday;
 use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
 use tinystr::TinyStr16;
 use zerovec::ZeroVec;
-use crate::types::IsoWeekday;
 
 /// The date at which an era started
 ///

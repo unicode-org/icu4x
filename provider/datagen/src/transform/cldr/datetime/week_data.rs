@@ -6,8 +6,8 @@ use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use icu_calendar::week_of::WeekCalculator;
 use icu_calendar::provider::{WeekDataV1, WeekDataV1Marker};
+use icu_calendar::week_of::WeekCalculator;
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;

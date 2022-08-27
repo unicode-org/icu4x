@@ -17,8 +17,8 @@ use crate::provider::date_time::{DateSymbols, TimeSymbols};
 
 use core::fmt;
 use fixed_decimal::FixedDecimal;
-use icu_decimal::FixedDecimalFormatter;
 use icu_calendar::provider::WeekDataV1;
+use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 use writeable::Writeable;
@@ -263,7 +263,7 @@ where
             Week::WeekOfYear => format_number(
                 w,
                 fixed_decimal_format,
-                FixedDecimal::from(datetime.week_of_year()?.1.0),
+                FixedDecimal::from(datetime.week_of_year()?.1 .0),
                 field.length,
             )?,
             Week::WeekOfMonth => format_number(

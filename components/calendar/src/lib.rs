@@ -136,8 +136,8 @@ mod week_of;
 pub mod week {
     //! Functions for week-of-month and week-of-year arithmetic.
     use crate::week_of;
-    pub use week_of::WeekCalculator;
     pub use week_of::RelativeUnit;
+    pub use week_of::WeekCalculator;
     pub use week_of::WeekOf;
 }
 
