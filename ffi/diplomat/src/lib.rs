@@ -57,6 +57,7 @@ pub mod segmenter_grapheme;
 pub mod segmenter_line;
 pub mod segmenter_sentence;
 pub mod segmenter_word;
+pub mod time;
 pub mod timezone;
 
 #[cfg(target_arch = "wasm32")]
