@@ -88,8 +88,8 @@ fn basic_cldr_week_data() {
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(1, default_week_data.get().0.min_week_days);
-    assert_eq!(IsoWeekday::Monday, default_week_data.get().0.first_weekday);
+    assert_eq!(1, default_week_data.get().min_week_days);
+    assert_eq!(IsoWeekday::Monday, default_week_data.get().first_weekday);
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
@@ -99,8 +99,8 @@ fn basic_cldr_week_data() {
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(4, fr_week_data.get().0.min_week_days);
-    assert_eq!(IsoWeekday::Monday, fr_week_data.get().0.first_weekday);
+    assert_eq!(4, fr_week_data.get().min_week_days);
+    assert_eq!(IsoWeekday::Monday, fr_week_data.get().first_weekday);
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
@@ -112,10 +112,10 @@ fn basic_cldr_week_data() {
         .unwrap();
     // Only first_weekday is defined for IQ, min_week_days uses the default.
     assert_eq!(
-        default_week_data.get().0.min_week_days,
-        iq_week_data.get().0.min_week_days
+        default_week_data.get().min_week_days,
+        iq_week_data.get().min_week_days
     );
-    assert_eq!(IsoWeekday::Saturday, iq_week_data.get().0.first_weekday);
+    assert_eq!(IsoWeekday::Saturday, iq_week_data.get().first_weekday);
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
@@ -125,10 +125,10 @@ fn basic_cldr_week_data() {
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(4, gg_week_data.get().0.min_week_days);
+    assert_eq!(4, gg_week_data.get().min_week_days);
     // Only min_week_days is defined for GG, first_weekday uses the default.
     assert_eq!(
-        default_week_data.get().0.first_weekday,
-        gg_week_data.get().0.first_weekday
+        default_week_data.get().first_weekday,
+        gg_week_data.get().first_weekday
     );
 }
