@@ -86,7 +86,7 @@ impl FromStr for EraStartDate {
 #[cfg_attr(
     feature = "datagen",
     derive(serde::Serialize, databake::Bake),
-    databake(path = icu_calendar::week_of),
+    databake(path = icu_calendar::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_structs)] // used in data provider
