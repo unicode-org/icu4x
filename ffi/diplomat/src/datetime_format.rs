@@ -13,8 +13,9 @@ pub mod ffi {
     };
 
     use crate::{
-        datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XGregorianDateTime,
+        datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XGregorianDateTime, datetime::ffi::ICU4XIsoDateTime,
         errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
+        time::ffi::ICU4XTime,
     };
 
     #[diplomat::opaque]
@@ -56,11 +57,60 @@ pub mod ffi {
                 .into()
         }
 
+        /// Formats a [`ICU4XTime`] to a string.
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
+        pub fn format_time(
+            &self,
+            value: &ICU4XTime,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &value.0)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
         pub fn format_gregorian_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &value.0)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
+        /// Formats a [`ICU4XDateTime`] to a string.
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
+        pub fn format_datetime(
+            &self,
+            value: &ICU4XDateTime,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &value.0)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
+
+        /// Formats a [`ICU4XIsoDateTime`] to a string.
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
+        pub fn format_iso_datetime(
+            &self,
+            value: &ICU4XIsoDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             #[allow(unused_variables)]

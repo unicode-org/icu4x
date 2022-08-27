@@ -15,6 +15,7 @@ pub mod ffi {
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate};
+    use crate::time::ffi::{ICU4XTime};
     use crate::errors::ffi::ICU4XError;
 
     #[diplomat::opaque]
@@ -42,6 +43,12 @@ pub mod ffi {
                 })
                 .map_err(Into::into)
                 .into()
+        }
+
+        /// Gets the time contained in this object
+        #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
+        pub fn time(&self) -> Box<ICU4XTime> {
+            Box::new(ICU4XTime(self.0.time.clone()))
         }
     }
 
@@ -90,6 +97,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
         pub fn date(&self) -> Box<ICU4XIsoDate> {
             Box::new(ICU4XIsoDate(self.0.date.clone()))
+        }
+
+        /// Gets the time contained in this object
+        #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
+        pub fn time(&self) -> Box<ICU4XTime> {
+            Box::new(ICU4XTime(self.0.time.clone()))
         }
 
         /// Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
@@ -173,6 +186,12 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
         pub fn date(&self) -> Box<ICU4XDate> {
             Box::new(ICU4XDate(self.0.date.clone()))
+        }
+
+        /// Gets the time contained in this object
+        #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
+        pub fn time(&self) -> Box<ICU4XTime> {
+            Box::new(ICU4XTime(self.0.time.clone()))
         }
 
         /// Converts this date to ISO
