@@ -86,6 +86,16 @@ pub mod ffi {
                 .into()
         }
 
+        /// Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
+        #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
+        pub fn new_from_date_and_time(
+            date: &ICU4XIsoDate,
+            time: &ICU4XTime,
+        ) -> Box<ICU4XIsoDateTime> {
+            let dt = DateTime::new(date.0.clone(), time.0.clone());
+            Box::new(ICU4XIsoDateTime(dt))
+        }
+
         /// Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
         #[diplomat::rust_link(
             icu::calendar::DateTime::from_minutes_since_local_unix_epoch,
@@ -187,6 +197,12 @@ pub mod ffi {
                 .map(|dt| Box::new(ICU4XDateTime(dt)))
                 .map_err(Into::into)
                 .into()
+        }
+        /// Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
+        #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
+        pub fn new_from_date_and_time(date: &ICU4XDate, time: &ICU4XTime) -> Box<ICU4XDateTime> {
+            let dt = DateTime::new(date.0.clone(), time.0.clone());
+            Box::new(ICU4XDateTime(dt))
         }
 
         /// Gets a copy of the date contained in this object
