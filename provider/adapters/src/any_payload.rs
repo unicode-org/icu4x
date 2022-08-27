@@ -51,12 +51,15 @@ pub struct AnyPayloadProvider {
 
 impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
-    pub fn new_owned<M: KeyedDataMarker + 'static>(data: M::Yokeable) -> Self {
+    pub fn new_owned<M: KeyedDataMarker + 'static>(data: M::Yokeable) -> Self
+    where
+        M::Yokeable: icu_provider::any::RcWrapBounds,
+    {
         AnyPayloadProvider {
             key: M::KEY,
-            data: AnyPayload::from_rc_payload::<M>(alloc::rc::Rc::from(DataPayload::from_owned(
-                data,
-            ))),
+            data: AnyPayload::from_rcwrap_payload::<M>(icu_provider::RcWrap::from(
+                DataPayload::from_owned(data),
+            )),
         }
     }
 
@@ -72,6 +75,7 @@ impl AnyPayloadProvider {
     pub fn new_default<M: KeyedDataMarker + 'static>() -> Self
     where
         M::Yokeable: Default,
+        M::Yokeable: icu_provider::any::RcWrapBounds,
     {
         Self::new_owned::<M>(M::Yokeable::default())
     }
@@ -92,6 +96,7 @@ where
     M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+    M::Yokeable: icu_provider::any::RcWrapBounds,
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.as_downcasting().load(req)
