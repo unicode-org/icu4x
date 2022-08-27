@@ -8,7 +8,6 @@ use crate::marker::DataMarker;
 use crate::request::DataLocale;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
-use alloc::sync::Arc;
 use core::any::Any;
 use core::convert::TryFrom;
 use core::fmt::Debug;
@@ -133,7 +132,7 @@ where
 #[derive(Debug)]
 pub struct RcWrap<T: ?Sized>(
     #[cfg(not(feature = "sync"))] alloc::rc::Rc<T>,
-    #[cfg(feature = "sync")] Arc<T>,
+    #[cfg(feature = "sync")] alloc::sync::Arc<T>,
 );
 
 impl<T: ?Sized> core::ops::Deref for RcWrap<T> {
@@ -208,7 +207,7 @@ impl<T: Send + Sync + 'static> RcWrap<T> {
 
     /// Returns the inner value, if the `RcWrap` has exactly one strong reference.
     pub fn try_unwrap(self) -> Result<T, Self> {
-        match Arc::try_unwrap(self.0) {
+        match alloc::sync::Arc::try_unwrap(self.0) {
             Ok(t) => Ok(t),
             Err(e) => Err(RcWrap(e)),
         }
@@ -224,7 +223,7 @@ impl<T: 'static> RcWrap<T> {
 
     /// Returns the inner value, if the `RcWrap` has exactly one strong reference.
     pub fn try_unwrap(self) -> Result<T, Self> {
-        match Rc::try_unwrap(self.0) {
+        match alloc::rc::Rc::try_unwrap(self.0) {
             Ok(t) => Ok(t),
             Err(e) => Err(RcWrap(e)),
         }
