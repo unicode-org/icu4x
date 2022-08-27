@@ -28,6 +28,8 @@ diplomat_result_box_ICU4XDateTime_ICU4XError ICU4XDateTime_try_new_from_iso_in_c
 
 diplomat_result_box_ICU4XDateTime_ICU4XError ICU4XDateTime_try_new_from_codes_in_calendar(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar* calendar);
 
+ICU4XDateTime* ICU4XDateTime_new_from_date_and_time(const ICU4XDate* date, const ICU4XTime* time);
+
 ICU4XDate* ICU4XDateTime_date(const ICU4XDateTime* self);
 
 ICU4XTime* ICU4XDateTime_time(const ICU4XDateTime* self);

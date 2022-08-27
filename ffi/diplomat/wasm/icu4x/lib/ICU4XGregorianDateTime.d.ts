@@ -1,5 +1,6 @@
 import { u8, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XDateTime } from "./ICU4XDateTime";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XTime } from "./ICU4XTime";
 
@@ -27,4 +28,12 @@ export class ICU4XGregorianDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time Rust documentation for `time`} for more information.
    */
   time(): ICU4XTime;
+
+  /**
+
+   * Converts this to an {@link ICU4XDateTime `ICU4XDateTime`} capable of being mixed with dates of other calendars
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any Rust documentation for `to_any`} for more information.
+   */
+  to_any(): ICU4XDateTime;
 }

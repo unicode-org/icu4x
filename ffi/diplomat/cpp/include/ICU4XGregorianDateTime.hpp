@@ -14,6 +14,7 @@
 class ICU4XGregorianDateTime;
 #include "ICU4XError.hpp"
 class ICU4XTime;
+class ICU4XDateTime;
 
 /**
  * A destruction policy for using ICU4XGregorianDateTime with std::unique_ptr.
@@ -45,6 +46,14 @@ class ICU4XGregorianDateTime {
    * See the [Rust documentation for `time`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time) for more information.
    */
   ICU4XTime time() const;
+
+  /**
+   * Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
+   * other calendars
+   * 
+   * See the [Rust documentation for `to_any`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any) for more information.
+   */
+  ICU4XDateTime to_any() const;
   inline const capi::ICU4XGregorianDateTime* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGregorianDateTime* AsFFIMut() { return this->inner.get(); }
   inline ICU4XGregorianDateTime(capi::ICU4XGregorianDateTime* i) : inner(i) {}
@@ -56,6 +65,7 @@ class ICU4XGregorianDateTime {
 };
 
 #include "ICU4XTime.hpp"
+#include "ICU4XDateTime.hpp"
 
 inline diplomat::result<ICU4XGregorianDateTime, ICU4XError> ICU4XGregorianDateTime::try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
   auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTime_try_new(year, month, day, hour, minute, second, nanosecond);
@@ -69,5 +79,8 @@ inline diplomat::result<ICU4XGregorianDateTime, ICU4XError> ICU4XGregorianDateTi
 }
 inline ICU4XTime ICU4XGregorianDateTime::time() const {
   return ICU4XTime(capi::ICU4XGregorianDateTime_time(this->inner.get()));
+}
+inline ICU4XDateTime ICU4XGregorianDateTime::to_any() const {
+  return ICU4XDateTime(capi::ICU4XGregorianDateTime_to_any(this->inner.get()));
 }
 #endif

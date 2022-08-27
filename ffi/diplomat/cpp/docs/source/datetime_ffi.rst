@@ -22,6 +22,13 @@
         See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes>`__ for more information.
 
 
+    .. cpp:function:: static ICU4XDateTime new_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time)
+
+        Creates a new :cpp:class:`ICU4XDateTime` from an :cpp:class:`ICU4XDate` and :cpp:class:`ICU4XTime` object
+
+        See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
+
+
     .. cpp:function:: ICU4XDate date() const
 
         Gets a copy of the date contained in this object
@@ -71,6 +78,13 @@
         See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
 
 
+    .. cpp:function:: ICU4XDateTime to_any() const
+
+        Converts this to an :cpp:class:`ICU4XDateTime` capable of being mixed with dates of other calendars
+
+        See the `Rust documentation for to_any <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any>`__ for more information.
+
+
 .. cpp:class:: ICU4XIsoDateTime
 
     An ICU4X DateTime object capable of containing a ISO-8601 date and time.
@@ -83,6 +97,13 @@
         Creates a new :cpp:class:`ICU4XIsoDateTime` from the specified date and time.
 
         See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
+
+
+    .. cpp:function:: static ICU4XIsoDateTime new_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time)
+
+        Creates a new :cpp:class:`ICU4XIsoDateTime` from an :cpp:class:`ICU4XIsoDate` and :cpp:class:`ICU4XTime` object
+
+        See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> from_minutes_since_local_unix_epoch(int32_t minutes)

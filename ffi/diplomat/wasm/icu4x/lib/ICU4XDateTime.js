@@ -58,6 +58,10 @@ export class ICU4XDateTime {
     return diplomat_out;
   }
 
+  static new_from_date_and_time(arg_date, arg_time) {
+    return new ICU4XDateTime(wasm.ICU4XDateTime_new_from_date_and_time(arg_date.underlying, arg_time.underlying), true, []);
+  }
+
   date() {
     return new ICU4XDate(wasm.ICU4XDateTime_date(this.underlying), true, []);
   }

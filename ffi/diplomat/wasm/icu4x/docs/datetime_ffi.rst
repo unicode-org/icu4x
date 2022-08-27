@@ -22,6 +22,13 @@
         See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes>`__ for more information.
 
 
+    .. js:staticfunction:: new_from_date_and_time(date, time)
+
+        Creates a new :js:class:`ICU4XDateTime` from an :js:class:`ICU4XDate` and :js:class:`ICU4XTime` object
+
+        See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
+
+
     .. js:function:: date()
 
         Gets a copy of the date contained in this object
@@ -71,6 +78,13 @@
         See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
 
 
+    .. js:function:: to_any()
+
+        Converts this to an :js:class:`ICU4XDateTime` capable of being mixed with dates of other calendars
+
+        See the `Rust documentation for to_any <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any>`__ for more information.
+
+
 .. js:class:: ICU4XIsoDateTime
 
     An ICU4X DateTime object capable of containing a ISO-8601 date and time.
@@ -83,6 +97,13 @@
         Creates a new :js:class:`ICU4XIsoDateTime` from the specified date and time.
 
         See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
+
+
+    .. js:staticfunction:: new_from_date_and_time(date, time)
+
+        Creates a new :js:class:`ICU4XIsoDateTime` from an :js:class:`ICU4XIsoDate` and :js:class:`ICU4XTime` object
+
+        See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
 
 
     .. js:staticfunction:: from_minutes_since_local_unix_epoch(minutes)

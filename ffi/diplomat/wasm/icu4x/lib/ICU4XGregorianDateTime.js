@@ -1,5 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
+import { ICU4XDateTime } from "./ICU4XDateTime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 import { ICU4XTime } from "./ICU4XTime.js"
 
@@ -36,5 +37,9 @@ export class ICU4XGregorianDateTime {
 
   time() {
     return new ICU4XTime(wasm.ICU4XGregorianDateTime_time(this.underlying), true, []);
+  }
+
+  to_any() {
+    return new ICU4XDateTime(wasm.ICU4XGregorianDateTime_to_any(this.underlying), true, []);
   }
 }

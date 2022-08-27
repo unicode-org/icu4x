@@ -42,6 +42,13 @@ class ICU4XIsoDateTime {
   static diplomat::result<ICU4XIsoDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
   /**
+   * Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
+   * 
+   * See the [Rust documentation for `new`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new) for more information.
+   */
+  static ICU4XIsoDateTime new_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time);
+
+  /**
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
    * 
    * See the [Rust documentation for `from_minutes_since_local_unix_epoch`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch) for more information.
@@ -99,6 +106,9 @@ inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::try_new(
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
+}
+inline ICU4XIsoDateTime ICU4XIsoDateTime::new_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time) {
+  return ICU4XIsoDateTime(capi::ICU4XIsoDateTime_new_from_date_and_time(date.AsFFI(), time.AsFFI()));
 }
 inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::from_minutes_since_local_unix_epoch(int32_t minutes) {
   auto diplomat_result_raw_out_value = capi::ICU4XIsoDateTime_from_minutes_since_local_unix_epoch(minutes);

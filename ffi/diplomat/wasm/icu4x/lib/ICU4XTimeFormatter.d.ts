@@ -20,7 +20,7 @@ export class ICU4XTimeFormatter {
 
    * Creates a new {@link ICU4XTimeFormatter `ICU4XTimeFormatter`} from locale data.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TimeFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XTimeLength): ICU4XTimeFormatter | never;

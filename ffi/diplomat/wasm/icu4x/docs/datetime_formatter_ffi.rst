@@ -1,5 +1,26 @@
-``datetime_format::ffi``
-========================
+``datetime_formatter::ffi``
+===========================
+
+.. js:class:: ICU4XDateFormatter
+
+    An ICU4X DateFormatter object capable of formatting a :js:class:`ICU4XDate` as a string, using some calendar specified at runtime in the locale.
+
+    See the `Rust documentation for date_length <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.date_length.html>`__ for more information.
+
+
+    .. js:staticfunction:: try_new(provider, locale, date_length)
+
+        Creates a new :js:class:`ICU4XDateFormatter` from locale data.
+
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable>`__ for more information.
+
+
+    .. js:function:: format_datetime(value)
+
+        Formats a :js:class:`ICU4XDate` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html#method.format_to_write>`__ for more information.
+
 
 .. js:class:: ICU4XDateLength
 
@@ -47,7 +68,7 @@
 
 .. js:class:: ICU4XGregorianDateTimeFormatter
 
-    An ICU4X TypedDateFormatter object capable of formatting a :js:class:`ICU4XGregorianDateTime` as a string, using the Gregorian Calendar.
+    An ICU4X TypedDateTimeFormatter object capable of formatting a :js:class:`ICU4XGregorianDateTime` as a string, using the Gregorian Calendar.
 
     See the `Rust documentation for TypedDateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html>`__ for more information.
 
@@ -77,7 +98,7 @@
 
         Creates a new :js:class:`ICU4XTimeFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
     .. js:function:: format_time(value)

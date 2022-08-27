@@ -13,6 +13,7 @@ export { ICU4XCustomTimeZone } from './ICU4XCustomTimeZone.js';
 export { ICU4XDataProvider } from './ICU4XDataProvider.js';
 export { ICU4XDataStruct } from './ICU4XDataStruct.js';
 export { ICU4XDate } from './ICU4XDate.js';
+export { ICU4XDateFormatter } from './ICU4XDateFormatter.js';
 export { ICU4XDateLength } from './ICU4XDateLength.js';
 export { ICU4XDateTime } from './ICU4XDateTime.js';
 export { ICU4XDateTimeFormatter } from './ICU4XDateTimeFormatter.js';

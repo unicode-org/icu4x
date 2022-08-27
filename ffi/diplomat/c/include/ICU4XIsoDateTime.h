@@ -25,6 +25,8 @@ extern "C" {
 
 diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
+ICU4XIsoDateTime* ICU4XIsoDateTime_new_from_date_and_time(const ICU4XIsoDate* date, const ICU4XTime* time);
+
 diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_from_minutes_since_local_unix_epoch(int32_t minutes);
 
 ICU4XIsoDate* ICU4XIsoDateTime_date(const ICU4XIsoDateTime* self);

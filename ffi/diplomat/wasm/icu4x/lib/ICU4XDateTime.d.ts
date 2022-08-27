@@ -34,6 +34,14 @@ export class ICU4XDateTime {
 
   /**
 
+   * Creates a new {@link ICU4XDateTime `ICU4XDateTime`} from an {@link ICU4XDate `ICU4XDate`} and {@link ICU4XTime `ICU4XTime`} object
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new Rust documentation for `new`} for more information.
+   */
+  static new_from_date_and_time(date: ICU4XDate, time: ICU4XTime): ICU4XDateTime;
+
+  /**
+
    * Gets a copy of the date contained in this object
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date Rust documentation for `date`} for more information.

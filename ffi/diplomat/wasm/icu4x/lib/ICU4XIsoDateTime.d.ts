@@ -24,6 +24,14 @@ export class ICU4XIsoDateTime {
 
   /**
 
+   * Creates a new {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} from an {@link ICU4XIsoDate `ICU4XIsoDate`} and {@link ICU4XTime `ICU4XTime`} object
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new Rust documentation for `new`} for more information.
+   */
+  static new_from_date_and_time(date: ICU4XIsoDate, time: ICU4XTime): ICU4XIsoDateTime;
+
+  /**
+
    * Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch Rust documentation for `from_minutes_since_local_unix_epoch`} for more information.

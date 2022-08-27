@@ -36,6 +36,10 @@ export class ICU4XIsoDateTime {
     })();
   }
 
+  static new_from_date_and_time(arg_date, arg_time) {
+    return new ICU4XIsoDateTime(wasm.ICU4XIsoDateTime_new_from_date_and_time(arg_date.underlying, arg_time.underlying), true, []);
+  }
+
   static from_minutes_since_local_unix_epoch(arg_minutes) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);

@@ -52,6 +52,13 @@ class ICU4XDateTime {
   static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
 
   /**
+   * Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
+   * 
+   * See the [Rust documentation for `new`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new) for more information.
+   */
+  static ICU4XDateTime new_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time);
+
+  /**
    * Gets a copy of the date contained in this object
    * 
    * See the [Rust documentation for `date`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date) for more information.
@@ -112,6 +119,9 @@ inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::try_new_from_c
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
+}
+inline ICU4XDateTime ICU4XDateTime::new_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time) {
+  return ICU4XDateTime(capi::ICU4XDateTime_new_from_date_and_time(date.AsFFI(), time.AsFFI()));
 }
 inline ICU4XDate ICU4XDateTime::date() const {
   return ICU4XDate(capi::ICU4XDateTime_date(this->inner.get()));
