@@ -1446,14 +1446,15 @@ where
                             let (starter, tail) = self
                                 .scalars16
                                 .get_subslice(offset..offset + len)
-                                .and_then(|slice| slice.split_first())
+                                .and_then(ZeroSlice::split_first)
                                 .map_or_else(
                                     || {
                                         // GIGO case
                                         debug_assert!(false);
                                         (REPLACEMENT_CHARACTER, EMPTY_U16)
                                     },
-                                    |(first, trail)| (char_from_u16(first), trail),
+                                    |(first, tail)| (char_from_u16(first), tail),
+                                    
                                 );
                             c = starter;
                             if trail_or_complex & 0x1000 != 0 {
@@ -1505,7 +1506,7 @@ where
                                         debug_assert!(false);
                                         (REPLACEMENT_CHARACTER, EMPTY_U24)
                                     },
-                                    |(first, trail)| (char_from_u24(first), trail),
+                                    |(first, tail)| (char_from_u24(first), tail),
                                 );
 
                             c = starter;
