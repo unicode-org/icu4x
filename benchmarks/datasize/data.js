@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661557839373,
+  "lastUpdate": 1661637791740,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25493,6 +25493,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/bf9012336256c01512374518f2ff90f25d45a998"
         },
         "date": 1661557783947,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "af635e223132df2671ce7004b992835b26f6f271",
+          "message": "week_of refactoring (#2462)\n\n* Add week_of_month and week_of_year to Date\r\n* Rename CalendarInfo\r\n* Move the provider struct into icu_calendar and make runtime struct non_exhaustive",
+          "timestamp": "2022-08-27T15:01:05-07:00",
+          "tree_id": "48f4463323ac3489ccba72194095ba86de8d0c91",
+          "url": "https://github.com/unicode-org/icu4x/commit/af635e223132df2671ce7004b992835b26f6f271"
+        },
+        "date": 1661637748269,
         "tool": "ndjson",
         "benches": [
           {
