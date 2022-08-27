@@ -9,11 +9,11 @@ use crate::{
     options::{length, preferences, DateTimeFormatterOptions},
     provider::calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
     provider::date_time::PatternSelector,
-    provider::week_data::WeekDataV1Marker,
     raw,
 };
 use alloc::string::String;
 use core::marker::PhantomData;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;

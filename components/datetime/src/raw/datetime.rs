@@ -19,12 +19,12 @@ use crate::{
             ErasedDateLengthsV1Marker, ErasedDateSymbolsV1Marker, TimeLengthsV1Marker,
             TimeSymbolsV1Marker,
         },
-        week_data::WeekDataV1Marker,
     },
     DateTimeFormatterError, FormattedDateTime,
 };
 use alloc::string::String;
 
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,

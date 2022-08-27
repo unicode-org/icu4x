@@ -33,6 +33,8 @@ icu::calendar::Date::new_julian_date#FnInStruct
 icu::calendar::Date::to_any#FnInStruct
 icu::calendar::Date::to_calendar#FnInStruct
 icu::calendar::Date::to_iso#FnInStruct
+icu::calendar::Date::week_of_month#FnInStruct
+icu::calendar::Date::week_of_year#FnInStruct
 icu::calendar::Date::wrap_calendar_in_rc#FnInStruct
 icu::calendar::Date::year#FnInStruct
 icu::calendar::DateTime::from_minutes_since_local_unix_epoch#FnInStruct
@@ -91,6 +93,14 @@ icu::calendar::iso::Iso::new#FnInStruct
 icu::calendar::iso::Iso::to_any#FnInStruct
 icu::calendar::iso::Iso::to_any_cloned#FnInStruct
 icu::calendar::iso::IsoDateInner#Struct
+icu::calendar::week::RelativeUnit#Enum
+icu::calendar::week::WeekCalculator#Struct
+icu::calendar::week::WeekCalculator::try_new_unstable#FnInStruct
+icu::calendar::week::WeekCalculator::try_new_with_any_provider#FnInStruct
+icu::calendar::week::WeekCalculator::try_new_with_buffer_provider#FnInStruct
+icu::calendar::week::WeekCalculator::week_of_month#FnInStruct
+icu::calendar::week::WeekCalculator::week_of_year#FnInStruct
+icu::calendar::week::WeekOf#Struct
 icu::casemapping::CaseMapping#Struct
 icu::casemapping::CaseMapping::fold#FnInStruct
 icu::casemapping::CaseMapping::fold_turkic#FnInStruct
@@ -392,7 +402,6 @@ icu::datetime::input::LocalizedDateTimeInput::day_of_week_in_month#FnInTrait
 icu::datetime::input::LocalizedDateTimeInput::flexible_day_period#FnInTrait
 icu::datetime::input::LocalizedDateTimeInput::week_of_month#FnInTrait
 icu::datetime::input::LocalizedDateTimeInput::week_of_year#FnInTrait
-icu::datetime::input::LocalizedDateTimeInput::year_week#FnInTrait
 icu::datetime::input::MonthCode#Struct
 icu::datetime::input::MonthCode::Err#AssociatedTypeInStruct
 icu::datetime::input::MonthCode::from_str#FnInStruct

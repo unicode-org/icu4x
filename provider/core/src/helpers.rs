@@ -230,6 +230,18 @@ macro_rules! gen_any_buffer_constructors {
         }
     };
 
+    (locale: include, options: skip, error: $error_ty:path) => {
+        $crate::gen_any_buffer_constructors!(
+            locale: include,
+            options: skip,
+            error: $error_ty,
+            functions: [
+                Self::try_new_unstable,
+                try_new_with_any_provider,
+                try_new_with_buffer_provider
+            ]
+        );
+    };
     (locale: include, options: skip, error: $error_ty:path, functions: [$f1:path, $f2:ident, $f3:ident]) => {
         #[doc = concat!("Create a new instance using an [`AnyProvider`](icu_provider::AnyProvider).\n\nSee also: [`", stringify!($f1), "`]")]
         pub fn $f2(provider: &(impl $crate::AnyProvider + ?Sized), locale: &$crate::DataLocale) -> Result<Self, $error_ty> {
