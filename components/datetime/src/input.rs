@@ -354,10 +354,21 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithWee
     }
 
     fn year_week(&self) -> Result<FormattableYear, DateTimeError> {
-        year_week(
-            self.data,
-            self.calendar.as_ref().ok_or(DateTimeError::MissingCalendar)?,
-        )
+        let config = self.calendar.ok_or(DateTimeError::MissingCalendar)?;
+        let day_of_year_info = self.data
+            .day_of_year_info()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_year_info"))?;
+        let iso_weekday = self.data
+            .iso_weekday()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?;
+        let week_of = config.week_of_year(day_of_year_info, iso_weekday)?;
+        Ok(match week_of.unit {
+            week_of::RelativeUnit::Previous => day_of_year_info.prev_year,
+            week_of::RelativeUnit::Current => self.data
+                .year()
+                .ok_or(DateTimeError::MissingInput("DateTimeInput::year"))?,
+            week_of::RelativeUnit::Next => day_of_year_info.next_year,
+        })
     }
 
     fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
@@ -372,10 +383,15 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithWee
     }
 
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
-        week_of_year(
-            self.data,
-            self.calendar.as_ref().ok_or(DateTimeError::MissingCalendar)?,
-        )
+        let config = self.calendar.ok_or(DateTimeError::MissingCalendar)?;
+        let day_of_year_info = self.data
+            .day_of_year_info()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_year_info"))?;
+        let iso_weekday = self.data
+            .iso_weekday()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?;
+        let week_of = config.week_of_year(day_of_year_info, iso_weekday)?;
+        Ok(WeekOfYear(week_of.week as u32))
     }
 
     fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, DateTimeError> {
