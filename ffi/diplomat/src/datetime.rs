@@ -15,8 +15,8 @@ pub mod ffi {
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate};
-    use crate::time::ffi::{ICU4XTime};
     use crate::errors::ffi::ICU4XError;
+    use crate::time::ffi::ICU4XTime;
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a Gregorian date and time.
@@ -50,7 +50,6 @@ pub mod ffi {
         pub fn time(&self) -> Box<ICU4XTime> {
             Box::new(ICU4XTime(self.0.time.clone()))
         }
-
 
         /// Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
         /// other calendars
