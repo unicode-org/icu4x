@@ -2,23 +2,20 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Week-of-year and week-of-month calculations.
-//!
-//! The main functionality of this module is found in the [`week_of()`] (and [`simple_week_of()`])
-//! functions.
-
 use crate::{error::DateTimeError, provider::WeekDataV1, types::{IsoWeekday, DayOfYearInfo, DayOfMonth, WeekOfMonth, WeekOfYear}};
+use icu_provider::prelude::*;
 
 /// Minimum number of days in a month unit required for using this module
 pub const MIN_UNIT_DAYS: u16 = 14;
 
-/// Information about how a given calendar assigns weeks to a year or month.
+/// Calculator for week-of-month and week-of-year based on locale-specific configurations.
 #[derive(Clone, Copy, Debug)]
 #[non_exhaustive]
 pub struct WeekCalculator {
     /// The first day of a week.
     pub first_weekday: IsoWeekday,
-    /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
+    /// For a given week, the minimum number of that week's days present in a given month or year
+    /// for the week to be considered part of that month or year.
     pub min_week_days: u8,
 }
 
@@ -35,10 +32,19 @@ impl From<&WeekDataV1> for WeekCalculator {
 }
 
 impl WeekCalculator {
-    /// Returns the zero based index of `weekday` vs this calendar's start of week.
-    fn weekday_index(&self, weekday: IsoWeekday) -> i8 {
-        (7 + (weekday as i8) - (self.first_weekday as i8)) % 7
+    /// Creates a new [`WeekCalculator`] from locale data.
+    pub fn try_new_unstable<P>(provider: &P, locale: &DataLocale) -> Result<Self, DataError>
+    where
+        P: DataProvider<crate::provider::WeekDataV1Marker>
+    {
+        provider.load(DataRequest {locale, metadata: Default::default()}).and_then(DataResponse::take_payload).map(|payload| payload.get().into())
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: skip,
+        error: DataError
+    );
 
     /// Returns the week of month according to a calendar with min_week_days = 1.
     ///
@@ -48,10 +54,61 @@ impl WeekCalculator {
     /// of December but 'MMMMW' would have it formatted as 'week 5 of January').
     ///
     /// 1: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_calendar::week::WeekCalculator;
+    /// use icu_calendar::types::{IsoWeekday, DayOfMonth, WeekOfMonth};
+    /// 
+    /// let week_calculator = WeekCalculator::try_new_with_buffer_provider(
+    ///     &icu_testdata::get_provider(),
+    ///     &icu_locid::locale!("en-GB").into()
+    /// )
+    /// .expect("Data exists");
+    /// 
+    /// // Wednesday the 10th is in week 2:
+    /// assert_eq!(
+    ///     WeekOfMonth(2),
+    ///     week_calculator.week_of_month(
+    ///         DayOfMonth(10),
+    ///         IsoWeekday::Wednesday
+    ///     )
+    /// );
+    /// ```
     pub fn week_of_month(&self, day_of_month: DayOfMonth, iso_weekday: IsoWeekday) -> WeekOfMonth {
         WeekOfMonth(simple_week_of(self.first_weekday, day_of_month.0 as u16, iso_weekday) as u32)
     }
 
+    /// Returns the week of year according to the weekday and [`DayOfYearInfo`].
+    /// 
+    /// # Examples
+    /// 
+    /// ```
+    /// use icu_calendar::week::{WeekCalculator, WeekOf, RelativeUnit};
+    /// use icu_calendar::types::{IsoWeekday, DayOfMonth};
+    /// use icu_calendar::Date;
+    /// 
+    /// let week_calculator = WeekCalculator::try_new_with_buffer_provider(
+    ///     &icu_testdata::get_provider(),
+    ///     &icu_locid::locale!("en-GB").into()
+    /// )
+    /// .expect("Data exists");
+    /// 
+    /// let iso_date = Date::new_iso_date(2022, 8, 26).unwrap();
+    /// 
+    /// // Friday August 26 is in week 34 of year 2022:
+    /// assert_eq!(
+    ///     WeekOf {
+    ///         unit: RelativeUnit::Current,
+    ///         week: 34
+    ///     },
+    ///     week_calculator.week_of_year(
+    ///         iso_date.day_of_year_info(),
+    ///         IsoWeekday::Friday
+    ///     ).unwrap()
+    /// );
+    /// ```
     pub fn week_of_year(&self, day_of_year_info: DayOfYearInfo, iso_weekday: IsoWeekday) -> Result<WeekOf, DateTimeError> {
         week_of(
             self,
@@ -60,6 +117,11 @@ impl WeekCalculator {
             day_of_year_info.day_of_year as u16,
             iso_weekday,
         )
+    }
+
+    /// Returns the zero based index of `weekday` vs this calendar's start of week.
+    fn weekday_index(&self, weekday: IsoWeekday) -> i8 {
+        (7 + (weekday as i8) - (self.first_weekday as i8)) % 7
     }
 }
 

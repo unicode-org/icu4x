@@ -8,7 +8,8 @@
 use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::Calendar;
-use icu_calendar::{week_of, AsCalendar, Date, DateTime, Iso};
+use icu_calendar::{AsCalendar, Date, DateTime, Iso};
+use icu_calendar::week::{WeekCalculator, RelativeUnit};
 use icu_timezone::{CustomTimeZone, GmtOffset, ZoneVariant};
 
 // TODO (Manishearth) fix up imports to directly import from icu_calendar
@@ -122,7 +123,7 @@ pub trait LocalizedDateTimeInput<T: DateTimeInput> {
 
 pub(crate) struct DateTimeInputWithWeekConfig<'data, T: DateTimeInput> {
     data: &'data T,
-    calendar: Option<week_of::WeekOfYearConfig>,
+    calendar: Option<WeekCalculator>,
 }
 
 /// A [`DateTimeInput`] type with all of the fields pre-extracted
@@ -262,7 +263,7 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
 }
 
 impl<'data, T: DateTimeInput> DateTimeInputWithWeekConfig<'data, T> {
-    pub(crate) fn new(data: &'data T, calendar: Option<week_of::WeekOfYearConfig>) -> Self {
+    pub(crate) fn new(data: &'data T, calendar: Option<WeekCalculator>) -> Self {
         Self { data, calendar }
     }
 }
@@ -293,11 +294,11 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithWee
             .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?;
         let week_of = config.week_of_year(day_of_year_info, iso_weekday)?;
         let year = match week_of.unit {
-            week_of::RelativeUnit::Previous => day_of_year_info.prev_year,
-            week_of::RelativeUnit::Current => self.data
+            RelativeUnit::Previous => day_of_year_info.prev_year,
+            RelativeUnit::Current => self.data
                 .year()
                 .ok_or(DateTimeError::MissingInput("DateTimeInput::year"))?,
-            week_of::RelativeUnit::Next => day_of_year_info.next_year,
+            RelativeUnit::Next => day_of_year_info.next_year,
         };
         Ok((year, WeekOfYear(week_of.week as u32)))
     }

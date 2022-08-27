@@ -6,7 +6,7 @@ use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use icu_calendar::week_of::WeekOfYearConfig;
+use icu_calendar::week_of::WeekCalculator;
 use icu_calendar::provider::{WeekDataV1, WeekDataV1Marker};
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
@@ -55,7 +55,7 @@ impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(WeekDataV1(WeekOfYearConfig {
+            payload: Some(DataPayload::from_owned(WeekDataV1(WeekCalculator {
                 first_weekday: week_data
                     .first_day
                     .get(&territory)

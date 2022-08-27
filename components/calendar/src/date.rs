@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
-use crate::week_of::{self, WeekOf, WeekOfYearConfig};
+use crate::week_of::{self, WeekOf, WeekCalculator};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
@@ -248,7 +248,7 @@ impl<A: AsCalendar> Date<A> {
     /// assert_eq!(date.week_of_month(first_weekday), 2);
     /// ```
     pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
-        let config = WeekOfYearConfig {
+        let config = WeekCalculator {
             first_weekday,
             min_week_days: 0, // ignored
         };
@@ -282,7 +282,7 @@ impl<A: AsCalendar> Date<A> {
     ///     })
     /// );
     /// ```
-    pub fn week_of_year(&self, config: &WeekOfYearConfig) -> Result<WeekOf, DateTimeError> {
+    pub fn week_of_year(&self, config: &WeekCalculator) -> Result<WeekOf, DateTimeError> {
         config.week_of_year(self.day_of_year_info(), self.day_of_week())
     }
 
