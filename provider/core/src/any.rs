@@ -6,7 +6,7 @@
 
 use crate::prelude::*;
 use crate::response::RcWrap;
-use cfg_if::cfg_if;
+use crate::response::RcWrapBounds;
 use core::any::Any;
 use core::convert::TryFrom;
 use core::convert::TryInto;
@@ -328,18 +328,6 @@ pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 pub trait AsDowncastingAnyProvider {
     /// Returns an object implementing `DynamicDataProvider<M>` when called on `AnyProvider`
     fn as_downcasting(&self) -> DowncastingAnyProvider<Self>;
-}
-
-cfg_if! {
-    if #[cfg(feature = "sync")] {
-        /// A trait that allows to define bounds for RcWrap when the "sync" feature is on.
-        pub trait RcWrapBounds: Send + Sync {}
-        impl<T: Send + Sync> RcWrapBounds for T {}
-    } else {
-        /// A trait that allows to define bounds for RcWrap when the "sync" feature is off.
-        pub trait RcWrapBounds {}
-        impl<T> RcWrapBounds for T {}
-    }
 }
 
 impl<P> AsDowncastingAnyProvider for P
