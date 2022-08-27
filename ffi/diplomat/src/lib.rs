@@ -42,7 +42,7 @@ pub mod calendar;
 pub mod data_struct;
 pub mod date;
 pub mod datetime;
-pub mod datetime_format;
+pub mod datetime_formatter;
 pub mod decimal;
 pub mod errors;
 pub mod fixed_decimal;
