@@ -35,7 +35,7 @@ pub mod ffi {
 
     impl ICU4XTimeFormatter {
         /// Creates a new [`ICU4XTimeFormatter`] from locale data.
-        #[diplomat::rust_link(icu::decimal::TypedDateFormatter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::decimal::TimeFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -70,6 +70,8 @@ pub mod ffi {
         }
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_string, FnInStruct, hidden)]
         pub fn format_gregorian_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
@@ -86,6 +88,8 @@ pub mod ffi {
         }
         /// Formats a [`ICU4XDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_string, FnInStruct, hidden)]
         pub fn format_datetime(
             &self,
             value: &ICU4XDateTime,
@@ -103,6 +107,8 @@ pub mod ffi {
 
         /// Formats a [`ICU4XIsoDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_string, FnInStruct, hidden)]
         pub fn format_iso_datetime(
             &self,
             value: &ICU4XIsoDateTime,
@@ -154,6 +160,12 @@ pub mod ffi {
 
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TypedDateFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TypedDateFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::datetime::TypedDateFormatter::format_to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn format_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
@@ -200,6 +212,12 @@ pub mod ffi {
 
         /// Formats a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::datetime::TypedDateTimeFormatter::format_to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn format_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
@@ -242,7 +260,9 @@ pub mod ffi {
         }
 
         /// Formats a [`ICU4XDate`] to a string.
-        #[diplomat::rust_link(icu::datetime::date_length::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_string, FnInStruct, hidden)]
         pub fn format_datetime(
             &self,
             value: &ICU4XDate,
@@ -288,6 +308,12 @@ pub mod ffi {
 
         /// Formats a [`ICU4XDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::datetime::DateTimeFormatter::format_to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn format_datetime(
             &self,
             value: &ICU4XDateTime,

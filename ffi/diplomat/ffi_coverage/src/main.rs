@@ -84,6 +84,7 @@ lazy_static::lazy_static! {
         "Into",
         "Iterator", // ???
         "Ord",
+        "Provider", // new error handling stuff
         "PartialEq",
         "PartialOrd",
         "RefUnwindSafe",
@@ -175,6 +176,11 @@ lazy_static::lazy_static! {
         "icu::calendar::DateDuration",
         "icu::calendar::DateDurationUnit",
 
+        // mostly used for provider, may in the future be exposed for options
+        "icu::datetime::fields",
+        // experimental
+        "icu::datetime::options::components",
+        "icu::datetime::options::preferences",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
@@ -185,11 +191,17 @@ lazy_static::lazy_static! {
         "icu::calendar::Calendar",
         // Rust-specific calendar wrapper stuff
         "icu::calendar::AsCalendar",
+        "icu::datetime::CldrCalendar",
         "icu::calendar::Ref",
         "icu::calendar::Date::wrap_calendar_in_rc",
         "icu::calendar::Date::wrap_calendar_in_arc",
         "icu::calendar::DateTime::wrap_calendar_in_rc",
         "icu::calendar::DateTime::wrap_calendar_in_arc",
+
+        // Rust-specific formatting wrappers
+        "icu::datetime::FormattedTimeZone",
+        "icu::datetime::FormattedDateTime",
+        "icu::datetime::FormattedZonedDateTime",
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike
         // calendar types exist to implement the trait
@@ -202,6 +214,9 @@ lazy_static::lazy_static! {
         "icu::calendar::gregorian::Gregorian",
         "icu::calendar::gregorian::GregorianDateInner",
 
+        // Rusty input trait
+        "icu::datetime::input",
+
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
         "icu::calendar::types",
@@ -211,9 +226,6 @@ lazy_static::lazy_static! {
         // uniformly especially for complex types
         "icu::calendar::provider",
         "icu::datetime::provider",
-
-        // Error helpers
-        "icu::calendar::DateTimeError::provide",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar",
