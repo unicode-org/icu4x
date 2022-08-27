@@ -65,8 +65,6 @@ impl WeekCalculator {
     /// in inconsistencies (e.g. in the ISO calendar 2021-01-01 is the last week
     /// of December but 'MMMMW' would have it formatted as 'week 5 of January').
     ///
-    /// 1: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
-    ///
     /// # Examples
     ///
     /// ```
@@ -88,6 +86,8 @@ impl WeekCalculator {
     ///     )
     /// );
     /// ```
+    ///
+    /// [1]: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
     pub fn week_of_month(&self, day_of_month: DayOfMonth, iso_weekday: IsoWeekday) -> WeekOfMonth {
         WeekOfMonth(simple_week_of(self.first_weekday, day_of_month.0 as u16, iso_weekday) as u32)
     }
@@ -251,7 +251,7 @@ pub enum RelativeUnit {
 pub struct WeekOf {
     /// Week of month/year. 1 based.
     pub week: u16,
-    /// The month/year that this week is in, relative to the month/unit for which [`week_of`] was called.
+    /// The month/year that this week is in, relative to the month/year of the input date.
     pub unit: RelativeUnit,
 }
 
