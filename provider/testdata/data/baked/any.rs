@@ -285,9 +285,9 @@ impl AnyProvider for BakedDataProvider {
                     .map(|&data| {
                         AnyPayload::from_rcwrap_payload::<
                             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker,
-                        >(icu_provider::RcWrap::from(DataPayload::from_owned(
-                            zerofrom::ZeroFrom::zero_from(data),
-                        )))
+                        >(icu_provider::RcWrap::from(
+                            DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(data)),
+                        ))
                     }),
                 ETHIOPIANDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
