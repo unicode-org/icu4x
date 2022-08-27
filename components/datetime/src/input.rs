@@ -266,82 +266,6 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     }
 }
 
-fn compute_week_of_year<T: DateInput>(
-    datetime: &T,
-    calendar: &week_of::WeekOfYearConfig,
-) -> Result<(DayOfYearInfo, week_of::WeekOf), DateTimeError> {
-    let doy_info = datetime
-        .day_of_year_info()
-        .ok_or(DateTimeError::MissingInput(
-            "DateTimeInput::day_of_year_info",
-        ))?;
-    let week = week_of::week_of(
-        calendar,
-        doy_info.days_in_prev_year as u16,
-        doy_info.days_in_year as u16,
-        doy_info.day_of_year as u16,
-        datetime
-            .iso_weekday()
-            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?,
-    )?;
-    Ok((doy_info, week))
-}
-
-fn year_week<T: DateInput>(
-    datetime: &T,
-    calendar: &week_of::WeekOfYearConfig,
-) -> Result<FormattableYear, DateTimeError> {
-    let (doy_info, week) = compute_week_of_year(datetime, calendar)?;
-    Ok(match week.unit {
-        week_of::RelativeUnit::Previous => doy_info.prev_year,
-        week_of::RelativeUnit::Current => datetime
-            .year()
-            .ok_or(DateTimeError::MissingInput("DateTimeInput::year"))?,
-        week_of::RelativeUnit::Next => doy_info.next_year,
-    })
-}
-
-fn week_of_year<T: DateInput>(
-    datetime: &T,
-    calendar: &week_of::WeekOfYearConfig,
-) -> Result<WeekOfYear, DateTimeError> {
-    let (_, week) = compute_week_of_year(datetime, calendar)?;
-    Ok(WeekOfYear(u32::from(week.week)))
-}
-
-/// Returns the week of month according to a calendar with min_week_days = 1.
-///
-/// This is different from what the UTS35 spec describes [1] but the latter is
-/// missing a month of week-of-month field so following the spec would result
-/// in inconsistencies (e.g. in the ISO calendar 2021-01-01 is the last week
-/// of December but 'MMMMW' would have it formatted as 'week 5 of January').
-///
-/// 1: https://www.unicode.org/reports/tr35/tr35-55/tr35-dates.html#Date_Patterns_Week_Of_Year
-fn week_of_month<T: DateInput>(
-    datetime: &T,
-    first_weekday: IsoWeekday,
-) -> Result<WeekOfMonth, DateTimeError> {
-    let day_of_month = datetime
-        .day_of_month()
-        .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
-
-    let week = week_of::simple_week_of(
-        first_weekday,
-        day_of_month.0 as u16,
-        datetime
-            .iso_weekday()
-            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?,
-    );
-    Ok(WeekOfMonth(u32::from(week)))
-}
-
-fn day_of_week_in_month<T: DateInput>(datetime: &T) -> Result<DayOfWeekInMonth, DateTimeError> {
-    let day_of_month = datetime
-        .day_of_month()
-        .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
-    Ok(day_of_month.into())
-}
-
 impl<'data, T: DateTimeInput> DateTimeInputWithWeekConfig<'data, T> {
     pub(crate) fn new(data: &'data T, calendar: Option<week_of::WeekOfYearConfig>) -> Self {
         Self { data, calendar }
@@ -395,7 +319,10 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithWee
     }
 
     fn day_of_week_in_month(&self) -> Result<DayOfWeekInMonth, DateTimeError> {
-        day_of_week_in_month(self.data)
+        let day_of_month = self.data
+            .day_of_month()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
+        Ok(day_of_month.into())
     }
 
     fn flexible_day_period(&self) {

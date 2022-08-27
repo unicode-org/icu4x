@@ -18,7 +18,7 @@ use crate::provider::date_time::{DateSymbols, TimeSymbols};
 use core::fmt;
 use fixed_decimal::FixedDecimal;
 use icu_decimal::FixedDecimalFormatter;
-use icu_calendar::provider::{WeekDataV1, WeekDataV1Marker};
+use icu_calendar::provider::WeekDataV1;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
 use writeable::Writeable;
