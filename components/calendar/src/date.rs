@@ -247,7 +247,7 @@ impl<A: AsCalendar> Date<A> {
     ///
     /// assert_eq!(date.week_of_month(first_weekday), 2);
     /// ```
-    pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> u16 {
+    pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
         let config = WeekOfYearConfig {
             first_weekday,
             min_week_days: 0, // ignored

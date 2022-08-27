@@ -361,12 +361,14 @@ impl<'data, T: DateTimeInput> LocalizedDateTimeInput<T> for DateTimeInputWithWee
     }
 
     fn week_of_month(&self) -> Result<WeekOfMonth, DateTimeError> {
-        week_of_month(
-            self.data,
-            self.calendar
-                .ok_or(DateTimeError::MissingCalendar)?
-                .first_weekday,
-        )
+        let config = self.calendar.ok_or(DateTimeError::MissingCalendar)?;
+        let day_of_month = self.data
+            .day_of_month()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::day_of_month"))?;
+        let iso_weekday = self.data
+            .iso_weekday()
+            .ok_or(DateTimeError::MissingInput("DateTimeInput::iso_weekday"))?;
+        Ok(config.week_of_month(day_of_month, iso_weekday))
     }
 
     fn week_of_year(&self) -> Result<WeekOfYear, DateTimeError> {
