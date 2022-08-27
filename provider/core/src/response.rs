@@ -233,11 +233,11 @@ impl<T: 'static> RcWrap<T> {
 
 cfg_if! {
     if #[cfg(feature = "sync")] {
-        /// A trait that allows to define bounds for RcWrap when the "sync" feature is on.
+        /// A trait that allows to specify bounds for RcWrap value when the "sync" feature is on.
         pub trait RcWrapBounds: Send + Sync {}
         impl<T: Send + Sync> RcWrapBounds for T {}
     } else {
-        /// A trait that allows to define bounds for RcWrap when the "sync" feature is off.
+        /// A trait that allows to specify bounds for RcWrap value when the "sync" feature is off.
         pub trait RcWrapBounds {}
         impl<T> RcWrapBounds for T {}
     }
