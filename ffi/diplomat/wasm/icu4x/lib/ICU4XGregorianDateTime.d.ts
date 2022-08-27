@@ -1,6 +1,7 @@
 import { u8, i32, u32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
+import { ICU4XTime } from "./ICU4XTime";
 
 /**
 
@@ -18,4 +19,12 @@ export class ICU4XGregorianDateTime {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XGregorianDateTime | never;
+
+  /**
+
+   * Gets the time contained in this object
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time Rust documentation for `time`} for more information.
+   */
+  time(): ICU4XTime;
 }

@@ -16,6 +16,7 @@ typedef struct ICU4XIsoDateTime ICU4XIsoDateTime;
 #endif
 #include "diplomat_result_box_ICU4XIsoDateTime_ICU4XError.h"
 #include "ICU4XIsoDate.h"
+#include "ICU4XTime.h"
 #include "ICU4XDateTime.h"
 #ifdef __cplusplus
 namespace capi {
@@ -27,6 +28,8 @@ diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_try_new(int32_t
 diplomat_result_box_ICU4XIsoDateTime_ICU4XError ICU4XIsoDateTime_from_minutes_since_local_unix_epoch(int32_t minutes);
 
 ICU4XIsoDate* ICU4XIsoDateTime_date(const ICU4XIsoDateTime* self);
+
+ICU4XTime* ICU4XIsoDateTime_time(const ICU4XIsoDateTime* self);
 
 ICU4XDateTime* ICU4XIsoDateTime_to_any(const ICU4XIsoDateTime* self);
 

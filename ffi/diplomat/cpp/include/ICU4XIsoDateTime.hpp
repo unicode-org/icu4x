@@ -14,6 +14,7 @@
 class ICU4XIsoDateTime;
 #include "ICU4XError.hpp"
 class ICU4XIsoDate;
+class ICU4XTime;
 class ICU4XDateTime;
 
 /**
@@ -55,6 +56,13 @@ class ICU4XIsoDateTime {
   ICU4XIsoDate date() const;
 
   /**
+   * Gets the time contained in this object
+   * 
+   * See the [Rust documentation for `time`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time) for more information.
+   */
+  ICU4XTime time() const;
+
+  /**
    * Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
    * other calendars
    * 
@@ -79,6 +87,7 @@ class ICU4XIsoDateTime {
 };
 
 #include "ICU4XIsoDate.hpp"
+#include "ICU4XTime.hpp"
 #include "ICU4XDateTime.hpp"
 
 inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
@@ -103,6 +112,9 @@ inline diplomat::result<ICU4XIsoDateTime, ICU4XError> ICU4XIsoDateTime::from_min
 }
 inline ICU4XIsoDate ICU4XIsoDateTime::date() const {
   return ICU4XIsoDate(capi::ICU4XIsoDateTime_date(this->inner.get()));
+}
+inline ICU4XTime ICU4XIsoDateTime::time() const {
+  return ICU4XTime(capi::ICU4XIsoDateTime_time(this->inner.get()));
 }
 inline ICU4XDateTime ICU4XIsoDateTime::to_any() const {
   return ICU4XDateTime(capi::ICU4XIsoDateTime_to_any(this->inner.get()));

@@ -15,6 +15,7 @@ class ICU4XCalendar;
 class ICU4XDateTime;
 #include "ICU4XError.hpp"
 class ICU4XDate;
+class ICU4XTime;
 class ICU4XIsoDateTime;
 
 /**
@@ -58,6 +59,13 @@ class ICU4XDateTime {
   ICU4XDate date() const;
 
   /**
+   * Gets the time contained in this object
+   * 
+   * See the [Rust documentation for `time`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time) for more information.
+   */
+  ICU4XTime time() const;
+
+  /**
    * Converts this date to ISO
    * 
    * See the [Rust documentation for `to_iso`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_iso) for more information.
@@ -82,6 +90,7 @@ class ICU4XDateTime {
 
 #include "ICU4XCalendar.hpp"
 #include "ICU4XDate.hpp"
+#include "ICU4XTime.hpp"
 #include "ICU4XIsoDateTime.hpp"
 
 inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
@@ -106,6 +115,9 @@ inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::try_new_from_c
 }
 inline ICU4XDate ICU4XDateTime::date() const {
   return ICU4XDate(capi::ICU4XDateTime_date(this->inner.get()));
+}
+inline ICU4XTime ICU4XDateTime::time() const {
+  return ICU4XTime(capi::ICU4XDateTime_time(this->inner.get()));
 }
 inline ICU4XIsoDateTime ICU4XDateTime::to_iso() const {
   return ICU4XIsoDateTime(capi::ICU4XDateTime_to_iso(this->inner.get()));

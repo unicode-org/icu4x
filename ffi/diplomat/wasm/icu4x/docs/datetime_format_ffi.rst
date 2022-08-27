@@ -80,9 +80,30 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
 
 
+    .. js:function:: format_time(value)
+
+        Formats a :js:class:`ICU4XTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
     .. js:function:: format_gregorian_datetime(value)
 
         Formats a :js:class:`ICU4XGregorianDateTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
+    .. js:function:: format_datetime(value)
+
+        Formats a :js:class:`ICU4XDateTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
+    .. js:function:: format_iso_datetime(value)
+
+        Formats a :js:class:`ICU4XIsoDateTime` to a string.
 
         See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
 

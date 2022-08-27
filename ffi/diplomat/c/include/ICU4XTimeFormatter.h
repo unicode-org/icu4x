@@ -18,8 +18,11 @@ typedef struct ICU4XTimeFormatter ICU4XTimeFormatter;
 #include "ICU4XLocale.h"
 #include "ICU4XTimeLength.h"
 #include "diplomat_result_box_ICU4XTimeFormatter_ICU4XError.h"
-#include "ICU4XGregorianDateTime.h"
+#include "ICU4XTime.h"
 #include "diplomat_result_void_ICU4XError.h"
+#include "ICU4XGregorianDateTime.h"
+#include "ICU4XDateTime.h"
+#include "ICU4XIsoDateTime.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -27,7 +30,13 @@ extern "C" {
 
 diplomat_result_box_ICU4XTimeFormatter_ICU4XError ICU4XTimeFormatter_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XTimeLength length);
 
+diplomat_result_void_ICU4XError ICU4XTimeFormatter_format_time(const ICU4XTimeFormatter* self, const ICU4XTime* value, DiplomatWriteable* write);
+
 diplomat_result_void_ICU4XError ICU4XTimeFormatter_format_gregorian_datetime(const ICU4XTimeFormatter* self, const ICU4XGregorianDateTime* value, DiplomatWriteable* write);
+
+diplomat_result_void_ICU4XError ICU4XTimeFormatter_format_datetime(const ICU4XTimeFormatter* self, const ICU4XDateTime* value, DiplomatWriteable* write);
+
+diplomat_result_void_ICU4XError ICU4XTimeFormatter_format_iso_datetime(const ICU4XTimeFormatter* self, const ICU4XIsoDateTime* value, DiplomatWriteable* write);
 void ICU4XTimeFormatter_destroy(ICU4XTimeFormatter* self);
 
 #ifdef __cplusplus

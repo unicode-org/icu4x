@@ -15,12 +15,15 @@ typedef struct ICU4XGregorianDateTime ICU4XGregorianDateTime;
 } // namespace capi
 #endif
 #include "diplomat_result_box_ICU4XGregorianDateTime_ICU4XError.h"
+#include "ICU4XTime.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
 #endif
 
 diplomat_result_box_ICU4XGregorianDateTime_ICU4XError ICU4XGregorianDateTime_try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+
+ICU4XTime* ICU4XGregorianDateTime_time(const ICU4XGregorianDateTime* self);
 void ICU4XGregorianDateTime_destroy(ICU4XGregorianDateTime* self);
 
 #ifdef __cplusplus

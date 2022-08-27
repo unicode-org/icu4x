@@ -3,6 +3,7 @@ import { FFIError } from "./diplomat-runtime"
 import { ICU4XDateTime } from "./ICU4XDateTime";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoDate } from "./ICU4XIsoDate";
+import { ICU4XTime } from "./ICU4XTime";
 
 /**
 
@@ -37,6 +38,14 @@ export class ICU4XIsoDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date Rust documentation for `date`} for more information.
    */
   date(): ICU4XIsoDate;
+
+  /**
+
+   * Gets the time contained in this object
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time Rust documentation for `time`} for more information.
+   */
+  time(): ICU4XTime;
 
   /**
 

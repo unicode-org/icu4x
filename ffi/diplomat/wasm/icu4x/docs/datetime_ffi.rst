@@ -29,6 +29,13 @@
         See the `Rust documentation for date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date>`__ for more information.
 
 
+    .. js:function:: time()
+
+        Gets the time contained in this object
+
+        See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
+
+
     .. js:function:: to_iso()
 
         Converts this date to ISO
@@ -57,6 +64,13 @@
         See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
 
 
+    .. js:function:: time()
+
+        Gets the time contained in this object
+
+        See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
+
+
 .. js:class:: ICU4XIsoDateTime
 
     An ICU4X DateTime object capable of containing a ISO-8601 date and time.
@@ -83,6 +97,13 @@
         Gets the date contained in this object
 
         See the `Rust documentation for date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date>`__ for more information.
+
+
+    .. js:function:: time()
+
+        Gets the time contained in this object
+
+        See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
 
 
     .. js:function:: to_any()

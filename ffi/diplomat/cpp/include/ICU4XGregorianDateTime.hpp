@@ -13,6 +13,7 @@
 
 class ICU4XGregorianDateTime;
 #include "ICU4XError.hpp"
+class ICU4XTime;
 
 /**
  * A destruction policy for using ICU4XGregorianDateTime with std::unique_ptr.
@@ -37,6 +38,13 @@ class ICU4XGregorianDateTime {
    * See the [Rust documentation for `new_gregorian_datetime`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime) for more information.
    */
   static diplomat::result<ICU4XGregorianDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+
+  /**
+   * Gets the time contained in this object
+   * 
+   * See the [Rust documentation for `time`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time) for more information.
+   */
+  ICU4XTime time() const;
   inline const capi::ICU4XGregorianDateTime* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XGregorianDateTime* AsFFIMut() { return this->inner.get(); }
   inline ICU4XGregorianDateTime(capi::ICU4XGregorianDateTime* i) : inner(i) {}
@@ -47,6 +55,7 @@ class ICU4XGregorianDateTime {
   std::unique_ptr<capi::ICU4XGregorianDateTime, ICU4XGregorianDateTimeDeleter> inner;
 };
 
+#include "ICU4XTime.hpp"
 
 inline diplomat::result<ICU4XGregorianDateTime, ICU4XError> ICU4XGregorianDateTime::try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
   auto diplomat_result_raw_out_value = capi::ICU4XGregorianDateTime_try_new(year, month, day, hour, minute, second, nanosecond);
@@ -57,5 +66,8 @@ inline diplomat::result<ICU4XGregorianDateTime, ICU4XError> ICU4XGregorianDateTi
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
+}
+inline ICU4XTime ICU4XGregorianDateTime::time() const {
+  return ICU4XTime(capi::ICU4XGregorianDateTime_time(this->inner.get()));
 }
 #endif

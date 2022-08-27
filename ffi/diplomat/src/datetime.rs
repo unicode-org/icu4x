@@ -50,6 +50,14 @@ pub mod ffi {
         pub fn time(&self) -> Box<ICU4XTime> {
             Box::new(ICU4XTime(self.0.time.clone()))
         }
+
+
+        /// Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
+        /// other calendars
+        #[diplomat::rust_link(icu::calendar::DateTime::to_any, FnInStruct)]
+        pub fn to_any(&self) -> Box<ICU4XDateTime> {
+            Box::new(ICU4XDateTime(self.0.to_any().wrap_calendar_in_arc()))
+        }
     }
 
     #[diplomat::opaque]

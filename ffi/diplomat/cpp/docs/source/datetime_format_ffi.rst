@@ -109,6 +109,20 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
 
 
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_time_to_writeable(const ICU4XTime& value, W& write) const
+
+        Formats a :cpp:class:`ICU4XTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_time(const ICU4XTime& value) const
+
+        Formats a :cpp:class:`ICU4XTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_gregorian_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
 
         Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
@@ -119,6 +133,34 @@
     .. cpp:function:: diplomat::result<std::string, ICU4XError> format_gregorian_datetime(const ICU4XGregorianDateTime& value) const
 
         Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XDateTime& value, W& write) const
+
+        Formats a :cpp:class:`ICU4XDateTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XDateTime& value) const
+
+        Formats a :cpp:class:`ICU4XDateTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const
+
+        Formats a :cpp:class:`ICU4XIsoDateTime` to a string.
+
+        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_iso_datetime(const ICU4XIsoDateTime& value) const
+
+        Formats a :cpp:class:`ICU4XIsoDateTime` to a string.
 
         See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
 

@@ -4,6 +4,7 @@ import { ICU4XCalendar } from "./ICU4XCalendar";
 import { ICU4XDate } from "./ICU4XDate";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
+import { ICU4XTime } from "./ICU4XTime";
 
 /**
 
@@ -38,6 +39,14 @@ export class ICU4XDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date Rust documentation for `date`} for more information.
    */
   date(): ICU4XDate;
+
+  /**
+
+   * Gets the time contained in this object
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time Rust documentation for `time`} for more information.
+   */
+  time(): ICU4XTime;
 
   /**
 

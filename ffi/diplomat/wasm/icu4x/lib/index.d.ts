@@ -51,6 +51,7 @@ export { ICU4XSentenceBreakIteratorLatin1 } from './ICU4XSentenceBreakIteratorLa
 export { ICU4XSentenceBreakIteratorUtf16 } from './ICU4XSentenceBreakIteratorUtf16.js';
 export { ICU4XSentenceBreakIteratorUtf8 } from './ICU4XSentenceBreakIteratorUtf8.js';
 export { ICU4XSentenceBreakSegmenter } from './ICU4XSentenceBreakSegmenter.js';
+export { ICU4XTime } from './ICU4XTime.js';
 export { ICU4XTimeFormatter } from './ICU4XTimeFormatter.js';
 export { ICU4XTimeLength } from './ICU4XTimeLength.js';
 export { ICU4XTransformResult } from './ICU4XTransformResult.js';

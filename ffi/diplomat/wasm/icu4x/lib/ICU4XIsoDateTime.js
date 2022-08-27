@@ -3,6 +3,7 @@ import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XDateTime } from "./ICU4XDateTime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 import { ICU4XIsoDate } from "./ICU4XIsoDate.js"
+import { ICU4XTime } from "./ICU4XTime.js"
 
 const ICU4XIsoDateTime_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XIsoDateTime_destroy(underlying);
@@ -54,6 +55,10 @@ export class ICU4XIsoDateTime {
 
   date() {
     return new ICU4XIsoDate(wasm.ICU4XIsoDateTime_date(this.underlying), true, []);
+  }
+
+  time() {
+    return new ICU4XTime(wasm.ICU4XIsoDateTime_time(this.underlying), true, []);
   }
 
   to_any() {
