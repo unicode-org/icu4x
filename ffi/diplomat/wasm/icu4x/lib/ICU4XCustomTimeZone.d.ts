@@ -16,6 +16,10 @@ export class ICU4XCustomTimeZone {
   static create_from_str(s: string): ICU4XCustomTimeZone | never;
 
   /**
+   */
+  static create_empty(): ICU4XCustomTimeZone;
+
+  /**
 
    * Sets the `gmt_offset` field from offset seconds.
 

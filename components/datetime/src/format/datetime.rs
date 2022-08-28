@@ -5,7 +5,7 @@
 use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, Field, FieldLength, FieldSymbol, Second, Week, Year};
 use crate::input::{
-    DateTimeInput, DateTimeInputWithCalendar, ExtractedDateTimeInput, LocalizedDateTimeInput,
+    DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, LocalizedDateTimeInput,
 };
 use crate::pattern::{
     runtime::{Pattern, PatternPlurals},
@@ -14,10 +14,10 @@ use crate::pattern::{
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsFromPatternsV1Marker;
 use crate::provider::date_time::{DateSymbols, TimeSymbols};
-use crate::provider::week_data::WeekDataV1;
 
 use core::fmt;
 use fixed_decimal::FixedDecimal;
+use icu_calendar::provider::WeekDataV1;
 use icu_decimal::FixedDecimalFormatter;
 use icu_plurals::PluralRules;
 use icu_provider::DataPayload;
@@ -167,7 +167,7 @@ where
     T: DateTimeInput,
     W: fmt::Write + ?Sized,
 {
-    let loc_datetime = DateTimeInputWithCalendar::new(datetime, week_data.map(|d| &d.0));
+    let loc_datetime = DateTimeInputWithWeekConfig::new(datetime, week_data.map(|v| v.into()));
     let pattern = patterns.select(&loc_datetime, ordinal_rules)?;
     write_pattern(
         pattern,
@@ -227,7 +227,7 @@ where
             Year::WeekOf => format_number(
                 w,
                 fixed_decimal_format,
-                FixedDecimal::from(datetime.year_week()?.number),
+                FixedDecimal::from(datetime.week_of_year()?.0.number),
                 field.length,
             )?,
         },
@@ -263,7 +263,7 @@ where
             Week::WeekOfYear => format_number(
                 w,
                 fixed_decimal_format,
-                FixedDecimal::from(datetime.week_of_year()?.0),
+                FixedDecimal::from(datetime.week_of_year()?.1 .0),
                 field.length,
             )?,
             Week::WeekOfMonth => format_number(
@@ -546,7 +546,7 @@ mod tests {
                 .unwrap();
 
         let mut sink = String::new();
-        let loc_datetime = DateTimeInputWithCalendar::new(&datetime, None);
+        let loc_datetime = DateTimeInputWithWeekConfig::new(&datetime, None);
         write_pattern(
             &pattern,
             Some(date_data.get()),

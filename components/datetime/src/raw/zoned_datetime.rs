@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
@@ -25,7 +26,6 @@ use crate::{
             patterns::PatternPluralsFromPatternsV1Marker, ErasedDateSymbolsV1Marker,
             TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
-        week_data::WeekDataV1Marker,
     },
     raw,
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},

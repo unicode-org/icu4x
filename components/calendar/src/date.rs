@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::week::{WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
@@ -229,6 +230,61 @@ impl<A: AsCalendar> Date<A> {
     #[inline]
     pub fn day_of_year_info(&self) -> types::DayOfYearInfo {
         self.calendar.as_calendar().day_of_year_info(&self.inner)
+    }
+
+    /// The week of the month containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::WeekOfMonth;
+    /// use icu::calendar::types::IsoWeekday;
+    ///
+    /// let date = Date::new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
+    ///
+    /// // The following info is usually locale-specific
+    /// let first_weekday = IsoWeekday::Sunday;
+    ///
+    /// assert_eq!(
+    ///     date.week_of_month(first_weekday),
+    ///     WeekOfMonth(2)
+    /// );
+    /// ```
+    pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
+        let config = WeekCalculator {
+            first_weekday,
+            min_week_days: 0, // ignored
+        };
+        config.week_of_month(self.day_of_month(), self.day_of_week())
+    }
+
+    /// The week of the year containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::IsoWeekday;
+    /// use icu::calendar::week::WeekCalculator;
+    /// use icu::calendar::week::RelativeUnit;
+    /// use icu::calendar::week::WeekOf;
+    ///
+    /// let date = Date::new_iso_date(2022, 8, 26).unwrap();
+    ///
+    /// // The following info is usually locale-specific
+    /// let week_calculator = WeekCalculator::default();
+    ///
+    /// assert_eq!(
+    ///     date.week_of_year(&week_calculator),
+    ///     Ok(WeekOf {
+    ///         week: 35,
+    ///         unit: RelativeUnit::Current
+    ///     })
+    /// );
+    /// ```
+    pub fn week_of_year(&self, config: &WeekCalculator) -> Result<WeekOf, DateTimeError> {
+        config.week_of_year(self.day_of_year_info(), self.day_of_week())
     }
 
     /// Construct a date from raw values for a given calendar. This does not check any
