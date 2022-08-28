@@ -372,7 +372,7 @@ mod test {
 
         let any_payload = payload.wrap_into_any_payload();
         assert_eq!(
-            "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
+            "AnyPayload { inner: PayloadRc(RcWrap(Any { .. })), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
             format!("{:?}", any_payload)
         );
 
