@@ -1454,7 +1454,6 @@ where
                                         (REPLACEMENT_CHARACTER, EMPTY_U16)
                                     },
                                     |(first, tail)| (char_from_u16(first), tail),
-                                    
                                 );
                             c = starter;
                             if trail_or_complex & 0x1000 != 0 {
