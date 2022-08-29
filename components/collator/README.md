@@ -103,11 +103,60 @@ assert_eq!(collator_l3.compare("A", "Ⓐ"), Ordering::Less);
 ### Alternate Handling
 
 Allows alternate handling for certain customized collation orderings, including the option to
-ignore the special handling for the strings of such customizations.
+ignore the special handling for the strings of such customizations.  Specifically,
+alternate handling is used to control the handling of the so-called **variable** characters in the
+Unicode Collation Algorithm: whitespace, punctuation and symbols.
 
 Note that `AlternateHandling::ShiftTrimmed` and `AlternateHandling::Blanked` are
 unimplemented. The default is `AlternateHandling::NonIgnorable`, except
 for Thai, whose default is `AlternateHandling::Shifted`.
+
+```rust
+use core::cmp::Ordering;
+use icu_collator::*;
+
+let data_provider = icu_testdata::get_provider();
+
+// If alternate handling is set to `NonIgnorable`, then differences among
+// these characters are of the same importance as differences among letters.
+
+let mut options_3n = CollatorOptions::new();
+options_3n.set_strength(Some(Strength::Tertiary));
+options_3n.set_alternate_handling(Some(AlternateHandling::NonIgnorable));
+let collator_3n: Collator =
+    Collator::try_new_unstable(&data_provider, &Default::default(), options_3n).unwrap();
+
+assert_eq!(collator_3n.compare("di Silva", "Di Silva"), Ordering::Less);
+assert_eq!(collator_3n.compare("Di Silva", "diSilva"), Ordering::Less);
+assert_eq!(collator_3n.compare("diSilva", "U.S.A."), Ordering::Less);
+assert_eq!(collator_3n.compare("U.S.A.", "USA"), Ordering::Less);
+
+// If alternate handling is set to `Shifted`, then these characters are of only minor
+// importance. The Shifted value is often used in combination with Strength
+// set to Quaternary.
+
+let mut options_3s = CollatorOptions::new();
+options_3s.set_strength(Some(Strength::Tertiary));
+options_3s.set_alternate_handling(Some(AlternateHandling::Shifted));
+let collator_3s: Collator =
+    Collator::try_new_unstable(&data_provider, &Default::default(), options_3s).unwrap();
+
+assert_eq!(collator_3s.compare("di Silva", "diSilva"), Ordering::Equal);
+assert_eq!(collator_3s.compare("diSilva", "Di Silva"), Ordering::Less);
+assert_eq!(collator_3s.compare("Di Silva", "U.S.A."), Ordering::Less);
+assert_eq!(collator_3s.compare("U.S.A.", "USA"), Ordering::Equal);
+
+let mut options_4s = CollatorOptions::new();
+options_4s.set_strength(Some(Strength::Quaternary));
+options_4s.set_alternate_handling(Some(AlternateHandling::Shifted));
+let collator_3s: Collator =
+    Collator::try_new_unstable(&data_provider, &Default::default(), options_4s).unwrap();
+
+assert_eq!(collator_3s.compare("di Silva", "diSilva"), Ordering::Less);
+assert_eq!(collator_3s.compare("diSilva", "Di Silva"), Ordering::Less);
+assert_eq!(collator_3s.compare("Di Silva", "U.S.A."), Ordering::Less);
+assert_eq!(collator_3s.compare("U.S.A.", "USA"), Ordering::Less);
+```
 
 ### Case Level
 
