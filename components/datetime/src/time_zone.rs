@@ -108,7 +108,7 @@ pub(super) struct TimeZoneDataPayloads {
 impl TimeZoneFormatter {
     /// Constructor that selectively loads data based on what is required to
     /// format the given pattern into the given locale.
-    pub(super) fn try_new<ZP>(
+    pub(super) fn try_new_for_pattern<ZP>(
         zone_provider: &ZP,
         locale: &DataLocale,
         patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
