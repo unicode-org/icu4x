@@ -210,8 +210,6 @@ assert_eq!(tertiary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
 assert_eq!(tertiary.compare("DEAL", "déjavu"), Ordering::Less);
 assert_eq!(tertiary.compare("déjavu", "dent"), Ordering::Less);
 assert_eq!(tertiary.compare("dent", "develop"), Ordering::Less);
-
-
 ```
 
 ### Case First
