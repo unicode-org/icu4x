@@ -337,6 +337,70 @@ impl TimeZoneFormatter {
         Ok(tz_format)
     }
 
+    /// Creates a new [`TimeZoneFormatter`] with a GMT or ISO format.
+    ///
+    /// To enable other time zone styles, use one of the `load` methods.
+    ///
+    /// # Examples
+    ///
+    /// Default format is Localized GMT:
+    ///
+    /// ```
+    /// use icu::timezone::CustomTimeZone;
+    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
+    /// use icu_locid::locale;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let tzf = TimeZoneFormatter::try_new_with_buffer_provider(
+    ///     &provider,
+    ///     &locale!("es").into(),
+    ///     TimeZoneFormatterOptions::default(),
+    /// ).unwrap();
+    ///
+    /// let time_zone = "-0700".parse::<CustomTimeZone>().unwrap();
+    ///
+    /// assert_eq!(
+    ///     tzf.format_to_string(&time_zone),
+    ///     "GMT-07:00"
+    /// );
+    /// ```
+    pub fn try_new_unstable<P>(
+        provider: &P,
+        locale: &DataLocale,
+        options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
+    where
+        P: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker> + ?Sized,
+    {
+        let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
+        let data_payloads = TimeZoneDataPayloads {
+            zone_formats: provider
+                .load(DataRequest {
+                    locale,
+                    metadata: Default::default(),
+                })?
+                .take_payload()?,
+            exemplar_cities: None,
+            mz_generic_long: None,
+            mz_generic_short: None,
+            mz_specific_long: None,
+            mz_specific_short: None,
+        };
+        Ok(Self {
+            data_payloads,
+            locale: locale.clone(),
+            format_units,
+            fallback_unit: TimeZoneFormatter::get_fallback_unit(options.fallback_format),
+        })
+    }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: TimeZoneFormatterOptions,
+        error: DateTimeFormatterError
+    );
+
     /// Constructor that selectively loads data based on what is required to
     /// format the given config into the given locale.
     ///
@@ -373,27 +437,7 @@ impl TimeZoneFormatter {
             + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
-        let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
-        let data_payloads = TimeZoneDataPayloads {
-            zone_formats: zone_provider
-                .load(DataRequest {
-                    locale,
-                    metadata: Default::default(),
-                })?
-                .take_payload()?,
-            exemplar_cities: None,
-            mz_generic_long: None,
-            mz_generic_short: None,
-            mz_specific_long: None,
-            mz_specific_short: None,
-        };
-
-        let mut tz_format: TimeZoneFormatter = Self {
-            data_payloads,
-            locale: locale.clone(),
-            format_units,
-            fallback_unit: TimeZoneFormatter::get_fallback_unit(options.fallback_format),
-        };
+        let mut tz_format = Self::try_new_unstable(zone_provider, locale, options)?;
 
         match config {
             TimeZoneFormatterConfig::GenericNonLocationLong => {
