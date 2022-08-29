@@ -52,7 +52,7 @@ pub mod ffi {
             date: &ICU4XIsoDate,
             time: &ICU4XTime,
         ) -> Box<ICU4XIsoDateTime> {
-            let dt = DateTime::new(date.0.clone(), time.0);
+            let dt = DateTime::new(date.0, time.0);
             Box::new(ICU4XIsoDateTime(dt))
         }
 
@@ -73,7 +73,7 @@ pub mod ffi {
         /// Gets the date contained in this object
         #[diplomat::rust_link(icu::calendar::DateTime::date, StructField)]
         pub fn date(&self) -> Box<ICU4XIsoDate> {
-            Box::new(ICU4XIsoDate(self.0.date.clone()))
+            Box::new(ICU4XIsoDate(self.0.date))
         }
 
         /// Gets the time contained in this object
