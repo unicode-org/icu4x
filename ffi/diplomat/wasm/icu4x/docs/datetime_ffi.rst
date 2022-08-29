@@ -57,34 +57,6 @@
         See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
 
-.. js:class:: ICU4XGregorianDateTime
-
-    An ICU4X DateTime object capable of containing a Gregorian date and time.
-
-    See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
-
-
-    .. js:staticfunction:: try_new(year, month, day, hour, minute, second, nanosecond)
-
-        Creates a new :js:class:`ICU4XGregorianDateTime` from the specified date and time.
-
-        See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
-
-
-    .. js:function:: time()
-
-        Gets the time contained in this object
-
-        See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
-
-
-    .. js:function:: to_any()
-
-        Converts this to an :js:class:`ICU4XDateTime` capable of being mixed with dates of other calendars
-
-        See the `Rust documentation for to_any <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any>`__ for more information.
-
-
 .. js:class:: ICU4XIsoDateTime
 
     An ICU4X DateTime object capable of containing a ISO-8601 date and time.

@@ -2,13 +2,13 @@ import { FFIError } from "./diplomat-runtime"
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XDateLength } from "./ICU4XDateLength";
 import { ICU4XError } from "./ICU4XError";
-import { ICU4XGregorianDateTime } from "./ICU4XGregorianDateTime";
+import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XTimeLength } from "./ICU4XTimeLength";
 
 /**
 
- * An ICU4X TypedDateTimeFormatter object capable of formatting a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} as a string, using the Gregorian Calendar.
+ * An ICU4X TypedDateTimeFormatter object capable of formatting a {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} as a string, using the Gregorian Calendar.
 
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html Rust documentation for `TypedDateTimeFormatter`} for more information.
  */
@@ -25,10 +25,10 @@ export class ICU4XGregorianDateTimeFormatter {
 
   /**
 
-   * Formats a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} to a string.
+   * Formats a {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} to a string.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  format_gregorian_datetime(value: ICU4XGregorianDateTime): string | never;
+  format_iso_datetime(value: ICU4XIsoDateTime): string | never;
 }

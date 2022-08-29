@@ -57,34 +57,6 @@
         See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
 
-.. cpp:class:: ICU4XGregorianDateTime
-
-    An ICU4X DateTime object capable of containing a Gregorian date and time.
-
-    See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
-
-
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond)
-
-        Creates a new :cpp:class:`ICU4XGregorianDateTime` from the specified date and time.
-
-        See the `Rust documentation for new_gregorian_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_gregorian_datetime>`__ for more information.
-
-
-    .. cpp:function:: ICU4XTime time() const
-
-        Gets the time contained in this object
-
-        See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
-
-
-    .. cpp:function:: ICU4XDateTime to_any() const
-
-        Converts this to an :cpp:class:`ICU4XDateTime` capable of being mixed with dates of other calendars
-
-        See the `Rust documentation for to_any <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any>`__ for more information.
-
-
 .. cpp:class:: ICU4XIsoDateTime
 
     An ICU4X DateTime object capable of containing a ISO-8601 date and time.

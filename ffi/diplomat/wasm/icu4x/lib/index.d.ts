@@ -28,7 +28,6 @@ export { ICU4XGraphemeClusterBreakIteratorUtf16 } from './ICU4XGraphemeClusterBr
 export { ICU4XGraphemeClusterBreakIteratorUtf8 } from './ICU4XGraphemeClusterBreakIteratorUtf8.js';
 export { ICU4XGraphemeClusterBreakSegmenter } from './ICU4XGraphemeClusterBreakSegmenter.js';
 export { ICU4XGregorianDateFormatter } from './ICU4XGregorianDateFormatter.js';
-export { ICU4XGregorianDateTime } from './ICU4XGregorianDateTime.js';
 export { ICU4XGregorianDateTimeFormatter } from './ICU4XGregorianDateTimeFormatter.js';
 export { ICU4XIsoDate } from './ICU4XIsoDate.js';
 export { ICU4XIsoDateTime } from './ICU4XIsoDateTime.js';
