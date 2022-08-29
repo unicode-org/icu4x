@@ -11,53 +11,12 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_calendar::types::Time;
     use icu_calendar::AnyCalendar;
-    use icu_calendar::{DateTime, Gregorian, Iso};
+    use icu_calendar::{DateTime, Iso};
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate};
     use crate::errors::ffi::ICU4XError;
     use crate::time::ffi::ICU4XTime;
-
-    #[diplomat::opaque]
-    /// An ICU4X DateTime object capable of containing a Gregorian date and time.
-    #[diplomat::rust_link(icu::calendar::DateTime, Struct)]
-    pub struct ICU4XGregorianDateTime(pub DateTime<Gregorian>);
-
-    impl ICU4XGregorianDateTime {
-        /// Creates a new [`ICU4XGregorianDateTime`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::DateTime::new_gregorian_datetime, FnInStruct)]
-        pub fn try_new(
-            year: i32,
-            month: u8,
-            day: u8,
-            hour: u8,
-            minute: u8,
-            second: u8,
-            nanosecond: u32,
-        ) -> DiplomatResult<Box<ICU4XGregorianDateTime>, ICU4XError> {
-            let nanosecond = try_icu4x!(nanosecond.try_into());
-            DateTime::new_gregorian_datetime(year, month, day, hour, minute, second)
-                .map(|mut dt| {
-                    dt.time.nanosecond = nanosecond;
-                    Box::new(ICU4XGregorianDateTime(dt))
-                })
-                .map_err(Into::into)
-                .into()
-        }
-
-        /// Gets the time contained in this object
-        #[diplomat::rust_link(icu::calendar::DateTime::time, StructField)]
-        pub fn time(&self) -> Box<ICU4XTime> {
-            Box::new(ICU4XTime(self.0.time))
-        }
-
-        /// Converts this to an [`ICU4XDateTime`] capable of being mixed with dates of
-        /// other calendars
-        #[diplomat::rust_link(icu::calendar::DateTime::to_any, FnInStruct)]
-        pub fn to_any(&self) -> Box<ICU4XDateTime> {
-            Box::new(ICU4XDateTime(self.0.to_any().wrap_calendar_in_arc()))
-        }
-    }
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.

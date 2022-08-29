@@ -155,7 +155,7 @@ lazy_static::lazy_static! {
         "icu::calendar::japanese",
         "icu::calendar::julian",
         "icu::calendar::any_calendar::IntoAnyCalendar",
-        "icu::calendar::Date::new_gregorian_date", // For gregorian we support DateTime but not Date
+        "icu::calendar::Date::new_gregorian_date",
         "icu::calendar::Date::new_buddhist_date",
         "icu::calendar::Date::new_coptic_date",
         "icu::calendar::Date::new_ethiopian_date",
@@ -163,6 +163,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Date::new_japanese_date",
         "icu::calendar::Date::new_japanese_extended_date",
         "icu::calendar::Date::new_julian_date",
+        "icu::calendar::DateTime::new_gregorian_datetime",
         "icu::calendar::DateTime::new_buddhist_datetime",
         "icu::calendar::DateTime::new_coptic_datetime",
         "icu::calendar::DateTime::new_ethiopian_datetime",
