@@ -240,7 +240,7 @@ impl<T: Send + Sync> RcWrapBounds for T {}
 #[cfg(not(feature = "sync"))]
 pub trait RcWrapBounds {}
 #[cfg(not(feature = "sync"))]
-pub trait RcWrapBounds {}
+impl<T> RcWrapBounds for T {}
 
 #[test]
 fn test_clone_eq() {
