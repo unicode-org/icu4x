@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661802501647,
+  "lastUpdate": 1661811542031,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9718,6 +9718,126 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9949cdc883c1c780faf81a1e06ae7888e2758d24",
+          "message": "Whack-a-mole 3: Date, DateTime, Time, and Formatters (#2464)\n\n* fix docs\r\n\r\n* Finish all AnyCalendarKind methods\r\n\r\n* datetime -> datetime_format\r\n\r\n* Split into datetime and calendar modules\r\n\r\n* Add ffi objects for Date\r\n\r\n* Add lots of methods to Date and DateTime\r\n\r\n* regen\r\n\r\n* remove dangerous mutable set_ns api\r\n\r\n* regen\r\n\r\n* Add Time module\r\n\r\n* hook Time type into everything\r\n\r\n* regen\r\n\r\n* Add Date formatters\r\n\r\n* rename\r\n\r\n* add DateTime ctor from parts\r\n\r\n* more datetime coverage whackamole\r\n\r\n* regen\r\n\r\n* clip\r\n\r\n* fix test\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/datetime_formatter.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/datetime.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* fixes\r\n\r\n* format_gregorian_datetime\r\n\r\n* add more formatters\r\n\r\n* regen\r\n\r\n* test\r\n\r\n* Move over to ICU4XIsoDate[Time] in gregorian formatter\r\n\r\n* Remove ICU4XGregorianDateTime\r\n\r\n* regen\r\n\r\n* tests\r\n\r\n* copy paste Date methods\r\n\r\n* Add methods to datetime\r\n\r\n* copy paste to iso\r\n\r\n* regen\r\n\r\n* clippy\r\n\r\n* clip\r\n\r\n* Update components/calendar/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update components/calendar/src/datetime.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/datetime_formatter.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* fixes\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/datetime.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* doc\r\n\r\n* gen\r\n\r\n* fmt\r\n\r\n* fix\r\n\r\n* link\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-08-29T22:04:41Z",
+          "tree_id": "9bf610175077042d5d41e3d90ac8bdad19fc7aa0",
+          "url": "https://github.com/unicode-org/icu4x/commit/9949cdc883c1c780faf81a1e06ae7888e2758d24"
+        },
+        "date": 1661811487898,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 626,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 466,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 498,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 595,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 982,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1006,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 467,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 493,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 582,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 561,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 988,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 45396690,
+            "range": "± 2659110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           }
