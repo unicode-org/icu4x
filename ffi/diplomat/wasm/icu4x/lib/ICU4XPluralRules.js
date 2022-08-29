@@ -52,14 +52,14 @@ export class ICU4XPluralRules {
     })();
   }
 
-  select(arg_op) {
+  category_for(arg_op) {
     const field_i_arg_op = arg_op["i"];
     const field_v_arg_op = arg_op["v"];
     const field_w_arg_op = arg_op["w"];
     const field_f_arg_op = arg_op["f"];
     const field_t_arg_op = arg_op["t"];
     const field_c_arg_op = arg_op["c"];
-    return ICU4XPluralCategory_rust_to_js[wasm.ICU4XPluralRules_select(this.underlying, field_i_arg_op, field_v_arg_op, field_w_arg_op, field_f_arg_op, field_t_arg_op, field_c_arg_op)];
+    return ICU4XPluralCategory_rust_to_js[wasm.ICU4XPluralRules_category_for(this.underlying, field_i_arg_op, field_v_arg_op, field_w_arg_op, field_f_arg_op, field_t_arg_op, field_c_arg_op)];
   }
 
   categories() {

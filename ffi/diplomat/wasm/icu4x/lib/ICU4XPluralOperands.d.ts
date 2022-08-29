@@ -18,7 +18,7 @@ export class ICU4XPluralOperands {
 
   /**
 
-   * FFI version of `PluralOperands::from_str()`.
+   * Construct for a given string representing a number
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html#method.from_str Rust documentation for `from_str`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>

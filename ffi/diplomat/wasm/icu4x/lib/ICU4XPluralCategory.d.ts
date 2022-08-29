@@ -1,3 +1,4 @@
+import { FFIError } from "./diplomat-runtime"
 
 /**
 
