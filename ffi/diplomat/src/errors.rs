@@ -29,6 +29,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::DateTimeFormatterError, Enum, compact)]
     #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
     #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
+    #[diplomat::rust_link(icu::plurals::PluralRulesError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     pub enum ICU4XError {
