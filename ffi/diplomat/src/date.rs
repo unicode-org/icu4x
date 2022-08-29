@@ -33,7 +33,7 @@ pub mod ffi {
 
     impl ICU4XIsoDate {
         /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::Date::new_gregorian_date, FnInStruct)]
+        #[diplomat::rust_link(icu::Date::new_iso_date, FnInStruct)]
         pub fn try_new(
             year: i32,
             month: u8,
