@@ -46,7 +46,6 @@ pub mod ffi {
         }
 
         #[diplomat::rust_link(icu::calendar::Date::to_any, FnInStruct)]
-        #[diplomat::rust_link(icu::calendar::Date::new_from_iso, FnInStruct, hidden)]
         pub fn to_any(&self) -> Box<ICU4XDate> {
             Box::new(ICU4XDate(self.0.to_any().wrap_calendar_in_arc()))
         }
