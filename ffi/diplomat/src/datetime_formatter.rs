@@ -218,7 +218,7 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn format_datetime(
+        pub fn format_gregorian_datetime(
             &self,
             value: &ICU4XGregorianDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
