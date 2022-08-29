@@ -155,8 +155,7 @@ lazy_static::lazy_static! {
         "icu::calendar::japanese",
         "icu::calendar::julian",
         "icu::calendar::any_calendar::IntoAnyCalendar",
-        "icu::calendar::Date::to_any",
-        "icu::calendar::DateTime::to_any",
+        "icu::calendar::Date::new_gregorian_date", // For gregorian we support DateTime but not Date
         "icu::calendar::Date::new_buddhist_date",
         "icu::calendar::Date::new_coptic_date",
         "icu::calendar::Date::new_ethiopian_date",
@@ -182,6 +181,12 @@ lazy_static::lazy_static! {
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
 
+
+        // Formatting wrappers, may be supported in the future
+        "icu::datetime::FormattedTimeZone",
+        "icu::datetime::FormattedDateTime",
+        "icu::datetime::FormattedZonedDateTime",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -198,10 +203,6 @@ lazy_static::lazy_static! {
         "icu::calendar::DateTime::wrap_calendar_in_rc",
         "icu::calendar::DateTime::wrap_calendar_in_arc",
 
-        // Rust-specific formatting wrappers
-        "icu::datetime::FormattedTimeZone",
-        "icu::datetime::FormattedDateTime",
-        "icu::datetime::FormattedZonedDateTime",
         // Individual markerlike calendar types and inner types
         // inner types are only public for associated type reasons, and the markerlike
         // calendar types exist to implement the trait
@@ -213,6 +214,7 @@ lazy_static::lazy_static! {
         "icu::calendar::Gregorian",
         "icu::calendar::gregorian::Gregorian",
         "icu::calendar::gregorian::GregorianDateInner",
+        "icu::calendar::any_calendar::AnyDateInner",
 
         // Rusty input trait
         "icu::datetime::input",
@@ -228,7 +230,8 @@ lazy_static::lazy_static! {
         "icu::datetime::provider",
 
         // Reexports (tool doesn't currently handle these)
-        "icu::calendar::any_calendar",
+        "icu::calendar::any_calendar::AnyCalendar",
+        "icu::calendar::any_calendar::AnyCalendarKind",
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 
