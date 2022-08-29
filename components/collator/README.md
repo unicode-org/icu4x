@@ -171,7 +171,8 @@ Whether to swap the ordering of uppercase and lowercase.
 
 ### Backward second level
 
-Compare the second level in backward order.
+Compare the second level in backward order. The default is `false` (off), except for Canadian
+French.
 
 ### Numeric
 
