@@ -2,27 +2,27 @@ import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 
-const ICU4XGregorianDateTime_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XGregorianDateTime_destroy(underlying);
+const ICU4XTime_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XTime_destroy(underlying);
 });
 
-export class ICU4XGregorianDateTime {
+export class ICU4XTime {
   #lifetimeEdges = [];
   constructor(underlying, owned, edges) {
     this.underlying = underlying;
     this.#lifetimeEdges.push(...edges);
     if (owned) {
-      ICU4XGregorianDateTime_box_destroy_registry.register(this, underlying);
+      ICU4XTime_box_destroy_registry.register(this, underlying);
     }
   }
 
-  static try_new(arg_year, arg_month, arg_day, arg_hour, arg_minute, arg_second) {
+  static try_new(arg_hour, arg_minute, arg_second, arg_nanosecond) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XGregorianDateTime_try_new(diplomat_receive_buffer, arg_year, arg_month, arg_day, arg_hour, arg_minute, arg_second);
+      wasm.ICU4XTime_try_new(diplomat_receive_buffer, arg_hour, arg_minute, arg_second, arg_nanosecond);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
-        const ok_value = new ICU4XGregorianDateTime(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        const ok_value = new ICU4XTime(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
@@ -31,5 +31,21 @@ export class ICU4XGregorianDateTime {
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
+  }
+
+  hour() {
+    return wasm.ICU4XTime_hour(this.underlying);
+  }
+
+  minute() {
+    return wasm.ICU4XTime_minute(this.underlying);
+  }
+
+  second() {
+    return wasm.ICU4XTime_second(this.underlying);
+  }
+
+  nanosecond() {
+    return wasm.ICU4XTime_nanosecond(this.underlying);
   }
 }

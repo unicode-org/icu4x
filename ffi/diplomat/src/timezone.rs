@@ -6,7 +6,7 @@ use icu_timezone::CustomTimeZone;
 
 #[diplomat::bridge]
 pub mod ffi {
-    use crate::calendar::ffi::ICU4XIsoDateTime;
+    use crate::datetime::ffi::ICU4XIsoDateTime;
     use crate::errors::ffi::ICU4XError;
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;

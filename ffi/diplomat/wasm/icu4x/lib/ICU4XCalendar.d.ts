@@ -30,7 +30,7 @@ export class ICU4XCalendar {
 
   /**
 
-   * Creates a new {@link ICU4XCalendar `ICU4XCalendar`} from the specified date and time.
+   * Returns the kind of this calendar
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.kind Rust documentation for `kind`} for more information.
    */
