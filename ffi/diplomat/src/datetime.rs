@@ -7,6 +7,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use alloc::sync::Arc;
     use core::convert::TryInto;
+    use core::fmt::Write;
 
     use diplomat_runtime::DiplomatResult;
     use icu_calendar::types::Time;
@@ -14,7 +15,7 @@ pub mod ffi {
     use icu_calendar::{DateTime, Iso};
 
     use crate::calendar::ffi::ICU4XCalendar;
-    use crate::date::ffi::{ICU4XDate, ICU4XIsoDate};
+    use crate::date::ffi::{ICU4XDate, ICU4XIsoDate, ICU4XIsoWeekday};
     use crate::errors::ffi::ICU4XError;
     use crate::time::ffi::ICU4XTime;
 
@@ -188,6 +189,104 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::DateTime::to_calendar, FnInStruct)]
         pub fn to_calendar(&self, calendar: &ICU4XCalendar) -> Box<ICU4XDateTime> {
             Box::new(ICU4XDateTime(self.0.to_calendar(calendar.0.clone())))
+        }
+
+        /// Returns the hour in this time
+        #[diplomat::rust_link(icu::calendar::types::Time::hour, StructField)]
+        pub fn hour(&self) -> u8 {
+            self.0.time.hour.into()
+        }
+        /// Returns the minute in this time
+        #[diplomat::rust_link(icu::calendar::types::Time::minute, StructField)]
+        pub fn minute(&self) -> u8 {
+            self.0.time.minute.into()
+        }
+        /// Returns the second in this time
+        #[diplomat::rust_link(icu::calendar::types::Time::second, StructField)]
+        pub fn second(&self) -> u8 {
+            self.0.time.second.into()
+        }
+        /// Returns the nanosecond in this time
+        #[diplomat::rust_link(icu::calendar::types::Time::nanosecond, StructField)]
+        pub fn nanosecond(&self) -> u32 {
+            self.0.time.nanosecond.into()
+        }
+
+        /// Returns the 1-indexed day in the month for this date
+        #[diplomat::rust_link(icu::calendar::Date::day_of_month, FnInStruct)]
+        pub fn day_of_month(&self) -> u32 {
+            self.0.date.day_of_month().0
+        }
+
+        /// Returns the day in the week for this day
+        #[diplomat::rust_link(icu::calendar::Date::day_of_week, FnInStruct)]
+        pub fn day_of_week(&self) -> ICU4XIsoWeekday {
+            self.0.date.day_of_week().into()
+        }
+        /// Returns 1-indexed number of the month of this date in its year
+        ///
+        /// Note that for lunar calendars this may not lead to the same month
+        /// having the same ordinal month across years; use month_code if you care
+        /// about month identity.
+        #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
+        pub fn ordinal_month(&self) -> u32 {
+            self.0.date.month().ordinal
+        }
+
+        /// Returns the month code for this date. Typically something
+        /// like "M01", "M02", but can be more complicated for lunar calendars.
+        #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
+        pub fn month_code(
+            &self,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let code = self.0.date.month().code;
+            let result = write.write_str(&code.0).map_err(Into::into).into();
+            write.flush();
+            result
+        }
+
+        /// Returns the year number in the current era for this date
+        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
+        pub fn year_in_era(&self) -> i32 {
+            self.0.date.year().number
+        }
+
+        /// Returns the era for this date,
+        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
+        pub fn era(
+            &self,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let era = self.0.date.year().era;
+            let result = write.write_str(&era.0).map_err(Into::into).into();
+            write.flush();
+            result
+        }
+
+        /// Returns the number of months in the year represented by this date
+        #[diplomat::rust_link(icu::calendar::Date::months_in_year, FnInStruct)]
+        pub fn months_in_year(&self) -> u8 {
+            self.0.date.months_in_year()
+        }
+
+        /// Returns the number of days in the month represented by this date
+        #[diplomat::rust_link(icu::calendar::Date::days_in_month, FnInStruct)]
+        pub fn days_in_month(&self) -> u8 {
+            self.0.date.days_in_month()
+        }
+
+        /// Returns the number of days in the year represented by this date
+        #[diplomat::rust_link(icu::calendar::Date::days_in_year, FnInStruct)]
+        pub fn days_in_year(&self) -> u32 {
+            self.0.date.days_in_year()
+        }
+
+        /// Returns the [`ICU4XCalendar`] object backing this date
+        #[diplomat::rust_link(icu::calendar::Date::calendar, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::calendar_wrapper, FnInStruct, hidden)]
+        pub fn calendar(&self) -> Box<ICU4XCalendar> {
+            Box::new(ICU4XCalendar(self.0.date.calendar_wrapper().clone()))
         }
     }
 }
