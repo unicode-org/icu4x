@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661811437406,
+  "lastUpdate": 1661815889313,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -47849,6 +47849,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 73,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a1dff1e5c7fe680bc466a3bf2c60ab4c2851f802",
+          "message": "Fix docs for XID_Start and XID_Continue in properties sets API docs (#2469)",
+          "timestamp": "2022-08-29T23:18:45Z",
+          "tree_id": "32f2f970bf185ce357f3e2bcd78a7b7b805b5e5b",
+          "url": "https://github.com/unicode-org/icu4x/commit/a1dff1e5c7fe680bc466a3bf2c60ab4c2851f802"
+        },
+        "date": 1661815836134,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 135300,
+            "range": "± 4118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27199,
+            "range": "± 466",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72283,
+            "range": "± 1519",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 240,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 111,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 86,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
