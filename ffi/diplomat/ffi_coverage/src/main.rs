@@ -192,6 +192,18 @@ lazy_static::lazy_static! {
         // could be exposed in the future but it's complicated
         "icu::plurals::rules",
 
+        // May be exposed when we have associated constants over FFI
+        "icu::properties::BidiClass",
+        "icu::properties::CanonicalCombiningClass",
+        "icu::properties::EastAsianWidth",
+        "icu::properties::GeneralCategory",
+        "icu::properties::GeneralCategoryGroup",
+        "icu::properties::GraphemeClusterBreak",
+        "icu::properties::LineBreak",
+        "icu::properties::Script",
+        "icu::properties::SentenceBreak",
+        "icu::properties::WordBreak",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -203,6 +215,7 @@ lazy_static::lazy_static! {
         "icu::calendar::provider",
         "icu::datetime::provider",
         "icu::plurals::provider",
+        "icu::properties::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
