@@ -51,7 +51,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.offset_seconds Rust documentation for `offset_seconds`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html 1}
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   gmt_offset_seconds(): i32 | never;
 
@@ -62,7 +62,7 @@ export class ICU4XCustomTimeZone {
    * Errors if the `gmt_offset` field is empty.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_positive Rust documentation for `is_positive`} for more information.
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   is_gmt_offset_positive(): boolean | never;
 
@@ -73,7 +73,7 @@ export class ICU4XCustomTimeZone {
    * Errors if the `gmt_offset` field is empty (which is not the same as zero).
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_zero Rust documentation for `is_zero`} for more information.
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   is_gmt_offset_zero(): boolean | never;
 
@@ -84,7 +84,7 @@ export class ICU4XCustomTimeZone {
    * Errors if the `gmt_offset` field is empty.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_minutes Rust documentation for `has_minutes`} for more information.
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   gmt_offset_has_minutes(): boolean | never;
 
@@ -95,7 +95,7 @@ export class ICU4XCustomTimeZone {
    * Errors if the `gmt_offset` field is empty.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_seconds Rust documentation for `has_seconds`} for more information.
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   gmt_offset_has_seconds(): boolean | never;
 
@@ -131,7 +131,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.time_zone_id Rust documentation for `time_zone_id`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html 1}
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   time_zone_id(): string | never;
 
@@ -167,7 +167,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id Rust documentation for `meta_zone_id`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html 1}
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   meta_zone_id(): string | never;
 
@@ -203,7 +203,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant Rust documentation for `zone_variant`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html 1}
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   zone_variant(): string | never;
 
@@ -236,7 +236,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.standard Rust documentation for `standard`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant 1}
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   is_standard_time(): boolean | never;
 
@@ -249,7 +249,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html#method.daylight Rust documentation for `daylight`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant 1}
-   * @throws {@link FFIError}<void>
+   * @throws {@link FFIError}<{@link ICU4XError}>
    */
   is_daylight_time(): boolean | never;
 

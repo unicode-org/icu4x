@@ -51,6 +51,7 @@ export const ICU4XError_js_to_rust = {
   "TinyStrNonAsciiError": 2306,
   "TimeZoneOffsetOutOfBoundsError": 2560,
   "TimeZoneInvalidOffsetError": 2561,
+  "TimeZoneMissingInputError": 2562,
 };
 
 export const ICU4XError_rust_to_js = {
@@ -103,6 +104,7 @@ export const ICU4XError_rust_to_js = {
   2306: "TinyStrNonAsciiError",
   2560: "TimeZoneOffsetOutOfBoundsError",
   2561: "TimeZoneInvalidOffsetError",
+  2562: "TimeZoneMissingInputError",
 };
 
 export const ICU4XError = {
@@ -155,4 +157,5 @@ export const ICU4XError = {
   "TinyStrNonAsciiError": "TinyStrNonAsciiError",
   "TimeZoneOffsetOutOfBoundsError": "TimeZoneOffsetOutOfBoundsError",
   "TimeZoneInvalidOffsetError": "TimeZoneInvalidOffsetError",
+  "TimeZoneMissingInputError": "TimeZoneMissingInputError",
 };
