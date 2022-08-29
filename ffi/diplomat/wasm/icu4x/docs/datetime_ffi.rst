@@ -168,7 +168,7 @@
 
         Creates a new :js:class:`ICU4XIsoDateTime` from the specified date and time.
 
-        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
+        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
 
 
     .. js:staticfunction:: new_from_date_and_time(date, time)

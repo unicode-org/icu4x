@@ -19,7 +19,7 @@ export class ICU4XIsoDateTime {
 
    * Creates a new {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} from the specified date and time.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_iso_datetime Rust documentation for `new_iso_datetime`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime Rust documentation for `new_iso_datetime`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XIsoDateTime | never;

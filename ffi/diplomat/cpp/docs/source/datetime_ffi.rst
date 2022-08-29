@@ -182,7 +182,7 @@
 
         Creates a new :cpp:class:`ICU4XIsoDateTime` from the specified date and time.
 
-        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
+        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
 
 
     .. cpp:function:: static ICU4XIsoDateTime new_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time)
