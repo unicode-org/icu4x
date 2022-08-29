@@ -13,7 +13,9 @@
 
 class ICU4XIsoDate;
 #include "ICU4XError.hpp"
+class ICU4XCalendar;
 class ICU4XDate;
+#include "ICU4XIsoWeekday.hpp"
 
 /**
  * A destruction policy for using ICU4XIsoDate with std::unique_ptr.
@@ -40,11 +42,101 @@ class ICU4XIsoDate {
   static diplomat::result<ICU4XIsoDate, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day);
 
   /**
+   * Convert this date to one in a different calendar
+   * 
+   * See the [Rust documentation for `to_calendar`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.to_calendar) for more information.
+   */
+  ICU4XDate to_calendar(const ICU4XCalendar& calendar) const;
+
+  /**
    * 
    * 
    * See the [Rust documentation for `to_any`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.to_any) for more information.
    */
   ICU4XDate to_any() const;
+
+  /**
+   * Returns the 1-indexed day in the month for this date
+   * 
+   * See the [Rust documentation for `day_of_month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_month) for more information.
+   */
+  uint32_t day_of_month() const;
+
+  /**
+   * Returns the day in the week for this day
+   * 
+   * See the [Rust documentation for `day_of_week`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week) for more information.
+   */
+  ICU4XIsoWeekday day_of_week() const;
+
+  /**
+   * Returns 1-indexed number of the month of this date in its year
+   * 
+   * Note that for lunar calendars this may not lead to the same month
+   * having the same ordinal month across years; use month_code if you care
+   * about month identity.
+   * 
+   * See the [Rust documentation for `month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month) for more information.
+   */
+  uint32_t ordinal_month() const;
+
+  /**
+   * Returns the month code for this date. Typically something
+   * like "M01", "M02", but can be more complicated for lunar calendars.
+   * 
+   * See the [Rust documentation for `month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month) for more information.
+   */
+  template<typename W> diplomat::result<std::monostate, ICU4XError> month_code_to_writeable(W& write) const;
+
+  /**
+   * Returns the month code for this date. Typically something
+   * like "M01", "M02", but can be more complicated for lunar calendars.
+   * 
+   * See the [Rust documentation for `month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month) for more information.
+   */
+  diplomat::result<std::string, ICU4XError> month_code() const;
+
+  /**
+   * Returns the year number in the current era for this date
+   * 
+   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year) for more information.
+   */
+  int32_t year_in_era() const;
+
+  /**
+   * Returns the era for this date,
+   * 
+   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year) for more information.
+   */
+  template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const;
+
+  /**
+   * Returns the era for this date,
+   * 
+   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year) for more information.
+   */
+  diplomat::result<std::string, ICU4XError> era() const;
+
+  /**
+   * Returns the number of months in the year represented by this date
+   * 
+   * See the [Rust documentation for `months_in_year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.months_in_year) for more information.
+   */
+  uint8_t months_in_year() const;
+
+  /**
+   * Returns the number of days in the month represented by this date
+   * 
+   * See the [Rust documentation for `days_in_month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_month) for more information.
+   */
+  uint8_t days_in_month() const;
+
+  /**
+   * Returns the number of days in the year represented by this date
+   * 
+   * See the [Rust documentation for `days_in_year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_year) for more information.
+   */
+  uint32_t days_in_year() const;
   inline const capi::ICU4XIsoDate* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XIsoDate* AsFFIMut() { return this->inner.get(); }
   inline ICU4XIsoDate(capi::ICU4XIsoDate* i) : inner(i) {}
@@ -55,6 +147,7 @@ class ICU4XIsoDate {
   std::unique_ptr<capi::ICU4XIsoDate, ICU4XIsoDateDeleter> inner;
 };
 
+#include "ICU4XCalendar.hpp"
 #include "ICU4XDate.hpp"
 
 inline diplomat::result<ICU4XIsoDate, ICU4XError> ICU4XIsoDate::try_new(int32_t year, uint8_t month, uint8_t day) {
@@ -67,7 +160,77 @@ inline diplomat::result<ICU4XIsoDate, ICU4XError> ICU4XIsoDate::try_new(int32_t 
   }
   return diplomat_result_out_value;
 }
+inline ICU4XDate ICU4XIsoDate::to_calendar(const ICU4XCalendar& calendar) const {
+  return ICU4XDate(capi::ICU4XIsoDate_to_calendar(this->inner.get(), calendar.AsFFI()));
+}
 inline ICU4XDate ICU4XIsoDate::to_any() const {
   return ICU4XDate(capi::ICU4XIsoDate_to_any(this->inner.get()));
+}
+inline uint32_t ICU4XIsoDate::day_of_month() const {
+  return capi::ICU4XIsoDate_day_of_month(this->inner.get());
+}
+inline ICU4XIsoWeekday ICU4XIsoDate::day_of_week() const {
+  return static_cast<ICU4XIsoWeekday>(capi::ICU4XIsoDate_day_of_week(this->inner.get()));
+}
+inline uint32_t ICU4XIsoDate::ordinal_month() const {
+  return capi::ICU4XIsoDate_ordinal_month(this->inner.get());
+}
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XIsoDate::month_code_to_writeable(W& write) const {
+  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+  auto diplomat_result_raw_out_value = capi::ICU4XIsoDate_month_code(this->inner.get(), &write_writer);
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::string, ICU4XError> ICU4XIsoDate::month_code() const {
+  std::string diplomat_writeable_string;
+  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XIsoDate_month_code(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+}
+inline int32_t ICU4XIsoDate::year_in_era() const {
+  return capi::ICU4XIsoDate_year_in_era(this->inner.get());
+}
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XIsoDate::era_to_writeable(W& write) const {
+  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+  auto diplomat_result_raw_out_value = capi::ICU4XIsoDate_era(this->inner.get(), &write_writer);
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::string, ICU4XError> ICU4XIsoDate::era() const {
+  std::string diplomat_writeable_string;
+  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XIsoDate_era(this->inner.get(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+}
+inline uint8_t ICU4XIsoDate::months_in_year() const {
+  return capi::ICU4XIsoDate_months_in_year(this->inner.get());
+}
+inline uint8_t ICU4XIsoDate::days_in_month() const {
+  return capi::ICU4XIsoDate_days_in_month(this->inner.get());
+}
+inline uint32_t ICU4XIsoDate::days_in_year() const {
+  return capi::ICU4XIsoDate_days_in_year(this->inner.get());
 }
 #endif

@@ -57,6 +57,120 @@
         See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
 
+    .. cpp:function:: uint8_t hour() const
+
+        Returns the hour in this time
+
+        See the `Rust documentation for hour <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.hour>`__ for more information.
+
+
+    .. cpp:function:: uint8_t minute() const
+
+        Returns the minute in this time
+
+        See the `Rust documentation for minute <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.minute>`__ for more information.
+
+
+    .. cpp:function:: uint8_t second() const
+
+        Returns the second in this time
+
+        See the `Rust documentation for second <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.second>`__ for more information.
+
+
+    .. cpp:function:: uint32_t nanosecond() const
+
+        Returns the nanosecond in this time
+
+        See the `Rust documentation for nanosecond <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
+
+
+    .. cpp:function:: uint32_t day_of_month() const
+
+        Returns the 1-indexed day in the month for this date
+
+        See the `Rust documentation for day_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_month>`__ for more information.
+
+
+    .. cpp:function:: ICU4XIsoWeekday day_of_week() const
+
+        Returns the day in the week for this day
+
+        See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
+
+
+    .. cpp:function:: uint32_t ordinal_month() const
+
+        Returns 1-indexed number of the month of this date in its year
+
+        Note that for lunar calendars this may not lead to the same month having the same ordinal month across years; use month_code if you care about month identity.
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> month_code_to_writeable(W& write) const
+
+        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> month_code() const
+
+        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. cpp:function:: int32_t year_in_era() const
+
+        Returns the year number in the current era for this date
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const
+
+        Returns the era for this date,
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> era() const
+
+        Returns the era for this date,
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: uint8_t months_in_year() const
+
+        Returns the number of months in the year represented by this date
+
+        See the `Rust documentation for months_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.months_in_year>`__ for more information.
+
+
+    .. cpp:function:: uint8_t days_in_month() const
+
+        Returns the number of days in the month represented by this date
+
+        See the `Rust documentation for days_in_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
+
+
+    .. cpp:function:: uint32_t days_in_year() const
+
+        Returns the number of days in the year represented by this date
+
+        See the `Rust documentation for days_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_year>`__ for more information.
+
+
+    .. cpp:function:: ICU4XCalendar calendar() const
+
+        Returns the :cpp:class:`ICU4XCalendar` object backing this date
+
+        See the `Rust documentation for calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.calendar>`__ for more information.
+
+
 .. cpp:class:: ICU4XIsoDateTime
 
     An ICU4X DateTime object capable of containing a ISO-8601 date and time.
@@ -111,4 +225,118 @@
         Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
         See the `Rust documentation for minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch>`__ for more information.
+
+
+    .. cpp:function:: ICU4XDateTime to_calendar(const ICU4XCalendar& calendar) const
+
+        Convert this datetime to one in a different calendar
+
+        See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
+
+
+    .. cpp:function:: uint8_t hour() const
+
+        Returns the hour in this time
+
+        See the `Rust documentation for hour <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.hour>`__ for more information.
+
+
+    .. cpp:function:: uint8_t minute() const
+
+        Returns the minute in this time
+
+        See the `Rust documentation for minute <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.minute>`__ for more information.
+
+
+    .. cpp:function:: uint8_t second() const
+
+        Returns the second in this time
+
+        See the `Rust documentation for second <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.second>`__ for more information.
+
+
+    .. cpp:function:: uint32_t nanosecond() const
+
+        Returns the nanosecond in this time
+
+        See the `Rust documentation for nanosecond <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
+
+
+    .. cpp:function:: uint32_t day_of_month() const
+
+        Returns the 1-indexed day in the month for this date
+
+        See the `Rust documentation for day_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_month>`__ for more information.
+
+
+    .. cpp:function:: ICU4XIsoWeekday day_of_week() const
+
+        Returns the day in the week for this day
+
+        See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
+
+
+    .. cpp:function:: uint32_t ordinal_month() const
+
+        Returns 1-indexed number of the month of this date in its year
+
+        Note that for lunar calendars this may not lead to the same month having the same ordinal month across years; use month_code if you care about month identity.
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> month_code_to_writeable(W& write) const
+
+        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> month_code() const
+
+        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. cpp:function:: int32_t year_in_era() const
+
+        Returns the year number in the current era for this date
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const
+
+        Returns the era for this date,
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> era() const
+
+        Returns the era for this date,
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: uint8_t months_in_year() const
+
+        Returns the number of months in the year represented by this date
+
+        See the `Rust documentation for months_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.months_in_year>`__ for more information.
+
+
+    .. cpp:function:: uint8_t days_in_month() const
+
+        Returns the number of days in the month represented by this date
+
+        See the `Rust documentation for days_in_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
+
+
+    .. cpp:function:: uint32_t days_in_year() const
+
+        Returns the number of days in the year represented by this date
+
+        See the `Rust documentation for days_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_year>`__ for more information.
 

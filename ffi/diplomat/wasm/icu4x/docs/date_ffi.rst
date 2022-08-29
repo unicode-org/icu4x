@@ -122,9 +122,81 @@
         See the `Rust documentation for new_iso_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date>`__ for more information.
 
 
+    .. js:function:: to_calendar(calendar)
+
+        Convert this date to one in a different calendar
+
+        See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.to_calendar>`__ for more information.
+
+
     .. js:function:: to_any()
 
         See the `Rust documentation for to_any <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.to_any>`__ for more information.
+
+
+    .. js:function:: day_of_month()
+
+        Returns the 1-indexed day in the month for this date
+
+        See the `Rust documentation for day_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_month>`__ for more information.
+
+
+    .. js:function:: day_of_week()
+
+        Returns the day in the week for this day
+
+        See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
+
+
+    .. js:function:: ordinal_month()
+
+        Returns 1-indexed number of the month of this date in its year
+
+        Note that for lunar calendars this may not lead to the same month having the same ordinal month across years; use month_code if you care about month identity.
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. js:function:: month_code()
+
+        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. js:function:: year_in_era()
+
+        Returns the year number in the current era for this date
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. js:function:: era()
+
+        Returns the era for this date,
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. js:function:: months_in_year()
+
+        Returns the number of months in the year represented by this date
+
+        See the `Rust documentation for months_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.months_in_year>`__ for more information.
+
+
+    .. js:function:: days_in_month()
+
+        Returns the number of days in the month represented by this date
+
+        See the `Rust documentation for days_in_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
+
+
+    .. js:function:: days_in_year()
+
+        Returns the number of days in the year represented by this date
+
+        See the `Rust documentation for days_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_year>`__ for more information.
 
 
 .. js:class:: ICU4XIsoWeekday

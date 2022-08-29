@@ -18,6 +18,9 @@ typedef struct ICU4XIsoDateTime ICU4XIsoDateTime;
 #include "ICU4XIsoDate.h"
 #include "ICU4XTime.h"
 #include "ICU4XDateTime.h"
+#include "ICU4XCalendar.h"
+#include "ICU4XIsoWeekday.h"
+#include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -36,6 +39,34 @@ ICU4XTime* ICU4XIsoDateTime_time(const ICU4XIsoDateTime* self);
 ICU4XDateTime* ICU4XIsoDateTime_to_any(const ICU4XIsoDateTime* self);
 
 int32_t ICU4XIsoDateTime_minutes_since_local_unix_epoch(const ICU4XIsoDateTime* self);
+
+ICU4XDateTime* ICU4XIsoDateTime_to_calendar(const ICU4XIsoDateTime* self, const ICU4XCalendar* calendar);
+
+uint8_t ICU4XIsoDateTime_hour(const ICU4XIsoDateTime* self);
+
+uint8_t ICU4XIsoDateTime_minute(const ICU4XIsoDateTime* self);
+
+uint8_t ICU4XIsoDateTime_second(const ICU4XIsoDateTime* self);
+
+uint32_t ICU4XIsoDateTime_nanosecond(const ICU4XIsoDateTime* self);
+
+uint32_t ICU4XIsoDateTime_day_of_month(const ICU4XIsoDateTime* self);
+
+ICU4XIsoWeekday ICU4XIsoDateTime_day_of_week(const ICU4XIsoDateTime* self);
+
+uint32_t ICU4XIsoDateTime_ordinal_month(const ICU4XIsoDateTime* self);
+
+diplomat_result_void_ICU4XError ICU4XIsoDateTime_month_code(const ICU4XIsoDateTime* self, DiplomatWriteable* write);
+
+int32_t ICU4XIsoDateTime_year_in_era(const ICU4XIsoDateTime* self);
+
+diplomat_result_void_ICU4XError ICU4XIsoDateTime_era(const ICU4XIsoDateTime* self, DiplomatWriteable* write);
+
+uint8_t ICU4XIsoDateTime_months_in_year(const ICU4XIsoDateTime* self);
+
+uint8_t ICU4XIsoDateTime_days_in_month(const ICU4XIsoDateTime* self);
+
+uint32_t ICU4XIsoDateTime_days_in_year(const ICU4XIsoDateTime* self);
 void ICU4XIsoDateTime_destroy(ICU4XIsoDateTime* self);
 
 #ifdef __cplusplus
