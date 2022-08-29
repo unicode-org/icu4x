@@ -8,7 +8,22 @@
 
     .. js:staticfunction:: create_from_str(s)
 
+        Creates a time zone from an offset string.
+
+
     .. js:staticfunction:: create_empty()
+
+        Creates a time zone with no information.
+
+        See the `Rust documentation for new_empty <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.new_empty>`__ for more information.
+
+
+    .. js:staticfunction:: create_utc()
+
+        Creates a time zone for UTC.
+
+        See the `Rust documentation for utc <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.utc>`__ for more information.
+
 
     .. js:function:: try_set_gmt_offset_seconds(offset_seconds)
 

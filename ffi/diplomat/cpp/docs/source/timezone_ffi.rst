@@ -8,7 +8,22 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s)
 
+        Creates a time zone from an offset string.
+
+
     .. cpp:function:: static ICU4XCustomTimeZone create_empty()
+
+        Creates a time zone with no information.
+
+        See the `Rust documentation for new_empty <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.new_empty>`__ for more information.
+
+
+    .. cpp:function:: static ICU4XCustomTimeZone create_utc()
+
+        Creates a time zone for UTC.
+
+        See the `Rust documentation for utc <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.utc>`__ for more information.
+
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_gmt_offset_seconds(int32_t offset_seconds)
 

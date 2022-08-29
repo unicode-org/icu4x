@@ -31,7 +31,7 @@ use icu_calendar::{DateTime, Iso};
 ///
 /// let tz2: CustomTimeZone = "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
-#[derive(Debug, Default)]
+#[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct CustomTimeZone {
     /// The GMT offset in seconds.
@@ -49,6 +49,18 @@ impl CustomTimeZone {
     pub const fn new_with_offset(gmt_offset: GmtOffset) -> Self {
         Self {
             gmt_offset: Some(gmt_offset),
+            time_zone_id: None,
+            meta_zone_id: None,
+            zone_variant: None,
+        }
+    }
+
+    /// Creates a time zone with no information.
+    ///
+    /// One or more fields must be specified before this time zone is usable.
+    pub const fn new_empty() -> Self {
+        Self {
+            gmt_offset: None,
             time_zone_id: None,
             meta_zone_id: None,
             zone_variant: None,

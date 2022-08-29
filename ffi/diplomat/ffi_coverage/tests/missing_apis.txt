@@ -297,9 +297,9 @@ icu::datetime::TimeZoneFormatter::load_iso_8601_format#FnInStruct
 icu::datetime::TimeZoneFormatter::load_localized_gmt_format#FnInStruct
 icu::datetime::TimeZoneFormatter::load_specific_non_location_long#FnInStruct
 icu::datetime::TimeZoneFormatter::load_specific_non_location_short#FnInStruct
-icu::datetime::TimeZoneFormatter::try_from_config_unstable#FnInStruct
-icu::datetime::TimeZoneFormatter::try_from_config_with_any_provider#FnInStruct
-icu::datetime::TimeZoneFormatter::try_from_config_with_buffer_provider#FnInStruct
+icu::datetime::TimeZoneFormatter::try_new_unstable#FnInStruct
+icu::datetime::TimeZoneFormatter::try_new_with_any_provider#FnInStruct
+icu::datetime::TimeZoneFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::TimeZoneFormatterConfig#Enum
 icu::datetime::TimeZoneFormatterOptions#Struct
 icu::datetime::TypedDateFormatter::format#FnInStruct
@@ -457,9 +457,9 @@ icu::datetime::time_zone::TimeZoneFormatter::load_iso_8601_format#FnInStruct
 icu::datetime::time_zone::TimeZoneFormatter::load_localized_gmt_format#FnInStruct
 icu::datetime::time_zone::TimeZoneFormatter::load_specific_non_location_long#FnInStruct
 icu::datetime::time_zone::TimeZoneFormatter::load_specific_non_location_short#FnInStruct
-icu::datetime::time_zone::TimeZoneFormatter::try_from_config_unstable#FnInStruct
-icu::datetime::time_zone::TimeZoneFormatter::try_from_config_with_any_provider#FnInStruct
-icu::datetime::time_zone::TimeZoneFormatter::try_from_config_with_buffer_provider#FnInStruct
+icu::datetime::time_zone::TimeZoneFormatter::try_new_unstable#FnInStruct
+icu::datetime::time_zone::TimeZoneFormatter::try_new_with_any_provider#FnInStruct
+icu::datetime::time_zone::TimeZoneFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::time_zone::TimeZoneFormatterConfig#Enum
 icu::datetime::time_zone::TimeZoneFormatterOptions#Struct
 icu::datetime::time_zone::ZeroPadding#Enum
@@ -1571,7 +1571,6 @@ icu::segmenter::provider::UCharDictionaryBreakDataV1Marker#Struct
 icu::segmenter::provider::WordBreakDataV1Marker#Struct
 icu::timezone::CustomTimeZone::Err#AssociatedTypeInStruct
 icu::timezone::CustomTimeZone::from_str#FnInStruct
-icu::timezone::CustomTimeZone::new#FnInStruct
 icu::timezone::GmtOffset::Err#AssociatedTypeInStruct
 icu::timezone::GmtOffset::from_offset_seconds_unchecked#FnInStruct
 icu::timezone::GmtOffset::from_str#FnInStruct

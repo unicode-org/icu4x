@@ -27,6 +27,7 @@ pub mod ffi {
     pub struct ICU4XMetaZoneCalculator(pub MetaZoneCalculator);
 
     impl ICU4XCustomTimeZone {
+        /// Creates a time zone from an offset string.
         pub fn create_from_str(s: &str) -> DiplomatResult<Box<ICU4XCustomTimeZone>, ICU4XError> {
             CustomTimeZone::from_str(s)
                 .map(ICU4XCustomTimeZone::from)
@@ -35,8 +36,17 @@ pub mod ffi {
                 .into()
         }
 
+        /// Creates a time zone with no information.
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_empty, FnInStruct)]
         pub fn create_empty() -> Box<ICU4XCustomTimeZone> {
-            Box::new(CustomTimeZone::default().into())
+            Box::new(CustomTimeZone::new_empty().into())
+        }
+
+        /// Creates a time zone for UTC.
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::utc, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset::utc, FnInStruct, hidden)]
+        pub fn create_utc() -> Box<ICU4XCustomTimeZone> {
+            Box::new(CustomTimeZone::utc().into())
         }
 
         /// Sets the `gmt_offset` field from offset seconds.
@@ -44,6 +54,7 @@ pub mod ffi {
         /// Errors if the offset seconds are out of range.
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_with_offset, FnInStruct, hidden)]
         pub fn try_set_gmt_offset_seconds(
             &mut self,
             offset_seconds: i32,

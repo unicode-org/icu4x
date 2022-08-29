@@ -32,8 +32,25 @@ struct ICU4XCustomTimeZoneDeleter {
  */
 class ICU4XCustomTimeZone {
  public:
+
+  /**
+   * Creates a time zone from an offset string.
+   */
   static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s);
+
+  /**
+   * Creates a time zone with no information.
+   * 
+   * See the [Rust documentation for `new_empty`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.new_empty) for more information.
+   */
   static ICU4XCustomTimeZone create_empty();
+
+  /**
+   * Creates a time zone for UTC.
+   * 
+   * See the [Rust documentation for `utc`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.utc) for more information.
+   */
+  static ICU4XCustomTimeZone create_utc();
 
   /**
    * Sets the `gmt_offset` field from offset seconds.
@@ -301,6 +318,9 @@ inline diplomat::result<ICU4XCustomTimeZone, ICU4XError> ICU4XCustomTimeZone::cr
 }
 inline ICU4XCustomTimeZone ICU4XCustomTimeZone::create_empty() {
   return ICU4XCustomTimeZone(capi::ICU4XCustomTimeZone_create_empty());
+}
+inline ICU4XCustomTimeZone ICU4XCustomTimeZone::create_utc() {
+  return ICU4XCustomTimeZone(capi::ICU4XCustomTimeZone_create_utc());
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_gmt_offset_seconds(int32_t offset_seconds) {
   auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_gmt_offset_seconds(this->inner.get(), offset_seconds);
