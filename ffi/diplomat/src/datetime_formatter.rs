@@ -13,7 +13,7 @@ pub mod ffi {
     };
 
     use crate::{
-        date::ffi::ICU4XDate, datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XGregorianDateTime,
+        date::ffi::{ICU4XDate, ICU4XIsoDate}, datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XGregorianDateTime,
         datetime::ffi::ICU4XIsoDateTime, errors::ffi::ICU4XError, locale::ffi::ICU4XLocale,
         provider::ffi::ICU4XDataProvider, time::ffi::ICU4XTime,
     };
@@ -258,12 +258,11 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-
         /// Formats a [`ICU4XDate`] to a string.
         #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_write, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::DateFormatter::format, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_string, FnInStruct, hidden)]
-        pub fn format_datetime(
+        pub fn format_date(
             &self,
             value: &ICU4XDate,
             write: &mut diplomat_runtime::DiplomatWriteable,
@@ -272,6 +271,66 @@ pub mod ffi {
             let result = self
                 .0
                 .format_to_write(write, &value.0)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
+        /// Formats a [`ICU4XIsoDate`] to a string.
+        ///
+        /// Will convert to this formatter's calendar first
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_string, FnInStruct, hidden)]
+        pub fn format_iso_date(
+            &self,
+            value: &ICU4XIsoDate,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let any = value.0.to_any();
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &any)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
+        /// Formats a [`ICU4XDateTime`] to a string.
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_string, FnInStruct, hidden)]
+        pub fn format_datetime(
+            &self,
+            value: &ICU4XDateTime,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &value.0)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
+        /// Formats a [`ICU4XIsoDateTime`] to a string.
+        ///
+        /// Will convert to this formatter's calendar first
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::format_to_string, FnInStruct, hidden)]
+        pub fn format_iso_datetime(
+            &self,
+            value: &ICU4XIsoDateTime,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let any = value.0.to_any();
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &any)
                 .map_err(Into::into)
                 .into();
             write.flush();
@@ -323,6 +382,32 @@ pub mod ffi {
             let result = self
                 .0
                 .format_to_write(write, &value.0)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
+
+        /// Formats a [`ICU4XIsoDateTime`] to a string.
+        ///
+        /// Will convert to this formatter's calendar first
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::datetime::DateTimeFormatter::format_to_string,
+            FnInStruct,
+            hidden
+        )]
+        pub fn format_iso_datetime(
+            &self,
+            value: &ICU4XIsoDateTime,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let any = value.0.to_any();
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &any)
                 .map_err(Into::into)
                 .into();
             write.flush();
