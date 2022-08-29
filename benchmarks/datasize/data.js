@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661810824681,
+  "lastUpdate": 1661815261971,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25613,6 +25613,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9949cdc883c1c780faf81a1e06ae7888e2758d24"
         },
         "date": 1661810775715,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a1dff1e5c7fe680bc466a3bf2c60ab4c2851f802",
+          "message": "Fix docs for XID_Start and XID_Continue in properties sets API docs (#2469)",
+          "timestamp": "2022-08-29T23:18:45Z",
+          "tree_id": "32f2f970bf185ce357f3e2bcd78a7b7b805b5e5b",
+          "url": "https://github.com/unicode-org/icu4x/commit/a1dff1e5c7fe680bc466a3bf2c60ab4c2851f802"
+        },
+        "date": 1661815215895,
         "tool": "ndjson",
         "benches": [
           {
