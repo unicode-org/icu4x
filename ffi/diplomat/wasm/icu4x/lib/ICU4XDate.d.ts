@@ -24,7 +24,7 @@ export class ICU4XDate {
 
   /**
 
-   * Creates a new {@link ICU4XDate `ICU4XDate`} representing the ISO date and time given but in a given calendar
+   * Creates a new {@link ICU4XDate `ICU4XDate`} from the given codes, which are interpreted in the given calendar system
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_codes Rust documentation for `new_from_codes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
@@ -94,7 +94,9 @@ export class ICU4XDate {
 
    * Returns the era for this date,
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year Rust documentation for `year`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/struct.Date.html#method.year Rust documentation for `year`} for more information.
+
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/types/struct.Era.html 1}
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   era(): string | never;

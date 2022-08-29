@@ -138,50 +138,16 @@ class ICU4XIsoDateTime {
   /**
    * Returns 1-indexed number of the month of this date in its year
    * 
-   * Note that for lunar calendars this may not lead to the same month
-   * having the same ordinal month across years; use month_code if you care
-   * about month identity.
-   * 
    * See the [Rust documentation for `month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month) for more information.
    */
-  uint32_t ordinal_month() const;
+  uint32_t month() const;
 
   /**
-   * Returns the month code for this date. Typically something
-   * like "M01", "M02", but can be more complicated for lunar calendars.
-   * 
-   * See the [Rust documentation for `month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month) for more information.
-   */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> month_code_to_writeable(W& write) const;
-
-  /**
-   * Returns the month code for this date. Typically something
-   * like "M01", "M02", but can be more complicated for lunar calendars.
-   * 
-   * See the [Rust documentation for `month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month) for more information.
-   */
-  diplomat::result<std::string, ICU4XError> month_code() const;
-
-  /**
-   * Returns the year number in the current era for this date
+   * Returns the year number for this date
    * 
    * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year) for more information.
    */
-  int32_t year_in_era() const;
-
-  /**
-   * Returns the era for this date,
-   * 
-   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year) for more information.
-   */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const;
-
-  /**
-   * Returns the era for this date,
-   * 
-   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year) for more information.
-   */
-  diplomat::result<std::string, ICU4XError> era() const;
+  int32_t year() const;
 
   /**
    * Returns the number of months in the year represented by this date
@@ -274,57 +240,11 @@ inline uint32_t ICU4XIsoDateTime::day_of_month() const {
 inline ICU4XIsoWeekday ICU4XIsoDateTime::day_of_week() const {
   return static_cast<ICU4XIsoWeekday>(capi::ICU4XIsoDateTime_day_of_week(this->inner.get()));
 }
-inline uint32_t ICU4XIsoDateTime::ordinal_month() const {
-  return capi::ICU4XIsoDateTime_ordinal_month(this->inner.get());
+inline uint32_t ICU4XIsoDateTime::month() const {
+  return capi::ICU4XIsoDateTime_month(this->inner.get());
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XIsoDateTime::month_code_to_writeable(W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XIsoDateTime_month_code(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
-  }
-  return diplomat_result_out_value;
-}
-inline diplomat::result<std::string, ICU4XError> ICU4XIsoDateTime::month_code() const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XIsoDateTime_month_code(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
-}
-inline int32_t ICU4XIsoDateTime::year_in_era() const {
-  return capi::ICU4XIsoDateTime_year_in_era(this->inner.get());
-}
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XIsoDateTime::era_to_writeable(W& write) const {
-  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XIsoDateTime_era(this->inner.get(), &write_writer);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
-  }
-  return diplomat_result_out_value;
-}
-inline diplomat::result<std::string, ICU4XError> ICU4XIsoDateTime::era() const {
-  std::string diplomat_writeable_string;
-  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XIsoDateTime_era(this->inner.get(), &diplomat_writeable_out);
-  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
-  if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(std::monostate());
-  } else {
-    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
-  }
-  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+inline int32_t ICU4XIsoDateTime::year() const {
+  return capi::ICU4XIsoDateTime_year(this->inner.get());
 }
 inline uint8_t ICU4XIsoDateTime::months_in_year() const {
   return capi::ICU4XIsoDateTime_months_in_year(this->inner.get());

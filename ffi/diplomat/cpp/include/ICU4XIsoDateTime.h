@@ -20,7 +20,6 @@ typedef struct ICU4XIsoDateTime ICU4XIsoDateTime;
 #include "ICU4XDateTime.h"
 #include "ICU4XCalendar.h"
 #include "ICU4XIsoWeekday.h"
-#include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -54,13 +53,9 @@ uint32_t ICU4XIsoDateTime_day_of_month(const ICU4XIsoDateTime* self);
 
 ICU4XIsoWeekday ICU4XIsoDateTime_day_of_week(const ICU4XIsoDateTime* self);
 
-uint32_t ICU4XIsoDateTime_ordinal_month(const ICU4XIsoDateTime* self);
+uint32_t ICU4XIsoDateTime_month(const ICU4XIsoDateTime* self);
 
-diplomat_result_void_ICU4XError ICU4XIsoDateTime_month_code(const ICU4XIsoDateTime* self, DiplomatWriteable* write);
-
-int32_t ICU4XIsoDateTime_year_in_era(const ICU4XIsoDateTime* self);
-
-diplomat_result_void_ICU4XError ICU4XIsoDateTime_era(const ICU4XIsoDateTime* self, DiplomatWriteable* write);
+int32_t ICU4XIsoDateTime_year(const ICU4XIsoDateTime* self);
 
 uint8_t ICU4XIsoDateTime_months_in_year(const ICU4XIsoDateTime* self);
 

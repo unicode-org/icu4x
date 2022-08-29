@@ -40,13 +40,12 @@ class ICU4XDateTime {
    * Creates a new [`ICU4XDateTime`] representing the ISO date and time
    * given but in a given calendar
    * 
-   * See the [Rust documentation for `new_iso_datetime`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime) for more information.
+   * See the [Rust documentation for `new_from_iso`](https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_from_iso) for more information.
    */
   static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
 
   /**
-   * Creates a new [`ICU4XDateTime`] representing the ISO date and time
-   * given but in a given calendar
+   * Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
    * 
    * See the [Rust documentation for `new_from_codes`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes) for more information.
    */

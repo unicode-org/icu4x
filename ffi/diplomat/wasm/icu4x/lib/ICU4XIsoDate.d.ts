@@ -56,37 +56,17 @@ export class ICU4XIsoDate {
 
    * Returns 1-indexed number of the month of this date in its year
 
-   * Note that for lunar calendars this may not lead to the same month having the same ordinal month across years; use month_code if you care about month identity.
-
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month Rust documentation for `month`} for more information.
    */
-  ordinal_month(): u32;
+  month(): u32;
 
   /**
 
-   * Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
-
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month Rust documentation for `month`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
-   */
-  month_code(): string | never;
-
-  /**
-
-   * Returns the year number in the current era for this date
+   * Returns the year number for this date
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year Rust documentation for `year`} for more information.
    */
-  year_in_era(): i32;
-
-  /**
-
-   * Returns the era for this date,
-
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year Rust documentation for `year`} for more information.
-   * @throws {@link FFIError}<{@link ICU4XError}>
-   */
-  era(): string | never;
+  year(): i32;
 
   /**
 

@@ -12,12 +12,12 @@
 
         Creates a new :cpp:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
 
-        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
+        See the `Rust documentation for new_from_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_from_iso>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar)
 
-        Creates a new :cpp:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
+        Creates a new :cpp:class:`ICU4XDateTime` from the given codes, which are interpreted in the given calendar system
 
         See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes>`__ for more information.
 
@@ -276,46 +276,16 @@
         See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
 
 
-    .. cpp:function:: uint32_t ordinal_month() const
+    .. cpp:function:: uint32_t month() const
 
         Returns 1-indexed number of the month of this date in its year
 
-        Note that for lunar calendars this may not lead to the same month having the same ordinal month across years; use month_code if you care about month identity.
-
         See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> month_code_to_writeable(W& write) const
+    .. cpp:function:: int32_t year() const
 
-        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
-
-        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
-
-
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> month_code() const
-
-        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
-
-        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
-
-
-    .. cpp:function:: int32_t year_in_era() const
-
-        Returns the year number in the current era for this date
-
-        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
-
-
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const
-
-        Returns the era for this date,
-
-        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
-
-
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> era() const
-
-        Returns the era for this date,
+        Returns the year number for this date
 
         See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
 

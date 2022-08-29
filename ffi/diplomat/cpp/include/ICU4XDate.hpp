@@ -43,8 +43,7 @@ class ICU4XDate {
   static diplomat::result<ICU4XDate, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar);
 
   /**
-   * Creates a new [`ICU4XDate`] representing the ISO date and time
-   * given but in a given calendar
+   * Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
    * 
    * See the [Rust documentation for `new_from_codes`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_codes) for more information.
    */
@@ -115,14 +114,18 @@ class ICU4XDate {
   /**
    * Returns the era for this date,
    * 
-   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year) for more information.
+   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/struct.Date.html#method.year) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/types/struct.Era.html)
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const;
 
   /**
    * Returns the era for this date,
    * 
-   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year) for more information.
+   * See the [Rust documentation for `year`](https://unicode-org.github.io/icu4x-docs/doc/icu/struct.Date.html#method.year) for more information.
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/types/struct.Era.html)
    */
   diplomat::result<std::string, ICU4XError> era() const;
 

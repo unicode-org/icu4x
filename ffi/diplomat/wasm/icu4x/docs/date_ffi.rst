@@ -17,7 +17,7 @@
 
     .. js:staticfunction:: try_new_from_codes_in_calendar(era_code, year, month_code, day, calendar)
 
-        Creates a new :js:class:`ICU4XDate` representing the ISO date and time given but in a given calendar
+        Creates a new :js:class:`ICU4XDate` from the given codes, which are interpreted in the given calendar system
 
         See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_codes>`__ for more information.
 
@@ -77,7 +77,9 @@
 
         Returns the era for this date,
 
-        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/struct.Date.html#method.year>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/types/struct.Era.html>`__
 
 
     .. js:function:: months_in_year()
@@ -148,32 +150,16 @@
         See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
 
 
-    .. js:function:: ordinal_month()
+    .. js:function:: month()
 
         Returns 1-indexed number of the month of this date in its year
 
-        Note that for lunar calendars this may not lead to the same month having the same ordinal month across years; use month_code if you care about month identity.
-
         See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
 
 
-    .. js:function:: month_code()
+    .. js:function:: year()
 
-        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
-
-        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
-
-
-    .. js:function:: year_in_era()
-
-        Returns the year number in the current era for this date
-
-        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
-
-
-    .. js:function:: era()
-
-        Returns the era for this date,
+        Returns the year number for this date
 
         See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
