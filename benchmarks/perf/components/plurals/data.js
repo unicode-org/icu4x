@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661802836182,
+  "lastUpdate": 1661811649423,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -91829,6 +91829,150 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/select/fs",
             "value": 2943,
             "range": "± 175",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9949cdc883c1c780faf81a1e06ae7888e2758d24",
+          "message": "Whack-a-mole 3: Date, DateTime, Time, and Formatters (#2464)\n\n* fix docs\r\n\r\n* Finish all AnyCalendarKind methods\r\n\r\n* datetime -> datetime_format\r\n\r\n* Split into datetime and calendar modules\r\n\r\n* Add ffi objects for Date\r\n\r\n* Add lots of methods to Date and DateTime\r\n\r\n* regen\r\n\r\n* remove dangerous mutable set_ns api\r\n\r\n* regen\r\n\r\n* Add Time module\r\n\r\n* hook Time type into everything\r\n\r\n* regen\r\n\r\n* Add Date formatters\r\n\r\n* rename\r\n\r\n* add DateTime ctor from parts\r\n\r\n* more datetime coverage whackamole\r\n\r\n* regen\r\n\r\n* clip\r\n\r\n* fix test\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/datetime_formatter.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/datetime.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* fixes\r\n\r\n* format_gregorian_datetime\r\n\r\n* add more formatters\r\n\r\n* regen\r\n\r\n* test\r\n\r\n* Move over to ICU4XIsoDate[Time] in gregorian formatter\r\n\r\n* Remove ICU4XGregorianDateTime\r\n\r\n* regen\r\n\r\n* tests\r\n\r\n* copy paste Date methods\r\n\r\n* Add methods to datetime\r\n\r\n* copy paste to iso\r\n\r\n* regen\r\n\r\n* clippy\r\n\r\n* clip\r\n\r\n* Update components/calendar/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update components/calendar/src/datetime.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/datetime_formatter.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* fixes\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/date.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* Update ffi/diplomat/src/datetime.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\n* doc\r\n\r\n* gen\r\n\r\n* fmt\r\n\r\n* fix\r\n\r\n* link\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-08-29T22:04:41Z",
+          "tree_id": "9bf610175077042d5d41e3d90ac8bdad19fc7aa0",
+          "url": "https://github.com/unicode-org/icu4x/commit/9949cdc883c1c780faf81a1e06ae7888e2758d24"
+        },
+        "date": 1661811603485,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 981,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/usize",
+            "value": 13,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/isize",
+            "value": 21,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string",
+            "value": 814,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/0",
+            "value": 16,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/10",
+            "value": 18,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/200",
+            "value": 20,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/3000",
+            "value": 23,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/40000",
+            "value": 24,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/500000",
+            "value": 28,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/6000000",
+            "value": 29,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/70000000",
+            "value": 31,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_unequal",
+            "value": 154,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_equal",
+            "value": 158,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/from_fixed_decimal",
+            "value": 142,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5115,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/lex",
+            "value": 1818,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17330,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/construct/fs",
+            "value": 7019,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/select/fs",
+            "value": 2669,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
