@@ -29,5 +29,5 @@ export class ICU4XGregorianDateFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  format_datetime(value: ICU4XGregorianDateTime): string | never;
+  format_gregorian_datetime(value: ICU4XGregorianDateTime): string | never;
 }

@@ -60,14 +60,14 @@ class ICU4XTimeFormatter {
   diplomat::result<std::string, ICU4XError> format_time(const ICU4XTime& value) const;
 
   /**
-   * Formats a [`ICU4XGregorianDateTime`] to a string.
+   * Formats the time portion of a [`ICU4XGregorianDateTime`] to a string.
    * 
    * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_gregorian_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const;
 
   /**
-   * Formats a [`ICU4XGregorianDateTime`] to a string.
+   * Formats the time portion of a [`ICU4XGregorianDateTime`] to a string.
    * 
    * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write) for more information.
    */

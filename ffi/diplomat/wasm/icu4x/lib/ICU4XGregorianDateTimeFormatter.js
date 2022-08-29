@@ -35,11 +35,11 @@ export class ICU4XGregorianDateTimeFormatter {
     })();
   }
 
-  format_datetime(arg_value) {
+  format_gregorian_datetime(arg_value) {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XGregorianDateTimeFormatter_format_datetime(diplomat_receive_buffer, this.underlying, arg_value.underlying, writeable);
+        wasm.ICU4XGregorianDateTimeFormatter_format_gregorian_datetime(diplomat_receive_buffer, this.underlying, arg_value.underlying, writeable);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

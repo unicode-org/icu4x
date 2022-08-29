@@ -36,7 +36,7 @@ export class ICU4XTimeFormatter {
 
   /**
 
-   * Formats a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} to a string.
+   * Formats the time portion of a {@link ICU4XGregorianDateTime `ICU4XGregorianDateTime`} to a string.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>

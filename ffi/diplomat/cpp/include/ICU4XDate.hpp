@@ -38,7 +38,7 @@ class ICU4XDate {
    * Creates a new [`ICU4XDate`] representing the ISO date and time
    * given but in a given calendar
    * 
-   * See the [Rust documentation for `new_iso_date`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date) for more information.
+   * See the [Rust documentation for `new_from_iso`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
    */
   static diplomat::result<ICU4XDate, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar);
 

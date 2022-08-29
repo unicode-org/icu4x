@@ -12,7 +12,7 @@
 
         Creates a new :js:class:`ICU4XDate` representing the ISO date and time given but in a given calendar
 
-        See the `Rust documentation for new_iso_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date>`__ for more information.
+        See the `Rust documentation for new_from_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_iso>`__ for more information.
 
 
     .. js:staticfunction:: try_new_from_codes_in_calendar(era_code, year, month_code, day, calendar)
@@ -119,7 +119,7 @@
 
         Creates a new :js:class:`ICU4XIsoDate` from the specified date and time.
 
-        See the `Rust documentation for new_gregorian_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_gregorian_date>`__ for more information.
+        See the `Rust documentation for new_iso_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date>`__ for more information.
 
 
     .. js:function:: to_any()

@@ -35,7 +35,7 @@ class ICU4XIsoDate {
   /**
    * Creates a new [`ICU4XIsoDate`] from the specified date and time.
    * 
-   * See the [Rust documentation for `new_gregorian_date`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_gregorian_date) for more information.
+   * See the [Rust documentation for `new_iso_date`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date) for more information.
    */
   static diplomat::result<ICU4XIsoDate, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day);
 

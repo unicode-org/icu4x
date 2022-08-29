@@ -27,7 +27,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XGregorianDateFormatter_ICU4XError ICU4XGregorianDateFormatter_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength length);
 
-diplomat_result_void_ICU4XError ICU4XGregorianDateFormatter_format_datetime(const ICU4XGregorianDateFormatter* self, const ICU4XGregorianDateTime* value, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XGregorianDateFormatter_format_gregorian_datetime(const ICU4XGregorianDateFormatter* self, const ICU4XGregorianDateTime* value, DiplomatWriteable* write);
 void ICU4XGregorianDateFormatter_destroy(ICU4XGregorianDateFormatter* self);
 
 #ifdef __cplusplus

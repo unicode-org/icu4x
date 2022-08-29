@@ -12,7 +12,7 @@
 
         Creates a new :cpp:class:`ICU4XDate` representing the ISO date and time given but in a given calendar
 
-        See the `Rust documentation for new_iso_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date>`__ for more information.
+        See the `Rust documentation for new_from_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_iso>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XDate, ICU4XError> try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar)
@@ -133,7 +133,7 @@
 
         Creates a new :cpp:class:`ICU4XIsoDate` from the specified date and time.
 
-        See the `Rust documentation for new_gregorian_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_gregorian_date>`__ for more information.
+        See the `Rust documentation for new_iso_date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_iso_date>`__ for more information.
 
 
     .. cpp:function:: ICU4XDate to_any() const
