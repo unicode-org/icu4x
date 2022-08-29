@@ -257,9 +257,9 @@ export class ICU4XCustomTimeZone {
 
    * Sets the meta zone based on the time zone and the local timestamp.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_set_meta_zone Rust documentation for `maybe_set_meta_zone`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone Rust documentation for `maybe_calculate_meta_zone`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone 1}
    */
-  maybe_set_meta_zone(local_datetime: ICU4XIsoDateTime, metazone_calculator: ICU4XMetaZoneCalculator): void;
+  maybe_calculate_meta_zone(local_datetime: ICU4XIsoDateTime, metazone_calculator: ICU4XMetaZoneCalculator): void;
 }

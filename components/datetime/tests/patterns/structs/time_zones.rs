@@ -41,20 +41,18 @@ pub enum FallbackFormat {
 
 impl From<FallbackFormat> for time_zone::TimeZoneFormatterOptions {
     fn from(other: FallbackFormat) -> time_zone::TimeZoneFormatterOptions {
-        match other {
+        let mut options = time_zone::TimeZoneFormatterOptions::default();
+        options.fallback_format = match other {
             FallbackFormat::Iso8601(iso_format, iso_minutes, iso_seconds) => {
-                time_zone::TimeZoneFormatterOptions {
-                    fallback_format: time_zone::FallbackFormat::Iso8601(
-                        iso_format.into(),
-                        iso_minutes.into(),
-                        iso_seconds.into(),
-                    ),
-                }
+                time_zone::FallbackFormat::Iso8601(
+                    iso_format.into(),
+                    iso_minutes.into(),
+                    iso_seconds.into(),
+                )
             }
-            FallbackFormat::LocalizedGmt => time_zone::TimeZoneFormatterOptions {
-                fallback_format: time_zone::FallbackFormat::LocalizedGmt,
-            },
-        }
+            FallbackFormat::LocalizedGmt => time_zone::FallbackFormat::LocalizedGmt,
+        };
+        options
     }
 }
 

@@ -70,7 +70,7 @@ diplomat_result_bool_void ICU4XCustomTimeZone_is_standard_time(const ICU4XCustom
 
 diplomat_result_bool_void ICU4XCustomTimeZone_is_daylight_time(const ICU4XCustomTimeZone* self);
 
-void ICU4XCustomTimeZone_maybe_set_meta_zone(ICU4XCustomTimeZone* self, const ICU4XIsoDateTime* local_datetime, const ICU4XMetaZoneCalculator* metazone_calculator);
+void ICU4XCustomTimeZone_maybe_calculate_meta_zone(ICU4XCustomTimeZone* self, const ICU4XIsoDateTime* local_datetime, const ICU4XMetaZoneCalculator* metazone_calculator);
 void ICU4XCustomTimeZone_destroy(ICU4XCustomTimeZone* self);
 
 #ifdef __cplusplus

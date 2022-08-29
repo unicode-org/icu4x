@@ -55,26 +55,45 @@ where
 /// first, a computationally heavy construction of [`TimeZoneFormatter`], and then fast formatting
 /// of the time-zone data using the instance.
 ///
+/// [`CustomTimeZone`] can be used as formatting input.
+///
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::{GmtOffset, CustomTimeZone};
-/// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
+/// use icu::calendar::DateTime;
+/// use icu::timezone::{CustomTimeZone, MetaZoneCalculator};
+/// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
 /// use icu_locid::locale;
+/// use tinystr::tinystr;
 ///
 /// let provider = icu_testdata::get_provider();
 ///
+/// // Set up the time zone. Note: the inputs here are
+/// //   1. The GMT offset
+/// //   2. The BCP-47 time zone ID
+/// //   3. A datetime (for metazone resolution)
+/// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
+/// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
+/// let mzc = MetaZoneCalculator::try_new_with_buffer_provider(&provider)
+/// .unwrap();
+/// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
+/// .unwrap();
+/// time_zone.maybe_calculate_meta_zone(&datetime, &mzc);
+///
+/// // Set up the formatter:
 /// let mut tzf = TimeZoneFormatter::try_new_with_buffer_provider(
 ///     &provider,
 ///     &locale!("en").into(),
 ///     TimeZoneFormatterOptions::default(),
 /// )
-/// .expect("Failed to create TimeZoneFormatter");
+/// .unwrap();
 /// tzf.load_generic_non_location_long(&provider).unwrap();
 ///
-/// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
-///
-/// let value = tzf.format_to_string(&time_zone);
+/// // Check the result:
+/// assert_eq!(
+///     tzf.format_to_string(&time_zone),
+///     "Central Time"
+/// );
 /// ```
 ///
 /// [data provider]: icu_provider
@@ -591,7 +610,7 @@ impl TimeZoneFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::timezone::{GmtOffset, CustomTimeZone};
+    /// use icu::timezone::CustomTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
@@ -604,7 +623,7 @@ impl TimeZoneFormatter {
     /// )
     /// .expect("Failed to create TimeZoneFormatter");
     ///
-    /// let time_zone = CustomTimeZone::new(Some(GmtOffset::default()), None, None, None);
+    /// let time_zone = CustomTimeZone::utc();
     ///
     /// let mut buffer = String::new();
     /// tzf.format_to_write(&mut buffer, &time_zone)
@@ -774,7 +793,7 @@ impl Default for FallbackFormat {
 
 /// A bag of options to define how time zone will be formatted.
 #[derive(Default, Debug, Clone, Copy, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
+#[non_exhaustive]
 pub struct TimeZoneFormatterOptions {
     pub fallback_format: FallbackFormat,
 }

@@ -270,19 +270,19 @@ pub mod ffi {
         }
 
         /// Sets the meta zone based on the time zone and the local timestamp.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_set_meta_zone, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_calculate_meta_zone, FnInStruct)]
         #[diplomat::rust_link(
             icu::timezone::MetaZoneCalculator::compute_metazone_from_timezone,
             FnInStruct,
             compact
         )]
-        pub fn maybe_set_meta_zone(
+        pub fn maybe_calculate_meta_zone(
             &mut self,
             local_datetime: &ICU4XIsoDateTime,
             metazone_calculator: &ICU4XMetaZoneCalculator,
         ) {
             self.0
-                .maybe_set_meta_zone(&local_datetime.0, &metazone_calculator.0);
+                .maybe_calculate_meta_zone(&local_datetime.0, &metazone_calculator.0);
         }
     }
 

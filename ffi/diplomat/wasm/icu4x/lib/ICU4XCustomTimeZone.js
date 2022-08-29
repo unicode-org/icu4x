@@ -293,7 +293,7 @@ export class ICU4XCustomTimeZone {
     })();
   }
 
-  maybe_set_meta_zone(arg_local_datetime, arg_metazone_calculator) {
-    wasm.ICU4XCustomTimeZone_maybe_set_meta_zone(this.underlying, arg_local_datetime.underlying, arg_metazone_calculator.underlying);
+  maybe_calculate_meta_zone(arg_local_datetime, arg_metazone_calculator) {
+    wasm.ICU4XCustomTimeZone_maybe_calculate_meta_zone(this.underlying, arg_local_datetime.underlying, arg_metazone_calculator.underlying);
   }
 }

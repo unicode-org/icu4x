@@ -531,12 +531,12 @@ fn test_time_zone_format_configs() {
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let zone_provider = icu_testdata::get_provider();
     let langid: LanguageIdentifier = "en".parse().unwrap();
-    let time_zone = CustomTimeZone::new(
-        None,
-        Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-        Some(MetaZoneId(tinystr!(4, "ampa"))),
-        Some(ZoneVariant::daylight()),
-    );
+    let time_zone = CustomTimeZone {
+        gmt_offset: None,
+        time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
+        meta_zone_id: Some(MetaZoneId(tinystr!(4, "ampa"))),
+        zone_variant: Some(ZoneVariant::daylight()),
+    };
     let tzf = TimeZoneFormatter::try_new_with_buffer_provider(
         &zone_provider,
         &langid.into(),

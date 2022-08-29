@@ -271,11 +271,11 @@ class ICU4XCustomTimeZone {
   /**
    * Sets the meta zone based on the time zone and the local timestamp.
    * 
-   * See the [Rust documentation for `maybe_set_meta_zone`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_set_meta_zone) for more information.
+   * See the [Rust documentation for `maybe_calculate_meta_zone`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone) for more information.
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone)
    */
-  void maybe_set_meta_zone(const ICU4XIsoDateTime& local_datetime, const ICU4XMetaZoneCalculator& metazone_calculator);
+  void maybe_calculate_meta_zone(const ICU4XIsoDateTime& local_datetime, const ICU4XMetaZoneCalculator& metazone_calculator);
   inline const capi::ICU4XCustomTimeZone* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCustomTimeZone* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCustomTimeZone(capi::ICU4XCustomTimeZone* i) : inner(i) {}
@@ -499,7 +499,7 @@ inline diplomat::result<bool, std::monostate> ICU4XCustomTimeZone::is_daylight_t
   }
   return diplomat_result_out_value;
 }
-inline void ICU4XCustomTimeZone::maybe_set_meta_zone(const ICU4XIsoDateTime& local_datetime, const ICU4XMetaZoneCalculator& metazone_calculator) {
-  capi::ICU4XCustomTimeZone_maybe_set_meta_zone(this->inner.get(), local_datetime.AsFFI(), metazone_calculator.AsFFI());
+inline void ICU4XCustomTimeZone::maybe_calculate_meta_zone(const ICU4XIsoDateTime& local_datetime, const ICU4XMetaZoneCalculator& metazone_calculator) {
+  capi::ICU4XCustomTimeZone_maybe_calculate_meta_zone(this->inner.get(), local_datetime.AsFFI(), metazone_calculator.AsFFI());
 }
 #endif
