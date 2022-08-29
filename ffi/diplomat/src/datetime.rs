@@ -173,7 +173,7 @@ pub mod ffi {
     impl ICU4XDateTime {
         /// Creates a new [`ICU4XDateTime`] representing the ISO date and time
         /// given but in a given calendar
-        #[diplomat::rust_link(icu::calendar::DateTime::new_iso_datetime, FnInStruct)]
+        #[diplomat::rust_link(icu::DateTime::new_from_iso, FnInStruct)]
         #[allow(clippy::too_many_arguments)]
         pub fn try_new_from_iso_in_calendar(
             year: i32,
