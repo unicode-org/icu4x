@@ -323,7 +323,6 @@ icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone", de
 [features]
 default = [
     "icu_calendar",
-    "icu_casemapping",
     "icu_collator",
     "icu_datetime",
     "icu_decimal",
@@ -332,10 +331,14 @@ default = [
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
-    "icu_segmenter",
     "icu_timezone",
 ]
+experimental = [
+    "icu_segmenter",
+    "icu_casemapping",
+]
 icu_datetime = ["icu_calendar", "dep:icu_datetime", "icu_decimal", "icu_plurals"]
+
 buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]
 icu_calendar_serde = ["buffer", "icu_calendar/serde"]
 icu_casemapping_serde = ["buffer", "icu_casemapping/serde"]
@@ -351,7 +354,6 @@ icu_segmenter_serde = ["buffer", "icu_segmenter/serde"]
 icu_timezone_serde = ["buffer", "icu_timezone/serde"]
 serde = [
     "icu_calendar_serde",
-    "icu_casemapping_serde",
     "icu_collator_serde",
     "icu_datetime_serde",
     "icu_decimal_serde",
@@ -360,8 +362,11 @@ serde = [
     "icu_normalizer_serde",
     "icu_plurals_serde",
     "icu_properties_serde",
-    "icu_segmenter_serde",
     "icu_timezone_serde",
+]
+experimental_serde = [
+    "icu_casemapping_serde",
+    "icu_segmenter_serde",
 ]
 std = []
 bin = [
