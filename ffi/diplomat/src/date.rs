@@ -193,7 +193,8 @@ pub mod ffi {
         }
 
         /// Returns the era for this date,
-        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
+        #[diplomat::rust_link(icu::Date::year, FnInStruct)]
+        #[diplomat::rust_link(icu::types::Era, Struct, compact)]
         pub fn era(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
