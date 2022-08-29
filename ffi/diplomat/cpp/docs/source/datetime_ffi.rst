@@ -1,134 +1,312 @@
 ``datetime::ffi``
 =================
 
-.. cpp:enum-struct:: ICU4XDateLength
+.. cpp:class:: ICU4XDateTime
 
-    .. cpp:enumerator:: Full
+    An ICU4X DateTime object capable of containing a date and time for any calendar.
 
-    .. cpp:enumerator:: Long
+    See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
-    .. cpp:enumerator:: Medium
 
-    .. cpp:enumerator:: Short
+    .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar)
 
-.. cpp:class:: ICU4XDateTimeFormatter
+        Creates a new :cpp:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
 
-    An ICU4X DateFormatter object capable of formatting a :cpp:class:`ICU4XDateTime` as a string, using some calendar specified at runtime in the locale.
+        See the `Rust documentation for new_from_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_from_iso>`__ for more information.
 
-    See the `Rust documentation for DateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html>`__ for more information.
 
+    .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar)
 
-    .. cpp:function:: static diplomat::result<ICU4XDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
+        Creates a new :cpp:class:`ICU4XDateTime` from the given codes, which are interpreted in the given calendar system
 
-        Creates a new :cpp:class:`ICU4XDateTimeFormatter` from locale data.
+        See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes>`__ for more information.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
+    .. cpp:function:: static ICU4XDateTime new_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time)
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XDateTime& value, W& write) const
+        Creates a new :cpp:class:`ICU4XDateTime` from an :cpp:class:`ICU4XDate` and :cpp:class:`ICU4XTime` object
 
-        Formats a :cpp:class:`ICU4XDateTime` to a string.
+        See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write>`__ for more information.
 
+    .. cpp:function:: ICU4XDate date() const
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XDateTime& value) const
+        Gets a copy of the date contained in this object
 
-        Formats a :cpp:class:`ICU4XDateTime` to a string.
+        See the `Rust documentation for date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date>`__ for more information.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write>`__ for more information.
 
+    .. cpp:function:: ICU4XTime time() const
 
-.. cpp:class:: ICU4XGregorianDateFormatter
+        Gets the time contained in this object
 
-    An ICU4X TypedDateFormatter object capable of formatting a :cpp:class:`ICU4XGregorianDateTime` as a string, using the Gregorian Calendar.
+        See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
 
-    See the `Rust documentation for TypedDateFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html>`__ for more information.
 
+    .. cpp:function:: ICU4XIsoDateTime to_iso() const
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length)
+        Converts this date to ISO
 
-        Creates a new :cpp:class:`ICU4XGregorianDateFormatter` from locale data.
+        See the `Rust documentation for to_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_iso>`__ for more information.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
 
+    .. cpp:function:: ICU4XDateTime to_calendar(const ICU4XCalendar& calendar) const
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
+        Convert this datetime to one in a different calendar
 
-        Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
+        See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write>`__ for more information.
 
+    .. cpp:function:: uint8_t hour() const
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XGregorianDateTime& value) const
+        Returns the hour in this time
 
-        Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
+        See the `Rust documentation for hour <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.hour>`__ for more information.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write>`__ for more information.
 
+    .. cpp:function:: uint8_t minute() const
 
-.. cpp:class:: ICU4XGregorianDateTimeFormatter
+        Returns the minute in this time
 
-    An ICU4X TypedDateFormatter object capable of formatting a :cpp:class:`ICU4XGregorianDateTime` as a string, using the Gregorian Calendar.
+        See the `Rust documentation for minute <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.minute>`__ for more information.
 
-    See the `Rust documentation for TypedDateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html>`__ for more information.
 
+    .. cpp:function:: uint8_t second() const
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
+        Returns the second in this time
 
-        Creates a new :cpp:class:`ICU4XGregorianDateFormatter` from locale data.
+        See the `Rust documentation for second <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.second>`__ for more information.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
+    .. cpp:function:: uint32_t nanosecond() const
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
+        Returns the nanosecond in this time
 
-        Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
+        See the `Rust documentation for nanosecond <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.format_to_write>`__ for more information.
 
+    .. cpp:function:: uint32_t day_of_month() const
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_datetime(const ICU4XGregorianDateTime& value) const
+        Returns the 1-indexed day in the month for this date
 
-        Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
+        See the `Rust documentation for day_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_month>`__ for more information.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html#method.format_to_write>`__ for more information.
 
+    .. cpp:function:: ICU4XIsoWeekday day_of_week() const
 
-.. cpp:class:: ICU4XTimeFormatter
+        Returns the day in the week for this day
 
-    An ICU4X TimeFormatter object capable of formatting a :cpp:class:`ICU4XGregorianDateTime` as a string
+        See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
 
-    See the `Rust documentation for TimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html>`__ for more information.
 
+    .. cpp:function:: uint32_t ordinal_month() const
 
-    .. cpp:function:: static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length)
+        Returns 1-indexed number of the month of this date in its year
 
-        Creates a new :cpp:class:`ICU4XTimeFormatter` from locale data.
+        Note that for lunar calendars this may not lead to the same month having the same ordinal month across years; use month_code if you care about month identity.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_gregorian_datetime_to_writeable(const ICU4XGregorianDateTime& value, W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> month_code_to_writeable(W& write) const
 
-        Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
+        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::string, ICU4XError> format_gregorian_datetime(const ICU4XGregorianDateTime& value) const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> month_code() const
 
-        Formats a :cpp:class:`ICU4XGregorianDateTime` to a string.
+        Returns the month code for this date. Typically something like "M01", "M02", but can be more complicated for lunar calendars.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
 
 
-.. cpp:enum-struct:: ICU4XTimeLength
+    .. cpp:function:: int32_t year_in_era() const
 
-    .. cpp:enumerator:: Full
+        Returns the year number in the current era for this date
 
-    .. cpp:enumerator:: Long
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
 
-    .. cpp:enumerator:: Medium
 
-    .. cpp:enumerator:: Short
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> era_to_writeable(W& write) const
+
+        Returns the era for this date,
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> era() const
+
+        Returns the era for this date,
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: uint8_t months_in_year() const
+
+        Returns the number of months in the year represented by this date
+
+        See the `Rust documentation for months_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.months_in_year>`__ for more information.
+
+
+    .. cpp:function:: uint8_t days_in_month() const
+
+        Returns the number of days in the month represented by this date
+
+        See the `Rust documentation for days_in_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
+
+
+    .. cpp:function:: uint32_t days_in_year() const
+
+        Returns the number of days in the year represented by this date
+
+        See the `Rust documentation for days_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_year>`__ for more information.
+
+
+    .. cpp:function:: ICU4XCalendar calendar() const
+
+        Returns the :cpp:class:`ICU4XCalendar` object backing this date
+
+        See the `Rust documentation for calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.calendar>`__ for more information.
+
+
+.. cpp:class:: ICU4XIsoDateTime
+
+    An ICU4X DateTime object capable of containing a ISO-8601 date and time.
+
+    See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond)
+
+        Creates a new :cpp:class:`ICU4XIsoDateTime` from the specified date and time.
+
+        See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
+
+
+    .. cpp:function:: static ICU4XIsoDateTime new_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time)
+
+        Creates a new :cpp:class:`ICU4XIsoDateTime` from an :cpp:class:`ICU4XIsoDate` and :cpp:class:`ICU4XTime` object
+
+        See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> from_minutes_since_local_unix_epoch(int32_t minutes)
+
+        Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
+
+        See the `Rust documentation for from_minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch>`__ for more information.
+
+
+    .. cpp:function:: ICU4XIsoDate date() const
+
+        Gets the date contained in this object
+
+        See the `Rust documentation for date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.date>`__ for more information.
+
+
+    .. cpp:function:: ICU4XTime time() const
+
+        Gets the time contained in this object
+
+        See the `Rust documentation for time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#structfield.time>`__ for more information.
+
+
+    .. cpp:function:: ICU4XDateTime to_any() const
+
+        Converts this to an :cpp:class:`ICU4XDateTime` capable of being mixed with dates of other calendars
+
+        See the `Rust documentation for to_any <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_any>`__ for more information.
+
+
+    .. cpp:function:: int32_t minutes_since_local_unix_epoch() const
+
+        Gets the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
+
+        See the `Rust documentation for minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.minutes_since_local_unix_epoch>`__ for more information.
+
+
+    .. cpp:function:: ICU4XDateTime to_calendar(const ICU4XCalendar& calendar) const
+
+        Convert this datetime to one in a different calendar
+
+        See the `Rust documentation for to_calendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.to_calendar>`__ for more information.
+
+
+    .. cpp:function:: uint8_t hour() const
+
+        Returns the hour in this time
+
+        See the `Rust documentation for hour <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.hour>`__ for more information.
+
+
+    .. cpp:function:: uint8_t minute() const
+
+        Returns the minute in this time
+
+        See the `Rust documentation for minute <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.minute>`__ for more information.
+
+
+    .. cpp:function:: uint8_t second() const
+
+        Returns the second in this time
+
+        See the `Rust documentation for second <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.second>`__ for more information.
+
+
+    .. cpp:function:: uint32_t nanosecond() const
+
+        Returns the nanosecond in this time
+
+        See the `Rust documentation for nanosecond <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html#structfield.nanosecond>`__ for more information.
+
+
+    .. cpp:function:: uint32_t day_of_month() const
+
+        Returns the 1-indexed day in the month for this date
+
+        See the `Rust documentation for day_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_month>`__ for more information.
+
+
+    .. cpp:function:: ICU4XIsoWeekday day_of_week() const
+
+        Returns the day in the week for this day
+
+        See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
+
+
+    .. cpp:function:: uint32_t month() const
+
+        Returns 1-indexed number of the month of this date in its year
+
+        See the `Rust documentation for month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.month>`__ for more information.
+
+
+    .. cpp:function:: int32_t year() const
+
+        Returns the year number for this date
+
+        See the `Rust documentation for year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.year>`__ for more information.
+
+
+    .. cpp:function:: uint8_t months_in_year() const
+
+        Returns the number of months in the year represented by this date
+
+        See the `Rust documentation for months_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.months_in_year>`__ for more information.
+
+
+    .. cpp:function:: uint8_t days_in_month() const
+
+        Returns the number of days in the month represented by this date
+
+        See the `Rust documentation for days_in_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_month>`__ for more information.
+
+
+    .. cpp:function:: uint32_t days_in_year() const
+
+        Returns the number of days in the year represented by this date
+
+        See the `Rust documentation for days_in_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.days_in_year>`__ for more information.
+
