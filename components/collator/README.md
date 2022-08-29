@@ -42,7 +42,7 @@ assert_eq!(collator_en.compare("manna", "mañana"), Ordering::Greater);
 
 ```
 
-### Examples of [`CollatorOptions`]
+### Examples of `CollatorOptions`
 
 The [`CollatorOptions`] struct configures specific custom behavior for the `Collator`.  See docs
 for [`CollatorOptions`] for more details.  Some basic descriptions and examples are below.
@@ -104,6 +104,10 @@ assert_eq!(collator_l3.compare("A", "Ⓐ"), Ordering::Less);
 
 Allows alternate handling for certain customized collation orderings, including the option to
 ignore the special handling for the strings of such customizations.
+
+Note that `AlternateHandling::ShiftTrimmed` and `AlternateHandling::Blanked` are
+unimplemented. The default is `AlternateHandling::NonIgnorable`, except
+for Thai, whose default is `AlternateHandling::Shifted`.
 
 ### Case Level
 

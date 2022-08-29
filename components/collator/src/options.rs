@@ -256,8 +256,9 @@ pub enum MaxVariable {
 ///
 /// ## Alternate Handling
 ///
-/// This is the BCP47 key `ka`. Note that `ShiftTrimmed` and `Blanked` are
-/// unimplemented. The default is `AlternateHandling::NonIgnorable`, except
+/// This is the BCP47 key `ka`. Note that `AlternateHandling::ShiftTrimmed` and
+/// `AlternateHandling::Blanked` are unimplemented. The default is
+/// `AlternateHandling::NonIgnorable`, except
 /// for Thai, whose default is `AlternateHandling::Shifted`.
 ///
 /// ## Case Level

@@ -127,6 +127,10 @@
 //! Allows alternate handling for certain customized collation orderings, including the option to
 //! ignore the special handling for the strings of such customizations.
 //!
+//! Note that `AlternateHandling::ShiftTrimmed` and `AlternateHandling::Blanked` are
+//! unimplemented. The default is `AlternateHandling::NonIgnorable`, except
+//! for Thai, whose default is `AlternateHandling::Shifted`.
+//!
 //! ## Case Level
 //!
 //! Whether to distinguish case in sorting, even for sorting levels higher than tertiary,
