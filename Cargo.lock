@@ -1722,7 +1722,6 @@ name = "icu_provider"
 version = "1.0.0-beta1"
 dependencies = [
  "bincode",
- "cfg-if 1.0.0",
  "databake",
  "dhat 0.3.0",
  "displaydoc",

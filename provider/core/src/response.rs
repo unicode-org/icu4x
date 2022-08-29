@@ -8,7 +8,6 @@ use crate::marker::DataMarker;
 use crate::request::DataLocale;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
-use cfg_if::cfg_if;
 use core::any::Any;
 use core::convert::TryFrom;
 use core::fmt::Debug;
@@ -231,17 +230,17 @@ impl<T: 'static> RcWrap<T> {
     }
 }
 
-cfg_if! {
-    if #[cfg(feature = "sync")] {
-        /// A trait that allows to specify bounds for RcWrap value when the "sync" feature is on.
-        pub trait RcWrapBounds: Send + Sync {}
-        impl<T: Send + Sync> RcWrapBounds for T {}
-    } else {
-        /// A trait that allows to specify bounds for RcWrap value when the "sync" feature is off.
-        pub trait RcWrapBounds {}
-        impl<T> RcWrapBounds for T {}
-    }
-}
+/// A trait that allows to specify bounds for RcWrap value when the "sync" feature is on.
+#[cfg(feature = "sync")]
+pub trait RcWrapBounds: Send + Sync {}
+#[cfg(feature = "sync")]
+impl<T: Send + Sync> RcWrapBounds for T {}
+
+/// A trait that allows to specify bounds for RcWrap value when the "sync" feature is off.
+#[cfg(not(feature = "sync"))]
+pub trait RcWrapBounds {}
+#[cfg(not(feature = "sync"))]
+pub trait RcWrapBounds {}
 
 #[test]
 fn test_clone_eq() {
