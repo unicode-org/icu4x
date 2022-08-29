@@ -580,16 +580,14 @@ mod test {
         let today_plus_5000 = Date::new_iso_date(2035, 3, 2).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, 5000));
         assert_eq!(offset, today_plus_5000);
-        let offset = today
-            .added(simple_subtract(&today_plus_5000, &today));
+        let offset = today.added(simple_subtract(&today_plus_5000, &today));
         assert_eq!(offset, today_plus_5000);
 
         let today = Date::new_iso_date(2021, 6, 23).unwrap();
         let today_minus_5000 = Date::new_iso_date(2007, 10, 15).unwrap();
         let offset = today.added(DateDuration::new(0, 0, 0, -5000));
         assert_eq!(offset, today_minus_5000);
-        let offset = today
-            .added(simple_subtract(&today_minus_5000, &today));
+        let offset = today.added(simple_subtract(&today_minus_5000, &today));
         assert_eq!(offset, today_minus_5000);
     }
 

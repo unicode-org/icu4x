@@ -149,6 +149,6 @@ impl<A: AsCalendar + Clone> Clone for DateTime<A> {
 impl<A> Copy for DateTime<A>
 where
     A: AsCalendar + Copy,
-    <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy
+    <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy,
 {
 }
