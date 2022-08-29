@@ -193,40 +193,6 @@ fn char_from_u24(u: U24) -> char {
 }
 
 #[inline(always)]
-fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
-    if let Some(slice) = s {
-        if let Some(first) = slice.first() {
-            return (
-                char_from_u16(first),
-                // `unwrap()` must succeed, because `first()` returned `Some`.
-                #[allow(clippy::unwrap_used)]
-                slice.get_subslice(1..slice.len()).unwrap(),
-            );
-        }
-    }
-    // GIGO case
-    debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U16)
-}
-
-#[inline(always)]
-fn split_first_u32(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
-    if let Some(slice) = s {
-        if let Some(first) = slice.first() {
-            return (
-                char_from_u24(first),
-                // `unwrap()` must succeed, because `first()` returned `Some`.
-                #[allow(clippy::unwrap_used)]
-                slice.get_subslice(1..slice.len()).unwrap(),
-            );
-        }
-    }
-    // GIGO case
-    debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U24)
-}
-
-#[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
     u32::from(c).wrapping_sub(u32::from(start)) <= (u32::from(end) - u32::from(start))
 }
@@ -1477,8 +1443,18 @@ where
                         let offset = usize::from(trail_or_complex & 0xFFF);
                         if offset < self.scalars16.len() {
                             let len = usize::from(trail_or_complex >> 13) + 2;
-                            let (starter, tail) =
-                                split_first_u16(self.scalars16.get_subslice(offset..offset + len));
+                            let (starter, tail) = self
+                                .scalars16
+                                .get_subslice(offset..offset + len)
+                                .and_then(ZeroSlice::split_first)
+                                .map_or_else(
+                                    || {
+                                        // GIGO case
+                                        debug_assert!(false);
+                                        (REPLACEMENT_CHARACTER, EMPTY_U16)
+                                    },
+                                    |(first, tail)| (char_from_u16(first), tail),
+                                );
                             c = starter;
                             if trail_or_complex & 0x1000 != 0 {
                                 for u in tail.iter() {
@@ -1519,9 +1495,19 @@ where
                         } else {
                             let len = usize::from(trail_or_complex >> 13) + 1;
                             let offset32 = offset - self.scalars16.len();
-                            let (starter, tail) = split_first_u32(
-                                self.scalars32.get_subslice(offset32..offset32 + len),
-                            );
+                            let (starter, tail) = self
+                                .scalars32
+                                .get_subslice(offset32..offset32 + len)
+                                .and_then(|slice| slice.split_first())
+                                .map_or_else(
+                                    || {
+                                        // GIGO case
+                                        debug_assert!(false);
+                                        (REPLACEMENT_CHARACTER, EMPTY_U24)
+                                    },
+                                    |(first, tail)| (char_from_u24(first), tail),
+                                );
+
                             c = starter;
                             if trail_or_complex & 0x1000 != 0 {
                                 for u in tail.iter() {
