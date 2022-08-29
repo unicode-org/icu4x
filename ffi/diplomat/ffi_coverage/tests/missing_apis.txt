@@ -157,7 +157,6 @@ icu::collections::codepointtrie::toml::CodePointTrieToml#Struct
 icu::collections::codepointtrie::toml::CodePointTrieToml::data_slice#FnInStruct
 icu::collections::codepointtrie::toml::CodePointTrieToml::index_slice#FnInStruct
 icu::datetime::DateFormatter#Struct
-icu::datetime::DateFormatter::try_new_unstable#FnInStruct
 icu::datetime::DateFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::DateFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::DateTimeFormatter::resolve_components#FnInStruct
