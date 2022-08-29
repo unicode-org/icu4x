@@ -68,7 +68,7 @@ pub mod ffi {
             write.flush();
             result
         }
-        /// Formats a [`ICU4XGregorianDateTime`] to a string.
+        /// Formats the time portion of a [`ICU4XGregorianDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_string, FnInStruct, hidden)]
