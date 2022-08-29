@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::asciibyte::AsciiByte;
+
 /// Internal helper struct that performs operations on aligned integers.
 /// Supports strings up to 4 bytes long.
 #[repr(transparent)]
@@ -24,8 +26,18 @@ impl Aligned4 {
     }
 
     #[inline]
+    pub const fn from_ascii_bytes<const N: usize>(src: &[AsciiByte; N]) -> Self {
+        Self::from_bytes::<N>(unsafe { core::mem::transmute(src) })
+    }
+
+    #[inline]
     pub const fn to_bytes(&self) -> [u8; 4] {
         self.0.to_ne_bytes()
+    }
+
+    #[inline]
+    pub const fn to_ascii_bytes(&self) -> [AsciiByte; 4] {
+        unsafe { core::mem::transmute(self.to_bytes()) }
     }
 
     pub const fn len(&self) -> usize {
@@ -171,8 +183,18 @@ impl Aligned8 {
     }
 
     #[inline]
+    pub const fn from_ascii_bytes<const N: usize>(src: &[AsciiByte; N]) -> Self {
+        Self::from_bytes::<N>(unsafe { core::mem::transmute(src) })
+    }
+
+    #[inline]
     pub const fn to_bytes(&self) -> [u8; 8] {
         self.0.to_ne_bytes()
+    }
+
+    #[inline]
+    pub const fn to_ascii_bytes(&self) -> [AsciiByte; 8] {
+        unsafe { core::mem::transmute(self.to_bytes()) }
     }
 
     pub const fn len(&self) -> usize {

@@ -7,10 +7,12 @@ use alloc::string::String;
 
 use icu_provider::prelude::*;
 
-use crate::provider::{calendar::*, week_data::WeekDataV1Marker};
+use crate::provider::calendar::*;
 use crate::{input::DateInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
+use icu_calendar::provider::{
+    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
+};
 use icu_calendar::Date;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
@@ -33,19 +35,15 @@ use icu_provider::DataLocale;
 /// ```
 /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
 /// use icu::datetime::{options::length, DateFormatter};
-/// use icu::locid::Locale;
+/// use icu::locid::locale;
 /// use std::str::FromStr;
 ///
 /// let length = length::Date::Medium;
 ///
-/// let df = DateFormatter::try_new_unstable(
-///     &icu_testdata::unstable(),
-///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
-///     length,
-/// )
-/// .expect("Failed to create TypedDateFormatter instance.");
+/// let df = DateFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("en-u-ca-gregory").into(), length)
+///     .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let date = Date::new_gregorian_date(2020, 9, 1)
+/// let date = Date::new_iso_date(2020, 9, 1)
 ///     .expect("Failed to construct Date.");
 /// let any_date = date.to_any();
 ///
@@ -105,12 +103,12 @@ impl DateFormatter {
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
     /// use icu::datetime::{options::length, DateFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let length = length::Date::Medium;
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let df = DateFormatter::try_new_with_buffer_provider(
     ///     &icu_testdata::buffer(),
@@ -119,7 +117,7 @@ impl DateFormatter {
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::new_gregorian_date(2020, 9, 1)
+    /// let datetime = Date::new_iso_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -157,12 +155,12 @@ impl DateFormatter {
     /// ```
     /// use icu::calendar::{any_calendar::AnyCalendar, Date, Gregorian};
     /// use icu::datetime::{options::length, DateFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let length = length::Date::Medium;
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let df = DateFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -171,7 +169,7 @@ impl DateFormatter {
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let datetime = Date::new_gregorian_date(2020, 9, 1)
+    /// let datetime = Date::new_iso_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -198,14 +196,14 @@ impl DateFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,

@@ -15,6 +15,7 @@ class ICU4XDataProvider;
 class ICU4XLocale;
 class ICU4XCalendar;
 #include "ICU4XError.hpp"
+#include "ICU4XAnyCalendarKind.hpp"
 
 /**
  * A destruction policy for using ICU4XCalendar with std::unique_ptr.
@@ -28,7 +29,7 @@ struct ICU4XCalendarDeleter {
 /**
  * 
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html) for more information.
+ * See the [Rust documentation for `AnyCalendar`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html) for more information.
  */
 class ICU4XCalendar {
  public:
@@ -36,9 +37,23 @@ class ICU4XCalendar {
   /**
    * Creates a new [`ICU4XCalendar`] from the specified date and time.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.AnyCalendar.html#method.try_new_unstable) for more information.
+   * See the [Rust documentation for `try_new_for_locale_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable) for more information.
    */
-  static diplomat::result<ICU4XCalendar, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  static diplomat::result<ICU4XCalendar, ICU4XError> try_new_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+
+  /**
+   * Creates a new [`ICU4XCalendar`] from the specified date and time.
+   * 
+   * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_unstable) for more information.
+   */
+  static diplomat::result<ICU4XCalendar, ICU4XError> try_new_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind);
+
+  /**
+   * Creates a new [`ICU4XCalendar`] from the specified date and time.
+   * 
+   * See the [Rust documentation for `kind`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.kind) for more information.
+   */
+  ICU4XAnyCalendarKind kind() const;
   inline const capi::ICU4XCalendar* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCalendar* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCalendar(capi::ICU4XCalendar* i) : inner(i) {}
@@ -52,8 +67,8 @@ class ICU4XCalendar {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
 
-inline diplomat::result<ICU4XCalendar, ICU4XError> ICU4XCalendar::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCalendar_try_new(provider.AsFFI(), locale.AsFFI());
+inline diplomat::result<ICU4XCalendar, ICU4XError> ICU4XCalendar::try_new_for_locale(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCalendar_try_new_for_locale(provider.AsFFI(), locale.AsFFI());
   diplomat::result<ICU4XCalendar, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCalendar>(std::move(ICU4XCalendar(diplomat_result_raw_out_value.ok)));
@@ -61,5 +76,18 @@ inline diplomat::result<ICU4XCalendar, ICU4XError> ICU4XCalendar::try_new(const 
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
+}
+inline diplomat::result<ICU4XCalendar, ICU4XError> ICU4XCalendar::try_new_for_kind(const ICU4XDataProvider& provider, ICU4XAnyCalendarKind kind) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCalendar_try_new_for_kind(provider.AsFFI(), static_cast<capi::ICU4XAnyCalendarKind>(kind));
+  diplomat::result<ICU4XCalendar, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XCalendar>(std::move(ICU4XCalendar(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline ICU4XAnyCalendarKind ICU4XCalendar::kind() const {
+  return static_cast<ICU4XAnyCalendarKind>(capi::ICU4XCalendar_kind(this->inner.get()));
 }
 #endif

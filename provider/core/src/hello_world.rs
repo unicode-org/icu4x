@@ -23,6 +23,7 @@ use core::fmt::Debug;
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_provider::hello_world))]
 pub struct HelloWorldV1<'data> {
+    /// The translation of "Hello World".
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub message: Cow<'data, str>,
 }
@@ -133,6 +134,28 @@ impl_dynamic_data_provider!(HelloWorldProvider, [HelloWorldV1Marker,], AnyMarker
 #[cfg(feature = "datagen")]
 make_exportable_provider!(HelloWorldProvider, [HelloWorldV1Marker,]);
 
+/// A data provider returning Hello World strings in different languages as JSON blobs.
+///
+/// Mostly useful for testing.
+///
+/// # Examples
+///
+/// ```
+/// use icu_locid::locale;
+/// use icu_provider::hello_world::*;
+/// use icu_provider::prelude::*;
+///
+/// let german_hello_world = HelloWorldProvider
+///     .into_json_provider()
+///     .load_buffer(HelloWorldV1Marker::KEY, DataRequest {
+///         locale: &locale!("de").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect("Loading should succeed")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!(b"{\"message\":\"Hallo Welt\"}", german_hello_world.get());
 pub struct HelloWorldJsonProvider(HelloWorldProvider);
 
 impl BufferProvider for HelloWorldJsonProvider {
@@ -169,6 +192,7 @@ impl IterableDataProvider<HelloWorldV1Marker> for HelloWorldProvider {
     }
 }
 
+#[cfg(feature = "datagen")]
 #[test]
 fn test_iter() {
     use icu_locid::locale;

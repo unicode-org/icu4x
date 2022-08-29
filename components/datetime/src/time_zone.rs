@@ -704,9 +704,7 @@ impl TimeZoneFormatter {
     /// ```
     pub fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, value);
         s
     }
 
@@ -726,7 +724,7 @@ impl TimeZoneFormatter {
     ) -> Result<String, DateTimeFormatterError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(TimeZoneFormatter::format_time_segment(
-                (gmt_offset.raw_offset_seconds() / 3600).abs() as u8,
+                (gmt_offset.offset_seconds() / 3600).abs() as u8,
                 padding,
             ))
         } else {
@@ -742,7 +740,7 @@ impl TimeZoneFormatter {
     ) -> Result<String, DateTimeFormatterError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(TimeZoneFormatter::format_time_segment(
-                (gmt_offset.raw_offset_seconds() % 3600 / 60).abs() as u8,
+                (gmt_offset.offset_seconds() % 3600 / 60).abs() as u8,
                 ZeroPadding::On,
             ))
         } else {
@@ -759,7 +757,7 @@ impl TimeZoneFormatter {
     ) -> Result<fmt::Result, DateTimeFormatterError> {
         if let Some(gmt_offset) = time_zone.gmt_offset() {
             Ok(sink.write_str(&TimeZoneFormatter::format_time_segment(
-                (gmt_offset.raw_offset_seconds() % 3600 % 60).abs() as u8,
+                (gmt_offset.offset_seconds() % 3600 % 60).abs() as u8,
                 ZeroPadding::On,
             )))
         } else {
@@ -972,7 +970,7 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
                     .map(|p| p.get())
                     .and_then(|metazones| {
                         time_zone
-                            .metazone_id()
+                            .meta_zone_id()
                             .and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
@@ -1010,7 +1008,7 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
                     .map(|p| p.get())
                     .and_then(|metazones| {
                         time_zone
-                            .metazone_id()
+                            .meta_zone_id()
                             .and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
@@ -1039,7 +1037,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
             .and_then(|metazones| {
                 time_zone.time_zone_id().and_then(|tz| {
                     time_zone
-                        .time_variant()
+                        .zone_variant()
                         .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
                 })
             })
@@ -1049,9 +1047,9 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
                     .as_ref()
                     .map(|p| p.get())
                     .and_then(|metazones| {
-                        time_zone.metazone_id().and_then(|mz| {
+                        time_zone.meta_zone_id().and_then(|mz| {
                             time_zone
-                                .time_variant()
+                                .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
                         })
                     })
@@ -1081,7 +1079,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
             .and_then(|metazones| {
                 time_zone.time_zone_id().and_then(|tz| {
                     time_zone
-                        .time_variant()
+                        .zone_variant()
                         .and_then(|variant| metazones.overrides.get_2d(&tz, &variant))
                 })
             })
@@ -1091,9 +1089,9 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
                     .as_ref()
                     .map(|p| p.get())
                     .and_then(|metazones| {
-                        time_zone.metazone_id().and_then(|mz| {
+                        time_zone.meta_zone_id().and_then(|mz| {
                             time_zone
-                                .time_variant()
+                                .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
                         })
                     })

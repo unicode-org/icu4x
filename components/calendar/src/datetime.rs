@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
+use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::types::{self, Time};
 use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
 
@@ -11,6 +11,10 @@ use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
 /// This can work with wrappers around [`Calendar`](crate::Calendar) types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait, much like
 /// [`Date`].
+///
+/// This can be constructed manually from a [`Date`] and [`Time`], or can be constructed
+/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
 ///
 /// ```rust
 /// use icu::calendar::DateTime;
@@ -29,11 +33,14 @@ use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
+    /// The date
     pub date: Date<A>,
+    /// The time
     pub time: Time,
 }
 
 impl<A: AsCalendar> DateTime<A> {
+    /// Construct a [`DateTime`] for a given [`Date`] and [`Time`]
     pub fn new(date: Date<A>, time: Time) -> Self {
         DateTime { date, time }
     }
@@ -82,7 +89,7 @@ impl<A: AsCalendar> DateTime<A> {
     }
 }
 
-impl<C: IncludedInAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
     /// Type-erase the date, converting it to a date for [`AnyCalendar`]
     pub fn to_any(&self) -> DateTime<AnyCalendar> {
         DateTime {

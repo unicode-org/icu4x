@@ -240,7 +240,7 @@ where
 
     /// Shifts all joiner ranges from key0_index onward one index up
     fn joiner_expand(&mut self, key0_index: usize) {
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::expect_used)] // slice overflow
         self.joiner
             .to_mut()
             .iter_mut()
@@ -257,18 +257,11 @@ where
 
     /// Shifts all joiner ranges from key0_index onward one index down
     fn joiner_shrink(&mut self, key0_index: usize) {
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
         self.joiner
             .to_mut()
             .iter_mut()
             .skip(key0_index)
-            .for_each(|ref mut v| {
-                **v = v
-                    .as_unsigned_int()
-                    .checked_sub(1)
-                    .expect("Shrink should always succeed")
-                    .to_unaligned()
-            });
+            .for_each(|ref mut v| **v = (v.as_unsigned_int() - 1).to_unaligned());
     }
 }
 
@@ -309,8 +302,7 @@ where
         let (key0_index, range) = self.get_or_insert_range_for_key0(key0);
         debug_assert!(range.start <= range.end); // '<=' because we may have inserted a new key0
         debug_assert!(range.end <= self.keys1.zvl_len());
-        // The above debug_assert! protects the unwrap() below
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // by debug_assert! invariants
         let index = range.start
             + match self.keys1.zvl_binary_search_in_range(key1, range).unwrap() {
                 Ok(index) => return Some(self.values.zvl_replace(index, value)),
@@ -341,9 +333,8 @@ where
         let range = self.get_range_for_key0_index(key0_index);
         debug_assert!(range.start < range.end); // '<' because every key0 should have a key1
         debug_assert!(range.end <= self.keys1.zvl_len());
-        // The above debug_assert! protects the unwrap() below
         let is_singleton_range = range.start + 1 == range.end;
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // by debug_assert invariants
         let index = range.start
             + self
                 .keys1
@@ -427,7 +418,7 @@ where
             _ => {}
         }
 
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::expect_used)] // slice overflow
         let joiner_value = u32::try_from(self.keys1.zvl_len() + 1)
             .expect("Attempted to add more than 2^32 elements to a ZeroMap2d");
 

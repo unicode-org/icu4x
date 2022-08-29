@@ -8,23 +8,23 @@ import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFor
 
 const locale = ICU4XLocale.create("bn");
 const dataProvider = ICU4XDataProvider.create_test();
-const format = ICU4XFixedDecimalFormatter.try_new(dataProvider, locale, "Auto");
+const format = ICU4XFixedDecimalFormatter.try_new_with_grouping_strategy(dataProvider, locale, "Auto");
 
 test("format a simple decimal", t => {
-  const decimal = ICU4XFixedDecimal.create(1234);
+  const decimal = ICU4XFixedDecimal.create_from_i32(1234);
   decimal.multiply_pow10(-2);
 
   t.is(format.format(decimal), "১২.৩৪");
 });
 
 test("format a long decimal", t => {
-  const decimal = ICU4XFixedDecimal.create(1000007);
+  const decimal = ICU4XFixedDecimal.create_from_i32(1000007);
 
   t.is(format.format(decimal), "১০,০০,০০৭");
 });
 
 test("format a negated, scaled decimal", t => {
-  const decimal = ICU4XFixedDecimal.create(1000007);
+  const decimal = ICU4XFixedDecimal.create_from_i32(1000007);
   decimal.multiply_pow10(2);
   decimal.set_sign("Negative");
 

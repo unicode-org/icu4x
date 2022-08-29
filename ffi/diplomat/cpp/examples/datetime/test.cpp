@@ -8,6 +8,7 @@
 #include "../../include/ICU4XTimeFormatter.hpp"
 #include "../../include/ICU4XDataStruct.hpp"
 #include "../../include/ICU4XLogger.hpp"
+#include "../../include/ICU4XCustomTimeZone.hpp"
 
 #include <atomic>
 #include <iostream>
@@ -46,7 +47,7 @@ int main() {
     }
 
     locale = ICU4XLocale::create("en-u-ca-japanese").ok().value();
-    ICU4XCalendar cal = ICU4XCalendar::try_new(dp, locale).ok().value();
+    ICU4XCalendar cal = ICU4XCalendar::try_new_for_locale(dp, locale).ok().value();
     ICU4XDateTime any_date = ICU4XDateTime::try_new_from_iso_in_calendar(2020, 10, 5, 13, 33, 15, cal).ok().value();
     ICU4XDateTimeFormatter any_dtf = ICU4XDateTimeFormatter::try_new(dp, locale, ICU4XDateLength::Medium, ICU4XTimeLength::Short).ok().value();
     out = any_dtf.format_datetime(any_date).ok().value();
@@ -55,5 +56,23 @@ int main() {
         std::cout << "Output does not match expected output" << std::endl;
         return 1;
     }
+
+    ICU4XCustomTimeZone time_zone = ICU4XCustomTimeZone::create_from_str("-6:00").ok().value();
+    ICU4XMetaZoneCalculator mzcalc = ICU4XMetaZoneCalculator::try_new(dp).ok().value();
+    time_zone.try_set_time_zone_id("uschi").ok().value();
+    std::string time_zone_id_return = time_zone.time_zone_id().ok().value();
+    if (time_zone_id_return != "uschi") {
+        std::cout << "Time zone ID does not roundtrip" << std::endl;
+        return 1;
+    }
+    ICU4XIsoDateTime local_datetime = ICU4XIsoDateTime::try_new(2022, 8, 25, 0, 0, 0).ok().value();
+    time_zone.maybe_set_meta_zone(local_datetime, mzcalc);
+    std::string meta_zone_id_return = time_zone.meta_zone_id().ok().value();
+    if (meta_zone_id_return != "amce") {
+        std::cout << "Meta zone ID not calculated correctly; got " << meta_zone_id_return << std::endl;
+        return 1;
+    }
+    // TODO: Pass the CustomTimeZone into a ZonedDateTimeFormatter once added to FFI
+
     return 0;
 }

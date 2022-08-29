@@ -51,7 +51,7 @@ impl Key {
         start: usize,
         end: usize,
     ) -> Result<Self, ParserError> {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // length checked
         if end - start != KEY_LENGTH
             || !bytes[start].is_ascii_alphanumeric()
             || !bytes[start + 1].is_ascii_alphabetic()

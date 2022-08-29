@@ -7,20 +7,20 @@ import test from 'ava';
 import { ICU4XFixedDecimal } from "../lib/index.js"
 
 test("convert a simple decimal to a string", t => {
-  const decimal = ICU4XFixedDecimal.create(1234);
+  const decimal = ICU4XFixedDecimal.create_from_i64(1234n);
 
   t.is(decimal.to_string(), "1234");
 });
 
 test("multiply a decimal by a power of 10", t => {
-  const decimal = ICU4XFixedDecimal.create(1234);
+  const decimal = ICU4XFixedDecimal.create_from_i32(1234);
   decimal.multiply_pow10(-2);
 
   t.is(decimal.to_string(), "12.34");
 });
 
 test("negate a decimal", t => {
-  const decimal = ICU4XFixedDecimal.create(1234);
+  const decimal = ICU4XFixedDecimal.create_from_i32(1234);
   decimal.set_sign("Negative");
 
   t.is(decimal.to_string(), "-1234");

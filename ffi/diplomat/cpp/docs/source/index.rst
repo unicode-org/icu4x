@@ -23,6 +23,7 @@ Documentation
    segmenter_line_ffi
    segmenter_sentence_ffi
    segmenter_word_ffi
+   timezone_ffi
 
 Indices and tables
 ==================

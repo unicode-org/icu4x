@@ -34,8 +34,8 @@ typedef enum ICU4XError {
   ICU4XError_DataStructValidityError = 768,
   ICU4XError_PropertyUnknownScriptIdError = 1024,
   ICU4XError_PropertyUnknownGeneralCategoryGroupError = 1025,
-  ICU4XError_DecimalLimitError = 1280,
-  ICU4XError_DecimalSyntaxError = 1281,
+  ICU4XError_FixedDecimalLimitError = 1280,
+  ICU4XError_FixedDecimalSyntaxError = 1281,
   ICU4XError_PluralParserError = 1536,
   ICU4XError_DateTimeParseError = 1792,
   ICU4XError_DateTimeOverflowError = 1793,
@@ -55,6 +55,11 @@ typedef enum ICU4XError {
   ICU4XError_DateTimeFormatFixedDecimalError = 2055,
   ICU4XError_DateTimeFormatMismatchedAnyCalendarError = 2056,
   ICU4XError_DateTimeFormatMismatchedCalendarLocaleError = 2057,
+  ICU4XError_TinyStrTooLargeError = 2304,
+  ICU4XError_TinyStrContainsNullError = 2305,
+  ICU4XError_TinyStrNonAsciiError = 2306,
+  ICU4XError_TimeZoneOffsetOutOfBoundsError = 2560,
+  ICU4XError_TimeZoneInvalidOffsetError = 2561,
 } ICU4XError;
 #ifdef __cplusplus
 } // namespace capi

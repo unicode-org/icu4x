@@ -25,8 +25,8 @@ export const ICU4XError_js_to_rust = {
   "DataStructValidityError": 768,
   "PropertyUnknownScriptIdError": 1024,
   "PropertyUnknownGeneralCategoryGroupError": 1025,
-  "DecimalLimitError": 1280,
-  "DecimalSyntaxError": 1281,
+  "FixedDecimalLimitError": 1280,
+  "FixedDecimalSyntaxError": 1281,
   "PluralParserError": 1536,
   "DateTimeParseError": 1792,
   "DateTimeOverflowError": 1793,
@@ -46,6 +46,11 @@ export const ICU4XError_js_to_rust = {
   "DateTimeFormatFixedDecimalError": 2055,
   "DateTimeFormatMismatchedAnyCalendarError": 2056,
   "DateTimeFormatMismatchedCalendarLocaleError": 2057,
+  "TinyStrTooLargeError": 2304,
+  "TinyStrContainsNullError": 2305,
+  "TinyStrNonAsciiError": 2306,
+  "TimeZoneOffsetOutOfBoundsError": 2560,
+  "TimeZoneInvalidOffsetError": 2561,
 };
 
 export const ICU4XError_rust_to_js = {
@@ -72,8 +77,8 @@ export const ICU4XError_rust_to_js = {
   768: "DataStructValidityError",
   1024: "PropertyUnknownScriptIdError",
   1025: "PropertyUnknownGeneralCategoryGroupError",
-  1280: "DecimalLimitError",
-  1281: "DecimalSyntaxError",
+  1280: "FixedDecimalLimitError",
+  1281: "FixedDecimalSyntaxError",
   1536: "PluralParserError",
   1792: "DateTimeParseError",
   1793: "DateTimeOverflowError",
@@ -93,6 +98,11 @@ export const ICU4XError_rust_to_js = {
   2055: "DateTimeFormatFixedDecimalError",
   2056: "DateTimeFormatMismatchedAnyCalendarError",
   2057: "DateTimeFormatMismatchedCalendarLocaleError",
+  2304: "TinyStrTooLargeError",
+  2305: "TinyStrContainsNullError",
+  2306: "TinyStrNonAsciiError",
+  2560: "TimeZoneOffsetOutOfBoundsError",
+  2561: "TimeZoneInvalidOffsetError",
 };
 
 export const ICU4XError = {
@@ -119,8 +129,8 @@ export const ICU4XError = {
   "DataStructValidityError": "DataStructValidityError",
   "PropertyUnknownScriptIdError": "PropertyUnknownScriptIdError",
   "PropertyUnknownGeneralCategoryGroupError": "PropertyUnknownGeneralCategoryGroupError",
-  "DecimalLimitError": "DecimalLimitError",
-  "DecimalSyntaxError": "DecimalSyntaxError",
+  "FixedDecimalLimitError": "FixedDecimalLimitError",
+  "FixedDecimalSyntaxError": "FixedDecimalSyntaxError",
   "PluralParserError": "PluralParserError",
   "DateTimeParseError": "DateTimeParseError",
   "DateTimeOverflowError": "DateTimeOverflowError",
@@ -140,4 +150,9 @@ export const ICU4XError = {
   "DateTimeFormatFixedDecimalError": "DateTimeFormatFixedDecimalError",
   "DateTimeFormatMismatchedAnyCalendarError": "DateTimeFormatMismatchedAnyCalendarError",
   "DateTimeFormatMismatchedCalendarLocaleError": "DateTimeFormatMismatchedCalendarLocaleError",
+  "TinyStrTooLargeError": "TinyStrTooLargeError",
+  "TinyStrContainsNullError": "TinyStrContainsNullError",
+  "TinyStrNonAsciiError": "TinyStrNonAsciiError",
+  "TimeZoneOffsetOutOfBoundsError": "TimeZoneOffsetOutOfBoundsError",
+  "TimeZoneInvalidOffsetError": "TimeZoneInvalidOffsetError",
 };

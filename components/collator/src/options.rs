@@ -19,6 +19,7 @@ use crate::elements::{CASE_MASK, TERTIARY_MASK};
 /// to fit in 3 bits.
 #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
 #[repr(u8)]
+#[non_exhaustive]
 pub enum Strength {
     /// Compare only on the level of base letters. This level
     /// corresponds to the ECMA-402 sensitivity "base".
@@ -188,6 +189,7 @@ pub enum Strength {
 /// varied dynamically.
 #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
 #[repr(u8)]
+#[non_exhaustive]
 pub enum AlternateHandling {
     /// Keep the characters whose level can be varied on the
     /// primary level.
@@ -202,6 +204,7 @@ pub enum AlternateHandling {
 /// differences are treated as case differences.)
 #[derive(Eq, PartialEq, Debug, PartialOrd, Ord)]
 #[repr(u8)]
+#[non_exhaustive]
 pub enum CaseFirst {
     /// Use the default tertiary weights.
     Off = 0,
@@ -215,6 +218,7 @@ pub enum CaseFirst {
 /// with `AlternateHandling::Shifted`.
 #[derive(Eq, PartialEq)]
 #[repr(u8)]
+#[non_exhaustive]
 pub enum MaxVariable {
     /// Characters classified as spaces are shifted.
     Space = 0,

@@ -9,10 +9,12 @@ use icu_provider::prelude::*;
 
 #[cfg(feature = "experimental")]
 use crate::options::components;
-use crate::provider::{calendar::*, date_time::PatternSelector, week_data::WeekDataV1Marker};
+use crate::provider::{calendar::*, date_time::PatternSelector};
 use crate::{input::DateTimeInput, DateTimeFormatterError, FormattedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
+use icu_calendar::provider::{
+    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
+};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
@@ -35,7 +37,7 @@ use icu_provider::DataLocale;
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locid::Locale;
+/// use icu::locid::locale;
 /// use std::str::FromStr;
 ///
 /// let mut options = length::Bag::from_date_time_style(
@@ -45,12 +47,12 @@ use icu_provider::DataLocale;
 ///
 /// let dtf = DateTimeFormatter::try_new_unstable(
 ///     &icu_testdata::unstable(),
-///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
+///     &locale!("en-u-ca-gregory").into(),
 ///     options.into(),
 /// )
 /// .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
@@ -66,12 +68,12 @@ use icu_provider::DataLocale;
 /// ```
 /// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, types::Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
-/// use icu::locid::Locale;
+/// use icu::locid::locale;
 /// # use std::str::FromStr;
 /// # use std::rc::Rc;
 /// # use std::convert::TryInto;
 ///
-/// let locale = Locale::from_str("en-u-ca-japanese").unwrap(); // English with the Japanese calendar
+/// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
 /// let calendar = AnyCalendar::try_new_for_locale_unstable(&icu_testdata::unstable(), &(&locale).into())
 ///                    .expect("constructing AnyCalendar failed");
@@ -154,15 +156,12 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let mut options = length::Bag::from_date_time_style(
-    ///     length::Date::Medium,
-    ///     length::Time::Short,
-    /// );
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
     ///     &icu_testdata::buffer(),
@@ -171,7 +170,7 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -209,15 +208,12 @@ impl DateTimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length, DateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let mut options = length::Bag::from_date_time_style(
-    ///     length::Date::Medium,
-    ///     length::Time::Short,
-    /// );
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let dtf = DateTimeFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -226,7 +222,7 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -255,14 +251,14 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
@@ -309,14 +305,14 @@ impl DateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
@@ -352,12 +348,12 @@ impl DateTimeFormatter {
     /// use icu::datetime::{
     ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
     /// };
-    /// use icu::locid::{locale, Locale};
+    /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
     /// let length = length::Date::Medium;
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let df = DateFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -375,7 +371,7 @@ impl DateTimeFormatter {
     ///
     /// let dtf = DateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -469,14 +465,14 @@ where {
     ///     options::{components, length},
     ///     DateTimeFormatter, DateTimeFormatterOptions,
     /// };
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
     /// use std::str::FromStr;
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
     /// let dtf = DateTimeFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
-    ///     &Locale::from_str("en-u-ca-gregory").unwrap().into(),
+    ///     &locale!("en-u-ca-gregory").into(),
     ///     options,
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");

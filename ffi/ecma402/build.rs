@@ -24,6 +24,7 @@ fn main() {
                 .join("baked"),
             pretty: false,
             insert_feature_gates: false,
+            use_separate_crates: false,
         }],
     )
     .unwrap();

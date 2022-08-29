@@ -8,7 +8,6 @@ use icu_calendar::provider::*;
 use icu_collator::provider::*;
 use icu_datetime::provider::calendar::*;
 use icu_datetime::provider::time_zones::*;
-use icu_datetime::provider::week_data::*;
 use icu_decimal::provider::*;
 use icu_list::provider::*;
 use icu_locid_transform::provider::*;
@@ -107,8 +106,8 @@ registry!(
     EmojiModifierV1Marker,
     EmojiPresentationV1Marker,
     EmojiV1Marker,
-    EthiopicDateLengthsV1Marker,
-    EthiopicDateSymbolsV1Marker,
+    EthiopianDateLengthsV1Marker,
+    EthiopianDateSymbolsV1Marker,
     ExemplarCitiesV1Marker,
     ExtendedPictographicV1Marker,
     ExtenderV1Marker,

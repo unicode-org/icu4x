@@ -43,6 +43,19 @@ impl DataProvider<::icu_calendar::provider::JapaneseExtendedErasV1Marker> for Ba
         })
     }
 }
+#[cfg(feature = "icu_calendar")]
+impl DataProvider<::icu_calendar::provider::WeekDataV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_calendar::provider::WeekDataV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *datetime::week_data_v1_r::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::WeekDataV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
 #[cfg(feature = "icu_casemapping")]
 impl DataProvider<::icu_casemapping::provider::CaseMappingV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_casemapping::provider::CaseMappingV1Marker>, DataError> {
@@ -206,30 +219,30 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Mark
     }
 }
 #[cfg(feature = "icu_datetime")]
-impl DataProvider<::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *datetime::ethiopic::datelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY, req)
                     })?,
             ))),
         })
     }
 }
 #[cfg(feature = "icu_datetime")]
-impl DataProvider<::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *datetime::ethiopic::datesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY, req)
                     })?,
             ))),
         })
@@ -459,19 +472,6 @@ impl DataProvider<::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker>
                 *time_zone::formats_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY, req))?,
-            ))),
-        })
-    }
-}
-#[cfg(feature = "icu_datetime")]
-impl DataProvider<::icu_datetime::provider::week_data::WeekDataV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::week_data::WeekDataV1Marker>, DataError> {
-        Ok(DataResponse {
-            metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::week_data_v1_r::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::week_data::WeekDataV1Marker::KEY, req))?,
             ))),
         })
     }

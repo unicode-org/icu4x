@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // Provider structs must be stable
-#![allow(clippy::exhaustive_structs)]
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 //! Data provider struct definitions for this ICU4X component.
 //!
@@ -14,9 +14,6 @@ pub mod calendar;
 
 /// Data providers for time zones.
 pub mod time_zones;
-
-/// Provider for week data.
-pub mod week_data;
 
 /// Traits for managing data needed by [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
 pub(crate) mod date_time;

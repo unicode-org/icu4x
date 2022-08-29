@@ -19,6 +19,7 @@ use crate::*;
 use core::marker::PhantomData;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
+use zerovec::ZeroVecError;
 
 /// A wrapper around code point map data. It is returned by APIs that return Unicode
 /// property data in a map-like form, ex: enumerated property value data keyed
@@ -62,6 +63,40 @@ impl<T: TrieValue> CodePointMapData<T> {
         CodePointMapDataBorrowed {
             map: self.data.get(),
         }
+    }
+
+    /// Convert this map to a map around another type
+    ///
+    /// Typically useful for type-erasing maps into maps around integers.
+    ///
+    /// # Panics
+    /// Will panic if T and P are different sizes
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu::properties::{maps, GeneralCategory};
+    /// use icu_collections::codepointtrie::CodePointTrie;
+    ///
+    /// let data =
+    ///     maps::load_general_category(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
+    ///
+    /// let gc = data.try_into_converted::<u8>().unwrap();
+    /// let gc = gc.as_borrowed();
+    ///
+    /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter as u8);  // U+6728
+    /// assert_eq!(gc.get('🎃'), GeneralCategory::OtherSymbol as u8);  // U+1F383 JACK-O-LANTERN
+    /// ```
+    pub fn try_into_converted<P>(self) -> Result<CodePointMapData<P>, ZeroVecError>
+    where
+        P: TrieValue,
+    {
+        self.data
+            .try_map_project::<ErasedMaplikeMarker<P>, _, _>(move |data, _| {
+                data.try_into_converted()
+            })
+            .map(CodePointMapData::from_data)
     }
 
     /// Construct a new one from loaded data

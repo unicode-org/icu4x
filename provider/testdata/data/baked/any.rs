@@ -7,6 +7,9 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_calendar")]
         const JAPANESEEXTENDEDERASV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY.get_hash();
+        #[cfg(feature = "icu_calendar")]
+        const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_calendar::provider::WeekDataV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_casemapping")]
         const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
@@ -44,11 +47,11 @@ impl AnyProvider for BakedDataProvider {
         const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_datetime")]
-        const ETHIOPICDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::EthiopicDateLengthsV1Marker::KEY.get_hash();
+        const ETHIOPIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_datetime")]
-        const ETHIOPICDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::EthiopicDateSymbolsV1Marker::KEY.get_hash();
+        const ETHIOPIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_datetime")]
         const GREGORIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY.get_hash();
@@ -98,9 +101,6 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_datetime")]
         const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.get_hash();
-        #[cfg(feature = "icu_datetime")]
-        const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::week_data::WeekDataV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_decimal")]
         const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.get_hash();
@@ -365,6 +365,11 @@ impl AnyProvider for BakedDataProvider {
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
+                #[cfg(feature = "icu_calendar")]
+                WEEKDATAV1MARKER => datetime::week_data_v1_r::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .copied()
+                    .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_casemapping")]
                 CASEMAPPINGV1MARKER => props::casemap_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
@@ -431,12 +436,12 @@ impl AnyProvider for BakedDataProvider {
                         )))
                     }),
                 #[cfg(feature = "icu_datetime")]
-                ETHIOPICDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
+                ETHIOPIANDATELENGTHSV1MARKER => datetime::ethiopic::datelengths_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_datetime")]
-                ETHIOPICDATESYMBOLSV1MARKER => datetime::ethiopic::datesymbols_v1::DATA
+                ETHIOPIANDATESYMBOLSV1MARKER => datetime::ethiopic::datesymbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -517,11 +522,6 @@ impl AnyProvider for BakedDataProvider {
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_datetime")]
                 TIMEZONEFORMATSV1MARKER => time_zone::formats_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .copied()
-                    .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
-                WEEKDATAV1MARKER => datetime::week_data_v1_r::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),

@@ -2,9 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-#![allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-#![allow(clippy::exhaustive_enums, clippy::exhaustive_structs)] // TODO(#1668) Clippy exceptions need docs or fixing.
-
 use crate::rules::reference;
 use core::{convert::TryInto, fmt, str::FromStr};
 use icu_provider::{yoke, zerofrom};
@@ -19,6 +16,7 @@ use zerovec::{
     derive(databake::Bake),
     databake(path = icu_plurals::rules::runtime::ast),
 )]
+#[allow(clippy::exhaustive_structs)] // TODO(#1668): This is both a runtime as well as a data struct...
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
@@ -482,7 +480,7 @@ mod test {
             }
         );
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(1);
+        let fd = fixed_decimal::FixedDecimal::from(1);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }
@@ -493,27 +491,27 @@ mod test {
         let ref_rule = reference::parse(input.as_bytes()).unwrap();
         let rule = Rule::from(&ref_rule);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(0);
+        let fd = fixed_decimal::FixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(13);
+        let fd = fixed_decimal::FixedDecimal::from(13);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(103);
+        let fd = fixed_decimal::FixedDecimal::from(103);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(113);
+        let fd = fixed_decimal::FixedDecimal::from(113);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(178);
+        let fd = fixed_decimal::FixedDecimal::from(178);
         let operands = PluralOperands::from(&fd);
         assert!(!test_rule(&rule, &operands),);
 
-        let fd = fixed_decimal::decimal::FixedDecimal::from(0);
+        let fd = fixed_decimal::FixedDecimal::from(0);
         let operands = PluralOperands::from(&fd);
         assert!(test_rule(&rule, &operands),);
     }

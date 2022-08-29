@@ -29,7 +29,7 @@ struct ICU4XLocaleCanonicalizerDeleter {
 /**
  * A locale canonicalizer.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html) for more information.
+ * See the [Rust documentation for `LocaleCanonicalizer`](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html) for more information.
  */
 class ICU4XLocaleCanonicalizer {
  public:
@@ -37,14 +37,14 @@ class ICU4XLocaleCanonicalizer {
   /**
    * Create a new [`ICU4XLocaleCanonicalizer`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.new) for more information.
    */
   static diplomat::result<ICU4XLocaleCanonicalizer, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * FFI version of `LocaleCanonicalizer::canonicalize()`.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
+   * See the [Rust documentation for `canonicalize`](https://unicode-org.github.io/icu4x-docs/doc/icu/locale_canonicalizer/struct.LocaleCanonicalizer.html#method.canonicalize) for more information.
    */
   ICU4XTransformResult canonicalize(ICU4XLocale& locale) const;
   inline const capi::ICU4XLocaleCanonicalizer* AsFFI() const { return this->inner.get(); }

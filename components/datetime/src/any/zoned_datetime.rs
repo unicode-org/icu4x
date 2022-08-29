@@ -8,11 +8,13 @@ use alloc::string::String;
 use icu_provider::prelude::*;
 
 use crate::input::{DateTimeInput, ExtractedDateTimeInput, TimeZoneInput};
-use crate::provider::{self, calendar::*, date_time::PatternSelector, week_data::WeekDataV1Marker};
+use crate::provider::{self, calendar::*, date_time::PatternSelector};
 use crate::time_zone::TimeZoneFormatterOptions;
 use crate::{DateTimeFormatterError, FormattedZonedDateTime};
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
-use icu_calendar::provider::{JapaneseErasV1Marker, JapaneseExtendedErasV1Marker};
+use icu_calendar::provider::{
+    JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
+};
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
@@ -42,7 +44,6 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu::timezone::CustomTimeZone;
-/// use icu_datetime::TimeZoneFormatterOptions;
 ///
 /// let options = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
@@ -52,11 +53,11 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     options.into(),
-///     TimeZoneFormatterOptions::default(),
+///     Default::default(),
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
@@ -87,32 +88,26 @@ impl ZonedDateTimeFormatter {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
-    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// let options = length::Bag::from_date_time_style(
-    ///     length::Date::Medium,
-    ///     length::Time::Long,
-    /// )
-    /// .into();
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale.into(),
     ///     options,
-    ///     TimeZoneFormatterOptions::default(),
+    ///     Default::default(),
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) =
-    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///         .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_eq!(
@@ -150,14 +145,14 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
@@ -213,14 +208,14 @@ impl ZonedDateTimeFormatter {
             + DataProvider<JapaneseExtendedDateLengthsV1Marker>
             + DataProvider<CopticDateLengthsV1Marker>
             + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopicDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
             + DataProvider<GregorianDateSymbolsV1Marker>
             + DataProvider<BuddhistDateSymbolsV1Marker>
             + DataProvider<JapaneseDateSymbolsV1Marker>
             + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
             + DataProvider<CopticDateSymbolsV1Marker>
             + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopicDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
             + DataProvider<JapaneseErasV1Marker>
             + DataProvider<JapaneseExtendedErasV1Marker>
             + ?Sized,
@@ -262,33 +257,31 @@ impl ZonedDateTimeFormatter {
     ///
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     ///
-    /// ```rust
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// Test will currently fail due to <https://github.com/unicode-org/icu4x/issues/2188>,
+    /// since these functions currently *must* be given a fallback-enabled provider and
+    /// we do not have one in `icu_testdata`
+    ///
+    /// ```ignore
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
-    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// let options = length::Bag::from_date_time_style(
-    ///     length::Date::Medium,
-    ///     length::Time::Long,
-    /// )
-    /// .into();
-    /// let locale = Locale::from_str("en-u-ca-gregory").unwrap();
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_any_provider(
     ///     &icu_testdata::any(),
     ///     &locale.into(),
     ///     options,
-    ///     TimeZoneFormatterOptions::default(),
+    ///     Default::default(),
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) =
-    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///         .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_eq!(
@@ -326,32 +319,26 @@ impl ZonedDateTimeFormatter {
     /// - `u-ca-japanese` (Japanese calendar): `calendar/japanese@1`
     ///
     /// ```rust
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::options::length;
-    /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
-    /// use icu::locid::Locale;
+    /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// let options = length::Bag::from_date_time_style(
-    ///     length::Date::Medium,
-    ///     length::Time::Long,
-    /// )
-    /// .into();
-    /// let locale = Locale::from_str("en").unwrap();
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
+    /// let locale = locale!("en");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_with_buffer_provider(
     ///     &icu_testdata::buffer(),
     ///     &locale.into(),
     ///     options,
-    ///     TimeZoneFormatterOptions::default(),
+    ///     Default::default(),
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let (datetime, time_zone) =
-    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///         .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
     /// assert_eq!(

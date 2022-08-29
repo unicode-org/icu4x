@@ -7,7 +7,7 @@
 use crate::error::DateTimeFormatterError as Error;
 use crate::fields::{self, FieldSymbol};
 use crate::input::{
-    DateTimeInput, DateTimeInputWithCalendar, ExtractedDateTimeInput, ExtractedTimeZoneInput,
+    DateTimeInput, DateTimeInputWithWeekConfig, ExtractedDateTimeInput, ExtractedTimeZoneInput,
     LocalizedDateTimeInput, TimeZoneInput,
 };
 use crate::pattern::{runtime, PatternItem};
@@ -62,13 +62,13 @@ where
     W: fmt::Write + ?Sized,
 {
     let patterns = &zoned_datetime_format.datetime_format.patterns;
-    let loc_datetime = DateTimeInputWithCalendar::new(
+    let loc_datetime = DateTimeInputWithWeekConfig::new(
         datetime,
         zoned_datetime_format
             .datetime_format
             .week_data
             .as_ref()
-            .map(|d| &d.get().0),
+            .map(|d| d.get().into()),
     );
 
     let pattern = patterns.get().0.select(

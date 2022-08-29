@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
@@ -25,7 +26,6 @@ use crate::{
             patterns::PatternPluralsFromPatternsV1Marker, ErasedDateSymbolsV1Marker,
             TimeLengthsV1Marker, TimeSymbolsV1Marker,
         },
-        week_data::WeekDataV1Marker,
     },
     raw,
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
@@ -167,9 +167,7 @@ impl ZonedDateTimeFormatter {
         time_zone: &impl TimeZoneInput,
     ) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, date, time_zone)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, date, time_zone);
         s
     }
 }

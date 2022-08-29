@@ -7,6 +7,7 @@
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[allow(clippy::exhaustive_enums)] // this type is stable
 pub enum GenericPatternItem {
+    // A single digit, 0..=9
     Placeholder(u8),
     Literal(char),
 }

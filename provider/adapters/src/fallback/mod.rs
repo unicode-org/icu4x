@@ -79,8 +79,7 @@ pub struct LocaleFallbackConfig {
     /// config.priority = FallbackPriority::Language;
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(
-    ///     icu_locid::Locale::from_bytes(b"ca-ES-valencia")
-    ///         .unwrap()
+    ///     icu_locid::locale!("ca-ES-valencia")
     ///         .into(),
     /// );
     ///
@@ -110,8 +109,7 @@ pub struct LocaleFallbackConfig {
     /// config.priority = FallbackPriority::Region;
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(
-    ///     icu_locid::Locale::from_bytes(b"ca-ES-valencia")
-    ///         .unwrap()
+    ///     icu_locid::locale!("ca-ES-valencia")
     ///         .into(),
     /// );
     ///
@@ -144,8 +142,7 @@ pub struct LocaleFallbackConfig {
     /// config.extension_key = Some(icu_locid::extensions_unicode_key!("nu"));
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(
-    ///     icu_locid::Locale::from_bytes(b"ar-EG-u-nu-latn")
-    ///         .unwrap()
+    ///     icu_locid::locale!("ar-EG-u-nu-latn")
     ///         .into(),
     /// );
     ///
@@ -267,7 +264,7 @@ impl LocaleFallbacker {
     ///         .expect("data");
     /// let key_fallbacker = fallbacker.for_key(FooV1Marker::KEY);
     /// let mut fallback_iterator = key_fallbacker
-    ///     .fallback_for(icu_locid::Locale::from_bytes(b"en-GB").unwrap().into());
+    ///     .fallback_for(icu_locid::locale!("en-GB").into());
     ///
     /// // Run the algorithm and check the results.
     /// assert_eq!(fallback_iterator.get().to_string(), "en-GB");

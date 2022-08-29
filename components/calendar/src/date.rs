@@ -2,7 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
+use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::week::{WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
@@ -45,7 +46,9 @@ impl<C: Calendar> AsCalendar for Arc<C> {
 }
 
 /// This exists as a wrapper around `&'a T` so that
-/// `Date<&'a C>` is possible for calendar `C`. Unfortunately,
+/// `Date<&'a C>` is possible for calendar `C`.
+///
+/// Unfortunately,
 /// [`AsCalendar`] cannot be implemented on `&'a T` directly because
 /// `&'a T` is `#[fundamental]` and the impl would clash with the one above with
 /// `AsCalendar` for `C: Calendar`.
@@ -82,6 +85,10 @@ impl<'a, C> Deref for Ref<'a, C> {
 ///
 /// This can work with wrappers around [`Calendar`] types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait.
+///
+/// This can be constructed  constructed
+/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
 ///
 /// ```rust
 /// use icu::calendar::Date;
@@ -225,6 +232,61 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().day_of_year_info(&self.inner)
     }
 
+    /// The week of the month containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::WeekOfMonth;
+    /// use icu::calendar::types::IsoWeekday;
+    ///
+    /// let date = Date::new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
+    ///
+    /// // The following info is usually locale-specific
+    /// let first_weekday = IsoWeekday::Sunday;
+    ///
+    /// assert_eq!(
+    ///     date.week_of_month(first_weekday),
+    ///     WeekOfMonth(2)
+    /// );
+    /// ```
+    pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
+        let config = WeekCalculator {
+            first_weekday,
+            min_week_days: 0, // ignored
+        };
+        config.week_of_month(self.day_of_month(), self.day_of_week())
+    }
+
+    /// The week of the year containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::IsoWeekday;
+    /// use icu::calendar::week::WeekCalculator;
+    /// use icu::calendar::week::RelativeUnit;
+    /// use icu::calendar::week::WeekOf;
+    ///
+    /// let date = Date::new_iso_date(2022, 8, 26).unwrap();
+    ///
+    /// // The following info is usually locale-specific
+    /// let week_calculator = WeekCalculator::default();
+    ///
+    /// assert_eq!(
+    ///     date.week_of_year(&week_calculator),
+    ///     Ok(WeekOf {
+    ///         week: 35,
+    ///         unit: RelativeUnit::Current
+    ///     })
+    /// );
+    /// ```
+    pub fn week_of_year(&self, config: &WeekCalculator) -> Result<WeekOf, DateTimeError> {
+        config.week_of_year(self.day_of_year_info(), self.day_of_week())
+    }
+
     /// Construct a date from raw values for a given calendar. This does not check any
     /// invariants for the date and calendar, and should only be called by calendar implementations.
     ///
@@ -251,7 +313,7 @@ impl<A: AsCalendar> Date<A> {
     }
 }
 
-impl<C: IncludedInAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
     /// Type-erase the date, converting it to a date for [`AnyCalendar`]
     pub fn to_any(&self) -> Date<AnyCalendar> {
         let cal = self.calendar();

@@ -115,9 +115,9 @@ impl<'data> CodePointInversionList<'data> {
     /// }
     /// ```
     pub fn from_inversion_list(inv_list: ZeroVec<'data, u32>) -> Result<Self, CodePointSetError> {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // chunks
         if is_valid_zv(&inv_list) {
-            let size: usize = inv_list
+            let size = inv_list
                 .as_ule_slice()
                 .chunks(2)
                 .map(|end_points| {
@@ -285,7 +285,7 @@ impl<'data> CodePointInversionList<'data> {
     /// assert_eq!(None, ex_iter_chars.next());
     /// ```
     pub fn iter_chars(&self) -> impl Iterator<Item = char> + '_ {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // chunks
         self.inv_list
             .as_ule_slice()
             .chunks(2)
@@ -312,7 +312,7 @@ impl<'data> CodePointInversionList<'data> {
     /// assert_eq!(None, example_iter_ranges.next());
     /// ```
     pub fn iter_ranges(&self) -> impl ExactSizeIterator<Item = RangeInclusive<u32>> + '_ {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // chunks
         self.inv_list.as_ule_slice().chunks(2).map(|pair| {
             let range_start: u32 = AsULE::from_unaligned(pair[0]);
             let range_limit: u32 = AsULE::from_unaligned(pair[1]);

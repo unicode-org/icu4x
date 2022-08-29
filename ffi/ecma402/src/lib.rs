@@ -13,10 +13,13 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        // TODO(#1668): enable clippy::exhaustive_enums,
+        clippy::exhaustive_enums,
         // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+
+#[cfg(test)]
+pub mod testing;
 
 /// Implements ECMA-402 [`Intl.PluralRules`][link].
 ///
@@ -35,12 +38,12 @@ pub struct DataLocale(icu_provider::DataLocale);
 impl DataLocale {
     /// Creates a `DataLocale` from any other [`ecma402_traits::Locale`]
     fn from_ecma_locale<L: ecma402_traits::Locale>(other: L) -> Self {
-        #[allow(clippy::expect_used)]
+        #[allow(clippy::unwrap_used)] // ecma402_traits::Locale::to_string is a valid locale
         Self(
             other
                 .to_string()
                 .parse::<icu::locid::Locale>()
-                .expect("valid locale")
+                .unwrap()
                 .into(),
         )
     }

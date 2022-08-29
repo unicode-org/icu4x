@@ -152,11 +152,12 @@ While this app doesn't do anything on its own yet, we now have a loaded data pro
 
 ```rust
 use icu::locid::locale;
-use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
+use icu::calendar::DateTime;
+use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 
 fn main() {
-    let date = parse_gregorian_from_str("2020-10-14T13:21:00")
-        .expect("Failed to parse a datetime.");
+    let date = DateTime::new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+        .expect("Failed to create a datetime.");
 
     let options = length::Bag {
         time: Some(length::Time::Medium),
@@ -164,7 +165,7 @@ fn main() {
         ..Default::default()
     }.into();
 
-    let dtf = DateTimeFormat::try_new(locale!("ja"), &icu_testdata::unstable(), &options)
+    let dtf = DateTimeFormat::try_new_unstable(&icu_testdata::unstable(), &locale!("ja").into(), &options)
         .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);

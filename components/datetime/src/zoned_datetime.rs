@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use core::marker::PhantomData;
-use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_calendar::provider::{JapaneseErasV1Marker, WeekDataV1Marker};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -18,7 +18,6 @@ use crate::{
         self,
         calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
         date_time::PatternSelector,
-        week_data::WeekDataV1Marker,
     },
     raw,
     time_zone::TimeZoneFormatterOptions,
@@ -45,11 +44,12 @@ use crate::{
 /// # Examples
 ///
 /// ```
-/// use icu::calendar::Gregorian;
-/// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+/// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
 /// use icu::locid::locale;
-/// use icu_datetime::TimeZoneFormatterOptions;
+/// use icu::datetime::TimeZoneFormatterOptions;
+/// use icu::timezone::CustomTimeZone;
+/// use std::str::FromStr;
 ///
 /// let options = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
@@ -63,9 +63,8 @@ use crate::{
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
-/// let (datetime, time_zone) =
-///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-///         .expect("Failed to parse zoned datetime");
+/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+/// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
 ///
 /// let value = zdtf.format_to_string(&datetime, &time_zone);
 /// ```
@@ -198,10 +197,11 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedZonedDateTimeFormatter;
     /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
+    /// use std::str::FromStr;
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -211,9 +211,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
-    /// let (datetime, time_zone) =
-    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///         .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     ///
     /// let formatted_date = zdtf.format(&datetime, &time_zone);
     ///
@@ -238,10 +237,12 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedZonedDateTimeFormatter;
     /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
+    /// use std::str::FromStr;
+    ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
@@ -250,9 +251,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
-    /// let (datetime, time_zone) =
-    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///         .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     ///
     /// let mut buffer = String::new();
     /// zdtf.format_to_write(&mut buffer, &datetime, &time_zone)
@@ -275,10 +275,12 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::mock::parse_zoned_gregorian_from_str;
+    /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedZonedDateTimeFormatter;
     /// use icu::locid::locale;
+    /// use icu::timezone::CustomTimeZone;
+    /// use std::str::FromStr;
+    ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
@@ -287,9 +289,8 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
-    /// let (datetime, time_zone) =
-    ///     parse_zoned_gregorian_from_str("2021-04-08T16:12:37.000-07:00")
-    ///         .expect("Failed to parse zoned datetime");
+    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     ///
     /// let _ = zdtf.format_to_string(&datetime, &time_zone);
     /// ```
