@@ -135,44 +135,15 @@ pub mod ffi {
             self.0.date.day_of_week().into()
         }
         /// Returns 1-indexed number of the month of this date in its year
-        ///
-        /// Note that for lunar calendars this may not lead to the same month
-        /// having the same ordinal month across years; use month_code if you care
-        /// about month identity.
         #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
-        pub fn ordinal_month(&self) -> u32 {
+        pub fn month(&self) -> u32 {
             self.0.date.month().ordinal
         }
 
-        /// Returns the month code for this date. Typically something
-        /// like "M01", "M02", but can be more complicated for lunar calendars.
-        #[diplomat::rust_link(icu::calendar::Date::month, FnInStruct)]
-        pub fn month_code(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
-            let code = self.0.date.month().code;
-            let result = write.write_str(&code.0).map_err(Into::into).into();
-            write.flush();
-            result
-        }
-
-        /// Returns the year number in the current era for this date
+        /// Returns the year number for this date
         #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
-        pub fn year_in_era(&self) -> i32 {
+        pub fn year(&self) -> i32 {
             self.0.date.year().number
-        }
-
-        /// Returns the era for this date,
-        #[diplomat::rust_link(icu::calendar::Date::year, FnInStruct)]
-        pub fn era(
-            &self,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
-            let era = self.0.date.year().era;
-            let result = write.write_str(&era.0).map_err(Into::into).into();
-            write.flush();
-            result
         }
 
         /// Returns the number of months in the year represented by this date

@@ -63,7 +63,6 @@ pub mod ffi {
             value: &ICU4XTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &value.0)
@@ -82,7 +81,6 @@ pub mod ffi {
             value: &ICU4XDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &value.0)
@@ -101,7 +99,6 @@ pub mod ffi {
             value: &ICU4XIsoDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &value.0)
@@ -158,7 +155,6 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             let greg = Date::new_from_iso(value.0, Gregorian);
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &greg)
@@ -181,7 +177,6 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             let greg = DateTime::new_from_iso(value.0, Gregorian);
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &greg)
@@ -234,7 +229,6 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             let greg = DateTime::new_from_iso(value.0, Gregorian);
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &greg)
@@ -299,7 +293,6 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             let any = value.0.to_any();
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &any)
@@ -317,7 +310,6 @@ pub mod ffi {
             value: &ICU4XDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &value.0)
@@ -338,7 +330,6 @@ pub mod ffi {
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             let any = value.0.to_any();
-            #[allow(unused_variables)]
             let result = self
                 .0
                 .format_to_write(write, &any)
