@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661638416890,
+  "lastUpdate": 1661802433210,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -9455,6 +9455,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 54001451,
             "range": "± 627058",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sipasseuth.daniel@gmail.com",
+            "name": "Sipasseuth Daniel",
+            "username": "dsipasseuth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1ad3fb5eae2c319b71b385729922b2db202f32ca",
+          "message": "split_first_u16/split_first_u24 -> split_first (#2459)\n\n* refactor(issue_2056): split_first_u16/split_first_u24 -> split_first\r\n\r\n* Apply suggestions from code review\r\n\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>\r\n\r\n* cargo fmt error fix\r\n\r\nCo-authored-by: Daniel Sipasseuth <dsipasseuth@google.com>\r\nCo-authored-by: Robert Bastian <robertbastian@users.noreply.github.com>",
+          "timestamp": "2022-08-29T19:31:32Z",
+          "tree_id": "e56556ee389cf523bd23bfe8c64209b0445beab6",
+          "url": "https://github.com/unicode-org/icu4x/commit/1ad3fb5eae2c319b71b385729922b2db202f32ca"
+        },
+        "date": 1661802384327,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 592,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 366,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 373,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 426,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 781,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 808,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 365,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 374,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 425,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 461,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 807,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 54214803,
+            "range": "± 757973",
             "unit": "ns/iter"
           },
           {
