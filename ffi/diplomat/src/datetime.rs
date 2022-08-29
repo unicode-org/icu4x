@@ -195,8 +195,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Creates a new [`ICU4XDateTime`] representing the ISO date and time
-        /// given but in a given calendar
+        /// Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
         #[diplomat::rust_link(icu::calendar::DateTime::new_from_codes, FnInStruct)]
         #[allow(clippy::too_many_arguments)]
         pub fn try_new_from_codes_in_calendar(
