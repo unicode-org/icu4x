@@ -64,7 +64,7 @@
 //!
 //! ```
 //!
-//! ## Examples of [`CollatorOptions`]
+//! ## Examples of `CollatorOptions`
 //!
 //! The [`CollatorOptions`] struct configures specific custom behavior for the `Collator`.  See docs
 //! for [`CollatorOptions`] for more details.  Some basic descriptions and examples are below.
