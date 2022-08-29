@@ -122,8 +122,7 @@ pub mod ffi {
                 .into()
         }
 
-        /// Creates a new [`ICU4XDate`] representing the ISO date and time
-        /// given but in a given calendar
+        /// Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
         #[diplomat::rust_link(icu::calendar::Date::new_from_codes, FnInStruct)]
         pub fn try_new_from_codes_in_calendar(
             era_code: &str,
