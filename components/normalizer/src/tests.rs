@@ -266,7 +266,8 @@ fn test_nfc_utf16_to() {
 #[test]
 fn test_nfc_utf8_to_errors() {
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -296,7 +297,8 @@ fn test_nfc_utf8_to_errors() {
 #[test]
 fn test_nfd_utf8_to_errors() {
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
 
     let mut buf = StackString::new();
     assert!(normalizer
@@ -326,7 +328,8 @@ fn test_nfd_utf8_to_errors() {
 #[test]
 fn test_nfc_utf16_to_errors() {
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -434,7 +437,8 @@ fn test_nfc_utf16_to_errors() {
 #[test]
 fn test_nfd_utf16_to_errors() {
     let normalizer: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
 
     let mut buf = StackVec::new();
     assert!(normalizer
@@ -779,13 +783,17 @@ fn char_to_str(c: char, sink: &mut StackString) {
 #[test]
 fn test_conformance_utf16() {
     let nfd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfkd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfkc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
 
     let mut input = StackVec::new();
     let mut normalized = StackVec::new();
@@ -996,13 +1004,17 @@ fn test_conformance_utf16() {
 #[test]
 fn test_conformance_utf8() {
     let nfd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfkd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfkc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
 
     let mut input = StackString::new();
     let mut normalized = StackString::new();
@@ -1349,7 +1361,8 @@ fn test_ccc() {
 #[test]
 fn test_utf16_basic() {
     let normalizer: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
 
     assert_eq!(
         normalizer.normalize_utf16(&[0x0061]).as_slice(),
@@ -1364,13 +1377,17 @@ fn test_utf16_basic() {
 #[test]
 fn test_is_normalized() {
     let nfd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        DecomposingNormalizer::try_new_nfd_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfkd: DecomposingNormalizer =
-        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        DecomposingNormalizer::try_new_nfkd_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
     let nfkc: ComposingNormalizer =
-        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::buffer().as_deserializing()).unwrap();
+        ComposingNormalizer::try_new_nfkc_unstable(&icu_testdata::buffer().as_deserializing())
+            .unwrap();
 
     let aaa = "aaa";
     assert!(nfd.is_normalized(aaa));
