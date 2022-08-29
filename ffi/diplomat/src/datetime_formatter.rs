@@ -6,20 +6,24 @@
 pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
-    use icu_calendar::Gregorian;
+    use icu_calendar::{Date, DateTime, Gregorian};
     use icu_datetime::{
         options::length, DateFormatter, DateTimeFormatter, TimeFormatter, TypedDateFormatter,
         TypedDateTimeFormatter,
     };
 
     use crate::{
-        date::ffi::{ICU4XDate, ICU4XIsoDate}, datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XGregorianDateTime,
-        datetime::ffi::ICU4XIsoDateTime, errors::ffi::ICU4XError, locale::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider, time::ffi::ICU4XTime,
+        date::ffi::{ICU4XDate, ICU4XIsoDate},
+        datetime::ffi::ICU4XDateTime,
+        datetime::ffi::ICU4XIsoDateTime,
+        errors::ffi::ICU4XError,
+        locale::ffi::ICU4XLocale,
+        provider::ffi::ICU4XDataProvider,
+        time::ffi::ICU4XTime,
     };
 
     #[diplomat::opaque]
-    /// An ICU4X TimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string
+    /// An ICU4X TimeFormatter object capable of formatting an [`ICU4XTime`] type (and others) as a string
     #[diplomat::rust_link(icu::datetime::TimeFormatter, Struct)]
     // TODO(#2153) - Rename to ICU4XTimeFormatter when we remove the dependency on calendar
     // from TimeFormatter.
@@ -68,24 +72,7 @@ pub mod ffi {
             write.flush();
             result
         }
-        /// Formats the time portion of a [`ICU4XGregorianDateTime`] to a string.
-        #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::TimeFormatter::format, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_string, FnInStruct, hidden)]
-        pub fn format_gregorian_datetime(
-            &self,
-            value: &ICU4XGregorianDateTime,
-            write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ICU4XError> {
-            #[allow(unused_variables)]
-            let result = self
-                .0
-                .format_to_write(write, &value.0)
-                .map_err(Into::into)
-                .into();
-            write.flush();
-            result
-        }
+
         /// Formats a [`ICU4XDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format_to_write, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::TimeFormatter::format, FnInStruct, hidden)]
@@ -126,7 +113,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    /// An ICU4X TypedDateFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string,
+    /// An ICU4X TypedDateFormatter object capable of formatting a [`ICU4XIsoDateTime`] as a string,
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime::TypedDateFormatter, Struct)]
     pub struct ICU4XGregorianDateFormatter(pub TypedDateFormatter<Gregorian>);
@@ -157,8 +144,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-
-        /// Formats a [`ICU4XGregorianDateTime`] to a string.
+        /// Formats a [`ICU4XIsoDate`] to a string.
         #[diplomat::rust_link(icu::datetime::TypedDateFormatter::format_to_write, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::TypedDateFormatter::format, FnInStruct, hidden)]
         #[diplomat::rust_link(
@@ -166,15 +152,39 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn format_gregorian_datetime(
+        pub fn format_iso_date(
             &self,
-            value: &ICU4XGregorianDateTime,
+            value: &ICU4XIsoDate,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
+            let greg = Date::new_from_iso(value.0, Gregorian);
             #[allow(unused_variables)]
             let result = self
                 .0
-                .format_to_write(write, &value.0)
+                .format_to_write(write, &greg)
+                .map_err(Into::into)
+                .into();
+            write.flush();
+            result
+        }
+        /// Formats a [`ICU4XIsoDateTime`] to a string.
+        #[diplomat::rust_link(icu::datetime::TypedDateFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TypedDateFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::datetime::TypedDateFormatter::format_to_string,
+            FnInStruct,
+            hidden
+        )]
+        pub fn format_iso_datetime(
+            &self,
+            value: &ICU4XIsoDateTime,
+            write: &mut diplomat_runtime::DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let greg = DateTime::new_from_iso(value.0, Gregorian);
+            #[allow(unused_variables)]
+            let result = self
+                .0
+                .format_to_write(write, &greg)
                 .map_err(Into::into)
                 .into();
             write.flush();
@@ -183,7 +193,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    /// An ICU4X TypedDateTimeFormatter object capable of formatting a [`ICU4XGregorianDateTime`] as a string,
+    /// An ICU4X TypedDateTimeFormatter object capable of formatting a [`ICU4XIsoDateTime`] as a string,
     /// using the Gregorian Calendar.
     #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter, Struct)]
     pub struct ICU4XGregorianDateTimeFormatter(pub TypedDateTimeFormatter<Gregorian>);
@@ -210,7 +220,7 @@ pub mod ffi {
                 .into()
         }
 
-        /// Formats a [`ICU4XGregorianDateTime`] to a string.
+        /// Formats a [`ICU4XIsoDateTime`] to a string.
         #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::format_to_write, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::format, FnInStruct, hidden)]
         #[diplomat::rust_link(
@@ -218,15 +228,16 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn format_gregorian_datetime(
+        pub fn format_iso_datetime(
             &self,
-            value: &ICU4XGregorianDateTime,
+            value: &ICU4XIsoDateTime,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
+            let greg = DateTime::new_from_iso(value.0, Gregorian);
             #[allow(unused_variables)]
             let result = self
                 .0
-                .format_to_write(write, &value.0)
+                .format_to_write(write, &greg)
                 .map_err(Into::into)
                 .into();
             write.flush();

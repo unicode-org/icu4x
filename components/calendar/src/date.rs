@@ -377,3 +377,8 @@ impl<A: AsCalendar + Clone> Clone for Date<A> {
         }
     }
 }
+
+impl<A: AsCalendar + Copy> Copy for Date<A> where
+    <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy
+{
+}
