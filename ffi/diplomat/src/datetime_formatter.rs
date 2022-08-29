@@ -253,7 +253,7 @@ pub mod ffi {
 
     impl ICU4XDateFormatter {
         /// Creates a new [`ICU4XDateFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::DateFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
