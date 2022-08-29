@@ -5,6 +5,8 @@ impl AnyProvider for BakedDataProvider {
             ::icu_calendar::provider::JapaneseErasV1Marker::KEY.get_hash();
         const JAPANESEEXTENDEDERASV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY.get_hash();
+        const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_calendar::provider::WeekDataV1Marker::KEY.get_hash();
         const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
         const COLLATIONDATAV1MARKER: ::icu_provider::DataKeyHash =
@@ -66,8 +68,6 @@ impl AnyProvider for BakedDataProvider {
                 .get_hash();
         const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.get_hash();
-        const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::week_data::WeekDataV1Marker::KEY.get_hash();
         const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.get_hash();
         const ANDLISTV1MARKER: ::icu_provider::DataKeyHash =
@@ -247,6 +247,9 @@ impl AnyProvider for BakedDataProvider {
                 JAPANESEEXTENDEDERASV1MARKER => calendar::japanext_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
+                WEEKDATAV1MARKER => datetime::week_data_v1_r::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .map(AnyPayload::from_static_ref),
                 CASEMAPPINGV1MARKER => props::casemap_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
@@ -341,9 +344,6 @@ impl AnyProvider for BakedDataProvider {
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 TIMEZONEFORMATSV1MARKER => time_zone::formats_v1::DATA
-                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .map(AnyPayload::from_static_ref),
-                WEEKDATAV1MARKER => datetime::week_data_v1_r::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 DECIMALSYMBOLSV1MARKER => decimal::symbols_v1_u_nu::DATA

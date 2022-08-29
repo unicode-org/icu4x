@@ -15,8 +15,5 @@ pub mod calendar;
 /// Data providers for time zones.
 pub mod time_zones;
 
-/// Provider for week data.
-pub mod week_data;
-
 /// Traits for managing data needed by [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter).
 pub(crate) mod date_time;

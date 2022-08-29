@@ -9,6 +9,7 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
+use crate::types::IsoWeekday;
 use core::str::FromStr;
 use icu_provider::{yoke, zerofrom};
 use tinystr::TinyStr16;
@@ -72,4 +73,26 @@ impl FromStr for EraStartDate {
 
         Ok(EraStartDate { year, month, day })
     }
+}
+
+/// An ICU4X mapping to a subset of CLDR weekData.
+/// See CLDR-JSON's weekData.json for more context.
+#[icu_provider::data_struct(marker(
+    WeekDataV1Marker,
+    "datetime/week_data@1",
+    fallback_by = "region"
+))]
+#[derive(Clone, Copy, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[allow(clippy::exhaustive_structs)] // used in data provider
+pub struct WeekDataV1 {
+    /// The first day of a week.
+    pub first_weekday: IsoWeekday,
+    /// For a given week, the minimum number of that week's days present in a given month or year for the week to be considered part of that month or year.
+    pub min_week_days: u8,
 }

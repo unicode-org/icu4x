@@ -14,6 +14,7 @@ use icu_calendar::{
     ethiopian::{Ethiopian, EthiopianEraStyle},
     indian::Indian,
     japanese::{Japanese, JapaneseExtended},
+    provider::WeekDataV1Marker,
     AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
@@ -24,7 +25,7 @@ use icu_datetime::provider::time_zones::{
 use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
     pattern::runtime,
-    provider::{calendar::*, week_data::WeekDataV1Marker},
+    provider::calendar::*,
     time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
     CldrCalendar, DateTimeFormatter, DateTimeFormatterOptions, TimeFormatter, TypedDateFormatter,
     TypedDateTimeFormatter, TypedZonedDateTimeFormatter,

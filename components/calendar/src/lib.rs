@@ -131,7 +131,15 @@ pub mod japanese;
 pub mod julian;
 pub mod provider;
 pub mod types;
-pub mod week_of;
+mod week_of;
+
+pub mod week {
+    //! Functions for week-of-month and week-of-year arithmetic.
+    use crate::week_of;
+    pub use week_of::RelativeUnit;
+    pub use week_of::WeekCalculator;
+    pub use week_of::WeekOf;
+}
 
 pub use any_calendar::{AnyCalendar, AnyCalendarKind};
 pub use calendar::Calendar;
