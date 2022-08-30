@@ -623,7 +623,6 @@ icu::plurals::PluralRules::try_new_ordinal_with_buffer_provider#FnInStruct
 icu::plurals::PluralRules::try_new_with_any_provider#FnInStruct
 icu::plurals::PluralRules::try_new_with_buffer_provider#FnInStruct
 icu::properties::bidi::BidiClassAdapter::bidi_class#FnInStruct
-icu::properties::maps::CodePointMapDataBorrowed::get_set_for_value#FnInStruct
 icu::properties::script::ScriptExtensionsSet#Struct
 icu::properties::script::ScriptExtensionsSet::contains#FnInStruct
 icu::properties::script::ScriptExtensionsSet::iter#FnInStruct

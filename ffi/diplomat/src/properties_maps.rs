@@ -10,6 +10,7 @@ pub mod ffi {
     use icu_properties::{maps, PropertiesError};
 
     use crate::errors::ffi::ICU4XError;
+    use crate::properties_sets::ffi::ICU4XCodePointSetData;
     use diplomat_runtime::DiplomatResult;
 
     use icu_provider::prelude::BufferProvider;
@@ -25,6 +26,28 @@ pub mod ffi {
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 
     impl ICU4XCodePointMapData8 {
+        /// Gets the value for a code point.
+        #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_u32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn get(&self, cp: char) -> u8 {
+            self.0.as_borrowed().get(cp)
+        }
+
+        /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_set_for_value,
+            FnInStruct
+        )]
+        pub fn get_set_for_value(&self, value: u8) -> Box<ICU4XCodePointSetData> {
+            Box::new(ICU4XCodePointSetData(
+                self.0.as_borrowed().get_set_for_value(value),
+            ))
+        }
+
         /// Gets a map for Unicode property General_Category from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_general_category, Fn)]
         pub fn try_get_general_category(
@@ -103,17 +126,6 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-
-        /// Gets the value for a code point.
-        #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
-        #[diplomat::rust_link(
-            icu::properties::maps::CodePointMapDataBorrowed::get_u32,
-            FnInStruct,
-            hidden
-        )]
-        pub fn get(&self, cp: char) -> u8 {
-            self.0.as_borrowed().get(cp)
-        }
     }
 
     #[diplomat::opaque]
@@ -126,6 +138,23 @@ pub mod ffi {
     pub struct ICU4XCodePointMapData16(maps::CodePointMapData<u16>);
 
     impl ICU4XCodePointMapData16 {
+        /// Gets the value for a code point.
+        #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
+        pub fn get(&self, cp: char) -> u16 {
+            self.0.as_borrowed().get(cp)
+        }
+
+        /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_set_for_value,
+            FnInStruct
+        )]
+        pub fn get_set_for_value(&self, value: u16) -> Box<ICU4XCodePointSetData> {
+            Box::new(ICU4XCodePointSetData(
+                self.0.as_borrowed().get_set_for_value(value),
+            ))
+        }
+
         /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_script, Fn)]
         pub fn try_get_script(
@@ -142,12 +171,6 @@ pub mod ffi {
                 })
                 .map_err(Into::into)
                 .into()
-        }
-
-        /// Gets the value for a code point.
-        #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
-        pub fn get(&self, cp: char) -> u16 {
-            self.0.as_borrowed().get(cp)
         }
     }
 }
