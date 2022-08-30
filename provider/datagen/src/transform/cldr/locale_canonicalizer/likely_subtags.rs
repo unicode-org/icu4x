@@ -3,56 +3,34 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
-use icu_locale_canonicalizer::provider::*;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_locid_transform::provider::*;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use zerovec::ZeroMap;
 
-/// A data provider reading from CLDR JSON likely subtags rule files.
-#[derive(Debug)]
-pub struct LikelySubtagsProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for LikelySubtagsProvider {
-    fn from(source: &SourceData) -> Self {
-        LikelySubtagsProvider {
-            source: source.clone(),
-        }
-    }
-}
-
-impl ResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
+impl DataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<LikelySubtagsV1Marker>, DataError> {
         // We treat searching for und as a request for all data. Other requests
         // are not currently supported.
-        if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+        if !req.locale.is_empty() {
+            return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
         let data: &cldr_serde::likely_subtags::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/likelySubtags.json")?;
 
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         Ok(DataResponse {
-            metadata,
+            metadata: Default::default(),
             payload: Some(DataPayload::from_owned(LikelySubtagsV1::from(data))),
         })
     }
 }
 
-icu_provider::make_exportable_provider!(LikelySubtagsProvider, [LikelySubtagsV1Marker,]);
-
-impl IterableResourceProvider<LikelySubtagsV1Marker> for LikelySubtagsProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LikelySubtagsV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -149,9 +127,9 @@ fn test_basic() {
         subtags_language as language, subtags_region as region, subtags_script as script,
     };
 
-    let provider = LikelySubtagsProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
     let result: DataPayload<LikelySubtagsV1Marker> = provider
-        .load_resource(&Default::default())
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();

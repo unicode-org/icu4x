@@ -13,6 +13,7 @@ use crate::Script;
 #[cfg(feature = "std")]
 impl std::error::Error for PropertiesError {}
 
+/// An error related to loading or accessing Unicode Properties.
 #[derive(Display, Debug, Copy, Clone)]
 #[non_exhaustive]
 pub enum PropertiesError {

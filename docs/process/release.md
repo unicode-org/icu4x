@@ -8,7 +8,7 @@ Over the last month before the release target date, we'll discuss the checklist 
 
 Once the release is complete, the assigned release driver will:
 
-* Run `cargo +nightly fmt -- --config=format_code_in_doc_comments=true` to prettify our docs
+* Run `cargo +nightly fmt -- --config=format_code_in_doc_comments=true --config=doc_comment_code_block_width=80` to prettify our docs
 * Run `cargo make full-data` to make sure full datagen works
 * Verify that the milestone and checklist are complete
 * Verify with component owners that they're ready for release

@@ -36,7 +36,10 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 
@@ -59,7 +62,7 @@ where
     let mut seq = serializer.serialize_tuple(N)?;
 
     for i in 0..N {
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // i, j in 0..N
         match array.iter().take(i).position(|item| item == &array[i]) {
             None if human => seq.serialize_element(&HumanSer::Value(&array[i]))?,
             None => seq.serialize_element(&MachineSer::Value(&array[i]))?,
@@ -83,13 +86,13 @@ where
     let mut array: [MaybeUninit<T>; N] = unsafe { MaybeUninit::uninit().assume_init() };
 
     if deserializer.is_human_readable() {
-        for (i, r) in
-            IntoIterator::into_iter(<[HumanDe<T>; N]>::deserialize(deserializer)?).enumerate()
+        for (i, r) in <[HumanDe<T>; N]>::deserialize(deserializer)?
+            .into_iter()
+            .enumerate()
         {
             match r {
                 HumanDe::Value(v) => {
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
+                    #[allow(clippy::indexing_slicing)] // i in 0..N by enumerate
                     array[i].write(v);
                 }
                 HumanDe::Fallback([j]) => unsafe {
@@ -101,8 +104,7 @@ where
                             i, j
                         )));
                     }
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
+                    #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }
@@ -113,8 +115,7 @@ where
         {
             match r {
                 MachineDe::Value(v) => {
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
+                    #[allow(clippy::indexing_slicing)] // i in 0..N by enumerate
                     array[i].write(v);
                 }
                 MachineDe::Fallback(j) => unsafe {
@@ -126,8 +127,7 @@ where
                             i, j
                         )));
                     }
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
+                    #[allow(clippy::indexing_slicing)] // j < i in 0..N by enumerate
                     array[i].write(array[j].assume_init_ref().clone());
                 },
             }
@@ -161,12 +161,14 @@ enum MachineSer<'a, T> {
 #[derive(serde::Deserialize)]
 #[serde(untagged)]
 #[doc(hidden)]
+#[allow(clippy::exhaustive_enums)] // internal type
 pub enum HumanDe<T> {
     Value(T),
     Fallback([usize; 1]),
 }
 
 #[doc(hidden)]
+#[allow(clippy::exhaustive_enums)] // internal type
 pub enum MachineDe<T> {
     Value(T),
     Fallback(usize),

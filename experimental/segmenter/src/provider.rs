@@ -6,9 +6,15 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use icu_codepointtrie::CodePointTrie;
+use alloc::borrow::Cow;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use zerovec::{ZeroSlice, ZeroVec};
+use zerovec::{ZeroMap, ZeroVec};
+
+#[cfg(feature = "lstm")]
+use crate::lstm_error::Error;
+#[cfg(feature = "lstm")]
+use ndarray::{Array, Array1, Array2};
 
 /// Pre-processed Unicode data in the form of tables to be used for rule-based breaking.
 #[icu_provider::data_struct(
@@ -36,9 +42,18 @@ pub struct RuleBreakDataV1<'data> {
     /// Number of properties; should be the square root of the length of [`Self::break_state_table`].
     pub property_count: u8,
 
+    /// The index of the last simple state for [`Self::break_state_table`]. (A simple state has no
+    /// `left` nor `right` in SegmenterProperty).
     pub last_codepoint_property: i8,
+
+    /// The index of SOT (start of text) state for [`Self::break_state_table`].
     pub sot_property: u8,
+
+    /// The index of EOT (end of text) state [`Self::break_state_table`].
     pub eot_property: u8,
+
+    /// The index of "SA" state (or 127 if the complex language isn't handled) for
+    /// [`Self::break_state_table`].
     pub complex_property: u8,
 }
 
@@ -67,7 +82,7 @@ pub struct RuleBreakStateTable<'data>(
 );
 
 /// char16trie data for dictionary break
-#[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/char16trie@1")]
+#[icu_provider::data_struct(UCharDictionaryBreakDataV1Marker = "segmenter/dictionary@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(
     feature = "datagen",
@@ -81,23 +96,92 @@ pub struct UCharDictionaryBreakDataV1<'data> {
     pub trie_data: ZeroVec<'data, u16>,
 }
 
-impl<'data> Default for UCharDictionaryBreakDataV1<'data> {
-    fn default() -> Self {
-        // Test data of thai dictionary
-        const THAI_DICTIONARY: &ZeroSlice<u16> =
-            match ZeroSlice::<u16>::try_from_bytes(include_bytes!("../tests/testdata/thai.dict")) {
-                Ok(s) => s,
-                Err(_) => panic!("invalid dictionary data"),
-            };
-        Self {
-            trie_data: THAI_DICTIONARY.as_zerovec(),
+/// The struct that stores a LSTM's matrix.
+#[derive(PartialEq, Debug, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct LstmMatrix<'data> {
+    #[allow(missing_docs)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub dim: ZeroVec<'data, i16>,
+    #[allow(missing_docs)]
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub data: ZeroVec<'data, f32>,
+}
+
+#[cfg(feature = "lstm")]
+impl<'data> LstmMatrix<'data> {
+    pub(crate) fn as_ndarray1(&self) -> Result<Array1<f32>, Error> {
+        if self.dim.len() == 1 {
+            Ok(Array::from_vec(self.data.to_vec()))
+        } else {
+            Err(Error::DimensionMismatch)
+        }
+    }
+
+    pub(crate) fn as_ndarray2(&self) -> Result<Array2<f32>, Error> {
+        if self.dim.len() == 2 {
+            Array::from_shape_vec(
+                (
+                    self.dim.get(0).unwrap() as usize,
+                    self.dim.get(1).unwrap() as usize,
+                ),
+                self.data.to_vec(),
+            )
+            .map_err(|_| Error::DimensionMismatch)
+        } else {
+            Err(Error::DimensionMismatch)
         }
     }
 }
 
-pub const ALL_KEYS: [ResourceKey; 4] = [
-    LineBreakDataV1Marker::KEY,
-    GraphemeClusterBreakDataV1Marker::KEY,
-    WordBreakDataV1Marker::KEY,
-    SentenceBreakDataV1Marker::KEY,
-];
+/// The struct that stores a LSTM model.
+#[icu_provider::data_struct(LstmDataV1Marker = "segmenter/lstm@1")]
+#[derive(PartialEq, Debug, Clone)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize,databake::Bake),
+    databake(path = icu_segmenter::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct LstmDataV1<'data> {
+    /// Name of the model
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub model: Cow<'data, str>,
+    /// The grapheme cluster dictionary used to train the model
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub dic: ZeroMap<'data, str, i16>,
+    /// The matrix associateed with embedding layer
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat1: LstmMatrix<'data>,
+    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat2: LstmMatrix<'data>,
+    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat3: LstmMatrix<'data>,
+    /// The matrices associated with forward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat4: LstmMatrix<'data>,
+    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat5: LstmMatrix<'data>,
+    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat6: LstmMatrix<'data>,
+    /// The matrices associated with backward LSTM layer (embedding to hunits, hunits to hunits, and bias respectively)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat7: LstmMatrix<'data>,
+    /// The matrices associated with output layer (weight and bias term respectiely)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat8: LstmMatrix<'data>,
+    /// The matrices associated with output layer (weight and bias term respectiely)
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub mat9: LstmMatrix<'data>,
+}

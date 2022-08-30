@@ -3,100 +3,83 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 use icu_plurals::provider::*;
 use icu_plurals::rules::runtime::ast::Rule;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 
-/// A data provider reading from CLDR JSON plural rule files.
-#[derive(Debug)]
-pub struct PluralsProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for PluralsProvider {
-    fn from(source: &SourceData) -> Self {
-        PluralsProvider {
-            source: source.clone(),
-        }
-    }
-}
-
-impl PluralsProvider {
-    fn get_rules_for(&self, key: ResourceKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
-        match key {
-            CardinalV1Marker::KEY => self
-                .source
-                .get_cldr_paths()?
-                .cldr_core()
+impl crate::DatagenProvider {
+    fn get_rules_for(&self, key: DataKey) -> Result<&cldr_serde::plurals::Rules, DataError> {
+        if key == CardinalV1Marker::KEY {
+            self.source
+                .cldr()?
+                .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/plurals.json")?
                 .supplemental
                 .plurals_type_cardinal
-                .as_ref(),
-            OrdinalV1Marker::KEY => self
-                .source
-                .get_cldr_paths()?
-                .cldr_core()
+                .as_ref()
+        } else if key == OrdinalV1Marker::KEY {
+            self.source
+                .cldr()?
+                .core()
                 .read_and_parse::<cldr_serde::plurals::Resource>("supplemental/ordinals.json")?
                 .supplemental
                 .plurals_type_ordinal
-                .as_ref(),
-            _ => None,
+                .as_ref()
+        } else {
+            None
         }
         .ok_or(DataError::custom("Unknown key for PluralRulesV1"))
     }
 }
 
-impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> ResourceProvider<M> for PluralsProvider {
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
-        Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_owned(PluralRulesV1::from(
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.get_rules_for(M::KEY)?
+macro_rules! implement {
+    ($marker:ident) => {
+        impl DataProvider<$marker> for crate::DatagenProvider {
+            fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                Ok(DataResponse {
+                    metadata: Default::default(),
+                    payload: Some(DataPayload::from_owned(PluralRulesV1::from(
+                        self.get_rules_for(<$marker>::KEY)?
+                            .0
+                            .get(&req.locale.get_langid())
+                            .ok_or(DataErrorKind::MissingLocale.into_error())?,
+                    ))),
+                })
+            }
+        }
+
+        impl IterableDataProvider<$marker> for crate::DatagenProvider {
+            fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                Ok(self
+                    .get_rules_for(<$marker>::KEY)?
                     .0
-                    .get(&req.options.get_langid())
-                    .ok_or(DataErrorKind::MissingLocale.into_error())?,
-            ))),
-        })
-    }
+                    .keys()
+                    // TODO(#568): Avoid the clone
+                    .cloned()
+                    .map(DataLocale::from)
+                    .collect())
+            }
+        }
+    };
 }
 
-icu_provider::make_exportable_provider!(PluralsProvider, [OrdinalV1Marker, CardinalV1Marker,]);
-
-impl<M: ResourceMarker<Yokeable = PluralRulesV1<'static>>> IterableResourceProvider<M>
-    for PluralsProvider
-{
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
-        Ok(self
-            .get_rules_for(M::KEY)?
-            .0
-            .iter_keys()
-            // TODO(#568): Avoid the clone
-            .cloned()
-            .map(ResourceOptions::from)
-            .collect())
-    }
-}
+implement!(CardinalV1Marker);
+implement!(OrdinalV1Marker);
 
 impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
     fn from(other: &cldr_serde::plurals::LocalePluralRules) -> Self {
         /// Removes samples from plural rule strings. Takes an owned [`String`] reference and
         /// returns a new [`String`] in a [`Cow::Owned`].
-        #[allow(clippy::ptr_arg)]
-        fn convert(s: &String) -> Rule<'static> {
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        fn convert(s: &str) -> Rule<'static> {
             s.parse().expect("Rule parsing failed.")
         }
         Self {
-            zero: other.zero.as_ref().map(convert),
-            one: other.one.as_ref().map(convert),
-            two: other.two.as_ref().map(convert),
-            few: other.few.as_ref().map(convert),
-            many: other.many.as_ref().map(convert),
+            zero: other.zero.as_deref().map(convert),
+            one: other.one.as_deref().map(convert),
+            two: other.two.as_deref().map(convert),
+            few: other.few.as_deref().map(convert),
+            many: other.many.as_deref().map(convert),
         }
     }
 }
@@ -105,12 +88,12 @@ impl From<&cldr_serde::plurals::LocalePluralRules> for PluralRulesV1<'static> {
 fn test_basic() {
     use icu_locid::langid;
 
-    let provider = PluralsProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
 
     // Spot-check locale 'cs' since it has some interesting entries
     let cs_rules: DataPayload<CardinalV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: langid!("cs").into(),
+        .load(DataRequest {
+            locale: &langid!("cs").into(),
             metadata: Default::default(),
         })
         .unwrap()

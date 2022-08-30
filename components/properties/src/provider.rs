@@ -3,18 +3,24 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // Provider structs must be stable
-#![allow(clippy::exhaustive_structs)]
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 //! Data provider struct definitions for this ICU4X component.
 //!
 //! Read more about data providers: [`icu_provider`]
 
 use crate::script::ScriptWithExtensions;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use core::ops::RangeInclusive;
+use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSet;
+use zerofrom::ZeroFrom;
+use zerovec::ZeroVecError;
 
 /// A set of characters with a particular property.
+///
+/// This data enum is extensible, more backends may be added in the future.
+/// Old data can be used with newer code but not vice versa.
 #[derive(Debug, Eq, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -22,13 +28,19 @@ use icu_uniset::UnicodeSet;
     databake(path = icu_properties::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct UnicodePropertyV1<'data> {
+#[non_exhaustive]
+pub enum PropertyCodePointSetV1<'data> {
     /// The set of characters, represented as an inversion list
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub inv_list: UnicodeSet<'data>,
+    InversionList(#[cfg_attr(feature = "serde", serde(borrow))] CodePointInversionList<'data>),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
 /// A map efficiently storing data about individual characters.
+///
+/// This data enum is extensible, more backends may be added in the future.
+/// Old data can be used with newer code but not vice versa.
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[cfg_attr(
     feature = "datagen", 
@@ -36,13 +48,16 @@ pub struct UnicodePropertyV1<'data> {
     databake(path = icu_properties::provider),
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct UnicodePropertyMapV1<'data, T: TrieValue> {
+#[non_exhaustive]
+pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
     /// A codepoint trie storing the data
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    pub code_point_trie: CodePointTrie<'data, T>,
+    CodePointTrie(#[cfg_attr(feature = "serde", serde(borrow))] CodePointTrie<'data, T>),
+    // new variants should go BELOW existing ones
+    // Serde serializes based on variant name and index in the enum
+    // https://docs.rs/serde/latest/serde/trait.Serializer.html#tymethod.serialize_unit_variant
 }
 
-/// A data structure efficiently storing `Script` and `Script_Extensions` property data.
+/// A struct that efficiently stores `Script` and `Script_Extensions` property data.
 #[icu_provider::data_struct(ScriptWithExtensionsPropertyV1Marker = "props/scx@1")]
 #[derive(Debug, Eq, PartialEq, Clone)]
 #[cfg_attr(
@@ -57,6 +72,110 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     pub data: ScriptWithExtensions<'data>,
 }
 
+// See CodePointSetData for documentation of these functions
+impl<'data> PropertyCodePointSetV1<'data> {
+    #[inline]
+    pub(crate) fn contains(&self, ch: char) -> bool {
+        match *self {
+            Self::InversionList(ref l) => l.contains(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn contains_u32(&self, ch: u32) -> bool {
+        match *self {
+            Self::InversionList(ref l) => l.contains_u32(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        match *self {
+            Self::InversionList(ref l) => l.iter_ranges(),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_inversion_list(l: CodePointInversionList<'static>) -> Self {
+        Self::InversionList(l)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_inversion_list(
+        &'_ self,
+    ) -> Option<&'_ CodePointInversionList<'data>> {
+        match *self {
+            Self::InversionList(ref l) => Some(l),
+            // any other backing data structure that cannot return a CPInvList in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
+        match *self {
+            Self::InversionList(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
+}
+
+// See CodePointMapData for documentation of these functions
+impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
+    #[inline]
+    pub(crate) fn get_u32(&self, ch: u32) -> T {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get(ch),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn try_into_converted<P>(
+        self,
+    ) -> Result<PropertyCodePointMapV1<'data, P>, ZeroVecError>
+    where
+        P: TrieValue,
+    {
+        match self {
+            Self::CodePointTrie(t) => t
+                .try_into_converted()
+                .map(PropertyCodePointMapV1::CodePointTrie),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn get_set_for_value(&self, value: T) -> CodePointInversionList<'static> {
+        match *self {
+            Self::CodePointTrie(ref t) => t.get_set_for_value(value),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn iter_ranges(&self) -> impl Iterator<Item = CodePointMapRange<T>> + '_ {
+        match *self {
+            Self::CodePointTrie(ref t) => t.iter_ranges(),
+        }
+    }
+
+    #[inline]
+    pub(crate) fn from_code_point_trie(trie: CodePointTrie<'static, T>) -> Self {
+        Self::CodePointTrie(trie)
+    }
+
+    #[inline]
+    pub(crate) fn as_code_point_trie(&self) -> Option<&CodePointTrie<'data, T>> {
+        match *self {
+            Self::CodePointTrie(ref t) => Some(t),
+            // any other backing data structure that cannot return a CPT in O(1) time should return None
+        }
+    }
+
+    #[inline]
+    pub(crate) fn to_code_point_trie(&self) -> CodePointTrie<'_, T> {
+        match *self {
+            Self::CodePointTrie(ref t) => ZeroFrom::zero_from(t),
+        }
+    }
+}
+
 macro_rules! expand {
     (
         ($(($bin_marker:ident, $bin_s:literal),)+),
@@ -64,13 +183,14 @@ macro_rules! expand {
     ) => {
 
             $(
+                #[doc = core::concat!("Data marker for the '", $bin_s, "' Unicode property")]
                 pub struct $bin_marker;
 
                 impl DataMarker for $bin_marker {
-                    type Yokeable = UnicodePropertyV1<'static>;
+                    type Yokeable = PropertyCodePointSetV1<'static>;
                 }
-                impl ResourceMarker for $bin_marker {
-                    const KEY: ResourceKey = resource_key!(concat!("props/", $bin_s, "@1"));
+                impl KeyedDataMarker for $bin_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $bin_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
@@ -84,20 +204,21 @@ macro_rules! expand {
                 impl databake::Bake for $bin_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ icu_properties::provider::$bin_marker }
+                        databake::quote!{ ::icu_properties::provider::$bin_marker }
                     }
                 }
             )+
 
             $(
+                #[doc = core::concat!("Data marker for the '", $enum_s, "' Unicode property")]
                 pub struct $enum_marker;
 
                 impl DataMarker for $enum_marker {
-                    type Yokeable = UnicodePropertyMapV1<'static, crate::$value_ty>;
+                    type Yokeable = PropertyCodePointMapV1<'static, crate::$value_ty>;
                 }
 
-                impl ResourceMarker for $enum_marker {
-                    const KEY: ResourceKey = resource_key!(concat!("props/", $enum_s, "@1"));
+                impl KeyedDataMarker for $enum_marker {
+                    const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
                 }
 
                 #[cfg(feature = "datagen")]
@@ -111,22 +232,10 @@ macro_rules! expand {
                 impl databake::Bake for $enum_marker {
                     fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
                         env.insert("icu_properties");
-                        databake::quote!{ icu_properties::provider::$enum_marker }
+                        databake::quote!{ ::icu_properties::provider::$enum_marker }
                     }
                 }
             )+
-
-            #[cfg(feature = "datagen")]
-            /// The set of all resource keys supported by [`icu_uniset`](crate).
-            pub const ALL_KEYS: [ResourceKey; 75] = [
-                $(
-                    $bin_marker::KEY,
-                )+
-                $(
-                    $enum_marker::KEY,
-                )+
-                ScriptWithExtensionsPropertyV1Marker::KEY,
-            ];
     };
 }
 

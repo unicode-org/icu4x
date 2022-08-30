@@ -89,6 +89,11 @@ impl Value {
     }
 
     #[doc(hidden)]
+    pub const fn as_single_subtag(&self) -> Option<&TinyAsciiStr<8>> {
+        self.0.single()
+    }
+
+    #[doc(hidden)]
     pub const fn from_tinystr(subtag: Option<TinyAsciiStr<8>>) -> Self {
         match subtag {
             None => Self(ShortVec::new()),
@@ -106,28 +111,28 @@ impl Value {
 
     #[doc(hidden)]
     pub const fn subtag_from_bytes(bytes: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
-        if *VALUE_LENGTH.start() > bytes.len() || *VALUE_LENGTH.end() < bytes.len() {
-            return Err(ParserError::InvalidExtension);
-        };
-        match TinyAsciiStr::from_bytes(bytes) {
-            Ok(TRUE_VALUE) => Ok(None),
-            Ok(val) if val.is_ascii_alphanumeric() => Ok(Some(val)),
-            _ => Err(ParserError::InvalidExtension),
-        }
+        Self::parse_subtag_from_bytes_manual_slice(bytes, 0, bytes.len())
     }
 
     pub(crate) fn parse_subtag(t: &[u8]) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
-        let s = TinyAsciiStr::from_bytes(t).map_err(|_| ParserError::InvalidSubtag)?;
-        if !VALUE_LENGTH.contains(&t.len()) || !s.is_ascii_alphanumeric() {
+        Self::parse_subtag_from_bytes_manual_slice(t, 0, t.len())
+    }
+
+    pub(crate) const fn parse_subtag_from_bytes_manual_slice(
+        bytes: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Option<TinyAsciiStr<8>>, ParserError> {
+        let slice_len = end - start;
+        if slice_len > *VALUE_LENGTH.end() || slice_len < *VALUE_LENGTH.start() {
             return Err(ParserError::InvalidExtension);
         }
 
-        let s = s.to_ascii_lowercase();
-
-        if s == TRUE_VALUE {
-            Ok(None)
-        } else {
-            Ok(Some(s))
+        match TinyAsciiStr::from_bytes_manual_slice(bytes, start, end) {
+            Ok(TRUE_VALUE) => Ok(None),
+            Ok(s) if s.is_ascii_alphanumeric() => Ok(Some(s.to_ascii_lowercase())),
+            Ok(_) => Err(ParserError::InvalidExtension),
+            Err(_) => Err(ParserError::InvalidSubtag),
         }
     }
 

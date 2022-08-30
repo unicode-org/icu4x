@@ -2,27 +2,29 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::date;
-use crate::error::DateTimeFormatError;
+use crate::error::DateTimeFormatterError;
 use crate::fields;
-use crate::options::{components, length, preferences, DateTimeFormatOptions};
+use crate::input;
+use crate::options::{length, preferences, DateTimeFormatterOptions};
 use crate::pattern::{hour_cycle, runtime::PatternPlurals};
 use crate::provider;
 use crate::provider::calendar::patterns::PatternPluralsV1;
-use crate::provider::calendar::DatePatternsV1;
 use crate::provider::calendar::{
-    patterns::PatternPluralsFromPatternsV1Marker, DatePatternsV1Marker,
-    DateSkeletonPatternsV1Marker,
+    patterns::GenericPatternV1Marker, patterns::PatternPluralsFromPatternsV1Marker,
+    ErasedDateLengthsV1Marker, TimeLengthsV1Marker,
 };
-use crate::skeleton;
-use icu_calendar::types::Era;
-use icu_locid::Locale;
+use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
+#[cfg(feature = "experimental")]
+use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
+use icu_calendar::types::{Era, MonthCode};
+#[cfg(feature = "experimental")]
+use icu_locid::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
-type Result<T> = core::result::Result<T, DateTimeFormatError>;
+type Result<T> = core::result::Result<T, DateTimeFormatterError>;
 
 fn pattern_for_time_length_inner<'data>(
-    data: DatePatternsV1<'data>,
+    data: TimeLengthsV1<'data>,
     length: length::Time,
     preferences: &Option<preferences::Bag>,
 ) -> PatternPlurals<'data> {
@@ -54,7 +56,23 @@ fn pattern_for_time_length_inner<'data>(
     PatternPlurals::from(pattern)
 }
 
-fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> PatternPlurals {
+fn time_patterns_data_payload<D>(
+    data_provider: &D,
+    locale: &DataLocale,
+) -> Result<DataPayload<TimeLengthsV1Marker>>
+where
+    D: DataProvider<TimeLengthsV1Marker> + ?Sized,
+{
+    let data = data_provider
+        .load(DataRequest {
+            locale,
+            metadata: Default::default(),
+        })?
+        .take_payload()?;
+    Ok(data)
+}
+
+fn pattern_for_date_length_inner(data: DateLengthsV1, length: length::Date) -> PatternPlurals {
     let pattern = match length {
         length::Date::Full => data.date.full,
         length::Date::Long => data.date.long,
@@ -64,38 +82,81 @@ fn pattern_for_date_length_inner(data: DatePatternsV1, length: length::Date) -> 
     PatternPlurals::from(pattern)
 }
 
-pub struct PatternSelector<'a, D: ?Sized> {
+/// Determine the appropriate `Pattern` for a given `options::length::Time` bag.
+/// If a preference for an hour cycle is set, it will look look up a pattern in the time_h11_12 or
+/// time_h23_h24 provider data, and then manually modify the symbol in the pattern if needed.
+pub(crate) fn pattern_for_time_length<'a, D>(
     data_provider: &'a D,
-    locale: &'a Locale,
+    locale: &'a DataLocale,
+    length: length::Time,
+    preferences: Option<preferences::Bag>,
+) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>>
+where
+    D: DataProvider<TimeLengthsV1Marker> + ?Sized,
+{
+    let patterns_data = time_patterns_data_payload(data_provider, locale)?;
+    Ok(patterns_data.map_project(|data, _| {
+        let pattern = pattern_for_time_length_inner(data, length, &preferences).clone();
+        pattern.into()
+    }))
 }
 
-// Manual impls needed since `derive(Copy)` inserts
-// a `D: Copy` bound
-impl<D: ?Sized> Copy for PatternSelector<'_, D> {}
-impl<D: ?Sized> Clone for PatternSelector<'_, D> {
-    fn clone(&self) -> Self {
-        *self
-    }
+/// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
+pub(crate) fn pattern_for_date_length(
+    length: length::Date,
+    patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+) -> DataPayload<PatternPluralsFromPatternsV1Marker> {
+    patterns_data.map_project(|data, _| {
+        let pattern = pattern_for_date_length_inner(data, length);
+        pattern.into()
+    })
+}
+
+/// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
+pub(crate) fn generic_pattern_for_date_length(
+    length: length::Date,
+    patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+) -> DataPayload<GenericPatternV1Marker> {
+    patterns_data.map_project(|data, _| {
+        let pattern = match length {
+            length::Date::Full => data.length_combinations.full,
+            length::Date::Long => data.length_combinations.long,
+            length::Date::Medium => data.length_combinations.medium,
+            length::Date::Short => data.length_combinations.short,
+        };
+
+        pattern.into()
+    })
+}
+
+#[derive(Clone)]
+pub struct PatternSelector<'a, D: ?Sized> {
+    data_provider: &'a D,
+    date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+    locale: &'a DataLocale,
+    #[cfg(feature = "experimental")]
+    cal_val: &'a Value,
 }
 
 impl<D> PatternSelector<'_, D>
 where
-    D: ResourceProvider<DatePatternsV1Marker>
-        + ResourceProvider<DateSkeletonPatternsV1Marker>
-        + ?Sized,
+    D: DataProvider<TimeLengthsV1Marker> + ?Sized,
 {
+    #[cfg(not(feature = "experimental"))]
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
-        locale: &'a Locale,
-        options: &DateTimeFormatOptions,
+        date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        locale: &'a DataLocale,
+        options: &DateTimeFormatterOptions,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         let selector = PatternSelector {
             data_provider,
+            date_patterns_data,
             locale,
         };
         match options {
-            DateTimeFormatOptions::Length(bag) => selector.pattern_for_length_bag(bag),
-            DateTimeFormatOptions::Components(bag) => selector.patterns_for_components_bag(bag),
+            DateTimeFormatterOptions::Length(bag) => selector
+                .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
         }
     }
 
@@ -103,51 +164,23 @@ where
     fn pattern_for_length_bag(
         self,
         length: &length::Bag,
+        preferences: Option<preferences::Bag>,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
         match (length.date, length.time) {
             (None, None) => Ok(DataPayload::from_owned(PatternPluralsV1(
                 PatternPlurals::default(),
             ))),
             (None, Some(time_length)) => {
-                self.pattern_for_time_length(time_length, length.preferences)
+                pattern_for_time_length(self.data_provider, self.locale, time_length, preferences)
             }
-            (Some(date_length), None) => self.pattern_for_date_length(date_length),
+            (Some(date_length), None) => Ok(pattern_for_date_length(
+                date_length,
+                self.date_patterns_data,
+            )),
             (Some(date_length), Some(time_length)) => {
-                self.pattern_for_datetime_length(date_length, time_length, length.preferences)
+                self.pattern_for_datetime_length(date_length, time_length, preferences)
             }
         }
-    }
-
-    /// Determine the appropriate `Pattern` for a given `options::length::Date` bag.
-    fn pattern_for_date_length(
-        self,
-        length: length::Date,
-    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = self.patterns_data_payload()?;
-        Ok(
-            patterns_data.map_project_with_capture(length, |data, length, _| {
-                let pattern = pattern_for_date_length_inner(data, length);
-                pattern.into()
-            }),
-        )
-    }
-
-    /// Determine the appropriate `Pattern` for a given `options::length::Time` bag.
-    /// If a preference for an hour cycle is set, it will look look up a pattern in the time_h11_12 or
-    /// time_h23_h24 provider data, and then manually modify the symbol in the pattern if needed.
-    fn pattern_for_time_length(
-        self,
-        length: length::Time,
-        preferences: Option<preferences::Bag>,
-    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = self.patterns_data_payload()?;
-        Ok(patterns_data.map_project_with_capture(
-            (length, preferences),
-            |data, (length, preferences), _| {
-                let pattern = pattern_for_time_length_inner(data, length, &preferences).clone();
-                pattern.into()
-            },
-        ))
     }
 
     /// Determine the appropriate `Pattern` for a given `options::length::Date` and
@@ -158,25 +191,55 @@ where
         time_length: length::Time,
         preferences: Option<preferences::Bag>,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
-        let patterns_data = self.patterns_data_payload()?;
-        patterns_data.try_map_project_with_capture(
-            (date_length, time_length, preferences),
-            |data, (date_length, time_length, preferences), _| {
-                let date = pattern_for_date_length_inner(data.clone(), date_length)
-                    .expect_pattern("Lengths are single patterns");
-                let time = pattern_for_time_length_inner(data.clone(), time_length, &preferences)
-                    .expect_pattern("Lengths are single patterns");
+        let time_patterns_data = time_patterns_data_payload(self.data_provider, self.locale)?;
 
-                let pattern = match date_length {
-                    length::Date::Full => data.length_combinations.full,
-                    length::Date::Long => data.length_combinations.long,
-                    length::Date::Medium => data.length_combinations.medium,
-                    length::Date::Short => data.length_combinations.short,
-                };
-                let pattern = pattern.combined(date, time)?;
-                Ok(PatternPlurals::from(pattern).into())
-            },
-        )
+        self.date_patterns_data.try_map_project(|data, _| {
+            // TODO (#1131) - We may be able to remove the clone here.
+            let date = pattern_for_date_length_inner(data.clone(), date_length)
+                .expect_pattern("Lengths are single patterns");
+
+            let pattern = match date_length {
+                length::Date::Full => data.length_combinations.full,
+                length::Date::Long => data.length_combinations.long,
+                length::Date::Medium => data.length_combinations.medium,
+                length::Date::Short => data.length_combinations.short,
+            };
+
+            // TODO (#1131) - We may be able to remove the clone here.
+            let time = pattern_for_time_length_inner(
+                time_patterns_data.get().clone(),
+                time_length,
+                &preferences,
+            )
+            .expect_pattern("Lengths are single patterns");
+            Ok(PatternPlurals::from(pattern.combined(date, time)?).into())
+        })
+    }
+}
+
+#[cfg(feature = "experimental")]
+impl<D> PatternSelector<'_, D>
+where
+    D: DataProvider<TimeLengthsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker> + ?Sized,
+{
+    pub(crate) fn for_options<'a>(
+        data_provider: &'a D,
+        date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
+        locale: &'a DataLocale,
+        cal_val: &'a Value,
+        options: &DateTimeFormatterOptions,
+    ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
+        let selector = PatternSelector {
+            data_provider,
+            date_patterns_data,
+            locale,
+            cal_val,
+        };
+        match options {
+            DateTimeFormatterOptions::Length(bag) => selector
+                .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
+            DateTimeFormatterOptions::Components(bag) => selector.patterns_for_components_bag(bag),
+        }
     }
 
     /// Determine the appropriate `PatternPlurals` for a given `options::components::Bag`.
@@ -184,13 +247,13 @@ where
         self,
         components: &components::Bag,
     ) -> Result<DataPayload<PatternPluralsFromPatternsV1Marker>> {
+        use crate::skeleton;
         let skeletons_data = self.skeleton_data_payload()?;
-        let patterns_data = self.patterns_data_payload()?;
         // Not all skeletons are currently supported.
         let requested_fields = components.to_vec_fields();
         let patterns = match skeleton::create_best_pattern_for_fields(
             skeletons_data.get(),
-            &patterns_data.get().length_combinations,
+            &self.date_patterns_data.get().length_combinations,
             &requested_fields,
             components,
             false, // Prefer the requested fields over the matched pattern.
@@ -199,27 +262,26 @@ where
             | skeleton::BestSkeleton::MissingOrExtraFields(pattern) => Some(pattern),
             skeleton::BestSkeleton::NoMatch => None,
         }
-        .ok_or(DateTimeFormatError::UnsupportedOptions)?;
+        .ok_or(DateTimeFormatterError::UnsupportedOptions)?;
         Ok(DataPayload::from_owned(PatternPluralsV1(
             patterns.into_owned(),
         )))
     }
-    fn patterns_data_payload(self) -> Result<DataPayload<DatePatternsV1Marker>> {
-        let data = self
-            .data_provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(self.locale),
-                metadata: Default::default(),
-            })?
-            .take_payload()?;
-        Ok(data)
-    }
 
-    fn skeleton_data_payload(self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
+    #[cfg(feature = "experimental")]
+    fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
+        use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
+        let mut locale = self.locale.clone();
+        // Skeleton data for ethioaa is stored under ethiopic
+        if self.cal_val == &value!("ethioaa") {
+            locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
+        } else {
+            locale.set_unicode_ext(key!("ca"), self.cal_val.clone());
+        };
         let data = self
             .data_provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(self.locale),
+            .load(DataRequest {
+                locale: &locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;
@@ -227,35 +289,28 @@ where
     }
 }
 
-pub trait DateTimeSymbols {
+pub trait DateSymbols {
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: usize,
+        code: MonthCode,
     ) -> Result<&str>;
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::IsoWeekday,
+        day: input::IsoWeekday,
     ) -> Result<&str>;
-    fn get_symbol_for_day_period(
-        &self,
-        day_period: fields::DayPeriod,
-        length: fields::FieldLength,
-        hour: date::IsoHour,
-        is_top_of_hour: bool,
-    ) -> Result<&str>;
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str>;
+    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str;
 }
 
-impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
+impl<'data> DateSymbols for provider::calendar::DateSymbolsV1<'data> {
     fn get_symbol_for_weekday(
         &self,
         weekday: fields::Weekday,
         length: fields::FieldLength,
-        day: date::IsoWeekday,
+        day: input::IsoWeekday,
     ) -> Result<&str> {
         let widths = match weekday {
             fields::Weekday::Format => &self.weekdays.format,
@@ -275,7 +330,7 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
                             .0
                             .get(idx)
                             .map(|x| &**x)
-                            .ok_or(DateTimeFormatError::MissingWeekdaySymbol(idx));
+                            .ok_or(DateTimeFormatterError::MissingWeekdaySymbol(idx));
                     } else {
                         return self.get_symbol_for_weekday(fields::Weekday::Format, length, day);
                     }
@@ -296,17 +351,15 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
             .0
             .get(idx)
             .map(|x| &**x)
-            .ok_or(DateTimeFormatError::MissingWeekdaySymbol(idx))
+            .ok_or(DateTimeFormatterError::MissingWeekdaySymbol(idx))
     }
 
     fn get_symbol_for_month(
         &self,
         month: fields::Month,
         length: fields::FieldLength,
-        num: usize,
+        code: MonthCode,
     ) -> Result<&str> {
-        // TODO(#493): Support symbols for non-Gregorian calendars.
-        debug_assert!(num < 12);
         let widths = match month {
             fields::Month::Format => &self.months.format,
             fields::Month::StandAlone => {
@@ -318,15 +371,13 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
                     };
                     if let Some(symbols) = symbols {
                         return symbols
-                            .0
-                            .get(num)
-                            .map(|x| &**x)
-                            .ok_or(DateTimeFormatError::MissingMonthSymbol(num));
+                            .get(code)
+                            .ok_or(DateTimeFormatterError::MissingMonthSymbol(code));
                     } else {
-                        return self.get_symbol_for_month(fields::Month::Format, length, num);
+                        return self.get_symbol_for_month(fields::Month::Format, length, code);
                     }
                 } else {
-                    return self.get_symbol_for_month(fields::Month::Format, length, num);
+                    return self.get_symbol_for_month(fields::Month::Format, length, code);
                 }
             }
         };
@@ -336,17 +387,40 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
             _ => &widths.abbreviated,
         };
         symbols
-            .0
-            .get(num)
-            .map(|x| &**x)
-            .ok_or(DateTimeFormatError::MissingMonthSymbol(num))
+            .get(code)
+            .ok_or(DateTimeFormatterError::MissingMonthSymbol(code))
     }
 
+    /// Get the era symbol
+    ///
+    /// This will fall back to the era code directly, if, for example,
+    /// a japanext datetime is formatted with a `DateTimeFormat<Japanese>`
+    fn get_symbol_for_era<'a>(&'a self, length: fields::FieldLength, era_code: &'a Era) -> &str {
+        let symbols = match length {
+            fields::FieldLength::Wide => &self.eras.names,
+            fields::FieldLength::Narrow => &self.eras.narrow,
+            _ => &self.eras.abbr,
+        };
+        symbols.get(&era_code.0).unwrap_or(&era_code.0)
+    }
+}
+
+pub trait TimeSymbols {
     fn get_symbol_for_day_period(
         &self,
         day_period: fields::DayPeriod,
         length: fields::FieldLength,
-        hour: date::IsoHour,
+        hour: input::IsoHour,
+        is_top_of_hour: bool,
+    ) -> Result<&str>;
+}
+
+impl<'data> TimeSymbols for provider::calendar::TimeSymbolsV1<'data> {
+    fn get_symbol_for_day_period(
+        &self,
+        day_period: fields::DayPeriod,
+        length: fields::FieldLength,
+        hour: input::IsoHour,
         is_top_of_hour: bool,
     ) -> Result<&str> {
         use fields::{DayPeriod::NoonMidnight, FieldLength};
@@ -362,16 +436,5 @@ impl<'data> DateTimeSymbols for provider::calendar::DateSymbolsV1<'data> {
             (_, hour, _) if hour < 12 => &symbols.am,
             _ => &symbols.pm,
         })
-    }
-
-    fn get_symbol_for_era(&self, length: fields::FieldLength, era_code: Era) -> Result<&str> {
-        let symbols = match length {
-            fields::FieldLength::Wide => &self.eras.names,
-            fields::FieldLength::Narrow => &self.eras.narrow,
-            _ => &self.eras.abbr,
-        };
-        symbols
-            .get(&era_code.0)
-            .ok_or(DateTimeFormatError::MissingEraSymbol(era_code.0))
     }
 }

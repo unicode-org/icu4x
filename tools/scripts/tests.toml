@@ -24,10 +24,10 @@ args = ["build-all-features"]
 description = "Run all Rust tests with all features and targets"
 category = "ICU4X Development"
 command = "cargo"
-args = ["test", "--all-features", "--all-targets"]
+args = ["test", "--all-features", "--all-targets", "--no-fail-fast"]
 
 [tasks.test-docs]
 description = "Run all Rust doctests with all features"
 category = "ICU4X Development"
 command = "cargo"
-args = ["test", "--all-features", "--doc"]
+args = ["test", "--all-features", "--doc", "--no-fail-fast"]

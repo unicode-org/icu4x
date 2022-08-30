@@ -3,45 +3,30 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 
 use icu_locid::LanguageIdentifier;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::provider::*;
 
 use writeable::Writeable;
 use zerovec::{maps::ZeroMap2d, ZeroMap};
 
-/// A data provider reading from CLDR JSON likely subtags rule files.
-#[derive(Debug)]
-pub struct FallbackRulesProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for FallbackRulesProvider {
-    fn from(source: &SourceData) -> Self {
-        FallbackRulesProvider {
-            source: source.clone(),
-        }
-    }
-}
-
-impl ResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
-    fn load_resource(
+impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
+    fn load(
         &self,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackLikelySubtagsV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
-        if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+        if !req.locale.is_empty() {
+            return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
         let likely_subtags_data: &cldr_serde::likely_subtags::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/likelySubtags.json")?;
 
         let metadata = DataResponseMetadata::default();
@@ -52,21 +37,21 @@ impl ResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProv
     }
 }
 
-impl ResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
-    fn load_resource(
+impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
+    fn load(
         &self,
-        req: &DataRequest,
+        req: DataRequest,
     ) -> Result<DataResponse<LocaleFallbackParentsV1Marker>, DataError> {
         // We treat searching for `und` as a request for all data. Other requests
         // are not currently supported.
-        if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
+        if !req.locale.is_empty() {
+            return Err(DataErrorKind::ExtraneousLocale.into_error());
         }
 
         let parents_data: &cldr_serde::parent_locales::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/parentLocales.json")?;
 
         let metadata = DataResponseMetadata::default();
@@ -77,22 +62,14 @@ impl ResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(
-    FallbackRulesProvider,
-    [
-        LocaleFallbackLikelySubtagsV1Marker,
-        LocaleFallbackParentsV1Marker,
-    ]
-);
-
-impl IterableResourceProvider<LocaleFallbackLikelySubtagsV1Marker> for FallbackRulesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableResourceProvider<LocaleFallbackParentsV1Marker> for FallbackRulesProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -191,9 +168,9 @@ fn test_basic() {
         langid, subtags_language as language, subtags_region as region, subtags_script as script,
     };
 
-    let provider = FallbackRulesProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
     let likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker> = provider
-        .load_resource(&DataRequest::default())
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();
@@ -206,8 +183,8 @@ fn test_basic() {
         likely_subtags
             .get()
             .lr2s
-            .get_copied(&language!("zh").into(), &region!("TW").into()),
-        Ok(script!("Hant"))
+            .get_copied_2d(&language!("zh").into(), &region!("TW").into()),
+        Some(script!("Hant"))
     );
     assert_eq!(
         likely_subtags.get().l2r.get_copied(&language!("zh").into()),
@@ -217,12 +194,12 @@ fn test_basic() {
         likely_subtags
             .get()
             .ls2r
-            .get_copied(&language!("zh").into(), &script!("Hant").into()),
-        Ok(region!("TW"))
+            .get_copied_2d(&language!("zh").into(), &script!("Hant").into()),
+        Some(region!("TW"))
     );
 
     let parents: DataPayload<LocaleFallbackParentsV1Marker> = provider
-        .load_resource(&DataRequest::default())
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();

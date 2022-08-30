@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XCodePointMapData16.h"
-}
 
 class ICU4XDataProvider;
 class ICU4XCodePointMapData16;
@@ -27,9 +25,15 @@ struct ICU4XCodePointMapData16Deleter {
 };
 
 /**
- * An ICU4X Unicode Set Property object, capable of querying whether a code point is contained in a set based on a Unicode property. For properties whose values fit into 16 bits.
+ * An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/index.html) for more information.
+ * For properties whose values fit into 16 bits.
+ * 
+ * See the [Rust documentation for `properties`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/index.html) for more information.
+ * 
+ * See the [Rust documentation for `CodePointMapData`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapData.html) for more information.
+ * 
+ * See the [Rust documentation for `CodePointMapDataBorrowed`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html) for more information.
  */
 class ICU4XCodePointMapData16 {
  public:
@@ -37,14 +41,14 @@ class ICU4XCodePointMapData16 {
   /**
    * Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_properties/maps/fn.get_script.html) for more information.
+   * See the [Rust documentation for `load_script`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData16, ICU4XError> try_get_script(const ICU4XDataProvider& provider);
 
   /**
    * Gets the value for a code point.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_codepointtrie/codepointtrie/struct.CodePointTrie.html#method.get_u32) for more information.
+   * See the [Rust documentation for `get`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
    */
   uint16_t get(char32_t cp) const;
   inline const capi::ICU4XCodePointMapData16* AsFFI() const { return this->inner.get(); }
@@ -63,9 +67,9 @@ inline diplomat::result<ICU4XCodePointMapData16, ICU4XError> ICU4XCodePointMapDa
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData16_try_get_script(provider.AsFFI());
   diplomat::result<ICU4XCodePointMapData16, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XCodePointMapData16(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XCodePointMapData16>(std::move(ICU4XCodePointMapData16(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

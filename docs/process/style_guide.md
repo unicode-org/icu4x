@@ -906,6 +906,10 @@ In general, non-panicky APIs that return `Result`s or `Option`s should be prefer
 
 `#[allow()]`s should be documented with a comment.
 
+## Debug :: required
+
+Crates should deny the `missing_debug_implementations` lint at the top-level so that our types all have `Debug` implementations.
+
 # Imports and Configurations
 
 ## Features

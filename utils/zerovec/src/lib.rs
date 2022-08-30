@@ -74,7 +74,7 @@
 //!     strs: VarZeroVec::from(&["hello", "world"]),
 //! };
 //! let bincode_bytes = bincode::serialize(&data).expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 71);
+//! assert_eq!(bincode_bytes.len(), 67);
 //!
 //! let deserialized: DataStruct =
 //!     bincode::deserialize(&bincode_bytes).expect("Deserialization should be successful");
@@ -148,7 +148,7 @@
 //!
 //! let bincode_bytes = bincode::serialize(&data)
 //!     .expect("Serialization should be successful");
-//! assert_eq!(bincode_bytes.len(), 176);
+//! assert_eq!(bincode_bytes.len(), 168);
 //!
 //! let deserialized: Data = bincode::deserialize(&bincode_bytes)
 //!     .expect("Deserialization should be successful");
@@ -200,7 +200,10 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 // this crate does a lot of nuanced lifetime manipulation, being explicit
@@ -266,7 +269,6 @@ pub mod maps {
     pub use crate::map2d::ZeroMap2dBorrowed;
 
     pub use crate::map::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
-    pub use crate::map2d::KeyError;
 }
 
 pub mod vecs {
@@ -286,7 +288,7 @@ pub mod vecs {
     #[doc(no_inline)]
     pub use crate::varzerovec::{VarZeroSlice, VarZeroVec};
 
-    pub use crate::varzerovec::VarZeroVecOwned;
+    pub use crate::varzerovec::{Index16, Index32, VarZeroVecFormat, VarZeroVecOwned};
 
     pub use crate::flexzerovec::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
 }

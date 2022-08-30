@@ -46,6 +46,12 @@ description = "Run all tests for the CI 'test' job"
 category = "CI"
 dependencies = [
     "test-all-features",
+]
+
+[tasks.ci-job-testdata]
+description = "Run all tests for the CI 'testdata' job"
+category = "CI"
+dependencies = [
     "testdata-check",
 ]
 
@@ -56,7 +62,10 @@ dependencies = [
     "test-docs",
 ]
 
-[tasks.ci-job-full-data]
+[tasks.ci-job-full-datagen]
+# Note: ci-job-full-datagen is not actually invoked by CI and instead exists
+# for symmetry and predictability. CI instead uses a custom GitHub action
+# that allows it to download and cache the CLDR releases efficiently
 description = "Run full data generation on latest CLDR and ICU"
 category = "CI"
 dependencies = [
@@ -68,6 +77,13 @@ description = "Run all tests for the CI 'ffi' job"
 category = "CI"
 dependencies = [
     "test-ffi",
+]
+
+[tasks.ci-job-verify-ffi]
+description = "Run all tests for the CI 'verify-ffi' job"
+category = "CI"
+dependencies = [
+    "verify-ffi",
 ]
 
 

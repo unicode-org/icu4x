@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XBidiParagraph.h"
-}
 
 #include "ICU4XError.hpp"
 #include "ICU4XBidiDirection.hpp"
@@ -43,14 +41,14 @@ class ICU4XBidiParagraph {
   /**
    * The primary direction of this paragraph
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+   * See the [Rust documentation for `level_at`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
    */
   ICU4XBidiDirection direction() const;
 
   /**
    * The number of bytes in this paragraph
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
+   * See the [Rust documentation for `len`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.ParagraphInfo.html#method.len) for more information.
    */
   size_t size() const;
 
@@ -68,7 +66,7 @@ class ICU4XBidiParagraph {
    * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
    * within this paragraph's range.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+   * See the [Rust documentation for `level_at`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> reorder_line_to_writeable(size_t range_start, size_t range_end, W& out) const;
 
@@ -76,7 +74,7 @@ class ICU4XBidiParagraph {
    * Reorder a line based on display order. The ranges are specified relative to the source text and must be contained
    * within this paragraph's range.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+   * See the [Rust documentation for `level_at`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
    */
   diplomat::result<std::string, ICU4XError> reorder_line(size_t range_start, size_t range_end) const;
 
@@ -87,7 +85,7 @@ class ICU4XBidiParagraph {
    * 
    * Returns 0 (equivalent to `Level::ltr()`) on error
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
+   * See the [Rust documentation for `level_at`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Paragraph.html#method.level_at) for more information.
    */
   uint8_t level_at(size_t pos) const;
   inline const capi::ICU4XBidiParagraph* AsFFI() const { return this->inner.get(); }
@@ -107,7 +105,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XBidiParagraph::set_para
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -130,7 +128,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XBi
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -142,7 +140,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XBidiParagraph::reorder_lin
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }

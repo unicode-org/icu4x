@@ -2,12 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Serializer configurations for [`serde_json`].
+
 use super::AbstractSerializer;
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use std::io::{self, Write};
+use std::io;
 
+/// Choices for how to render the JSON files.
 #[non_exhaustive]
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum StyleOption {
@@ -18,6 +21,23 @@ pub enum StyleOption {
 }
 
 /// A serializer for JavaScript Object Notation (JSON).
+///
+/// # Examples
+///
+/// ```
+/// use icu_provider_fs::export::FilesystemExporter;
+/// use icu_provider_fs::export::serializers;
+///
+/// let serializer = serializers::postcard::Serializer::new(Default::default());
+///
+/// // Then pass it to a FilesystemExporter:
+/// let demo_path = std::env::temp_dir().join("icu4x_json_serializer_demo");
+/// FilesystemExporter::try_new(
+///     Box::from(serializer),
+///     demo_path.clone().into()
+/// ).unwrap();
+/// std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
+/// ```
 pub struct Serializer {
     style: StyleOption,
 }
@@ -42,9 +62,8 @@ impl AbstractSerializer for Serializer {
     fn serialize(
         &self,
         obj: &DataPayload<ExportMarker>,
-        sink: &mut dyn io::Write,
+        mut sink: &mut dyn io::Write,
     ) -> Result<(), DataError> {
-        let mut sink = crlify::BufWriterWithLineEndingFix::new(sink);
         match self.style {
             StyleOption::Compact => obj.serialize(&mut serde_json::Serializer::new(&mut sink)),
             StyleOption::Pretty => obj.serialize(&mut serde_json::Serializer::pretty(&mut sink)),
@@ -58,15 +77,22 @@ impl AbstractSerializer for Serializer {
     fn get_buffer_format(&self) -> BufferFormat {
         BufferFormat::Json
     }
+
+    fn is_text_format(&self) -> bool {
+        true
+    }
 }
 
 impl Serializer {
+    /// Creates a new serializer for [`serde_json`].
     pub fn new(options: Options) -> Self {
         Self {
             style: options.style,
         }
     }
 
+    /// Convenience function to create a JSON serializer with the
+    /// [`StyleOption::Pretty`] format.
     pub fn pretty() -> Self {
         Self::new(Options {
             style: StyleOption::Pretty,

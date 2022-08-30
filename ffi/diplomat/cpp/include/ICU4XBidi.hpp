@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XBidi.h"
-}
 
 class ICU4XDataProvider;
 class ICU4XBidi;
@@ -30,7 +28,7 @@ struct ICU4XBidiDeleter {
 /**
  * An ICU4X Bidi object, containing loaded bidi data
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
+ * See the [Rust documentation for `BidiClassAdapter`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html) for more information.
  */
 class ICU4XBidi {
  public:
@@ -38,7 +36,7 @@ class ICU4XBidi {
   /**
    * Creates a new [`ICU4XBidi`] from locale data.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
+   * See the [Rust documentation for `new`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html#method.new) for more information.
    */
   static diplomat::result<ICU4XBidi, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
@@ -47,7 +45,7 @@ class ICU4XBidi {
    * 
    * Takes in a Level for the default level, if it is an invalid value it will default to LTR
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
+   * See the [Rust documentation for `new_with_data_source`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.BidiInfo.html#method.new_with_data_source) for more information.
    */
   ICU4XBidiInfo for_text(const std::string_view text, uint8_t default_level) const;
 
@@ -56,7 +54,7 @@ class ICU4XBidi {
    * 
    * Invalid levels (numbers greater than 125) will be assumed LTR
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
+   * See the [Rust documentation for `is_rtl`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_rtl) for more information.
    */
   static bool level_is_rtl(uint8_t level);
 
@@ -65,21 +63,21 @@ class ICU4XBidi {
    * 
    * Invalid levels (numbers greater than 125) will be assumed LTR
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
+   * See the [Rust documentation for `is_ltr`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.is_ltr) for more information.
    */
   static bool level_is_ltr(uint8_t level);
 
   /**
    * Get a basic RTL Level value
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.rtl) for more information.
+   * See the [Rust documentation for `rtl`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.rtl) for more information.
    */
   static uint8_t level_rtl();
 
   /**
    * Get a simple LTR Level value
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.ltr) for more information.
+   * See the [Rust documentation for `ltr`](https://unicode-org.github.io/icu4x-docs/doc/unicode_bidi/struct.Level.html#method.ltr) for more information.
    */
   static uint8_t level_ltr();
   inline const capi::ICU4XBidi* AsFFI() const { return this->inner.get(); }
@@ -99,9 +97,9 @@ inline diplomat::result<ICU4XBidi, ICU4XError> ICU4XBidi::try_new(const ICU4XDat
   auto diplomat_result_raw_out_value = capi::ICU4XBidi_try_new(provider.AsFFI());
   diplomat::result<ICU4XBidi, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XBidi(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XBidi>(std::move(ICU4XBidi(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

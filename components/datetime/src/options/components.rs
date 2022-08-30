@@ -4,6 +4,9 @@
 
 //! # Implementation status
 //!
+//! This module is available by enabling the `"experimental"` feature. It may change in breaking
+//! ways, including across minor releases.
+//!
 //! This is currently only a partial implementation of the UTS-35 skeleton matching algorithm.
 //!
 //! | Algorithm step | Status |
@@ -42,7 +45,7 @@
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatOptions;
+//! use icu::datetime::DateTimeFormatterOptions;
 //!
 //! let mut bag = components::Bag::default();
 //! bag.year = Some(components::Year::Numeric);
@@ -53,25 +56,27 @@
 //! bag.minute = Some(components::Numeric::TwoDigit);
 //!
 //! // The options can be created manually.
-//! let options = DateTimeFormatOptions::Components(bag);
+//! let options = DateTimeFormatterOptions::Components(bag);
 //! ```
 //!
 //! Or the options can be inferred through the `.into()` trait.
 //!
 //! ```
 //! use icu::datetime::options::components;
-//! use icu::datetime::DateTimeFormatOptions;
-//! let options: DateTimeFormatOptions = components::Bag::default().into();
+//! use icu::datetime::DateTimeFormatterOptions;
+//! let options: DateTimeFormatterOptions = components::Bag::default().into();
 //! ```
 //!
-//! *Note*: The exact result returned from [`DateTimeFormat`](crate::DateTimeFormat) is a subject to change over
+//! *Note*: The exact result returned from [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) is a subject to change over
 //! time. Formatted result should be treated as opaque and displayed to the user as-is,
 //! and it is strongly recommended to never write tests that expect a particular formatted output.
+
 use crate::{
     fields::{self, Field, FieldLength, FieldSymbol},
     pattern::{runtime::PatternPlurals, PatternItem},
 };
 
+#[cfg(feature = "experimental")]
 use alloc::vec::Vec;
 
 use super::preferences;
@@ -124,6 +129,7 @@ impl Bag {
     /// Converts the components::Bag into a Vec<Field>. The fields will be ordered in from most
     /// significant field to least significant. This is the order the fields are listed in
     /// the UTS 35 table - https://unicode.org/reports/tr35/tr35-dates.html#Date_Field_Symbol_Table
+    #[cfg(any(test, feature = "experimental"))] // only used in experimental code
     pub(crate) fn to_vec_fields(&self) -> Vec<Field> {
         let mut fields = Vec::new();
         if let Some(era) = self.era {
@@ -330,16 +336,13 @@ impl Bag {
             });
         }
 
-        debug_assert!(
-            fields.windows(2).all(|f| {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                // Change to code redired as clippy on statements arex experimental
-                let comp = f[0] < f[1];
-                comp
-            }),
-            "The fields are sorted and unique."
-        );
+        {
+            #![allow(clippy::indexing_slicing)] // debug
+            debug_assert!(
+                fields.windows(2).all(|f| f[0] < f[1]),
+                "The fields are sorted and unique."
+            );
+        }
 
         fields
     }
@@ -530,7 +533,7 @@ impl From<TimeZoneName> for Field {
     }
 }
 
-/// Get the resolved components for a DateTimeFormat, via the PatternPlurals. In the case of
+/// Get the resolved components for a TypedDateTimeFormatter, via the PatternPlurals. In the case of
 /// plurals resolve off of the required `other` pattern.
 impl<'data> From<&PatternPlurals<'data>> for Bag {
     fn from(other: &PatternPlurals) -> Self {

@@ -24,38 +24,39 @@ More information about the project can be found in [the docs subdirectory](docs/
 
 ## Quick Start
 
-An example `ICU4X` powered application in Rust may look like this:
+An example `ICU4X` powered application in Rust may look like below...
+
+`Cargo.toml`:
 
 ```toml
-icu = "0.2"
-icu_provider_fs = "0.2"
+[dependencies]
+icu = { version = "1.0.0-beta1", features = ["serde"] }
+icu_testdata = "1.0.0-beta1"
 ```
 
+`src/main.rs`:
+
 ```rust
+use icu::calendar::DateTime;
+use icu::datetime::{options::length, DateTimeFormatter};
 use icu::locid::locale;
-use icu::datetime::{DateTimeFormat, mock::datetime::MockDateTime, options::length};
-use icu_provider_fs::FsDataProvider;
 
-fn main() {
-    let date: MockDateTime = "2020-10-14T13:21:00".parse()
-        .expect("Failed to parse a datetime.");
+let provider = icu_testdata::get_provider();
 
-    let provider = FsDataProvider::try_new("/home/{USER}/projects/icu/icu4x-data")
-        .expect("Failed to initialize Data Provider.");
+let options =
+    length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-    let options = length::Bag {
-        time: Some(length::Time::Medium),
-        date: Some(length::Date::Long),
-        ..Default::default()
-    }.into();
+let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("es").into(), options)
+    .expect("Failed to create TypedDateTimeFormatter instance.");
 
-    let dtf = DateTimeFormat::try_new(locale!("pl"), &provider, &options)
-        .expect("Failed to initialize DateTimeFormat");
+let date = DateTime::new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
+let date = date.to_any();
 
-    let formatted_date = dtf.format(&date);
-
-    println!("📅: {}", formatted_date);
-}
+let formatted_date = dtf.format(&date).expect("Formatting failed");
+assert_eq!(
+    formatted_date.to_string(),
+    "12 de septiembre de 2020, 12:35:00"
+);
 ```
 
 ## Development
@@ -84,7 +85,7 @@ ICU4X will provide an ECMA-402-compatible API surface in the target client-side 
 The [performance benchmarks](docs/process/benchmarking.md) are all run on Ubuntu, and are broken out by component.
 
 * [locid](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/locid)
-* [uniset](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/utils/uniset)
+* [collections](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/collections)
 * [fixed_decimal](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/utils/fixed_decimal)
 * [plurals](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/plurals)
 * [datetime](https://unicode-org.github.io/icu4x-docs/benchmarks/perf/components/datetime)

@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Get paths to the test data directories.
+
 use std::path::PathBuf;
 
 /// Returns the absolute path to the top-level data directory.
@@ -14,9 +16,9 @@ pub fn cldr_json_root() -> PathBuf {
     data_root().join("cldr")
 }
 
-/// Returns the absolute path to the UProps TOML root directory.
-pub fn uprops_toml_root() -> PathBuf {
-    data_root().join("uprops")
+/// Returns the absolute path to the icuexport TOML root directory.
+pub fn icuexport_toml_root() -> PathBuf {
+    data_root().join("icuexport")
 }
 
 /// Returns the absolute path to the collation tailoring TOML root directory.

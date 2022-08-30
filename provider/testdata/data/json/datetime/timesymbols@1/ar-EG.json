@@ -1,0 +1,36 @@
+{
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "ص",
+        "pm": "م",
+        "noon": null,
+        "midnight": null
+      },
+      "narrow": {
+        "am": "ص",
+        "pm": "م",
+        "noon": null,
+        "midnight": null
+      },
+      "short": null,
+      "wide": {
+        "am": "ص",
+        "pm": "م",
+        "noon": null,
+        "midnight": null
+      }
+    },
+    "stand_alone": {
+      "abbreviated": null,
+      "narrow": null,
+      "short": null,
+      "wide": {
+        "am": "صباحًا",
+        "pm": "مساءً",
+        "noon": null,
+        "midnight": null
+      }
+    }
+  }
+}

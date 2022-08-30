@@ -6,6 +6,10 @@
 
 use crate::prelude::*;
 
+/// [`DataMarker`] for raw buffers. Returned by [`BufferProvider`].
+///
+/// The data is expected to be deserialized before it can be used; see
+/// [`DataPayload::into_deserialized`].
 #[allow(clippy::exhaustive_structs)] // marker type
 pub struct BufferMarker;
 
@@ -16,10 +20,10 @@ impl DataMarker for BufferMarker {
 /// A data provider that returns opaque bytes.
 ///
 /// Generally, these bytes are expected to be deserializable with Serde. To get an object
-/// implementing [`ResourceProvider`] via Serde, use [`as_deserializing()`], which requires
+/// implementing [`DataProvider`] via Serde, use [`as_deserializing()`], which requires
 /// enabling at least one of the Serde features.
 ///
-/// Along with [`ResourceProvider`], this is one of the two foundational traits in this crate.
+/// Along with [`DataProvider`], this is one of the two foundational traits in this crate.
 ///
 /// [`BufferProvider`] can be made into a trait object. It is used over FFI.
 ///
@@ -31,13 +35,13 @@ impl DataMarker for BufferMarker {
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
 ///
-/// let buffer_provider = HelloWorldProvider::new_with_placeholder_data().into_json_provider();
+/// let buffer_provider = HelloWorldProvider.into_json_provider();
 ///
 /// let data_provider = buffer_provider.as_deserializing();
 ///
 /// let german_hello_world: DataPayload<HelloWorldV1Marker> = data_provider
-///     .load_resource(&DataRequest {
-///         options: locale!("de").into(),
+///     .load(DataRequest {
+///         locale: &locale!("de").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Loading should succeed")
@@ -50,10 +54,11 @@ impl DataMarker for BufferMarker {
 ///
 /// [`as_deserializing()`]: AsDeserializingBufferProvider::as_deserializing
 pub trait BufferProvider {
+    /// Loads a [`DataPayload`]`<`[`BufferMarker`]`>` according to the key and request.
     fn load_buffer(
         &self,
-        key: ResourceKey,
-        req: &DataRequest,
+        key: DataKey,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError>;
 }
 

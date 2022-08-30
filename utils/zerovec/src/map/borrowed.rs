@@ -23,8 +23,8 @@ pub use super::vecs::{MutableZeroVecLike, ZeroVecLike};
 /// use zerovec::maps::ZeroMapBorrowed;
 ///
 /// // Example byte buffer representing the map { 1: "one" }
-/// let BINCODE_BYTES: &[u8; 31] = &[
-///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 11, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 111,
+/// let BINCODE_BYTES: &[u8; 29] = &[
+///     4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 9, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 111,
 ///     110, 101,
 /// ];
 ///
@@ -120,6 +120,14 @@ where
     K: ?Sized,
     V: ?Sized,
 {
+    #[doc(hidden)] // databake internal
+    pub const unsafe fn from_parts_unchecked(
+        keys: &'a <K as ZeroMapKV<'a>>::Slice,
+        values: &'a <V as ZeroMapKV<'a>>::Slice,
+    ) -> Self {
+        Self { keys, values }
+    }
+
     /// The number of elements in the [`ZeroMapBorrowed`]
     pub fn len(&self) -> usize {
         self.values.zvl_len()
@@ -212,10 +220,8 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a>,
-    V: ZeroMapKV<'a>,
-    K: ?Sized,
-    V: ?Sized,
+    K: ZeroMapKV<'a> + ?Sized,
+    V: ZeroMapKV<'a> + ?Sized,
 {
     /// Produce an ordered iterator over key-value pairs
     pub fn iter<'b>(
@@ -226,19 +232,12 @@ where
             &'a <V as ZeroMapKV<'a>>::GetType,
         ),
     > + 'b {
-        (0..self.keys.zvl_len()).map(move |idx| {
-            (
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.keys.zvl_get(idx).unwrap(),
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                self.values.zvl_get(idx).unwrap(),
-            )
-        })
+        self.iter_keys().zip(self.iter_values())
     }
 
     /// Produce an ordered iterator over keys
     pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'a <K as ZeroMapKV<'a>>::GetType> + 'b {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // idx in 0..keys.zvl_len()
         (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
@@ -246,16 +245,15 @@ where
     pub fn iter_values<'b>(
         &'b self,
     ) -> impl Iterator<Item = &'a <V as ZeroMapKV<'a>>::GetType> + 'b {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::unwrap_used)] // idx in 0..keys.zvl_len() == values.zvl_len()
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
 }
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized + Ord,
-    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + ?Sized,
-    V: AsULE + Ord + Copy + 'static,
+    K: ZeroMapKV<'a> + Ord + ?Sized,
+    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + AsULE + Copy + 'static,
 {
     /// For cases when `V` is fixed-size, obtain a direct copy of `V` instead of `V::ULE`
     pub fn get_copied(&self, key: &K) -> Option<V> {
@@ -270,9 +268,9 @@ where
     ) -> impl Iterator<Item = (&'b <K as ZeroMapKV<'a>>::GetType, V)> {
         (0..self.keys.zvl_len()).map(move |idx| {
             (
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::unwrap_used)] // idx in 0..keys.zvl_len()
                 self.keys.zvl_get(idx).unwrap(),
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::unwrap_used)] // idx in 0..keys.zvl_len() = values.zvl_len()
                 self.values.get(idx).unwrap(),
             )
         })
@@ -281,10 +279,8 @@ where
 
 impl<'a, K, V> ZeroMapBorrowed<'a, K, V>
 where
-    K: ZeroMapKV<'a, Slice = ZeroSlice<K>> + ?Sized,
-    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + ?Sized,
-    K: AsULE + Copy + Ord + 'static,
-    V: AsULE + Copy + Ord + 'static,
+    K: ZeroMapKV<'a, Slice = ZeroSlice<K>> + AsULE + Copy + Ord + 'static,
+    V: ZeroMapKV<'a, Slice = ZeroSlice<V>> + AsULE + Copy + 'static,
 {
     /// Similar to [`Self::iter()`] except it returns a direct copy of the keys values instead of references
     /// to `K::ULE` and `V::ULE`, in cases when `K` and `V` are fixed-size
@@ -295,9 +291,9 @@ where
         let len = self.keys.zvl_len();
         (0..len).map(move |idx| {
             (
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::unwrap_used)] // idx in 0..keys.zvl_len()
                 ZeroSlice::get(keys, idx).unwrap(),
-                #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::unwrap_used)] // idx in 0..keys.zvl_len() = values.zvl_len()
                 ZeroSlice::get(values, idx).unwrap(),
             )
         })

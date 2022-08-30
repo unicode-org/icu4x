@@ -2,12 +2,18 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::parser::{get_subtag_iterator, parse_locale, ParserError};
+use crate::ordering::SubtagOrderingResult;
+use crate::parser::{
+    get_subtag_iterator, parse_locale,
+    parse_locale_with_single_variant_single_keyword_unicode_keyword_extension, ParserError,
+    ParserMode,
+};
 use crate::{extensions, subtags, LanguageIdentifier};
 use alloc::string::String;
 use alloc::string::ToString;
 use core::cmp::Ordering;
 use core::str::FromStr;
+use tinystr::TinyAsciiStr;
 
 /// A core struct representing a [`Unicode Locale Identifier`].
 ///
@@ -67,19 +73,35 @@ use core::str::FromStr;
 /// assert_eq!(loc.id.variants.get(0), "valencia".parse::<Variant>().ok().as_ref());
 /// ```
 /// [`Unicode Locale Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_locale_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-#[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+#[derive(Default, PartialEq, Eq, Clone, Hash)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct Locale {
-    // Language component of the Locale
+    /// The basic language/script/region components in the locale identifier along with any variants.
     pub id: LanguageIdentifier,
-    // Unicode Locale Extensions
+    /// Any extensions present in the locale identifier.
     pub extensions: extensions::Extensions,
 }
 
 #[test]
-fn test() {
-    assert_eq!(core::mem::size_of::<Locale>(), 216);
+fn test_sizes() {
+    assert_eq!(core::mem::size_of::<subtags::Language>(), 3);
+    assert_eq!(core::mem::size_of::<subtags::Script>(), 4);
+    assert_eq!(core::mem::size_of::<subtags::Region>(), 3);
+    assert_eq!(core::mem::size_of::<subtags::Variant>(), 8);
+    assert_eq!(core::mem::size_of::<subtags::Variants>(), 32);
+    assert_eq!(core::mem::size_of::<LanguageIdentifier>(), 48);
+
+    assert_eq!(core::mem::size_of::<extensions::transform::Transform>(), 72);
+    assert_eq!(core::mem::size_of::<Option<LanguageIdentifier>>(), 48);
+    assert_eq!(core::mem::size_of::<extensions::transform::Fields>(), 24);
+
+    assert_eq!(core::mem::size_of::<extensions::unicode::Attributes>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::unicode::Keywords>(), 48);
+    assert_eq!(core::mem::size_of::<Vec<extensions::other::Other>>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::private::Private>(), 24);
+    assert_eq!(core::mem::size_of::<extensions::Extensions>(), 192);
+
+    assert_eq!(core::mem::size_of::<Locale>(), 240);
 }
 
 impl Locale {
@@ -134,10 +156,10 @@ impl Locale {
         Ok(locale.to_string())
     }
 
-    /// Compare this `Locale` with BCP-47 bytes.
+    /// Compare this [`Locale`] with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
-    /// `Locale` to a BCP-47 string and then performed a byte comparison.
+    /// [`Locale`] to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
     /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
@@ -148,28 +170,69 @@ impl Locale {
     /// use icu::locid::Locale;
     /// use std::cmp::Ordering;
     ///
-    /// let bcp47_strings: &[&[u8]] = &[
-    ///     b"pl-Latn-PL",
-    ///     b"und",
-    ///     b"und-fonipa",
-    ///     b"und-t-m0-true",
-    ///     b"und-u-ca-hebrew",
-    ///     b"und-u-ca-japanese",
-    ///     b"zh",
+    /// let bcp47_strings: &[&str] = &[
+    ///     "pl-Latn-PL",
+    ///     "und",
+    ///     "und-fonipa",
+    ///     "und-t-m0-true",
+    ///     "und-u-ca-hebrew",
+    ///     "und-u-ca-japanese",
+    ///     "zh",
     /// ];
     ///
     /// for ab in bcp47_strings.windows(2) {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = Locale::from_bytes(a).unwrap();
-    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
+    ///     let a_loc = a.parse::<Locale>().unwrap();
+    ///     assert_eq!(a, a_loc.to_string());
+    ///     assert!(a_loc.strict_cmp(a.as_bytes()) == Ordering::Equal);
+    ///     assert!(a_loc.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let mut other_iter = other.split(|b| *b == b'-');
+        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+    }
+
+    /// Compare this [`Locale`] with an iterator of BCP-47 subtags.
+    ///
+    /// This function has the same equality semantics as [`Locale::strict_cmp`]. It is intended as
+    /// a more modular version that allows multiple subtag iterators to be chained together.
+    ///
+    /// For an additional example, see [`SubtagOrderingResult`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::locale;
+    /// use std::cmp::Ordering;
+    ///
+    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia", &*b"u", &*b"ca", &*b"hebrew"];
+    ///
+    /// let loc = locale!("ca-ES-valencia-u-ca-hebrew");
+    /// assert_eq!(
+    ///     Ordering::Equal,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = locale!("ca-ES-valencia");
+    /// assert_eq!(
+    ///     Ordering::Less,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = locale!("ca-ES-valencia-u-nu-arab");
+    /// assert_eq!(
+    ///     Ordering::Greater,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    /// ```
+    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
+    where
+        I: Iterator<Item = &'l [u8]>,
+    {
         let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = other_iter.next() {
+            if let Some(other) = subtags.next() {
                 match subtag.as_bytes().cmp(other) {
                     Ordering::Equal => Ok(()),
                     not_equal => Err(not_equal),
@@ -178,13 +241,10 @@ impl Locale {
                 Err(Ordering::Greater)
             }
         });
-        if let Err(o) = r {
-            return o;
+        match r {
+            Ok(_) => SubtagOrderingResult::Subtags(subtags),
+            Err(o) => SubtagOrderingResult::Ordering(o),
         }
-        if other_iter.next().is_some() {
-            return Ordering::Less;
-        }
-        Ordering::Equal
     }
 
     /// Compare this `Locale` with a potentially unnormalized BCP-47 string.
@@ -253,6 +313,26 @@ impl Locale {
             }
         }
         iter.next() == None
+    }
+
+    #[doc(hidden)]
+    #[allow(clippy::type_complexity)]
+    pub const fn from_bytes_with_single_variant_single_keyword_unicode_extension(
+        v: &[u8],
+    ) -> Result<
+        (
+            subtags::Language,
+            Option<subtags::Script>,
+            Option<subtags::Region>,
+            Option<subtags::Variant>,
+            Option<(extensions::unicode::Key, Option<TinyAsciiStr<8>>)>,
+        ),
+        ParserError,
+    > {
+        parse_locale_with_single_variant_single_keyword_unicode_keyword_extension(
+            v,
+            ParserMode::Locale,
+        )
     }
 
     pub(crate) fn for_each_subtag_str<E, F>(&self, f: &mut F) -> Result<(), E>
@@ -455,38 +535,105 @@ impl
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: The macro cannot produce locales with variants or extensions due to
-/// const limitations (see [`Heap Allocations in Constants`]):
+/// *Note*: The macro cannot produce locales with more than one variant or multiple extensions
+/// (only single keyword unicode extension is supported) due to const
+/// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail
-/// icu::locid::locale!("en-US-u-ca-ja");
+/// icu::locid::locale!("sl-IT-rozaj-biske-1994")
 /// ```
 /// Use runtime parsing instead:
 /// ```
-/// "en-US-u-ca-ja".parse::<icu::locid::Locale>().unwrap();
+/// "sl-IT-rozaj-biske-1994".parse::<icu::locid::Locale>().unwrap();
 /// ```
 ///
+/// Locales with multiple keys are not supported
+/// ```compile_fail
+/// icu::locid::locale!("th-TH-u-ca-buddhist-nu-thai");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "th-TH-u-ca-buddhist-nu-thai".parse::<icu::locid::Locale>().unwrap();
+/// ```
+///
+/// Locales with attributes are not supported
+/// ```compile_fail
+/// icu::locid::locale!("en-US-u-foobar-ca-buddhist");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "en-US-u-foobar-ca-buddhist".parse::<icu::locid::Locale>().unwrap();
+/// ```
+///
+/// Locales with single key but multiple types are not supported
+/// ```compile_fail
+/// icu::locid::locale!("en-US-u-ca-islamic-umalqura");
+/// ```
+/// Use runtime parsing instead:
+/// ```
+/// "en-US-u-ca-islamic-umalqura".parse::<icu::locid::Locale>().unwrap();
+/// ```
 /// [`Locale`]: crate::Locale
 /// [`Heap Allocations in Constants`]: https://github.com/rust-lang/const-eval/issues/20
 #[macro_export]
 macro_rules! locale {
     ($locale:literal) => {{
         const R: $crate::Locale =
-            match $crate::LanguageIdentifier::from_bytes_without_variants($locale.as_bytes()) {
-                Ok((language, script, region)) => $crate::Locale {
+            match $crate::Locale::from_bytes_with_single_variant_single_keyword_unicode_extension(
+                $locale.as_bytes(),
+            ) {
+                Ok((language, script, region, variant, keyword)) => $crate::Locale {
                     id: $crate::LanguageIdentifier {
                         language,
                         script,
                         region,
-                        variants: $crate::subtags::Variants::new(),
+                        variants: match variant {
+                            Some(v) => $crate::subtags::Variants::from_variant(v),
+                            None => $crate::subtags::Variants::new(),
+                        },
                     },
-                    extensions: $crate::extensions::Extensions::new(),
+                    extensions: match keyword {
+                        Some(k) => $crate::extensions::Extensions::from_unicode(
+                            $crate::extensions::unicode::Unicode {
+                                keywords: $crate::extensions::unicode::Keywords::new_single(
+                                    k.0,
+                                    $crate::extensions::unicode::Value::from_tinystr(k.1),
+                                ),
+
+                                attributes: $crate::extensions::unicode::Attributes::new(),
+                            },
+                        ),
+                        None => $crate::extensions::Extensions::new(),
+                    },
                 },
                 #[allow(clippy::panic)] // const context
-                _ => panic!(concat!("Invalid language code: ", $locale, " . Note that variant tags and \
-                                        Unicode extensions are not supported by the locale! macro, use \
-                                        runtime parsing instead.")),
+                _ => panic!(concat!(
+                    "Invalid language code: ",
+                    $locale,
+                    " . Note the locale! macro only supports up to one variant tag; \
+                                        unicode extensions are not supported. Use \
+                                        runtime parsing instead."
+                )),
             };
         R
     }};
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_locale_macro_can_parse_locale_with_single_variant() {
+        const DE_AT_FOOBAR: Locale = locale!("de_at-foobar");
+        let de_at_foobar: Locale = "de_at-foobar".parse().unwrap();
+        assert_eq!(DE_AT_FOOBAR, de_at_foobar);
+    }
+
+    #[test]
+    fn test_locale_macro_can_parse_locale_with_single_keyword_unicode_extension() {
+        const DE_AT_U_CA_FOOBAR: Locale = locale!("de_at-u-ca-foobar");
+        let de_at_u_ca_foobar: Locale = "de_at-u-ca-foobar".parse().unwrap();
+        assert_eq!(DE_AT_U_CA_FOOBAR, de_at_u_ca_foobar);
+    }
 }

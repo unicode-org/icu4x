@@ -2,15 +2,21 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::any_calendar::{AnyCalendar, IncludedInAnyCalendar};
-use crate::types::Time;
-use crate::{AsCalendar, Calendar, Date, Iso};
+use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::types::{self, Time};
+use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
+use alloc::rc::Rc;
+use alloc::sync::Arc;
 
 /// A date+time for a given calendar.
 ///
 /// This can work with wrappers around [`Calendar`](crate::Calendar) types,
 /// e.g. `Rc<C>`, via the [`AsCalendar`] trait, much like
 /// [`Date`].
+///
+/// This can be constructed manually from a [`Date`] and [`Time`], or can be constructed
+/// from its fields via [`Self::new_from_codes()`], or can be constructed with one of the
+/// `new_<calendar>_datetime()` per-calendar methods (and then freely converted between calendars).
 ///
 /// ```rust
 /// use icu::calendar::DateTime;
@@ -29,13 +35,31 @@ use crate::{AsCalendar, Calendar, Date, Iso};
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DateTime<A: AsCalendar> {
+    /// The date
     pub date: Date<A>,
+    /// The time
     pub time: Time,
 }
 
 impl<A: AsCalendar> DateTime<A> {
+    /// Construct a [`DateTime`] for a given [`Date`] and [`Time`]
     pub fn new(date: Date<A>, time: Time) -> Self {
         DateTime { date, time }
+    }
+
+    /// Construct a datetime from from era/month codes and fields,
+    /// and some calendar representation
+    #[inline]
+    pub fn new_from_codes(
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+        time: Time,
+        calendar: A,
+    ) -> Result<Self, DateTimeError> {
+        let date = Date::new_from_codes(era, year, month_code, day, calendar)?;
+        Ok(DateTime { date, time })
     }
 
     /// Construct a DateTime from an ISO datetime and some calendar representation
@@ -67,11 +91,33 @@ impl<A: AsCalendar> DateTime<A> {
     }
 }
 
-impl<C: IncludedInAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
+impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
     /// Type-erase the date, converting it to a date for [`AnyCalendar`]
     pub fn to_any(&self) -> DateTime<AnyCalendar> {
         DateTime {
             date: self.date.to_any(),
+            time: self.time,
+        }
+    }
+}
+
+impl<C: Calendar> DateTime<C> {
+    /// Wrap the calendar type in `Rc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `DateTime<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_rc(self) -> DateTime<Rc<C>> {
+        DateTime {
+            date: self.date.wrap_calendar_in_rc(),
+            time: self.time,
+        }
+    }
+
+    /// Wrap the calendar type in `Arc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `DateTime<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_arc(self) -> DateTime<Arc<C>> {
+        DateTime {
+            date: self.date.wrap_calendar_in_arc(),
             time: self.time,
         }
     }
@@ -98,4 +144,11 @@ impl<A: AsCalendar + Clone> Clone for DateTime<A> {
             time: self.time,
         }
     }
+}
+
+impl<A> Copy for DateTime<A>
+where
+    A: AsCalendar + Copy,
+    <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy,
+{
 }

@@ -2,14 +2,33 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Serializer configurations for [`postcard`].
+
 use super::AbstractSerializer;
 use icu_provider::buf::BufferFormat;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
-use postcard::ser_flavors::{AllocVec, Encoder, Flavor};
+use postcard::ser_flavors::{AllocVec, Flavor};
 use std::io;
 
 /// A serializer for Postcard.
+///
+/// # Examples
+///
+/// ```
+/// use icu_provider_fs::export::FilesystemExporter;
+/// use icu_provider_fs::export::serializers;
+///
+/// let serializer = serializers::postcard::Serializer::new(Default::default());
+///
+/// // Then pass it to a FilesystemExporter:
+/// let demo_path = std::env::temp_dir().join("icu4x_postcard_serializer_demo");
+/// FilesystemExporter::try_new(
+///     Box::from(serializer),
+///     demo_path.clone().into()
+/// ).unwrap();
+/// std::fs::remove_dir_all(&demo_path).expect("Cleaning up test directory");
+/// ```
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Serializer;
 
@@ -25,17 +44,14 @@ impl AbstractSerializer for Serializer {
         sink: &mut dyn io::Write,
     ) -> Result<(), DataError> {
         let mut serializer = postcard::Serializer {
-            output: Encoder {
-                flavor: AllocVec::new(),
-            },
+            output: AllocVec::new(),
         };
         obj.serialize(&mut serializer)
             .map_err(|e| DataError::custom("Postcard serialize").with_display_context(&e))?;
         let output = serializer
             .output
-            .flavor
-            .release()
-            .map_err(|_| DataError::custom("postcard release() failed"))?;
+            .finalize()
+            .map_err(|_| DataError::custom("Postcard finalize"))?;
         sink.write_all(&output)?;
         Ok(())
     }
@@ -46,6 +62,7 @@ impl AbstractSerializer for Serializer {
 }
 
 impl Serializer {
+    /// Creates a new serializer for [`postcard`].
     pub fn new(_options: Options) -> Self {
         Self {}
     }

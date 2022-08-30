@@ -2,14 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::blob_schema::BlobSchema;
+use crate::blob_schema::{BlobSchema, BlobSchemaV1};
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use icu_provider::RcWrap;
 use serde::de::Deserialize;
-use writeable::Writeable;
 use yoke::*;
-use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data from blobs dynamically created at runtime.
 ///
@@ -40,12 +38,12 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// .expect("Reading pre-computed postcard buffer");
 ///
 /// // Create a DataProvider from it:
-/// let provider = BlobDataProvider::new_from_blob(blob).expect("Deserialization should succeed");
+/// let provider = BlobDataProvider::try_new_from_blob(blob).expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider
-///     .load_resource(&DataRequest {
-///         options: locale!("la").into(),
+///     .load(DataRequest {
+///         locale: &locale!("la").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
@@ -56,58 +54,55 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// ```
 ///
 /// [`StaticDataProvider`]: crate::StaticDataProvider
+#[derive(Clone)]
 pub struct BlobDataProvider {
-    #[allow(clippy::type_complexity)]
-    data: Yoke<ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>, RcWrap>,
+    data: Yoke<BlobSchemaV1<'static>, RcWrap<[u8]>>,
 }
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
-    pub fn new_from_blob<B: Into<RcWrap>>(blob: B) -> Result<Self, DataError> {
+    pub fn try_new_from_blob<B: Into<RcWrap<[u8]>>>(blob: B) -> Result<Self, DataError> {
         Ok(BlobDataProvider {
             data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
                 BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(bytes)).map(
                     |blob| {
                         let BlobSchema::V001(blob) = blob;
-                        blob.resources
+                        #[cfg(debug_assertions)]
+                        blob.check_invariants();
+                        blob
                     },
                 )
             })?,
         })
-    }
-
-    #[cfg(feature = "export")]
-    #[doc(hidden)] // See #1771, we don't want this to be a publicly visible API
-    pub fn get_map(&self) -> &ZeroMap2dBorrowed<ResourceKeyHash, [u8], [u8]> {
-        self.data.get()
     }
 }
 
 impl BufferProvider for BlobDataProvider {
     fn load_buffer(
         &self,
-        key: ResourceKey,
-        req: &DataRequest,
+        key: DataKey,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard1);
         Ok(DataResponse {
             metadata,
             payload: Some(DataPayload::from_yoked_buffer(
-                self.data.try_map_project_cloned_with_capture(
-                    (key, req),
-                    |zm, (key, req), _| {
-                        zm.get(&key.get_hash(), req.options.write_to_string().as_bytes())
-                            .map_err(|e| {
-                                match e {
-                                    KeyError::K0 => DataErrorKind::MissingResourceKey,
-                                    KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                                }
-                                .with_req(key, req)
-                            })
-                    },
-                )?,
+                self.data.try_map_project_cloned(|blob, _| {
+                    let idx = blob
+                        .keys
+                        .get0(&key.get_hash())
+                        .ok_or(DataErrorKind::MissingDataKey)
+                        .and_then(|cursor| {
+                            cursor
+                                .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
+                                .ok_or(DataErrorKind::MissingLocale)
+                        })
+                        .map_err(|kind| kind.with_req(key, req))?;
+                    blob.buffers
+                        .get(idx)
+                        .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))
+                })?,
             )),
         })
     }

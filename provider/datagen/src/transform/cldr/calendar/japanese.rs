@@ -3,55 +3,37 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::SourceData;
 use icu_calendar::provider::*;
 use icu_locid::langid;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::BTreeMap;
 use std::env;
 use std::str::FromStr;
+use tinystr::tinystr;
 use tinystr::TinyStr16;
 use zerovec::ule::AsULE;
 use zerovec::ZeroVec;
 
 const JAPANESE_FILE: &str = include_str!("./snapshot-japanese@1.json");
 
-/// A data provider reading from CLDR JSON Japanese calendar files.
-#[derive(Debug)]
-pub struct JapaneseErasProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for JapaneseErasProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn load_resource(
+impl crate::DatagenProvider {
+    fn load_japanese_eras(
         &self,
-        req: &DataRequest,
+        japanext: bool,
     ) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
-        if !req.options.is_empty() {
-            return Err(DataErrorKind::ExtraneousResourceOptions.into_error());
-        }
-
         // The era codes depend on the Latin romanizations of the eras, found
         // in the `en` locale. We load this data to construct era codes but
         // actual user code only needs to load the data for the locales it cares about.
         let era_names: &cldr_serde::ca::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_dates("japanese")
+            .cldr()?
+            .dates("japanese")
             .read_and_parse(&langid!("en"), "ca-japanese.json")?;
         let era_dates: &cldr_serde::japanese::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/calendarData.json")?;
 
         let era_name_map = &era_names
@@ -73,7 +55,6 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 
         let mut ret = JapaneseErasV1 {
             dates_to_eras: ZeroVec::new(),
-            dates_to_historical_eras: ZeroVec::new(),
         };
 
         for (era_id, era_name) in era_name_map.iter() {
@@ -96,27 +77,21 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 
             let code = era_to_code(era_name, start_date.year)
                 .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
-            if start_date.year >= 1868 {
+            if start_date.year >= 1868 || japanext {
                 ret.dates_to_eras
-                    .to_mut()
-                    .push((start_date, code).to_unaligned());
-            } else {
-                ret.dates_to_historical_eras
                     .to_mut()
                     .push((start_date, code).to_unaligned());
             }
         }
 
         ret.dates_to_eras.to_mut().sort_unstable();
-        ret.dates_to_historical_eras.to_mut().sort_unstable();
 
         // Integrity check
         //
         // Era code generation relies on the English era data which could in theory change; we have an integrity check
         // to catch such cases. It is relatively rare for a new era to be added, and in those cases the integrity check can
         // be disabled when generating new data.
-        if env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
-            #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        if japanext && env::var("ICU4X_SKIP_JAPANESE_INTEGRITY_CHECK").is_err() {
             let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
                 .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
 
@@ -138,6 +113,25 @@ impl ResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
             payload: Some(DataPayload::from_owned(ret)),
+        })
+    }
+}
+
+impl DataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<JapaneseErasV1Marker>, DataError> {
+        self.load_japanese_eras(false)
+    }
+}
+
+impl DataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        _req: DataRequest,
+    ) -> Result<DataResponse<JapaneseExtendedErasV1Marker>, DataError> {
+        let DataResponse { metadata, payload } = self.load_japanese_eras(true)?;
+        Ok(DataResponse {
+            metadata,
+            payload: payload.map(|p| p.cast()),
         })
     }
 }
@@ -191,10 +185,14 @@ fn era_to_code(original: &str, year: i32) -> Result<TinyStr16, String> {
     Ok(code)
 }
 
-icu_provider::make_exportable_provider!(JapaneseErasProvider, [JapaneseErasV1Marker,]);
+impl IterableDataProvider<JapaneseErasV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![Default::default()])
+    }
+}
 
-impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<JapaneseExtendedErasV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
@@ -202,11 +200,14 @@ impl IterableResourceProvider<JapaneseErasV1Marker> for JapaneseErasProvider {
 pub fn get_era_code_map() -> BTreeMap<String, TinyStr16> {
     let snapshot: JapaneseErasV1 = serde_json::from_str(JAPANESE_FILE)
         .expect("Failed to parse the precached snapshot-japanese@1.json. This is a bug.");
-    snapshot
-        .dates_to_historical_eras
+    let mut map: BTreeMap<_, _> = snapshot
+        .dates_to_eras
         .iter()
-        .chain(snapshot.dates_to_eras.iter())
         .enumerate()
         .map(|(i, (_, value))| (i.to_string(), value))
-        .collect()
+        .collect();
+    // Splice in details about gregorian eras for pre-meiji dates
+    map.insert("bce".to_string(), tinystr!(16, "bce"));
+    map.insert("ce".to_string(), tinystr!(16, "ce"));
+    map
 }

@@ -12,9 +12,9 @@ use crate::provider::*;
 use crate::props::ScriptULE;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
-use icu_codepointtrie::{CodePointTrie, TrieValue};
+use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-use icu_uniset::UnicodeSet;
 #[cfg(feature = "serde")]
 use serde::{Deserialize, Serialize};
 use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
@@ -36,6 +36,8 @@ const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 /// into the `extensions` structure.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "datagen", derive(databake::Bake))]
+#[cfg_attr(feature = "datagen", databake(path = icu_properties::script))]
 #[repr(transparent)]
 #[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
 #[allow(clippy::exhaustive_structs)] // this type is stable
@@ -174,7 +176,8 @@ impl From<ScriptWithExt> for Script {
     }
 }
 
-/// A data structure that wraps ScriptExtensions array return value.
+/// A struct that wraps a [`Script`] array, such as in the return value for
+/// [`get_script_extensions_val`](ScriptWithExtensions::get_script_extensions_val).
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct ScriptExtensionsSet<'a> {
     values: &'a ZeroSlice<Script>,
@@ -188,7 +191,7 @@ impl ScriptExtensionsSet<'_> {
     /// ```
     /// use icu::properties::{script, Script};
     /// let provider = icu_testdata::get_provider();
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -207,7 +210,7 @@ impl ScriptExtensionsSet<'_> {
     /// ```
     /// use icu::properties::{script, Script};
     /// let provider = icu_testdata::get_provider();
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -281,7 +284,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -317,7 +320,7 @@ impl<'data> ScriptWithExtensions<'data> {
             let scx_val = self.extensions.get(ext_idx as usize);
             let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
 
-            let default_sc_val = <Script as TrieValue>::DATA_GET_ERROR_VALUE;
+            let default_sc_val = Script::Unknown;
 
             scx_first_sc.unwrap_or(default_sc_val)
         } else if sc_with_ext.is_common() {
@@ -380,7 +383,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -434,7 +437,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -484,7 +487,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -538,7 +541,7 @@ impl<'data> ScriptWithExtensions<'data> {
             .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()))
     }
 
-    /// Returns a [`UnicodeSet`] for the given [`Script`] which represents all
+    /// Returns a [`CodePointInversionList`] for the given [`Script`] which represents all
     /// code points for which `has_script` will return true.
     ///
     /// # Examples
@@ -548,7 +551,7 @@ impl<'data> ScriptWithExtensions<'data> {
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let payload = script::get_script_with_extensions(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -569,11 +572,12 @@ impl<'data> ScriptWithExtensions<'data> {
     /// assert!(syriac.contains_u32(0x1DFA)); // COMBINING DOT BELOW LEFT
     /// assert!(!syriac.contains_u32(0x1DFB)); // COMBINING DELETION MARK
     /// ```
-    pub fn get_script_extensions_set(&self, script: Script) -> UnicodeSet {
-        UnicodeSet::from_iter(self.get_script_extensions_ranges(script))
+    pub fn get_script_extensions_set(&self, script: Script) -> CodePointInversionList {
+        CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
+/// The return type `Result` for any of the `load_script_with_extensions_`* functions.
 pub type ScriptWithExtensionsResult =
     Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
 
@@ -588,7 +592,7 @@ pub type ScriptWithExtensionsResult =
 /// let provider = icu_testdata::get_provider();
 ///
 /// let payload =
-///     script::get_script_with_extensions(&provider)
+///     script::load_script_with_extensions_with_buffer_provider(&provider)
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let swe = &data_struct.data;
@@ -630,7 +634,7 @@ pub type ScriptWithExtensionsResult =
 /// assert!(swe.has_script(0x0650, Script::Syriac));
 /// assert!(!swe.has_script(0x0650, Script::Thaana));
 ///
-/// // get a `UnicodeSet` for when `Script` value is contained in `Script_Extensions` value
+/// // get a `CodePointInversionList` for when `Script` value is contained in `Script_Extensions` value
 /// let syriac = swe.get_script_extensions_set(Script::Syriac);
 /// assert!(syriac.contains_u32(0x0650)); // ARABIC KASRA
 /// assert!(!syriac.contains_u32(0x0660)); // ARABIC-INDIC DIGIT ZERO
@@ -638,10 +642,21 @@ pub type ScriptWithExtensionsResult =
 /// assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
 /// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
 /// ```
-pub fn get_script_with_extensions(
-    provider: &(impl ResourceProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
+pub fn load_script_with_extensions_unstable(
+    provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
 ) -> ScriptWithExtensionsResult {
     Ok(provider
-        .load_resource(&Default::default())
+        .load(Default::default())
         .and_then(DataResponse::take_payload)?)
 }
+
+icu_provider::gen_any_buffer_constructors!(
+    locale: skip,
+    options: skip,
+    result: ScriptWithExtensionsResult,
+    functions: [
+        load_script_with_extensions_unstable,
+        load_script_with_extensions_with_any_provider,
+        load_script_with_extensions_with_buffer_provider
+    ]
+);

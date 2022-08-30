@@ -2,40 +2,14 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::language::*;
+use crate::lstm_bies::Lstm;
+use crate::provider::LstmDataV1Marker;
 
 use alloc::string::String;
 use alloc::string::ToString;
 use core::char::decode_utf16;
 use icu_provider::DataError;
 use icu_provider::DataPayload;
-use icu_segmenter_lstm::lstm::Lstm;
-use icu_segmenter_lstm::structs;
-
-// TODO:
-// json file is big, So I should use anoher binary format like npy.
-// But provided npy uses tensorflow dtype.
-const THAI_MODEL: &[u8; 373466] =
-    include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/th.json");
-const BURMESE_MODEL: &[u8; 475209] =
-    include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
-
-lazy_static! {
-    static ref THAI_LSTM: structs::LstmData<'static> =
-        serde_json::from_slice(THAI_MODEL).expect("JSON syntax error");
-    static ref BURMESE_LSTM: structs::LstmData<'static> =
-        serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
-}
-
-// LSTM model depends on language, So we have to switch models per language.
-pub fn get_best_lstm_model(codepoint: u32) -> Option<DataPayload<structs::LstmDataMarker>> {
-    let lang = get_language(codepoint);
-    match lang {
-        Language::Thai => Some(DataPayload::from_owned(THAI_LSTM.clone())),
-        Language::Burmese => Some(DataPayload::from_owned(BURMESE_LSTM.clone())),
-        _ => None,
-    }
-}
 
 // A word break iterator using LSTM model. Input string have to be same language.
 
@@ -106,12 +80,12 @@ impl LstmSegmenterIteratorUtf16 {
     }
 }
 
-pub struct LstmSegmenter {
-    lstm: Lstm,
+pub struct LstmSegmenter<'l> {
+    lstm: Lstm<'l>,
 }
 
-impl LstmSegmenter {
-    pub fn try_new(payload: DataPayload<structs::LstmDataMarker>) -> Result<Self, DataError> {
+impl<'l> LstmSegmenter<'l> {
+    pub fn try_new(payload: &'l DataPayload<LstmDataV1Marker>) -> Result<Self, DataError> {
         let lstm = Lstm::try_new(payload).unwrap();
 
         Ok(Self { lstm })
@@ -131,13 +105,24 @@ impl LstmSegmenter {
 #[cfg(test)]
 mod tests {
     use crate::lstm::*;
+    use crate::provider::LstmDataV1;
+    use icu_locid::locale;
+    use icu_provider::prelude::*;
 
     #[test]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 
-        let payload = get_best_lstm_model(TEST_STR.chars().next().unwrap() as u32).unwrap();
-        let segmenter = LstmSegmenter::try_new(payload).unwrap();
+        let provider = icu_testdata::get_provider();
+        let payload = provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale!("th")),
+                metadata: Default::default(),
+            })
+            .expect("Loading should succeed!")
+            .take_payload()
+            .expect("Data should be present!");
+        let segmenter = LstmSegmenter::try_new(&payload).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         assert_eq!(breaks, [12, 21, 33], "Thai test");
 
@@ -155,8 +140,11 @@ mod tests {
         // "Burmese Language" in Burmese
         const TEST_STR: &str = "မြန်မာဘာသာစကား";
 
-        let payload = get_best_lstm_model(TEST_STR.chars().next().unwrap() as u32).unwrap();
-        let segmenter = LstmSegmenter::try_new(payload).unwrap();
+        const BURMESE_MODEL: &[u8; 475209] =
+            include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/my.json");
+        let data: LstmDataV1 = serde_json::from_slice(BURMESE_MODEL).expect("JSON syntax error");
+        let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
+        let segmenter = LstmSegmenter::try_new(&payload).unwrap();
         let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
         // LSTM model breaks more characters, but it is better to return [30].
         assert_eq!(breaks, [12, 18, 30], "Burmese test");
@@ -165,5 +153,39 @@ mod tests {
         let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
         // LSTM model breaks more characters, but it is better to return [10].
         assert_eq!(breaks, [4, 6, 10], "Burmese utf-16 test");
+    }
+
+    #[test]
+    fn khmer_word_break() {
+        const TEST_STR: &str = "សេចក្ដីប្រកាសជាសកលស្ដីពីសិទ្ធិមនុស្ស";
+        const KHMER_MODEL: &[u8; 384592] =
+            include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/km.json");
+        let data: LstmDataV1 = serde_json::from_slice(KHMER_MODEL).expect("JSON syntax error");
+        let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
+        let segmenter = LstmSegmenter::try_new(&payload).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        // Note: This small sample matches the ICU dictionary segmenter
+        assert_eq!(breaks, [39, 48, 54, 72], "Khmer test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [13, 16, 18, 24], "Khmer utf-16 test");
+    }
+
+    #[test]
+    fn lao_word_break() {
+        const TEST_STR: &str = "ກ່ຽວກັບສິດຂອງມະນຸດ";
+        const LAO_MODEL: &[u8; 372529] =
+            include_bytes!("../tests/testdata/json/core/segmenter_lstm@1/lo.json");
+        let data: LstmDataV1 = serde_json::from_slice(LAO_MODEL).expect("JSON syntax error");
+        let payload = DataPayload::<LstmDataV1Marker>::from_owned(data);
+        let segmenter = LstmSegmenter::try_new(&payload).unwrap();
+        let breaks: Vec<usize> = segmenter.segment_str(TEST_STR).collect();
+        // Note: LSTM finds a break at '12' that the dictionary does not find
+        assert_eq!(breaks, [12, 21, 30, 39], "Lao test");
+
+        let utf16: Vec<u16> = TEST_STR.encode_utf16().collect();
+        let breaks: Vec<usize> = segmenter.segment_utf16(&utf16).collect();
+        assert_eq!(breaks, [4, 7, 10, 13], "Lao utf-16 test");
     }
 }

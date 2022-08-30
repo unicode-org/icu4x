@@ -3,13 +3,19 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XPluralRules.h"
+#include "../../include/ICU4XLogger.h"
 #include <string.h>
 #include <stdio.h>
 
 int main() {
-    ICU4XLocale* locale = ICU4XLocale_create("ar", 2);
+    ICU4XLogger_init_simple_logger();
+    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create("ar", 2);
+    if (!locale_result.is_ok) {
+        return 1;
+    }
+    ICU4XLocale* locale = locale_result.ok;
     ICU4XDataProvider* provider = ICU4XDataProvider_create_test();
-    diplomat_result_box_ICU4XPluralRules_ICU4XError plural_result = ICU4XPluralRules_try_new_cardinal(locale, provider);
+    diplomat_result_box_ICU4XPluralRules_ICU4XError plural_result = ICU4XPluralRules_try_new_cardinal(provider, locale);
     if (!plural_result.is_ok) {
         printf("Failed to create PluralRules\n");
         return 1;
@@ -26,7 +32,7 @@ int main() {
 
     ICU4XPluralOperands op1 = { .i = 3 };
 
-    ICU4XPluralCategory cat1 = ICU4XPluralRules_select(rules, op1);
+    ICU4XPluralCategory cat1 = ICU4XPluralRules_category_for(rules, op1);
 
     printf("Plural Category %d (should be %d)\n", (int)cat1, (int)ICU4XPluralCategory_Few);
 
@@ -37,7 +43,7 @@ int main() {
         return 1;
     }
 
-    ICU4XPluralCategory cat2 = ICU4XPluralRules_select(rules, op_result.ok);
+    ICU4XPluralCategory cat2 = ICU4XPluralRules_category_for(rules, op_result.ok);
 
     printf("Plural Category %d (should be %d)\n", (int)cat2, (int)ICU4XPluralCategory_Many);
 

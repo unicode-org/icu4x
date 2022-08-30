@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XLineBreakSegmenter.h"
-}
 
 class ICU4XDataProvider;
 class ICU4XLineBreakSegmenter;
@@ -33,7 +31,7 @@ struct ICU4XLineBreakSegmenterDeleter {
 /**
  * An ICU4X line-break segmenter, capable of finding breakpoints in strings.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html) for more information.
+ * See the [Rust documentation for `LineBreakSegmenter`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html) for more information.
  */
 class ICU4XLineBreakSegmenter {
  public:
@@ -41,35 +39,35 @@ class ICU4XLineBreakSegmenter {
   /**
    * Construct a [`ICU4XLineBreakSegmenter`] with default options.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new) for more information.
+   * See the [Rust documentation for `try_new`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new) for more information.
    */
   static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
    * Construct a [`ICU4XLineBreakSegmenter`] with custom options.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options) for more information.
+   * See the [Rust documentation for `try_new_with_options`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options) for more information.
    */
   static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options);
 
   /**
    * Segments a UTF-8 string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_str) for more information.
+   * See the [Rust documentation for `segment_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_str) for more information.
    */
   ICU4XLineBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 
   /**
    * Segments a UTF-16 string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_utf16) for more information.
+   * See the [Rust documentation for `segment_utf16`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_utf16) for more information.
    */
   ICU4XLineBreakIteratorUtf16 segment_utf16(const diplomat::span<uint16_t> input) const;
 
   /**
    * Segments a Latin-1 string.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.LineBreakSegmenter.html#method.segment_latin1) for more information.
+   * See the [Rust documentation for `segment_latin1`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_latin1) for more information.
    */
   ICU4XLineBreakIteratorLatin1 segment_latin1(const diplomat::span<uint8_t> input) const;
   inline const capi::ICU4XLineBreakSegmenter* AsFFI() const { return this->inner.get(); }
@@ -92,9 +90,9 @@ inline diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> ICU4XLineBreakSegme
   auto diplomat_result_raw_out_value = capi::ICU4XLineBreakSegmenter_try_new(provider.AsFFI());
   diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineBreakSegmenter>(std::move(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -103,9 +101,9 @@ inline diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> ICU4XLineBreakSegme
   auto diplomat_result_raw_out_value = capi::ICU4XLineBreakSegmenter_try_new_with_options(provider.AsFFI(), capi::ICU4XLineBreakOptions{ .line_break_rule = static_cast<capi::ICU4XLineBreakRule>(diplomat_wrapped_struct_options.line_break_rule), .word_break_rule = static_cast<capi::ICU4XWordBreakRule>(diplomat_wrapped_struct_options.word_break_rule), .ja_zh = diplomat_wrapped_struct_options.ja_zh });
   diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XLineBreakSegmenter>(std::move(ICU4XLineBreakSegmenter(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

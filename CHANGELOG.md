@@ -11,12 +11,12 @@
     - Turn all errors into Copy types (#1657)
   - Components
     - `calendar`:
-      - Coptic, Indian and Ethiopic calendars (#1660, #1715, #1779)
+      - Coptic, Indian and Ethiopian calendars (#1660, #1715, #1779)
       - Calendar arithmetic (#1614)
     - `datetime`:
       - Formatting for fractional seconds (#1813, #1801)
       - Support for day of week in month ('F') (#1770)
-      - Custom fallbacking for TimeZoneFormat (#1591)
+      - Custom fallbacking for TimeZoneFormatter (#1591)
       - Support for week-of-month (#1468)
       - Bug fix to get_best_available_format_pattern skeleton matching logic (#1549)
     - `decimal`: No updates
@@ -75,7 +75,7 @@
 
   - General data model
     - `DataPayload` no longer needs a lifetime (#1297, #1279)
-    - Re-write ResourceKey (#1511)
+    - Re-write DataKey (#1511)
     - Rewrite ErasedDataProvider as AnyProvider (#1495)
     - Add EitherProvider and rename IterableDataProviderCore to IterableProvider (#1455)
     - Change DataRequest to be borrowed in BufferProvider (#1416)
@@ -89,7 +89,7 @@
       - Week-of-year support (#1206)
       - `DateTimeFormat::resolve_components()` (#1362)
       - Era formatting (#1346)
-      - `TimeZoneFormatConfig` (#1256)
+      - `TimeZoneFormatterConfig` (#1256)
       - New data model for organizing calendar data (#1300)
       - Bugfix around missing localized strings in time zone data (#1405)
     - `decimal`: No updates

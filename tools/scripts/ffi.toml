@@ -9,12 +9,20 @@ description = "Run FFI tests"
 category = "ICU4X Development"
 dependencies = [
     "cargo-make-min-version",
-    "verify-diplomat-gen",
     "test-c",
     "test-c-tiny",
     "test-cpp",
     "build-wearos-ffi",
     "test-nostd",
+]
+
+[tasks.verify-ffi]
+description = "Run FFI tests that verify checked in code is up to date"
+category = "ICU4X Development"
+dependencies = [
+    "cargo-make-min-version",
+    "verify-diplomat-gen",
+    "verify-diplomat-coverage",
 ]
 
 # Some tasks need a minimum version of cargo-make. Configs within cargo-make
@@ -27,6 +35,29 @@ description = "Verify that the minimum version of cargo-make exists"
 category = "ICU4X Development"
 install_crate = { crate_name = "cargo-make", binary = "cargo", test_arg = ["make", "--version"], min_version = "0.35.0" }
 
+[tasks.diplomat-coverage]
+description = "Produces the list of ICU APIs that are not exported through Diplomat"
+category = "ICU4X Development"
+toolchain = "nightly-2022-08-25"
+script = '''
+cargo run -p icu_ffi_coverage --all-features > ffi/diplomat/ffi_coverage/tests/missing_apis.txt
+'''
+
+[tasks.verify-diplomat-coverage]
+description = "Verify that checked-in Diplomat coverage is up to date"
+category = "ICU4X Development"
+dependencies = [
+    "diplomat-coverage",
+]
+script_runner = "@duckscript"
+script = '''
+exit_on_error true
+code = exec --get-exit-code git diff --exit-code -- ffi/diplomat/ffi_coverage/tests
+if ${code}
+    trigger_error "Diplomat coverage dump need to be regenerated. Please run `cargo make diplomat-coverage` and commit."
+end
+'''
+
 [tasks.verify-diplomat-gen]
 description = "Verify that checked-in Diplomat bindings are up to date"
 category = "ICU4X Development"
@@ -36,7 +67,10 @@ dependencies = [
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
-exec --fail-on-error git diff --exit-code -- ffi/diplomat
+code = exec --get-exit-code git diff --exit-code -- ffi/diplomat
+if ${code}
+    trigger_error "Diplomat bindings need to be regenerated. Please run `cargo make diplomat-install`, then `cargo make diplomat-gen`, and commit. (Testing against different Diplomat versions may omit install step.)"
+end
 '''
 
 [tasks.diplomat-gen]
@@ -51,7 +85,6 @@ dependencies = [
 [tasks.test-c]
 description = "Run C API tests"
 category = "ICU4X Development"
-dependencies = [ "diplomat-gen-c" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -66,7 +99,7 @@ exec --fail-on-error make
 [tasks.test-c-tiny]
 description = "Run C API tests for tiny targets"
 category = "ICU4X Development"
-dependencies = [ "diplomat-gen-c" ]
+install_crate = { rustup_component_name = "rust-src" }
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -78,7 +111,6 @@ exec ls -l
 [tasks.test-cpp]
 description = "Run CPP tests"
 category = "ICU4X Development"
-dependencies = [ "diplomat-gen-cpp" ]
 script_runner = "@duckscript"
 script = '''
 exit_on_error true
@@ -89,6 +121,8 @@ exec --fail-on-error make
 cd ../bidi
 exec --fail-on-error make
 cd ../segmenter
+exec --fail-on-error make
+cd ../datetime
 exec --fail-on-error make
 cd ../fixeddecimal
 exec --fail-on-error make
@@ -143,6 +177,7 @@ exec --fail-on-error diplomat-tool cpp ./cpp/include --docs ./cpp/docs/source --
 description = "Build ICU4X CAPI for Cortex"
 category = "ICU4X FFI"
 toolchain = "nightly-2022-04-05"
+install_crate = { rustup_component_name = "rust-src" }
 env = { "RUSTFLAGS" = "-Ctarget-cpu=cortex-m33 -Cpanic=abort" }
 command = "cargo"
 args = ["build", "--package", "icu_freertos",
@@ -155,6 +190,7 @@ args = ["build", "--package", "icu_freertos",
 description = "Ensure ICU4X core builds on no-std"
 category = "ICU4X FFI"
 toolchain = "nightly-2022-04-05"
+install_crate = { rustup_component_name = "rust-src" }
 command = "cargo"
 args = ["build", "--package", "icu", "--target", "thumbv7m-none-eabi"]
 

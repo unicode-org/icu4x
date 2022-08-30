@@ -33,7 +33,7 @@
 //! The command line interface is available with the `bin` feature.
 //! ```bash
 //! cargo run --features bin -- \
-//!     --uprops-root /path/to/uprops/root \
+//!     --icu_exports-root /path/to/icu_exports/root \
 //!     --all-keys \
 //!     --locales de,en-AU \
 //!     --format blob \
@@ -51,7 +51,8 @@
         // clippy::expect_used,
         // clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
 #![warn(missing_docs)]
@@ -60,11 +61,11 @@ mod databake;
 mod error;
 mod registry;
 mod source;
-pub mod transform;
+mod transform;
 
-pub use error::{MISSING_CLDR_ERROR, MISSING_COLLATION_ERROR, MISSING_UPROPS_ERROR};
-pub use registry::get_all_keys;
-pub use source::{SourceData, TrieType};
+pub use error::*;
+pub use registry::all_keys;
+pub use source::*;
 
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::*;
@@ -76,12 +77,48 @@ use std::collections::HashSet;
 use std::io::{BufRead, BufReader};
 use std::path::{Path, PathBuf};
 
+/// [`DataProvider`] backed by [`SourceData`]
+#[allow(clippy::exhaustive_structs)] // any information will be added to SourceData
+#[derive(Debug, Clone)]
+pub struct DatagenProvider {
+    /// The underlying raw data
+    pub source: SourceData,
+}
+
+#[cfg(test)]
+impl DatagenProvider {
+    /// Create a `DatagenProvider` that uses test data.
+    pub fn for_test() -> Self {
+        lazy_static::lazy_static! {
+            static ref TEST_PROVIDER: DatagenProvider = DatagenProvider {
+                source: SourceData::default()
+                    .with_cldr(
+                        icu_testdata::paths::cldr_json_root(),
+                        CldrLocaleSubset::Full,
+                    )
+                    .expect("testdata is valid")
+                    .with_icuexport(icu_testdata::paths::icuexport_toml_root())
+                    .expect("testdata is valid"),
+            };
+        }
+        TEST_PROVIDER.clone()
+    }
+}
+
+impl AnyProvider for DatagenProvider {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.as_any_provider().load_any(key, req)
+    }
+}
+
 /// Parses a list of human-readable key identifiers and returns a
-/// list of [`ResourceKey`]s. Invalid key names are ignored.
+/// list of [`DataKey`]s.
+///
+/// Unknown key names are ignored.
 ///
 /// # Example
 /// ```
-/// # use icu_provider::ResourceMarker;
+/// # use icu_provider::KeyedDataMarker;
 /// assert_eq!(
 ///     icu_datagen::keys(&["list/and@1", "list/or@1"]),
 ///     vec![
@@ -90,16 +127,18 @@ use std::path::{Path, PathBuf};
 ///     ],
 /// );
 /// ```
-pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
+pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
     let keys = strings.iter().map(AsRef::as_ref).collect::<HashSet<&str>>();
-    get_all_keys()
+    all_keys()
         .into_iter()
         .filter(|k| keys.contains(k.get_path()))
         .collect()
 }
 
 /// Parses a file of human-readable key identifiers and returns a
-/// list of [`ResourceKey`]s. Invalid key names are ignored.
+/// list of [`DataKey`]s.
+///
+/// Unknown key names are ignored.
 ///
 /// # Example
 ///
@@ -110,7 +149,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// ```
 /// #### build.rs
 /// ```no_run
-/// # use icu_provider::ResourceMarker;
+/// # use icu_provider::KeyedDataMarker;
 /// # use std::fs::File;
 /// # fn main() -> std::io::Result<()> {
 /// assert_eq!(
@@ -123,24 +162,25 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<ResourceKey> {
 /// # Ok(())
 /// # }
 /// ```
-pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
+pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let keys = BufReader::new(std::fs::File::open(path.as_ref())?)
         .lines()
         .collect::<std::io::Result<HashSet<String>>>()?;
-    Ok(get_all_keys()
+    Ok(all_keys()
         .into_iter()
         .filter(|k| keys.contains(k.get_path()))
         .collect())
 }
 
-/// Parses a compiled binary and returns a list of used [`ResourceKey`]s. Unknown
-/// key names are ignored.
+/// Parses a compiled binary and returns a list of used [`DataKey`]s used by it.
+///
+/// Unknown key names are ignored.
 ///
 /// # Example
 ///
 /// #### build.rs
 /// ```no_run
-/// # use icu_provider::ResourceMarker;
+/// # use icu_provider::KeyedDataMarker;
 /// # use std::fs::File;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// assert_eq!(
@@ -153,7 +193,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKe
 /// # Ok(())
 /// # }
 /// ```
-pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey>> {
+pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
     let file = std::fs::read(path.as_ref())?;
     let mut candidates = HashSet::new();
     let mut i = 0;
@@ -173,7 +213,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<ResourceKey
         }
     }
 
-    Ok(get_all_keys()
+    Ok(all_keys()
         .into_iter()
         .filter(|k| candidates.contains(k.get_path().as_bytes()))
         .collect())
@@ -190,6 +230,8 @@ pub enum Out {
         serializer: Box<dyn serializers::AbstractSerializer + Sync>,
         /// Whether to overwrite existing data.
         overwrite: bool,
+        /// Whether to create a fingerprint file with SHA2 hashes
+        fingerprint: bool,
     },
     /// Output as a postcard blob to the given sink.
     Blob(Box<dyn std::io::Write + Sync>),
@@ -201,7 +243,10 @@ pub enum Out {
         pretty: bool,
         /// Whether to gate each key on its crate name. This allows using the module
         /// even if some keys are not required and their dependencies are not included.
+        /// Requires use_separate_crates.
         insert_feature_gates: bool,
+        /// Whether to use separate crates to name types instead of the `icu` metacrate
+        use_separate_crates: bool,
     },
 }
 
@@ -211,15 +256,15 @@ pub enum Out {
 /// * `locales`: If this is present, only locales that are either `und` or
 ///   contained (strictly, i.e. `en` != `en-US`) in the slice will be generated.
 ///   Otherwise, all locales supported by the source data will be generated.
-/// * `keys`: The keys for which to generate data. See [`get_all_keys()`].
-/// * `sources`: The underlying source data. CLDR and/or uprops data can be missing if no
-///   requested key requires them, otherwise [`MISSING_CLDR_ERROR`] or [`MISSING_UPROPS_ERROR`]
-///   will be returned.
+/// * `keys`: The keys for which to generate data. See [`all_keys`], [`keys`], [`keys_from_file`], [`keys_from_bin`].
+/// * `sources`: The underlying source data. CLDR and/or ICU data can be missing if no
+///   requested key requires them, otherwise an error satisfying [`is_missing_cldr_error`]
+///   or [`is_missing_icuexport_error`] will be returned.
 /// * `out`: The output format and location. See the documentation on [`Out`]
 pub fn datagen(
     locales: Option<&[LanguageIdentifier]>,
-    keys: &[ResourceKey],
-    sources: &SourceData,
+    keys: &[DataKey],
+    source: &SourceData,
     outs: Vec<Out>,
 ) -> Result<(), DataError> {
     let exporters = outs
@@ -230,14 +275,15 @@ pub fn datagen(
                     output_path,
                     serializer,
                     overwrite,
+                    fingerprint,
                 } => {
-                    let mut options =
-                        icu_provider_fs::export::fs_exporter::ExporterOptions::default();
+                    let mut options = icu_provider_fs::export::ExporterOptions::default();
                     options.root = output_path;
                     if overwrite {
                         options.overwrite =
-                            icu_provider_fs::export::fs_exporter::OverwriteOption::RemoveAndReplace
+                            icu_provider_fs::export::OverwriteOption::RemoveAndReplace
                     }
+                    options.fingerprint = fingerprint;
                     Box::new(icu_provider_fs::export::FilesystemExporter::try_new(
                         serializer, options,
                     )?)
@@ -249,16 +295,20 @@ pub fn datagen(
                     mod_directory,
                     pretty,
                     insert_feature_gates,
+                    use_separate_crates,
                 } => Box::new(databake::BakedDataExporter::new(
                     mod_directory,
                     pretty,
                     insert_feature_gates,
+                    use_separate_crates,
                 )),
             })
         })
         .collect::<Result<Vec<_>, DataError>>()?;
 
-    let mut provider: Box<dyn ExportableProvider> = Box::new(create_datagen_provider!(*sources));
+    let mut provider: Box<dyn ExportableProvider> = Box::new(DatagenProvider {
+        source: source.clone(),
+    });
 
     if let Some(locales) = locales {
         let locales = locales.to_vec();
@@ -270,24 +320,27 @@ pub fn datagen(
     }
 
     keys.into_par_iter().try_for_each(|&key| {
-        let options = provider.supported_options_for_key(key)?;
         log::info!("Writing key: {}", key);
-        let res = options.into_par_iter().try_for_each(|options| {
+        let locales = provider
+            .supported_locales_for_key(key)
+            .map_err(|e| e.with_key(key))?;
+        let res = locales.into_par_iter().try_for_each(|locale| {
             let req = DataRequest {
-                options: options.clone(),
+                locale: &locale,
                 metadata: Default::default(),
             };
             let payload = provider
-                .load_payload(key, &req)
+                .load_data(key, req)
                 .and_then(DataResponse::take_payload)
-                .map_err(|e| e.with_req(key, &req))?;
-            exporters
-                .par_iter()
-                .try_for_each(|e| e.put_payload(key, &options, &payload))
+                .map_err(|e| e.with_req(key, req))?;
+            exporters.par_iter().try_for_each(|e| {
+                e.put_payload(key, &locale, &payload)
+                    .map_err(|e| e.with_req(key, req))
+            })
         });
 
         for e in &exporters {
-            e.flush(key)?;
+            e.flush(key).map_err(|e| e.with_key(key))?;
         }
 
         res
@@ -303,10 +356,16 @@ pub fn datagen(
 #[test]
 fn test_keys() {
     assert_eq!(
-        keys(&["list/and@1", "datetime/lengths@1", "trash",]),
+        keys(&[
+            "list/and@1",
+            "datetime/gregory/datelengths@1",
+            "decimal/symbols@1[u-nu]",
+            "trash",
+        ]),
         vec![
-            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
             icu_list::provider::AndListV1Marker::KEY,
+            icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
         ]
     );
 }
@@ -319,31 +378,32 @@ fn test_keys_from_file() {
         )
         .unwrap(),
         vec![
-            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
-            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
-            icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
-            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
+            icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
+            icu_calendar::provider::WeekDataV1Marker::KEY,
         ]
     );
 }
 
 #[test]
 fn test_keys_from_bin() {
-    // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_static_provider`
-    // and running `cargo +nightly wasm-build-release --examples -p icu_datetime --features serde \
-    // && cp target/wasm32-unknown-unknown/release/examples/work_log.wasm provider/datagen/tests/data/`
+    // File obtained by changing work_log.rs to use `icu_testdata::get_smaller_postcard_provider`
+    // and running `cargo +nightly-2022-04-05 wasm-build-release --examples -p icu_datetime --features serde \
+    // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(
         keys_from_bin(PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests/data/work_log.wasm"))
             .unwrap(),
         vec![
-            icu_datetime::provider::calendar::DatePatternsV1Marker::KEY,
-            icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY,
-            icu_datetime::provider::calendar::DateSymbolsV1Marker::KEY,
-            icu_datetime::provider::week_data::WeekDataV1Marker::KEY,
             icu_decimal::provider::DecimalSymbolsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY,
+            icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY,
             icu_plurals::provider::OrdinalV1Marker::KEY,
+            icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY,
+            icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY,
+            icu_calendar::provider::WeekDataV1Marker::KEY,
         ]
     );
 }

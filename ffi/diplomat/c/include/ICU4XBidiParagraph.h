@@ -7,12 +7,19 @@
 #include "diplomat_runtime.h"
 
 #ifdef __cplusplus
-extern "C" {
+namespace capi {
 #endif
 
 typedef struct ICU4XBidiParagraph ICU4XBidiParagraph;
+#ifdef __cplusplus
+} // namespace capi
+#endif
 #include "diplomat_result_void_ICU4XError.h"
 #include "ICU4XBidiDirection.h"
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 
 diplomat_result_void_ICU4XError ICU4XBidiParagraph_set_paragraph_in_text(ICU4XBidiParagraph* self, size_t n);
 
@@ -30,6 +37,7 @@ uint8_t ICU4XBidiParagraph_level_at(const ICU4XBidiParagraph* self, size_t pos);
 void ICU4XBidiParagraph_destroy(ICU4XBidiParagraph* self);
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

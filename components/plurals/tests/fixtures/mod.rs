@@ -39,9 +39,7 @@ pub struct FixedDecimalInput {
 
 impl From<&FixedDecimalInput> for FixedDecimal {
     fn from(f: &FixedDecimalInput) -> Self {
-        FixedDecimal::from(f.from)
-            .multiplied_pow10(f.pow10)
-            .unwrap()
+        FixedDecimal::from(f.from).multiplied_pow10(f.pow10)
     }
 }
 

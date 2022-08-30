@@ -1,37 +1,12 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<icu_properties::provider::EmojiModifierBaseV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<icu_properties::provider::EmojiModifierBaseV1Marker>, DataError> {
-        static VALUES: &[(&str, DataStruct)] = &[("und", UND)];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions.with_req(
-                    <icu_properties::provider::EmojiModifierBaseV1Marker>::KEY,
-                    req,
-                )
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
 type DataStruct =
-    &'static <icu_properties::provider::EmojiModifierBaseV1Marker as DataMarker>::Yokeable;
-static UND: DataStruct = &::icu_properties::provider::UnicodePropertyV1 {
-    inv_list: unsafe {
+    <::icu_properties::provider::EmojiModifierBaseV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);
+static UND: &DataStruct =
+    &::icu_properties::provider::PropertyCodePointSetV1::InversionList(unsafe {
         #[allow(unused_unsafe)]
-        ::icu_uniset::UnicodeSet::from_parts_unchecked(
+        ::icu_collections::codepointinvlist::CodePointInversionList::from_parts_unchecked(
             unsafe {
                 ::zerovec::ZeroVec::from_bytes_unchecked(&[
                     29u8, 38u8, 0u8, 0u8, 30u8, 38u8, 0u8, 0u8, 249u8, 38u8, 0u8, 0u8, 250u8, 38u8,
@@ -63,5 +38,4 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyV1 {
             },
             132usize,
         )
-    },
-};
+    });

@@ -1,44 +1,44 @@
 {
   "defaults": {
     "alas": {
-      "daylight": "AKDT",
-      "standard": "AKST"
+      "dt": "AKDT",
+      "st": "AKST"
     },
     "amce": {
-      "daylight": "CDT",
-      "standard": "CST"
+      "dt": "CDT",
+      "st": "CST"
     },
     "amea": {
-      "daylight": "EDT",
-      "standard": "EST"
+      "dt": "EDT",
+      "st": "EST"
     },
     "ammo": {
-      "daylight": "MDT",
-      "standard": "MST"
+      "dt": "MDT",
+      "st": "MST"
     },
     "ampa": {
-      "daylight": "PDT",
-      "standard": "PST"
+      "dt": "PDT",
+      "st": "PST"
     },
     "atla": {
-      "daylight": "ADT",
-      "standard": "AST"
+      "dt": "ADT",
+      "st": "AST"
     },
     "haal": {
-      "daylight": "HADT",
-      "standard": "HAST"
+      "dt": "HADT",
+      "st": "HAST"
     },
     "mgmt": {
-      "standard": "GMT"
+      "st": "GMT"
     }
   },
   "overrides": {
     "ushnl": {
-      "daylight": "HDT",
-      "standard": "HST"
+      "dt": "HDT",
+      "st": "HST"
     },
     "utc": {
-      "standard": "UTC"
+      "st": "UTC"
     }
   }
 }

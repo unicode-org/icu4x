@@ -19,15 +19,17 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
+pub mod any_payload;
 pub mod either;
 pub mod fallback;
 pub mod filter;
 pub mod fork;
 mod helpers;
-pub mod struct_provider;

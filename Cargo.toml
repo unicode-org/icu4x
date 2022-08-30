@@ -6,28 +6,29 @@
 resolver = "2"
 members = [
     "components/calendar",
+    "components/collator",
+    "components/collections",
+    "components/collections/codepointtrie_builder",
     "components/datetime",
     "components/decimal",
     "components/icu",
     "components/icu4x",
     "components/list",
-    "components/locale_canonicalizer",
+    "components/locid_transform",
     "components/locid",
+    "components/normalizer",
     "components/plurals",
     "components/properties",
+    "components/timezone",
     "experimental/bies",
     "experimental/casemapping",
-    "experimental/char16trie",
     "utils/databake",
     "utils/databake/derive",
-    "experimental/collator",
-    "experimental/normalizer",
     "experimental/segmenter",
-    "experimental/segmenter_lstm",
     "ffi/capi_cdylib",
     "ffi/diplomat",
+    "ffi/diplomat/ffi_coverage",
     "ffi/capi_staticlib",
-    "ffi/ecma402",
     "ffi/freertos",
     "provider/adapters",
     "provider/blob",
@@ -39,15 +40,12 @@ members = [
     "tools/benchmark/macros",
     "tools/benchmark/memory",
     "tools/benchmark/binsize",
-    "utils/codepointtrie",
-    "utils/codepointtrie/builder",
     "utils/deduplicating_array",
     "utils/fixed_decimal",
     "utils/litemap",
     "utils/pattern",
     "utils/tinystr",
     "utils/tzif",
-    "utils/uniset",
     "utils/writeable",
     "utils/yoke",
     "utils/yoke/derive",
@@ -56,14 +54,19 @@ members = [
     "utils/zerovec",
     "utils/zerovec/derive",
 ]
-exclude = ["provider/testdata/data/const"]
+exclude = [
+    # This crate uses datagen which requires downloading ZIP files during build,
+    # so we don't want to build it as part of the workspace.
+    "ffi/ecma402",
+]
 
+# LTO is needed for WASM and other size-optimized builds,
+# and it improve the performance of benchmarks
 [profile.release]
+lto = true
 
-# LTO is needed for WASM and other size-optimized builds
 [profile.release-opt-size]
 inherits = "release"
-lto = true
 opt-level = "s"
 
 # Enable debug information specifically for memory profiling.

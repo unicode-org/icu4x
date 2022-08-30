@@ -7,7 +7,7 @@
 #include "diplomat_runtime.h"
 
 #ifdef __cplusplus
-extern "C" {
+namespace capi {
 #endif
 
 typedef enum ICU4XLineBreakRule {
@@ -16,10 +16,18 @@ typedef enum ICU4XLineBreakRule {
   ICU4XLineBreakRule_Strict = 2,
   ICU4XLineBreakRule_Anywhere = 3,
 } ICU4XLineBreakRule;
+#ifdef __cplusplus
+} // namespace capi
+#endif
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 
 void ICU4XLineBreakRule_destroy(ICU4XLineBreakRule* self);
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

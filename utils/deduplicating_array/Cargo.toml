@@ -5,12 +5,12 @@
 [package]
 name = "deduplicating_array"
 description = "A serde serialization strategy that uses PartialEq to reduce serialized size."
-version = "0.1.1"
+version = "0.1.2"
 authors = ["The ICU4X Project Developers"]
-edition = "2018"
+edition = "2021"
 readme = "README.md"
 repository = "https://github.com/unicode-org/icu4x"
-license-file = "LICENSE"
+license = "Unicode-DFS-2016"
 include = [
     "src/**/*",
     "examples/**/*",
@@ -27,7 +27,7 @@ serde = { version = "1.0", default-features = false, features = ["alloc", "deriv
 
 [dev-dependencies]
 serde_json = "1.0"
-postcard = { version = "1.0.0-alpha.2", features = ["use-std"] }
+postcard = { version = "1.0.0", features = ["use-std"] }
 
 [features]
 bench = []

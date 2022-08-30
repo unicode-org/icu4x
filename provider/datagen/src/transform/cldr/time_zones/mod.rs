@@ -3,113 +3,103 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::transform::cldr::cldr_serde;
-use crate::transform::cldr::cldr_serde::time_zones::CldrTimeZonesData;
-use crate::SourceData;
+use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
+use cldr_serde::time_zones::meta_zones::MetaZoneAliasData;
+use cldr_serde::time_zones::meta_zones::ZonePeriod;
+use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use icu_datetime::provider::time_zones::*;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
-use litemap::LiteMap;
+use icu_timezone::provider::*;
+use std::collections::HashMap;
 
 mod convert;
 
-/// A data provider reading from CLDR JSON zones files.
-#[derive(Debug)]
-pub struct TimeZonesProvider {
-    source: SourceData,
+#[derive(Debug, Copy, Clone)]
+struct CldrTimeZonesData<'a> {
+    pub time_zone_names_resource: &'a TimeZoneNames,
+    pub bcp47_tzids_resource: &'a HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
+    pub meta_zone_ids_resource: &'a HashMap<MetaZoneId, MetaZoneAliasData>,
+    pub meta_zone_periods_resource: &'a HashMap<String, ZonePeriod>,
 }
 
-impl From<&SourceData> for TimeZonesProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-macro_rules! impl_resource_provider {
+macro_rules! impl_data_provider {
     ($($marker:ident),+) => {
         $(
-            impl ResourceProvider<$marker> for TimeZonesProvider {
-                fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<$marker>, DataError> {
-                    let langid = req.options.get_langid();
+            impl DataProvider<$marker> for crate::DatagenProvider {
+                fn load(&self, req: DataRequest) -> Result<DataResponse<$marker>, DataError> {
+                    let langid = req.locale.get_langid();
 
                     let resource: &cldr_serde::time_zones::time_zone_names::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates("gregorian")
+                        .cldr()?
+                        .dates("gregorian")
                         .read_and_parse(&langid, "timeZoneNames.json")?;
-                    let time_zone_names = resource
+
+                    let time_zone_names_resource = &resource
                         .main
                         .0
                         .get(&langid)
                         .expect("CLDR file contains the expected language")
                         .dates
-                        .time_zone_names
-                        .clone();
+                        .time_zone_names;
 
                     let resource: &cldr_serde::time_zones::bcp47_tzid::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_bcp47()
+                        .cldr()?
+                        .bcp47()
                         .read_and_parse("timezone.json")?;
 
-                    let mut bcp47_tzids = LiteMap::new();
-                    for (bcp47_tzid, bcp47_tzid_data) in resource.keyword.u.time_zones.values.iter() {
-                        if let Some(alias) = &bcp47_tzid_data.alias {
-                            for data_value in alias.split(" ") {
-                                bcp47_tzids.insert(data_value.to_string(), *bcp47_tzid);
-                            }
-                        }
-                    }
+                    let bcp47_tzids_resource = &resource.keyword.u.time_zones.values;
 
                     let resource: &cldr_serde::time_zones::meta_zones::Resource = self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_core()
+                        .cldr()?
+                        .core()
                         .read_and_parse("supplemental/metaZones.json")?;
 
-                    let mut meta_zone_ids = LiteMap::new();
-                    for (meta_zone_id, meta_zone_id_data) in
-                        resource.supplemental.meta_zones.meta_zone_ids.0.iter()
-                    {
-                        meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), meta_zone_id.clone());
-                    }
-                    let meta_zone_periods = resource.supplemental.meta_zones.meta_zone_info.time_zone.0.clone();
+                    let meta_zone_ids_resource = &resource.supplemental.meta_zones.meta_zone_ids.0;
 
-                    let metadata = DataResponseMetadata::default();
-                    // TODO(#1109): Set metadata.data_langid correctly.
+                    let meta_zone_periods_resource = &resource.supplemental.meta_zones.meta_zone_info.time_zone.0;
+
                     Ok(DataResponse {
-                        metadata,
+                        metadata: Default::default(),
                         payload: Some(DataPayload::from_owned(
-                            <$marker as DataMarker>::Yokeable::from(&CldrTimeZonesData {
-                                time_zone_names,
-                                bcp47_tzids,
-                                meta_zone_ids,
-                                meta_zone_periods,
+                            <$marker as DataMarker>::Yokeable::from(CldrTimeZonesData {
+                                time_zone_names_resource,
+                                bcp47_tzids_resource,
+                                meta_zone_ids_resource,
+                                meta_zone_periods_resource,
                             }),
                         )),
                     })
                 }
             }
 
-            impl IterableResourceProvider<$marker> for TimeZonesProvider {
-                fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+            impl IterableDataProvider<$marker> for crate::DatagenProvider {
+                fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+                    if <$marker>::KEY == MetaZonePeriodV1Marker::KEY {
+                        // MetaZonePeriodV1 does not require localized time zone data
+                        Ok(vec![Default::default()])
+                    } else {
+
                     Ok(self
                         .source
-                        .get_cldr_paths()?
-                        .cldr_dates("gregorian")
+                        .cldr()?
+                        .dates("gregorian")
                         .list_langs()?
-                        .map(Into::<ResourceOptions>::into)
+                        .map(DataLocale::from)
                         .collect())
+}
                 }
             }
         )+
 
-        icu_provider::make_exportable_provider!(TimeZonesProvider, [$($marker),+,]);
     };
 }
 
-impl_resource_provider!(
+impl_data_provider!(
     TimeZoneFormatsV1Marker,
     ExemplarCitiesV1Marker,
     MetaZoneGenericNamesLongV1Marker,
@@ -121,6 +111,7 @@ impl_resource_provider!(
 
 #[cfg(test)]
 mod tests {
+    use icu_timezone::ZoneVariant;
     use tinystr::tinystr;
 
     use super::*;
@@ -129,11 +120,11 @@ mod tests {
     fn basic_cldr_time_zones() {
         use icu_locid::langid;
 
-        let provider = TimeZonesProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
 
         let time_zone_formats: DataPayload<TimeZoneFormatsV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: langid!("en").into(),
+            .load(DataRequest {
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -142,8 +133,8 @@ mod tests {
         assert_eq!("GMT", time_zone_formats.get().gmt_zero_format);
 
         let exemplar_cities: DataPayload<ExemplarCitiesV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: langid!("en").into(),
+            .load(DataRequest {
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -159,8 +150,8 @@ mod tests {
         );
 
         let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: langid!("en").into(),
+            .load(DataRequest {
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -184,8 +175,8 @@ mod tests {
         );
 
         let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: langid!("en").into(),
+            .load(DataRequest {
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -196,7 +187,7 @@ mod tests {
             specific_names_long
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "aucw")), &tinystr!(8, "standard"))
+                .get_2d(&MetaZoneId(tinystr!(4, "aucw")), &ZoneVariant::standard())
                 .unwrap()
         );
         assert_eq!(
@@ -204,16 +195,16 @@ mod tests {
             specific_names_long
                 .get()
                 .overrides
-                .get(
+                .get_2d(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
-                    &tinystr!(8, "standard")
+                    &ZoneVariant::standard()
                 )
                 .unwrap()
         );
 
         let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: langid!("en").into(),
+            .load(DataRequest {
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -237,8 +228,8 @@ mod tests {
         );
 
         let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: langid!("en").into(),
+            .load(DataRequest {
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -249,7 +240,7 @@ mod tests {
             specific_names_short
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "ampa")), &tinystr!(8, "daylight"))
+                .get_2d(&MetaZoneId(tinystr!(4, "ampa")), &ZoneVariant::daylight())
                 .unwrap()
         );
         assert_eq!(
@@ -257,16 +248,16 @@ mod tests {
             specific_names_short
                 .get()
                 .overrides
-                .get(
+                .get_2d(
                     &TimeZoneBcp47Id(tinystr!(8, "utc")),
-                    &tinystr!(8, "standard")
+                    &ZoneVariant::standard()
                 )
                 .unwrap()
         );
 
         let metazone_period: DataPayload<MetaZonePeriodV1Marker> = provider
-            .load_resource(&DataRequest {
-                options: langid!("en").into(),
+            .load(DataRequest {
+                locale: &langid!("en").into(),
                 metadata: Default::default(),
             })
             .unwrap()
@@ -277,10 +268,7 @@ mod tests {
             metazone_period
                 .get()
                 .0
-                .get_copied(
-                    &TimeZoneBcp47Id(tinystr!(8, "gblon")),
-                    &String::from("1971-10-31 02:00")
-                )
+                .get_copied_2d(&TimeZoneBcp47Id(tinystr!(8, "gblon")), &962040)
                 .unwrap()
         );
     }

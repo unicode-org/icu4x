@@ -2,6 +2,12 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! Serializer configurations for the [`FilesystemExporter`].
+//!
+//! Each serializer is in a child module.
+//!
+//! [`FilesystemExporter`]: super::FilesystemExporter
+
 pub mod bincode;
 pub mod json;
 pub mod postcard;
@@ -22,4 +28,9 @@ pub trait AbstractSerializer {
 
     /// Gets the buffer format currently being serialized.
     fn get_buffer_format(&self) -> BufferFormat;
+
+    /// This can be set to get correct CRLF on Windows.
+    fn is_text_format(&self) -> bool {
+        false
+    }
 }

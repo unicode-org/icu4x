@@ -86,12 +86,8 @@ Here is an example of a `provider.rs` boilerplate for a component:
 ```rust
 use std::borrow::Cow;
 
-pub mod key {
-    use icu_provider::{resource::ResourceKey, resource_key};
-    pub const EXAMPLE_V1: ResourceKey = resource_key!("foo/example@1");
-}
-
 /// This is a sample data struct.
+#[icu_provider::data_struct(SampleDataStructV1Marker = "foo/example@1")]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "serde", derive(Deserialize))]
 #[cfg_attr(feature = "datagen", derive(Serialize))]
@@ -104,15 +100,6 @@ pub struct SampleDataStructV1<'data> {
     /// Do _not_ use skip_serializing_if, see
     /// https://github.com/serde-rs/serde/issues/1732
     pub option_value: Option<i32>,
-}
-
-impl Default for SampleDataStructV1<'_> {
-    fn default() -> Self {
-        SampleDataStructV1 {
-            normal_value: Cow::Borrowed("(undefined)"),
-            option_value: None,
-        }
-    }
 }
 ```
 

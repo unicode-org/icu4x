@@ -10,34 +10,17 @@
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-dates-full/main/en/ca-gregorian.json>
 
 use icu_locid::LanguageIdentifier;
-use litemap::LiteMap;
 use serde::Deserialize;
 use std::borrow::Cow;
+use std::collections::HashMap;
 
 macro_rules! symbols {
-    ($name: ident, $([$alias: expr, $element: ident, $ty: ty]),+ $(,)?) => {
+    ($name: ident, $symbols:item) => {
         pub mod $name {
             use super::*;
 
             #[derive(Debug, PartialEq, Clone, Deserialize)]
-            pub struct Symbols {
-                $(
-                    #[serde(rename = $alias)]
-                    pub $element: $ty
-                ),*
-            }
-
-            symbols!();
-        }
-    };
-    ($name: ident, $([$element: ident, $ty: ty]),+ $(,)?) => {
-        pub mod $name {
-            use super::*;
-
-            #[derive(Debug, PartialEq, Clone, Deserialize)]
-            pub struct Symbols {
-                $(pub $element: $ty),*
-            }
+            $symbols
 
             symbols!();
         }
@@ -68,41 +51,31 @@ macro_rules! symbols {
     }
 }
 
-symbols!(
-    months,
-    ["1", m1, String],
-    ["2", m2, String],
-    ["3", m3, String],
-    ["4", m4, String],
-    ["5", m5, String],
-    ["6", m6, String],
-    ["7", m7, String],
-    ["8", m8, String],
-    ["9", m9, String],
-    ["10", m10, String],
-    ["11", m11, String],
-    ["12", m12, String],
-);
+symbols!(months, pub struct Symbols(pub HashMap<String, String>););
 
 symbols!(
     days,
-    [sun, String],
-    [mon, String],
-    [tue, String],
-    [wed, String],
-    [thu, String],
-    [fri, String],
-    [sat, String],
+    pub struct Symbols {
+        pub sun: String,
+        pub mon: String,
+        pub tue: String,
+        pub wed: String,
+        pub thu: String,
+        pub fri: String,
+        pub sat: String,
+    }
 );
 
 // The day period symbols are Cow<'static, str> instead of String because the Option
 // needs to be retained when converting them into Cow for the data provider.
 symbols!(
     day_periods,
-    ["am", am, Cow<'static, str>],
-    ["pm", pm, Cow<'static, str>],
-    ["noon", noon, Option<Cow<'static, str>>],
-    ["midnight", midnight, Option<Cow<'static, str>>],
+    pub struct Symbols {
+        pub am: Cow<'static, str>,
+        pub pm: Cow<'static, str>,
+        pub noon: Option<Cow<'static, str>>,
+        pub midnight: Option<Cow<'static, str>>,
+    }
 );
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
@@ -130,11 +103,11 @@ impl LengthPattern {
 #[derive(PartialEq, Debug, Deserialize, Clone)]
 pub struct Eras {
     #[serde(rename = "eraNames")]
-    pub names: LiteMap<String, String>,
+    pub names: HashMap<String, String>,
     #[serde(rename = "eraAbbr")]
-    pub abbr: LiteMap<String, String>,
+    pub abbr: HashMap<String, String>,
     #[serde(rename = "eraNarrow")]
-    pub narrow: LiteMap<String, String>,
+    pub narrow: HashMap<String, String>,
 }
 
 #[derive(PartialEq, Debug, Deserialize, Clone)]
@@ -156,7 +129,7 @@ pub struct DateTimeFormats {
 }
 
 #[derive(PartialEq, Clone, Debug, Deserialize)]
-pub struct AvailableFormats(pub LiteMap<String, String>);
+pub struct AvailableFormats(pub HashMap<String, String>);
 
 /// This struct represents a 1:1 mapping of the CLDR ca-gregorian.json data at the key
 /// "main.LANGID.dates.calendars.gregorian" where "LANGID" is the identifier.
@@ -180,7 +153,7 @@ pub struct Dates {
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct DatesCalendars {
-    pub calendars: LiteMap<String, Dates>,
+    pub calendars: HashMap<String, Dates>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -189,7 +162,7 @@ pub struct LangDates {
 }
 
 #[derive(PartialEq, Debug, Deserialize)]
-pub struct LangData(pub LiteMap<LanguageIdentifier, LangDates>);
+pub struct LangData(pub HashMap<LanguageIdentifier, LangDates>);
 
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Resource {

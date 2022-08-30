@@ -19,7 +19,7 @@ use writeable::Writeable;
 /// let provider = FsDataProvider::try_new("/path/to/data/directory")
 ///     .expect_err("Specify a real directory in the line above");
 /// ```
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub struct FsDataProvider {
     root: PathBuf,
     manifest: Manifest,
@@ -48,22 +48,21 @@ impl FsDataProvider {
 impl BufferProvider for FsDataProvider {
     fn load_buffer(
         &self,
-        key: ResourceKey,
-        req: &DataRequest,
+        key: DataKey,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut path_buf = self.root.join(&*key.write_to_string());
         if !path_buf.exists() {
-            return Err(DataErrorKind::MissingResourceKey.with_req(key, req));
+            return Err(DataErrorKind::MissingDataKey.with_req(key, req));
         }
-        path_buf.push(&*req.options.write_to_string());
+        path_buf.push(&*req.locale.write_to_string());
         path_buf.set_extension(self.manifest.file_extension);
         if !path_buf.exists() {
-            return Err(DataErrorKind::MissingResourceOptions.with_req(key, req));
+            return Err(DataErrorKind::MissingLocale.with_req(key, req));
         }
         let buffer =
             fs::read(&path_buf).map_err(|e| DataError::from(e).with_path_context(&path_buf))?;
         let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(self.manifest.buffer_format);
         Ok(DataResponse {
             metadata,

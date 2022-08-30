@@ -18,11 +18,12 @@
 //! - [`StoreIterable`] for methods that return iterators
 //! - [`StoreFromIterator`] to enable `FromIterator` for LiteMap
 //!
-//! To test your implementation, enable the `"testing"` feature and then pass an empty instance
-//! of `LiteMap` with your store into [`check_litemap()`].
+//! To test your implementation, enable the `"testing"` feature and use [`check_store()`].
 //!
-//! [`check_litemap()`]: crate::testing::check_litemap
+//! [`check_store()`]: crate::testing::check_store
 
+mod slice_impl;
+#[cfg(feature = "alloc")]
 mod vec_impl;
 
 use core::cmp::Ordering;
@@ -30,23 +31,17 @@ use core::iter::DoubleEndedIterator;
 use core::iter::FromIterator;
 use core::iter::Iterator;
 
+/// Trait to enable const construction of empty store.
+pub trait StoreConstEmpty<K: ?Sized, V: ?Sized> {
+    /// An empty store
+    const EMPTY: Self;
+}
+
 /// Trait to enable pluggable backends for LiteMap.
 ///
 /// Some methods have default implementations provided for convenience; however, it is generally
 /// better to implement all methods that your data store supports.
-pub trait Store<K, V> {
-    type KeyValueIntoIter: Iterator<Item = (K, V)>;
-
-    /// Creates a new store with the specified capacity hint.
-    ///
-    /// Implementations may ignore the argument if they do not support pre-allocating capacity.
-    fn lm_with_capacity(capacity: usize) -> Self;
-
-    /// Reserves additional capacity in the store.
-    ///
-    /// Implementations may ignore the argument if they do not support pre-allocating capacity.
-    fn lm_reserve(&mut self, additional: usize);
-
+pub trait Store<K: ?Sized, V: ?Sized>: Sized {
     /// Returns the number of elements in the store.
     fn lm_len(&self) -> usize;
 
@@ -57,9 +52,6 @@ pub trait Store<K, V> {
 
     /// Gets a key/value pair at the specified index.
     fn lm_get(&self, index: usize) -> Option<(&K, &V)>;
-
-    /// Gets a key/value pair at the specified index, with a mutable value.
-    fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)>;
 
     /// Gets the last element in the store, or None if the store is empty.
     fn lm_last(&self) -> Option<(&K, &V)> {
@@ -77,7 +69,21 @@ pub trait Store<K, V> {
     fn lm_binary_search_by<F>(&self, cmp: F) -> Result<usize, usize>
     where
         F: FnMut(&K) -> Ordering;
+}
 
+pub trait StoreMut<K, V>: Store<K, V> {
+    /// Creates a new store with the specified capacity hint.
+    ///
+    /// Implementations may ignore the argument if they do not support pre-allocating capacity.
+    fn lm_with_capacity(capacity: usize) -> Self;
+
+    /// Reserves additional capacity in the store.
+    ///
+    /// Implementations may ignore the argument if they do not support pre-allocating capacity.
+    fn lm_reserve(&mut self, additional: usize);
+
+    /// Gets a key/value pair at the specified index, with a mutable value.
+    fn lm_get_mut(&mut self, index: usize) -> Option<(&K, &mut V)>;
     /// Pushes one additional item onto the store.
     fn lm_push(&mut self, key: K, value: V);
 
@@ -94,26 +100,6 @@ pub trait Store<K, V> {
     ///
     /// Panics if `index` is greater than the length.
     fn lm_remove(&mut self, index: usize) -> (K, V);
-
-    /// Adds items from another store to the end of this store.
-    fn lm_extend_end(&mut self, other: Self)
-    where
-        Self: Sized,
-    {
-        for item in other.lm_into_iter() {
-            self.lm_push(item.0, item.1);
-        }
-    }
-
-    /// Adds items from another store to the beginning of this store.
-    fn lm_extend_start(&mut self, other: Self)
-    where
-        Self: Sized,
-    {
-        for (i, item) in other.lm_into_iter().enumerate() {
-            self.lm_insert(i, item.0, item.1);
-        }
-    }
 
     /// Removes all items from the store.
     fn lm_clear(&mut self);
@@ -134,21 +120,45 @@ pub trait Store<K, V> {
             }
         }
     }
-
-    /// Returns an iterator that moves every item from this store.
-    fn lm_into_iter(self) -> Self::KeyValueIntoIter;
 }
 
 /// Iterator methods for the LiteMap store.
 pub trait StoreIterable<'a, K: 'a, V: 'a>: Store<K, V> {
     type KeyValueIter: Iterator<Item = (&'a K, &'a V)> + DoubleEndedIterator + 'a;
-    type KeyValueIterMut: Iterator<Item = (&'a K, &'a mut V)> + DoubleEndedIterator + 'a;
 
     /// Returns an iterator over key/value pairs.
     fn lm_iter(&'a self) -> Self::KeyValueIter;
+}
+
+pub trait StoreIterableMut<'a, K: 'a, V: 'a>: StoreMut<K, V> + StoreIterable<'a, K, V> {
+    type KeyValueIterMut: Iterator<Item = (&'a K, &'a mut V)> + DoubleEndedIterator + 'a;
+    type KeyValueIntoIter: Iterator<Item = (K, V)>;
 
     /// Returns an iterator over key/value pairs, with a mutable value.
     fn lm_iter_mut(&'a mut self) -> Self::KeyValueIterMut;
+
+    /// Returns an iterator that moves every item from this store.
+    fn lm_into_iter(self) -> Self::KeyValueIntoIter;
+
+    /// Adds items from another store to the end of this store.
+    fn lm_extend_end(&mut self, other: Self)
+    where
+        Self: Sized,
+    {
+        for item in other.lm_into_iter() {
+            self.lm_push(item.0, item.1);
+        }
+    }
+
+    /// Adds items from another store to the beginning of this store.
+    fn lm_extend_start(&mut self, other: Self)
+    where
+        Self: Sized,
+    {
+        for (i, item) in other.lm_into_iter().enumerate() {
+            self.lm_insert(i, item.0, item.1);
+        }
+    }
 }
 
 /// A store that can be built from a tuple iterator.

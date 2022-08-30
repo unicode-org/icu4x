@@ -32,20 +32,31 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
 use crate::julian::Julian;
-use crate::{
-    types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
-    DateTime, DateTimeError,
-};
-use core::convert::TryInto;
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::marker::PhantomData;
+use tinystr::tinystr;
 
-/// The Coptic calendar
+/// The [Coptic Calendar]
+///
+/// The [Coptic calendar] is a solar calendar used by the Coptic Orthodox Church, with twelve normal months
+/// and a thirteenth small epagomenal month.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Coptic calendar]: https://en.wikipedia.org/wiki/Coptic_calendar
+///
+/// # Era codes
+///
+/// This calendar supports two era codes: `"bd"`, and `"ad"`, corresponding to the Before Diocletian and After Diocletian/Anno Martyrum
+/// eras. 1 A.M. is equivalent to 284 C.E.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Coptic;
 
+/// The inner date type used for representing [`Date`]s of [`Coptic`]. See [`Date`] and [`Coptic`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct CopticDateInner(pub(crate) ArithmeticDate<Coptic>);
 
@@ -64,7 +75,7 @@ impl CalendarArithmetic for Coptic {
         }
     }
 
-    fn months_for_every_year() -> u8 {
+    fn months_for_every_year(_: i32) -> u8 {
         13
     }
 
@@ -75,6 +86,29 @@ impl CalendarArithmetic for Coptic {
 
 impl Calendar for Coptic {
     type DateInner = CopticDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let year = if era.0 == tinystr!(16, "ad") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            year
+        } else if era.0 == tinystr!(16, "bd") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            1 - year
+        } else {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(CopticDateInner)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> CopticDateInner {
         let fixed_iso = Iso::fixed_from_iso(*iso.inner());
         Self::coptic_from_fixed(fixed_iso)
@@ -117,11 +151,11 @@ impl Calendar for Coptic {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::Year {
-        crate::gregorian::year_as_gregorian(date.0.year)
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        year_as_coptic(date.0.year)
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.solar_month()
     }
 
@@ -135,9 +169,9 @@ impl Calendar for Coptic {
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
             days_in_year: date.0.days_in_year(),
-            prev_year: crate::gregorian::year_as_gregorian(prev_year),
+            prev_year: year_as_coptic(prev_year),
             days_in_prev_year: Coptic::days_in_year_direct(prev_year),
-            next_year: crate::gregorian::year_as_gregorian(next_year),
+            next_year: year_as_coptic(next_year),
         }
     }
 
@@ -150,6 +184,8 @@ impl Calendar for Coptic {
     }
 }
 
+pub(crate) const COPTIC_EPOCH: i32 = Julian::fixed_from_julian_integers(284, 8, 29);
+
 impl Coptic {
     // "Fixed" is a day count representation of calendars staring from Jan 1st of year 1 of the Georgian Calendar.
     // The fixed date algorithms are from
@@ -157,35 +193,30 @@ impl Coptic {
     //
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1978
     fn fixed_from_coptic(date: ArithmeticDate<Coptic>) -> i32 {
-        let coptic_epoch = Julian::fixed_from_julian_integers(284, 8, 29);
-        coptic_epoch - 1
+        COPTIC_EPOCH - 1
             + 365 * (date.year - 1)
             + (date.year / 4)
             + 30 * (date.month as i32 - 1)
             + date.day as i32
     }
 
-    pub(crate) fn fixed_from_coptic_integers(year: i32, month: i32, day: i32) -> i32 {
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    pub(crate) fn fixed_from_coptic_integers(year: i32, month: u8, day: u8) -> i32 {
         Self::fixed_from_coptic(ArithmeticDate {
             year,
-            month: month.try_into().unwrap(),
-            day: day.try_into().unwrap(),
+            month,
+            day,
             marker: PhantomData,
         })
     }
 
     // Lisp code reference: https://github.com/EdReingold/calendar-code2/blob/1ee51ecfaae6f856b0d7de3e36e9042100b4f424/calendar.l#L1990
     pub(crate) fn coptic_from_fixed(date: i32) -> CopticDateInner {
-        let coptic_epoch = Julian::fixed_from_julian_integers(284, 8, 29);
-        let year = (4 * (date - coptic_epoch) + 1463) / 1461;
-        let month = (date - Self::fixed_from_coptic_integers(year, 1, 1)) / 30 + 1;
-        let day = date + 1 - Self::fixed_from_coptic_integers(year, month, 1);
+        let year = (4 * (date - COPTIC_EPOCH) + 1463) / 1461;
+        let month = ((date - Self::fixed_from_coptic_integers(year, 1, 1)) / 30 + 1) as u8; // <= 12 < u8::MAX
+        let day = (date + 1 - Self::fixed_from_coptic_integers(year, month, 1)) as u8; // <= days_in_month < u8::MAX
 
-        #[allow(clippy::unwrap_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        *Date::new_coptic_date(year, month as u8, day as u8)
-            .unwrap()
-            .inner()
+        #[allow(clippy::unwrap_used)] // day and month have the correct bounds
+        *Date::new_coptic_date(year, month, day).unwrap().inner()
     }
 
     fn days_in_year_direct(year: i32) -> u32 {
@@ -199,6 +230,8 @@ impl Coptic {
 
 impl Date<Coptic> {
     /// Construct new Coptic Date.
+    ///
+    /// Negative years are in the B.D. era, starting with 0 = 1 B.D.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -230,6 +263,8 @@ impl Date<Coptic> {
 impl DateTime<Coptic> {
     /// Construct a new Coptic datetime from integers.
     ///
+    /// Negative years are in the B.D. era, starting with 0 = 1 B.D.
+    ///
     /// ```rust
     /// use icu::calendar::DateTime;
     ///
@@ -255,5 +290,21 @@ impl DateTime<Coptic> {
             date: Date::new_coptic_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
+    }
+}
+
+fn year_as_coptic(year: i32) -> types::FormattableYear {
+    if year > 0 {
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "ad")),
+            number: year,
+            related_iso: None,
+        }
+    } else {
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "bd")),
+            number: 1 - year,
+            related_iso: None,
+        }
     }
 }

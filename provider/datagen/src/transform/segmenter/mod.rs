@@ -2,37 +2,23 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! This module contains implementations of the [`ICU4X`] [data provider] interface
-//! based on Unicode properties and TOML files implementing [Unicode Standard Annex #14][UAX14] and
-//! [Unicode Standard Annex #29][UAX29] breaking rules.
-//!
-//! This module exports feature-specific providers. Use [`crate::create_datagen_provider`]
-//! for an all-inclusive provider.
-//!
-//! **Important:** This data provider implementation is not optimized
-//! for production use. Read more in the [data provider] docs.
-//!
-//! [`ICU4X`]: ../icu/index.html
-//! [data provider]: icu_provider
-//! [UAX14]: https://www.unicode.org/reports/tr14/
-//! [UAX29]: https://www.unicode.org/reports/tr29/
+//! This module contains provider implementations backed by built-in segmentation data.
 
-use crate::transform::uprops::{
-    BinaryPropertyUnicodeSetDataProvider, EnumeratedPropertyCodePointTrieProvider,
-};
-use crate::SourceData;
-use icu_codepointtrie::CodePointTrie;
 use icu_codepointtrie_builder::{CodePointTrieBuilder, CodePointTrieBuilderData};
+use icu_collections::codepointtrie::CodePointTrie;
+use icu_locid::{langid, locale};
 use icu_properties::{
-    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, SentenceBreak,
-    WordBreak,
+    maps, sets, EastAsianWidth, GeneralCategory, GraphemeClusterBreak, LineBreak, Script,
+    SentenceBreak, WordBreak,
 };
-use icu_provider::datagen::IterableResourceProvider;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
+use icu_segmenter::provider::*;
 use icu_segmenter::symbols::*;
-use icu_segmenter::*;
 use std::fmt::Debug;
 use zerovec::ZeroVec;
+
+mod lstm;
 
 // state machine name define by builtin name
 // [[tables]]
@@ -62,7 +48,7 @@ struct SegmenterProperty {
 
 // state machine break result define
 // The follow is "Double_Quote x Double_Quote".
-// [[tables]]
+// [[rules]]
 // left = [ "Double_Qoute" ]
 // right = [ "Double_Qoute" ]
 // break_state = true # true if break opportunity.
@@ -228,94 +214,69 @@ fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
     }
 }
 
-fn is_cjk_fullwidth(eaw: &CodePointTrie<EastAsianWidth>, codepoint: u32) -> bool {
+fn is_cjk_fullwidth(eaw: maps::CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
     matches!(
-        eaw.get(codepoint),
+        eaw.get_u32(codepoint),
         EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
     )
 }
 
-/// A data provider reading from segmenter rule files.
-#[derive(Debug)]
-pub struct SegmenterRuleProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for SegmenterRuleProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl SegmenterRuleProvider {
+impl crate::DatagenProvider {
     fn generate_rule_break_data(
         &self,
-        key: ResourceKey,
+        key: DataKey,
     ) -> Result<RuleBreakDataV1<'static>, DataError> {
         let segmenter = self
             .source
-            .get_segmenter_paths()?
+            .segmenter()?
             .read_and_parse_toml::<SegmenterRuleTable>(&format!(
                 "{}.toml",
                 key.get_path()
                     .split(&['/', '@'])
                     .nth(1)
-                    .expect("ResourceKey format should be valid!")
+                    .expect("DataKey format should be valid!")
             ))?;
 
-        // Load enumerate Unicode property dependencies.
-        let cp_map_provider = EnumeratedPropertyCodePointTrieProvider::from(&self.source);
+        let data = maps::load_word_break(self).expect("The data should be valid!");
+        let wb = data.as_borrowed();
 
-        let payload = maps::get_word_break(&cp_map_provider).expect("The data should be valid!");
-        let wb = &payload.get().code_point_trie;
+        let data = maps::load_grapheme_cluster_break(self).expect("The data should be valid!");
+        let gb = data.as_borrowed();
 
-        let payload =
-            maps::get_grapheme_cluster_break(&cp_map_provider).expect("The data should be valid!");
-        let gb = &payload.get().code_point_trie;
+        let data = maps::load_sentence_break(self).expect("The data should be valid!");
+        let sb = data.as_borrowed();
 
-        let payload =
-            maps::get_sentence_break(&cp_map_provider).expect("The data should be valid!");
-        let sb = &payload.get().code_point_trie;
+        let data = maps::load_line_break(self).expect("The data should be valid!");
+        let lb = data.as_borrowed();
 
-        let payload = maps::get_line_break(&cp_map_provider).expect("The data should be valid!");
-        let lb = &payload.get().code_point_trie;
+        let data = maps::load_east_asian_width(self).expect("The data should be valid!");
+        let eaw = data.as_borrowed();
 
-        let payload =
-            maps::get_east_asian_width(&cp_map_provider).expect("The data should be valid!");
-        let eaw = &payload.get().code_point_trie;
+        let data = maps::load_general_category(self).expect("The data should be valid!");
+        let gc = data.as_borrowed();
 
-        let payload =
-            maps::get_general_category(&cp_map_provider).expect("The data should be valid!");
-        let gc = &payload.get().code_point_trie;
+        let data = maps::load_script(self).expect("The data should be valid");
+        let script = data.as_borrowed();
 
-        // Load binary Unicode property dependencies.
-        let uniset_provider = BinaryPropertyUnicodeSetDataProvider::from(&self.source);
-
-        let payload =
-            sets::get_extended_pictographic(&uniset_provider).expect("The data should be valid!");
-        let extended_pictographic = &payload.get().inv_list;
+        let data = sets::load_extended_pictographic(self).expect("The data should be valid!");
+        let extended_pictographic = data.as_borrowed();
 
         // As of Unicode 14.0.0, the break property and the largest codepoint defined in UCD are
         // summarized in the following list. See details in the property txt in
-        // https://www.unicode.org/Public/14.0.0/ucd/auxiliary/.
+        // https://www.unicode.org/Public/14.0.0/ucd/
         //
+        // Line Break Property: U+E01EF ; CM [1]
         // Grapheme Break Property: U+E0FFF ; Control
         // Sentence Break Property: U+E01EF ; Extend
         // Word Break Property: U+E01EF ; Extend
         //
         // The table length should be large enough to contain all codepoints.
-        const UAX29_CODEPOINT_TABLE_LEN: usize = 0xE1000;
+        //
+        // [1] In LineBreak.txt, it defines F0000..FFFFD and 100000..10FFFD to be "XX", which are
+        // the default unassigned values, so it's ok to omit them in the table.
+        const CODEPOINT_TABLE_LEN: usize = 0xE1000;
 
-        // The property values of codepoints >= U+0x20000 are built into the line segmenter.
-        const UAX14_CODEPOINT_TABLE_LEN: usize = 0x20000;
-
-        let mut properties_map = if segmenter.segmenter_type == "line" {
-            vec![0; UAX14_CODEPOINT_TABLE_LEN]
-        } else {
-            vec![0; UAX29_CODEPOINT_TABLE_LEN]
-        };
+        let mut properties_map = vec![0; CODEPOINT_TABLE_LEN];
         let mut properties_names = Vec::<String>::new();
         let mut simple_properties_count = 0;
 
@@ -351,18 +312,30 @@ impl SegmenterRuleProvider {
 
                         if p.name == "SA" {
                             // Word break property doesn't define SA, but we will use non-UAX29 rules.
-                            // SA property is within 0..U+0x20000
-                            for c in 0..0x20000 {
-                                if lb.get(c) == LineBreak::ComplexContext {
+                            // SA/CJ property is within 0..U+0x40000
+                            for c in 0..0x40000 {
+                                if lb.get_u32(c) == LineBreak::ComplexContext {
                                     properties_map[c as usize] = property_index
+                                } else if let Some(c) = char::from_u32(c) {
+                                    match script.get(c) {
+                                        Script::Han | Script::Hiragana => {
+                                            properties_map[c as usize] = property_index;
+                                        }
+                                        _ => {}
+                                    }
                                 }
                             }
+
                             continue;
                         }
 
+                        // TODO(#2239):
+                        // How to handle Katakana in UAX29? UAX29 defines Katakana rule, but CJ dictionary has another rules.
+                        // Katakana will use UAX#29 rules instead of dictionary.
+
                         let prop = get_word_segmenter_value_from_name(&*p.name);
-                        for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
-                            if wb.get(c) == prop {
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if wb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -384,8 +357,8 @@ impl SegmenterRuleProvider {
                         }
 
                         let prop = get_grapheme_segmenter_value_from_name(&*p.name);
-                        for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
-                            if gb.get(c) == prop {
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if gb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -394,8 +367,8 @@ impl SegmenterRuleProvider {
 
                     "sentence" => {
                         let prop = get_sentence_segmenter_value_from_name(&*p.name);
-                        for c in 0..(UAX29_CODEPOINT_TABLE_LEN as u32) {
-                            if sb.get(c) == prop {
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if sb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -410,17 +383,17 @@ impl SegmenterRuleProvider {
                             || p.name == "PO_EAW"
                             || p.name == "PR_EAW"
                         {
-                            for i in 0..0x20000 {
-                                match lb.get(i) {
+                            for i in 0..(CODEPOINT_TABLE_LEN as u32) {
+                                match lb.get_u32(i) {
                                     LineBreak::OpenPunctuation => {
                                         if (p.name == "OP_OP30"
-                                            && (eaw.get(i) != EastAsianWidth::Fullwidth
-                                                && eaw.get(i) != EastAsianWidth::Halfwidth
-                                                && eaw.get(i) != EastAsianWidth::Wide))
+                                            && (eaw.get_u32(i) != EastAsianWidth::Fullwidth
+                                                && eaw.get_u32(i) != EastAsianWidth::Halfwidth
+                                                && eaw.get_u32(i) != EastAsianWidth::Wide))
                                             || (p.name == "OP_EA"
-                                                && (eaw.get(i) == EastAsianWidth::Fullwidth
-                                                    || eaw.get(i) == EastAsianWidth::Halfwidth
-                                                    || eaw.get(i) == EastAsianWidth::Wide))
+                                                && (eaw.get_u32(i) == EastAsianWidth::Fullwidth
+                                                    || eaw.get_u32(i) == EastAsianWidth::Halfwidth
+                                                    || eaw.get_u32(i) == EastAsianWidth::Wide))
                                         {
                                             properties_map[i as usize] = property_index;
                                         }
@@ -429,9 +402,9 @@ impl SegmenterRuleProvider {
                                     LineBreak::CloseParenthesis => {
                                         // CP_EA is unused on the latest spec.
                                         if p.name == "CP_EA"
-                                            && (eaw.get(i) == EastAsianWidth::Fullwidth
-                                                || eaw.get(i) == EastAsianWidth::Halfwidth
-                                                || eaw.get(i) == EastAsianWidth::Wide)
+                                            && (eaw.get_u32(i) == EastAsianWidth::Fullwidth
+                                                || eaw.get_u32(i) == EastAsianWidth::Halfwidth
+                                                || eaw.get_u32(i) == EastAsianWidth::Wide)
                                         {
                                             properties_map[i as usize] = property_index;
                                         }
@@ -439,7 +412,7 @@ impl SegmenterRuleProvider {
 
                                     LineBreak::Ideographic => {
                                         if p.name == "ID_CN"
-                                            && gc.get(i) == GeneralCategory::Unassigned
+                                            && gc.get_u32(i) == GeneralCategory::Unassigned
                                         {
                                             if let Some(c) = char::from_u32(i) {
                                                 if extended_pictographic.contains(c) {
@@ -468,8 +441,8 @@ impl SegmenterRuleProvider {
                         }
 
                         let prop = get_line_segmenter_value_from_name(&*p.name);
-                        for c in 0..0x20000 {
-                            if lb.get(c) == prop {
+                        for c in 0..(CODEPOINT_TABLE_LEN as u32) {
+                            if lb.get_u32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -486,7 +459,7 @@ impl SegmenterRuleProvider {
                 simple_properties_count += 1;
                 for c in codepoint {
                     let c = *c as usize;
-                    if c > UAX29_CODEPOINT_TABLE_LEN {
+                    if c > CODEPOINT_TABLE_LEN {
                         continue;
                     }
                     properties_map[c] = property_index;
@@ -613,9 +586,27 @@ impl SegmenterRuleProvider {
             data: CodePointTrieBuilderData::ValuesByCodePoint(&properties_map),
             default_value: 0,
             error_value: 0,
-            trie_type: self.source.trie_type(),
+            trie_type: self.source.trie_type().to_internal(),
         }
         .build();
+
+        if segmenter.segmenter_type == "line" {
+            // Note: The following match statement had been used in line.rs:
+            //
+            // match codepoint {
+            //     0x20000..=0x2fffd => ID,
+            //     0x30000..=0x3fffd => ID,
+            //     0xe0001 => CM,
+            //     0xe0020..=0xe007f => CM,
+            //     0xe0100..=0xe01ef => CM,
+            //     _ => XX,
+            // }
+            debug_assert_eq!(property_trie.get(0x20000), ID);
+            debug_assert_eq!(property_trie.get(0x3fffd), ID);
+            debug_assert_eq!(property_trie.get(0xd0000), XX);
+            debug_assert_eq!(property_trie.get(0xe0001), CM);
+            debug_assert_eq!(property_trie.get(0xe0020), CM);
+        }
 
         Ok(RuleBreakDataV1 {
             property_table: RuleBreakPropertyTable(property_trie),
@@ -629,11 +620,8 @@ impl SegmenterRuleProvider {
     }
 }
 
-impl ResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load_resource(
-        &self,
-        _req: &DataRequest,
-    ) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
+impl DataProvider<LineBreakDataV1Marker> for crate::DatagenProvider {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<LineBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(LineBreakDataV1Marker::KEY)?;
 
         Ok(DataResponse {
@@ -643,10 +631,10 @@ impl ResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-impl ResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load_resource(
+impl DataProvider<GraphemeClusterBreakDataV1Marker> for crate::DatagenProvider {
+    fn load(
         &self,
-        _req: &DataRequest,
+        _req: DataRequest,
     ) -> Result<DataResponse<GraphemeClusterBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(GraphemeClusterBreakDataV1Marker::KEY)?;
 
@@ -657,11 +645,8 @@ impl ResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvide
     }
 }
 
-impl ResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load_resource(
-        &self,
-        _req: &DataRequest,
-    ) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
+impl DataProvider<WordBreakDataV1Marker> for crate::DatagenProvider {
+    fn load(&self, _req: DataRequest) -> Result<DataResponse<WordBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(WordBreakDataV1Marker::KEY)?;
 
         Ok(DataResponse {
@@ -671,10 +656,10 @@ impl ResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-impl ResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn load_resource(
+impl DataProvider<SentenceBreakDataV1Marker> for crate::DatagenProvider {
+    fn load(
         &self,
-        _req: &DataRequest,
+        _req: DataRequest,
     ) -> Result<DataResponse<SentenceBreakDataV1Marker>, DataError> {
         let break_data = self.generate_rule_break_data(SentenceBreakDataV1Marker::KEY)?;
 
@@ -685,37 +670,84 @@ impl ResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
     }
 }
 
-icu_provider::make_exportable_provider!(
-    SegmenterRuleProvider,
-    [
-        LineBreakDataV1Marker,
-        GraphemeClusterBreakDataV1Marker,
-        WordBreakDataV1Marker,
-        SentenceBreakDataV1Marker,
-    ]
-);
-
-impl IterableResourceProvider<LineBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<LineBreakDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableResourceProvider<GraphemeClusterBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<GraphemeClusterBreakDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableResourceProvider<WordBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<WordBreakDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }
 }
 
-impl IterableResourceProvider<SentenceBreakDataV1Marker> for SegmenterRuleProvider {
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<SentenceBreakDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
+    }
+}
+
+#[derive(serde::Deserialize, Debug)]
+struct SegmenterDictionaryData {
+    trie_data: Vec<u16>,
+}
+
+impl crate::DatagenProvider {
+    fn get_toml_filename(locale: &DataLocale) -> Option<&'static str> {
+        if locale.get_langid() == langid!("km") {
+            Some("dictionary_km.toml")
+        } else if locale.get_langid() == langid!("ja") {
+            Some("dictionary_cj.toml")
+        } else if locale.get_langid() == langid!("lo") {
+            Some("dictionary_lo.toml")
+        } else if locale.get_langid() == langid!("my") {
+            Some("dictionary_my.toml")
+        } else if locale.get_langid() == langid!("th") {
+            Some("dictionary_th.toml")
+        } else {
+            None
+        }
+    }
+}
+
+impl DataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<UCharDictionaryBreakDataV1Marker>, DataError> {
+        let toml_data = self
+            .source
+            .segmenter()?
+            .read_and_parse_toml::<SegmenterDictionaryData>(
+                Self::get_toml_filename(req.locale)
+                    .ok_or_else(|| DataErrorKind::MissingLocale.into_error())?,
+            )?;
+        let data = UCharDictionaryBreakDataV1 {
+            trie_data: ZeroVec::alloc_from_slice(&toml_data.trie_data),
+        };
+        Ok(DataResponse {
+            metadata: DataResponseMetadata::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+}
+
+impl IterableDataProvider<UCharDictionaryBreakDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![
+            locale!("th").into(),
+            locale!("km").into(),
+            locale!("lo").into(),
+            locale!("my").into(),
+            locale!("ja").into(),
+        ])
     }
 }
 
@@ -725,9 +757,9 @@ mod tests {
 
     #[test]
     fn load_grapheme_cluster_data() {
-        let provider = SegmenterRuleProvider::from(&SourceData::for_test());
+        let provider = crate::DatagenProvider::for_test();
         let payload: DataPayload<GraphemeClusterBreakDataV1Marker> = provider
-            .load_resource(&DataRequest::default())
+            .load(Default::default())
             .expect("Loading should succeed!")
             .take_payload()
             .expect("Data should be present!");

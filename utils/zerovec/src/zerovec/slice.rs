@@ -58,6 +58,18 @@ where
         T::ULE::parse_byte_slice(bytes).map(Self::from_ule_slice)
     }
 
+    /// Uses a `&[u8]` buffer as a `ZeroVec<T>` without any verification.
+    ///
+    /// # Safety
+    ///
+    /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
+    pub const unsafe fn from_bytes_unchecked(bytes: &[u8]) -> &Self {
+        // &[u8] and &[T::ULE] are the same slice with different length metadata.
+        let (data, mut metadata): (usize, usize) = core::mem::transmute(bytes);
+        metadata /= core::mem::size_of::<T::ULE>();
+        core::mem::transmute((data, metadata))
+    }
+
     /// Construct a `&ZeroSlice<T>` from a slice of ULEs.
     ///
     /// This function can be used for constructing ZeroVecs in a const context, avoiding
@@ -319,8 +331,37 @@ where
     /// assert_eq!(it.next(), None);
     /// ```
     #[inline]
-    pub fn iter(&self) -> impl DoubleEndedIterator<Item = T> + '_ {
+    pub fn iter(&self) -> impl DoubleEndedIterator<Item = T> + ExactSizeIterator<Item = T> + '_ {
         self.as_ule_slice().iter().copied().map(T::from_unaligned)
+    }
+
+    /// Returns a tuple with the first element and a subslice of the remaining elements.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use zerovec::ule::AsULE;
+    /// use zerovec::ZeroSlice;
+    ///
+    /// const DATA: &ZeroSlice<u16> =
+    ///   ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([211, 281, 421, 32973,]));
+    ///   const EXPECTED_VALUE: (u16, &ZeroSlice<u16>) = (
+    ///     211,
+    ///     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([281, 421, 32973,])),
+    ///   );
+    /// assert_eq!(EXPECTED_VALUE, DATA.split_first().unwrap());
+    /// ```
+    #[inline]
+    pub fn split_first(&self) -> Option<(T, &ZeroSlice<T>)> {
+        if let Some(first) = self.first() {
+            return Some((
+                first,
+                // `unwrap()` must succeed, because `first()` returned `Some`.
+                #[allow(clippy::unwrap_used)]
+                self.get_subslice(1..self.len()).unwrap(),
+            ));
+        }
+        None
     }
 }
 
@@ -483,5 +524,39 @@ where
 {
     fn default() -> Self {
         ZeroSlice::from_ule_slice(&[])
+    }
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_split_first() {
+        {
+            // empty slice.
+            assert_eq!(None, ZeroSlice::<u16>::new_empty().split_first());
+        }
+        {
+            // single element slice
+            const DATA: &ZeroSlice<u16> =
+                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([211]));
+            assert_eq!((211, ZeroSlice::new_empty()), DATA.split_first().unwrap());
+        }
+        {
+            // slice with many elements.
+            const DATA: &ZeroSlice<u16> =
+                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
+                    211, 281, 421, 32973,
+                ]));
+            const EXPECTED_VALUE: (u16, &ZeroSlice<u16>) = (
+                211,
+                ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
+                    281, 421, 32973,
+                ])),
+            );
+
+            assert_eq!(EXPECTED_VALUE, DATA.split_first().unwrap());
+        }
     }
 }

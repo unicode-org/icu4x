@@ -46,8 +46,7 @@ pub(crate) mod internal {
         let frac_part = if n.fract() == 0.0 {
             ""
         } else {
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // fract output shape
             &raw_frac_part[2..]
         };
 
@@ -241,9 +240,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         L: ecma402_traits::Locale,
         Self: Sized,
     {
-        // TODO: introduce a global data provider here.
-        let dp = icu_provider::inv::InvariantDataProvider;
-        Self::try_new_with_provider(l, opts, &dp)
+        Self::try_new_with_provider(l, opts, &crate::BakedDataProvider)
     }
 
     fn select<W>(&self, number: f64, writer: &mut W) -> std::fmt::Result
@@ -251,7 +248,7 @@ impl ecma402_traits::pluralrules::PluralRules for PluralRules {
         W: std::fmt::Write,
     {
         let op = internal::to_icu4x_operands(number, self.opts.clone());
-        let result = self.rep.select(op);
+        let result = self.rep.category_for(op);
         write!(writer, "{}", internal::as_str(result))
     }
 }
@@ -265,48 +262,46 @@ impl PluralRules {
     ) -> Result<Self, PluralRulesError>
     where
         L: ecma402_traits::Locale,
-        P: icu_provider::ResourceProvider<ipr::provider::OrdinalV1Marker>
-            + icu_provider::ResourceProvider<ipr::provider::CardinalV1Marker>,
+        P: icu_provider::DataProvider<ipr::provider::OrdinalV1Marker>
+            + icu_provider::DataProvider<ipr::provider::CardinalV1Marker>,
         Self: Sized,
     {
-        let locale: String = format!("{}", l);
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let locale: icu::locid::Locale = locale
-            .parse()
-            .expect("Converting from locale string to locale should always succeed");
         let rule_type = internal::to_icu4x_type(&opts.in_type);
 
-        // Oops, there is no slot in the ECMA 402 APIs to add the data provider.  What to do?
-        let rep = ipr::PluralRules::try_new(locale, provider, rule_type)?;
+        let rep = ipr::PluralRules::try_new_unstable(
+            provider,
+            &crate::DataLocale::from_ecma_locale(l),
+            rule_type,
+        )?;
         Ok(Self { opts, rep })
     }
 }
 
 #[cfg(test)]
 mod testing {
+    use crate::testing::TestLocale;
     use ecma402_traits::pluralrules;
     use ecma402_traits::pluralrules::PluralRules;
-    use icu::locid::{locale, Locale};
     use icu::plurals::PluralRulesError;
 
     #[test]
     fn plurals_per_locale() -> Result<(), PluralRulesError> {
         #[derive(Debug, Clone)]
         struct TestCase {
-            locale: Locale,
+            locale: TestLocale,
             opts: pluralrules::Options,
             numbers: Vec<f64>,
             expected: Vec<&'static str>,
         }
         let tests = vec![
             TestCase {
-                locale: locale!("ar"),
+                locale: TestLocale("ar"),
                 opts: Default::default(),
                 numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
                 expected: vec!["zero", "one", "two", "few", "few", "many"],
             },
             TestCase {
-                locale: locale!("ar"),
+                locale: TestLocale("ar"),
                 opts: pluralrules::Options {
                     in_type: pluralrules::options::Type::Ordinal,
                     ..Default::default()
@@ -315,13 +310,13 @@ mod testing {
                 expected: vec!["other", "other", "other", "other", "other", "other"],
             },
             TestCase {
-                locale: locale!("sr"),
+                locale: TestLocale("sr"),
                 opts: Default::default(),
                 numbers: vec![0.0, 1.0, 2.0, 5.0, 6.0, 18.0],
                 expected: vec!["other", "one", "few", "other", "other", "other"],
             },
             TestCase {
-                locale: locale!("sr"),
+                locale: TestLocale("sr"),
                 opts: pluralrules::Options {
                     in_type: pluralrules::options::Type::Ordinal,
                     ..Default::default()
@@ -330,13 +325,8 @@ mod testing {
                 expected: vec!["other", "other", "other", "other", "other", "other"],
             },
         ];
-        let provider = icu_testdata::get_provider();
         for (i, test) in tests.into_iter().enumerate() {
-            let plr = super::PluralRules::try_new_with_provider(
-                crate::Locale::FromLocale(test.locale),
-                test.opts,
-                &provider,
-            )?;
+            let plr = super::PluralRules::try_new(test.locale, test.opts)?;
             assert_eq!(
                 test.numbers
                     .iter()

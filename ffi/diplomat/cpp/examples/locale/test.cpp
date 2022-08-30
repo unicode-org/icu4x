@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 #include "../../include/ICU4XLocale.hpp"
+#include "../../include/ICU4XLogger.hpp"
 
 #include <iostream>
 
@@ -30,7 +31,8 @@ static bool test_string(std::string_view actualString,
 }
 
 int main() {
-  ICU4XLocale locale = ICU4XLocale::create("es-ES").value();
+  ICU4XLogger::init_simple_logger();
+  ICU4XLocale locale = ICU4XLocale::create("es-ES").ok().value();
   if (!test_locale(locale, "es-ES", "Created a locale")) {
     return 1;
   }

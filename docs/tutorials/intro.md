@@ -23,7 +23,7 @@ cargo 1.51.0 (43b129a20 2021-03-16)
 ```
 
 In this tutorial we are going to use a directory relative to the user's home directory `~/projects/icu/`. The `~` in the path indicates the relative location of the user home directory.
-Please crate the directory structure necessary.
+Please create the directory structure necessary.
 
 # 2. Creating MyApp
 
@@ -152,11 +152,12 @@ While this app doesn't do anything on its own yet, we now have a loaded data pro
 
 ```rust
 use icu::locid::locale;
-use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, mock::parse_gregorian_from_str, options::length};
+use icu::calendar::DateTime;
+use icu::datetime::{DateTimeFormat, DateTimeFormatOptions, options::length};
 
 fn main() {
-    let date = parse_gregorian_from_str("2020-10-14T13:21:00")
-        .expect("Failed to parse a datetime.");
+    let date = DateTime::new_gregorian_datetime(2020, 10, 14, 13, 21, 28)
+        .expect("Failed to create a datetime.");
 
     let provider = icu_testdata::get_provider();
 
@@ -166,7 +167,7 @@ fn main() {
         ..Default::default()
     }.into();
 
-    let dtf = DateTimeFormat::try_new(locale!("ja"), &provider, &options)
+    let dtf = DateTimeFormat::try_new_with_buffer_provider(&provider, &locale!("ja").into(), &options)
         .expect("Failed to initialize DateTimeFormat");
 
     let formatted_date = dtf.format(&date);
@@ -193,7 +194,7 @@ If you have ICU4X data on the file system in a JSON format, it can be loaded via
 ```toml
 [dependencies]
 icu = "0.6"
-icu_provider_fs = {version = "0.6" , features = ["deserialize_json"]}
+icu_provider_fs = {version = "1.0.0-beta1" , features = ["deserialize_json"]}
 ```
 
 ```rs
@@ -223,7 +224,7 @@ cd icu4x
 git checkout icu@0.6.0
 cargo run --bin icu4x-datagen --features bin -- \
     --cldr-tag 41.0.0 \
-    --uprops-tag release-71-1 \
+    --icuexport-tag release-71-1 \
     --out ~/projects/icu/icu4x-data \
     --all-keys --all-locales
 ```
@@ -234,7 +235,7 @@ The last command is a bit dense, so let's dissect it.
 * We tell it that the binary is named `icu4x-datagen`
 * Then we use `--` to separate arguments to `cargo` from arguments to our app
 * Then we pass `--cldr-tag` which informs the program which CLDR version to use
-* Then we pass `--uprops-tag` which informs the program which ICU-exported Unicode Properties version to use
+* Then we pass `--icuexport-tag` which informs the program which ICU-exported data version to use
 * Then we pass `--out` directory which is where we want the generated ICU4X data to be stored
 * Finally, we set `--all-keys` which specify that we want to export all keys available
 

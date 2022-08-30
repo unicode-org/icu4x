@@ -2,25 +2,41 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+// The mutation operations in this file should panic to prevent undefined behavior
+#![allow(clippy::unwrap_used)]
+#![allow(clippy::expect_used)]
+#![allow(clippy::indexing_slicing)]
+#![allow(clippy::panic)]
+
 use super::*;
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
+use core::any;
+use core::convert::TryInto;
 use core::marker::PhantomData;
 use core::ops::Deref;
 use core::ops::Range;
 use core::{fmt, ptr, slice};
 
+use super::components::LENGTH_WIDTH;
+use super::components::MAX_INDEX;
+use super::components::MAX_LENGTH;
+use super::components::METADATA_WIDTH;
+
 /// A fully-owned [`VarZeroVec`]. This type has no lifetime but has the same
 /// internal buffer representation of [`VarZeroVec`], making it cheaply convertible to
 /// [`VarZeroVec`] and [`VarZeroSlice`].
-pub struct VarZeroVecOwned<T: ?Sized> {
-    marker: PhantomData<Box<T>>,
+///
+/// The `F` type parameter is a [`VarZeroVecFormat`] (see its docs for more details), which can be used to select the
+/// precise format of the backing buffer with various size and performance tradeoffs. It defaults to [`Index16`].
+pub struct VarZeroVecOwned<T: ?Sized, F = Index16> {
+    marker: PhantomData<(Box<T>, F)>,
     // safety invariant: must parse into a valid VarZeroVecComponents
     entire_slice: Vec<u8>,
 }
 
-impl<T: ?Sized> Clone for VarZeroVecOwned<T> {
+impl<T: ?Sized, F> Clone for VarZeroVecOwned<T, F> {
     fn clone(&self) -> Self {
         VarZeroVecOwned {
             marker: self.marker,
@@ -37,14 +53,14 @@ enum ShiftType {
     Remove,
 }
 
-impl<T: VarULE + ?Sized> Deref for VarZeroVecOwned<T> {
-    type Target = VarZeroSlice<T>;
-    fn deref(&self) -> &VarZeroSlice<T> {
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> Deref for VarZeroVecOwned<T, F> {
+    type Target = VarZeroSlice<T, F>;
+    fn deref(&self) -> &VarZeroSlice<T, F> {
         self.as_slice()
     }
 }
 
-impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
+impl<T: VarULE + ?Sized, F> VarZeroVecOwned<T, F> {
     /// Construct an empty VarZeroVecOwned
     pub fn new() -> Self {
         Self {
@@ -52,9 +68,11 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             entire_slice: Vec::new(),
         }
     }
+}
 
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecOwned<T, F> {
     /// Construct a VarZeroVecOwned from a [`VarZeroSlice`] by cloning the internal data
-    pub fn from_slice(slice: &VarZeroSlice<T>) -> Self {
+    pub fn from_slice(slice: &VarZeroSlice<T, F>) -> Self {
         Self {
             marker: PhantomData,
             entire_slice: slice.as_bytes().into(),
@@ -69,7 +87,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         Ok(Self {
             marker: PhantomData,
             // TODO(#1410): Rethink length errors in VZV.
-            entire_slice: components::get_serializable_bytes(elements).ok_or(
+            entire_slice: components::get_serializable_bytes::<T, A, F>(elements).ok_or(
                 "Attempted to build VarZeroVec out of elements that \
                                      cumulatively are larger than a u32 in size",
             )?,
@@ -77,7 +95,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     }
 
     /// Obtain this `VarZeroVec` as a [`VarZeroSlice`]
-    pub fn as_slice(&self) -> &VarZeroSlice<T> {
+    pub fn as_slice(&self) -> &VarZeroSlice<T, F> {
         let slice: &[u8] = &*self.entire_slice;
         unsafe {
             // safety: the slice is known to come from a valid parsed VZV
@@ -91,7 +109,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     pub(crate) fn with_capacity(capacity: usize) -> Self {
         Self {
             marker: PhantomData,
-            entire_slice: Vec::with_capacity(capacity * 8),
+            entire_slice: Vec::with_capacity(capacity * (F::INDEX_WIDTH + 4)),
         }
     }
 
@@ -99,7 +117,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// elements. Since `T` can take up an arbitrary size this will
     /// just allocate enough space for 4-byte Ts
     pub(crate) fn reserve(&mut self, capacity: usize) {
-        self.entire_slice.reserve(capacity * 8)
+        self.entire_slice.reserve(capacity * (F::INDEX_WIDTH + 4))
     }
 
     /// Get the position of a specific element in the data segment.
@@ -111,11 +129,13 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     unsafe fn element_position_unchecked(&self, idx: usize) -> usize {
         let len = self.len();
         let out = if idx == len {
-            self.entire_slice.len() - 4 - (4 * len)
+            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - (F::INDEX_WIDTH * len)
         } else {
-            u32::from_unaligned(*self.index_data(idx)) as usize
+            F::rawbytes_to_usize(*self.index_data(idx))
         };
-        debug_assert!(out + 4 + len * 4 <= self.entire_slice.len());
+        debug_assert!(
+            out + LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH <= self.entire_slice.len()
+        );
         out
     }
 
@@ -134,25 +154,25 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// ## Safety
     /// No safe functions may be called until `self.as_encoded_bytes()` is well-formed.
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    unsafe fn set_len(&mut self, len: u32) {
-        RawBytesULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[..4])[0] =
-            len.into();
+    unsafe fn set_len(&mut self, len: usize) {
+        assert!(len <= MAX_LENGTH);
+        let len_bytes = len.to_le_bytes();
+        self.entire_slice[0..LENGTH_WIDTH].copy_from_slice(&len_bytes[0..LENGTH_WIDTH]);
+        // Double-check that the length fits in the length field
+        assert_eq!(len_bytes[LENGTH_WIDTH..].iter().sum::<u8>(), 0);
     }
 
     fn index_range(index: usize) -> Range<usize> {
-        let pos = 4 + 4 * index;
-        pos..pos + 4
+        let pos = LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * index;
+        pos..pos + F::INDEX_WIDTH
     }
 
-    /// Return the slice representing the given `index`.
+    /// Return the raw bytes representing the given `index`.
     ///
     /// ## Safety
     /// The index must be valid, and self.as_encoded_bytes() must be well-formed
-    #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-    unsafe fn index_data(&self, index: usize) -> &RawBytesULE<4> {
-        &RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])
-            [0]
+    unsafe fn index_data(&self, index: usize) -> &F::RawBytes {
+        &F::RawBytes::from_byte_slice_unchecked(&self.entire_slice[Self::index_range(index)])[0]
     }
 
     /// Return the mutable slice representing the given `index`.
@@ -160,17 +180,16 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// ## Safety
     /// The index must be valid. self.as_encoded_bytes() must have allocated space
     /// for this index, but need not have its length appropriately set.
-    unsafe fn index_data_mut(&mut self, index: usize) -> &mut RawBytesULE<4> {
+    unsafe fn index_data_mut(&mut self, index: usize) -> &mut F::RawBytes {
         let ptr = self.entire_slice.as_mut_ptr();
         let range = Self::index_range(index);
 
         // Doing this instead of just `get_unchecked_mut()` because it's unclear
         // if `get_unchecked_mut()` can be called out of bounds on a slice even
         // if we know the buffer is larger.
-        let data = slice::from_raw_parts_mut(ptr.add(range.start), 4);
+        let data = slice::from_raw_parts_mut(ptr.add(range.start), F::INDEX_WIDTH);
 
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        &mut RawBytesULE::<4>::from_byte_slice_unchecked_mut(data)[0]
+        &mut F::rawbytes_from_byte_slice_unchecked_mut(data)[0]
     }
 
     /// Shift the indices starting with and after `starting_index` by the provided `amount`.
@@ -180,12 +199,18 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// The length of the slice must be correctly set.
     unsafe fn shift_indices(&mut self, starting_index: usize, amount: i32) {
         let len = self.len();
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let indices =
-            RawBytesULE::<4>::from_byte_slice_unchecked_mut(&mut self.entire_slice[4..4 + 4 * len]);
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        let indices = F::rawbytes_from_byte_slice_unchecked_mut(
+            &mut self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH
+                ..LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * len],
+        );
         for idx in &mut indices[starting_index..] {
-            *idx = (u32::from_unaligned(*idx).wrapping_add(amount as u32)).into();
+            let mut new_idx = F::rawbytes_to_usize(*idx);
+            if amount > 0 {
+                new_idx = new_idx.checked_add(amount.try_into().unwrap()).unwrap();
+            } else {
+                new_idx = new_idx.checked_sub((-amount).try_into().unwrap()).unwrap();
+            }
+            *idx = F::usize_to_rawbytes(new_idx);
         }
     }
 
@@ -193,7 +218,7 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// If you wish to repeatedly call methods on this [`VarZeroVecOwned`],
     /// it is more efficient to perform this conversion first
-    pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T> {
+    pub fn as_varzerovec<'a>(&'a self) -> VarZeroVec<'a, T, F> {
         self.as_slice().into()
     }
 
@@ -214,8 +239,8 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     ///
     /// ## Safety
     /// - `index` must be a valid index, or, if `shift_type == ShiftType::Insert`, `index == self.len()` is allowed.
-    /// - `new_size` musn't result in the data segment growing larger than `u32::MAX`.
-    unsafe fn shift(&mut self, index: usize, new_size: u32, shift_type: ShiftType) -> &mut [u8] {
+    /// - `new_size` musn't result in the data segment growing larger than `F::MAX_VALUE`.
+    unsafe fn shift(&mut self, index: usize, new_size: usize, shift_type: ShiftType) -> &mut [u8] {
         // The format of the encoded data is:
         //  - four bytes of "len"
         //  - len*4 bytes for an array of indices
@@ -239,19 +264,19 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         // How much shifting must be done in bytes due to removal/insertion of an index.
         let index_shift: i64 = match shift_type {
-            ShiftType::Insert => 4,
+            ShiftType::Insert => F::INDEX_WIDTH as i64,
             ShiftType::Replace => 0,
-            ShiftType::Remove => -4,
+            ShiftType::Remove => -(F::INDEX_WIDTH as i64),
         };
         // The total shift in byte size of the owned slice.
         let shift: i64 =
             new_size as i64 - (prev_element.end - prev_element.start) as i64 + index_shift;
         let new_slice_len = slice_len.wrapping_add(shift as usize);
         if shift > 0 {
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            if new_slice_len > u32::MAX as usize {
+            if new_slice_len > F::MAX_VALUE as usize {
                 panic!(
-                    "Attempted to grow VarZeroVec to an encoded size that does not fit within a u32"
+                    "Attempted to grow VarZeroVec to an encoded size that does not fit within the length size used by {}",
+                    any::type_name::<F>()
                 );
             }
             self.entire_slice.reserve(shift as usize);
@@ -262,7 +287,9 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // Note: There are no references introduced between pointer creation and pointer use, and all
             //       raw pointers are derived from a single &mut. This preserves pointer provenance.
             let slice_range = self.entire_slice.as_mut_ptr_range();
-            let data_start = slice_range.start.add(4 + len * 4);
+            let data_start = slice_range
+                .start
+                .add(LENGTH_WIDTH + METADATA_WIDTH + len * F::INDEX_WIDTH);
             let prev_element_p =
                 data_start.add(prev_element.start)..data_start.add(prev_element.end);
 
@@ -271,8 +298,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             // When removing:  where the index being removed is.
             // When replacing: unused.
             let index_range = {
-                let index_start = slice_range.start.add(4 + 4 * index);
-                index_start..index_start.add(4)
+                let index_start = slice_range
+                    .start
+                    .add(LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH * index);
+                index_start..index_start.add(F::INDEX_WIDTH)
             };
 
             unsafe fn shift_bytes(block: Range<*const u8>, to: *mut u8) {
@@ -298,12 +327,12 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
                     // Move data before the element forward by 4 to make space for a new index.
                     shift_bytes(index_range.start..prev_element_p.start, index_range.end);
 
-                    *self.index_data_mut(index) = (prev_element.start as u32).into();
-                    self.set_len((len + 1) as u32);
+                    *self.index_data_mut(index) = F::usize_to_rawbytes(prev_element.start);
+                    self.set_len(len + 1);
                     index + 1
                 }
                 ShiftType::Remove => {
-                    self.set_len((len - 1) as u32);
+                    self.set_len(len - 1);
                     index
                 }
                 ShiftType::Replace => index + 1,
@@ -320,8 +349,10 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         debug_assert!(self.verify_integrity());
 
         // Return a mut slice to the new element data.
-        let element_pos = 4 + self.len() * 4 + self.element_position_unchecked(index);
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        let element_pos = LENGTH_WIDTH
+            + METADATA_WIDTH
+            + self.len() * F::INDEX_WIDTH
+            + self.element_position_unchecked(index);
         &mut self.entire_slice[element_pos..element_pos + new_size as usize]
     }
 
@@ -341,40 +372,41 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
             _ => (),
         }
         let len = unsafe {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            u32::from_unaligned(
-                RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[..4])[0],
-            )
+            RawBytesULE::<LENGTH_WIDTH>::from_byte_slice_unchecked(
+                &self.entire_slice[..LENGTH_WIDTH],
+            )[0]
+            .as_unsigned_int()
         };
         if len == 0 {
             // An empty vec must have an empty slice: there is only a single valid byte representation.
             return false;
         }
-        if slice_len < 4 + len as usize * 4 {
+        if slice_len < LENGTH_WIDTH + METADATA_WIDTH + len as usize * F::INDEX_WIDTH {
             // Not enough room for the indices.
             return false;
         }
-        let data_len = self.entire_slice.len() - 4 - len as usize * 4;
-        if data_len > u32::MAX as usize {
+        let data_len =
+            self.entire_slice.len() - LENGTH_WIDTH - METADATA_WIDTH - len as usize * F::INDEX_WIDTH;
+        if data_len > MAX_INDEX {
             // The data segment is too long.
             return false;
         }
-        let data_len = data_len as u32;
 
         // Test index validity.
         let indices = unsafe {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            RawBytesULE::<4>::from_byte_slice_unchecked(&self.entire_slice[4..4 + len as usize * 4])
+            F::RawBytes::from_byte_slice_unchecked(
+                &self.entire_slice[LENGTH_WIDTH + METADATA_WIDTH
+                    ..LENGTH_WIDTH + METADATA_WIDTH + len as usize * F::INDEX_WIDTH],
+            )
         };
         for idx in indices {
-            if u32::from_unaligned(*idx) > data_len {
+            if F::rawbytes_to_usize(*idx) > data_len {
                 // Indices must not point past the data segment.
                 return false;
             }
         }
         for window in indices.windows(2) {
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            if u32::from_unaligned(window[0]) > u32::from_unaligned(window[1]) {
+            if F::rawbytes_to_usize(window[0]) > F::rawbytes_to_usize(window[1]) {
                 // Indices must be in non-decreasing order.
                 return false;
             }
@@ -390,7 +422,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Insert an element at index `idx`
     pub fn insert<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
-        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index > len {
             panic!(
                 "Called out-of-bounds insert() on VarZeroVec, index {} len {}",
@@ -401,23 +432,17 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
         let value_len = element.encode_var_ule_len();
 
         if len == 0 {
-            // 4 bytes for length, 4 bytes for the index, remaining for element
-            self.reserve(8 + value_len);
-            let len_u32 = 1u32;
-            let index_u32 = 0u32;
-            self.entire_slice.extend(&len_u32.to_unaligned().0);
-            self.entire_slice.extend(&index_u32.to_unaligned().0);
-            let header_len = self.entire_slice.len();
-            self.entire_slice.resize(header_len + value_len, 0);
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
+            let header_len = LENGTH_WIDTH + METADATA_WIDTH + F::INDEX_WIDTH;
+            let cap = header_len + value_len;
+            self.entire_slice.resize(cap, 0);
+            self.entire_slice[0] = 1; // set length
             element.encode_var_ule_write(&mut self.entire_slice[header_len..]);
             return;
         }
 
-        assert!(value_len < u32::MAX as usize);
+        assert!(value_len < MAX_INDEX);
         unsafe {
-            let place = self.shift(index, value_len as u32, ShiftType::Insert);
+            let place = self.shift(index, value_len, ShiftType::Insert);
             element.encode_var_ule_write(place);
         }
     }
@@ -425,7 +450,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Remove the element at index `idx`
     pub fn remove(&mut self, index: usize) {
         let len = self.len();
-        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index >= len {
             panic!(
                 "Called out-of-bounds remove() on VarZeroVec, index {} len {}",
@@ -445,7 +469,6 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
     /// Replace the element at index `idx` with another
     pub fn replace<A: EncodeAsVarULE<T> + ?Sized>(&mut self, index: usize, element: &A) {
         let len = self.len();
-        #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
         if index >= len {
             panic!(
                 "Called out-of-bounds replace() on VarZeroVec, index {} len {}",
@@ -455,15 +478,15 @@ impl<T: VarULE + ?Sized> VarZeroVecOwned<T> {
 
         let value_len = element.encode_var_ule_len();
 
-        assert!(value_len < u32::MAX as usize);
+        assert!(value_len < MAX_INDEX);
         unsafe {
-            let place = self.shift(index, value_len as u32, ShiftType::Replace);
+            let place = self.shift(index, value_len, ShiftType::Replace);
             element.encode_var_ule_write(place);
         }
     }
 }
 
-impl<T: VarULE + ?Sized> fmt::Debug for VarZeroVecOwned<T>
+impl<T: VarULE + ?Sized, F: VarZeroVecFormat> fmt::Debug for VarZeroVecOwned<T, F>
 where
     T: fmt::Debug,
 {
@@ -472,17 +495,18 @@ where
     }
 }
 
-impl<T: VarULE + ?Sized> Default for VarZeroVecOwned<T> {
+impl<T: VarULE + ?Sized, F> Default for VarZeroVecOwned<T, F> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T, A> PartialEq<&'_ [A]> for VarZeroVecOwned<T>
+impl<T, A, F> PartialEq<&'_ [A]> for VarZeroVecOwned<T, F>
 where
     T: VarULE + ?Sized,
     T: PartialEq,
     A: AsRef<T>,
+    F: VarZeroVecFormat,
 {
     #[inline]
     fn eq(&self, other: &&[A]) -> bool {
@@ -490,8 +514,10 @@ where
     }
 }
 
-impl<'a, T: ?Sized + VarULE> From<&'a VarZeroSlice<T>> for VarZeroVecOwned<T> {
-    fn from(other: &'a VarZeroSlice<T>) -> Self {
+impl<'a, T: ?Sized + VarULE, F: VarZeroVecFormat> From<&'a VarZeroSlice<T, F>>
+    for VarZeroVecOwned<T, F>
+{
+    fn from(other: &'a VarZeroSlice<T, F>) -> Self {
         Self::from_slice(other)
     }
 }

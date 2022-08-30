@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // Provider structs must be stable
-#![allow(clippy::exhaustive_structs)]
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
 
 //! Data provider struct definitions for this ICU4X component.
 //!
@@ -64,18 +64,22 @@ impl DataMarker for ErasedListV1Marker {
 
 impl<'data> ListFormatterPatternsV1<'data> {
     pub(crate) fn start(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize)]
     }
 
     pub(crate) fn middle(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize) + 1]
     }
 
     pub(crate) fn end(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize) + 2]
     }
 
     pub(crate) fn pair(&self, style: ListStyle) -> &ConditionalListJoinerPattern<'data> {
+        #![allow(clippy::indexing_slicing)] // style as usize < 3
         &self.0[4 * (style as usize) + 3]
     }
 
@@ -134,13 +138,13 @@ pub struct SpecialCasePattern<'data> {
 pub struct ListJoinerPattern<'data> {
     /// The pattern string without the placeholders
     string: Cow<'data, str>,
-    /// The index of the first placeholder.
+    /// The index of the first placeholder. Always <= index_1.
     // Always 0 for CLDR data, so we don't need to serialize it.
     // In-memory we have free space for it as index_1 doesn't
     // fill a word.
     #[cfg_attr(feature = "datagen", serde(skip))]
     index_0: u8,
-    /// The index of the second placeholder
+    /// The index of the second placeholder. Always < string.len().
     index_1: u8,
 }
 
@@ -215,6 +219,7 @@ impl<'a> ConditionalListJoinerPattern<'a> {
 
 impl<'data> ListJoinerPattern<'data> {
     fn borrow_tuple(&'data self) -> PatternParts<'data> {
+        #![allow(clippy::indexing_slicing)] // by invariant
         let index_0 = self.index_0 as usize;
         let index_1 = self.index_1 as usize;
         (
@@ -231,6 +236,8 @@ impl<'data> ListJoinerPattern<'data> {
 
 #[cfg(feature = "datagen")]
 mod datagen {
+    #![allow(clippy::indexing_slicing)] // datagen
+
     use super::*;
     use icu_provider::DataError;
 
@@ -262,14 +269,14 @@ mod datagen {
         pub fn make_conditional(
             &mut self,
             pattern: &str,
-            regex: &str,
+            regex: &StringMatcher<'static>,
             alternative_pattern: &str,
         ) -> Result<(), DataError> {
             let old = ListJoinerPattern::from_str(pattern, true, true)?;
             for i in 0..12 {
                 if self.0[i].default == old {
                     self.0[i].special_case = Some(SpecialCasePattern {
-                        condition: StringMatcher::new(regex)?,
+                        condition: regex.clone(),
                         pattern: ListJoinerPattern::from_str(
                             alternative_pattern,
                             i % 4 == 0 || i % 4 == 3, // allow_prefix = start or pair
@@ -328,6 +335,7 @@ mod datagen {
 
     impl databake::Bake for ListJoinerPattern<'_> {
         fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+            env.insert("icu_list");
             let string = (&*self.string).bake(env);
             let index_1 = self.index_1.bake(env);
             // Safe because our own data is safe
@@ -362,7 +370,7 @@ pub(crate) mod test {
         ])
         .unwrap();
         patterns
-            .make_conditional("{0}. {1}", "A", "{0} :o {1}")
+            .make_conditional("{0}. {1}", &StringMatcher::new("A").unwrap(), "{0} :o {1}")
             .unwrap();
         patterns
     }
@@ -434,6 +442,15 @@ pub(crate) mod test {
         assert_eq!(
             pattern.size_hint(ListStyle::Narrow, 200),
             LengthHint::exact(2 + 197 * 2) + LengthHint::between(2, 4)
+        );
+    }
+
+    #[test]
+    fn databake() {
+        databake::test_bake!(
+            ListJoinerPattern,
+            const: unsafe { crate::provider::ListJoinerPattern::from_parts_unchecked(", ", 2u8) },
+            icu_list
         );
     }
 }

@@ -1,11 +1,11 @@
 # icu_locid [![crates.io](https://img.shields.io/crates/v/icu_locid)](https://crates.io/crates/icu_locid)
 
-`icu_locid` is one of the [`ICU4X`] components.
+Parsing, manipulating, and serializing Unicode Language and Locale Identifiers.
 
-This API provides necessary functionality for parsing, manipulating, and serializing Unicode Language
-and Locale Identifiers.
+This module is published as its own crate ([`icu_locid`](https://docs.rs/icu_locid/latest/icu_locid/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
-The crate provides algorithms for parsing a string into a well-formed language or locale identifier
+The module provides algorithms for parsing a string into a well-formed language or locale identifier
 as defined by [`UTS #35: Unicode LDML 3. Unicode Language and Locale Identifiers`].
 
 [`Locale`] is the most common structure to use for storing information about a language,

@@ -9,16 +9,14 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XPluralCategory.h"
-}
 
 
 
 /**
  * FFI version of `PluralCategory`.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_plurals/enum.PluralCategory.html) for more information.
+ * See the [Rust documentation for `PluralCategory`](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html) for more information.
  */
 enum struct ICU4XPluralCategory {
   Zero = 0,

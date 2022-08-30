@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XDataProvider.h"
-}
 
 class ICU4XDataProvider;
 #include "ICU4XError.hpp"
@@ -28,7 +26,7 @@ struct ICU4XDataProviderDeleter {
 /**
  * An ICU4X data provider, capable of loading ICU4X data keys from some source.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/index.html) for more information.
+ * See the [Rust documentation for `icu_provider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/index.html) for more information.
  */
 class ICU4XDataProvider {
  public:
@@ -38,7 +36,7 @@ class ICU4XDataProvider {
    * Requires the `provider_fs` feature.
    * Not supported in WASM.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more information.
+   * See the [Rust documentation for `FsDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_fs/struct.FsDataProvider.html) for more information.
    */
   static diplomat::result<ICU4XDataProvider, ICU4XError> create_fs(const std::string_view path);
 
@@ -46,21 +44,21 @@ class ICU4XDataProvider {
    * Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].
    * Requires the `provider_test` feature.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html) for more information.
+   * See the [Rust documentation for `icu_testdata`](https://unicode-org.github.io/icu4x-docs/doc/icu_testdata/index.html) for more information.
    */
   static ICU4XDataProvider create_test();
 
   /**
    * Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more information.
+   * See the [Rust documentation for `BlobDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.BlobDataProvider.html) for more information.
    */
   static diplomat::result<ICU4XDataProvider, ICU4XError> create_from_byte_slice(const diplomat::span<uint8_t> blob);
 
   /**
    * Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more information.
+   * See the [Rust documentation for `StaticDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more information.
    */
   static ICU4XDataProvider create_empty();
   inline const capi::ICU4XDataProvider* AsFFI() const { return this->inner.get(); }
@@ -78,9 +76,9 @@ inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_create_fs(path.data(), path.size());
   diplomat::result<ICU4XDataProvider, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XDataProvider(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XDataProvider>(std::move(ICU4XDataProvider(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -91,9 +89,9 @@ inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_create_from_byte_slice(blob.data(), blob.size());
   diplomat::result<ICU4XDataProvider, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
-    diplomat_result_out_value = diplomat::Ok(ICU4XDataProvider(diplomat_result_raw_out_value.ok));
+    diplomat_result_out_value = diplomat::Ok<ICU4XDataProvider>(std::move(ICU4XDataProvider(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }

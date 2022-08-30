@@ -32,19 +32,28 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::{ArithmeticDate, CalendarArithmetic};
 use crate::iso::Iso;
-use crate::{
-    types, ArithmeticDate, Calendar, CalendarArithmetic, Date, DateDuration, DateDurationUnit,
-    DateTime, DateTimeError,
-};
+use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use core::marker::PhantomData;
 use tinystr::tinystr;
 
-/// The Indian national calendar
+/// The Indian National Calendar (aka the Saka calendar)
+///
+/// The [Indian National calendar] is a solar calendar used by the Indian government, with twelve months.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Indian National calendar]: https://en.wikipedia.org/wiki/Indian_national_calendar
+///
+/// # Era codes
+///
+/// This calendar has a single era: `"saka"`, with Saka 0 being 78 CE. Dates before this era use negative years.
 #[derive(Copy, Clone, Debug, Hash, Default, Eq, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Indian;
 
+/// The inner date type used for representing [`Date`]s of [`Indian`]. See [`Date`] and [`Indian`] for more details.
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
 pub struct IndianDateInner(ArithmeticDate<Indian>);
 
@@ -65,7 +74,7 @@ impl CalendarArithmetic for Indian {
         }
     }
 
-    fn months_for_every_year() -> u8 {
+    fn months_for_every_year(_: i32) -> u8 {
         12
     }
 
@@ -76,6 +85,19 @@ impl CalendarArithmetic for Indian {
 
 impl Calendar for Indian {
     type DateInner = IndianDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        if era.0 != tinystr!(16, "saka") {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        }
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IndianDateInner)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> IndianDateInner {
         let day_of_year = Iso::day_of_year(*iso.inner());
         IndianDateInner(ArithmeticDate::date_from_year_day(
@@ -121,15 +143,15 @@ impl Calendar for Indian {
         date1.0.until(date2.0, _largest_unit, _smallest_unit)
     }
 
-    fn year(&self, date: &Self::DateInner) -> types::Year {
-        types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
+        types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year,
-            related_iso: date.0.year + 78,
+            related_iso: None,
         }
     }
 
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         date.0.solar_month()
     }
 
@@ -138,15 +160,15 @@ impl Calendar for Indian {
     }
 
     fn day_of_year_info(&self, date: &Self::DateInner) -> types::DayOfYearInfo {
-        let prev_year = types::Year {
+        let prev_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year - 1,
-            related_iso: date.0.year + 77,
+            related_iso: None,
         };
-        let next_year = types::Year {
+        let next_year = types::FormattableYear {
             era: types::Era(tinystr!(16, "saka")),
             number: date.0.year + 1,
-            related_iso: date.0.year + 79,
+            related_iso: None,
         };
         types::DayOfYearInfo {
             day_of_year: date.0.day_of_year(),
@@ -182,7 +204,7 @@ impl Indian {
 }
 
 impl Date<Indian> {
-    /// Construct new Indian Date.
+    /// Construct new Indian Date, with year provided in the Śaka era.
     ///
     /// ```rust
     /// use icu::calendar::Date;
@@ -212,7 +234,7 @@ impl Date<Indian> {
 }
 
 impl DateTime<Indian> {
-    /// Construct a new Indian datetime from integers.
+    /// Construct a new Indian datetime from integers, with year provided in the Śaka era.
     ///
     /// ```rust
     /// use icu::calendar::DateTime;

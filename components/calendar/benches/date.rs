@@ -29,7 +29,6 @@ fn bench_date<A: AsCalendar>(date: &mut Date<A>) {
     let _ = black_box(date.to_iso());
 }
 
-#[cfg(feature = "bench")]
 fn bench_calendar<C: Clone + Calendar>(
     group: &mut BenchmarkGroup<WallTime>,
     name: &str,
@@ -89,8 +88,16 @@ fn date_benches(c: &mut Criterion) {
         &mut group,
         "calendar/ethiopic",
         &fxs,
-        icu::calendar::ethiopic::Ethiopic::new(),
-        |y, m, d| Date::new_ethiopic_date(y, m, d).unwrap(),
+        icu::calendar::ethiopian::Ethiopian::new(),
+        |y, m, d| {
+            Date::new_ethiopian_date(
+                icu::calendar::ethiopian::EthiopianEraStyle::AmeteMihret,
+                y,
+                m,
+                d,
+            )
+            .unwrap()
+        },
     );
 
     #[cfg(feature = "bench")]

@@ -26,9 +26,9 @@ impl PartialEq for StringMatcher<'_> {
 
 #[cfg(feature = "datagen")]
 impl databake::Bake for StringMatcher<'_> {
-    fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
-        ctx.insert("icu_list");
-        let bytes = (&*self.dfa_bytes).bake(ctx);
+    fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+        env.insert("icu_list");
+        let bytes = (&&*self.dfa_bytes).bake(env);
         // Safe because our own data is safe
         databake::quote! {
             unsafe { ::icu_list::provider::StringMatcher::from_dfa_bytes_unchecked(#bytes) }
@@ -138,6 +138,7 @@ impl<'data> StringMatcher<'data> {
         })
     }
 
+    #[allow(clippy::unwrap_used)] // by invariant
     pub(crate) fn test(&self, string: &str) -> bool {
         cfg!(target_endian = "little")
             && matches!(
@@ -196,5 +197,17 @@ mod test {
             matcher
         );
         assert!(serde_json::from_str::<StringMatcher>(".*[").is_err());
+    }
+
+    #[test]
+    #[ignore] // https://github.com/rust-lang/rust/issues/98906
+    fn databake() {
+        databake::test_bake!(
+            StringMatcher,
+            const: unsafe {
+                crate::provider::StringMatcher::from_dfa_bytes_unchecked(&[49u8, 50u8, 51u8, ])
+            },
+            icu_list
+        );
     }
 }

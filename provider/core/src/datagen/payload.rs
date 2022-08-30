@@ -37,6 +37,7 @@ where
     }
 }
 
+#[doc(hidden)] // exposed for make_exportable_provider
 #[derive(yoke::Yokeable)]
 pub struct ExportBox {
     payload: Box<dyn ExportableYoke + Sync>,
@@ -111,7 +112,7 @@ impl DataPayload<ExportMarker> {
     /// assert_eq!(
     ///     quote! {
     ///         ::icu_provider::hello_world::HelloWorldV1 {
-    ///             message: ::alloc::borrow::Cow::Borrowed("(und) Hello World"),
+    ///             message: alloc::borrow::Cow::Borrowed("(und) Hello World"),
     ///         }
     ///     }
     ///     .to_string(),

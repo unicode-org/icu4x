@@ -13,7 +13,6 @@ use core::str::FromStr;
 
 use static_assertions::const_assert;
 
-use crate::signum::Signum;
 use crate::uint_iterator::IntIterator;
 
 use crate::Error;
@@ -23,7 +22,7 @@ const_assert!(core::mem::size_of::<usize>() >= core::mem::size_of::<u16>());
 
 /// A struct containing decimal digits with efficient iteration and manipulation by magnitude
 /// (power of 10). Supports a mantissa of non-zero digits and a number of leading and trailing
-/// zeros, used for formatting and plural selection.
+/// zeros, as well as an optional sign; used for formatting and plural selection.
 ///
 /// # Data Types
 ///
@@ -112,8 +111,47 @@ pub struct FixedDecimal {
     /// - <= magnitude
     lower_magnitude: i16,
 
-    /// Whether the number is negative. Negative zero is supported.
-    is_negative: bool,
+    /// The sign; note that a positive value may be represented by either
+    /// `Sign::Positive` (corresponding to a prefix +) or `Sign::None`
+    /// (corresponding to the absence of a prefix sign).
+    sign: Sign,
+}
+
+/// A specification of the sign used when formatting a number.
+#[derive(Copy, Clone, PartialEq, Eq, Debug)]
+#[allow(clippy::exhaustive_enums)] // TODO(#1668)
+pub enum Sign {
+    /// No sign (implicitly positive, e.g., 1729).
+    None,
+    /// A negative sign, e.g., -1729.
+    Negative,
+    /// An explicit positive sign, e.g., +1729.
+    Positive,
+}
+
+/// Configuration for when to render the minus sign or plus sign.
+#[non_exhaustive]
+#[derive(Debug, Eq, PartialEq, Clone, Copy)]
+pub enum SignDisplay {
+    /// Render the sign according to locale preferences. In most cases, this means a minus sign
+    /// will be shown on negative numbers, and no sign will be shown on positive numbers.
+    Auto,
+
+    /// Do not display the sign. Positive and negative numbers are indistinguishable.
+    Never,
+
+    /// Show a minus sign on negative numbers and a plus sign on positive numbers, including zero.
+    Always,
+
+    /// Show a minus sign on negative numbers and a plus sign on positive numbers, except do not
+    /// show any sign on positive or negative zero.
+    ExceptZero,
+
+    /// Show a minus sign on strictly negative numbers. Do not show a sign on positive numbers or
+    /// on positive or negative zero.
+    ///
+    /// This differs from [`Auto`](SignDisplay::Auto) in that it does not render a sign on negative zero.
+    Negative,
 }
 
 impl Default for FixedDecimal {
@@ -124,7 +162,7 @@ impl Default for FixedDecimal {
             magnitude: 0,
             upper_magnitude: 0,
             lower_magnitude: 0,
-            is_negative: false,
+            sign: Sign::None,
         }
     }
 }
@@ -134,10 +172,14 @@ macro_rules! impl_from_signed_integer_type {
         impl From<$itype> for FixedDecimal {
             fn from(value: $itype) -> Self {
                 let int_iterator: IntIterator<$utype> = value.into();
-                let is_negative = int_iterator.is_negative;
+                let sign = if int_iterator.is_negative {
+                    Sign::Negative
+                } else {
+                    Sign::None
+                };
                 let mut result = Self::from_ascending(int_iterator)
                     .expect("All built-in integer types should fit");
-                result.is_negative = is_negative;
+                result.sign = sign;
                 result
             }
         }
@@ -198,8 +240,7 @@ impl FixedDecimal {
             if i != 0 || d != 0 {
                 i += 1;
                 match X.checked_sub(i) {
-                    #[allow(clippy::indexing_slicing)]
-                    // TODO(#1668) Clippy exceptions need docs or fixing.
+                    #[allow(clippy::indexing_slicing)] // X - i < X
                     Some(v) => mem[v] = d,
                     // This error should be obsolete after X is made generic
                     None => return Err(Error::Limit),
@@ -215,8 +256,7 @@ impl FixedDecimal {
             result.magnitude = magnitude as i16;
             result.upper_magnitude = result.magnitude;
             debug_assert!(i <= X);
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::indexing_slicing)] // X - i < X
             result.digits.extend_from_slice(&mem[(X - i)..]);
         }
         #[cfg(debug_assertions)]
@@ -288,11 +328,11 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// let dec: FixedDecimal = "012.340".parse().expect("valid syntax");
-    /// assert_eq!(1, dec.nonzero_magnitude_left());
+    /// assert_eq!(1, dec.nonzero_magnitude_start());
     ///
-    /// assert_eq!(0, FixedDecimal::from(0).nonzero_magnitude_left());
+    /// assert_eq!(0, FixedDecimal::from(0).nonzero_magnitude_start());
     /// ```
-    pub fn nonzero_magnitude_left(&self) -> i16 {
+    pub fn nonzero_magnitude_start(&self) -> i16 {
         self.magnitude
     }
 
@@ -304,11 +344,11 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// let dec: FixedDecimal = "012.340".parse().expect("valid syntax");
-    /// assert_eq!(-2, dec.nonzero_magnitude_right());
+    /// assert_eq!(-2, dec.nonzero_magnitude_end());
     ///
-    /// assert_eq!(0, FixedDecimal::from(0).nonzero_magnitude_right());
+    /// assert_eq!(0, FixedDecimal::from(0).nonzero_magnitude_end());
     /// ```
-    pub fn nonzero_magnitude_right(&self) -> i16 {
+    pub fn nonzero_magnitude_end(&self) -> i16 {
         if self.is_zero() {
             0
         } else {
@@ -331,13 +371,24 @@ impl FixedDecimal {
         self.digits.is_empty()
     }
 
+    /// Clears all the fields and sets the number to zero.
+    fn clear(&mut self) {
+        self.upper_magnitude = 0;
+        self.lower_magnitude = 0;
+        self.magnitude = 0;
+        self.digits.clear();
+        self.sign = Sign::None;
+
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
     /// Shift the digits by a power of 10, modifying self.
     ///
     /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
     /// before the decimal separator) visible.
     ///
-    /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
-    /// digits should fit in an i16.
+    /// NOTE: if the operation causes overflow, the number will be set to zero.
     ///
     /// # Examples
     ///
@@ -347,28 +398,40 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.multiply_pow10(3).expect("Bounds are small");
+    /// dec.multiply_pow10(3);
     /// assert_eq!("42000", dec.to_string());
     /// ```
-    pub fn multiply_pow10(&mut self, delta: i16) -> Result<(), Error> {
+    pub fn multiply_pow10(&mut self, delta: i16) {
         match delta.cmp(&0) {
             Ordering::Greater => {
-                self.upper_magnitude = self
-                    .upper_magnitude
-                    .checked_add(delta)
-                    .ok_or(Error::Limit)?;
-                // If we get here, then the magnitude change is in-bounds.
-                let lower_magnitude = self.lower_magnitude + delta;
-                self.lower_magnitude = cmp::min(0, lower_magnitude);
+                let upper_magnitude = self.upper_magnitude.checked_add(delta);
+                match upper_magnitude {
+                    Some(upper_magnitude) => {
+                        self.upper_magnitude = upper_magnitude;
+                        // If we get here, then the magnitude change is in-bounds.
+                        let lower_magnitude = self.lower_magnitude + delta;
+                        self.lower_magnitude = cmp::min(0, lower_magnitude);
+                    }
+                    None => {
+                        // there is an overflow
+                        self.clear();
+                    }
+                }
             }
             Ordering::Less => {
-                self.lower_magnitude = self
-                    .lower_magnitude
-                    .checked_add(delta)
-                    .ok_or(Error::Limit)?;
-                // If we get here, then the magnitude change is in-bounds.
-                let upper_magnitude = self.upper_magnitude + delta;
-                self.upper_magnitude = cmp::max(0, upper_magnitude);
+                let lower_magnitude = self.lower_magnitude.checked_add(delta);
+                match lower_magnitude {
+                    Some(lower_magnitude) => {
+                        self.lower_magnitude = lower_magnitude;
+                        // If we get here, then the magnitude change is in-bounds.
+                        let upper_magnitude = self.upper_magnitude + delta;
+                        self.upper_magnitude = cmp::max(0, upper_magnitude);
+                    }
+                    None => {
+                        // there is an overflow
+                        self.clear();
+                    }
+                }
             }
             Ordering::Equal => {}
         };
@@ -377,7 +440,6 @@ impl FixedDecimal {
         }
         #[cfg(debug_assertions)]
         self.check_invariants();
-        Ok(())
     }
 
     /// Shift the digits by a power of 10, consuming self and returning a new object if successful.
@@ -385,8 +447,7 @@ impl FixedDecimal {
     /// Leading or trailing zeros may be added to keep the digit at magnitude 0 (the last digit
     /// before the decimal separator) visible.
     ///
-    /// Can fail if the change in magnitude pushes the digits out of bounds; the magnitudes of all
-    /// digits should fit in an i16.
+    /// NOTE: if the operation causes overflow, the returned number will be zero.
     ///
     /// # Examples
     ///
@@ -394,60 +455,227 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     ///
     /// let dec = FixedDecimal::from(42)
-    ///     .multiplied_pow10(3)
-    ///     .expect("Bounds are small");
+    ///     .multiplied_pow10(3);
     /// assert_eq!("42000", dec.to_string());
     /// ```
-    pub fn multiplied_pow10(mut self, delta: i16) -> Result<Self, Error> {
-        match self.multiply_pow10(delta) {
-            Ok(()) => Ok(self),
-            Err(err) => Err(err),
+    pub fn multiplied_pow10(mut self, delta: i16) -> Self {
+        self.multiply_pow10(delta);
+        self
+    }
+
+    /// Returns the sign.
+    /// # Examples
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Sign;
+    /// # use std::str::FromStr;
+    ///
+    /// assert_eq!(FixedDecimal::from_str("1729").unwrap().sign(), Sign::None);
+    /// assert_eq!(FixedDecimal::from_str("-1729").unwrap().sign(), Sign::Negative);
+    /// assert_eq!(FixedDecimal::from_str("+1729").unwrap().sign(), Sign::Positive);
+    /// ```
+    pub fn sign(&self) -> Sign {
+        self.sign
+    }
+
+    /// Change the sign to the one given.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Sign;
+    ///
+    /// let mut dec = FixedDecimal::from(1729);
+    /// assert_eq!("1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::Negative);
+    /// assert_eq!("-1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::Positive);
+    /// assert_eq!("+1729", dec.to_string());
+    ///
+    /// dec.set_sign(Sign::None);
+    /// assert_eq!("1729", dec.to_string());
+    /// ```
+    pub fn set_sign(&mut self, sign: Sign) {
+        self.sign = sign;
+    }
+
+    /// Change the sign to the one given, consuming self and returning a new object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::Sign;
+    ///
+    /// assert_eq!("+1729", FixedDecimal::from(1729).with_sign(Sign::Positive).to_string());
+    /// assert_eq!("1729", FixedDecimal::from(-1729).with_sign(Sign::None).to_string());
+    /// assert_eq!("-1729", FixedDecimal::from(1729).with_sign(Sign::Negative).to_string());
+    /// ```
+    pub fn with_sign(mut self, sign: Sign) -> Self {
+        self.set_sign(sign);
+        self
+    }
+
+    /// Sets the sign according to the given sign display strategy.
+    ///
+    /// # Examples
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignDisplay::*;
+    ///
+    /// let mut dec = FixedDecimal::from(1729);
+    /// assert_eq!("1729", dec.to_string());
+    /// dec.apply_sign_display(Always);
+    /// assert_eq!("+1729", dec.to_string());
+    /// ```
+    pub fn apply_sign_display(&mut self, sign_display: SignDisplay) {
+        use Sign::*;
+        match sign_display {
+            SignDisplay::Auto => {
+                if self.sign != Negative {
+                    self.sign = None
+                }
+            }
+            SignDisplay::Always => {
+                if self.sign != Negative {
+                    self.sign = Positive
+                }
+            }
+            SignDisplay::Never => self.sign = None,
+            SignDisplay::ExceptZero => {
+                if self.is_zero() {
+                    self.sign = None
+                } else if self.sign != Negative {
+                    self.sign = Positive
+                }
+            }
+            SignDisplay::Negative => {
+                if self.sign != Negative || self.is_zero() {
+                    self.sign = None
+                }
+            }
         }
     }
 
-    /// Change the value from negative to positive or from positive to negative, modifying self.
-    /// Negative zero is supported.
+    /// Sets the sign according to the given sign display strategy, consuming
+    /// self and returning a new object.
     ///
     /// # Examples
-    ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
+    /// use fixed_decimal::SignDisplay::*;
     ///
-    /// let mut dec = FixedDecimal::from(42);
-    /// assert_eq!("42", dec.to_string());
-    ///
-    /// dec.negate();
-    /// assert_eq!("-42", dec.to_string());
-    ///
-    /// dec.negate();
-    /// assert_eq!("42", dec.to_string());
-    ///
-    /// // Negative zero example
-    /// let zero = FixedDecimal::from(0);
-    /// let mut negative_zero = FixedDecimal::from(0);
-    /// negative_zero.negate();
-    ///
-    /// assert_eq!("0", zero.to_string());
-    /// assert_eq!("-0", negative_zero.to_string());
-    /// assert_ne!(zero, negative_zero);
+    /// assert_eq!("+1729", FixedDecimal::from(1729).with_sign_display(ExceptZero).to_string());
     /// ```
-    pub fn negate(&mut self) {
-        self.is_negative = !self.is_negative;
+    pub fn with_sign_display(mut self, sign_display: SignDisplay) -> Self {
+        self.apply_sign_display(sign_display);
+        self
     }
 
-    /// Change the value from negative to positive or from positive to negative, consuming self
-    /// and returning a new object.
+    /// Remove leading zeroes, consuming self and returning a new object.
     ///
     /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// assert_eq!(FixedDecimal::from(-42), FixedDecimal::from(42).negated());
+    /// let dec = FixedDecimal::from(123400)
+    ///     .multiplied_pow10(-4)
+    ///     .padded_start(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// assert_eq!("12.3400", dec.trimmed_start().to_string());
     /// ```
-    pub fn negated(mut self) -> Self {
-        self.negate();
+    pub fn trimmed_start(mut self) -> Self {
+        self.trim_start();
         self
+    }
+
+    /// Remove leading zeroes, modifying self.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(123400)
+    ///     .multiplied_pow10(-4)
+    ///     .padded_start(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// dec.trim_start();
+    /// assert_eq!("12.3400", dec.to_string());
+    /// ```
+    ///
+    /// There is no effect if the most significant digit has magnitude less than zero:
+    ///
+    /// ```
+    /// # use fixed_decimal::FixedDecimal;
+    /// let mut dec = FixedDecimal::from(22)
+    ///     .multiplied_pow10(-4);
+    /// assert_eq!("0.0022", dec.to_string());
+    ///
+    /// dec.trim_start();
+    /// assert_eq!("0.0022", dec.to_string());
+    /// ```
+    pub fn trim_start(&mut self) {
+        self.upper_magnitude = cmp::max(self.magnitude, 0);
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    /// Remove trailing zeroes, consuming self and returning a new object.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let dec = FixedDecimal::from(123400)
+    ///     .multiplied_pow10(-4)
+    ///     .padded_start(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// assert_eq!("0012.34", dec.trimmed_end().to_string());
+    /// ```
+    pub fn trimmed_end(mut self) -> Self {
+        self.trim_end();
+        self
+    }
+
+    /// Remove trailing zeroes, modifying self.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    ///
+    /// let mut dec = FixedDecimal::from(123400)
+    ///     .multiplied_pow10(-4)
+    ///     .padded_start(4);
+    /// assert_eq!("0012.3400", dec.to_string());
+    ///
+    /// dec.trim_end();
+    /// assert_eq!("0012.34", dec.to_string());
+    /// ```
+    ///
+    /// There is no effect if the least significant digit has magnitude more than zero:
+    ///
+    /// ```
+    /// # use fixed_decimal::FixedDecimal;
+    /// let mut dec = FixedDecimal::from(2200);
+    /// assert_eq!("2200", dec.to_string());
+    ///
+    /// dec.trim_end();
+    /// assert_eq!("2200", dec.to_string());
+    /// ```
+    pub fn trim_end(&mut self) {
+        self.lower_magnitude = cmp::min(0, self.nonzero_magnitude_end());
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Zero-pad the number on the left to a particular position,
@@ -455,7 +683,7 @@ impl FixedDecimal {
     ///
     /// Negative numbers have no effect.
     ///
-    /// Also see [`FixedDecimal::truncated_left()`].
+    /// Also see [`FixedDecimal::with_max_position()`].
     ///
     /// # Examples
     ///
@@ -464,16 +692,16 @@ impl FixedDecimal {
     ///
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
-    /// assert_eq!("0042", dec.clone().padded_left(4).to_string());
+    /// assert_eq!("0042", dec.clone().padded_start(4).to_string());
     ///
-    /// assert_eq!("042", dec.clone().padded_left(3).to_string());
+    /// assert_eq!("042", dec.clone().padded_start(3).to_string());
     ///
-    /// assert_eq!("42", dec.clone().padded_left(2).to_string());
+    /// assert_eq!("42", dec.clone().padded_start(2).to_string());
     ///
-    /// assert_eq!("42", dec.clone().padded_left(1).to_string());
+    /// assert_eq!("42", dec.clone().padded_start(1).to_string());
     /// ```
-    pub fn padded_left(mut self, position: i16) -> Self {
-        self.pad_left(position);
+    pub fn padded_start(mut self, position: i16) -> Self {
+        self.pad_start(position);
         self
     }
 
@@ -481,7 +709,7 @@ impl FixedDecimal {
     ///
     /// Negative numbers have no effect.
     ///
-    /// Also see [`FixedDecimal::truncate_left()`].
+    /// Also see [`FixedDecimal::set_max_position()`].
     ///
     /// # Examples
     ///
@@ -491,19 +719,19 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from(42);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.pad_left(4);
+    /// dec.pad_start(4);
     /// assert_eq!("0042", dec.to_string());
     ///
-    /// dec.pad_left(3);
+    /// dec.pad_start(3);
     /// assert_eq!("042", dec.to_string());
     ///
-    /// dec.pad_left(2);
+    /// dec.pad_start(2);
     /// assert_eq!("42", dec.to_string());
     ///
-    /// dec.pad_left(1);
+    /// dec.pad_start(1);
     /// assert_eq!("42", dec.to_string());
     /// ```
-    pub fn pad_left(&mut self, position: i16) {
+    pub fn pad_start(&mut self, position: i16) {
         if position <= 0 {
             return;
         }
@@ -513,78 +741,152 @@ impl FixedDecimal {
             magnitude = self.magnitude;
         }
         self.upper_magnitude = magnitude;
+        #[cfg(debug_assertions)]
+        self.check_invariants();
+    }
+
+    /// Zero-pad the number on the right to a particular (negative) position. Will truncate
+    /// trailing zeros if necessary, but will not truncate other digits, returning the result.
+    ///
+    /// Positive numbers have no effect.
+    ///
+    /// Also see [`FixedDecimal::trunced()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
+    /// assert_eq!("123.456", dec.to_string());
+    ///
+    /// assert_eq!("123.456", dec.clone().padded_end(-1).to_string());
+    ///
+    /// assert_eq!("123.456", dec.clone().padded_end(-2).to_string());
+    ///
+    /// assert_eq!("123.456000", dec.clone().padded_end(-6).to_string());
+    ///
+    /// assert_eq!("123.4560", dec.clone().padded_end(-4).to_string());
+    /// ```
+    pub fn padded_end(mut self, position: i16) -> Self {
+        self.pad_end(position);
+        self
+    }
+
+    /// Zero-pad the number on the right to a particular (negative) position. Will truncate
+    /// trailing zeros if necessary, but will not truncate other digits.
+    ///
+    /// Positive numbers have no effect.
+    ///
+    /// Also see [`FixedDecimal::trunc()`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
+    /// assert_eq!("123.456", dec.to_string());
+    ///
+    /// dec.pad_end(-1);
+    /// assert_eq!("123.456", dec.to_string());
+    ///
+    /// dec.pad_end(-2);
+    /// assert_eq!("123.456", dec.to_string());
+    ///
+    /// dec.pad_end(-6);
+    /// assert_eq!("123.456000", dec.to_string());
+    ///
+    /// dec.pad_end(-4);
+    /// assert_eq!("123.4560", dec.to_string());
+    /// ```
+    pub fn pad_end(&mut self, position: i16) {
+        if position >= 0 {
+            return;
+        }
+        let bottom_magnitude = self.nonzero_magnitude_end();
+        let mut magnitude = position;
+        // Do not truncate nonzero digits
+        if magnitude >= bottom_magnitude {
+            magnitude = bottom_magnitude;
+        }
+        self.lower_magnitude = magnitude;
+        #[cfg(debug_assertions)]
+        self.check_invariants();
     }
 
     /// Truncate the number on the left to a particular position, deleting
     /// digits if necessary, returning the result.
     ///
-    /// Also see [`FixedDecimal::padded_left()`].
+    /// Also see [`FixedDecimal::padded_start()`].
     ///
     /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3).expect("in-bounds");
+    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
     /// assert_eq!("4235.970", dec.to_string());
     ///
-    /// assert_eq!("04235.970", dec.clone().truncated_left(5).to_string());
+    /// assert_eq!("04235.970", dec.clone().with_max_position(5).to_string());
     ///
-    /// assert_eq!("35.970", dec.clone().truncated_left(2).to_string());
+    /// assert_eq!("35.970", dec.clone().with_max_position(2).to_string());
     ///
-    /// assert_eq!("5.970", dec.clone().truncated_left(1).to_string());
+    /// assert_eq!("5.970", dec.clone().with_max_position(1).to_string());
     ///
-    /// assert_eq!("0.970", dec.clone().truncated_left(0).to_string());
+    /// assert_eq!("0.970", dec.clone().with_max_position(0).to_string());
     ///
-    /// assert_eq!("0.070", dec.clone().truncated_left(-1).to_string());
+    /// assert_eq!("0.070", dec.clone().with_max_position(-1).to_string());
     ///
-    /// assert_eq!("0.000", dec.clone().truncated_left(-2).to_string());
+    /// assert_eq!("0.000", dec.clone().with_max_position(-2).to_string());
     ///
-    /// assert_eq!("0.0000", dec.clone().truncated_left(-4).to_string());
+    /// assert_eq!("0.0000", dec.clone().with_max_position(-4).to_string());
     /// ```
-    pub fn truncated_left(mut self, position: i16) -> Self {
-        self.truncate_left(position);
+    pub fn with_max_position(mut self, position: i16) -> Self {
+        self.set_max_position(position);
         self
     }
 
     /// Truncate the number on the left to a particular position, deleting
     /// digits if necessary.
     ///
-    /// Also see [`FixedDecimal::pad_left()`].
+    /// Also see [`FixedDecimal::pad_start()`].
     ///
     /// # Examples
     ///
     /// ```
     /// use fixed_decimal::FixedDecimal;
     ///
-    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3).expect("in-bounds");
+    /// let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
     /// assert_eq!("4235.970", dec.to_string());
     ///
-    /// dec.truncate_left(5);
+    /// dec.set_max_position(5);
     /// assert_eq!("04235.970", dec.to_string());
     ///
-    /// dec.truncate_left(2);
+    /// dec.set_max_position(2);
     /// assert_eq!("35.970", dec.to_string());
     ///
-    /// dec.truncate_left(1);
+    /// dec.set_max_position(1);
     /// assert_eq!("5.970", dec.to_string());
     ///
-    /// dec.truncate_left(0);
+    /// dec.set_max_position(0);
     /// assert_eq!("0.970", dec.to_string());
     ///
-    /// dec.truncate_left(-1);
+    /// dec.set_max_position(-1);
     /// assert_eq!("0.070", dec.to_string());
     ///
-    /// dec.truncate_left(-2);
+    /// dec.set_max_position(-2);
     /// assert_eq!("0.000", dec.to_string());
     ///
-    /// dec.truncate_left(-4);
+    /// dec.set_max_position(-4);
     /// assert_eq!("0.0000", dec.to_string());
     /// ```
-    pub fn truncate_left(&mut self, position: i16) {
+    pub fn set_max_position(&mut self, position: i16) {
         self.lower_magnitude = cmp::min(self.lower_magnitude, position);
         self.upper_magnitude = if position <= 0 { 0 } else { position - 1 };
-        if position <= self.nonzero_magnitude_right() {
+        if position <= self.nonzero_magnitude_end() {
             self.digits.clear();
             self.magnitude = 0;
             #[cfg(debug_assertions)]
@@ -665,7 +967,7 @@ impl FixedDecimal {
     /// Truncate the number on the right to a particular position, deleting
     /// digits if necessary.
     ///
-    /// Also see [`FixedDecimal::padded_right()`].
+    /// Also see [`FixedDecimal::padded_end()`].
     ///
     /// # Examples
     ///
@@ -674,29 +976,25 @@ impl FixedDecimal {
     /// # use std::str::FromStr;
     ///
     /// let dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// assert_eq!("-1", dec.truncated_right(0).to_string());
-    ///
+    /// assert_eq!("-1", dec.trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.4").unwrap();
-    /// assert_eq!("0", dec.truncated_right(0).to_string());
-    ///
+    /// assert_eq!("0", dec.trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.5").unwrap();
-    /// assert_eq!("0", dec.truncated_right(0).to_string());
-    ///
+    /// assert_eq!("0", dec.trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("0.6").unwrap();
-    /// assert_eq!("0", dec.truncated_right(0).to_string());
-    ///
+    /// assert_eq!("0", dec.trunced(0).to_string());
     /// let dec = FixedDecimal::from_str("1.5").unwrap();
-    /// assert_eq!("1", dec.truncated_right(0).to_string());
+    /// assert_eq!("1", dec.trunced(0).to_string());
     /// ```
-    pub fn truncated_right(mut self, position: i16) -> Self {
-        self.truncate_right(position);
+    pub fn trunced(mut self, position: i16) -> Self {
+        self.trunc(position);
         self
     }
 
     /// Truncates the number on the right to a particular position, deleting
     /// digits if necessary.
     ///
-    /// Also see [`FixedDecimal::pad_right()`].
+    /// Also see [`FixedDecimal::pad_end()`].
     ///
     /// # Examples
     ///
@@ -705,26 +1003,22 @@ impl FixedDecimal {
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.truncate_right(0);
+    /// dec.trunc(0);
     /// assert_eq!("-1", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.truncate_right(0);
+    /// dec.trunc(0);
     /// assert_eq!("0", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.truncate_right(0);
+    /// dec.trunc(0);
     /// assert_eq!("0", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.truncate_right(0);
+    /// dec.trunc(0);
     /// assert_eq!("0", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.truncate_right(0);
+    /// dec.trunc(0);
     /// assert_eq!("1", dec.to_string());
     /// ```
-    pub fn truncate_right(&mut self, position: i16) {
+    pub fn trunc(&mut self, position: i16) {
         self.lower_magnitude = cmp::min(position, 0);
         if position == i16::MIN {
             // Nothing more to do
@@ -758,30 +1052,25 @@ impl FixedDecimal {
     /// # use std::str::FromStr;
     ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
-    /// dec.half_truncate_right(0);
+    /// dec.half_trunc(0);
     /// assert_eq!("-1", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
-    /// dec.half_truncate_right(0);
+    /// dec.half_trunc(0);
     /// assert_eq!("0", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
-    /// dec.half_truncate_right(0);
+    /// dec.half_trunc(0);
     /// assert_eq!("0", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
-    /// dec.half_truncate_right(0);
-    /// assert_eq!("1", dec.to_string());
-    ///    
+    /// dec.half_trunc(0);
+    /// assert_eq!("1", dec.to_string());   
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
-    /// dec.half_truncate_right(0);
+    /// dec.half_trunc(0);
     /// assert_eq!("1", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("3.954").unwrap();
-    /// dec.half_truncate_right(0);
+    /// dec.half_trunc(0);
     /// assert_eq!("4", dec.to_string());
     /// ```
-    pub fn half_truncate_right(&mut self, position: i16) {
+    pub fn half_trunc(&mut self, position: i16) {
         let digit_after_position = self.digit_at_next_positon(position);
         let should_expand = match digit_after_position.cmp(&5) {
             Ordering::Less => false,
@@ -789,15 +1078,42 @@ impl FixedDecimal {
             Ordering::Equal =>
             // NOTE: `digit_after_position` equals 5, this means, position does not equal to `i16::MIN`.
             {
-                self.nonzero_magnitude_right() < position - 1
+                self.nonzero_magnitude_end() < position - 1
             }
         };
 
         if should_expand {
             self.expand(position);
         } else {
-            self.truncate_right(position);
+            self.trunc(position);
         }
+    }
+
+    /// Half Truncates the number on the right to a particular position, deleting
+    /// digits if necessary.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-1", dec.half_trunced(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.half_trunced(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("0", dec.half_trunced(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.half_trunced(0).to_string());    
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("1", dec.half_trunced(0).to_string());
+    /// let dec = FixedDecimal::from_str("3.954").unwrap();
+    /// assert_eq!("4", dec.half_trunced(0).to_string());
+    /// ```
+    pub fn half_trunced(mut self, position: i16) -> Self {
+        self.half_trunc(position);
+        self
     }
 
     /// Take the expand of the number at a particular position.
@@ -811,28 +1127,24 @@ impl FixedDecimal {
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.expand(0);
     /// assert_eq!("-2", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.4").unwrap();
     /// dec.expand(0);
     /// assert_eq!("1", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.5").unwrap();
     /// dec.expand(0);
     /// assert_eq!("1", dec.to_string());
-    ///
     /// let mut dec = FixedDecimal::from_str("0.6").unwrap();
     /// dec.expand(0);
-    /// assert_eq!("1", dec.to_string());
-    ///    
+    /// assert_eq!("1", dec.to_string());  
     /// let mut dec = FixedDecimal::from_str("1.5").unwrap();
     /// dec.expand(0);
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn expand(&mut self, position: i16) {
         let before_truncate_is_zero = self.is_zero();
-        let before_truncate_bottom_magnitude = self.nonzero_magnitude_right();
+        let before_truncate_bottom_magnitude = self.nonzero_magnitude_end();
         let before_truncate_magnitude = self.magnitude;
-        self.truncate_right(position);
+        self.trunc(position);
 
         if before_truncate_is_zero || position <= before_truncate_bottom_magnitude {
             #[cfg(debug_assertions)]
@@ -858,6 +1170,30 @@ impl FixedDecimal {
 
         #[cfg(debug_assertions)]
         self.check_invariants();
+    }
+
+    /// Take the expand of the number at a particular position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-2", dec.expanded(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("1", dec.expanded(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("1", dec.expanded(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.expanded(0).to_string());   
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("2", dec.expanded(0).to_string());
+    /// ```
+    pub fn expanded(mut self, position: i16) -> Self {
+        self.expand(position);
+        self
     }
 
     /// Take the half expand of the number at a particular position.
@@ -890,8 +1226,32 @@ impl FixedDecimal {
         if digit_after_position >= 5 {
             self.expand(position);
         } else {
-            self.truncate_right(position);
+            self.trunc(position);
         }
+    }
+
+    /// Take the half expand of the number at a particular position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-2", dec.half_expanded(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.half_expanded(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("1", dec.half_expanded(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.half_expanded(0).to_string());
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("2", dec.half_expanded(0).to_string());
+    /// ```
+    pub fn half_expanded(mut self, position: i16) -> Self {
+        self.half_expand(position);
+        self
     }
 
     /// Take the ceiling of the number at a particular position.
@@ -919,12 +1279,36 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn ceil(&mut self, position: i16) {
-        if self.is_negative {
-            self.truncate_right(position);
+        if self.sign == Sign::Negative {
+            self.trunc(position);
             return;
         }
 
         self.expand(position);
+    }
+
+    /// Take the ceiling of the number at a particular position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-1", dec.ceiled(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("1", dec.ceiled(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("1", dec.ceiled(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.ceiled(0).to_string());
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("2", dec.ceiled(0).to_string());
+    /// ```
+    pub fn ceiled(mut self, position: i16) -> Self {
+        self.ceil(position);
+        self
     }
 
     /// Take the half ceiling of the number at a particular position.
@@ -952,12 +1336,36 @@ impl FixedDecimal {
     /// assert_eq!("2", dec.to_string());
     /// ```
     pub fn half_ceil(&mut self, position: i16) {
-        if self.is_negative {
-            self.half_truncate_right(position);
+        if self.sign == Sign::Negative {
+            self.half_trunc(position);
             return;
         }
 
         self.half_expand(position);
+    }
+
+    /// Take the half ceiling of the number at a particular position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-1", dec.half_ceiled(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.half_ceiled(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("1", dec.half_ceiled(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.half_ceiled(0).to_string());
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("2", dec.half_ceiled(0).to_string());
+    /// ```
+    pub fn half_ceiled(mut self, position: i16) -> Self {
+        self.half_ceil(position);
+        self
     }
 
     /// Take the floor of the number at a particular position.
@@ -985,12 +1393,36 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn floor(&mut self, position: i16) {
-        if self.is_negative {
+        if self.sign == Sign::Negative {
             self.expand(position);
             return;
         }
 
-        self.truncate_right(position);
+        self.trunc(position);
+    }
+
+    /// Take the floor of the number at a particular position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-2", dec.floored(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.floored(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("0", dec.floored(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("0", dec.floored(0).to_string());
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("1", dec.floored(0).to_string());
+    /// ```
+    pub fn floored(mut self, position: i16) -> Self {
+        self.floor(position);
+        self
     }
 
     /// Take the half floor of the number at a particular position.
@@ -1000,6 +1432,7 @@ impl FixedDecimal {
     /// ```
     /// use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
+    ///
     /// let mut dec = FixedDecimal::from_str("-1.5").unwrap();
     /// dec.half_floor(0);
     /// assert_eq!("-2", dec.to_string());
@@ -1017,12 +1450,36 @@ impl FixedDecimal {
     /// assert_eq!("1", dec.to_string());
     /// ```
     pub fn half_floor(&mut self, position: i16) {
-        if self.is_negative {
+        if self.sign == Sign::Negative {
             self.half_expand(position);
             return;
         }
 
-        self.half_truncate_right(position);
+        self.half_trunc(position);
+    }
+
+    /// Take the half floor of the number at a particular position.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use fixed_decimal::FixedDecimal;
+    /// # use std::str::FromStr;
+    ///
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-2", dec.half_floored(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.half_floored(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("0", dec.half_floored(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.half_floored(0).to_string());
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("1", dec.half_floored(0).to_string());
+    /// ```
+    pub fn half_floored(mut self, position: i16) -> Self {
+        self.half_floor(position);
+        self
     }
 
     /// Take the half even of the number at a particular position.
@@ -1056,7 +1513,7 @@ impl FixedDecimal {
             Ordering::Greater => true,
             Ordering::Equal => {
                 // NOTE: `digit_after_position` equals to 5, this means that positon does not equal i16::MIN.
-                if self.nonzero_magnitude_right() < position - 1 {
+                if self.nonzero_magnitude_end() < position - 1 {
                     true
                 } else {
                     self.digit_at(position) % 2 != 0
@@ -1067,16 +1524,11 @@ impl FixedDecimal {
         if should_expand {
             self.expand(position);
         } else {
-            self.truncate_right(position);
+            self.trunc(position);
         }
     }
 
-    /// Zero-pad the number on the right to a particular (negative) position. Will truncate
-    /// trailing zeros if necessary, but will not truncate other digits, returning the result.
-    ///
-    /// Positive numbers have no effect.
-    ///
-    /// Also see [`FixedDecimal::truncated_right()`].
+    /// Take the half even of the number at a particular position.
     ///
     /// # Examples
     ///
@@ -1084,63 +1536,20 @@ impl FixedDecimal {
     /// use fixed_decimal::FixedDecimal;
     /// # use std::str::FromStr;
     ///
-    /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
-    /// assert_eq!("123.456", dec.to_string());
-    ///
-    /// assert_eq!("123.456", dec.clone().padded_right(-1).to_string());
-    ///
-    /// assert_eq!("123.456", dec.clone().padded_right(-2).to_string());
-    ///
-    /// assert_eq!("123.456000", dec.clone().padded_right(-6).to_string());
-    ///
-    /// assert_eq!("123.4560", dec.clone().padded_right(-4).to_string());
+    /// let dec = FixedDecimal::from_str("-1.5").unwrap();
+    /// assert_eq!("-2", dec.half_evened(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.4").unwrap();
+    /// assert_eq!("0", dec.half_evened(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.5").unwrap();
+    /// assert_eq!("0", dec.half_evened(0).to_string());
+    /// let dec = FixedDecimal::from_str("0.6").unwrap();
+    /// assert_eq!("1", dec.half_evened(0).to_string());
+    /// let dec = FixedDecimal::from_str("1.5").unwrap();
+    /// assert_eq!("2", dec.half_evened(0).to_string());
     /// ```
-    pub fn padded_right(mut self, position: i16) -> Self {
-        self.pad_right(position);
+    pub fn half_evened(mut self, position: i16) -> Self {
+        self.half_even(position);
         self
-    }
-
-    /// Zero-pad the number on the right to a particular (negative) position. Will truncate
-    /// trailing zeros if necessary, but will not truncate other digits.
-    ///
-    /// Positive numbers have no effect.
-    ///
-    /// Also see [`FixedDecimal::truncate_right()`].
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// # use std::str::FromStr;
-    ///
-    /// let mut dec = FixedDecimal::from_str("123.456").unwrap();
-    /// assert_eq!("123.456", dec.to_string());
-    ///
-    /// dec.pad_right(-1);
-    /// assert_eq!("123.456", dec.to_string());
-    ///
-    /// dec.pad_right(-2);
-    /// assert_eq!("123.456", dec.to_string());
-    ///
-    /// dec.pad_right(-6);
-    /// assert_eq!("123.456000", dec.to_string());
-    ///
-    /// dec.pad_right(-4);
-    /// assert_eq!("123.4560", dec.to_string());
-    /// ```
-    pub fn pad_right(&mut self, position: i16) {
-        if position >= 0 {
-            return;
-        }
-        let bottom_magnitude = self.nonzero_magnitude_right();
-        let mut magnitude = position;
-        // Do not truncate nonzero digits
-        if magnitude >= bottom_magnitude {
-            magnitude = bottom_magnitude;
-        }
-        self.lower_magnitude = magnitude;
-        #[cfg(debug_assertions)]
-        self.check_invariants();
     }
 
     /// Concatenate another `FixedDecimal` into the end of this `FixedDecimal`.
@@ -1158,15 +1567,14 @@ impl FixedDecimal {
     ///
     /// let integer = FixedDecimal::from(123);
     /// let fraction = FixedDecimal::from(456)
-    ///     .multiplied_pow10(-3)
-    ///     .expect("in-range");
+    ///     .multiplied_pow10(-3);
     ///
-    /// let result =  integer.concatenated_right(fraction).expect("nonoverlapping");
+    /// let result =  integer.concatenated_end(fraction).expect("nonoverlapping");
     ///
     /// assert_eq!("123.456", result.to_string());
     /// ```
-    pub fn concatenated_right(mut self, other: FixedDecimal) -> Result<Self, FixedDecimal> {
-        match self.concatenate_right(other) {
+    pub fn concatenated_end(mut self, other: FixedDecimal) -> Result<Self, FixedDecimal> {
+        match self.concatenate_end(other) {
             Ok(()) => Ok(self),
             Err(err) => Err(err),
         }
@@ -1187,16 +1595,15 @@ impl FixedDecimal {
     ///
     /// let mut integer = FixedDecimal::from(123);
     /// let fraction = FixedDecimal::from(456)
-    ///     .multiplied_pow10(-3)
-    ///     .expect("nonoverlapping");
+    ///     .multiplied_pow10(-3);
     ///
-    /// integer.concatenate_right(fraction);
+    /// integer.concatenate_end(fraction);
     ///
     /// assert_eq!("123.456", integer.to_string());
     /// ```
-    pub fn concatenate_right(&mut self, other: FixedDecimal) -> Result<(), FixedDecimal> {
-        let self_right = self.nonzero_magnitude_right();
-        let other_left = other.nonzero_magnitude_left();
+    pub fn concatenate_end(&mut self, other: FixedDecimal) -> Result<(), FixedDecimal> {
+        let self_right = self.nonzero_magnitude_end();
+        let other_left = other.nonzero_magnitude_start();
         if self.is_zero() {
             // Operation will succeed. We can move the digits into self.
             self.digits = other.digits;
@@ -1227,37 +1634,12 @@ impl FixedDecimal {
         self.digits.extend_from_slice(new_digits);
     }
 
-    /// Returns the [Signum][Signum] of this FixedDecimal.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// use fixed_decimal::Signum;
-    ///
-    /// assert_eq!(Signum::AboveZero, FixedDecimal::from(42).signum());
-    /// assert_eq!(Signum::PositiveZero, FixedDecimal::from(0).signum());
-    /// assert_eq!(
-    ///     Signum::NegativeZero,
-    ///     FixedDecimal::from(0).negated().signum()
-    /// );
-    /// assert_eq!(Signum::BelowZero, FixedDecimal::from(-42).signum());
-    /// ```
-    pub fn signum(&self) -> Signum {
-        let is_zero = self.digits.is_empty();
-        match (self.is_negative, is_zero) {
-            (false, false) => Signum::AboveZero,
-            (false, true) => Signum::PositiveZero,
-            (true, false) => Signum::BelowZero,
-            (true, true) => Signum::NegativeZero,
-        }
-    }
-
     /// Assert that the invariants among struct fields are enforced. Returns true if all are okay.
     /// Call this in any method that mutates the struct fields.
     ///
     /// Example: `debug_assert!(self.check_invariants())`
     #[cfg(debug_assertions)]
+    #[allow(clippy::indexing_slicing)]
     fn check_invariants(&self) {
         // magnitude invariants:
         debug_assert!(
@@ -1282,16 +1664,17 @@ impl FixedDecimal {
         );
 
         // digits invariants:
-        let max_len = (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize;
-        debug_assert!(self.digits.len() <= max_len, "{:?}", self);
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        debug_assert!(
+            self.digits.len() <= (self.magnitude as i32 - self.lower_magnitude as i32 + 1) as usize,
+            "{:?}",
+            self
+        );
         if !self.digits.is_empty() {
-            debug_assert_ne!(self.digits[0], 0, "Starts with a zero {:?}", self);
+            debug_assert_ne!(self.digits[0], 0, "Starts with a zero {self:?}");
             debug_assert_ne!(
                 self.digits[self.digits.len() - 1],
                 0,
-                "Ends with a zero {:?}",
-                self
+                "Ends with a zero {self:?}",
             );
         } else {
             debug_assert_eq!(self.magnitude, 0);
@@ -1315,8 +1698,10 @@ impl writeable::Writeable for FixedDecimal {
     /// assert_eq!("42", result);
     /// ```
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
-        if self.is_negative {
-            sink.write_char('-')?;
+        match self.sign {
+            Sign::Negative => sink.write_char('-')?,
+            Sign::Positive => sink.write_char('+')?,
+            Sign::None => (),
         }
         for m in self.magnitude_range().rev() {
             if m == -1 {
@@ -1339,15 +1724,14 @@ impl writeable::Writeable for FixedDecimal {
     /// use writeable::Writeable;
     ///
     /// let dec = FixedDecimal::from(-5000)
-    ///     .multiplied_pow10(-2)
-    ///     .expect("Bounds are small");
+    ///     .multiplied_pow10(-2);
     /// let result = dec.write_to_string();
     /// assert_eq!(LengthHint::exact(6), dec.write_len());
     /// ```
     fn write_len(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
-            + (if self.is_negative { 1 } else { 0 })
+            + (if self.sign == Sign::None { 0 } else { 1 })
             + (if self.lower_magnitude < 0 { 1 } else { 0 })
     }
 }
@@ -1364,19 +1748,25 @@ impl FromStr for FixedDecimal {
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
-        // Check if the input string is "" or "-"
-        if input_str.is_empty() || input_str == "-" {
+        if input_str.is_empty() {
             return Err(Error::Syntax);
         }
         let input_str = input_str.as_bytes();
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let is_negative = input_str[0] == b'-';
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let no_sign_str = if is_negative {
-            &input_str[1..]
-        } else {
-            input_str
+        #[allow(clippy::indexing_slicing)] // The string is not empty.
+        let sign = match input_str[0] {
+            b'-' => Sign::Negative,
+            b'+' => Sign::Positive,
+            _ => Sign::None,
         };
+        #[allow(clippy::indexing_slicing)] // The string is not empty.
+        let no_sign_str = if sign == Sign::None {
+            input_str
+        } else {
+            &input_str[1..]
+        };
+        if no_sign_str.is_empty() {
+            return Err(Error::Syntax);
+        }
         // Compute length of each string once and store it, so if you use that multiple times,
         // you don't compute it multiple times
         // has_dot: shows if your input has dot in it
@@ -1439,7 +1829,7 @@ impl FromStr for FixedDecimal {
 
         // defining the output dec here and set its sign
         let mut dec = Self {
-            is_negative,
+            sign,
             ..Default::default()
         };
 
@@ -1533,7 +1923,7 @@ impl FromStr for FixedDecimal {
                 pow += (digit - b'0') as i16;
             }
 
-            dec.multiply_pow10(pos_neg * pow)?;
+            dec.multiply_pow10(pos_neg * pow);
 
             // Clean up magnitude after multiplication
             if dec.magnitude > 0 {
@@ -1557,6 +1947,7 @@ impl FromStr for FixedDecimal {
 /// information required by FixedDecimal.
 #[cfg(feature = "ryu")]
 #[derive(Debug, Clone, Copy)]
+#[allow(clippy::exhaustive_enums)] // TODO(#1668)
 pub enum DoublePrecision {
     /// Specify that the floating point number is integer-valued.
     ///
@@ -1565,33 +1956,19 @@ pub enum DoublePrecision {
 
     /// Specify that the floating point number is precise to a specific power of 10.
     /// The number may be rounded or trailing zeros may be added as necessary.
-    Magnitude(i16, RoundingMode),
+    Magnitude(i16),
 
     /// Specify that the floating point number is precise to a specific number of significant digits.
     /// The number may be rounded or trailing zeros may be added as necessary.
     ///
     /// The number requested may not be zero
-    SignificantDigits(u8, RoundingMode),
+    SignificantDigits(u8),
 
     /// Specify that the floating point number is precise to the maximum representable by IEEE.
     ///
     /// This results in a FixedDecimal having enough digits to recover the original floating point
     /// value, with no trailing zeros.
     Floating,
-}
-
-/// Specifies how numbers should be rounded
-#[derive(Copy, Clone, PartialEq, Eq, Debug)]
-pub enum RoundingMode {
-    /// Return an error if the number has trailing nonzero digits that need to be rounded.
-    Unnecessary,
-
-    /// Round toward zero (remove, or truncate, all trailing digits).
-    Truncate,
-
-    /// Round ties away from zero.
-    HalfExpand,
-    // TODO(#1177): Add more rounding modes.
 }
 
 #[cfg(feature = "ryu")]
@@ -1609,12 +1986,12 @@ impl FixedDecimal {
     /// This function can be made available with the `"ryu"` feature.
     ///
     /// ```rust
-    /// use fixed_decimal::{DoublePrecision, FixedDecimal, RoundingMode};
+    /// use fixed_decimal::{DoublePrecision, FixedDecimal};
     /// use writeable::Writeable;
     ///
     /// let decimal = FixedDecimal::try_from_f64(
     ///     -5.1,
-    ///     DoublePrecision::Magnitude(-2, RoundingMode::Unnecessary),
+    ///     DoublePrecision::Magnitude(-2),
     /// )
     /// .expect("Finite quantity with limited precision");
     /// assert_eq!(decimal.write_to_string(), "-5.10");
@@ -1657,50 +2034,21 @@ impl FixedDecimal {
                     return Err(Error::Limit);
                 }
             }
-            DoublePrecision::Magnitude(mag, mode) => {
-                if mag > lowest_magnitude {
-                    let round_by = (mag - lowest_magnitude) as u16;
-
-                    if round_by as usize <= n_digits {
-                        decimal.round_trailing_digits(round_by, mode)?;
-                    } else {
-                        // If we need to round by more digits than rounding can ever produce
-                        // the number is zero
-                        decimal = Default::default();
-                    }
-                }
-                if mag < 0 {
-                    // If the target magnitude was negative, make
-                    // sure we update the lower magnitude to match it
-                    decimal.lower_magnitude = mag;
-                } else if decimal.lower_magnitude < 0 {
-                    // If the target magnitude was positive,
-                    // we may have truncated digits off the right
-                    // side, reset the lower magnitude
-                    decimal.lower_magnitude = 0;
-                }
+            DoublePrecision::Magnitude(mag) => {
+                decimal.half_even(mag);
             }
-            DoublePrecision::SignificantDigits(sig, mode) => {
-                let sig = sig as usize;
+            DoublePrecision::SignificantDigits(sig) => {
                 if sig == 0 {
                     return Err(Error::Limit);
                 }
-                if sig < n_digits {
-                    let round_by = (n_digits - sig) as u16;
-                    decimal.round_trailing_digits(round_by, mode)?;
-                    // It may have rounded up by one
-                    debug_assert!(decimal.digits.len() <= sig as usize);
-                }
-                let target_lowest_magnitude = decimal.magnitude - sig as i16 + 1;
-                if target_lowest_magnitude <= 0 {
-                    // If the target magnitude was negative, make sure we update
-                    // the lower magnitude to match it
-                    decimal.lower_magnitude = target_lowest_magnitude;
-                } else if decimal.lower_magnitude < 0 {
-                    // If the target magnitude was positive,
-                    // we may have truncated digits off the right side
-                    // of the decimal point, reset the lower magnitude
-                    decimal.lower_magnitude = 0;
+
+                let position = decimal.magnitude - (sig as i16) + 1;
+                let old_magnitude = decimal.magnitude;
+                decimal.half_even(position);
+
+                // This means the significant digits has been increased by 1.
+                if decimal.magnitude > old_magnitude {
+                    decimal.lower_magnitude = cmp::min(0, position + 1);
                 }
             }
         }
@@ -1718,161 +2066,6 @@ impl FixedDecimal {
         let mut buf = ryu::Buffer::new();
         let formatted = buf.format_finite(float);
         Self::from_str(formatted)
-    }
-
-    /// Internal function to round off `n` digits
-    /// from the right
-    ///
-    /// `self` must have at least `n` digits
-    ///
-    /// This may end up adding a digit to the left!
-    ///
-    /// This will not change the number of significant digits, it simply exists
-    /// to *round* them (and will typically reduce the size of `self.digits`)
-    ///
-    /// This function is responsible for fixing `digits`, `magnitude`, and `upper_magnitude`.
-    /// It will only modify upper_magnitude when it is not large enough to fit the rounded number.
-    /// The caller may fix up `lower_magnitude` by whatever scheme it desires
-    fn round_trailing_digits(&mut self, n: u16, mode: RoundingMode) -> Result<(), Error> {
-        /// For fixing up invariants after truncation
-        ///
-        /// Basically will ensure that we don't end with any zeroes
-        fn fixup_invariants(dec: &mut FixedDecimal) {
-            let first_nonzero = dec.digits.iter().rposition(|d| *d != 0).unwrap_or(0);
-            dec.digits.truncate(first_nonzero + 1);
-            if dec.digits.is_empty() {
-                dec.magnitude = 0;
-            }
-        }
-
-        debug_assert!(
-            self.digits.len() >= n as usize,
-            "Attempted to round off {} digits of number that has only {}",
-            n,
-            self.digits.len()
-        );
-        if n == 0 {
-            // no point attempting to round off any digits
-            #[cfg(debug_assertions)]
-            self.check_invariants();
-            return Ok(());
-        }
-
-        let cutoff = self.digits.len() - n as usize;
-
-        match mode {
-            RoundingMode::Unnecessary => {
-                // If we got to this point then rounding was not unnecessary
-                return Err(Error::Limit);
-            }
-            RoundingMode::Truncate => {
-                self.digits.truncate(cutoff);
-                fixup_invariants(self);
-                #[cfg(debug_assertions)]
-                self.check_invariants();
-                return Ok(());
-            }
-            // continue to rest of routine
-            RoundingMode::HalfExpand => (),
-        }
-
-        // Do we need to round our significant digits?
-        // TODO(#1177): This heuristic is insufficient for most rounding modes.
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let round = self.digits[cutoff] >= 5;
-
-        self.digits.truncate(cutoff);
-
-        if round {
-            // how much to truncate by after rounding
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            let mut round_truncate = cutoff;
-            #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            for digit in self.digits[..cutoff].iter_mut().rev() {
-                if *digit == 9 {
-                    // Truncate this digit, the next digit can be rounded
-                    round_truncate -= 1;
-                } else {
-                    // We need to update this digit, then we're done
-                    *digit += 1;
-                    self.digits.truncate(round_truncate);
-                    #[cfg(debug_assertions)]
-                    self.check_invariants();
-                    return Ok(());
-                }
-            }
-
-            // If we reached this point then the last digit was 9 and we need to insert
-            // another digit at the beginning
-
-            self.digits.clear();
-            self.digits.push(1);
-            debug_assert!(self.upper_magnitude >= 0);
-            self.magnitude += 1;
-            if self.upper_magnitude < self.magnitude {
-                self.upper_magnitude = self.magnitude;
-            }
-        } else {
-            fixup_invariants(self);
-        }
-        #[cfg(debug_assertions)]
-        self.check_invariants();
-        Ok(())
-    }
-}
-
-#[cfg(feature = "ryu")]
-#[test]
-fn test_round() {
-    #[derive(Debug)]
-    struct TestCase {
-        pub input: f64,
-        pub round: u16,
-        pub expected: &'static str,
-    }
-    let cases = [
-        TestCase {
-            input: 1.234567,
-            round: 2,
-            expected: "1.234600",
-        },
-        TestCase {
-            input: 1.23456789,
-            round: 2,
-            expected: "1.23456800",
-        },
-        TestCase {
-            input: 88899971.,
-            round: 2,
-            expected: "88900000.0",
-        },
-        TestCase {
-            input: 999988.,
-            round: 2,
-            expected: "1000000.0",
-        },
-        TestCase {
-            input: 0.9,
-            round: 1,
-            expected: "1.0",
-        },
-        TestCase {
-            input: 9.9,
-            round: 1,
-            expected: "10.0",
-        },
-        TestCase {
-            input: 9.9,
-            round: 2,
-            expected: "10.0",
-        },
-    ];
-
-    for case in &cases {
-        let mut dec = FixedDecimal::new_from_f64_raw(case.input).unwrap();
-        dec.round_trailing_digits(case.round, RoundingMode::HalfExpand)
-            .unwrap();
-        writeable::assert_writeable_eq!(dec, case.expected, "{:?}", case);
     }
 }
 
@@ -1899,164 +2092,153 @@ fn test_float() {
         // HalfExpand tests
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::Magnitude(-2, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(-2),
             expected: "1.23",
         },
         TestCase {
             input: 1.235567,
-            precision: DoublePrecision::Magnitude(-2, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(-2),
             expected: "1.24",
         },
         TestCase {
             input: 1.2002,
-            precision: DoublePrecision::Magnitude(-3, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(-3),
             expected: "1.200",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::Magnitude(2, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(2),
             expected: "889000",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::Magnitude(4, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(4),
             expected: "890000",
         },
         TestCase {
             input: 0.9,
-            precision: DoublePrecision::Magnitude(0, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(0),
             expected: "1",
         },
         TestCase {
             input: 0.9,
-            precision: DoublePrecision::Magnitude(2, RoundingMode::HalfExpand),
-            expected: "0",
+            precision: DoublePrecision::Magnitude(2),
+            expected: "00",
         },
         TestCase {
             input: 0.009,
-            precision: DoublePrecision::Magnitude(-2, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(-2),
             expected: "0.01",
         },
         TestCase {
             input: 0.009,
-            precision: DoublePrecision::Magnitude(-1, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(-1),
             expected: "0.0",
         },
         TestCase {
             input: 0.009,
-            precision: DoublePrecision::Magnitude(0, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(0),
             expected: "0",
         },
         TestCase {
             input: 0.0000009,
-            precision: DoublePrecision::Magnitude(0, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(0),
             expected: "0",
         },
         TestCase {
             input: 0.0000009,
-            precision: DoublePrecision::Magnitude(-7, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(-7),
             expected: "0.0000009",
         },
         TestCase {
             input: 0.0000009,
-            precision: DoublePrecision::Magnitude(-6, RoundingMode::HalfExpand),
+            precision: DoublePrecision::Magnitude(-6),
             expected: "0.000001",
         },
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::SignificantDigits(1, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(1),
             expected: "1",
         },
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::SignificantDigits(2, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(2),
             expected: "1.2",
         },
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::SignificantDigits(4, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(4),
             expected: "1.235",
         },
         TestCase {
             input: 1.234567,
-            precision: DoublePrecision::SignificantDigits(10, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(10),
             expected: "1.234567000",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::SignificantDigits(1, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(1),
             expected: "900000",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::SignificantDigits(2, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(2),
             expected: "890000",
         },
         TestCase {
             input: 888999.,
-            precision: DoublePrecision::SignificantDigits(4, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(4),
             expected: "889000",
         },
         TestCase {
             input: 988999.,
-            precision: DoublePrecision::SignificantDigits(1, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(1),
             expected: "1000000",
         },
         TestCase {
             input: 99888.,
-            precision: DoublePrecision::SignificantDigits(1, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(1),
             expected: "100000",
         },
         TestCase {
             input: 99888.,
-            precision: DoublePrecision::SignificantDigits(2, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(2),
             expected: "100000",
         },
         TestCase {
             input: 99888.,
-            precision: DoublePrecision::SignificantDigits(3, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(3),
             expected: "99900",
         },
         TestCase {
+            input: 0.0099,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "0.01",
+        },
+        TestCase {
             input: 9.9888,
-            precision: DoublePrecision::SignificantDigits(1, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(1),
             expected: "10",
         },
         TestCase {
             input: 9.9888,
-            precision: DoublePrecision::SignificantDigits(2, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(2),
             expected: "10",
         },
         TestCase {
+            input: 99888.0,
+            precision: DoublePrecision::SignificantDigits(1),
+            expected: "100000",
+        },
+        TestCase {
+            input: 99888.0,
+            precision: DoublePrecision::SignificantDigits(2),
+            expected: "100000",
+        },
+        TestCase {
             input: 9.9888,
-            precision: DoublePrecision::SignificantDigits(3, RoundingMode::HalfExpand),
+            precision: DoublePrecision::SignificantDigits(3),
             expected: "9.99",
-        },
-        // truncation tests
-        TestCase {
-            input: 888999.,
-            precision: DoublePrecision::Magnitude(4, RoundingMode::Truncate),
-            expected: "880000",
-        },
-        TestCase {
-            input: 0.009,
-            precision: DoublePrecision::Magnitude(-2, RoundingMode::Truncate),
-            expected: "0.00",
-        },
-        TestCase {
-            input: 0.0000009,
-            precision: DoublePrecision::Magnitude(-7, RoundingMode::Truncate),
-            expected: "0.0000009",
-        },
-        TestCase {
-            input: 9.9888,
-            precision: DoublePrecision::SignificantDigits(3, RoundingMode::Truncate),
-            expected: "9.98",
-        },
-        TestCase {
-            input: 888999.,
-            precision: DoublePrecision::Integer,
-            expected: "888999",
         },
     ];
 
@@ -2169,7 +2351,7 @@ fn test_basic() {
     for cas in &cases {
         let mut dec: FixedDecimal = cas.input.into();
         // println!("{}", cas.input + 0.01);
-        dec.multiply_pow10(cas.delta).unwrap();
+        dec.multiply_pow10(cas.delta);
         writeable::assert_writeable_eq!(dec, cas.expected, "{:?}", cas);
     }
 }
@@ -2185,6 +2367,10 @@ fn test_from_str() {
     let cases = [
         TestCase {
             input_str: "-00123400",
+            magnitudes: [7, 5, 2, 0],
+        },
+        TestCase {
+            input_str: "+00123400",
             magnitudes: [7, 5, 2, 0],
         },
         TestCase {
@@ -2248,6 +2434,10 @@ fn test_from_str() {
             magnitudes: [0, 0, 0, 0],
         },
         TestCase {
+            input_str: "+0",
+            magnitudes: [0, 0, 0, 0],
+        },
+        TestCase {
             input_str: "000",
             magnitudes: [2, 0, 0, 0],
         },
@@ -2264,8 +2454,8 @@ fn test_from_str() {
             "{:?}",
             cas
         );
-        assert_eq!(fd.nonzero_magnitude_left(), cas.magnitudes[1], "{:?}", cas);
-        assert_eq!(fd.nonzero_magnitude_right(), cas.magnitudes[2], "{:?}", cas);
+        assert_eq!(fd.nonzero_magnitude_start(), cas.magnitudes[1], "{:?}", cas);
+        assert_eq!(fd.nonzero_magnitude_end(), cas.magnitudes[2], "{:?}", cas);
         let input_str_roundtrip = fd.to_string();
         assert_eq!(cas.input_str, input_str_roundtrip, "{:?}", cas);
     }
@@ -2343,12 +2533,13 @@ fn test_ui128_limits() {
 fn test_upper_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.upper_magnitude, 4);
-    dec.multiply_pow10(32763).unwrap();
+    dec.multiply_pow10(32763);
     assert_eq!(dec.upper_magnitude, core::i16::MAX);
-    assert_eq!(dec.nonzero_magnitude_left(), core::i16::MAX);
+    assert_eq!(dec.nonzero_magnitude_start(), core::i16::MAX);
     let dec_backup = dec.clone();
-    assert_eq!(Error::Limit, dec.multiply_pow10(1).unwrap_err());
-    assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+    dec.multiply_pow10(1);
+    assert!(dec.is_zero());
+    assert_ne!(dec, dec_backup, "Value should be unchanged on failure");
 
     // Checking from_str for dec (which is valid)
     let dec_roundtrip = FixedDecimal::from_str(&dec.to_string()).unwrap();
@@ -2359,12 +2550,13 @@ fn test_upper_magnitude_bounds() {
 fn test_lower_magnitude_bounds() {
     let mut dec: FixedDecimal = 98765.into();
     assert_eq!(dec.lower_magnitude, 0);
-    dec.multiply_pow10(-32768).unwrap();
+    dec.multiply_pow10(-32768);
     assert_eq!(dec.lower_magnitude, core::i16::MIN);
-    assert_eq!(dec.nonzero_magnitude_right(), core::i16::MIN);
+    assert_eq!(dec.nonzero_magnitude_end(), core::i16::MIN);
     let dec_backup = dec.clone();
-    assert_eq!(Error::Limit, dec.multiply_pow10(-1).unwrap_err());
-    assert_eq!(dec, dec_backup, "Value should be unchanged on failure");
+    dec.multiply_pow10(-1);
+    assert!(dec.is_zero());
+    assert_ne!(dec, dec_backup);
 
     // Checking from_str for dec (which is valid)
     let dec_roundtrip = FixedDecimal::from_str(&dec.to_string()).unwrap();
@@ -2511,6 +2703,10 @@ fn test_syntax_error() {
             expected_err: Some(Error::Syntax),
         },
         TestCase {
+            input_str: "+",
+            expected_err: Some(Error::Syntax),
+        },
+        TestCase {
             input_str: "-1",
             expected_err: None,
         },
@@ -2529,112 +2725,176 @@ fn test_syntax_error() {
 }
 
 #[test]
-fn test_signum_zero() {
-    #[derive(Debug)]
-    struct TestCase {
-        pub fixed_decimal: FixedDecimal,
-        pub expected_signum: Signum,
-    }
-    let cases = [
-        TestCase {
-            fixed_decimal: Default::default(),
-            expected_signum: Signum::PositiveZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from(0),
-            expected_signum: Signum::PositiveZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from(0).negated(),
-            expected_signum: Signum::NegativeZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("0").unwrap(),
-            expected_signum: Signum::PositiveZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("000").unwrap(),
-            expected_signum: Signum::PositiveZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("-0.000").unwrap(),
-            expected_signum: Signum::NegativeZero,
-        },
-        TestCase {
-            fixed_decimal: FixedDecimal::from_str("000.000").unwrap(),
-            expected_signum: Signum::PositiveZero,
-        },
-    ];
-    for cas in &cases {
-        let signum = cas.fixed_decimal.signum();
-        assert_eq!(cas.expected_signum, signum, "{:?}", cas);
-    }
-}
-
-#[test]
 fn test_pad() {
     let mut dec = FixedDecimal::from_str("-0.42").unwrap();
     assert_eq!("-0.42", dec.to_string());
 
-    dec.pad_left(1);
+    dec.pad_start(1);
     assert_eq!("-0.42", dec.to_string());
 
-    dec.pad_left(4);
+    dec.pad_start(4);
     assert_eq!("-0000.42", dec.to_string());
 
-    dec.pad_left(2);
+    dec.pad_start(2);
     assert_eq!("-00.42", dec.to_string());
 }
 
 #[test]
-fn test_truncate_left() {
+fn test_sign_display() {
+    use SignDisplay::*;
+    let positive_nonzero = FixedDecimal::from(163);
+    let negative_nonzero = FixedDecimal::from(-163);
+    let positive_zero = FixedDecimal::from(0);
+    let negative_zero = FixedDecimal::from(0).with_sign(Sign::Negative);
+    assert_eq!(
+        "163",
+        positive_nonzero.clone().with_sign_display(Auto).to_string()
+    );
+    assert_eq!(
+        "-163",
+        negative_nonzero.clone().with_sign_display(Auto).to_string()
+    );
+    assert_eq!(
+        "0",
+        positive_zero.clone().with_sign_display(Auto).to_string()
+    );
+    assert_eq!(
+        "-0",
+        negative_zero.clone().with_sign_display(Auto).to_string()
+    );
+    assert_eq!(
+        "+163",
+        positive_nonzero
+            .clone()
+            .with_sign_display(Always)
+            .to_string()
+    );
+    assert_eq!(
+        "-163",
+        negative_nonzero
+            .clone()
+            .with_sign_display(Always)
+            .to_string()
+    );
+    assert_eq!(
+        "+0",
+        positive_zero.clone().with_sign_display(Always).to_string()
+    );
+    assert_eq!(
+        "-0",
+        negative_zero.clone().with_sign_display(Always).to_string()
+    );
+    assert_eq!(
+        "163",
+        positive_nonzero
+            .clone()
+            .with_sign_display(Never)
+            .to_string()
+    );
+    assert_eq!(
+        "163",
+        negative_nonzero
+            .clone()
+            .with_sign_display(Never)
+            .to_string()
+    );
+    assert_eq!(
+        "0",
+        positive_zero.clone().with_sign_display(Never).to_string()
+    );
+    assert_eq!(
+        "0",
+        negative_zero.clone().with_sign_display(Never).to_string()
+    );
+    assert_eq!(
+        "+163",
+        positive_nonzero
+            .clone()
+            .with_sign_display(ExceptZero)
+            .to_string()
+    );
+    assert_eq!(
+        "-163",
+        negative_nonzero
+            .clone()
+            .with_sign_display(ExceptZero)
+            .to_string()
+    );
+    assert_eq!(
+        "0",
+        positive_zero
+            .clone()
+            .with_sign_display(ExceptZero)
+            .to_string()
+    );
+    assert_eq!(
+        "0",
+        negative_zero
+            .clone()
+            .with_sign_display(ExceptZero)
+            .to_string()
+    );
+    assert_eq!(
+        "163",
+        positive_nonzero.with_sign_display(Negative).to_string()
+    );
+    assert_eq!(
+        "-163",
+        negative_nonzero.with_sign_display(Negative).to_string()
+    );
+    assert_eq!("0", positive_zero.with_sign_display(Negative).to_string());
+    assert_eq!("0", negative_zero.with_sign_display(Negative).to_string());
+}
+
+#[test]
+fn test_set_max_position() {
     let mut dec = FixedDecimal::from(1000);
     assert_eq!("1000", dec.to_string());
 
-    dec.truncate_left(2);
+    dec.set_max_position(2);
     assert_eq!("00", dec.to_string());
 
-    dec.truncate_left(0);
+    dec.set_max_position(0);
     assert_eq!("0", dec.to_string());
 
-    dec.truncate_left(3);
+    dec.set_max_position(3);
     assert_eq!("000", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("0.456").unwrap();
     assert_eq!("0.456", dec.to_string());
 
-    dec.truncate_left(0);
+    dec.set_max_position(0);
     assert_eq!("0.456", dec.to_string());
 
-    dec.truncate_left(-1);
+    dec.set_max_position(-1);
     assert_eq!("0.056", dec.to_string());
 
-    dec.truncate_left(-2);
+    dec.set_max_position(-2);
     assert_eq!("0.006", dec.to_string());
 
-    dec.truncate_left(-3);
+    dec.set_max_position(-3);
     assert_eq!("0.000", dec.to_string());
 
-    dec.truncate_left(-4);
+    dec.set_max_position(-4);
     assert_eq!("0.0000", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("100.01").unwrap();
-    dec.truncate_left(1);
+    dec.set_max_position(1);
     assert_eq!("0.01", dec.to_string());
 }
 
 #[test]
-fn test_pad_left_bounds() {
+fn test_pad_start_bounds() {
     let mut dec = FixedDecimal::from_str("299792.458").unwrap();
     let max_integer_digits = core::i16::MAX as usize + 1;
 
-    dec.pad_left(core::i16::MAX - 1);
+    dec.pad_start(core::i16::MAX - 1);
     assert_eq!(
         max_integer_digits - 2,
         dec.to_string().split_once('.').unwrap().0.len()
     );
 
-    dec.pad_left(core::i16::MAX);
+    dec.pad_start(core::i16::MAX);
     assert_eq!(
         max_integer_digits - 1,
         dec.to_string().split_once('.').unwrap().0.len()
@@ -2642,17 +2902,17 @@ fn test_pad_left_bounds() {
 }
 
 #[test]
-fn test_pad_right_bounds() {
+fn test_pad_end_bounds() {
     let mut dec = FixedDecimal::from_str("299792.458").unwrap();
     let max_fractional_digits = -(core::i16::MIN as isize) as usize;
 
-    dec.pad_right(core::i16::MIN + 1);
+    dec.pad_end(core::i16::MIN + 1);
     assert_eq!(
         max_fractional_digits - 1,
         dec.to_string().split_once('.').unwrap().1.len()
     );
 
-    dec.pad_right(core::i16::MIN);
+    dec.pad_end(core::i16::MIN);
     assert_eq!(
         max_fractional_digits,
         dec.to_string().split_once('.').unwrap().1.len()
@@ -2876,54 +3136,50 @@ fn test_rounding() {
     assert_eq!("-0.0", dec.to_string());
 
     // Test Truncate Right
-    let mut dec = FixedDecimal::from(4235970)
-        .multiplied_pow10(-3)
-        .expect("in-bounds");
+    let mut dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
-    dec.truncate_right(-5);
+    dec.trunc(-5);
     assert_eq!("4235.97000", dec.to_string());
 
-    dec.truncate_right(-1);
+    dec.trunc(-1);
     assert_eq!("4235.9", dec.to_string());
 
-    dec.truncate_right(0);
+    dec.trunc(0);
     assert_eq!("4235", dec.to_string());
 
-    dec.truncate_right(1);
+    dec.trunc(1);
     assert_eq!("4230", dec.to_string());
 
-    dec.truncate_right(5);
+    dec.trunc(5);
     assert_eq!("00000", dec.to_string());
 
-    dec.truncate_right(2);
+    dec.trunc(2);
     assert_eq!("00000", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("-99.999").unwrap();
-    dec.truncate_right(-2);
+    dec.trunc(-2);
     assert_eq!("-99.99", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("1234.56").unwrap();
-    dec.truncate_right(-1);
+    dec.trunc(-1);
     assert_eq!("1234.5", dec.to_string());
 
     let mut dec = FixedDecimal::from_str("0.009").unwrap();
-    dec.truncate_right(-1);
+    dec.trunc(-1);
     assert_eq!("0.0", dec.to_string());
 
-    // Test truncated_right
-    let dec = FixedDecimal::from(4235970)
-        .multiplied_pow10(-3)
-        .expect("in-bounds");
+    // Test trunced
+    let dec = FixedDecimal::from(4235970).multiplied_pow10(-3);
     assert_eq!("4235.970", dec.to_string());
 
-    assert_eq!("4235.97000", dec.clone().truncated_right(-5).to_string());
+    assert_eq!("4235.97000", dec.clone().trunced(-5).to_string());
 
-    assert_eq!("4230", dec.clone().truncated_right(1).to_string());
+    assert_eq!("4230", dec.clone().trunced(1).to_string());
 
-    assert_eq!("4200", dec.clone().truncated_right(2).to_string());
+    assert_eq!("4200", dec.clone().trunced(2).to_string());
 
-    assert_eq!("00000", dec.truncated_right(5).to_string());
+    assert_eq!("00000", dec.trunced(5).to_string());
 
     //Test expand
     let mut dec = FixedDecimal::from_str("3.234").unwrap();
@@ -3147,7 +3403,7 @@ fn test_concatenate() {
     for cas in &cases {
         let fd1 = FixedDecimal::from_str(cas.input_1).unwrap();
         let fd2 = FixedDecimal::from_str(cas.input_2).unwrap();
-        match fd1.concatenated_right(fd2) {
+        match fd1.concatenated_end(fd2) {
             Ok(fd) => {
                 assert_eq!(cas.expected, Some(fd.to_string().as_str()), "{:?}", cas);
             }

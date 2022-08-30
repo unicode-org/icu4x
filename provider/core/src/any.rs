@@ -5,7 +5,8 @@
 //! Traits for data providers that produce `Any` objects.
 
 use crate::prelude::*;
-use alloc::rc::Rc;
+use crate::response::RcWrap;
+use crate::response::RcWrapBounds;
 use core::any::Any;
 use core::convert::TryFrom;
 use core::convert::TryInto;
@@ -23,10 +24,15 @@ enum AnyPayloadInner {
     StructRef(&'static dyn Any),
     /// A boxed `DataPayload<M>`.
     ///
-    /// Note: This needs to be an `Rc`, not a `Box`, so that `AnyPayload` is cloneable.
+    /// Note: This needs to be an `RcWrap`, not a `Box`, so that `AnyPayload` is cloneable.
     /// If an `AnyPayload` is cloned, the actual cloning of the data is delayed until
     /// `downcast()` is invoked (at which point we have the concrete type).
-    PayloadRc(Rc<dyn Any>),
+
+    #[cfg(not(feature = "sync"))]
+    PayloadRc(RcWrap<dyn Any>),
+
+    #[cfg(feature = "sync")]
+    PayloadRc(RcWrap<dyn Any + Send + Sync>),
 }
 
 /// A type-erased data payload.
@@ -52,6 +58,7 @@ impl DataMarker for AnyMarker {
 impl<M> crate::dynutil::UpcastDataPayload<M> for AnyMarker
 where
     M: DataMarker + 'static,
+    M::Yokeable: RcWrapBounds,
 {
     #[inline]
     fn upcast(other: DataPayload<M>) -> DataPayload<AnyMarker> {
@@ -71,6 +78,7 @@ impl AnyPayload {
         // For the StructRef case:
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
         // For the PayloadRc case:
+        M::Yokeable: RcWrapBounds,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     {
         use AnyPayloadInner::*;
@@ -83,10 +91,10 @@ impl AnyPayload {
                 Ok(DataPayload::from_owned(M::Yokeable::zero_from(down_ref)))
             }
             PayloadRc(any_rc) => {
-                let down_rc: Rc<DataPayload<M>> = any_rc
+                let down_rc: RcWrap<DataPayload<M>> = any_rc
                     .downcast()
                     .map_err(|_| DataError::for_type::<M>().with_str_context(type_name))?;
-                Ok(Rc::try_unwrap(down_rc).unwrap_or_else(|down_rc| (*down_rc).clone()))
+                Ok(RcWrap::try_unwrap(down_rc).unwrap_or_else(|down_rc| (*down_rc).clone()))
             }
         }
     }
@@ -121,32 +129,33 @@ impl AnyPayload {
         }
     }
 
-    /// Creates an `AnyPayload` from a [`DataPayload`] stored in an [`Rc`].
+    /// Creates an `AnyPayload` from a [`DataPayload`] stored in an [`RcWrap`].
     ///
     /// # Examples
     ///
     /// ```
     /// use icu_provider::hello_world::*;
     /// use icu_provider::prelude::*;
+    /// use icu_provider::RcWrap;
     /// use std::borrow::Cow;
-    /// use std::rc::Rc;
     ///
     /// let payload: DataPayload<HelloWorldV1Marker> = DataPayload::from_owned(HelloWorldV1 {
     ///     message: Cow::Borrowed("Custom Hello World"),
     /// });
-    /// let rc_payload = Rc::from(payload);
+    /// let rc_payload = RcWrap::from(payload);
     ///
-    /// let any_payload = AnyPayload::from_rc_payload(rc_payload);
+    /// let any_payload = AnyPayload::from_rcwrap_payload(rc_payload);
     ///
     /// let payload: DataPayload<HelloWorldV1Marker> = any_payload.downcast().expect("TypeId matches");
     /// assert_eq!("Custom Hello World", payload.get().message);
     /// ```
-    pub fn from_rc_payload<M>(rc_payload: Rc<DataPayload<M>>) -> Self
+    pub fn from_rcwrap_payload<M>(rc_payload: RcWrap<DataPayload<M>>) -> Self
     where
         M: DataMarker + 'static,
+        M::Yokeable: RcWrapBounds,
     {
         AnyPayload {
-            inner: AnyPayloadInner::PayloadRc(rc_payload),
+            inner: AnyPayloadInner::PayloadRc(rc_payload.into_dyn_any()),
             type_name: core::any::type_name::<M>(),
         }
     }
@@ -155,6 +164,7 @@ impl AnyPayload {
 impl<M> DataPayload<M>
 where
     M: DataMarker + 'static,
+    M::Yokeable: RcWrapBounds,
 {
     /// Wraps this DataPayload in an `Rc` and returns it as an `AnyPayload`.
     ///
@@ -177,7 +187,7 @@ where
     /// ```
     pub fn wrap_into_any_payload(self) -> AnyPayload {
         AnyPayload {
-            inner: AnyPayloadInner::PayloadRc(Rc::from(self)),
+            inner: AnyPayloadInner::PayloadRc(RcWrap::from(self).into_dyn_any()),
             type_name: core::any::type_name::<M>(),
         }
     }
@@ -191,6 +201,7 @@ impl DataPayload<AnyMarker> {
         M: DataMarker + 'static,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+        M::Yokeable: RcWrapBounds,
     {
         self.try_unwrap_owned()?.downcast()
     }
@@ -237,6 +248,7 @@ impl AnyResponse {
         M: DataMarker + 'static,
         for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
         M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+        M::Yokeable: RcWrapBounds,
     {
         Ok(DataResponse {
             metadata: self.metadata,
@@ -249,75 +261,72 @@ impl AnyResponse {
 ///
 /// # Examples
 ///
-/// [`AnyPayloadProvider`] implements `AnyProvider`.
-///
 /// ```
 /// use icu_provider::hello_world::*;
 /// use icu_provider::prelude::*;
-/// use icu_provider_adapters::struct_provider::AnyPayloadProvider;
 /// use std::borrow::Cow;
 ///
-/// const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
-///     message: Cow::Borrowed("Custom Hello World"),
-/// };
-///
-/// let provider = AnyPayloadProvider {
-///     key: HelloWorldV1Marker::KEY,
-///     data: AnyPayload::from_static_ref(&CONST_DATA),
-/// };
-///
-/// let any_response = provider
-///     .load_any(HelloWorldV1Marker::KEY, &DataRequest::default())
+/// let any_response = HelloWorldProvider
+///     .as_any_provider()
+///     .load_any(
+///         HelloWorldV1Marker::KEY,
+///         DataRequest {
+///             locale: &icu_locid::locale!("de").into(),
+///             metadata: Default::default(),
+///         },
+///     )
 ///     .expect("Load should succeed");
 ///
 /// // Downcast to something useful
-/// let response: DataResponse<HelloWorldV1Marker> = any_response.downcast().expect("Types match");
+/// let response: DataResponse<HelloWorldV1Marker> =
+///     any_response.downcast().expect("Types match");
 ///
 /// let payload = response.take_payload().expect("Data should be present");
 ///
-/// assert_eq!(payload.get().message, "Custom Hello World");
+/// assert_eq!(payload.get().message, "Hallo Welt");
 /// ```
-///
-/// [`AnyPayloadProvider`]: ../icu_provider_adapters/struct_provider/struct.AnyPayloadProvider.html
 pub trait AnyProvider {
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError>;
+    /// Loads an [`AnyPayload`] according to the key and request.
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
-/// A wrapper over `DynProvider<AnyMarker>` that implements `AnyProvider`
+/// A wrapper over `DynamicDataProvider<AnyMarker>` that implements `AnyProvider`
 #[allow(clippy::exhaustive_structs)] // newtype
-pub struct DynProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
+pub struct DynamicDataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
 
-pub trait AsDynProviderAnyMarkerWrap {
-    /// Returns an object implementing `AnyProvider` when called on `DynProvider<AnyMarker>`
-    fn as_any_provider(&self) -> DynProviderAnyMarkerWrap<Self>;
+/// Blanket-implemented trait adding the [`Self::as_any_provider()`] function.
+pub trait AsDynamicDataProviderAnyMarkerWrap {
+    /// Returns an object implementing `AnyProvider` when called on `DynamicDataProvider<AnyMarker>`
+    fn as_any_provider(&self) -> DynamicDataProviderAnyMarkerWrap<Self>;
 }
 
-impl<P> AsDynProviderAnyMarkerWrap for P
+impl<P> AsDynamicDataProviderAnyMarkerWrap for P
 where
-    P: DynProvider<AnyMarker>,
+    P: DynamicDataProvider<AnyMarker>,
 {
     #[inline]
-    fn as_any_provider(&self) -> DynProviderAnyMarkerWrap<P> {
-        DynProviderAnyMarkerWrap(self)
+    fn as_any_provider(&self) -> DynamicDataProviderAnyMarkerWrap<P> {
+        DynamicDataProviderAnyMarkerWrap(self)
     }
 }
 
-impl<P> AnyProvider for DynProviderAnyMarkerWrap<'_, P>
+impl<P> AnyProvider for DynamicDataProviderAnyMarkerWrap<'_, P>
 where
-    P: DynProvider<AnyMarker> + ?Sized,
+    P: DynamicDataProvider<AnyMarker> + ?Sized,
 {
     #[inline]
-    fn load_any(&self, key: ResourceKey, req: &DataRequest) -> Result<AnyResponse, DataError> {
-        self.0.load_payload(key, req)?.try_into()
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.0.load_data(key, req)?.try_into()
     }
 }
 
-/// A wrapper over `AnyProvider` that implements `DynProvider<M>` via downcasting
+/// A wrapper over `AnyProvider` that implements `DynamicDataProvider<M>` via downcasting
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct DowncastingAnyProvider<'a, P: ?Sized>(pub &'a P);
 
+/// Blanket-implemented trait adding the [`Self::as_downcasting()`] function.
 pub trait AsDowncastingAnyProvider {
-    /// Returns an object implementing `DynProvider<M>` when called on `AnyProvider`
+    /// Returns an object implementing `DynamicDataProvider<M>` when called on `AnyProvider`
     fn as_downcasting(&self) -> DowncastingAnyProvider<Self>;
 }
 
@@ -331,15 +340,16 @@ where
     }
 }
 
-impl<M, P> ResourceProvider<M> for DowncastingAnyProvider<'_, P>
+impl<M, P> DataProvider<M> for DowncastingAnyProvider<'_, P>
 where
     P: AnyProvider + ?Sized,
-    M: ResourceMarker + 'static,
+    M: KeyedDataMarker + 'static,
     for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
     M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+    M::Yokeable: RcWrapBounds,
 {
     #[inline]
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.0.load_any(M::KEY, req)?.downcast()
     }
 }
@@ -348,7 +358,6 @@ where
 mod test {
     use super::*;
     use crate::hello_world::*;
-    use crate::marker::CowStrMarker;
     use alloc::borrow::Cow;
 
     const CONST_DATA: HelloWorldV1<'static> = HelloWorldV1 {
@@ -363,13 +372,19 @@ mod test {
 
         let any_payload = payload.wrap_into_any_payload();
         assert_eq!(
-            "AnyPayload { inner: PayloadRc(Any { .. }), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
+            "AnyPayload { inner: PayloadRc(RcWrap(Any { .. })), type_name: \"icu_provider::hello_world::HelloWorldV1Marker\" }",
             format!("{:?}", any_payload)
         );
 
-        let err = any_payload.downcast::<CowStrMarker>().unwrap_err();
+        struct WrongMarker;
+
+        impl DataMarker for WrongMarker {
+            type Yokeable = u8;
+        }
+
+        let err = any_payload.downcast::<WrongMarker>().unwrap_err();
         assert_eq!(
-            "ICU4X data error: Mismatched types: tried to downcast with icu_provider::marker::impls::CowStrMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
+            "ICU4X data error: Mismatched types: tried to downcast with icu_provider::any::test::test_debug::WrongMarker, but actual type is different: icu_provider::hello_world::HelloWorldV1Marker",
             format!("{}", err)
         );
     }

@@ -3,10 +3,10 @@
 
 #include <string>
 #include <variant>
+#include <array>
+#include <optional>
 
-namespace capi {
 #include "diplomat_runtime.h"
-}
 
 namespace diplomat {
 

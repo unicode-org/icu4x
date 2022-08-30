@@ -49,15 +49,16 @@ pub mod private;
 pub mod transform;
 pub mod unicode;
 
-pub use other::Other;
-pub use private::Private;
-pub use transform::Transform;
-pub use unicode::Unicode;
+use other::Other;
+use private::Private;
+use transform::Transform;
+use unicode::Unicode;
 
 use alloc::vec::Vec;
 
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
+
 /// Defines the type of extension.
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
@@ -73,8 +74,7 @@ pub enum ExtensionType {
 }
 
 impl ExtensionType {
-    #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
-    pub fn from_byte(key: u8) -> Result<Self, ParserError> {
+    pub(crate) const fn from_byte(key: u8) -> Result<Self, ParserError> {
         let key = key.to_ascii_lowercase();
         match key {
             b'u' => Ok(Self::Unicode),
@@ -84,16 +84,33 @@ impl ExtensionType {
             _ => Err(ParserError::InvalidExtension),
         }
     }
+
+    pub(crate) const fn from_bytes_manual_slice(
+        bytes: &[u8],
+        start: usize,
+        end: usize,
+    ) -> Result<Self, ParserError> {
+        if end - start != 1 {
+            return Err(ParserError::InvalidExtension);
+        }
+        #[allow(clippy::indexing_slicing)]
+        Self::from_byte(bytes[start])
+    }
 }
 
 /// A map of extensions associated with a given [`Locale`](crate::Locale).
-#[derive(Debug, Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
-#[allow(missing_docs)] // TODO(#1028) - Add missing docs.
+#[derive(Debug, Default, PartialEq, Eq, Clone, Hash)]
 #[non_exhaustive]
 pub struct Extensions {
+    /// A representation of the data for a Unicode extension, when present in the locale identifer.
     pub unicode: Unicode,
+    /// A representation of the data for a transform extension, when present in the locale identifer.
     pub transform: Transform,
+    /// A representation of the data for a private-use extension, when present in the locale identifer.
     pub private: Private,
+    /// A sequence of any other extensions that are present in the locale identifier but are not formally
+    /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],
+    /// and [`Private`] are.
     pub other: Vec<Other>,
 }
 
@@ -111,6 +128,18 @@ impl Extensions {
     pub const fn new() -> Self {
         Self {
             unicode: Unicode::new(),
+            transform: Transform::new(),
+            private: Private::new(),
+            other: Vec::new(),
+        }
+    }
+
+    /// Function to create a new map of extensions containing exactly one unicode extension, callable in `const`
+    /// context.
+    #[inline]
+    pub const fn from_unicode(unicode: Unicode) -> Self {
+        Self {
+            unicode,
             transform: Transform::new(),
             private: Private::new(),
             other: Vec::new(),

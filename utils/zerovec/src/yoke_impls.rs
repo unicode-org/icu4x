@@ -287,104 +287,262 @@ where
 }
 
 #[cfg(test)]
-#[allow(non_camel_case_types)]
+#[allow(non_camel_case_types, non_snake_case)]
 mod test {
     use super::*;
     use crate::{vecs::FlexZeroSlice, VarZeroSlice, ZeroSlice};
+    use databake::*;
 
     // Note: The following derives cover Yoke as well as Serde and databake. These may partially
     // duplicate tests elsewhere in this crate, but they are here for completeness.
 
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_ZeroVec<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroVec<'data, u16>,
     }
 
+    #[test]
+    fn bake_ZeroVec() {
+        test_bake!(
+            DeriveTest_ZeroVec<'static>,
+            crate::yoke_impls::test::DeriveTest_ZeroVec {
+                _data: unsafe { crate::ZeroVec::from_bytes_unchecked(&[]) },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_ZeroSlice<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: &'data ZeroSlice<u16>,
     }
 
+    #[test]
+    fn bake_ZeroSlice() {
+        test_bake!(
+            DeriveTest_ZeroSlice<'static>,
+            crate::yoke_impls::test::DeriveTest_ZeroSlice {
+                _data: unsafe { crate::ZeroSlice::from_bytes_unchecked(&[]) },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_FlexZeroVec<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: FlexZeroVec<'data>,
     }
 
+    #[test]
+    fn bake_FlexZeroVec() {
+        test_bake!(
+            DeriveTest_FlexZeroVec<'static>,
+            crate::yoke_impls::test::DeriveTest_FlexZeroVec {
+                _data: unsafe {
+                    crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[1u8]).as_flexzerovec()
+                },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_FlexZeroSlice<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: &'data FlexZeroSlice,
     }
 
+    #[test]
+    fn bake_FlexZeroSlice() {
+        test_bake!(
+            DeriveTest_FlexZeroSlice<'static>,
+            crate::yoke_impls::test::DeriveTest_FlexZeroSlice {
+                _data: unsafe { crate::vecs::FlexZeroSlice::from_byte_slice_unchecked(&[1u8]) },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_VarZeroVec<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: VarZeroVec<'data, str>,
     }
 
+    #[test]
+    fn bake_VarZeroVec() {
+        test_bake!(
+            DeriveTest_VarZeroVec<'static>,
+            crate::yoke_impls::test::DeriveTest_VarZeroVec {
+                _data: unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     struct DeriveTest_VarZeroSlice<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: &'data VarZeroSlice<str>,
     }
 
+    #[test]
+    fn bake_VarZeroSlice() {
+        test_bake!(
+            DeriveTest_VarZeroSlice<'static>,
+            crate::yoke_impls::test::DeriveTest_VarZeroSlice {
+                _data: unsafe { crate::VarZeroSlice::from_bytes_unchecked(&[]) }
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMap<'data, [u8], str>,
     }
 
+    #[test]
+    fn bake_ZeroMap() {
+        test_bake!(
+            DeriveTest_ZeroMap<'static>,
+            crate::yoke_impls::test::DeriveTest_ZeroMap {
+                _data: unsafe {
+                    #[allow(unused_unsafe)]
+                    crate::ZeroMap::from_parts_unchecked(
+                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                    )
+                },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapBorrowed<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMapBorrowed<'data, [u8], str>,
     }
 
+    #[test]
+    fn bake_ZeroMapBorrowed() {
+        test_bake!(
+            DeriveTest_ZeroMapBorrowed<'static>,
+            crate::yoke_impls::test::DeriveTest_ZeroMapBorrowed {
+                _data: unsafe {
+                    #[allow(unused_unsafe)]
+                    crate::maps::ZeroMapBorrowed::from_parts_unchecked(
+                        unsafe { crate::VarZeroSlice::from_bytes_unchecked(&[]) },
+                        unsafe { crate::VarZeroSlice::from_bytes_unchecked(&[]) },
+                    )
+                },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMapWithULE<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMap<'data, ZeroSlice<u32>, str>,
     }
 
+    #[test]
+    fn bake_ZeroMapWithULE() {
+        test_bake!(
+            DeriveTest_ZeroMapWithULE<'static>,
+            crate::yoke_impls::test::DeriveTest_ZeroMapWithULE {
+                _data: unsafe {
+                    #[allow(unused_unsafe)]
+                    crate::ZeroMap::from_parts_unchecked(
+                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                    )
+                },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap2d<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMap2d<'data, u16, u16, str>,
     }
 
+    #[test]
+    fn bake_ZeroMap2d() {
+        test_bake!(
+            DeriveTest_ZeroMap2d<'static>,
+            crate::yoke_impls::test::DeriveTest_ZeroMap2d {
+                _data: unsafe {
+                    #[allow(unused_unsafe)]
+                    crate::ZeroMap2d::from_parts_unchecked(
+                        unsafe { crate::ZeroVec::from_bytes_unchecked(&[]) },
+                        unsafe { crate::ZeroVec::from_bytes_unchecked(&[]) },
+                        unsafe { crate::ZeroVec::from_bytes_unchecked(&[]) },
+                        unsafe { crate::VarZeroVec::from_bytes_unchecked(&[]) },
+                    )
+                },
+            },
+            zerovec,
+        );
+    }
+
     #[derive(yoke::Yokeable)]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize, serde::Serialize))]
-    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impl::test))]
+    #[cfg_attr(feature = "databake", derive(databake::Bake), databake(path = zerovec::yoke_impls::test))]
     #[yoke(prove_covariance_manually)]
     struct DeriveTest_ZeroMap2dBorrowed<'data> {
         #[cfg_attr(feature = "serde", serde(borrow))]
         _data: ZeroMap2dBorrowed<'data, u16, u16, str>,
+    }
+
+    #[test]
+    fn bake_ZeroMap2dBorrowed() {
+        test_bake!(
+            DeriveTest_ZeroMap2dBorrowed<'static>,
+            crate::yoke_impls::test::DeriveTest_ZeroMap2dBorrowed {
+                _data: unsafe {
+                    #[allow(unused_unsafe)]
+                    crate::maps::ZeroMap2dBorrowed::from_parts_unchecked(
+                        unsafe { crate::ZeroSlice::from_bytes_unchecked(&[]) },
+                        unsafe { crate::ZeroSlice::from_bytes_unchecked(&[]) },
+                        unsafe { crate::ZeroSlice::from_bytes_unchecked(&[]) },
+                        unsafe { crate::VarZeroSlice::from_bytes_unchecked(&[]) },
+                    )
+                },
+            },
+            zerovec,
+        );
     }
 }

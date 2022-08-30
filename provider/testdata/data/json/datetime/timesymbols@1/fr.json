@@ -1,0 +1,26 @@
+{
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "midi",
+        "midnight": "minuit"
+      },
+      "narrow": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "midi",
+        "midnight": "minuit"
+      },
+      "short": null,
+      "wide": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "midi",
+        "midnight": "minuit"
+      }
+    },
+    "stand_alone": null
+  }
+}

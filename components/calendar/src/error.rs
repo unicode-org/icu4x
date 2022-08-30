@@ -3,13 +3,14 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use displaydoc::Display;
+use tinystr::{TinyStr16, TinyStr4};
 
 #[cfg(feature = "std")]
 impl std::error::Error for DateTimeError {}
 
 /// A list of possible error outcomes for working with various inputs to DateTime inputs
 /// and operations.
-#[derive(Display, Debug, Copy, Clone)]
+#[derive(Display, Debug, Copy, Clone, PartialEq)]
 #[non_exhaustive]
 pub enum DateTimeError {
     /// An input could not be parsed.
@@ -31,15 +32,24 @@ pub enum DateTimeError {
         /// The minimum value
         min: isize,
     },
-    /// The time zone offset was invalid.
-    #[displaydoc("Failed to parse time-zone offset")]
-    InvalidTimeZoneOffset,
     /// Out of range
     // TODO(Manishearth) turn this into a proper variant
     OutOfRange,
-    /// An input was missing.
+    /// Unknown era
+    #[displaydoc("No era named {0} for calendar {1}")]
+    UnknownEra(TinyStr16, &'static str),
+    /// Unknown month code for a given calendar
+    #[displaydoc("No month code named {0} for calendar {1}")]
+    UnknownMonthCode(TinyStr4, &'static str),
+    /// Missing required input field for formatting
     #[displaydoc("No value for {0}")]
     MissingInput(&'static str),
+    /// No support for a given calendar in AnyCalendar
+    #[displaydoc("AnyCalendar does not support calendar {0}")]
+    UnknownAnyCalendarKind(TinyStr16),
+    /// An operation required a calendar but a calendar was not provided.
+    #[displaydoc("An operation required a calendar but a calendar was not provided")]
+    MissingCalendar,
 }
 
 impl From<core::num::ParseIntError> for DateTimeError {

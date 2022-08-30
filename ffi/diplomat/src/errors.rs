@@ -5,19 +5,33 @@
 use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
-use icu_decimal::FixedDecimalFormatError;
+use icu_calendar::DateTimeError;
+use icu_datetime::DateTimeFormatterError;
+use icu_decimal::FixedDecimalFormatterError;
+use icu_locid::ParserError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
+use icu_timezone::TimeZoneError;
+use tinystr::TinyStrError;
 
 #[diplomat::bridge]
 pub mod ffi {
     use alloc::boxed::Box;
 
+    #[derive(Debug, Copy, Clone, PartialEq, Eq)]
     #[repr(C)]
     /// A common enum for errors that ICU4X may return, organized by API
     ///
     /// The error names are stable and can be checked against as strings in the JS API
+    #[diplomat::rust_link(fixed_decimal::Error, Enum, compact)]
+    #[diplomat::rust_link(icu::calendar::DateTimeError, Enum, compact)]
+    #[diplomat::rust_link(icu::datetime::DateTimeFormatterError, Enum, compact)]
+    #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
+    #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
+    #[diplomat::rust_link(icu::plurals::PluralRulesError, Enum, compact)]
+    #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
+    #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     pub enum ICU4XError {
         // general errors
         /// The error is not currently categorized as ICU4XError.
@@ -33,26 +47,27 @@ pub mod ffi {
 
         // general data errors
         // See DataError
-        DataMissingResourceKeyError = 0x1_00,
+        DataMissingDataKeyError = 0x1_00,
         DataMissingVariantError = 0x1_01,
         DataMissingLocaleError = 0x1_02,
-        DataMissingResourceOptionsError = 0x1_03,
-        DataNeedsVariantError = 0x1_04,
-        DataNeedsLocaleError = 0x1_05,
-        DataExtraneousResourceOptionsError = 0x1_06,
-        DataFilteredResourceError = 0x1_07,
-        DataMismatchedTypeError = 0x1_08,
-        DataMissingPayloadError = 0x1_09,
-        DataInvalidStateError = 0x1_0A,
-        DataCustomError = 0x1_0B,
-        DataIoError = 0x1_0C,
-        DataUnavailableBufferFormatError = 0x1_0D,
+        DataNeedsVariantError = 0x1_03,
+        DataNeedsLocaleError = 0x1_04,
+        DataExtraneousLocaleError = 0x1_05,
+        DataFilteredResourceError = 0x1_06,
+        DataMismatchedTypeError = 0x1_07,
+        DataMissingPayloadError = 0x1_08,
+        DataInvalidStateError = 0x1_09,
+        DataCustomError = 0x1_0A,
+        DataIoError = 0x1_0B,
+        DataUnavailableBufferFormatError = 0x1_0C,
 
         // locale errors
         /// The subtag being requested was not set
         LocaleUndefinedSubtagError = 0x2_00,
         /// The locale or subtag string failed to parse
-        LocaleParserError = 0x2_01,
+        LocaleParserLanguageError = 0x2_01,
+        LocaleParserSubtagError = 0x2_02,
+        LocaleParserExtensionError = 0x2_03,
 
         // data struct errors
         /// Attempted to construct an invalid data struct
@@ -60,35 +75,78 @@ pub mod ffi {
 
         // property errors
         PropertyUnknownScriptIdError = 0x4_00,
-        PropertyUnknownGeneralCategoryGroupError = 41,
+        PropertyUnknownGeneralCategoryGroupError = 0x4_01,
 
-        // decimal errors
-        DecimalLimitError = 0x5_00,
-        DecimalSyntaxError = 0x5_01,
+        // fixed_decimal errors
+        FixedDecimalLimitError = 0x5_00,
+        FixedDecimalSyntaxError = 0x5_01,
 
         // plural errors
         PluralParserError = 0x6_00,
+
+        // datetime errors
+        DateTimeParseError = 0x7_00,
+        DateTimeOverflowError = 0x7_01,
+        DateTimeUnderflowError = 0x7_02,
+        DateTimeOutOfRangeError = 0x7_03,
+        DateTimeUnknownEraError = 0x7_04,
+        DateTimeUnknownMonthCodeError = 0x7_05,
+        DateTimeMissingInputError = 0x7_06,
+        DateTimeUnknownAnyCalendarKindError = 0x7_07,
+
+        // datetime format errors
+        DateTimeFormatPatternError = 0x8_00,
+        DateTimeFormatMissingInputFieldError = 0x8_01,
+        DateTimeFormatSkeletonError = 0x8_02,
+        DateTimeFormatUnsupportedFieldError = 0x8_03,
+        DateTimeFormatUnsupportedOptionsError = 0x8_04,
+        DateTimeFormatMissingWeekdaySymbolError = 0x8_05,
+        DateTimeFormatMissingMonthSymbolError = 0x8_06,
+        DateTimeFormatFixedDecimalError = 0x8_07,
+        DateTimeFormatMismatchedAnyCalendarError = 0x8_08,
+        DateTimeFormatMismatchedCalendarLocaleError = 0x8_09,
+
+        // tinystr errors
+        TinyStrTooLargeError = 0x9_00,
+        TinyStrContainsNullError = 0x9_01,
+        TinyStrNonAsciiError = 0x9_02,
+
+        // timezone errors
+        TimeZoneOffsetOutOfBoundsError = 0xA_00,
+        TimeZoneInvalidOffsetError = 0xA_01,
     }
 }
 
+#[cfg(feature = "logging")]
+#[inline]
+fn log_conversion<T: core::fmt::Display>(e: &T, ffi_error: ICU4XError) {
+    use core::any;
+    log::warn!(
+        "Returning ICU4XError::{:?} based on original {}: {}",
+        ffi_error,
+        any::type_name::<T>(),
+        e
+    );
+}
+
+#[cfg(not(feature = "logging"))]
+#[inline]
+fn log_conversion<T: core::fmt::Display>(_e: &T, _ffi_error: ICU4XError) {}
+
 impl From<fmt::Error> for ICU4XError {
-    fn from(_: fmt::Error) -> Self {
+    fn from(e: fmt::Error) -> Self {
+        log_conversion(&e, ICU4XError::WriteableError);
         ICU4XError::WriteableError
     }
 }
 
 impl From<DataError> for ICU4XError {
     fn from(e: DataError) -> Self {
-        match e.kind {
-            DataErrorKind::MissingResourceKey => ICU4XError::DataMissingResourceKeyError,
-            DataErrorKind::MissingVariant => ICU4XError::DataMissingVariantError,
+        let ret = match e.kind {
+            DataErrorKind::MissingDataKey => ICU4XError::DataMissingDataKeyError,
             DataErrorKind::MissingLocale => ICU4XError::DataMissingLocaleError,
-            DataErrorKind::MissingResourceOptions => ICU4XError::DataMissingResourceOptionsError,
-            DataErrorKind::NeedsVariant => ICU4XError::DataNeedsVariantError,
             DataErrorKind::NeedsLocale => ICU4XError::DataNeedsLocaleError,
-            DataErrorKind::ExtraneousResourceOptions => {
-                ICU4XError::DataExtraneousResourceOptionsError
-            }
+            DataErrorKind::ExtraneousLocale => ICU4XError::DataExtraneousLocaleError,
             DataErrorKind::FilteredResource => ICU4XError::DataFilteredResourceError,
             DataErrorKind::MismatchedType(..) => ICU4XError::DataMismatchedTypeError,
             DataErrorKind::MissingPayload => ICU4XError::DataMissingPayloadError,
@@ -105,47 +163,157 @@ impl From<DataError> for ICU4XError {
                 ICU4XError::DataUnavailableBufferFormatError
             }
             _ => ICU4XError::UnknownError,
-        }
+        };
+        log_conversion(&e, ret);
+        ret
     }
 }
 
 impl From<PropertiesError> for ICU4XError {
     fn from(e: PropertiesError) -> Self {
-        match e {
+        let ret = match e {
             PropertiesError::PropDataLoad(e) => e.into(),
             PropertiesError::UnknownScriptId(..) => ICU4XError::PropertyUnknownScriptIdError,
             PropertiesError::UnknownGeneralCategoryGroup(..) => {
                 ICU4XError::PropertyUnknownGeneralCategoryGroupError
             }
             _ => ICU4XError::UnknownError,
-        }
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<DateTimeError> for ICU4XError {
+    fn from(e: DateTimeError) -> Self {
+        let ret = match e {
+            DateTimeError::Parse => ICU4XError::DateTimeParseError,
+            DateTimeError::Overflow { field: _, max: _ } => ICU4XError::DateTimeOverflowError,
+            DateTimeError::Underflow { field: _, min: _ } => ICU4XError::DateTimeUnderflowError,
+            DateTimeError::OutOfRange => ICU4XError::DateTimeOutOfRangeError,
+            DateTimeError::UnknownEra(..) => ICU4XError::DateTimeUnknownEraError,
+            DateTimeError::UnknownMonthCode(..) => ICU4XError::DateTimeUnknownMonthCodeError,
+            DateTimeError::MissingInput(_) => ICU4XError::DateTimeMissingInputError,
+            DateTimeError::UnknownAnyCalendarKind(_) => {
+                ICU4XError::DateTimeUnknownAnyCalendarKindError
+            }
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<DateTimeFormatterError> for ICU4XError {
+    fn from(e: DateTimeFormatterError) -> Self {
+        let ret = match e {
+            DateTimeFormatterError::Pattern(_) => ICU4XError::DateTimeFormatPatternError,
+            DateTimeFormatterError::Format(err) => err.into(),
+            DateTimeFormatterError::DataProvider(err) => err.into(),
+            DateTimeFormatterError::MissingInputField(_) => {
+                ICU4XError::DateTimeFormatMissingInputFieldError
+            }
+            // TODO(#1324): Add back skeleton errors
+            // DateTimeFormatterError::Skeleton(_) => ICU4XError::DateTimeFormatSkeletonError,
+            DateTimeFormatterError::UnsupportedField(_) => {
+                ICU4XError::DateTimeFormatUnsupportedFieldError
+            }
+            DateTimeFormatterError::UnsupportedOptions => {
+                ICU4XError::DateTimeFormatUnsupportedOptionsError
+            }
+            DateTimeFormatterError::PluralRules(err) => err.into(),
+            DateTimeFormatterError::DateTimeInput(err) => err.into(),
+            DateTimeFormatterError::MissingWeekdaySymbol(_) => {
+                ICU4XError::DateTimeFormatMissingWeekdaySymbolError
+            }
+            DateTimeFormatterError::MissingMonthSymbol(_) => {
+                ICU4XError::DateTimeFormatMissingMonthSymbolError
+            }
+            DateTimeFormatterError::FixedDecimal => ICU4XError::DateTimeFormatFixedDecimalError,
+            DateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
+            DateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
+                ICU4XError::DateTimeFormatMismatchedAnyCalendarError
+            }
+            DateTimeFormatterError::MismatchedCalendarLocale(_, _) => {
+                ICU4XError::DateTimeFormatMismatchedCalendarLocaleError
+            }
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
     }
 }
 
 impl From<DecimalError> for ICU4XError {
     fn from(e: DecimalError) -> Self {
-        match e {
-            DecimalError::Limit => ICU4XError::DecimalLimitError,
-            DecimalError::Syntax => ICU4XError::DecimalSyntaxError,
-        }
+        let ret = match e {
+            DecimalError::Limit => ICU4XError::FixedDecimalLimitError,
+            DecimalError::Syntax => ICU4XError::FixedDecimalSyntaxError,
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
     }
 }
 
 impl From<PluralRulesError> for ICU4XError {
     fn from(e: PluralRulesError) -> Self {
-        match e {
+        let ret = match e {
             PluralRulesError::DataProvider(e) => e.into(),
             PluralRulesError::Parser(..) => ICU4XError::PluralParserError,
             _ => ICU4XError::UnknownError,
-        }
+        };
+        log_conversion(&e, ret);
+        ret
     }
 }
 
-impl From<FixedDecimalFormatError> for ICU4XError {
-    fn from(e: FixedDecimalFormatError) -> Self {
-        match e {
-            FixedDecimalFormatError::Data(e) => e.into(),
+impl From<FixedDecimalFormatterError> for ICU4XError {
+    fn from(e: FixedDecimalFormatterError) -> Self {
+        let ret = match e {
+            FixedDecimalFormatterError::Data(e) => e.into(),
             _ => ICU4XError::UnknownError,
-        }
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<ParserError> for ICU4XError {
+    fn from(e: ParserError) -> Self {
+        let ret = match e {
+            ParserError::InvalidLanguage => ICU4XError::LocaleParserLanguageError,
+            ParserError::InvalidSubtag => ICU4XError::LocaleParserSubtagError,
+            ParserError::InvalidExtension => ICU4XError::LocaleParserExtensionError,
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<TinyStrError> for ICU4XError {
+    fn from(e: TinyStrError) -> Self {
+        let ret = match e {
+            TinyStrError::TooLarge { .. } => ICU4XError::TinyStrTooLargeError,
+            TinyStrError::ContainsNull => ICU4XError::TinyStrContainsNullError,
+            TinyStrError::NonAscii => ICU4XError::TinyStrNonAsciiError,
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<TimeZoneError> for ICU4XError {
+    fn from(e: TimeZoneError) -> Self {
+        let ret = match e {
+            TimeZoneError::OffsetOutOfBounds => ICU4XError::TimeZoneOffsetOutOfBoundsError,
+            TimeZoneError::InvalidOffset => ICU4XError::TimeZoneInvalidOffsetError,
+            TimeZoneError::DataProvider(err) => err.into(),
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
     }
 }

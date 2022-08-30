@@ -7,18 +7,40 @@
 use crate::error::DateTimeError;
 use core::convert::TryFrom;
 use core::convert::TryInto;
-use core::ops::{Add, Sub};
+use core::fmt;
 use core::str::FromStr;
-use tinystr::{TinyStr16, TinyStr8};
+use tinystr::{TinyStr16, TinyStr4};
+use zerovec::maps::ZeroMapKV;
+use zerovec::ule::AsULE;
 
+/// The era of a particular date
+///
+/// Different calendars use different era codes, see their documentation
+/// for details.
 #[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
 pub struct Era(pub TinyStr16);
 
+impl From<TinyStr16> for Era {
+    fn from(x: TinyStr16) -> Self {
+        Self(x)
+    }
+}
+
+impl FromStr for Era {
+    type Err = <TinyStr16 as FromStr>::Err;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s.parse().map(Self)
+    }
+}
+
 /// Representation of a formattable year.
-#[derive(Clone, Debug, PartialEq)]
-#[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct Year {
+///
+/// More fields may be added in the future, for things like
+/// the cyclic or extended year
+#[derive(Copy, Clone, Debug, PartialEq)]
+#[non_exhaustive]
+pub struct FormattableYear {
     /// The era containing the year.
     pub era: Era,
 
@@ -27,18 +49,81 @@ pub struct Year {
 
     /// The related ISO year. This is normally the ISO (proleptic Gregorian) year having the greatest
     /// overlap with the calendar year. It is used in certain date formatting patterns.
-    pub related_iso: i32,
+    ///
+    /// Can be None if the calendar does not typically use related_iso (and CLDR does not contain patterns
+    /// using it)
+    pub related_iso: Option<i32>,
 }
 
-/// TODO(#486): Implement month codes.
-#[derive(Clone, Debug, PartialEq)]
+impl FormattableYear {
+    /// Construct a new Year given an era and number
+    ///
+    /// Other fields can be set mutably after construction
+    /// as needed
+    pub fn new(era: Era, number: i32) -> Self {
+        Self {
+            era,
+            number,
+            related_iso: None,
+        }
+    }
+}
+
+/// Representation of a month in a year
+///
+/// Month codes typically look like `M01`, `M02`, etc, but can handle leap months
+/// (`M03L`) in lunar calendars. Solar calendars will have codes between `M01` and `M12`
+/// potentially with an `M13` for epagomenal months. Check the docs for a particular calendar
+/// for details on what its month codes are.
+#[derive(Clone, Copy, Debug, PartialEq, Eq, PartialOrd, Ord, Hash)]
 #[allow(clippy::exhaustive_structs)] // this is a newtype
-pub struct MonthCode(pub TinyStr8);
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_calendar::types),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+pub struct MonthCode(pub TinyStr4);
+
+impl AsULE for MonthCode {
+    type ULE = TinyStr4;
+    fn to_unaligned(self) -> TinyStr4 {
+        self.0
+    }
+    fn from_unaligned(u: TinyStr4) -> Self {
+        Self(u)
+    }
+}
+
+impl<'a> ZeroMapKV<'a> for MonthCode {
+    type Container = zerovec::ZeroVec<'a, MonthCode>;
+    type Slice = zerovec::ZeroSlice<MonthCode>;
+    type GetType = <MonthCode as AsULE>::ULE;
+    type OwnedType = MonthCode;
+}
+
+impl fmt::Display for MonthCode {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}", self.0)
+    }
+}
+
+impl From<TinyStr4> for MonthCode {
+    fn from(x: TinyStr4) -> Self {
+        Self(x)
+    }
+}
+impl FromStr for MonthCode {
+    type Err = <TinyStr4 as FromStr>::Err;
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        s.parse().map(Self)
+    }
+}
 
 /// Representation of a formattable month.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct Month {
+pub struct FormattableMonth {
     /// The month number in this given year. For calendars with leap months, all months after
     /// the leap month will end up with an incremented number.
     ///
@@ -52,7 +137,7 @@ pub struct Month {
 /// A struct containing various details about the position of the day within a year. It is returned
 // by the [`day_of_year_info()`](trait.DateInput.html#tymethod.day_of_year_info) method of the
 // [`DateInput`] trait.
-#[derive(Clone, Debug, PartialEq)]
+#[derive(Copy, Clone, Debug, PartialEq)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct DayOfYearInfo {
     /// The current day of the year, 1-based.
@@ -60,15 +145,16 @@ pub struct DayOfYearInfo {
     /// The number of days in a year.
     pub days_in_year: u32,
     /// The previous year.
-    pub prev_year: Year,
+    pub prev_year: FormattableYear,
     /// The number of days in the previous year.
     pub days_in_prev_year: u32,
     /// The next year.
-    pub next_year: Year,
+    pub next_year: FormattableYear,
 }
 
 /// A day number in a month. Usually 1-based.
 #[allow(clippy::exhaustive_structs)] // this is a newtype
+#[derive(Clone, Copy, Debug, PartialEq)]
 pub struct DayOfMonth(pub u32);
 
 /// A week number in a month. Usually 1-based.
@@ -174,19 +260,24 @@ macro_rules! dt_unit {
             }
         }
 
-        impl Add<$storage> for $name {
-            type Output = Self;
-
-            fn add(self, other: $storage) -> Self {
-                Self(self.0 + other)
+        impl $name {
+            /// Attempts to add two values.
+            /// Returns `Some` if the sum is within bounds.
+            /// Returns `None` if the sum is out of bounds.
+            pub fn try_add(self, other: $storage) -> Option<Self> {
+                let sum = self.0.saturating_add(other);
+                if sum > $value {
+                    None
+                } else {
+                    Some(Self(sum))
+                }
             }
-        }
 
-        impl Sub<$storage> for $name {
-            type Output = Self;
-
-            fn sub(self, other: $storage) -> Self {
-                Self(self.0 - other)
+            /// Attempts to subtract two values.
+            /// Returns `Some` if the difference is within bounds.
+            /// Returns `None` if the difference is out of bounds.
+            pub fn try_sub(self, other: $storage) -> Option<Self> {
+                self.0.checked_sub(other).map(Self)
             }
         }
     };
@@ -196,30 +287,143 @@ dt_unit!(
     IsoHour,
     u8,
     24,
-    "An ISO-8601 hour component, for use with ISO calendars."
+    "An ISO-8601 hour component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 24]`."
 );
 
 dt_unit!(
     IsoMinute,
     u8,
     60,
-    "An ISO-8601 minute component, for use with ISO calendars."
+    "An ISO-8601 minute component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 60]`."
 );
 
 dt_unit!(
     IsoSecond,
     u8,
     61,
-    "An ISO-8601 second component, for use with ISO calendars."
+    "An ISO-8601 second component, for use with ISO calendars.\n\nMust be within inclusive bounds `[0, 61]`."
 );
 
 dt_unit!(
     NanoSecond,
     u32,
     999_999_999,
-    "A fractional second component, stored as nanoseconds."
+    "A fractional second component, stored as nanoseconds.\n\nMust be within inclusive bounds `[0, 999_999_999]`."
 );
 
+#[test]
+fn test_iso_hour_arithmetic() {
+    const HOUR_MAX: u8 = 24;
+    const HOUR_VALUE: u8 = 5;
+    let hour = IsoHour(HOUR_VALUE);
+
+    // middle of bounds
+    assert_eq!(
+        hour.try_add(HOUR_VALUE - 1),
+        Some(IsoHour(HOUR_VALUE + (HOUR_VALUE - 1)))
+    );
+    assert_eq!(
+        hour.try_sub(HOUR_VALUE - 1),
+        Some(IsoHour(HOUR_VALUE - (HOUR_VALUE - 1)))
+    );
+
+    // edge of bounds
+    assert_eq!(hour.try_add(HOUR_MAX - HOUR_VALUE), Some(IsoHour(HOUR_MAX)));
+    assert_eq!(hour.try_sub(HOUR_VALUE), Some(IsoHour(0)));
+
+    // out of bounds
+    assert_eq!(hour.try_add(1 + HOUR_MAX - HOUR_VALUE), None);
+    assert_eq!(hour.try_sub(1 + HOUR_VALUE), None);
+}
+
+#[test]
+fn test_iso_minute_arithmetic() {
+    const MINUTE_MAX: u8 = 60;
+    const MINUTE_VALUE: u8 = 5;
+    let minute = IsoMinute(MINUTE_VALUE);
+
+    // middle of bounds
+    assert_eq!(
+        minute.try_add(MINUTE_VALUE - 1),
+        Some(IsoMinute(MINUTE_VALUE + (MINUTE_VALUE - 1)))
+    );
+    assert_eq!(
+        minute.try_sub(MINUTE_VALUE - 1),
+        Some(IsoMinute(MINUTE_VALUE - (MINUTE_VALUE - 1)))
+    );
+
+    // edge of bounds
+    assert_eq!(
+        minute.try_add(MINUTE_MAX - MINUTE_VALUE),
+        Some(IsoMinute(MINUTE_MAX))
+    );
+    assert_eq!(minute.try_sub(MINUTE_VALUE), Some(IsoMinute(0)));
+
+    // out of bounds
+    assert_eq!(minute.try_add(1 + MINUTE_MAX - MINUTE_VALUE), None);
+    assert_eq!(minute.try_sub(1 + MINUTE_VALUE), None);
+}
+
+#[test]
+fn test_iso_second_arithmetic() {
+    const SECOND_MAX: u8 = 61;
+    const SECOND_VALUE: u8 = 5;
+    let second = IsoSecond(SECOND_VALUE);
+
+    // middle of bounds
+    assert_eq!(
+        second.try_add(SECOND_VALUE - 1),
+        Some(IsoSecond(SECOND_VALUE + (SECOND_VALUE - 1)))
+    );
+    assert_eq!(
+        second.try_sub(SECOND_VALUE - 1),
+        Some(IsoSecond(SECOND_VALUE - (SECOND_VALUE - 1)))
+    );
+
+    // edge of bounds
+    assert_eq!(
+        second.try_add(SECOND_MAX - SECOND_VALUE),
+        Some(IsoSecond(SECOND_MAX))
+    );
+    assert_eq!(second.try_sub(SECOND_VALUE), Some(IsoSecond(0)));
+
+    // out of bounds
+    assert_eq!(second.try_add(1 + SECOND_MAX - SECOND_VALUE), None);
+    assert_eq!(second.try_sub(1 + SECOND_VALUE), None);
+}
+
+#[test]
+fn test_iso_nano_second_arithmetic() {
+    const NANO_SECOND_MAX: u32 = 999_999_999;
+    const NANO_SECOND_VALUE: u32 = 5;
+    let nano_second = NanoSecond(NANO_SECOND_VALUE);
+
+    // middle of bounds
+    assert_eq!(
+        nano_second.try_add(NANO_SECOND_VALUE - 1),
+        Some(NanoSecond(NANO_SECOND_VALUE + (NANO_SECOND_VALUE - 1)))
+    );
+    assert_eq!(
+        nano_second.try_sub(NANO_SECOND_VALUE - 1),
+        Some(NanoSecond(NANO_SECOND_VALUE - (NANO_SECOND_VALUE - 1)))
+    );
+
+    // edge of bounds
+    assert_eq!(
+        nano_second.try_add(NANO_SECOND_MAX - NANO_SECOND_VALUE),
+        Some(NanoSecond(NANO_SECOND_MAX))
+    );
+    assert_eq!(nano_second.try_sub(NANO_SECOND_VALUE), Some(NanoSecond(0)));
+
+    // out of bounds
+    assert_eq!(
+        nano_second.try_add(1 + NANO_SECOND_MAX - NANO_SECOND_VALUE),
+        None
+    );
+    assert_eq!(nano_second.try_sub(1 + NANO_SECOND_VALUE), None);
+}
+
+/// A representation of a time in hours, minutes, seconds, and nanoseconds
 #[derive(Debug, Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Hash)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Time {
@@ -237,7 +441,7 @@ pub struct Time {
 }
 
 impl Time {
-    /// Do not validate the numeric input for this component.
+    /// Construct a new [`Time`], without validating that all components are in range
     pub const fn new(
         hour: IsoHour,
         minute: IsoMinute,
@@ -252,6 +456,7 @@ impl Time {
         }
     }
 
+    /// Construct a new [`Time`], whilst validating that all components are in range
     pub fn try_new(
         hour: u8,
         minute: u8,
@@ -267,123 +472,6 @@ impl Time {
     }
 }
 
-/// The GMT offset in seconds for a mock time zone
-#[derive(Copy, Clone, Debug, Default)]
-pub struct GmtOffset(i32);
-
-impl GmtOffset {
-    /// Attempt to create a [`GmtOffset`] from a seconds input. It returns an error when the seconds
-    /// overflows or underflows.
-    pub fn try_new(seconds: i32) -> Result<Self, DateTimeError> {
-        // Valid range is from GMT-12 to GMT+14 in seconds.
-        if seconds < -(12 * 60 * 60) {
-            Err(DateTimeError::Underflow {
-                field: "GmtOffset",
-                min: -(12 * 60 * 60),
-            })
-        } else if seconds > (14 * 60 * 60) {
-            Err(DateTimeError::Overflow {
-                field: "GmtOffset",
-                max: (14 * 60 * 60),
-            })
-        } else {
-            Ok(Self(seconds))
-        }
-    }
-
-    /// Returns the raw offset value in seconds.
-    pub fn raw_offset_seconds(&self) -> i32 {
-        self.0
-    }
-
-    /// Returns `true` if the [`GmtOffset`] is positive, otherwise `false`.
-    pub fn is_positive(&self) -> bool {
-        self.0 >= 0
-    }
-
-    /// Returns `true` if the [`GmtOffset`] is zero, otherwise `false`.
-    pub fn is_zero(&self) -> bool {
-        self.0 == 0
-    }
-
-    /// Returns `true` if the [`GmtOffset`] has non-zero minutes, otherwise `false`.
-    pub fn has_minutes(&self) -> bool {
-        self.0 % 3600 / 60 > 0
-    }
-
-    /// Returns `true` if the [`GmtOffset`] has non-zero seconds, otherwise `false`.
-    pub fn has_seconds(&self) -> bool {
-        self.0 % 3600 % 60 > 0
-    }
-}
-
-impl FromStr for GmtOffset {
-    type Err = DateTimeError;
-
-    /// Parse a [`GmtOffset`] from a string.
-    ///
-    /// The offset must range from GMT-12 to GMT+14.
-    /// The string must be an ISO 8601 time zone designator:
-    /// e.g. Z
-    /// e.g. +05
-    /// e.g. +0500
-    /// e.g. +05:00
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::datetime::date::GmtOffset;
-    ///
-    /// let offset0: GmtOffset = "Z".parse().expect("Failed to parse a GMT offset.");
-    /// let offset1: GmtOffset = "-09".parse().expect("Failed to parse a GMT offset.");
-    /// let offset2: GmtOffset = "-0930".parse().expect("Failed to parse a GMT offset.");
-    /// let offset3: GmtOffset = "-09:30".parse().expect("Failed to parse a GMT offset.");
-    /// ```
-    fn from_str(input: &str) -> Result<Self, Self::Err> {
-        let offset_sign = match input.chars().next() {
-            Some('+') => 1,
-            /* ASCII */ Some('-') => -1,
-            /* U+2212 */ Some('−') => -1,
-            Some('Z') => return Ok(Self(0)),
-            _ => return Err(DateTimeError::InvalidTimeZoneOffset),
-        };
-
-        let seconds = match input.chars().count() {
-            /* ±hh */
-            3 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3].parse()?;
-                offset_sign * (hour as i32 * 60 * 60)
-            }
-            /* ±hhmm */
-            5 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3].parse()?;
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let minute: u8 = input[3..5].parse()?;
-                offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
-            }
-            /* ±hh:mm */
-            6 => {
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let hour: u8 = input[1..3].parse()?;
-                #[allow(clippy::indexing_slicing)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
-                let minute: u8 = input[4..6].parse()?;
-                offset_sign * (hour as i32 * 60 * 60 + minute as i32 * 60)
-            }
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            _ => panic!("Invalid time-zone designator"),
-        };
-
-        Self::try_new(seconds)
-    }
-}
-
 /// A weekday in a 7-day week, according to ISO-8601.
 ///
 /// The discriminant values correspond to ISO-8601 weekday numbers (Monday = 1, Sunday = 7).
@@ -391,7 +479,7 @@ impl FromStr for GmtOffset {
 /// # Examples
 ///
 /// ```
-/// use icu::datetime::date::IsoWeekday;
+/// use icu::datetime::input::IsoWeekday;
 ///
 /// assert_eq!(1, IsoWeekday::Monday as usize);
 /// assert_eq!(7, IsoWeekday::Sunday as usize);
@@ -423,7 +511,7 @@ impl From<usize> for IsoWeekday {
     /// # Examples
     ///
     /// ```
-    /// use icu::datetime::date::IsoWeekday;
+    /// use icu::datetime::input::IsoWeekday;
     ///
     /// assert_eq!(IsoWeekday::Sunday, IsoWeekday::from(0));
     /// assert_eq!(IsoWeekday::Monday, IsoWeekday::from(1));

@@ -10,7 +10,10 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        clippy::exhaustive_structs,
+        clippy::exhaustive_enums,
+        missing_debug_implementations,
     )
 )]
 
@@ -82,6 +85,7 @@ use core::fmt;
 /// During computation, the lower bound will saturate at `usize::MAX`, while the upper
 /// bound will become `None` if `usize::MAX` is exceeded.
 #[derive(Debug, PartialEq, Eq, Copy, Clone)]
+#[non_exhaustive]
 pub struct LengthHint(pub usize, pub Option<usize>);
 
 impl LengthHint {
@@ -136,6 +140,7 @@ impl LengthHint {
 }
 
 #[derive(Clone, Copy, Debug, PartialEq)]
+#[allow(clippy::exhaustive_structs)] // stable
 pub struct Part {
     pub category: &'static str,
     pub value: &'static str,
@@ -239,9 +244,7 @@ pub trait Writeable {
     /// ```
     fn write_to_string(&self) -> Cow<str> {
         let mut output = String::with_capacity(self.write_len().capacity());
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.write_to(&mut output)
-            .expect("impl Write for String is infallible");
+        let _ = self.write_to(&mut output);
         Cow::Owned(output)
     }
 }

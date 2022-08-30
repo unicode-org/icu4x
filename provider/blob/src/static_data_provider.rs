@@ -6,8 +6,6 @@ use crate::blob_schema::*;
 use icu_provider::buf::BufferFormat;
 use icu_provider::prelude::*;
 use serde::de::Deserialize;
-use writeable::Writeable;
-use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 
 /// A data provider loading data statically baked in to the binary.
 ///
@@ -32,12 +30,12 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 ///     "/tests/data/hello_world.postcard"
 /// ));
 ///
-/// let provider = StaticDataProvider::new_from_static_blob(&HELLO_WORLD_BLOB)
+/// let provider = StaticDataProvider::try_new_from_static_blob(&HELLO_WORLD_BLOB)
 ///     .expect("Deserialization should succeed");
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
-///     .load_resource(&DataRequest {
-///         options: locale!("la").into(),
+///     .load(DataRequest {
+///         locale: &locale!("la").into(),
 ///         metadata: Default::default(),
 ///     })
 ///     .expect("Data should be valid")
@@ -48,18 +46,21 @@ use zerovec::maps::{KeyError, ZeroMap2dBorrowed};
 /// ```
 ///
 /// [`BlobDataProvider`]: crate::BlobDataProvider
+#[derive(Clone, Copy)]
 pub struct StaticDataProvider {
-    data: ZeroMap2dBorrowed<'static, ResourceKeyHash, [u8], [u8]>,
+    data: BlobSchemaV1<'static>,
 }
 
 impl StaticDataProvider {
     /// Create a [`StaticDataProvider`] from a `'static` blob of ICU4X data.
-    pub fn new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
+    pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(StaticDataProvider {
             data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob)).map(
                 |blob| {
                     let BlobSchema::V001(blob) = blob;
-                    blob.resources
+                    #[cfg(debug_assertions)]
+                    blob.check_invariants();
+                    blob
                 },
             )?,
         })
@@ -79,10 +80,10 @@ impl StaticDataProvider {
     ///
     /// let stub_provider = StaticDataProvider::new_empty();
     ///
-    /// ResourceProvider::<HelloWorldV1Marker>::load_resource(
+    /// DataProvider::<HelloWorldV1Marker>::load(
     ///     &stub_provider,
-    ///     &DataRequest {
-    ///         options: locale!("la").into(),
+    ///     DataRequest {
+    ///         locale: &locale!("la").into(),
     ///         metadata: Default::default(),
     ///     },
     /// )
@@ -90,7 +91,7 @@ impl StaticDataProvider {
     /// ```
     pub fn new_empty() -> Self {
         StaticDataProvider {
-            data: ZeroMap2dBorrowed::new(),
+            data: Default::default(),
         }
     }
 }
@@ -98,25 +99,30 @@ impl StaticDataProvider {
 impl BufferProvider for StaticDataProvider {
     fn load_buffer(
         &self,
-        key: ResourceKey,
-        req: &DataRequest,
+        key: DataKey,
+        req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
         metadata.buffer_format = Some(BufferFormat::Postcard1);
+        let idx = self
+            .data
+            .keys
+            .get0(&key.get_hash())
+            .ok_or(DataErrorKind::MissingDataKey)
+            .and_then(|cursor| {
+                cursor
+                    .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
+                    .ok_or(DataErrorKind::MissingLocale)
+            })
+            .map_err(|kind| kind.with_req(key, req))?;
+        let bytes = self
+            .data
+            .buffers
+            .get(idx)
+            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
         Ok(DataResponse {
             metadata,
-            payload: Some(DataPayload::from_static_buffer(
-                self.data
-                    .get(&key.get_hash(), req.options.write_to_string().as_bytes())
-                    .map_err(|e| {
-                        match e {
-                            KeyError::K0 => DataErrorKind::MissingResourceKey,
-                            KeyError::K1 => DataErrorKind::MissingResourceOptions,
-                        }
-                        .with_req(key, req)
-                    })?,
-            )),
+            payload: { Some(DataPayload::from_static_buffer(bytes)) },
         })
     }
 }

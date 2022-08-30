@@ -86,8 +86,6 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-    - name: Install rustfmt
-      run: rustup component add rustfmt
     - name: Build
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -98,6 +96,54 @@ jobs:
       with:
         command: make
         args: ci-job-test
+
+  testdata:
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, macos-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+    # Note: rustfmt is required for databake formatting
+    - name: Install rustfmt
+      run: rustup component add rustfmt
+    - name: Build icu4x-testdata-datagen
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --bin=icu4x-testdata-datagen --features=bin
+    - name: Build icu4x-datagen
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --bin=icu4x-datagen --features=experimental,bin
+    - name: Run `cargo make ci-job-testdata`
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-testdata
 
   # Docs test job - runs all "cargo make" testing commands for docs
   test-docs:
@@ -148,7 +194,7 @@ jobs:
       id: source-data-cache
       with:
         path: data/source
-        key: source-data-41-71
+        key: source-data/41/icu4x-2022-08-17-71.x
     - name: Download CLDR source data
       if: steps.source-data-cache.outputs.cache-hit != 'true'
       uses: robinraju/release-downloader@v1.3
@@ -162,22 +208,23 @@ jobs:
       uses: robinraju/release-downloader@v1.3
       with: 
         repository: "unicode-org/icu"
-        tag: "release-71-1"
-        fileName: "icuexportdata_uprops_full.zip"
+        tag: "icu4x/2022-08-17/71.x"
+        fileName: "icuexportdata_icu4x-2022-08-17-71.x.zip"
         out-file-path: "data/source/"
     - name: Run datagen
       uses: actions-rs/cargo@v1.0.1
+      # cargo make ci-job-full-datagen replicates this
       with:
         command: run
         args: > 
           -p icu_datagen --features bin --release --
-          --uprops-root data/source/icuexportdata_uprops_full.zip
-          --cldr-root data/source/cldr-41.0.0-json-full.zip 
+          --icuexport-root data/source/icuexportdata_icu4x-2022-08-17-71.x.zip
+          --cldr-root data/source/cldr-41.0.0-json-full.zip
           --all-locales
           --all-keys
           --format blob
           --syntax postcard
-          --out data/full.postcard 
+          --out data/full.postcard
 
   # FFI job - runs all "cargo make" FFI tests
   ffi:
@@ -203,6 +250,54 @@ jobs:
         wget https://apt.llvm.org/llvm.sh
         chmod +x llvm.sh
         sudo ./llvm.sh 14
+    - name: Get cargo-make version
+      id: cargo-make-version
+      run: |
+        echo "::set-output name=hash::$(cargo search cargo-make | grep '^cargo-make =' | md5sum)"
+      shell: bash
+    - name: Attempt to load cached cargo-make
+      uses: actions/cache@v2
+      id: cargo-make-cache
+      with:
+        path: |
+          ~/.cargo/bin/cargo-make
+          ~/.cargo/bin/cargo-make.exe
+        key: ${{ runner.os }}-make-${{ steps.cargo-make-version.outputs.hash }}
+    - name: Install cargo-make
+      if: steps.cargo-make-cache.outputs.cache-hit != 'true'
+      uses: actions-rs/install@v0.1.2
+      with:
+        crate: cargo-make
+        version: latest
+    - name: Build
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: build
+        args: --all-targets --all-features
+    - name: Run `cargo make ci-job-ffi`
+      uses: actions-rs/cargo@v1.0.1
+      with:
+        command: make
+        args: ci-job-ffi
+      env:
+        CXX: "g++-10"
+
+
+  # FFI job - runs all "cargo make" FFI verification tests
+  verify-ffi:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+    runs-on: ${{ matrix.os }}
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Load the default Rust toolchain via the rust-toolchain file.
+      run: rustup show
+    - name: Load nightly for rustdoc-json
+      run: |
+        rustup install nightly-2022-08-25
     - name: Get cargo-make version
       id: cargo-make-version
       run: |
@@ -262,18 +357,11 @@ jobs:
         command: install
         args: --git https://github.com/rust-diplomat/diplomat.git --version ${{ steps.diplomat-version.outputs.rev }} diplomat-tool
 
-    - name: Build
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: build
-        args: --all-targets --all-features
-    - name: Run `cargo make ci-job-ffi`
+    - name: Run `cargo make ci-job-verify-ffi`
       uses: actions-rs/cargo@v1.0.1
       with:
         command: make
-        args: ci-job-ffi
-      env:
-        CXX: "g++-10"
+        args: ci-job-verify-ffi
 
 
   # Feature coverage job - builds all permutations of features
@@ -334,8 +422,8 @@ jobs:
         uses: actions/cache@v2
         id: npm-cache
         with:
-          path: ffi/diplomat/wasm/node_modules
-          key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
+          path: ffi/diplomat/wasm/icu4x/node_modules
+          key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/icu4x/package-lock.json') }}
       - name: Install npm packages.
         # If npm dependencies are not found in cache.
         if: steps.npm-cache.outputs.cache-hit != 'true'
@@ -344,12 +432,12 @@ jobs:
           # ready-to-use locally, you also can execute
           # 'sudo npm install -g wasm-opt --unsafe-perm' and
           # 'sudo npm install -g wabt'.
-          cd ffi/diplomat/wasm
+          cd ffi/diplomat/wasm/icu4x
           npm ci
       - name: Set path to wasm-opt and wabt binaries
         run: |
-          echo "$PWD/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-          echo "$PWD/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+          echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+          echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wabt/bin" >> $GITHUB_PATH
 
       - name: Get twiggy version
         id: twiggy-version
@@ -584,7 +672,7 @@ jobs:
           - components/locid
           - components/plurals
           - components/datetime
-          - utils/uniset
+          - components/collections
           - utils/fixed_decimal
 
 
@@ -701,11 +789,12 @@ jobs:
               icu_calendar/iso_date_manipulations
               icu_calendar/iso_datetime_manipulations
               icu_datetime/work_log
+              icu_list/and_list
               icu_locid/syntatically_canonicalize_locales
               icu_locid/filter_langids
               icu_plurals/unread_emails
               icu_plurals/elevator_floors
-              icu_uniset/unicode_bmp_blocks_selector
+              icu_collections/unicode_bmp_blocks_selector
               fixed_decimal/permyriad
               writeable/writeable_message
               litemap/language_names_lite_map
@@ -848,32 +937,32 @@ jobs:
       uses: actions/cache@v2
       id: npm-cache
       with:
-        path: ffi/diplomat/wasm/node_modules
-        key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/package-lock.json') }}
+        path: ffi/diplomat/wasm/icu4x/node_modules
+        key: ${{ runner.os }}-npm-${{ hashFiles('ffi/diplomat/wasm/icu4x/package-lock.json') }}
 
     - name: Install npm packages.
       # If npm dependencies are not found in cache.
       if: steps.npm-cache.outputs.cache-hit != 'true'
       # Note: if package.json and package-lock.json are out of sync then
       # 'npm ci' will fail. Locally execute 'npm install' in directory
-      # 'ffi/diplomat/wasm' to generate a new package-lock.json file and
+      # 'ffi/diplomat/wasm/icu4x' to generate a new package-lock.json file and
       # merge it into the repository.
       run: |
-        cd ffi/diplomat/wasm
+        cd ffi/diplomat/wasm/icu4x
         npm ci
         if [ $? -ne 0 ]
         then
           echo Execution of npm ci failed. This may be due to package.json
           echo and package-lock.json being out of sync. Locally execute
-          echo npm install in directory  ffi/diplomat/wasm to generate a
+          echo npm install in directory  ffi/diplomat/wasm/icu4x to generate a
           echo new package-lock.json file and and merge it into the repository.
           exit 1
         fi
 
     - name: Set path to wasm-opt and wabt binaries
       run: |
-        echo "$PWD/ffi/diplomat/wasm/node_modules/wasm-opt/bin" >> $GITHUB_PATH
-        echo "$PWD/ffi/diplomat/wasm/node_modules/wabt/bin" >> $GITHUB_PATH
+        echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wasm-opt/bin" >> $GITHUB_PATH
+        echo "$PWD/ffi/diplomat/wasm/icu4x/node_modules/wabt/bin" >> $GITHUB_PATH
 
     - name: Install prerequisites for wasm build
       run: |
@@ -1051,11 +1140,11 @@ jobs:
         <html>
           <head>
             <meta charset="utf-8">
-            <meta http-equiv="refresh" content="0;url=./doc/icu4x" />
+            <meta http-equiv="refresh" content="0;url=./doc/icu" />
             <title>ICU4X Developer Docs</title>
           </head>
           <body>
-            <p><a href="./doc/icu4x">Redirect to icu4x crate doc</a></p>
+            <p><a href="./doc/icu">Redirect to the <tt>icu</tt> crate of ICU4X</a></p>
           </body>
         </html>
         EOL

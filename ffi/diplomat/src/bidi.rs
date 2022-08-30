@@ -10,8 +10,7 @@ pub mod ffi {
     use core::fmt::Write;
     use icu_properties::bidi::BidiClassAdapter;
     use icu_properties::maps;
-    use icu_properties::provider::BidiClassV1Marker;
-    use icu_provider::DataPayload;
+    use icu_properties::BidiClass;
     use unicode_bidi::BidiInfo;
     use unicode_bidi::Level;
     use unicode_bidi::Paragraph;
@@ -28,8 +27,8 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X Bidi object, containing loaded bidi data
     #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter, Struct)]
-    // #[diplomat::rust_link(icu::properties::maps::get_bidi_class, Struct)]
-    pub struct ICU4XBidi(pub DataPayload<BidiClassV1Marker>);
+    // #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Struct)]
+    pub struct ICU4XBidi(pub maps::CodePointMapData<BidiClass>);
 
     impl ICU4XBidi {
         /// Creates a new [`ICU4XBidi`] from locale data.
@@ -37,7 +36,7 @@ pub mod ffi {
         pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
-            maps::get_bidi_class(&provider)
+            maps::load_bidi_class(&provider)
                 .map(|bidi| Box::new(ICU4XBidi(bidi)))
                 .map_err(Into::into)
                 .into()
@@ -52,8 +51,8 @@ pub mod ffi {
             text: &'text str,
             default_level: u8,
         ) -> Box<ICU4XBidiInfo<'text>> {
-            let data = self.0.get();
-            let adapter = BidiClassAdapter::new(&data.code_point_trie);
+            let data = self.0.as_borrowed();
+            let adapter = BidiClassAdapter::new(data);
 
             Box::new(ICU4XBidiInfo(BidiInfo::new_with_data_source(
                 &adapter,

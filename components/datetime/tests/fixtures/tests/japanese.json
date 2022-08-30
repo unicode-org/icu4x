@@ -11,7 +11,7 @@
         },
         "output": {
             "values": {
-                "japanese/en": "2 Reiwa"
+                "en-u-ca-japanese": "2 Reiwa"
             }
         }
     },
@@ -27,7 +27,7 @@
         },
         "output": {
             "values": {
-                "japanese/en": "22 Heisei"
+                "en-u-ca-japanese": "22 Heisei"
             }
         }
     },
@@ -43,7 +43,7 @@
         },
         "output": {
             "values": {
-                "japanese/en": "2 Shōwa"
+                "en-u-ca-japanese": "2 Shōwa"
             }
         }
     },
@@ -59,7 +59,7 @@
         },
         "output": {
             "values": {
-                "japanese/en": "45 Meiji"
+                "en-u-ca-japanese": "45 Meiji"
             }
         }
     },
@@ -75,7 +75,7 @@
         },
         "output": {
             "values": {
-                "japanese/en": "1 Taishō"
+                "en-u-ca-japanese": "1 Taishō"
             }
         }
     },
@@ -91,7 +91,7 @@
         },
         "output": {
             "values": {
-                "japanese/en": "33 Meiji"
+                "en-u-ca-japanese": "33 Meiji"
             }
         }
     },
@@ -107,7 +107,8 @@
         },
         "output": {
             "values": {
-                "japanese/en": "12 Kansei (1789–1801)"
+                "en-u-ca-japanese": "1800 Anno Domini",
+                "en-u-ca-japanext": "12 Kansei (1789–1801)"
             }
         }
     },
@@ -123,7 +124,8 @@
         },
         "output": {
             "values": {
-                "japanese/en": "5 Keichō (1596–1615)"
+                "en-u-ca-japanese": "1600 Anno Domini",
+                "en-u-ca-japanext": "5 Keichō (1596–1615)"
             }
         }
     }

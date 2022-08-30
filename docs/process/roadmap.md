@@ -46,10 +46,10 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 		* [x] 0.6 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/15))
 			* [x] Finish full-stack Script_Extensions property ([#1577](https://github.com/unicode-org/icu4x/issues/1577))
 			* [x] User-Friendly Data Slicing (part of [#1110](https://github.com/unicode-org/icu4x/issues/1110))
-			* [x] Add Coptic, Indian, and Ethiopic calendars
+			* [x] Add Coptic, Indian, and Ethiopian calendars
 			* [x] Fully zero-copy data
 			* [x] Bi-di support in Rust
-			* [x] TimeZoneFormat
+			* [x] TimeZoneFormatter
 	* [ ] April-June
 		* [ ] 1.0 Release ([Milestone](https://github.com/unicode-org/icu4x/milestone/16))
 			* [ ] Data + API stability

@@ -7,13 +7,20 @@
 #include "diplomat_runtime.h"
 
 #ifdef __cplusplus
-extern "C" {
+namespace capi {
 #endif
 
 typedef struct ICU4XBidi ICU4XBidi;
+#ifdef __cplusplus
+} // namespace capi
+#endif
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XBidi_ICU4XError.h"
 #include "ICU4XBidiInfo.h"
+#ifdef __cplusplus
+namespace capi {
+extern "C" {
+#endif
 
 diplomat_result_box_ICU4XBidi_ICU4XError ICU4XBidi_try_new(const ICU4XDataProvider* provider);
 
@@ -29,6 +36,7 @@ uint8_t ICU4XBidi_level_ltr();
 void ICU4XBidi_destroy(ICU4XBidi* self);
 
 #ifdef __cplusplus
-}
+} // extern "C"
+} // namespace capi
 #endif
 #endif

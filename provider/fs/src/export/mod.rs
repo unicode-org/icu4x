@@ -16,7 +16,8 @@
 //! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
 //! use icu_provider::dynutil::*;
-//! use icu_provider_fs::export::fs_exporter;
+//! use icu_provider_fs::export::ExporterOptions;
+//! use icu_provider_fs::export::FilesystemExporter;
 //! use icu_provider_fs::export::serializers;
 //! use icu_provider_fs::FsDataProvider;
 //! use std::borrow::Cow;
@@ -27,9 +28,9 @@
 //! // Set up the exporter
 //! let mut options = serializers::json::Options::default();
 //! let serializer = Box::new(serializers::json::Serializer::new(options));
-//! let mut options = fs_exporter::ExporterOptions::default();
+//! let mut options = ExporterOptions::default();
 //! options.root = demo_path.clone();
-//! let mut exporter = fs_exporter::FilesystemExporter::try_new(serializer, options)
+//! let mut exporter = FilesystemExporter::try_new(serializer, options)
 //!     .expect("Should successfully initialize data output directory");
 //!
 //! // Export something
@@ -50,11 +51,11 @@
 //!
 //! // Read the key from the filesystem and ensure it is as expected
 //! let req = DataRequest {
-//!     options: Default::default(),
+//!     locale: Default::default(),
 //!     metadata: Default::default(),
 //! };
 //! let response: DataPayload<HelloWorldV1Marker> = provider
-//!     .load_resource(&req)
+//!     .load(req)
 //!     .unwrap()
 //!     .take_payload()
 //!     .unwrap();
@@ -65,6 +66,16 @@
 //! std::fs::remove_dir_all(&demo_path).expect("Should clean up test directory");
 //! ```
 
-pub mod fs_exporter;
+#![allow(
+    clippy::indexing_slicing,
+    clippy::unwrap_used,
+    clippy::expect_used,
+    clippy::panic
+)]
+
+mod fs_exporter;
 pub mod serializers;
+
+pub use fs_exporter::ExporterOptions;
 pub use fs_exporter::FilesystemExporter;
+pub use fs_exporter::OverwriteOption;

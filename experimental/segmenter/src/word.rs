@@ -6,6 +6,7 @@ use alloc::string::String;
 use alloc::vec;
 use alloc::vec::Vec;
 use core::str::CharIndices;
+use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
 use crate::complex::*;
@@ -14,7 +15,7 @@ use crate::provider::*;
 use crate::rule_segmenter::*;
 
 /// Word break iterator for an `str` (a UTF-8 string).
-pub type WordBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, WordBreakType>;
+pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
 
 /// Word break iterator for a Latin-1 (8-bit) string.
 pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeLatin1>;
@@ -23,44 +24,155 @@ pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTy
 pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf16>;
 
 /// Supports loading word break data, and creating word break iterators for different string
-/// encodings. Please see the [module-level documentation](crate) for its usages.
+/// encodings.
+///
+/// # Examples
+///
+/// Segment a string:
+///
+/// ```rust
+/// use icu_segmenter::WordBreakSegmenter;
+/// let provider = icu_testdata::get_provider();
+/// let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+/// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
+/// ```
+///
+/// Segment a Latin1 byte string:
+///
+/// ```rust
+/// use icu_segmenter::WordBreakSegmenter;
+/// let provider = icu_testdata::get_provider();
+/// let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
+/// ```
 pub struct WordBreakSegmenter {
     payload: DataPayload<WordBreakDataV1Marker>,
-    dictionary_payload: DataPayload<UCharDictionaryBreakDataV1Marker>,
+    dictionary: Dictionary,
+    lstm: LstmPayloads,
 }
 
 impl WordBreakSegmenter {
+    /// Construct a [`WordBreakSegmenter`].
+    #[cfg(feature = "lstm")]
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<WordBreakDataV1Marker>
-            + ResourceProvider<UCharDictionaryBreakDataV1Marker>
+        D: DataProvider<WordBreakDataV1Marker>
+            + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + DataProvider<LstmDataV1Marker>
             + ?Sized,
     {
-        let payload = provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let payload = provider.load(Default::default())?.take_payload()?;
 
-        // TODO: Use `provider` parameter after we support loading dictionary data from the
-        // production-ready providers.
-        let inv_provider = icu_provider::inv::InvariantDataProvider;
-        let dictionary_payload = inv_provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
+        let cj = Self::load_dictionary(provider, locale!("ja")).ok();
+
+        let lstm = if cfg!(feature = "lstm") {
+            let burmese = Self::load_lstm(provider, locale!("my")).ok();
+            let khmer = Self::load_lstm(provider, locale!("lo")).ok();
+            let lao = Self::load_lstm(provider, locale!("lo")).ok();
+            let thai = Self::load_lstm(provider, locale!("th")).ok();
+            LstmPayloads {
+                burmese,
+                khmer,
+                lao,
+                thai,
+            }
+        } else {
+            LstmPayloads::default()
+        };
+
         Ok(Self {
             payload,
-            dictionary_payload,
+            dictionary: Dictionary {
+                burmese: None,
+                khmer: None,
+                lao: None,
+                thai: None,
+                cj,
+            },
+            lstm,
         })
     }
 
+    /// Construct a [`WordBreakSegmenter`].
+    #[cfg(not(feature = "lstm"))]
+    pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
+    where
+        D: DataProvider<WordBreakDataV1Marker>
+            + DataProvider<UCharDictionaryBreakDataV1Marker>
+            + ?Sized,
+    {
+        let payload = provider.load(Default::default())?.take_payload()?;
+
+        let dictionary = if cfg!(feature = "lstm") {
+            let cj = Self::load_dictionary(provider, locale!("ja")).ok();
+            Dictionary {
+                burmese: None,
+                khmer: None,
+                lao: None,
+                thai: None,
+                cj,
+            }
+        } else {
+            let cj = Self::load_dictionary(provider, locale!("ja")).ok();
+            let burmese = Self::load_dictionary(provider, locale!("my")).ok();
+            let khmer = Self::load_dictionary(provider, locale!("km")).ok();
+            let lao = Self::load_dictionary(provider, locale!("lo")).ok();
+            let thai = Self::load_dictionary(provider, locale!("th")).ok();
+            Dictionary {
+                burmese,
+                khmer,
+                lao,
+                thai,
+                cj,
+            }
+        };
+
+        Ok(Self {
+            payload,
+            dictionary,
+            lstm: LstmPayloads::default(),
+        })
+    }
+
+    fn load_dictionary<D: DataProvider<UCharDictionaryBreakDataV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
+        provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
+    }
+
+    #[cfg(feature = "lstm")]
+    fn load_lstm<D: DataProvider<LstmDataV1Marker> + ?Sized>(
+        provider: &D,
+        locale: Locale,
+    ) -> Result<DataPayload<LstmDataV1Marker>, DataError> {
+        provider
+            .load(DataRequest {
+                locale: &DataLocale::from(locale),
+                metadata: Default::default(),
+            })?
+            .take_payload()
+    }
+
     /// Create a word break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIterator<'l, 's> {
-        WordBreakIterator {
+    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> WordBreakIteratorUtf8<'l, 's> {
+        WordBreakIteratorUtf8 {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: Some(&self.dictionary_payload),
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -72,7 +184,8 @@ impl WordBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -84,14 +197,15 @@ impl WordBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: Some(&self.dictionary_payload),
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 }
 
-pub struct WordBreakType;
+pub struct WordBreakTypeUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakType {
+impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -122,7 +236,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakType {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary_payload?, &s);
+        let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
         iter.result_cache = breaks;
         let mut i = iter.current_pos_data.unwrap().1.len_utf8();
         loop {
@@ -145,7 +259,7 @@ pub struct WordBreakTypeLatin1;
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
-    type CharType = u8; // TODO: Latin1Char
+    type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")
@@ -196,7 +310,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf16 {
         // Restore iterator to move to head of complex string
         iter.iter = start_iter;
         iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_utf16(iter.dictionary_payload?, &s);
+        let breaks = complex_language_segment_utf16(iter.dictionary, iter.lstm, &s);
         let mut i = 1;
         iter.result_cache = breaks;
         // result_cache vector is utf-16 index that is in BMP.

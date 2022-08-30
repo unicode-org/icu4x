@@ -7,26 +7,25 @@
 use crate::grouper;
 use crate::options::*;
 use crate::provider::*;
-use crate::sign_selector;
 use fixed_decimal::FixedDecimal;
+use fixed_decimal::Sign;
 use writeable::Writeable;
 
-/// An intermediate structure returned by [`FixedDecimalFormat`](crate::FixedDecimalFormat).
+/// An intermediate structure returned by [`FixedDecimalFormatter`](crate::FixedDecimalFormatter).
 /// Use [`Writeable`][Writeable] to render the formatted decimal to a string or buffer.
 #[derive(Debug, PartialEq, Clone)]
 pub struct FormattedFixedDecimal<'l> {
     pub(crate) value: &'l FixedDecimal,
-    pub(crate) options: &'l FixedDecimalFormatOptions,
+    pub(crate) options: &'l FixedDecimalFormatterOptions,
     pub(crate) symbols: &'l DecimalSymbolsV1<'l>,
 }
 
 impl<'l> FormattedFixedDecimal<'l> {
     fn get_affixes(&self) -> Option<&AffixesV1> {
-        use sign_selector::SignSelection::*;
-        match sign_selector::select(self.value.signum(), self.options.sign_display) {
-            Minus => Some(&self.symbols.minus_sign_affixes),
-            Neither => None,
-            Plus => Some(&self.symbols.plus_sign_affixes),
+        match self.value.sign() {
+            Sign::Negative => Some(&self.symbols.minus_sign_affixes),
+            Sign::None => None,
+            Sign::Positive => Some(&self.symbols.plus_sign_affixes),
         }
     }
 }
@@ -46,10 +45,8 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
             if m == -1 {
                 sink.write_str(&self.symbols.decimal_separator)?;
             }
-            let d = self.value.digit_at(m);
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
-            sink.write_char(self.symbols.digits[d as usize])?;
+            #[allow(clippy::indexing_slicing)] // digit_at in 0..=9
+            sink.write_char(self.symbols.digits[self.value.digit_at(m) as usize])?;
             if grouper::check(
                 upper_magnitude,
                 m,

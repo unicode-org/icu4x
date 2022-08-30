@@ -30,7 +30,7 @@ pub fn check(
         use GroupingStrategy::*;
         match strategy {
             Never => return false,
-            // Note: Auto and Always are the same for FixedDecimalFormat.
+            // Note: Auto and Always are the same for FixedDecimalFormatter.
             // When currencies are implemented, this will change.
             Auto | Always => cmp::max(1, sizes.min_grouping) as i16,
             Min2 => cmp::max(2, sizes.min_grouping) as i16,
@@ -55,11 +55,11 @@ pub fn check(
 fn test_grouper() {
     use crate::options;
     use crate::provider::*;
-    use crate::FixedDecimalFormat;
+    use crate::FixedDecimalFormatter;
     use fixed_decimal::FixedDecimal;
     use icu_locid::LanguageIdentifier;
     use icu_provider::prelude::*;
-    use icu_provider_adapters::struct_provider::AnyPayloadProvider;
+    use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use writeable::Writeable;
 
     let western_sizes = GroupingSizesV1 {
@@ -154,25 +154,20 @@ fn test_grouper() {
     ];
     for cas in &cases {
         for i in 0..4 {
-            let dec = FixedDecimal::from(1)
-                .multiplied_pow10((i as i16) + 3)
-                .unwrap();
-            let data_struct = crate::provider::DecimalSymbolsV1 {
-                grouping_sizes: cas.sizes,
-                ..Default::default()
-            };
-            let provider = AnyPayloadProvider {
-                key: DecimalSymbolsV1Marker::KEY,
-                data: DataPayload::<DecimalSymbolsV1Marker>::from_owned(data_struct)
-                    .wrap_into_any_payload(),
-            };
-            let options = options::FixedDecimalFormatOptions {
+            let dec = FixedDecimal::from(1).multiplied_pow10((i as i16) + 3);
+            let provider = AnyPayloadProvider::new_owned::<DecimalSymbolsV1Marker>(
+                crate::provider::DecimalSymbolsV1 {
+                    grouping_sizes: cas.sizes,
+                    ..Default::default()
+                },
+            );
+            let options = options::FixedDecimalFormatterOptions {
                 grouping_strategy: cas.strategy,
                 ..Default::default()
             };
-            let fdf = FixedDecimalFormat::try_new(
-                LanguageIdentifier::UND,
+            let fdf = FixedDecimalFormatter::try_new_unstable(
                 &provider.as_downcasting(),
+                &LanguageIdentifier::UND.into(),
                 options,
             )
             .unwrap();

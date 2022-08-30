@@ -1,12 +1,12 @@
 {
   "defaults": {
     "gulf": {
-      "standard": "GST"
+      "st": "GST"
     }
   },
   "overrides": {
     "utc": {
-      "standard": "UTC"
+      "st": "UTC"
     }
   }
 }

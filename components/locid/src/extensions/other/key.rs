@@ -31,8 +31,7 @@ impl_tinystr_subtag!(
 );
 
 impl Key {
-    #[allow(missing_docs)] // TODO(#1028) - Add missing docs.
-    pub const fn valid_key(v: &[u8]) -> bool {
+    pub(crate) const fn valid_key(v: &[u8]) -> bool {
         2 <= v.len() && v.len() <= 8
     }
 }

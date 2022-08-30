@@ -32,6 +32,7 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::iso::{Iso, IsoDateInner};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use tinystr::tinystr;
@@ -44,15 +45,38 @@ const BUDDHIST_ERA_OFFSET: i32 = 543;
 #[derive(Copy, Clone, Debug, Default)]
 /// The [Thai Solar Buddhist Calendar][cal]
 ///
-/// This is basically the same as the Gregorian calendar,
-/// however it has a different zero year: 1 AD = 544 BE
+/// The [Thai Solar Buddhist Calendar][cal] is a solar calendar used in Thailand, with twelve months.
+/// The months and days are identical to that of the Gregorian calendar, however the years are counted
+/// differently using the Buddhist Era.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
 ///
 /// [cal]: https://en.wikipedia.org/wiki/Thai_solar_calendar
+///
+/// # Era codes
+///
+/// This calendar supports one era, `"be"`, with 1 B.E. being 543 BCE
+
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Buddhist;
 
 impl Calendar for Buddhist {
     type DateInner = IsoDateInner;
+
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        if era.0 != tinystr!(16, "be") {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        }
+        let year = year - BUDDHIST_ERA_OFFSET;
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day).map(IsoDateInner)
+    }
     fn date_from_iso(&self, iso: Date<Iso>) -> IsoDateInner {
         *iso.inner()
     }
@@ -91,12 +115,12 @@ impl Calendar for Buddhist {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         iso_year_as_buddhist(date.0.year)
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         Iso.month(date)
     }
 
@@ -186,11 +210,11 @@ impl DateTime<Buddhist> {
     }
 }
 
-fn iso_year_as_buddhist(year: i32) -> types::Year {
+fn iso_year_as_buddhist(year: i32) -> types::FormattableYear {
     let buddhist_year = year + BUDDHIST_ERA_OFFSET;
-    types::Year {
+    types::FormattableYear {
         era: types::Era(tinystr!(16, "be")),
         number: buddhist_year,
-        related_iso: year,
+        related_iso: None,
     }
 }

@@ -6,37 +6,21 @@ use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use crate::SourceData;
-use icu_calendar::arithmetic::week_of::CalendarInfo;
-use icu_datetime::provider::week_data::*;
-use icu_provider::datagen::IterableResourceProvider;
+use icu_calendar::provider::{WeekDataV1, WeekDataV1Marker};
+use icu_locid::LanguageIdentifier;
+use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::collections::HashSet;
 
-/// A data provider reading from CLDR JSON weekData files.
-#[derive(Debug)]
-pub struct WeekDataProvider {
-    source: SourceData,
-}
-
-impl From<&SourceData> for WeekDataProvider {
-    fn from(source: &SourceData) -> Self {
-        Self {
-            source: source.clone(),
-        }
-    }
-}
-
-impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
-    #[allow(clippy::needless_collect)] // https://github.com/rust-lang/rust-clippy/issues/7526
-    fn supported_options(&self) -> Result<Vec<ResourceOptions>, DataError> {
+impl IterableDataProvider<WeekDataV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         let week_data: &cldr_serde::week_data::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
-        let regions: HashSet<ResourceOptions> = week_data
+        let regions: HashSet<DataLocale> = week_data
             .min_days
             .keys()
             .chain(week_data.first_day.keys())
@@ -45,21 +29,17 @@ impl IterableResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                 Territory::Region(r) => Some(Some(*r)),
                 _ => None,
             })
-            .map(ResourceOptions::temp_for_region)
+            .map(LanguageIdentifier::from)
+            .map(DataLocale::from)
             .collect();
         Ok(regions.into_iter().collect())
     }
 }
 
-impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
-        let metadata = DataResponseMetadata::default();
-        // TODO(#1109): Set metadata.data_langid correctly.
+impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<WeekDataV1Marker>, DataError> {
         let territory = req
-            .options
+            .locale
             .region()
             .map(|v| -> Result<Territory, DataError> { Ok(Territory::Region(v)) })
             .transpose()?
@@ -67,14 +47,14 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
 
         let week_data: &cldr_serde::week_data::Resource = self
             .source
-            .get_cldr_paths()?
-            .cldr_core()
+            .cldr()?
+            .core()
             .read_and_parse("supplemental/weekData.json")?;
         let week_data = &week_data.supplemental.week_data;
 
         Ok(DataResponse {
-            metadata,
-            payload: Some(DataPayload::from_owned(WeekDataV1(CalendarInfo {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(WeekDataV1 {
                 first_weekday: week_data
                     .first_day
                     .get(&territory)
@@ -91,45 +71,40 @@ impl ResourceProvider<WeekDataV1Marker> for WeekDataProvider {
                         "Missing default entry for minDays in weekData.json",
                     ))?
                     .0,
-            }))),
+            })),
         })
     }
 }
 
-icu_provider::make_exportable_provider!(WeekDataProvider, [WeekDataV1Marker,]);
-
 #[test]
 fn basic_cldr_week_data() {
     use icu_calendar::types::IsoWeekday;
-    use icu_locid::subtags_region as region;
+    use icu_locid::langid;
 
-    let provider = WeekDataProvider::from(&SourceData::for_test());
+    let provider = crate::DatagenProvider::for_test();
 
     let default_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: ResourceOptions::default(),
-            metadata: Default::default(),
-        })
+        .load(Default::default())
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(1, default_week_data.get().0.min_week_days);
-    assert_eq!(IsoWeekday::Monday, default_week_data.get().0.first_weekday);
+    assert_eq!(1, default_week_data.get().min_week_days);
+    assert_eq!(IsoWeekday::Monday, default_week_data.get().first_weekday);
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: ResourceOptions::temp_for_region(Some(region!("FR"))),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-FR")),
             metadata: Default::default(),
         })
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(4, fr_week_data.get().0.min_week_days);
-    assert_eq!(IsoWeekday::Monday, fr_week_data.get().0.first_weekday);
+    assert_eq!(4, fr_week_data.get().min_week_days);
+    assert_eq!(IsoWeekday::Monday, fr_week_data.get().first_weekday);
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: ResourceOptions::temp_for_region(Some(region!("IQ"))),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-IQ")),
             metadata: Default::default(),
         })
         .unwrap()
@@ -137,23 +112,23 @@ fn basic_cldr_week_data() {
         .unwrap();
     // Only first_weekday is defined for IQ, min_week_days uses the default.
     assert_eq!(
-        default_week_data.get().0.min_week_days,
-        iq_week_data.get().0.min_week_days
+        default_week_data.get().min_week_days,
+        iq_week_data.get().min_week_days
     );
-    assert_eq!(IsoWeekday::Saturday, iq_week_data.get().0.first_weekday);
+    assert_eq!(IsoWeekday::Saturday, iq_week_data.get().first_weekday);
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
-        .load_resource(&DataRequest {
-            options: ResourceOptions::temp_for_region(Some(region!("GG"))),
+        .load(DataRequest {
+            locale: &DataLocale::from(langid!("und-GG")),
             metadata: Default::default(),
         })
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(4, gg_week_data.get().0.min_week_days);
+    assert_eq!(4, gg_week_data.get().min_week_days);
     // Only min_week_days is defined for GG, first_weekday uses the default.
     assert_eq!(
-        default_week_data.get().0.first_weekday,
-        gg_week_data.get().0.first_weekday
+        default_week_data.get().first_weekday,
+        gg_week_data.get().first_weekday
     );
 }

@@ -4,19 +4,20 @@
 
 use core::fmt;
 
-use crate::error::DateTimeFormatError as Error;
+use crate::error::DateTimeFormatterError as Error;
 use crate::{
-    date::TimeZoneInput,
-    time_zone::{FormatTimeZone, TimeZoneFormat, TimeZoneFormatUnit},
-    DateTimeFormatError,
+    input::TimeZoneInput,
+    time_zone::{FormatTimeZone, TimeZoneFormatter, TimeZoneFormatterUnit},
+    DateTimeFormatterError,
 };
 use writeable::Writeable;
 
+/// [`FormattedTimeZone`] is a intermediate structure which can be retrieved as an output from [`TimeZoneFormatter`].
 pub struct FormattedTimeZone<'l, T>
 where
     T: TimeZoneInput,
 {
-    pub(crate) time_zone_format: &'l TimeZoneFormat,
+    pub(crate) time_zone_format: &'l TimeZoneFormatter,
     pub(crate) time_zone: &'l T,
 }
 
@@ -29,7 +30,7 @@ where
         match self.write_no_fallback(sink) {
             Ok(Ok(r)) => Ok(r),
             _ => match self.time_zone_format.fallback_unit {
-                TimeZoneFormatUnit::LocalizedGmt(fallback) => {
+                TimeZoneFormatterUnit::LocalizedGmt(fallback) => {
                     match fallback.format(
                         sink,
                         self.time_zone,
@@ -37,13 +38,10 @@ where
                     ) {
                         Ok(Ok(r)) => Ok(r),
                         Ok(Err(e)) => Err(e),
-                        Err(_e) => {
-                            debug_assert!(false, "{:?}", _e);
-                            Err(core::fmt::Error)
-                        }
+                        Err(e) => self.handle_last_resort_error(e, sink),
                     }
                 }
-                TimeZoneFormatUnit::Iso8601(fallback) => {
+                TimeZoneFormatterUnit::Iso8601(fallback) => {
                     match fallback.format(
                         sink,
                         self.time_zone,
@@ -51,10 +49,7 @@ where
                     ) {
                         Ok(Ok(r)) => Ok(r),
                         Ok(Err(e)) => Err(e),
-                        Err(_e) => {
-                            debug_assert!(false, "{:?}", _e);
-                            Err(core::fmt::Error)
-                        }
+                        Err(e) => self.handle_last_resort_error(e, sink),
                     }
                 }
                 _ => Err(core::fmt::Error),
@@ -86,10 +81,43 @@ where
         for unit in self.time_zone_format.format_units.iter() {
             match unit.format(w, self.time_zone, &self.time_zone_format.data_payloads) {
                 Ok(r) => return Ok(r),
-                Err(DateTimeFormatError::UnsupportedOptions) => continue,
+                Err(DateTimeFormatterError::UnsupportedOptions) => continue,
                 Err(e) => return Err(e),
             }
         }
-        Err(DateTimeFormatError::UnsupportedOptions)
+        Err(DateTimeFormatterError::UnsupportedOptions)
+    }
+
+    fn handle_last_resort_error<W>(&self, e: DateTimeFormatterError, sink: &mut W) -> fmt::Result
+    where
+        W: core::fmt::Write + ?Sized,
+    {
+        match e {
+            DateTimeFormatterError::MissingInputField(Some("gmt_offset")) => {
+                debug_assert!(
+                    false,
+                    "Warning: using last-resort time zone fallback: {:?}.\
+ To fix this warning, ensure the gmt_offset field is present.",
+                    &self
+                        .time_zone_format
+                        .data_payloads
+                        .zone_formats
+                        .get()
+                        .gmt_offset_fallback
+                );
+                sink.write_str(
+                    &self
+                        .time_zone_format
+                        .data_payloads
+                        .zone_formats
+                        .get()
+                        .gmt_offset_fallback,
+                )
+            }
+            _ => {
+                debug_assert!(false, "{:?}", e);
+                Err(core::fmt::Error)
+            }
+        }
     }
 }

@@ -43,3 +43,10 @@ pub const BINCODE_BUF: &[u8] = &[
     46, 0, 48, 49, 50, 0, 52, 53, 54, 0, 56, 57, 58, 0, 60, 61, 62, 0, 64, 65, 66, 0, 68, 69, 70,
     0, 72, 73, 74, 0, 76, 77, 78, 0,
 ];
+
+/// Representation of a VarZeroVec<str> of length 4 as bytes.
+/// Safety: The bytes were manually verified to be valid.
+pub const TEST_VARZEROSLICE_BYTES: &[u8] = &[
+    4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 119, 207, 137, 230, 150, 135, 240,
+    145, 132, 131,
+];

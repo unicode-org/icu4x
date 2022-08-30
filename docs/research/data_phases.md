@@ -170,4 +170,4 @@ The question is then: in what order do we visit these locale/variant combos?
     - `und/arab`
     - `und`
 
-If more than one of these strategies is useful, we could consider making multiple variant fields on ResourceOptions with different fallback behavior.
+If more than one of these strategies is useful, we could consider making multiple variant fields on DataLocale with different fallback behavior.

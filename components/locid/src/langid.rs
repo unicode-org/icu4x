@@ -5,8 +5,9 @@
 use core::cmp::Ordering;
 use core::str::FromStr;
 
+use crate::ordering::SubtagOrderingResult;
 use crate::parser::{
-    get_subtag_iterator, parse_language_identifier, parse_language_identifier_without_variants,
+    get_subtag_iterator, parse_language_identifier, parse_language_identifier_with_single_variant,
     ParserError, ParserMode,
 };
 use crate::subtags;
@@ -57,7 +58,7 @@ use alloc::string::ToString;
 /// ```
 ///
 /// [`Unicode BCP47 Language Identifier`]: https://unicode.org/reports/tr35/tr35.html#Unicode_language_identifier
-#[derive(Default, PartialEq, Eq, Clone, Hash, PartialOrd, Ord)]
+#[derive(Default, PartialEq, Eq, Clone, Hash)]
 #[allow(clippy::exhaustive_structs)] // This struct is stable (and invoked by a macro)
 pub struct LanguageIdentifier {
     /// Language subtag of the language identifier.
@@ -88,19 +89,21 @@ impl LanguageIdentifier {
     }
 
     #[doc(hidden)]
+    #[allow(clippy::type_complexity)]
     // The return type should be `Result<Self, ParserError>` once the `const_precise_live_drops`
     // is stabilized ([rust-lang#73255](https://github.com/rust-lang/rust/issues/73255)).
-    pub const fn from_bytes_without_variants(
+    pub const fn from_bytes_with_single_variant(
         v: &[u8],
     ) -> Result<
         (
             subtags::Language,
             Option<subtags::Script>,
             Option<subtags::Region>,
+            Option<subtags::Variant>,
         ),
         ParserError,
     > {
-        parse_language_identifier_without_variants(v, ParserMode::LanguageIdentifier)
+        parse_language_identifier_with_single_variant(v, ParserMode::LanguageIdentifier)
     }
 
     /// A constructor which takes a utf8 slice which may contain extension keys,
@@ -159,10 +162,10 @@ impl LanguageIdentifier {
         Ok(lang_id.to_string())
     }
 
-    /// Compare this `LanguageIdentifier` with BCP-47 bytes.
+    /// Compare this [`LanguageIdentifier`] with BCP-47 bytes.
     ///
     /// The return value is equivalent to what would happen if you first converted this
-    /// `LanguageIdentifier` to a BCP-47 string and then performed a byte comparison.
+    /// [`LanguageIdentifier`] to a BCP-47 string and then performed a byte comparison.
     ///
     /// This function is case-sensitive and results in a *total order*, so it is appropriate for
     /// binary search. The only argument producing [`Ordering::Equal`] is `self.to_string()`.
@@ -173,28 +176,69 @@ impl LanguageIdentifier {
     /// use icu::locid::LanguageIdentifier;
     /// use std::cmp::Ordering;
     ///
-    /// let bcp47_strings: &[&[u8]] = &[
-    ///     b"pl-Latn-PL",
-    ///     b"und",
-    ///     b"und-Adlm",
-    ///     b"und-GB",
-    ///     b"und-ZA",
-    ///     b"und-fonipa",
-    ///     b"zh",
+    /// let bcp47_strings: &[&str] = &[
+    ///     "pl-Latn-PL",
+    ///     "und",
+    ///     "und-Adlm",
+    ///     "und-GB",
+    ///     "und-ZA",
+    ///     "und-fonipa",
+    ///     "zh",
     /// ];
     ///
     /// for ab in bcp47_strings.windows(2) {
     ///     let a = ab[0];
     ///     let b = ab[1];
     ///     assert!(a.cmp(b) == Ordering::Less);
-    ///     let a_langid = LanguageIdentifier::from_bytes(a).unwrap();
-    ///     assert!(a_langid.strict_cmp(b) == Ordering::Less);
+    ///     let a_langid = a.parse::<LanguageIdentifier>().unwrap();
+    ///     assert_eq!(a, a_langid.to_string());
+    ///     assert!(a_langid.strict_cmp(a.as_bytes()) == Ordering::Equal);
+    ///     assert!(a_langid.strict_cmp(b.as_bytes()) == Ordering::Less);
     /// }
     /// ```
     pub fn strict_cmp(&self, other: &[u8]) -> Ordering {
-        let mut other_iter = other.split(|b| *b == b'-');
+        self.strict_cmp_iter(other.split(|b| *b == b'-')).end()
+    }
+
+    /// Compare this [`LanguageIdentifier`] with an iterator of BCP-47 subtags.
+    ///
+    /// This function has the same equality semantics as [`LanguageIdentifier::strict_cmp`]. It is intended as
+    /// a more modular version that allows multiple subtag iterators to be chained together.
+    ///
+    /// For an additional example, see [`SubtagOrderingResult`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::LanguageIdentifier;
+    /// use std::cmp::Ordering;
+    ///
+    /// let subtags: &[&[u8]] = &[&*b"ca", &*b"ES", &*b"valencia"];
+    ///
+    /// let loc = "ca-ES-valencia".parse::<LanguageIdentifier>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Equal,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ES".parse::<LanguageIdentifier>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Less,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    ///
+    /// let loc = "ca-ZA".parse::<LanguageIdentifier>().unwrap();
+    /// assert_eq!(
+    ///     Ordering::Greater,
+    ///     loc.strict_cmp_iter(subtags.iter().copied()).end()
+    /// );
+    /// ```
+    pub fn strict_cmp_iter<'l, I>(&self, mut subtags: I) -> SubtagOrderingResult<I>
+    where
+        I: Iterator<Item = &'l [u8]>,
+    {
         let r = self.for_each_subtag_str(&mut |subtag| {
-            if let Some(other) = other_iter.next() {
+            if let Some(other) = subtags.next() {
                 match subtag.as_bytes().cmp(other) {
                     Ordering::Equal => Ok(()),
                     not_equal => Err(not_equal),
@@ -203,14 +247,12 @@ impl LanguageIdentifier {
                 Err(Ordering::Greater)
             }
         });
-        if let Err(o) = r {
-            return o;
+        match r {
+            Ok(_) => SubtagOrderingResult::Subtags(subtags),
+            Err(o) => SubtagOrderingResult::Ordering(o),
         }
-        if other_iter.next().is_some() {
-            return Ordering::Less;
-        }
-        Ordering::Equal
     }
+
     /// Compare this `LanguageIdentifier` with a potentially unnormalized BCP-47 string.
     ///
     /// The return value is equivalent to what would happen if you first parsed the
@@ -484,16 +526,16 @@ impl From<&LanguageIdentifier>
 /// assert_eq!(DE_AT, de_at);
 /// ```
 ///
-/// *Note*: The macro cannot produce language identifiers with variants due to const
+/// *Note*: The macro cannot produce language identifiers with more than one variants due to const
 /// limitations (see [`Heap Allocations in Constants`]):
 ///
 /// ```compile_fail
-/// icu::locid::langid("de_at-foobar");
+/// icu::locid::langid!("und-variant1-variant2");
 /// ```
 ///
 /// Use runtime parsing instead:
 /// ```
-/// "de_at-foobar"
+/// "und-variant1-variant2"
 ///     .parse::<icu::locid::LanguageIdentifier>()
 ///     .unwrap();
 /// ```
@@ -504,17 +546,31 @@ impl From<&LanguageIdentifier>
 macro_rules! langid {
     ($langid:literal) => {{
         const R: $crate::LanguageIdentifier =
-            match $crate::LanguageIdentifier::from_bytes_without_variants($langid.as_bytes()) {
-                Ok((language, script, region)) => $crate::LanguageIdentifier {
+            match $crate::LanguageIdentifier::from_bytes_with_single_variant($langid.as_bytes()) {
+                Ok((language, script, region, variant)) => $crate::LanguageIdentifier {
                     language,
                     script,
                     region,
-                    variants: $crate::subtags::Variants::new(),
+                    variants: match variant {
+                        Some(v) => $crate::subtags::Variants::from_variant(v),
+                        None => $crate::subtags::Variants::new(),
+                    }
                 },
                 #[allow(clippy::panic)] // const context
-                _ => panic!(concat!("Invalid language code: ", $langid, " . Note that variant tags are not \
-                                        supported by the langid! macro, use runtime parsing instead.")),
+                _ => panic!(concat!("Invalid language code: ", $langid, " . Note langid! macro can only support up to a single variant tag. Use runtime parsing instead.")),
             };
         R
     }};
+}
+
+#[cfg(test)]
+mod test {
+    use super::*;
+
+    #[test]
+    fn test_langid_macro_can_parse_langid_with_single_variant() {
+        const DE_AT_FOOBAR: LanguageIdentifier = langid!("de_at-foobar");
+        let de_at_foobar: LanguageIdentifier = "de_at-foobar".parse().unwrap();
+        assert_eq!(DE_AT_FOOBAR, de_at_foobar);
+    }
 }

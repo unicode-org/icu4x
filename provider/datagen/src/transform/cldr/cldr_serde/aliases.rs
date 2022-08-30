@@ -7,8 +7,8 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/aliases.json>
 
-use litemap::LiteMap;
 use serde::Deserialize;
+use std::collections::HashMap;
 use tinystr::TinyAsciiStr;
 
 #[derive(PartialEq, Debug, Deserialize)]
@@ -20,15 +20,15 @@ pub struct Replacement<T> {
 #[derive(PartialEq, Debug, Deserialize)]
 pub struct Alias {
     #[serde(rename = "languageAlias")]
-    pub language_aliases: LiteMap<String, Replacement<String>>,
+    pub language_aliases: HashMap<String, Replacement<String>>,
     #[serde(rename = "scriptAlias")]
-    pub script_aliases: LiteMap<TinyAsciiStr<4>, Replacement<TinyAsciiStr<4>>>,
+    pub script_aliases: HashMap<TinyAsciiStr<4>, Replacement<TinyAsciiStr<4>>>,
     #[serde(rename = "territoryAlias")]
-    pub region_aliases: LiteMap<TinyAsciiStr<3>, Replacement<String>>,
+    pub region_aliases: HashMap<TinyAsciiStr<3>, Replacement<String>>,
     #[serde(rename = "variantAlias")]
-    pub variant_aliases: LiteMap<TinyAsciiStr<8>, Replacement<TinyAsciiStr<8>>>,
+    pub variant_aliases: HashMap<TinyAsciiStr<8>, Replacement<TinyAsciiStr<8>>>,
     #[serde(rename = "subdivisionAlias")]
-    pub subdivision_aliases: LiteMap<TinyAsciiStr<7>, Replacement<String>>,
+    pub subdivision_aliases: HashMap<TinyAsciiStr<7>, Replacement<String>>,
 }
 
 #[derive(PartialEq, Debug, Deserialize)]

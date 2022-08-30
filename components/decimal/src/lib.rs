@@ -4,10 +4,10 @@
 
 #![warn(missing_docs)]
 
-//! [`icu_decimal`](crate) offers localized decimal number formatting.
+//! Formatting basic decimal numbers.
 //!
-//! Currently, [`icu_decimal`](crate) provides [`FixedDecimalFormat`], which renders basic decimal numbers
-//! in a locale-sensitive way.
+//! This module is published as its own crate ([`icu_decimal`](https://docs.rs/icu_decimal/latest/icu_decimal/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! Support for currencies, measurement units, and compact notation is planned. To track progress,
 //! follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
@@ -17,12 +17,12 @@
 //! ## Format a number with Bengali digits
 //!
 //! ```
-//! use icu::decimal::FixedDecimalFormat;
+//! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locid::locale;
 //! use writeable::Writeable;
 //!
 //! let provider = icu_testdata::get_provider();
-//! let fdf = FixedDecimalFormat::try_new(locale!("bn"), &provider, Default::default())
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &locale!("bn").into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
@@ -36,22 +36,43 @@
 //!
 //! ```
 //! use fixed_decimal::FixedDecimal;
-//! use icu::decimal::FixedDecimalFormat;
+//! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locid::Locale;
 //! use writeable::Writeable;
 //!
-//! let provider = icu_provider::inv::InvariantDataProvider;
-//! let fdf = FixedDecimalFormat::try_new(Locale::UND, &provider, Default::default())
+//! let provider = icu_testdata::get_provider();
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &Locale::UND.into(), Default::default())
 //!     .expect("Data should load successfully");
 //!
 //! let fixed_decimal = FixedDecimal::from(200050)
-//!     .multiplied_pow10(-2)
-//!     .expect("Operation is fully in range");
+//!     .multiplied_pow10(-2);
 //!
 //! assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
 //! ```
 //!
-//! [`FixedDecimalFormat`]: FixedDecimalFormat
+//! ### Format a number using an alternative numbering system
+//!
+//! Numbering systems specified in the `-u-nu` subtag will be followed as long as the locale has
+//! symbols for that numbering system.
+//!
+//! ```
+//! use icu::decimal::FixedDecimalFormatter;
+//! use icu::locid::Locale;
+//! use writeable::Writeable;
+//!
+//! let provider = icu_testdata::get_provider();
+//! let locale = "th-u-nu-thai".parse::<Locale>().unwrap();
+//! let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Default::default())
+//!     .expect("Data should load successfully");
+//!
+//! let fixed_decimal = 1000007.into();
+//! let formatted_value = fdf.format(&fixed_decimal);
+//! let formatted_str = formatted_value.write_to_string();
+//!
+//! assert_eq!("๑,๐๐๐,๐๐๗", formatted_str);
+//! ```
+//!
+//! [`FixedDecimalFormatter`]: FixedDecimalFormatter
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -63,29 +84,29 @@
         clippy::expect_used,
         clippy::panic,
         clippy::exhaustive_structs,
-        clippy::exhaustive_enums
+        clippy::exhaustive_enums,
+        // TODO(#2266): enable missing_debug_implementations,
     )
 )]
+#![warn(missing_docs)]
 
 extern crate alloc;
 
-pub mod error;
+mod error;
 pub mod format;
 mod grouper;
 pub mod options;
 pub mod provider;
-mod sign_selector;
 
-pub use error::Error as FixedDecimalFormatError;
+pub use error::Error as FixedDecimalFormatterError;
 pub use format::FormattedFixedDecimal;
 
 use fixed_decimal::FixedDecimal;
-use icu_locid::Locale;
 use icu_provider::prelude::*;
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
-/// [`FixedDecimalFormat`] supports:
+/// [`FixedDecimalFormatter`] supports:
 ///
 /// 1. Rendering in the local numbering system
 /// 2. Locale-sensitive grouping separator positions
@@ -94,29 +115,32 @@ use icu_provider::prelude::*;
 /// Read more about the options in the [`options`] module.
 ///
 /// See the crate-level documentation for examples.
-pub struct FixedDecimalFormat {
-    options: options::FixedDecimalFormatOptions,
+pub struct FixedDecimalFormatter {
+    options: options::FixedDecimalFormatterOptions,
     symbols: DataPayload<provider::DecimalSymbolsV1Marker>,
 }
 
-impl FixedDecimalFormat {
-    /// Creates a new [`FixedDecimalFormat`] from locale data and an options bag.
-    pub fn try_new<
-        T: Into<Locale>,
-        D: ResourceProvider<provider::DecimalSymbolsV1Marker> + ?Sized,
-    >(
-        locale: T,
+impl FixedDecimalFormatter {
+    /// Creates a new [`FixedDecimalFormatter`] from locale data and an options bag.
+    pub fn try_new_unstable<D: DataProvider<provider::DecimalSymbolsV1Marker> + ?Sized>(
         data_provider: &D,
-        options: options::FixedDecimalFormatOptions,
-    ) -> Result<Self, FixedDecimalFormatError> {
+        locale: &DataLocale,
+        options: options::FixedDecimalFormatterOptions,
+    ) -> Result<Self, FixedDecimalFormatterError> {
         let symbols = data_provider
-            .load_resource(&DataRequest {
-                options: locale.into().into(),
+            .load(DataRequest {
+                locale,
                 metadata: Default::default(),
             })?
             .take_payload()?;
         Ok(Self { options, symbols })
     }
+
+    icu_provider::gen_any_buffer_constructors!(
+        locale: include,
+        options: options::FixedDecimalFormatterOptions,
+        error: FixedDecimalFormatterError
+    );
 
     /// Formats a [`FixedDecimal`], returning a [`FormattedFixedDecimal`].
     pub fn format<'l>(&'l self, value: &'l FixedDecimal) -> FormattedFixedDecimal<'l> {

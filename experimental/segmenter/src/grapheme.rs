@@ -6,12 +6,14 @@ use alloc::vec::Vec;
 use core::str::CharIndices;
 use icu_provider::prelude::*;
 
+use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
-pub type GraphemeClusterBreakIterator<'l, 's> = RuleBreakIterator<'l, 's, GraphemeClusterBreakType>;
+pub type GraphemeClusterBreakIteratorUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, GraphemeClusterBreakTypeUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 pub type GraphemeClusterBreakIteratorLatin1<'l, 's> =
@@ -22,31 +24,67 @@ pub type GraphemeClusterBreakIteratorUtf16<'l, 's> =
     RuleBreakIterator<'l, 's, GraphemeClusterBreakTypeUtf16>;
 
 /// Supports loading grapheme cluster break data, and creating grapheme cluster break iterators for
-/// different string encodings. Please see the [module-level documentation](crate) for its usages.
+/// different string encodings.
+///
+/// # Examples
+///
+/// Segment a string:
+///
+/// ```rust
+/// use icu_segmenter::GraphemeClusterBreakSegmenter;
+/// let provider = icu_testdata::get_provider();
+/// let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_str("Hello 🗺").collect();
+/// // World Map (U+1F5FA) is encoded in four bytes in UTF-8.
+/// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 10]);
+/// ```
+///
+/// Segment a Latin1 byte string:
+///
+/// ```rust
+/// use icu_segmenter::GraphemeClusterBreakSegmenter;
+/// let provider = icu_testdata::get_provider();
+/// let segmenter = GraphemeClusterBreakSegmenter::try_new(&provider).expect("Data exists");
+///
+/// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
+/// assert_eq!(&breakpoints, &[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]);
+/// ```
 pub struct GraphemeClusterBreakSegmenter {
     payload: DataPayload<GraphemeClusterBreakDataV1Marker>,
+    dictionary: Dictionary,
+    lstm: LstmPayloads,
 }
 
 impl GraphemeClusterBreakSegmenter {
+    /// Construct a [`GraphemeClusterBreakSegmenter`].
     pub fn try_new<D>(provider: &D) -> Result<Self, DataError>
     where
-        D: ResourceProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
+        D: DataProvider<GraphemeClusterBreakDataV1Marker> + ?Sized,
     {
-        let payload = provider
-            .load_resource(&DataRequest::default())?
-            .take_payload()?;
-        Ok(Self { payload })
+        let payload = provider.load(Default::default())?.take_payload()?;
+        let dictionary = Dictionary::default();
+        let lstm = LstmPayloads::default();
+        Ok(Self {
+            payload,
+            dictionary,
+            lstm,
+        })
     }
 
     /// Create a grapheme cluster break iterator for an `str` (a UTF-8 string).
-    pub fn segment_str<'l, 's>(&'l self, input: &'s str) -> GraphemeClusterBreakIterator<'l, 's> {
-        GraphemeClusterBreakIterator {
+    pub fn segment_str<'l, 's>(
+        &'l self,
+        input: &'s str,
+    ) -> GraphemeClusterBreakIteratorUtf8<'l, 's> {
+        GraphemeClusterBreakIteratorUtf8 {
             iter: input.char_indices(),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -61,7 +99,8 @@ impl GraphemeClusterBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 
@@ -76,14 +115,15 @@ impl GraphemeClusterBreakSegmenter {
             current_pos_data: None,
             result_cache: Vec::new(),
             data: self.payload.get(),
-            dictionary_payload: None,
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
         }
     }
 }
 
-pub struct GraphemeClusterBreakType;
+pub struct GraphemeClusterBreakTypeUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakType {
+impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
     type CharType = char;
 
@@ -103,7 +143,7 @@ pub struct GraphemeClusterBreakTypeLatin1;
 
 impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeLatin1 {
     type IterAttr = Latin1Indices<'s>;
-    type CharType = u8; // TODO: Latin1Char
+    type CharType = u8;
 
     fn get_current_position_character_len(_: &RuleBreakIterator<Self>) -> usize {
         panic!("not reachable")

@@ -10,10 +10,12 @@
         clippy::indexing_slicing,
         clippy::unwrap_used,
         clippy::expect_used,
-        clippy::panic
+        clippy::panic,
+        // Exhaustiveness and Debug is not required for Diplomat types
     )
 )]
 #![allow(clippy::upper_case_acronyms)]
+#![allow(clippy::needless_lifetimes)]
 
 //! This module contains the source of truth for the [Diplomat](https://github.com/rust-diplomat/diplomat)-generated
 //! FFI bindings. This generates the C, C++ and Wasm bindings. This module also contains the C
@@ -32,18 +34,31 @@ extern crate std as rust_std;
 
 extern crate alloc;
 
+#[macro_use]
+mod utils;
+
 pub mod bidi;
+pub mod calendar;
 pub mod data_struct;
+pub mod date;
+pub mod datetime;
+pub mod datetime_formatter;
 pub mod decimal;
 pub mod errors;
 pub mod fixed_decimal;
 pub mod locale;
-pub mod locale_canonicalizer;
+pub mod locid_transform;
+pub mod logging;
 pub mod pluralrules;
 pub mod properties_maps;
 pub mod properties_sets;
 pub mod provider;
+pub mod segmenter_grapheme;
 pub mod segmenter_line;
+pub mod segmenter_sentence;
+pub mod segmenter_word;
+pub mod time;
+pub mod timezone;
 
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;

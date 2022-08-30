@@ -1,0 +1,26 @@
+{
+  "day_periods": {
+    "format": {
+      "abbreviated": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "полд.",
+        "midnight": "полн."
+      },
+      "narrow": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "полд.",
+        "midnight": "полн."
+      },
+      "short": null,
+      "wide": {
+        "am": "AM",
+        "pm": "PM",
+        "noon": "полдень",
+        "midnight": "полночь"
+      }
+    },
+    "stand_alone": null
+  }
+}

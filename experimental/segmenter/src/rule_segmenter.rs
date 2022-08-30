@@ -2,10 +2,9 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use crate::complex::{Dictionary, LstmPayloads};
 use crate::provider::RuleBreakDataV1;
 use crate::symbols::*;
-use crate::UCharDictionaryBreakDataV1Marker;
-use icu_provider::DataPayload;
 
 /// A trait allowing for RuleBreakIterator to be generalized to multiple string
 /// encoding methods and granularity such as grapheme cluster, word, etc.
@@ -25,21 +24,19 @@ pub trait RuleBreakType<'l, 's> {
 }
 
 /// Implements the [`Iterator`] trait over the segmenter break opportunities of the given string.
-/// Please see the [module-level documentation](crate) for its usages.
 ///
 /// Lifetimes:
 ///
 /// - `'l` = lifetime of the segmenter object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
-///
-/// [`Iterator`]: core::iter::Iterator
 pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
     pub(crate) current_pos_data: Option<(usize, Y::CharType)>,
     pub(crate) result_cache: alloc::vec::Vec<usize>,
     pub(crate) data: &'l RuleBreakDataV1<'l>,
-    pub(crate) dictionary_payload: Option<&'l DataPayload<UCharDictionaryBreakDataV1Marker>>,
+    pub(crate) dictionary: &'l Dictionary,
+    pub(crate) lstm: &'l LstmPayloads,
 }
 
 impl<'l, 's, Y: RuleBreakType<'l, 's>> Iterator for RuleBreakIterator<'l, 's, Y> {

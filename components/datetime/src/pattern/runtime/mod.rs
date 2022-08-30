@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 //! Runtime `Pattern` implementation which is optimized for zero-allocation
-//! deserialization and high-performance runtime use in `DateTimeFormat`.
+//! deserialization and high-performance runtime use in `TypedDateTimeFormatter`.
 //!
 //! This module is meant to remain private and can evolve to utilize
 //! all runtime performance optimizations `ICU4X` needs.

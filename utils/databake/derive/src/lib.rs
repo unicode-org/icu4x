@@ -15,6 +15,22 @@ use syn::{
 };
 use synstructure::{AddBounds, Structure};
 
+/// This custom derive auto-implements the `Bake` trait on any given type that has public
+/// fields that also implement `Bake`.
+///
+/// For a type `Person` defined in the module `module` of crate `bar`, this derive
+/// can be used as follows:
+///
+/// ```rust
+/// use databake::Bake;
+///
+/// #[derive(Bake)]
+/// #[databake(path = bar::module)]
+/// pub struct Person<'a> {
+///    pub name: &'a str,
+///    pub age: u32,
+/// }
+/// ```
 #[proc_macro_derive(Bake, attributes(databake))]
 pub fn bake_derive(input: TokenStream) -> TokenStream {
     let input = parse_macro_input!(input as DeriveInput);
@@ -49,7 +65,7 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
     let body = structure.each_variant(|vi| {
         let recursive_bakes = vi.bindings().iter().map(|b| {
             let ident = b.binding.clone();
-            quote! { let #ident =  #ident.bake(ctx); }
+            quote! { let #ident =  #ident.bake(env); }
         });
 
         let constructor = vi.construct(|_, i| {
@@ -70,8 +86,8 @@ fn bake_derive_impl(input: &DeriveInput) -> TokenStream2 {
 
     structure.gen_impl(quote! {
         gen impl databake::Bake for @Self {
-            fn bake(&self, ctx: &databake::CrateEnv) -> databake::TokenStream {
-                ctx.insert(#crate_name);
+            fn bake(&self, env: &databake::CrateEnv) -> databake::TokenStream {
+                env.insert(#crate_name);
                 match self {
                     #body
                 }

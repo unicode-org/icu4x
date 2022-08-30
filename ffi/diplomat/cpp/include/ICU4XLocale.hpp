@@ -9,9 +9,7 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-namespace capi {
 #include "ICU4XLocale.h"
-}
 
 class ICU4XLocale;
 #include "ICU4XError.hpp"
@@ -28,7 +26,7 @@ struct ICU4XLocaleDeleter {
 /**
  * An ICU4X Locale, capable of representing strings like `"en-US"`.
  * 
- * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+ * See the [Rust documentation for `Locale`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
  */
 class ICU4XLocale {
  public:
@@ -36,9 +34,9 @@ class ICU4XLocale {
   /**
    * Construct an [`ICU4XLocale`] from an locale identifier.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
-  static std::optional<ICU4XLocale> create(const std::string_view name);
+  static diplomat::result<ICU4XLocale, ICU4XError> create(const std::string_view name);
 
   /**
    * Construct an [`ICU4XLocale`] for the English language.
@@ -58,7 +56,7 @@ class ICU4XLocale {
   /**
    * Clones the [`ICU4XLocale`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * See the [Rust documentation for `Locale`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
    */
   ICU4XLocale clone() const;
 
@@ -66,7 +64,7 @@ class ICU4XLocale {
    * Write a string representation of the `LanguageIdentifier` part of
    * [`ICU4XLocale`] to `write`.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> basename_to_writeable(W& write) const;
 
@@ -74,98 +72,98 @@ class ICU4XLocale {
    * Write a string representation of the `LanguageIdentifier` part of
    * [`ICU4XLocale`] to `write`.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XError> basename() const;
 
   /**
    * Write a string representation of the unicode extension to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
+   * See the [Rust documentation for `extensions`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> get_unicode_extension_to_writeable(const std::string_view bytes, W& write) const;
 
   /**
    * Write a string representation of the unicode extension to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
+   * See the [Rust documentation for `extensions`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.extensions) for more information.
    */
   diplomat::result<std::string, ICU4XError> get_unicode_extension(const std::string_view bytes) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] language to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> language_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] language to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XError> language() const;
 
   /**
    * Set the language part of the [`ICU4XLocale`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_language(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] region to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> region_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] region to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XError> region() const;
 
   /**
    * Set the region part of the [`ICU4XLocale`].
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_region(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] script to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> script_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] script to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
+   * See the [Rust documentation for `id`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#structfield.id) for more information.
    */
   diplomat::result<std::string, ICU4XError> script() const;
 
   /**
    * Set the script part of the [`ICU4XLocale`]. Pass an empty string to remove the script.
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
+   * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
   diplomat::result<std::monostate, ICU4XError> set_script(const std::string_view bytes);
 
   /**
    * Write a string representation of [`ICU4XLocale`] to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * See the [Rust documentation for `Locale`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> tostring_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] to `write`
    * 
-   * See the [Rust documentation](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * See the [Rust documentation for `Locale`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
    */
   diplomat::result<std::string, ICU4XError> tostring() const;
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }
@@ -179,15 +177,15 @@ class ICU4XLocale {
 };
 
 
-inline std::optional<ICU4XLocale> ICU4XLocale::create(const std::string_view name) {
-  auto diplomat_optional_raw_out_value = capi::ICU4XLocale_create(name.data(), name.size());
-  std::optional<ICU4XLocale> diplomat_optional_out_value;
-  if (diplomat_optional_raw_out_value != nullptr) {
-    diplomat_optional_out_value = ICU4XLocale(diplomat_optional_raw_out_value);
+inline diplomat::result<ICU4XLocale, ICU4XError> ICU4XLocale::create(const std::string_view name) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_create(name.data(), name.size());
+  diplomat::result<ICU4XLocale, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<ICU4XLocale>(std::move(ICU4XLocale(diplomat_result_raw_out_value.ok)));
   } else {
-    diplomat_optional_out_value = std::nullopt;
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
-  return diplomat_optional_out_value;
+  return diplomat_result_out_value;
 }
 inline ICU4XLocale ICU4XLocale::create_en() {
   return ICU4XLocale(capi::ICU4XLocale_create_en());
@@ -208,7 +206,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLo
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -220,7 +218,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XLocale::basename() const {
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
@@ -231,7 +229,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLo
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -243,7 +241,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XLocale::get_unicode_extens
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
@@ -254,7 +252,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLo
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -266,7 +264,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XLocale::language() const {
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
@@ -276,7 +274,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_language(co
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -287,7 +285,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLo
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -299,7 +297,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XLocale::region() const {
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
@@ -309,7 +307,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_region(cons
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -320,7 +318,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLo
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -332,7 +330,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XLocale::script() const {
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
@@ -342,7 +340,7 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_script(cons
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -353,7 +351,7 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLo
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
 }
@@ -365,7 +363,7 @@ inline diplomat::result<std::string, ICU4XError> ICU4XLocale::tostring() const {
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
-    diplomat_result_out_value = diplomat::Err(static_cast<ICU4XError>(diplomat_result_raw_out_value.err));
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }

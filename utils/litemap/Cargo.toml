@@ -4,11 +4,11 @@
 
 [package]
 name = "litemap"
-version = "0.4.0"
+version = "0.5.0"
 authors = ["The ICU4X Project Developers"]
 repository = "https://github.com/unicode-org/icu4x"
 edition = "2018"
-license-file = "LICENSE"
+license = "Unicode-DFS-2016"
 keywords = ["sorted", "vec", "map", "hashmap", "btreemap"]
 description = "A key-value Map implementation based on a flat, sorted Vec."
 documentation = "https://docs.rs/litemap"
@@ -37,10 +37,18 @@ serde_json = "1"
 rkyv = { version = "0.7", features = ["validation"] }
 bytecheck = "0.6"
 bincode = "1"
-postcard = { version = "1.0.0-alpha.2", features = ["use-std"] }
-icu_locid = { version = "0.6", path = "../../components/locid" }
-icu_benchmark_macros = { version = "0.6", path = "../../tools/benchmark/macros" }
+postcard = { version = "1.0.0", features = ["use-std"] }
+icu_locid = { version = "1.0.0-beta1", path = "../../components/locid" }
+icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
 criterion = "0.3.4"
+
+[features]
+bench = []
+default = ["alloc"]
+alloc = []
+
+# Enables the `testing` module with tools for testing custom stores.
+testing = ["alloc"]
 
 [[test]]
 name = "serde"
@@ -59,12 +67,6 @@ required-features = ["serde"]
 name = "litemap_postcard"
 path = "benches/bin/litemap_postcard.rs"
 required-features = ["serde"]
-
-[features]
-bench = []
-
-# Enables the `testing` module with tools for testing custom stores.
-testing = []
 
 [[bench]]
 name = "litemap"

@@ -32,21 +32,58 @@
 //! ```
 
 use crate::any_calendar::AnyCalendarKind;
+use crate::calendar_arithmetic::ArithmeticDate;
 use crate::iso::{Iso, IsoDateInner};
 use crate::{types, Calendar, Date, DateDuration, DateDurationUnit, DateTime, DateTimeError};
 use tinystr::tinystr;
 
 /// The Gregorian Calendar
+///
+/// The [Gregorian calendar] is a solar calendar used by most of the world, with twelve months.
+///
+/// This type can be used with [`Date`] or [`DateTime`] to represent dates in this calendar.
+///
+/// [Gregorian calendar]: https://en.wikipedia.org/wiki/Gregorian_calendar
+///
+/// # Era codes
+///
+/// This calendar supports two era codes: `"bce"`, and `"ce"`, corresponding to the BCE and CE eras
 #[derive(Copy, Clone, Debug, Default)]
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct Gregorian;
 
 #[derive(Copy, Clone, Debug, Hash, Eq, PartialEq)]
-/// The inner date type used for representing Date<Gregorian>
+/// The inner date type used for representing [`Date`]s of [`Gregorian`]. See [`Date`] and [`Gregorian`] for more details.
 pub struct GregorianDateInner(IsoDateInner);
 
 impl Calendar for Gregorian {
     type DateInner = GregorianDateInner;
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError> {
+        let year = if era.0 == tinystr!(16, "ce") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            year
+        } else if era.0 == tinystr!(16, "bce") {
+            if year <= 0 {
+                return Err(DateTimeError::OutOfRange);
+            }
+            1 - year
+        } else {
+            return Err(DateTimeError::UnknownEra(era.0, self.debug_name()));
+        };
+
+        ArithmeticDate::new_from_solar(self, year, month_code, day)
+            .map(IsoDateInner)
+            .map(GregorianDateInner)
+    }
+
     fn date_from_iso(&self, iso: Date<Iso>) -> GregorianDateInner {
         GregorianDateInner(*iso.inner())
     }
@@ -85,12 +122,12 @@ impl Calendar for Gregorian {
     }
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year {
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear {
         year_as_gregorian(date.0 .0.year)
     }
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::Month {
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth {
         Iso.month(&date.0)
     }
 
@@ -180,18 +217,18 @@ impl DateTime<Gregorian> {
     }
 }
 
-pub fn year_as_gregorian(year: i32) -> types::Year {
+pub(crate) fn year_as_gregorian(year: i32) -> types::FormattableYear {
     if year > 0 {
-        types::Year {
-            era: types::Era(tinystr!(16, "ad")),
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "ce")),
             number: year,
-            related_iso: year,
+            related_iso: None,
         }
     } else {
-        types::Year {
-            era: types::Era(tinystr!(16, "bc")),
+        types::FormattableYear {
+            era: types::Era(tinystr!(16, "bce")),
             number: 1 - year,
-            related_iso: year,
+            related_iso: None,
         }
     }
 }

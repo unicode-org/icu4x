@@ -3,9 +3,9 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{
-    date::{DateTimeInput, LocalizedDateTimeInput},
-    error::DateTimeFormatError,
+    error::DateTimeFormatterError,
     fields::{Field, FieldSymbol, Week},
+    input::{DateTimeInput, LocalizedDateTimeInput},
     pattern::{runtime::Pattern, PatternError, PatternItem},
 };
 use either::Either;
@@ -131,7 +131,10 @@ impl<'data> PluralPattern<'data> {
     }
 }
 
-/// Either a single Pattern or a collection of pattern when there are plural variants.
+/// Either a [`Pattern`] single pattern or a [`PluralPattern`] collection of
+/// patterns when there are plural variants.
+///
+/// Currently, the plural forms are only based on the week number.
 #[derive(Debug, PartialEq, Clone, yoke::Yokeable, zerofrom::ZeroFrom)]
 #[allow(clippy::large_enum_variant)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
@@ -153,7 +156,7 @@ impl<'data> PatternPlurals<'data> {
         &self,
         loc_datetime: &impl LocalizedDateTimeInput<T>,
         ordinal_rules: Option<&PluralRules>,
-    ) -> Result<&Pattern, DateTimeFormatError>
+    ) -> Result<&Pattern, DateTimeFormatterError>
     where
         T: DateTimeInput,
     {
@@ -162,13 +165,11 @@ impl<'data> PatternPlurals<'data> {
             Self::MultipleVariants(plural_pattern) => {
                 let week_number = match plural_pattern.pivot_field() {
                     Week::WeekOfMonth => loc_datetime.week_of_month()?.0,
-                    Week::WeekOfYear => loc_datetime.week_of_year()?.0,
+                    Week::WeekOfYear => loc_datetime.week_of_year()?.1 .0,
                 };
-                #[allow(clippy::expect_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
                 let category = ordinal_rules
-                    .expect("ordinal_rules must be set with PatternPlurals::MultipleVariants")
-                    .select(week_number);
+                    .ok_or(DateTimeFormatterError::MissingOrdinalRules)?
+                    .category_for(week_number);
                 Ok(plural_pattern.variant(category))
             }
         }

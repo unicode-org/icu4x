@@ -3,9 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::prelude::*;
-use crate::ResourceKey;
+use crate::DataKey;
 use alloc::boxed::Box;
-use core::fmt;
 
 /// A trait that allows for converting between data payloads of different types.
 ///
@@ -17,13 +16,20 @@ use core::fmt;
 ///
 /// It will typically be implemented on data providers used in datagen.
 ///
-/// The `impl_dyn_provider` is able to automatically implement this trait.
+/// The [`make_exportable_provider!`] macro is able to automatically implement this trait.
+///
+/// [`make_exportable_provider!`]: crate::make_exportable_provider
 pub trait DataConverter<MFrom: DataMarker, MTo: DataMarker> {
+    /// Attempt to convert a payload corresponding to the given data key
+    /// from one marker type to another marker type.
+    ///
+    /// If this is not possible (for example, if the provider does not know about the key),
+    /// the original payload is returned back to the caller.
     fn convert(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, ReturnedPayloadError<MFrom>>;
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)>;
 }
 
 impl<MFrom, MTo, P> DataConverter<MFrom, MTo> for Box<P>
@@ -34,33 +40,9 @@ where
 {
     fn convert(
         &self,
-        key: ResourceKey,
+        key: DataKey,
         from: DataPayload<MFrom>,
-    ) -> Result<DataPayload<MTo>, ReturnedPayloadError<MFrom>> {
+    ) -> Result<DataPayload<MTo>, (DataPayload<MFrom>, DataError)> {
         (**self).convert(key, from)
     }
 }
-
-#[allow(clippy::exhaustive_structs)] // this type is stable
-pub struct ReturnedPayloadError<M: DataMarker>(pub DataPayload<M>, pub DataError);
-
-impl<M: DataMarker> From<ReturnedPayloadError<M>> for DataError {
-    fn from(other: ReturnedPayloadError<M>) -> Self {
-        other.1
-    }
-}
-
-impl<M: DataMarker> fmt::Debug for ReturnedPayloadError<M> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.1.fmt(f)
-    }
-}
-
-impl<M: DataMarker> fmt::Display for ReturnedPayloadError<M> {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        self.1.fmt(f)
-    }
-}
-
-#[cfg(feature = "std")]
-impl<M: DataMarker> std::error::Error for ReturnedPayloadError<M> {}

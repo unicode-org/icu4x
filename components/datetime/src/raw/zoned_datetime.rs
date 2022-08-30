@@ -3,147 +3,126 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use alloc::string::String;
+use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::{
-    options::{FixedDecimalFormatOptions, GroupingStrategy, SignDisplay},
+    options::{FixedDecimalFormatterOptions, GroupingStrategy},
     provider::DecimalSymbolsV1Marker,
-    FixedDecimalFormat,
+    FixedDecimalFormatter,
 };
-use icu_locid::Locale;
 use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
-    date::ZonedDateTimeInput,
     format::{
         datetime,
         zoned_datetime::{self, FormattedZonedDateTime},
     },
-    options::DateTimeFormatOptions,
+    input::{DateTimeInput, TimeZoneInput},
+    input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
     pattern::runtime::PatternPlurals,
     provider::{
         self,
-        calendar::{DatePatternsV1Marker, DateSkeletonPatternsV1Marker, DateSymbolsV1Marker},
-        week_data::WeekDataV1Marker,
+        calendar::{
+            patterns::PatternPluralsFromPatternsV1Marker, ErasedDateSymbolsV1Marker,
+            TimeLengthsV1Marker, TimeSymbolsV1Marker,
+        },
     },
     raw,
-    time_zone::{TimeZoneFormat, TimeZoneFormatOptions},
-    DateTimeFormatError,
+    time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions},
+    DateTimeFormatterError,
 };
 
-/// This is the internal "raw" version of [crate::ZonedDateTimeFormat], i.e. a version of ZonedDateTimeFormat
-/// without the generic parameter. The actual implementation of [crate::ZonedDateTimeFormat] should live here.
-pub(crate) struct ZonedDateTimeFormat {
-    pub datetime_format: raw::DateTimeFormat,
-    pub time_zone_format: TimeZoneFormat,
+/// This is the internal "raw" version of [crate::ZonedDateTimeFormatter], i.e. a version of ZonedDateTimeFormatter
+/// without the generic parameter. The actual implementation of [crate::ZonedDateTimeFormatter] should live here.
+pub(crate) struct ZonedDateTimeFormatter {
+    pub datetime_format: raw::DateTimeFormatter,
+    pub time_zone_format: TimeZoneFormatter,
 }
 
-impl ZonedDateTimeFormat {
-    /// Constructor that takes a selected [`Locale`], a reference to a [`DataProvider`] for
-    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatOptions`].
+impl ZonedDateTimeFormatter {
+    /// Constructor that takes a selected [`DataLocale`], a reference to a [`DataProvider`] for
+    /// dates, a [`DataProvider`] for time zones, and a list of [`DateTimeFormatterOptions`].
     /// It collects all data necessary to format zoned datetime values into the given locale.
     ///
     /// The "calendar" argument should be a Unicode BCP47 calendar identifier
     #[inline(never)]
-    pub fn try_new<DP, ZP, PP, DEP>(
-        locale: Locale,
-        date_provider: &DP,
-        zone_provider: &ZP,
-        plural_provider: &PP,
-        decimal_provider: &DEP,
-        date_time_format_options: &DateTimeFormatOptions,
-        time_zone_format_options: &TimeZoneFormatOptions,
-    ) -> Result<Self, DateTimeFormatError>
+    pub fn try_new<P>(
+        provider: &P,
+        patterns: DataPayload<PatternPluralsFromPatternsV1Marker>,
+        symbols_data_fn: impl FnOnce() -> Result<DataPayload<ErasedDateSymbolsV1Marker>, DataError>,
+        locale: &DataLocale,
+        time_zone_format_options: TimeZoneFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
     where
-        DP: ResourceProvider<DateSymbolsV1Marker>
-            + ResourceProvider<DatePatternsV1Marker>
-            + ResourceProvider<DateSkeletonPatternsV1Marker>
-            + ResourceProvider<WeekDataV1Marker>
+        P: DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
+            + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
             + ?Sized,
-        ZP: ResourceProvider<provider::time_zones::TimeZoneFormatsV1Marker>
-            + ResourceProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + ResourceProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
-            + ?Sized,
-        PP: ResourceProvider<OrdinalV1Marker> + ?Sized,
-        DEP: ResourceProvider<DecimalSymbolsV1Marker> + ?Sized,
     {
-        let patterns = provider::date_time::PatternSelector::for_options(
-            date_provider,
-            &locale,
-            date_time_format_options,
-        )?;
         let required = datetime::analyze_patterns(&patterns.get().0, true)
-            .map_err(|field| DateTimeFormatError::UnsupportedField(field.symbol))?;
+            .map_err(|field| DateTimeFormatterError::UnsupportedField(field.symbol))?;
+
+        let req = DataRequest {
+            locale,
+            metadata: Default::default(),
+        };
 
         let week_data = if required.week_data {
-            Some(
-                date_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::temp_for_region(locale.id.region),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+            Some(provider.load(req)?.take_payload()?)
         } else {
             None
         };
-
-        // TODO(#1109): Implement proper vertical fallback
-        let mut locale_no_extensions = locale.clone();
-        locale_no_extensions.extensions.unicode.clear();
 
         let ordinal_rules = if let PatternPlurals::MultipleVariants(_) = &patterns.get().0 {
-            Some(PluralRules::try_new_ordinal(
-                locale_no_extensions.clone(),
-                plural_provider,
-            )?)
+            Some(PluralRules::try_new_ordinal_unstable(provider, locale)?)
         } else {
             None
         };
 
-        let symbols_data = if required.symbols_data {
-            Some(
-                date_provider
-                    .load_resource(&DataRequest {
-                        options: ResourceOptions::from(&locale),
-                        metadata: Default::default(),
-                    })?
-                    .take_payload()?,
-            )
+        let date_symbols_data = if required.date_symbols_data {
+            Some(symbols_data_fn()?)
         } else {
             None
         };
 
-        let mut fixed_decimal_format_options = FixedDecimalFormatOptions::default();
+        let time_symbols_data = if required.time_symbols_data {
+            Some(provider.load(req)?.take_payload()?)
+        } else {
+            None
+        };
+
+        let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
-        fixed_decimal_format_options.sign_display = SignDisplay::Never;
 
-        let fixed_decimal_format = FixedDecimalFormat::try_new(
-            locale_no_extensions.clone(),
-            decimal_provider,
-            fixed_decimal_format_options,
-        )
-        .map_err(DateTimeFormatError::FixedDecimalFormat)?;
+        let fixed_decimal_format =
+            FixedDecimalFormatter::try_new_unstable(provider, locale, fixed_decimal_format_options)
+                .map_err(DateTimeFormatterError::FixedDecimalFormatter)?;
 
-        let datetime_format = raw::DateTimeFormat::new(
-            locale,
+        let datetime_format = raw::DateTimeFormatter::new(
             patterns,
-            symbols_data,
+            date_symbols_data,
+            time_symbols_data,
             week_data,
             ordinal_rules,
             fixed_decimal_format,
         );
 
-        let time_zone_format = TimeZoneFormat::try_new(
-            locale_no_extensions,
+        let time_zone_format = TimeZoneFormatter::try_new(
+            provider,
+            locale,
             datetime_format
                 // Only dates have plural variants so we can use any of the patterns for the time segment.
                 .patterns
                 .clone(),
-            zone_provider,
-            time_zone_format_options,
+            &time_zone_format_options,
         )?;
 
         Ok(Self {
@@ -155,13 +134,16 @@ impl ZonedDateTimeFormat {
     /// Takes a [`ZonedDateTimeInput`] implementer and returns an instance of a [`FormattedZonedDateTime`]
     /// that contains all information necessary to display a formatted zoned datetime and operate on it.
     #[inline]
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedZonedDateTime<'l, T>
-    where
-        T: ZonedDateTimeInput,
-    {
+    pub fn format<'l>(
+        &'l self,
+        date: &impl DateTimeInput,
+        time_zone: &impl TimeZoneInput,
+    ) -> FormattedZonedDateTime<'l> {
+        // Todo: optimize extraction #2143
         FormattedZonedDateTime {
             zoned_datetime_format: self,
-            zoned_datetime: value,
+            datetime: ExtractedDateTimeInput::extract_from(date),
+            time_zone: ExtractedTimeZoneInput::extract_from(time_zone),
         }
     }
 
@@ -171,18 +153,21 @@ impl ZonedDateTimeFormat {
     pub fn format_to_write(
         &self,
         w: &mut impl core::fmt::Write,
-        value: &impl ZonedDateTimeInput,
+        date: &impl DateTimeInput,
+        time_zone: &impl TimeZoneInput,
     ) -> core::fmt::Result {
-        zoned_datetime::write_pattern(self, value, w).map_err(|_| core::fmt::Error)
+        zoned_datetime::write_pattern(self, date, time_zone, w).map_err(|_| core::fmt::Error)
     }
 
     /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
     #[inline]
-    pub fn format_to_string(&self, value: &impl ZonedDateTimeInput) -> String {
+    pub fn format_to_string(
+        &self,
+        date: &impl DateTimeInput,
+        time_zone: &impl TimeZoneInput,
+    ) -> String {
         let mut s = String::new();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        self.format_to_write(&mut s, value)
-            .expect("Failed to write to a String.");
+        let _ = self.format_to_write(&mut s, date, time_zone);
         s
     }
 }

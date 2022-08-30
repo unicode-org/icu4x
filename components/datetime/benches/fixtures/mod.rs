@@ -4,7 +4,7 @@
 
 pub mod structs;
 
-use icu_datetime::options::DateTimeFormatOptions;
+use icu_datetime::options::DateTimeFormatterOptions;
 use std::fs::File;
 use std::io::BufReader;
 
@@ -25,9 +25,12 @@ pub fn get_patterns_fixture() -> std::io::Result<structs::PatternsFixture> {
 }
 
 #[allow(dead_code)]
-pub fn get_options(input: &structs::TestOptions) -> DateTimeFormatOptions {
+pub fn get_options(input: &structs::TestOptions) -> Option<DateTimeFormatterOptions> {
     match input {
-        structs::TestOptions::Length(bag) => (*bag).into(),
-        structs::TestOptions::Components(bag) => (*bag).into(),
+        structs::TestOptions::Length(bag) => Some((*bag).into()),
+        #[cfg(feature = "experimental")]
+        structs::TestOptions::Components(bag) => Some((*bag).into()),
+        #[cfg(not(feature = "experimental"))]
+        structs::TestOptions::Components(_) => None,
     }
 }

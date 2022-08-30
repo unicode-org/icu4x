@@ -11,12 +11,13 @@
 //!
 //! [`BufferProvider`]: crate::buf::BufferProvider
 
+// Hidden for now, but could be made public-stable in the future.
+#[doc(hidden)]
 pub mod borrow_de_utils;
 
 use crate::buf::BufferFormat;
 use crate::buf::BufferProvider;
 use crate::prelude::*;
-use core::marker::PhantomData;
 use serde::de::Deserialize;
 use yoke::trait_hack::YokeTraitHack;
 use yoke::Yokeable;
@@ -24,8 +25,9 @@ use yoke::Yokeable;
 /// A [`BufferProvider`] that deserializes its data using Serde.
 pub struct DeserializingBufferProvider<'a, P: ?Sized>(&'a P);
 
-/// Auto-implemented for all [`BufferProvider`] for easy wrapping in [`DeserializingBufferProvider`].
+/// Blanket-implemented trait adding the [`Self::as_deserializing()`] function.
 pub trait AsDeserializingBufferProvider {
+    /// Wrap this [`BufferProvider`] in a [`DeserializingBufferProvider`].
     fn as_deserializing(&self) -> DeserializingBufferProvider<Self>;
 }
 
@@ -43,7 +45,6 @@ fn deserialize_impl<'data, M>(
     // Allow `bytes` to be unused in case all buffer formats are disabled
     #[allow(unused_variables)] bytes: &'data [u8],
     buffer_format: BufferFormat,
-    _: PhantomData<&'data ()>,
 ) -> Result<<M::Yokeable as Yokeable<'data>>::Output, DataError>
 where
     M: DataMarker,
@@ -85,6 +86,30 @@ where
 }
 
 impl DataPayload<BufferMarker> {
+    /// Deserialize a [`DataPayload`]`<`[`BufferMarker`]`>` into a [`DataPayload`] of a
+    /// specific concrete type.
+    ///
+    /// This function takes the buffer format as an argument. When a buffer payload is returned
+    /// from a data provider, the buffer format is stored in the [`DataResponseMetadata`].
+    ///
+    /// # Examples
+    ///
+    /// Requires the `deserialize_json` feature:
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::hello_world::*;
+    /// use icu_provider::buf::BufferFormat;
+    ///
+    /// let buffer: &[u8] = b"{\"message\":\"Hallo Welt\"}";
+    ///
+    /// let buffer_payload = DataPayload::from_owned(buffer);
+    /// let payload: DataPayload<HelloWorldV1Marker> = buffer_payload
+    ///     .into_deserialized(BufferFormat::Json)
+    ///     .expect("Deserialization successful");
+    ///
+    /// assert_eq!(payload.get().message, "Hallo Welt");
+    /// ```
     pub fn into_deserialized<M>(
         self,
         buffer_format: BufferFormat,
@@ -96,11 +121,11 @@ impl DataPayload<BufferMarker> {
         // Necessary workaround bound (see `yoke::trait_hack` docs):
         for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
     {
-        self.try_map_project_with_capture(buffer_format, deserialize_impl::<M>)
+        self.try_map_project(|bytes, _| deserialize_impl::<M>(bytes, buffer_format))
     }
 }
 
-impl<P, M> DynProvider<M> for DeserializingBufferProvider<'_, P>
+impl<P, M> DynamicDataProvider<M> for DeserializingBufferProvider<'_, P>
 where
     M: DataMarker,
     P: BufferProvider + ?Sized,
@@ -109,11 +134,7 @@ where
     // Necessary workaround bound (see `yoke::trait_hack` docs):
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
-    fn load_payload(
-        &self,
-        key: ResourceKey,
-        req: &DataRequest,
-    ) -> Result<DataResponse<M>, DataError> {
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         let buffer_response = BufferProvider::load_buffer(self.0, key, req)?;
         let buffer_format = buffer_response
             .metadata
@@ -129,9 +150,9 @@ where
     }
 }
 
-impl<P, M> ResourceProvider<M> for DeserializingBufferProvider<'_, P>
+impl<P, M> DataProvider<M> for DeserializingBufferProvider<'_, P>
 where
-    M: ResourceMarker,
+    M: KeyedDataMarker,
     P: BufferProvider + ?Sized,
     // Actual bound:
     //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
@@ -139,31 +160,31 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
-    fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-        self.load_payload(M::KEY, req)
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.load_data(M::KEY, req)
     }
 }
 
-/// Implements [ResourceProvider] and [DynProvider] if [BufferProvider] is implemented.
+/// Implements [DataProvider] and [DynamicDataProvider] if [BufferProvider] is implemented.
 /// This allows dropping the call to `.as_deserializing()`.
 #[macro_export]
 macro_rules! impl_auto_deserializing {
     ($buffer_provider: ty) => {
-        impl<M> ResourceProvider<M> for $buffer_provider
+        impl<M> DataProvider<M> for $buffer_provider
         where
-            M: ResourceMarker,
+            M: KeyedDataMarker,
             // Actual bound:
             //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: serde::de::Deserialize<'de>,
             // Necessary workaround bound (see `yoke::trait_hack` docs):
             for<'de> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
                 serde::de::Deserialize<'de>,
         {
-            fn load_resource(&self, req: &DataRequest) -> Result<DataResponse<M>, DataError> {
-                self.as_deserializing().load_resource(req)
+            fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+                self.as_deserializing().load(req)
             }
         }
 
-        impl<M> DynProvider<M> for $buffer_provider
+        impl<M> DynamicDataProvider<M> for $buffer_provider
         where
             M: DataMarker,
             // Actual bound:
@@ -172,12 +193,12 @@ macro_rules! impl_auto_deserializing {
             for<'de> yoke::trait_hack::YokeTraitHack<<M::Yokeable as yoke::Yokeable<'de>>::Output>:
                 serde::de::Deserialize<'de>,
         {
-            fn load_payload(
+            fn load_data(
                 &self,
-                key: ResourceKey,
-                req: &DataRequest,
+                key: DataKey,
+                req: DataRequest,
             ) -> Result<DataResponse<M>, DataError> {
-                self.as_deserializing().load_payload(key, req)
+                self.as_deserializing().load_data(key, req)
             }
         }
     };

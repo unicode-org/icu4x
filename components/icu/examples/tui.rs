@@ -7,15 +7,15 @@
 
 #![no_main] // https://github.com/unicode-org/icu4x/issues/395
 
-use icu::calendar::Gregorian;
-use icu::datetime::DateTimeFormatOptions;
+use icu::calendar::{DateTime, Gregorian};
+use icu::datetime::DateTimeFormatterOptions;
+use icu::datetime::{TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
 use icu::locid::{locale, Locale};
 use icu::plurals::{PluralCategory, PluralRules};
-use icu_datetime::{
-    mock::zoned_datetime::MockZonedDateTime, TimeZoneFormatOptions, ZonedDateTimeFormat,
-};
-use icu_uniset::UnicodeSetBuilder;
+use icu::timezone::CustomTimeZone;
+use icu_collections::codepointinvlist::CodePointInversionListBuilder;
 use std::env;
+use std::str::FromStr;
 
 fn print<T: AsRef<str>>(_input: T) {
     #[cfg(debug_assertions)]
@@ -46,27 +46,23 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     print(format!("User: {}", user_name));
 
     {
-        let dtf = ZonedDateTimeFormat::<Gregorian>::try_new(
-            locale,
+        let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
             &provider,
-            &provider,
-            &provider,
-            &provider,
-            &DateTimeFormatOptions::default(),
-            &TimeZoneFormatOptions::default(),
+            &locale.into(),
+            DateTimeFormatterOptions::default(),
+            TimeZoneFormatterOptions::default(),
         )
-        .expect("Failed to create DateTimeFormat.");
-        let today: MockZonedDateTime = "2020-10-10T18:56:00Z"
-            .parse()
-            .expect("Failed to parse date");
+        .expect("Failed to create TypedDateTimeFormatter.");
+        let today_date = DateTime::new_gregorian_datetime(2020, 10, 10, 18, 56, 0).unwrap();
+        let today_tz = CustomTimeZone::from_str("Z").unwrap(); // Z refers to the utc timezone
 
-        let formatted_dt = dtf.format(&today);
+        let formatted_dt = dtf.format(&today_date, &today_tz);
 
         print(format!("Today is: {}", formatted_dt));
     }
 
     {
-        let mut builder = UnicodeSetBuilder::new();
+        let mut builder = CodePointInversionListBuilder::new();
         // See http://ftp.unicode.org/Public/MAPPINGS/ISO8859/8859-1.TXT
         builder.add_range(&('\u{0000}'..='\u{00FF}'));
         let latin1_set = builder.build();
@@ -81,10 +77,10 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     }
 
     {
-        let pr = PluralRules::try_new_cardinal(locale!("en"), &provider)
+        let pr = PluralRules::try_new_cardinal_unstable(&provider, &locale!("en").into())
             .expect("Failed to create PluralRules.");
 
-        match pr.select(email_count) {
+        match pr.category_for(email_count) {
             PluralCategory::One => print("Note: You have one unread email."),
             _ => print(format!("Note: You have {} unread emails.", email_count)),
         }

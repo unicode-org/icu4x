@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::AnyCalendarKind;
-use crate::{types, Date, DateDuration, DateDurationUnit, Iso};
+use crate::{types, Date, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use core::fmt;
 
 /// A calendar implementation
@@ -13,9 +13,20 @@ use core::fmt;
 ///
 /// Individual [`Calendar`] implementations may have inherent utility methods
 /// allowing for direct construction, etc.
+///
+/// For ICU4X 1.0, implementing this trait or calling methods directly is considered
+/// unstable and prone to change, especially for `offset_date()` and `until()`.
 pub trait Calendar {
     /// The internal type used to represent dates
     type DateInner: PartialEq + Eq + Clone + fmt::Debug;
+    /// Construct a date from era/month codes and fields
+    fn date_from_codes(
+        &self,
+        era: types::Era,
+        year: i32,
+        month_code: types::MonthCode,
+        day: u8,
+    ) -> Result<Self::DateInner, DateTimeError>;
     /// Construct the date from an ISO date
     fn date_from_iso(&self, iso: Date<Iso>) -> Self::DateInner;
     /// Obtain an ISO date from this date
@@ -39,9 +50,11 @@ pub trait Calendar {
     }
     // fn week_of_year(&self, date: &Self::DateInner) -> u8;
 
+    #[doc(hidden)] // unstable
     /// Add `offset` to `date`
     fn offset_date(&self, date: &mut Self::DateInner, offset: DateDuration<Self>);
 
+    #[doc(hidden)] // unstable
     /// Calculate `date2 - date` as a duration
     ///
     /// `calendar2` is the calendar object associated with `date2`. In case the specific calendar objects
@@ -60,10 +73,10 @@ pub trait Calendar {
     // fn since(&self, from: &Date<Self>, to: &Date<Self>) -> Duration<Self>, Error;
 
     /// The calendar-specific year represented by `date`
-    fn year(&self, date: &Self::DateInner) -> types::Year;
+    fn year(&self, date: &Self::DateInner) -> types::FormattableYear;
 
     /// The calendar-specific month represented by `date`
-    fn month(&self, date: &Self::DateInner) -> types::Month;
+    fn month(&self, date: &Self::DateInner) -> types::FormattableMonth;
 
     /// The calendar-specific day-of-month represented by `date`
     fn day_of_month(&self, date: &Self::DateInner) -> types::DayOfMonth;

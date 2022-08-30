@@ -22,3 +22,29 @@ impl<T: VarULE + ?Sized> Bake for &VarZeroSlice<T> {
         quote! { unsafe { ::zerovec::VarZeroSlice::from_bytes_unchecked(&[#(#bytes),*]) } }
     }
 }
+
+#[test]
+fn test_baked_vec() {
+    test_bake!(
+        VarZeroVec<str>,
+        const: unsafe {
+            crate::VarZeroVec::from_bytes_unchecked(&[
+                2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8,
+            ])
+        },
+        zerovec
+    );
+}
+
+#[test]
+fn test_baked_slice() {
+    test_bake!(
+        &VarZeroSlice<str>,
+        const: unsafe {
+            crate::VarZeroSlice::from_bytes_unchecked(&[
+                2u8, 1u8, 0u8, 22u8, 0u8, 77u8, 1u8, 92u8, 17u8,
+            ])
+        },
+        zerovec
+    );
+}

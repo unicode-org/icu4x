@@ -1,43 +1,16 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<icu_properties::provider::GraphemeClusterBreakV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<icu_properties::provider::GraphemeClusterBreakV1Marker>, DataError>
-    {
-        static VALUES: &[(&str, DataStruct)] = &[("und", UND)];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions.with_req(
-                    <icu_properties::provider::GraphemeClusterBreakV1Marker>::KEY,
-                    req,
-                )
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct =
-    &'static <icu_properties::provider::GraphemeClusterBreakV1Marker as DataMarker>::Yokeable;
-static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1 {
-    code_point_trie: ::icu_codepointtrie::CodePointTrie::from_parts(
-        ::icu_codepointtrie::CodePointTrieHeader {
+type DataStruct = < :: icu_properties :: provider :: GraphemeClusterBreakV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_properties::provider::PropertyCodePointMapV1::CodePointTrie(
+    ::icu_collections::codepointtrie::CodePointTrie::from_parts(
+        ::icu_collections::codepointtrie::CodePointTrieHeader {
             high_start: 921600u32,
             shifted12_high_start: 225u16,
             index3_null_offset: 407u16,
             data_null_offset: 32u32,
             null_value: 0u32,
-            trie_type: ::icu_codepointtrie::TrieType::Small,
+            trie_type: ::icu_collections::codepointtrie::TrieType::Small,
         },
         unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -546,5 +519,6 @@ static UND: DataStruct = &::icu_properties::provider::UnicodePropertyMapV1 {
                 12u8, 12u8, 0u8, 0u8, 0u8,
             ])
         },
+        ::icu_properties::GraphemeClusterBreak(0u8),
     ),
-};
+);

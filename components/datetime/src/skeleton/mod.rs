@@ -13,7 +13,7 @@ mod serde;
 pub use error::*;
 pub use helpers::*;
 
-#[cfg(all(test, feature = "datagen"))]
+#[cfg(all(test, feature = "datagen", feature = "experimental"))]
 mod test {
     use super::reference::Skeleton;
     use super::*;
@@ -25,7 +25,8 @@ mod test {
         options::components,
         pattern::runtime,
         provider::calendar::{
-            DatePatternsV1Marker, DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, SkeletonV1,
+            DateSkeletonPatternsV1, DateSkeletonPatternsV1Marker, GregorianDateLengthsV1Marker,
+            SkeletonV1,
         },
     };
     use core::convert::TryFrom;
@@ -38,24 +39,22 @@ mod test {
     };
 
     fn get_data_payload() -> (
-        DataPayload<DatePatternsV1Marker>,
+        DataPayload<GregorianDateLengthsV1Marker>,
         DataPayload<DateSkeletonPatternsV1Marker>,
     ) {
         let provider = icu_testdata::get_provider();
-        let locale: Locale = "en-u-ca-gregory".parse().unwrap();
+        let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
+        let req = DataRequest {
+            locale: &locale,
+            metadata: Default::default(),
+        };
         let patterns = provider
-            .load_resource(&DataRequest {
-                options: ResourceOptions::from(&locale),
-                metadata: Default::default(),
-            })
+            .load(req)
             .expect("Failed to load payload")
             .take_payload()
             .expect("Failed to retrieve payload");
         let skeletons = provider
-            .load_resource(&DataRequest {
-                options: locale.into(),
-                metadata: Default::default(),
-            })
+            .load(req)
             .expect("Failed to load payload")
             .take_payload()
             .expect("Failed to retrieve payload");

@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::{VarZeroSlice, VarZeroVec};
+use super::{VarZeroSlice, VarZeroVec, VarZeroVecFormat};
 use crate::ule::*;
 use alloc::boxed::Box;
 use alloc::vec::Vec;
@@ -12,11 +12,12 @@ use serde::de::{self, Deserialize, Deserializer, SeqAccess, Visitor};
 #[cfg(feature = "serde")]
 use serde::ser::{Serialize, SerializeSeq, Serializer};
 
-struct VarZeroVecVisitor<T: ?Sized> {
-    marker: PhantomData<fn() -> Box<T>>,
+struct VarZeroVecVisitor<T: ?Sized, F: VarZeroVecFormat> {
+    #[allow(clippy::type_complexity)] // this is a private marker type, who cares
+    marker: PhantomData<(fn() -> Box<T>, F)>,
 }
 
-impl<T: ?Sized> Default for VarZeroVecVisitor<T> {
+impl<T: ?Sized, F: VarZeroVecFormat> Default for VarZeroVecVisitor<T, F> {
     fn default() -> Self {
         Self {
             marker: PhantomData,
@@ -24,12 +25,13 @@ impl<T: ?Sized> Default for VarZeroVecVisitor<T> {
     }
 }
 
-impl<'de, T> Visitor<'de> for VarZeroVecVisitor<T>
+impl<'de, T, F> Visitor<'de> for VarZeroVecVisitor<T, F>
 where
     T: VarULE + ?Sized,
     Box<T>: Deserialize<'de>,
+    F: VarZeroVecFormat,
 {
-    type Value = VarZeroVec<'de, T>;
+    type Value = VarZeroVec<'de, T, F>;
 
     fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         formatter.write_str("a sequence or borrowed buffer of bytes")
@@ -59,10 +61,11 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<'de, 'a, T> Deserialize<'de> for VarZeroVec<'a, T>
+impl<'de, 'a, T, F> Deserialize<'de> for VarZeroVec<'a, T, F>
 where
     T: VarULE + ?Sized,
     Box<T>: Deserialize<'de>,
+    F: VarZeroVecFormat,
     'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -79,10 +82,11 @@ where
 }
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
-impl<'de, 'a, T> Deserialize<'de> for &'a VarZeroSlice<T>
+impl<'de, 'a, T, F> Deserialize<'de> for &'a VarZeroSlice<T, F>
 where
     T: VarULE + ?Sized,
     Box<T>: Deserialize<'de>,
+    F: VarZeroVecFormat,
     'de: 'a,
 {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
@@ -94,7 +98,7 @@ where
                 "&VarZeroSlice cannot be deserialized from human-readable formats",
             ))
         } else {
-            let deserialized: VarZeroVec<'a, T> = VarZeroVec::deserialize(deserializer)?;
+            let deserialized: VarZeroVec<'a, T, F> = VarZeroVec::deserialize(deserializer)?;
             let borrowed = if let VarZeroVec::Borrowed(b) = deserialized {
                 b
             } else {
@@ -109,9 +113,10 @@ where
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 #[cfg(feature = "serde")]
-impl<T> Serialize for VarZeroVec<'_, T>
+impl<T, F> Serialize for VarZeroVec<'_, T, F>
 where
     T: Serialize + VarULE + ?Sized,
+    F: VarZeroVecFormat,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -131,9 +136,10 @@ where
 
 /// This impl can be made available by enabling the optional `serde` feature of the `zerovec` crate
 #[cfg(feature = "serde")]
-impl<T> Serialize for VarZeroSlice<T>
+impl<T, F> Serialize for VarZeroSlice<T, F>
 where
     T: Serialize + VarULE + ?Sized,
+    F: VarZeroVecFormat,
 {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -162,22 +168,21 @@ mod test {
 
     // ["foo", "bar", "baz", "dolor", "quux", "lorem ipsum"];
     const BYTES: &[u8] = &[
-        6, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 9, 0, 0, 0, 14, 0, 0, 0, 18, 0, 0, 0, 102,
-        111, 111, 98, 97, 114, 98, 97, 122, 100, 111, 108, 111, 114, 113, 117, 117, 120, 108, 111,
-        114, 101, 109, 32, 105, 112, 115, 117, 109,
+        6, 0, 0, 0, 0, 0, 3, 0, 6, 0, 9, 0, 14, 0, 18, 0, 102, 111, 111, 98, 97, 114, 98, 97, 122,
+        100, 111, 108, 111, 114, 113, 117, 117, 120, 108, 111, 114, 101, 109, 32, 105, 112, 115,
+        117, 109,
     ];
     const JSON_STR: &str = "[\"foo\",\"bar\",\"baz\",\"dolor\",\"quux\",\"lorem ipsum\"]";
     const BINCODE_BUF: &[u8] = &[
-        57, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 9, 0, 0, 0, 14, 0,
-        0, 0, 18, 0, 0, 0, 102, 111, 111, 98, 97, 114, 98, 97, 122, 100, 111, 108, 111, 114, 113,
-        117, 117, 120, 108, 111, 114, 101, 109, 32, 105, 112, 115, 117, 109,
+        45, 0, 0, 0, 0, 0, 0, 0, 6, 0, 0, 0, 0, 0, 3, 0, 6, 0, 9, 0, 14, 0, 18, 0, 102, 111, 111,
+        98, 97, 114, 98, 97, 122, 100, 111, 108, 111, 114, 113, 117, 117, 120, 108, 111, 114, 101,
+        109, 32, 105, 112, 115, 117, 109,
     ];
 
     // ["w", "ω", "文", "𑄃"]
     const NONASCII_STR: &[&str] = &["w", "ω", "文", "𑄃"];
     const NONASCII_BYTES: &[u8] = &[
-        4, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 3, 0, 0, 0, 6, 0, 0, 0, 119, 207, 137, 230, 150, 135,
-        240, 145, 132, 131,
+        4, 0, 0, 0, 0, 0, 1, 0, 3, 0, 6, 0, 119, 207, 137, 230, 150, 135, 240, 145, 132, 131,
     ];
     #[test]
     fn test_serde_json() {

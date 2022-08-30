@@ -1,36 +1,9 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_normalizer::provider::CanonicalCompositionsV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_normalizer::provider::CanonicalCompositionsV1Marker>, DataError>
-    {
-        static VALUES: &[(&str, DataStruct)] = &[("und", UND)];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions.with_req(
-                    <::icu_normalizer::provider::CanonicalCompositionsV1Marker>::KEY,
-                    req,
-                )
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
-type DataStruct =
-    &'static <::icu_normalizer::provider::CanonicalCompositionsV1Marker as DataMarker>::Yokeable;
-static UND: DataStruct = &::icu_normalizer::provider::CanonicalCompositionsV1 {
-    canonical_compositions: ::icu_char16trie::char16trie::Char16Trie {
+type DataStruct = < :: icu_normalizer :: provider :: CanonicalCompositionsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);
+static UND: &DataStruct = &::icu_normalizer::provider::CanonicalCompositionsV1 {
+    canonical_compositions: ::icu_collections::char16trie::Char16Trie {
         data: unsafe {
             ::zerovec::ZeroVec::from_bytes_unchecked(&[
                 0u8, 0u8, 56u8, 0u8, 66u8, 3u8, 128u8, 2u8, 194u8, 12u8, 65u8, 1u8, 223u8, 13u8,

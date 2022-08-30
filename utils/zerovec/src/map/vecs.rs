@@ -4,7 +4,7 @@
 
 use crate::ule::*;
 use crate::varzerovec::owned::VarZeroVecOwned;
-use crate::vecs::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned};
+use crate::vecs::{FlexZeroSlice, FlexZeroVec, FlexZeroVecOwned, VarZeroVecFormat};
 use crate::{VarZeroSlice, VarZeroVec};
 use crate::{ZeroSlice, ZeroVec};
 use alloc::boxed::Box;
@@ -293,7 +293,8 @@ where
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> T {
         let vec = self.to_mut();
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        debug_assert!(index < vec.len());
+        #[allow(clippy::indexing_slicing)]
         T::from_unaligned(mem::replace(&mut vec[index], value.to_unaligned()))
     }
     fn zvl_push(&mut self, value: &T) {
@@ -329,16 +330,17 @@ where
     }
 }
 
-impl<'a, T> ZeroVecLike<T> for VarZeroVec<'a, T>
+impl<'a, T, F> ZeroVecLike<T> for VarZeroVec<'a, T, F>
 where
     T: VarULE,
     T: ?Sized,
+    F: VarZeroVecFormat,
 {
     type GetType = T;
-    type SliceVariant = VarZeroSlice<T>;
+    type SliceVariant = VarZeroSlice<T, F>;
 
     fn zvl_new_borrowed() -> &'static Self::SliceVariant {
-        VarZeroSlice::<T>::new_empty()
+        VarZeroSlice::<T, F>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -369,7 +371,7 @@ where
         self.len()
     }
 
-    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T> {
+    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T, F> {
         self.as_slice()
     }
 
@@ -379,16 +381,17 @@ where
     }
 }
 
-impl<T> ZeroVecLike<T> for VarZeroSlice<T>
+impl<T, F> ZeroVecLike<T> for VarZeroSlice<T, F>
 where
     T: VarULE,
     T: ?Sized,
+    F: VarZeroVecFormat,
 {
     type GetType = T;
-    type SliceVariant = VarZeroSlice<T>;
+    type SliceVariant = VarZeroSlice<T, F>;
 
     fn zvl_new_borrowed() -> &'static Self::SliceVariant {
-        VarZeroSlice::<T>::new_empty()
+        VarZeroSlice::<T, F>::new_empty()
     }
     fn zvl_binary_search(&self, k: &T) -> Result<usize, usize>
     where
@@ -419,7 +422,7 @@ where
         self.len()
     }
 
-    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T> {
+    fn zvl_as_borrowed(&self) -> &VarZeroSlice<T, F> {
         self
     }
 
@@ -429,10 +432,11 @@ where
     }
 }
 
-impl<'a, T> MutableZeroVecLike<'a, T> for VarZeroVec<'a, T>
+impl<'a, T, F> MutableZeroVecLike<'a, T> for VarZeroVec<'a, T, F>
 where
     T: VarULE,
     T: ?Sized,
+    F: VarZeroVecFormat,
 {
     type OwnedType = Box<T>;
     fn zvl_insert(&mut self, index: usize, value: &T) {
@@ -440,15 +444,17 @@ where
     }
     fn zvl_remove(&mut self, index: usize) -> Box<T> {
         let vec = self.make_mut();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let old = vec.get(index).expect("invalid index").to_boxed();
+        debug_assert!(index < vec.len());
+        #[allow(clippy::unwrap_used)]
+        let old = vec.get(index).unwrap().to_boxed();
         vec.remove(index);
         old
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> Box<T> {
         let vec = self.make_mut();
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let old = vec.get(index).expect("invalid index").to_boxed();
+        debug_assert!(index < vec.len());
+        #[allow(clippy::unwrap_used)]
+        let old = vec.get(index).unwrap().to_boxed();
         vec.replace(index, value);
         old
     }
@@ -474,10 +480,10 @@ where
         o
     }
 
-    fn zvl_from_borrowed(b: &'a VarZeroSlice<T>) -> Self {
+    fn zvl_from_borrowed(b: &'a VarZeroSlice<T, F>) -> Self {
         b.as_varzerovec()
     }
-    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T>> {
+    fn zvl_as_borrowed_inner(&self) -> Option<&'a VarZeroSlice<T, F>> {
         if let VarZeroVec::Borrowed(b) = *self {
             Some(b)
         } else {

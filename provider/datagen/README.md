@@ -30,7 +30,7 @@ fn main() {
 The command line interface is available with the `bin` feature.
 ```bash
 cargo run --features bin -- \
-    --uprops-root /path/to/uprops/root \
+    --icu_exports-root /path/to/icu_exports/root \
     --all-keys \
     --locales de,en-AU \
     --format blob \

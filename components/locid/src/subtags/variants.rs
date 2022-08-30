@@ -46,6 +46,21 @@ impl Variants {
         Self(ShortVec::new())
     }
 
+    /// Creates a new [`Variants`] set from a single [`Variant`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::subtags::{Variant, Variants};
+    ///
+    /// let variant: Variant = "posix".parse().expect("Parsing failed.");
+    /// let variants = Variants::from_variant(variant);
+    /// ```
+    #[inline]
+    pub const fn from_variant(variant: Variant) -> Self {
+        Self(ShortVec::new_single(variant))
+    }
+
     /// Creates a new [`Variants`] set from a [`Vec`].
     /// The caller is expected to provide sorted and deduplicated vector as
     /// an input.

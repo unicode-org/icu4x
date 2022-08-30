@@ -1,6 +1,6 @@
 # Tiny FixedDecimal FFI Demo
 
-This example contains tooling to build a size-optimized binary using FixedDecimal and FixedDecimalFormat in C over FFI.
+This example contains tooling to build a size-optimized binary using FixedDecimal and FixedDecimalFormatter in C over FFI.
 
 Prerequisites: `clang` and `lld`, which must be compatible with the Rust toolchain. `apt-get install clang lld` *might* work, but if you run into errors, refer to the following thread for tips:
 

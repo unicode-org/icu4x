@@ -81,6 +81,7 @@ use core::ops::Deref;
 ///
 /// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
 #[derive(Clone)]
+#[non_exhaustive]
 pub enum ZeroVec<'a, T>
 where
     T: AsULE + ?Sized,
@@ -257,7 +258,9 @@ where
     /// `bytes` need to be an output from [`ZeroSlice::as_bytes()`].
     pub const unsafe fn from_bytes_unchecked(bytes: &'a [u8]) -> Self {
         // &[u8] and &[T::ULE] are the same slice with different length metadata.
-        let (data, mut metadata): (usize, usize) = core::mem::transmute(bytes);
+        // n.b. be careful here, this might hit https://github.com/rust-lang/rust/issues/99923
+        let data = bytes.as_ptr();
+        let mut metadata = bytes.len();
         metadata /= core::mem::size_of::<T::ULE>();
         Self::Borrowed(core::mem::transmute((data, metadata)))
     }

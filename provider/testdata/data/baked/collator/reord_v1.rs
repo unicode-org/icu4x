@@ -1,35 +1,9 @@
 // @generated
-use icu_provider::prelude::*;
-impl ResourceProvider<::icu_collator::provider::CollationReorderingV1Marker>
-    for super::super::BakedDataProvider
-{
-    fn load_resource(
-        &self,
-        req: &DataRequest,
-    ) -> Result<DataResponse<::icu_collator::provider::CollationReorderingV1Marker>, DataError>
-    {
-        static VALUES: &[(&str, DataStruct)] = &[("bn", BN), ("ja", JA), ("th", TH)];
-        #[allow(clippy::unwrap_used)]
-        let value = VALUES
-            .binary_search_by(|(k, _)| req.options.strict_cmp(k.as_bytes()).reverse())
-            .map(|i| VALUES.get(i).unwrap().1)
-            .map_err(|_| {
-                DataErrorKind::MissingResourceOptions.with_req(
-                    <::icu_collator::provider::CollationReorderingV1Marker>::KEY,
-                    req,
-                )
-            })?;
-        Ok(DataResponse {
-            metadata: DataResponseMetadata::default(),
-            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                value,
-            ))),
-        })
-    }
-}
 type DataStruct =
-    &'static <::icu_collator::provider::CollationReorderingV1Marker as DataMarker>::Yokeable;
-static BN: DataStruct = &::icu_collator::provider::CollationReorderingV1 {
+    <::icu_collator::provider::CollationReorderingV1Marker as ::icu_provider::DataMarker>::Yokeable;
+pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
+    litemap::LiteMap::from_sorted_store_unchecked(&[("bn", BN), ("ja", JA), ("th", TH)]);
+static BN: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
     min_high_no_reorder: 1906311168u32,
     reorder_table: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -59,7 +33,7 @@ static BN: DataStruct = &::icu_collator::provider::CollationReorderingV1 {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[191u8, 255u8, 160u8, 113u8])
     },
 };
-static JA: DataStruct = &::icu_collator::provider::CollationReorderingV1 {
+static JA: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
     min_high_no_reorder: 4261412864u32,
     reorder_table: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
@@ -87,7 +61,7 @@ static JA: DataStruct = &::icu_collator::provider::CollationReorderingV1 {
     },
     reorder_ranges: unsafe { ::zerovec::ZeroVec::from_bytes_unchecked(&[]) },
 };
-static TH: DataStruct = &::icu_collator::provider::CollationReorderingV1 {
+static TH: &DataStruct = &::icu_collator::provider::CollationReorderingV1 {
     min_high_no_reorder: 1929379840u32,
     reorder_table: unsafe {
         ::zerovec::ZeroVec::from_bytes_unchecked(&[
