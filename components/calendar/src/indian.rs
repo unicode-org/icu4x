@@ -81,6 +81,10 @@ impl CalendarArithmetic for Indian {
     fn is_leap_year(year: i32) -> bool {
         Iso::is_leap_year(year + 78)
     }
+
+    fn days_in_provided_year(year: i32) -> u32 {
+        Self::days_in_year_solar(year)
+    }
 }
 
 /// The Saka calendar starts on the 81st day of the Gregorian year (March 22 or 21)
@@ -114,7 +118,7 @@ impl Calendar for Indian {
         // This is in the previous Indian year
         let day_of_year_indian = if day_of_year_iso <= DAY_OFFSET {
             year -= 1;
-            let n_days = if Self::is_leap_year(year) { 366 } else { 365 };
+            let n_days = Self::days_in_provided_year(year);
 
             // calculate day of year in previous year
             n_days + day_of_year_iso - DAY_OFFSET

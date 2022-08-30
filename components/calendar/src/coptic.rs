@@ -82,6 +82,10 @@ impl CalendarArithmetic for Coptic {
     fn is_leap_year(year: i32) -> bool {
         year % 4 == 3
     }
+
+    fn days_in_provided_year(year: i32) -> u32 {
+        Self::days_in_year_solar(year)
+    }
 }
 
 impl Calendar for Coptic {
