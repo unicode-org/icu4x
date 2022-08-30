@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661835668477,
+  "lastUpdate": 1661878639376,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25673,6 +25673,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/84ffc4a2400105162d6a09cc6f7a8a57b74c88b2"
         },
         "date": 1661835621836,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9e95b1dd21c0f6bfe58f3d2a426ff89633c3658b",
+          "message": "Reducing `locid_id` API surface (#2484)",
+          "timestamp": "2022-08-30T18:55:00+02:00",
+          "tree_id": "9f5074b538f57209568fa0bcdb5f2cf8c36335de",
+          "url": "https://github.com/unicode-org/icu4x/commit/9e95b1dd21c0f6bfe58f3d2a426ff89633c3658b"
+        },
+        "date": 1661878590024,
         "tool": "ndjson",
         "benches": [
           {
