@@ -49,15 +49,11 @@ pub mod private;
 pub mod transform;
 pub mod unicode;
 
-pub use other::Other;
-pub use private::Private;
-pub use transform::Transform;
-pub use unicode::Unicode;
-
 use alloc::vec::Vec;
 
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
+
 /// Defines the type of extension.
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]
@@ -102,15 +98,15 @@ impl ExtensionType {
 #[non_exhaustive]
 pub struct Extensions {
     /// A representation of the data for a Unicode extension, when present in the locale identifer.
-    pub unicode: Unicode,
+    pub unicode: unicode::Unicode,
     /// A representation of the data for a transform extension, when present in the locale identifer.
-    pub transform: Transform,
+    pub transform: transform::Transform,
     /// A representation of the data for a private-use extension, when present in the locale identifer.
-    pub private: Private,
+    pub private: private::Private,
     /// A sequence of any other extensions that are present in the locale identifier but are not formally
     /// [defined](https://unicode.org/reports/tr35/) and represented explicitly as [`Unicode`], [`Transform`],
     /// and [`Private`] are.
-    pub other: Vec<Other>,
+    pub other: Vec<other::Other>,
 }
 
 impl Extensions {
@@ -126,9 +122,9 @@ impl Extensions {
     #[inline]
     pub const fn new() -> Self {
         Self {
-            unicode: Unicode::new(),
-            transform: Transform::new(),
-            private: Private::new(),
+            unicode: unicode::Unicode::new(),
+            transform: transform::Transform::new(),
+            private: private::Private::new(),
             other: Vec::new(),
         }
     }
@@ -136,11 +132,11 @@ impl Extensions {
     /// Function to create a new map of extensions containing exactly one unicode extension, callable in `const`
     /// context.
     #[inline]
-    pub const fn from_unicode(unicode: Unicode) -> Self {
+    pub const fn from_unicode(unicode: unicode::Unicode) -> Self {
         Self {
             unicode,
-            transform: Transform::new(),
-            private: Private::new(),
+            transform: transform::Transform::new(),
+            private: private::Private::new(),
             other: Vec::new(),
         }
     }
@@ -213,16 +209,16 @@ impl Extensions {
         while let Some(subtag) = st {
             match subtag.get(0).map(|b| ExtensionType::from_byte(*b)) {
                 Some(Ok(ExtensionType::Unicode)) => {
-                    unicode = Some(Unicode::try_from_iter(iter)?);
+                    unicode = Some(unicode::Unicode::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Transform)) => {
-                    transform = Some(Transform::try_from_iter(iter)?);
+                    transform = Some(transform::Transform::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Private)) => {
-                    private = Some(Private::try_from_iter(iter)?);
+                    private = Some(private::Private::try_from_iter(iter)?);
                 }
                 Some(Ok(ExtensionType::Other(ext))) => {
-                    let parsed = Other::try_from_iter(ext, iter)?;
+                    let parsed = other::Other::try_from_iter(ext, iter)?;
                     if let Err(idx) = other.binary_search(&parsed) {
                         other.insert(idx, parsed);
                     } else {

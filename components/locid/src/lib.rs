@@ -79,21 +79,27 @@ extern crate alloc;
 
 #[macro_use]
 mod helpers;
+#[macro_use]
+mod macros;
 
-#[cfg(feature = "databake")]
-mod databake;
-pub mod extensions;
 mod langid;
 mod locale;
-mod macros;
-pub mod ordering;
+mod ordering;
 mod parser;
-#[cfg(feature = "serde")]
-mod serde;
-pub mod subtags;
-#[cfg(feature = "zerovec")]
-pub mod zerovec;
 
 pub use langid::LanguageIdentifier;
 pub use locale::Locale;
+pub use ordering::SubtagOrderingResult;
 pub use parser::errors::ParserError;
+
+pub mod extensions;
+pub mod subtags;
+
+#[cfg(feature = "serde")]
+mod serde;
+
+#[cfg(feature = "databake")]
+mod databake;
+
+#[cfg(feature = "zerovec")]
+pub mod zerovec;

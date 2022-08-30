@@ -16,7 +16,7 @@ use core::cmp::Ordering;
 ///
 /// ```
 /// use icu::locid::{Locale, locale};
-/// use icu::locid::ordering::SubtagOrderingResult;
+/// use icu::locid::SubtagOrderingResult;
 /// use std::cmp::Ordering;
 ///
 /// let subtags = b"en-US-it-IT".split(|b| *b == b'-');
