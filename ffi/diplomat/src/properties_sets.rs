@@ -28,6 +28,21 @@ pub mod ffi {
             self.0.as_borrowed().contains(cp)
         }
 
+        /// Gets a set for all characters in a particular General Category group,
+        /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
+        #[diplomat::rust_link(icu::properties::sets::load_for_general_category_group, Fn)]
+        pub fn try_load_for_general_category_group(
+            provider: &ICU4XDataProvider,
+            group: u32,
+        ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            sets::load_for_general_category_group(&provider, group.into())
+                .map(|data| Box::new(ICU4XCodePointSetData(data)))
+                .map_err(Into::into)
+                .into()
+        }
+
         /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::sets::load_ascii_hex_digit, Fn)]
         pub fn try_get_ascii_hex_digit(
