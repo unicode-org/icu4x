@@ -178,10 +178,10 @@ let primary =
                     &Default::default(),
                     options).unwrap();
 
-assert_eq!(primary.compare("DEAL", "ⓓⓔⓐⓛ"), Ordering::Equal);
-assert_eq!(primary.compare("ⓓⓔⓐⓛ", "déjavu"), Ordering::Less);
-assert_eq!(primary.compare("déjavu", "dent"), Ordering::Less);
-assert_eq!(primary.compare("dent", "develop"), Ordering::Less);
+assert_eq!(primary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
+assert_eq!(primary.compare("DEAL", "dejavu"), Ordering::Less);
+assert_eq!(primary.compare("dejavu", "dejAvu"), Ordering::Equal);
+assert_eq!(primary.compare("dejAvu", "déjavu"), Ordering::Equal);
 
 // Primary with case level on
 
@@ -192,10 +192,24 @@ let primary_and_case =
                     &Default::default(),
                     options).unwrap();
 
-assert_eq!(primary_and_case.compare("DEAL", "ⓓⓔⓐⓛ"), Ordering::Equal);
-assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "déjavu"), Ordering::Less);
-assert_eq!(primary_and_case.compare("déjavu", "dent"), Ordering::Less);
-assert_eq!(primary_and_case.compare("dent", "develop"), Ordering::Less);
+assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
+assert_eq!(primary_and_case.compare("DEAL", "dejavu"), Ordering::Less);
+assert_eq!(primary_and_case.compare("dejavu", "déjavu"), Ordering::Equal);
+assert_eq!(primary_and_case.compare("déjavu", "dejAvu"), Ordering::Equal);
+
+// Secondary with case level on
+
+options.set_strength(Some(Strength::Secondary));
+options.set_case_level(Some(true));
+let secondary_and_case =
+  Collator::try_new_with_buffer_provider(&data_provider,
+                    &Default::default(),
+                    options).unwrap();
+
+assert_eq!(secondary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
+assert_eq!(secondary_and_case.compare("DEAL", "dejavu"), Ordering::Less);
+assert_eq!(secondary_and_case.compare("dejavu", "dejAvu"), Ordering::Equal);
+assert_eq!(secondary_and_case.compare("dejAvu", "déjavu"), Ordering::Less);  // secondary difference
 
 // Tertiary
 
@@ -207,9 +221,9 @@ let tertiary =
                     options).unwrap();
 
 assert_eq!(tertiary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
-assert_eq!(tertiary.compare("DEAL", "déjavu"), Ordering::Less);
-assert_eq!(tertiary.compare("déjavu", "dent"), Ordering::Less);
-assert_eq!(tertiary.compare("dent", "develop"), Ordering::Less);
+assert_eq!(tertiary.compare("DEAL", "dejavu"), Ordering::Less);
+assert_eq!(tertiary.compare("dejavu", "dejAvu"), Ordering::Less);
+assert_eq!(tertiary.compare("dejAvu", "déjavu"), Ordering::Less);
 ```
 
 ### Case First
