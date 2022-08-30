@@ -149,13 +149,13 @@ assert_eq!(collator_3s.compare("U.S.A.", "USA"), Ordering::Equal);
 let mut options_4s = CollatorOptions::new();
 options_4s.set_strength(Some(Strength::Quaternary));
 options_4s.set_alternate_handling(Some(AlternateHandling::Shifted));
-let collator_3s: Collator =
+let collator_4s: Collator =
     Collator::try_new_unstable(&data_provider, &Default::default(), options_4s).unwrap();
 
-assert_eq!(collator_3s.compare("di Silva", "diSilva"), Ordering::Less);
-assert_eq!(collator_3s.compare("diSilva", "Di Silva"), Ordering::Less);
-assert_eq!(collator_3s.compare("Di Silva", "U.S.A."), Ordering::Less);
-assert_eq!(collator_3s.compare("U.S.A.", "USA"), Ordering::Less);
+assert_eq!(collator_4s.compare("di Silva", "diSilva"), Ordering::Less);
+assert_eq!(collator_4s.compare("diSilva", "Di Silva"), Ordering::Less);
+assert_eq!(collator_4s.compare("Di Silva", "U.S.A."), Ordering::Less);
+assert_eq!(collator_4s.compare("U.S.A.", "USA"), Ordering::Less);
 ```
 
 ### Case Level
