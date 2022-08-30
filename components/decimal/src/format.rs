@@ -23,9 +23,10 @@ pub struct FormattedFixedDecimal<'l> {
 impl<'l> FormattedFixedDecimal<'l> {
     fn get_affixes(&self) -> Option<&AffixesV1> {
         match self.value.sign() {
-            Sign::Negative => Some(&self.symbols.minus_sign_affixes),
             Sign::None => None,
+            Sign::Negative => Some(&self.symbols.minus_sign_affixes),
             Sign::Positive => Some(&self.symbols.plus_sign_affixes),
+            _ => unreachable!("This should not happen, because all the cases are covered."),
         }
     }
 }
