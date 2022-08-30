@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661892947350,
+  "lastUpdate": 1661897529959,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48203,6 +48203,66 @@ window.BENCHMARK_DATA = {
             "name": "to_string/write_to/908070605040302010",
             "value": 77,
             "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "74d3983b3080933cf755f0659d44c444530e2f55",
+          "message": "Fix arithmetic in Indian calendar (#2479)\n\n* Fix indian date conversion\r\n\r\n* Optimize days_in_year for solar calendars",
+          "timestamp": "2022-08-30T21:58:28Z",
+          "tree_id": "326c4c4698ae577985e7e928cfcae8dab3b1180a",
+          "url": "https://github.com/unicode-org/icu4x/commit/74d3983b3080933cf755f0659d44c444530e2f55"
+        },
+        "date": 1661897470811,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 125520,
+            "range": "± 5788",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 25490,
+            "range": "± 1147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 73506,
+            "range": "± 5771",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 209,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 80,
+            "range": "± 4",
             "unit": "ns/iter"
           },
           {
