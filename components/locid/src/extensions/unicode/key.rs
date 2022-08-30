@@ -66,23 +66,6 @@ impl Key {
         Ok(Self(key.to_ascii_lowercase()))
     }
 
-    /// A constructor which takes a TinyAsciiStr and produces a [`Key`]
-    /// without doing any checking.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::locid::extensions::unicode::Key;
-    /// use tinystr::tinystr;
-    ///
-    /// let key = Key::from_tinystr_unchecked(tinystr!(2, "ca"));
-    ///
-    /// assert_eq!(key.as_str(), "ca");
-    /// ```
-    pub fn from_tinystr_unchecked(key: TinyAsciiStr<KEY_LENGTH>) -> Self {
-        Self(key)
-    }
-
     /// A helper function for displaying
     /// a [`Key`] subtag as a `&`[`str`].
     ///

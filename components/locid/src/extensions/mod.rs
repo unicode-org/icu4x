@@ -49,15 +49,16 @@ pub mod private;
 pub mod transform;
 pub mod unicode;
 
-pub use other::Other;
-pub use private::Private;
-pub use transform::Transform;
-pub use unicode::Unicode;
+use other::Other;
+use private::Private;
+use transform::Transform;
+use unicode::Unicode;
 
 use alloc::vec::Vec;
 
 use crate::parser::ParserError;
 use crate::parser::SubtagIterator;
+
 /// Defines the type of extension.
 #[derive(Debug, PartialEq, Eq, Clone, Hash, PartialOrd, Ord, Copy)]
 #[non_exhaustive]

@@ -123,7 +123,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        calendar::check_locale::<C>(locale)?;
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
@@ -169,7 +168,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        calendar::check_locale::<C>(locale)?;
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,

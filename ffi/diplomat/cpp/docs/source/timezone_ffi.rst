@@ -8,7 +8,22 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s)
 
+        Creates a time zone from an offset string.
+
+
     .. cpp:function:: static ICU4XCustomTimeZone create_empty()
+
+        Creates a time zone with no information.
+
+        See the `Rust documentation for new_empty <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.new_empty>`__ for more information.
+
+
+    .. cpp:function:: static ICU4XCustomTimeZone create_utc()
+
+        Creates a time zone for UTC.
+
+        See the `Rust documentation for utc <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.utc>`__ for more information.
+
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> try_set_gmt_offset_seconds(int32_t offset_seconds)
 
@@ -243,11 +258,11 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. cpp:function:: void maybe_set_meta_zone(const ICU4XIsoDateTime& local_datetime, const ICU4XMetaZoneCalculator& metazone_calculator)
+    .. cpp:function:: void maybe_calculate_meta_zone(const ICU4XIsoDateTime& local_datetime, const ICU4XMetaZoneCalculator& metazone_calculator)
 
         Sets the meta zone based on the time zone and the local timestamp.
 
-        See the `Rust documentation for maybe_set_meta_zone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_set_meta_zone>`__ for more information.
+        See the `Rust documentation for maybe_calculate_meta_zone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone>`__ for more information.
 
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone>`__
 

@@ -30,6 +30,8 @@ diplomat_result_box_ICU4XCustomTimeZone_ICU4XError ICU4XCustomTimeZone_create_fr
 
 ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_empty();
 
+ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_utc();
+
 diplomat_result_void_ICU4XError ICU4XCustomTimeZone_try_set_gmt_offset_seconds(ICU4XCustomTimeZone* self, int32_t offset_seconds);
 
 void ICU4XCustomTimeZone_clear_gmt_offset(ICU4XCustomTimeZone* self);
@@ -70,7 +72,7 @@ diplomat_result_bool_void ICU4XCustomTimeZone_is_standard_time(const ICU4XCustom
 
 diplomat_result_bool_void ICU4XCustomTimeZone_is_daylight_time(const ICU4XCustomTimeZone* self);
 
-void ICU4XCustomTimeZone_maybe_set_meta_zone(ICU4XCustomTimeZone* self, const ICU4XIsoDateTime* local_datetime, const ICU4XMetaZoneCalculator* metazone_calculator);
+void ICU4XCustomTimeZone_maybe_calculate_meta_zone(ICU4XCustomTimeZone* self, const ICU4XIsoDateTime* local_datetime, const ICU4XMetaZoneCalculator* metazone_calculator);
 void ICU4XCustomTimeZone_destroy(ICU4XCustomTimeZone* self);
 
 #ifdef __cplusplus
