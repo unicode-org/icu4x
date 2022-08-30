@@ -26,7 +26,7 @@ use icu_calendar::{DateTime, Iso};
 ///     gmt_offset: Some(GmtOffset::default()),
 ///     time_zone_id: None,
 ///     meta_zone_id: None,
-///     time_variaint: None,
+///     zone_variant: None,
 /// };
 ///
 /// let tz2: CustomTimeZone = "+05:00".parse().expect("Failed to parse a time zone.");
@@ -98,7 +98,7 @@ impl CustomTimeZone {
     ///     gmt_offset: Some("+11".parse().expect("Failed to parse a GMT offset.")),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
     ///     meta_zone_id: None,
-    ///     time_variaint: None,
+    ///     zone_variant: None,
     /// };
     /// tz.maybe_calculate_meta_zone(
     ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
