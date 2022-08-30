@@ -757,7 +757,7 @@ pub enum IsoSeconds {
 /// Whether a field should be zero-padded in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
-pub enum ZeroPadding {
+pub(crate) enum ZeroPadding {
     /// Add zero-padding.
     On,
 
