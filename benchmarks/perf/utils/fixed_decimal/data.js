@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661815889313,
+  "lastUpdate": 1661836350213,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -47909,6 +47909,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 86,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "84ffc4a2400105162d6a09cc6f7a8a57b74c88b2",
+          "message": "Whack-a-mole part 4: PluralRules, some properties (#2471)\n\n* Some pluralrules fixes\r\n\r\n* regen\r\n\r\n* tests\r\n\r\n* regen\r\n\r\n* pare down properties",
+          "timestamp": "2022-08-30T04:58:52Z",
+          "tree_id": "96ecb18ad3209c5588387b4a857f47953c5ca2eb",
+          "url": "https://github.com/unicode-org/icu4x/commit/84ffc4a2400105162d6a09cc6f7a8a57b74c88b2"
+        },
+        "date": 1661836292262,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 134647,
+            "range": "± 7216",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27837,
+            "range": "± 1510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 77420,
+            "range": "± 6035",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 227,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 83,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 90,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
