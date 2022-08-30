@@ -153,10 +153,7 @@ pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
 const SINGLE_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
 
-/// Slice that we need to transmute
-const EMPTY_CHAR_SLICE: &[char] = &[];
-/// An empty `&ZeroSlice<char>`
-pub const EMPTY_CHAR: &ZeroSlice<char> = unsafe { core::mem::transmute(EMPTY_CHAR_SLICE) };
+pub const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
 
 const SINGLE_CHAR_ARR: [u8; 3] = [0xFD, 0xFF, 00];
 const SINGLE_CHAR_ULE: CharULE = unsafe { core::mem::transmute(SINGLE_CHAR_ARR) };
