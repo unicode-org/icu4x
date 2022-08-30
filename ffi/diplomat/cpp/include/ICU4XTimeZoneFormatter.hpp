@@ -60,7 +60,60 @@ class ICU4XTimeZoneFormatter {
   static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> try_new_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneFormat format, ICU4XIsoTimeZoneMinuteDisplay minutes, ICU4XIsoTimeZoneSecondDisplay seconds);
 
   /**
+   * 
+   * 
+   * See the [Rust documentation for `load_generic_non_location_long`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_non_location_long) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> load_generic_non_location_long(const ICU4XDataProvider& provider);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_generic_non_location_short`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_non_location_short) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> load_generic_non_location_short(const ICU4XDataProvider& provider);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_specific_non_location_long`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_specific_non_location_long) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> load_specific_non_location_long(const ICU4XDataProvider& provider);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_specific_non_location_short`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_specific_non_location_short) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> load_specific_non_location_short(const ICU4XDataProvider& provider);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_generic_location_format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_location_format) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> load_generic_location_format(const ICU4XDataProvider& provider);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_localized_gmt_format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_localized_gmt_format) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> load_localized_gmt_format();
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `load_iso_8601_format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_iso_8601_format) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> load_iso_8601_format(ICU4XIsoTimeZoneFormat format, ICU4XIsoTimeZoneMinuteDisplay minutes, ICU4XIsoTimeZoneSecondDisplay seconds);
+
+  /**
    * Formats a [`ICU4XCustomTimeZone`] to a string.
+   * 
+   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format) for more information.
+   * 
+   * See the [Rust documentation for `format_to_string`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
    * 
    * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_write) for more information.
    */
@@ -68,6 +121,10 @@ class ICU4XTimeZoneFormatter {
 
   /**
    * Formats a [`ICU4XCustomTimeZone`] to a string.
+   * 
+   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format) for more information.
+   * 
+   * See the [Rust documentation for `format_to_string`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
    * 
    * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_write) for more information.
    */
@@ -101,6 +158,76 @@ inline diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> ICU4XTimeZoneFormatt
   diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XTimeZoneFormatter>(std::move(ICU4XTimeZoneFormatter(diplomat_result_raw_out_value.ok)));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load_generic_non_location_long(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_generic_non_location_long(this->inner.get(), provider.AsFFI());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load_generic_non_location_short(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_generic_non_location_short(this->inner.get(), provider.AsFFI());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load_specific_non_location_long(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_specific_non_location_long(this->inner.get(), provider.AsFFI());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load_specific_non_location_short(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_specific_non_location_short(this->inner.get(), provider.AsFFI());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load_generic_location_format(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_generic_location_format(this->inner.get(), provider.AsFFI());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load_localized_gmt_format() {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_localized_gmt_format(this->inner.get());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XTimeZoneFormatter::load_iso_8601_format(ICU4XIsoTimeZoneFormat format, ICU4XIsoTimeZoneMinuteDisplay minutes, ICU4XIsoTimeZoneSecondDisplay seconds) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_load_iso_8601_format(this->inner.get(), static_cast<capi::ICU4XIsoTimeZoneFormat>(format), static_cast<capi::ICU4XIsoTimeZoneMinuteDisplay>(minutes), static_cast<capi::ICU4XIsoTimeZoneSecondDisplay>(seconds));
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
   } else {
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }

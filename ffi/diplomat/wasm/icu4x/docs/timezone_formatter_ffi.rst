@@ -45,9 +45,48 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.FallbackFormat.html>`__
 
 
+    .. js:function:: load_generic_non_location_long(provider)
+
+        See the `Rust documentation for load_generic_non_location_long <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_non_location_long>`__ for more information.
+
+
+    .. js:function:: load_generic_non_location_short(provider)
+
+        See the `Rust documentation for load_generic_non_location_short <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_non_location_short>`__ for more information.
+
+
+    .. js:function:: load_specific_non_location_long(provider)
+
+        See the `Rust documentation for load_specific_non_location_long <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_specific_non_location_long>`__ for more information.
+
+
+    .. js:function:: load_specific_non_location_short(provider)
+
+        See the `Rust documentation for load_specific_non_location_short <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_specific_non_location_short>`__ for more information.
+
+
+    .. js:function:: load_generic_location_format(provider)
+
+        See the `Rust documentation for load_generic_location_format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_location_format>`__ for more information.
+
+
+    .. js:function:: load_localized_gmt_format()
+
+        See the `Rust documentation for load_localized_gmt_format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_localized_gmt_format>`__ for more information.
+
+
+    .. js:function:: load_iso_8601_format(format, minutes, seconds)
+
+        See the `Rust documentation for load_iso_8601_format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_iso_8601_format>`__ for more information.
+
+
     .. js:function:: format_custom_time_zone(value)
 
         Formats a :js:class:`ICU4XCustomTimeZone` to a string.
+
+        See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format>`__ for more information.
+
+        See the `Rust documentation for format_to_string <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_string>`__ for more information.
 
         See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_write>`__ for more information.
 

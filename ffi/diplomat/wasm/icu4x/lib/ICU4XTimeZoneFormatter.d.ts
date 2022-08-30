@@ -43,7 +43,60 @@ export class ICU4XTimeZoneFormatter {
 
   /**
 
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_non_location_long Rust documentation for `load_generic_non_location_long`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  load_generic_non_location_long(provider: ICU4XDataProvider): void | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_non_location_short Rust documentation for `load_generic_non_location_short`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  load_generic_non_location_short(provider: ICU4XDataProvider): void | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_specific_non_location_long Rust documentation for `load_specific_non_location_long`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  load_specific_non_location_long(provider: ICU4XDataProvider): void | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_specific_non_location_short Rust documentation for `load_specific_non_location_short`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  load_specific_non_location_short(provider: ICU4XDataProvider): void | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_location_format Rust documentation for `load_generic_location_format`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  load_generic_location_format(provider: ICU4XDataProvider): void | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_localized_gmt_format Rust documentation for `load_localized_gmt_format`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  load_localized_gmt_format(): void | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_iso_8601_format Rust documentation for `load_iso_8601_format`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  load_iso_8601_format(format: ICU4XIsoTimeZoneFormat, minutes: ICU4XIsoTimeZoneMinuteDisplay, seconds: ICU4XIsoTimeZoneSecondDisplay): void | never;
+
+  /**
+
    * Formats a {@link ICU4XCustomTimeZone `ICU4XCustomTimeZone`} to a string.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format Rust documentation for `format`} for more information.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_string Rust documentation for `format_to_string`} for more information.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>

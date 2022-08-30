@@ -53,6 +53,125 @@ export class ICU4XTimeZoneFormatter {
     })();
   }
 
+  load_generic_non_location_long(arg_provider) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XTimeZoneFormatter_load_generic_non_location_long(diplomat_receive_buffer, this.underlying, arg_provider.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = {};
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  load_generic_non_location_short(arg_provider) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XTimeZoneFormatter_load_generic_non_location_short(diplomat_receive_buffer, this.underlying, arg_provider.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = {};
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  load_specific_non_location_long(arg_provider) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XTimeZoneFormatter_load_specific_non_location_long(diplomat_receive_buffer, this.underlying, arg_provider.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = {};
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  load_specific_non_location_short(arg_provider) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XTimeZoneFormatter_load_specific_non_location_short(diplomat_receive_buffer, this.underlying, arg_provider.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = {};
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  load_generic_location_format(arg_provider) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XTimeZoneFormatter_load_generic_location_format(diplomat_receive_buffer, this.underlying, arg_provider.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = {};
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  load_localized_gmt_format() {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XTimeZoneFormatter_load_localized_gmt_format(diplomat_receive_buffer, this.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = {};
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
+  load_iso_8601_format(arg_format, arg_minutes, arg_seconds) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+      wasm.ICU4XTimeZoneFormatter_load_iso_8601_format(diplomat_receive_buffer, this.underlying, ICU4XIsoTimeZoneFormat_js_to_rust[arg_format], ICU4XIsoTimeZoneMinuteDisplay_js_to_rust[arg_minutes], ICU4XIsoTimeZoneSecondDisplay_js_to_rust[arg_seconds]);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+      if (is_ok) {
+        const ok_value = {};
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
+  }
+
   format_custom_time_zone(arg_value) {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {

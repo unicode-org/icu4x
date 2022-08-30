@@ -50,6 +50,7 @@ pub mod ffi {
         /// Uses localized GMT as the fallback format.
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::try_new_unstable, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
+        #[diplomat::rust_link(icu::datetime::TimeZoneFormatterOptions, Struct, hidden)]
         pub fn try_new_with_localized_gmt_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -74,6 +75,7 @@ pub mod ffi {
         /// Uses ISO-8601 as the fallback format.
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::try_new_unstable, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::time_zone::FallbackFormat, Enum, compact)]
+        #[diplomat::rust_link(icu::datetime::TimeZoneFormatterOptions, Struct, hidden)]
         pub fn try_new_with_iso_8601_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -96,7 +98,120 @@ pub mod ffi {
             .into()
         }
 
+        #[diplomat::rust_link(
+            icu::datetime::TimeZoneFormatter::load_generic_non_location_long,
+            FnInStruct
+        )]
+        pub fn load_generic_non_location_long(
+            &mut self,
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<(), ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            self.0
+                .load_generic_non_location_long(&provider)
+                .map(|_| ())
+                .map_err(Into::into)
+                .into()
+        }
+
+        #[diplomat::rust_link(
+            icu::datetime::TimeZoneFormatter::load_generic_non_location_short,
+            FnInStruct
+        )]
+        pub fn load_generic_non_location_short(
+            &mut self,
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<(), ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            self.0
+                .load_generic_non_location_short(&provider)
+                .map(|_| ())
+                .map_err(Into::into)
+                .into()
+        }
+
+        #[diplomat::rust_link(
+            icu::datetime::TimeZoneFormatter::load_specific_non_location_long,
+            FnInStruct
+        )]
+        pub fn load_specific_non_location_long(
+            &mut self,
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<(), ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            self.0
+                .load_specific_non_location_long(&provider)
+                .map(|_| ())
+                .map_err(Into::into)
+                .into()
+        }
+
+        #[diplomat::rust_link(
+            icu::datetime::TimeZoneFormatter::load_specific_non_location_short,
+            FnInStruct
+        )]
+        pub fn load_specific_non_location_short(
+            &mut self,
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<(), ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            self.0
+                .load_specific_non_location_short(&provider)
+                .map(|_| ())
+                .map_err(Into::into)
+                .into()
+        }
+
+        #[diplomat::rust_link(
+            icu::datetime::TimeZoneFormatter::load_generic_location_format,
+            FnInStruct
+        )]
+        pub fn load_generic_location_format(
+            &mut self,
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<(), ICU4XError> {
+            use icu_provider::serde::AsDeserializingBufferProvider;
+            let provider = provider.0.as_deserializing();
+            self.0
+                .load_generic_location_format(&provider)
+                .map(|_| ())
+                .map_err(Into::into)
+                .into()
+        }
+
+        #[diplomat::rust_link(
+            icu::datetime::TimeZoneFormatter::load_localized_gmt_format,
+            FnInStruct
+        )]
+        pub fn load_localized_gmt_format(&mut self) -> DiplomatResult<(), ICU4XError> {
+            self.0
+                .load_localized_gmt_format()
+                .map(|_| ())
+                .map_err(Into::into)
+                .into()
+        }
+
+        #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::load_iso_8601_format, FnInStruct)]
+        pub fn load_iso_8601_format(
+            &mut self,
+            format: ICU4XIsoTimeZoneFormat,
+            minutes: ICU4XIsoTimeZoneMinuteDisplay,
+            seconds: ICU4XIsoTimeZoneSecondDisplay,
+        ) -> DiplomatResult<(), ICU4XError> {
+            self.0
+                .load_iso_8601_format(format.into(), minutes.into(), seconds.into())
+                .map(|_| ())
+                .map_err(Into::into)
+                .into()
+        }
+
         /// Formats a [`ICU4XCustomTimeZone`] to a string.
+        #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::format_to_string, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::format_to_write, FnInStruct)]
         pub fn format_custom_time_zone(
             &self,
