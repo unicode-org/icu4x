@@ -150,12 +150,14 @@ pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VA
 
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
-const SINGLE_U16: &ZeroSlice<u16> =
+const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
 
-pub const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
+pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
 
-const SINGLE_CHAR: &ZeroSlice<char> = ZeroSlice::from_ule_slice(&[CharULE([[0xFD, 0xFF, 00])]);
+const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> = ZeroSlice::from_ule_slice(&[unsafe {
+    core::mem::transmute::<[u8; 3], CharULE>([0xFDu8, 0xFFu8, 0u8])
+}]);
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
@@ -1094,7 +1096,7 @@ where
                     let len = usize::from(trail_or_complex >> 13) + 2;
                     for u in unwrap_or_gigo(
                         self.scalars16.get_subslice(offset..offset + len),
-                        SINGLE_U16, // single instead of empty for consistency with the other code path
+                        SINGLE_REPLACEMENT_CHARACTER_U16, // single instead of empty for consistency with the other code path
                     )
                     .iter()
                     {
@@ -1108,7 +1110,7 @@ where
                     let offset32 = offset - self.scalars16.len();
                     for ch in unwrap_or_gigo(
                         self.scalars32.get_subslice(offset32..offset32 + len),
-                        SINGLE_CHAR, // single instead of empty for consistency with the other code path
+                        SINGLE_REPLACEMENT_CHARACTER_CHAR, // single instead of empty for consistency with the other code path
                     )
                     .iter()
                     {
