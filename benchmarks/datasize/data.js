@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661896844454,
+  "lastUpdate": 1661896859120,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25823,6 +25823,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/74d3983b3080933cf755f0659d44c444530e2f55"
         },
         "date": 1661896798202,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5e6141a710a913db0139ab63e7e2364f493dbff6",
+          "message": "Mark generated files as generated (#2487)\n\n* Mark generated files as generated",
+          "timestamp": "2022-08-30T21:58:14Z",
+          "tree_id": "ae622768b54e57e53aadc36ad35cffb8f94e704d",
+          "url": "https://github.com/unicode-org/icu4x/commit/5e6141a710a913db0139ab63e7e2364f493dbff6"
+        },
+        "date": 1661896799753,
         "tool": "ndjson",
         "benches": [
           {
