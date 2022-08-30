@@ -242,10 +242,7 @@ fn char_from_u16(u: u16) -> char {
 const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
 
-/// Slice that we need to transmute
-const EMPTY_CHAR_SLICE: &[char] = &[];
-/// An empty `&ZeroSlice<char>`
-pub const EMPTY_CHAR: &ZeroSlice<char> = unsafe { core::mem::transmute(EMPTY_CHAR_SLICE) };
+pub const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty()
 
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
