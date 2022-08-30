@@ -82,6 +82,7 @@ mod helpers;
 
 mod langid;
 mod locale;
+mod macros;
 mod ordering;
 mod parser;
 
@@ -92,9 +93,7 @@ pub use parser::errors::ParserError;
 
 pub mod extensions;
 pub mod subtags;
+pub mod zerovec;
 
 #[cfg(feature = "serde")]
 mod serde;
-
-#[cfg(feature = "zerovec")]
-pub mod zerovec;
