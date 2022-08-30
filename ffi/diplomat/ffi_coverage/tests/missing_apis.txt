@@ -167,10 +167,8 @@ icu::datetime::DateTimeFormatterOptions#Enum
 icu::datetime::TimeFormatter::try_new_unstable#FnInStruct
 icu::datetime::TimeFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::TimeFormatter::try_new_with_buffer_provider#FnInStruct
-icu::datetime::TimeZoneFormatter#Struct
 icu::datetime::TimeZoneFormatter::format#FnInStruct
 icu::datetime::TimeZoneFormatter::format_to_string#FnInStruct
-icu::datetime::TimeZoneFormatter::format_to_write#FnInStruct
 icu::datetime::TimeZoneFormatter::load_generic_location_format#FnInStruct
 icu::datetime::TimeZoneFormatter::load_generic_non_location_long#FnInStruct
 icu::datetime::TimeZoneFormatter::load_generic_non_location_short#FnInStruct
@@ -178,7 +176,6 @@ icu::datetime::TimeZoneFormatter::load_iso_8601_format#FnInStruct
 icu::datetime::TimeZoneFormatter::load_localized_gmt_format#FnInStruct
 icu::datetime::TimeZoneFormatter::load_specific_non_location_long#FnInStruct
 icu::datetime::TimeZoneFormatter::load_specific_non_location_short#FnInStruct
-icu::datetime::TimeZoneFormatter::try_new_unstable#FnInStruct
 icu::datetime::TimeZoneFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::TimeZoneFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::TimeZoneFormatterConfig#Enum
@@ -212,10 +209,6 @@ icu::datetime::options::length::Bag::from_date_time_style#FnInStruct
 icu::datetime::options::length::Bag::from_time_style#FnInStruct
 icu::datetime::options::length::Date#Enum
 icu::datetime::options::length::Time#Enum
-icu::datetime::time_zone::FallbackFormat#Enum
-icu::datetime::time_zone::IsoFormat#Enum
-icu::datetime::time_zone::IsoMinutes#Enum
-icu::datetime::time_zone::IsoSeconds#Enum
 icu::datetime::time_zone::TimeZoneFormatter#Struct
 icu::datetime::time_zone::TimeZoneFormatter::format#FnInStruct
 icu::datetime::time_zone::TimeZoneFormatter::format_to_string#FnInStruct

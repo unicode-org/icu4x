@@ -798,6 +798,12 @@ pub struct TimeZoneFormatterOptions {
     pub fallback_format: FallbackFormat,
 }
 
+impl From<FallbackFormat> for TimeZoneFormatterOptions {
+    fn from(fallback_format: FallbackFormat) -> Self {
+        Self { fallback_format }
+    }
+}
+
 // Pacific Time
 #[derive(Debug, Clone, Copy, PartialEq)]
 pub(super) struct GenericNonLocationLongFormat {}
