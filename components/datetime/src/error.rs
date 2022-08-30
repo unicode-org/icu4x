@@ -13,7 +13,6 @@ use icu_calendar::types::MonthCode;
 use icu_decimal::FixedDecimalFormatterError;
 use icu_plurals::PluralRulesError;
 use icu_provider::prelude::DataError;
-use tinystr::TinyStr16;
 
 /// A list of possible error outcomes for the [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) struct.
 #[derive(Display, Debug, Copy, Clone)]
@@ -63,11 +62,6 @@ pub enum DateTimeFormatterError {
     /// An error from mixing calendar types in [`DateTimeFormatter`](crate::DateTimeFormatter)
     #[displaydoc("DateTimeFormatter for {0} calendar was given a {1:?} calendar")]
     MismatchedAnyCalendar(AnyCalendarKind, Option<AnyCalendarKind>),
-    /// An error from mixing calendar types in DateTimeFormat
-    #[displaydoc(
-        "TypedDateTimeFormatter<{0}> was given a locale asking for incompatible calendar u-ca-{1}"
-    )]
-    MismatchedCalendarLocale(&'static str, TinyStr16),
     /// Missing date symbols
     #[displaydoc("Missing date symbols")]
     MissingDateSymbols,
