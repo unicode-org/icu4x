@@ -83,7 +83,11 @@ impl CalendarArithmetic for Indian {
     }
 
     fn days_in_provided_year(year: i32) -> u32 {
-        Self::days_in_year_solar(year)
+        if Self::is_leap_year(year) {
+            366
+        } else {
+            365
+        }
     }
 }
 

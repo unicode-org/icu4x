@@ -25,7 +25,7 @@ pub trait CalendarArithmetic: Calendar {
 
     /// Calculate the days in a given year
     /// Can be overridden with simpler implementations for solar calendars
-    /// (use `days_in_year_solar()`). Leave this as the default
+    /// (typically, 366 in leap, 365 otgerwuse) Leave this as the default
     /// for lunar calendars
     ///
     /// The name has `provided` in it to avoid clashes with Calendar
@@ -36,15 +36,6 @@ pub trait CalendarArithmetic: Calendar {
             days += Self::month_days(year, month) as u32;
         }
         days
-    }
-
-    /// Set days_in_year to this for solar calendars
-    fn days_in_year_solar(year: i32) -> u32 {
-        if Self::is_leap_year(year) {
-            366
-        } else {
-            365
-        }
     }
 }
 
