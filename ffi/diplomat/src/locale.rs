@@ -22,6 +22,7 @@ pub mod ffi {
     impl ICU4XLocale {
         /// Construct an [`ICU4XLocale`] from an locale identifier.
         #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
+        #[diplomat::rust_link(icu::locid::Locale::from_str, FnInStruct, hidden)]
         pub fn create(name: &str) -> DiplomatResult<Box<ICU4XLocale>, ICU4XError> {
             Locale::from_str(name)
                 .map_err(ICU4XError::from)
@@ -191,8 +192,11 @@ pub mod ffi {
         }
 
         /// Write a string representation of [`ICU4XLocale`] to `write`
-        #[diplomat::rust_link(icu::locid::Locale, Struct)]
-        pub fn tostring(
+        #[diplomat::rust_link(icu::locid::Locale::write_to, FnInStruct)]
+        #[diplomat::rust_link(icu::locid::Locale::write_to_parts, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locid::Locale::write_to_string, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::locid::Locale::write_len, FnInStruct, hidden)]
+        pub fn to_string(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {

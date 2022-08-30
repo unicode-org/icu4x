@@ -66,6 +66,8 @@ lazy_static::lazy_static! {
     static ref IGNORED_TRAITS: HashSet<&'static str> = [
         // Rust and Rust ecosystem types
         "Any",
+        "AsMut",
+        "AsRef",
         "Bake",
         "Borrow",
         "BorrowMut",
@@ -211,6 +213,15 @@ lazy_static::lazy_static! {
         "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
         "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
 
+        // Not planned until someone needs them
+        "icu::locid::extensions",
+        "icu::locid::subtags",
+        "icu::locid::LanguageIdentifier",
+
+        // We currently do support this, but diplomat panics on the doc specifier
+        // https://github.com/rust-diplomat/diplomat/pull/244
+        "icu::locid::Locale::UND",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -277,6 +288,19 @@ lazy_static::lazy_static! {
         "icu::properties::sets::CodePointSetData::from_data",
         "icu::properties::sets::CodePointSetData::to_code_point_invesion_list",
         "icu::properties::sets::CodePointSetDataBorrowed::contains_u32",
+
+        // locid macros
+        "icu::locid::langid",
+        "icu::locid::locale",
+        "icu::locid::extensions_transform_key",
+        "icu::locid::extensions_unicode_key",
+        "icu::locid::extensions_unicode_value",
+        "icu::locid::subtags_language",
+        "icu::locid::subtags_region",
+        "icu::locid::subtags_script",
+        "icu::locid::subtags_variant",
+        // assoc type
+        "icu::locale::Locale::Err",
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 
