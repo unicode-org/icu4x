@@ -7,9 +7,8 @@ use core::default::Default;
 use core::fmt;
 use core::fmt::Debug;
 use icu_locid::extensions::unicode as unicode_ext;
-use icu_locid::ordering::SubtagOrderingResult;
 use icu_locid::subtags::{Language, Region, Script, Variants};
-use icu_locid::{LanguageIdentifier, Locale};
+use icu_locid::{LanguageIdentifier, Locale, SubtagOrderingResult};
 use writeable::{LengthHint, Writeable};
 
 #[cfg(doc)]
