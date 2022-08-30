@@ -257,17 +257,17 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///     length::Date::Full
     /// )
     /// .unwrap();
-    /// 
+    ///
     /// assert_eq!(
     ///     "Monday, August 29, 2022",
     ///     formatter.format_to_string(&Date::new_gregorian_date(2022, 8, 29).unwrap())
     /// );
     /// ```
-    /// 
+    ///
     /// If the locale has a calendar keyword, the keyword is ignored in favor of the
     /// type parameter on the [`TypedDateFormatter`]. To obey the calendar keyword,
     /// use [`DateFormatter`] instead.
-    /// 
+    ///
     /// ```
     /// use icu::calendar::indian::Indian;
     /// use icu::calendar::Date;
@@ -282,7 +282,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///     length::Date::Full
     /// )
     /// .unwrap();
-    /// 
+    ///
     /// // Indian format from type wins over locale keyword
     /// assert_eq!(
     ///     "Friday, Bhadra 7, 1944 Saka",
@@ -291,6 +291,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// ```
     ///
     /// [data provider]: icu_provider
+    /// [`DateFormatter`]: crate::DateFormatter
     #[inline]
     pub fn try_new_unstable<D>(
         data_provider: &D,
