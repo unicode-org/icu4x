@@ -285,7 +285,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// // Indian format from type wins over locale keyword
     /// assert_eq!(
-    ///     "Friday, Bhadra 7, 1944 Saka",
+    ///     "Monday, Bhadra 7, 1944 Saka",
     ///     formatter.format_to_string(&Date::new_indian_date(1944, 6, 7).unwrap())
     /// );
     /// ```

@@ -77,6 +77,14 @@ impl CalendarArithmetic for Iso {
     fn is_leap_year(year: i32) -> bool {
         year % 4 == 0 && (year % 400 == 0 || year % 100 != 0)
     }
+
+    fn days_in_provided_year(year: i32) -> u32 {
+        if Self::is_leap_year(year) {
+            366
+        } else {
+            365
+        }
+    }
 }
 
 impl Calendar for Iso {
