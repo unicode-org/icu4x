@@ -155,9 +155,7 @@ const SINGLE_U16: &ZeroSlice<u16> =
 
 pub const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
 
-const SINGLE_CHAR_ARR: [u8; 3] = [0xFD, 0xFF, 00];
-const SINGLE_CHAR_ULE: CharULE = unsafe { core::mem::transmute(SINGLE_CHAR_ARR) };
-const SINGLE_CHAR: &ZeroSlice<char> = ZeroSlice::<char>::from_ule_slice(&[SINGLE_CHAR_ULE]);
+const SINGLE_CHAR: &ZeroSlice<char> = ZeroSlice::from_ule_slice(&[CharULE([[0xFD, 0xFF, 00])]);
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
