@@ -14,6 +14,7 @@ use crate::elements::{
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::error::CollatorError;
+use crate::options::CollatorOptionsBitField;
 use crate::provider::CollationDataV1Marker;
 use crate::provider::CollationDiacriticsV1Marker;
 use crate::provider::CollationJamoV1Marker;
@@ -59,7 +60,7 @@ pub struct Collator {
     tailoring: Option<DataPayload<CollationDataV1Marker>>,
     jamo: DataPayload<CollationJamoV1Marker>,
     diacritics: DataPayload<CollationDiacriticsV1Marker>,
-    options: CollatorOptions,
+    options: CollatorOptionsBitField,
     reordering: Option<DataPayload<CollationReorderingV1Marker>>,
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
@@ -180,7 +181,7 @@ impl Collator {
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
 
-        let mut altered_defaults = CollatorOptions::new();
+        let mut altered_defaults = CollatorOptionsBitField::new();
 
         if metadata.alternate_shifted() {
             altered_defaults.set_alternate_handling(Some(AlternateHandling::Shifted));
@@ -192,7 +193,7 @@ impl Collator {
         altered_defaults.set_case_first(Some(metadata.case_first()));
         altered_defaults.set_max_variable(Some(metadata.max_variable()));
 
-        let mut merged_options = options;
+        let mut merged_options = CollatorOptionsBitField::from(options);
         merged_options.set_defaults(altered_defaults);
 
         let special_primaries = if merged_options.alternate_handling() == AlternateHandling::Shifted

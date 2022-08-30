@@ -149,9 +149,12 @@ extern crate alloc;
 
 pub use comparison::Collator;
 pub use options::AlternateHandling;
+pub use options::BackwardSecondLevel;
 pub use options::CaseFirst;
+pub use options::CaseLevel;
 pub use options::CollatorOptions;
 pub use options::MaxVariable;
+pub use options::Numeric;
 pub use options::Strength;
 
 #[cfg(all(test, feature = "serde"))]
