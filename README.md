@@ -41,12 +41,11 @@ use icu::calendar::DateTime;
 use icu::datetime::{options::length, DateTimeFormatter};
 use icu::locid::locale;
 
-fn main() {
-    let options =
-        length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
+let options =
+    length::Bag::from_date_time_style(length::Date::Long, length::Time::Medium).into();
 
-    let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
-        .expect("Failed to create DateTimeFormatter instance.");
+let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("es").into(), options)
+    .expect("Failed to create DateTimeFormatter instance.");
 
 let date = DateTime::new_iso_datetime(2020, 9, 12, 12, 35, 0).expect("Failed to parse date.");
 let date = date.to_any();

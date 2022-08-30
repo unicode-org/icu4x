@@ -9,6 +9,8 @@
 //! use icu::calendar::{types::Era, Date, DateTime};
 //! use tinystr::tinystr;
 //!
+//! // `icu_testdata::unstable` contains information specifying era dates.
+//! // Production code should probably use its own data provider
 //! let japanese_calendar =
 //!     Japanese::try_new_unstable(&icu_testdata::unstable())
 //!         .expect("Cannot load japanese data");
