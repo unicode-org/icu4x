@@ -764,19 +764,6 @@ pub enum ZeroPadding {
     Off,
 }
 
-/// A config enum for initializing TimeZoneFormatter.
-#[derive(Debug, Clone, Copy, PartialEq)]
-#[non_exhaustive]
-pub enum TimeZoneFormatterConfig {
-    GenericNonLocationLong,                     // Pacific Time
-    GenericNonLocationShort,                    // PT
-    GenericLocation,                            // Los Angeles Time
-    SpecificNonLocationLong,                    // Pacific Standard Time
-    SpecificNonLocationShort,                   // PDT
-    LocalizedGMT,                               // GMT-07:00
-    Iso8601(IsoFormat, IsoMinutes, IsoSeconds), // -07:00
-}
-
 /// An enum for fallback formats.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[non_exhaustive]
