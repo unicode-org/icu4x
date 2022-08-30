@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661881147273,
+  "lastUpdate": 1661881603618,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25733,6 +25733,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/8f902cbc1f62204bef1fd0f086988f971257c239"
         },
         "date": 1661881100613,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "72424a5b15026844341ccf762bb2d10231eb4755",
+          "message": "TimeZoneFormatter FFI and CustomTimeZone cleanup (#2470)",
+          "timestamp": "2022-08-30T10:44:26-07:00",
+          "tree_id": "025f143248d33866c853f73d0fb9e0cd7323d53e",
+          "url": "https://github.com/unicode-org/icu4x/commit/72424a5b15026844341ccf762bb2d10231eb4755"
+        },
+        "date": 1661881556862,
         "tool": "ndjson",
         "benches": [
           {
