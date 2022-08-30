@@ -54,7 +54,6 @@ typedef enum ICU4XError {
   ICU4XError_DateTimeFormatMissingMonthSymbolError = 2054,
   ICU4XError_DateTimeFormatFixedDecimalError = 2055,
   ICU4XError_DateTimeFormatMismatchedAnyCalendarError = 2056,
-  ICU4XError_DateTimeFormatMismatchedCalendarLocaleError = 2057,
   ICU4XError_TinyStrTooLargeError = 2304,
   ICU4XError_TinyStrContainsNullError = 2305,
   ICU4XError_TinyStrNonAsciiError = 2306,

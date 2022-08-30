@@ -2,20 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::error::DateTimeFormatterError;
 use crate::provider::calendar::*;
-use alloc::string::ToString;
-use core::any;
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::{
     buddhist::Buddhist, coptic::Coptic, ethiopian::Ethiopian, indian::Indian, japanese::Japanese,
     japanese::JapaneseExtended, Gregorian,
 };
 use icu_locid::extensions::unicode::Value;
-use icu_locid::extensions_unicode_key as key;
 use icu_locid::extensions_unicode_value as value;
 use icu_provider::prelude::*;
-use tinystr::{tinystr, TinyStr16};
 
 /// A calendar that can be found in CLDR
 ///
@@ -84,26 +79,6 @@ impl CldrCalendar for Ethiopian {
     fn is_identifier_allowed_for_calendar(value: &Value) -> bool {
         *value == value!("ethiopic") || *value == value!("ethioaa")
     }
-}
-
-pub(crate) fn check_locale<C: CldrCalendar>(
-    locale: &DataLocale,
-) -> Result<(), DateTimeFormatterError> {
-    let cal = locale.get_unicode_ext(&key!("ca"));
-
-    if let Some(cal) = cal {
-        if !C::is_identifier_allowed_for_calendar(&cal) {
-            let mut string = cal.to_string();
-            string.truncate(16);
-            let tiny = TinyStr16::from_str(&string).unwrap_or(tinystr!(16, "unknown"));
-            return Err(DateTimeFormatterError::MismatchedCalendarLocale(
-                any::type_name::<C>(),
-                tiny,
-            ));
-        }
-    }
-
-    Ok(())
 }
 
 pub(crate) fn load_lengths_for_cldr_calendar<C, P>(
