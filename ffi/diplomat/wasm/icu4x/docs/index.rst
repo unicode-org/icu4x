@@ -27,6 +27,7 @@ Documentation
    segmenter_word_ffi
    time_ffi
    timezone_ffi
+   timezone_formatter_ffi
 
 Indices and tables
 ==================

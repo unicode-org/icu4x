@@ -115,7 +115,7 @@ impl ZonedDateTimeFormatter {
             fixed_decimal_format,
         );
 
-        let time_zone_format = TimeZoneFormatter::try_new(
+        let time_zone_format = TimeZoneFormatter::try_new_for_pattern(
             provider,
             locale,
             datetime_format
