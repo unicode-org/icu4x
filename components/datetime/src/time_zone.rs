@@ -44,8 +44,8 @@ where
     Ok(())
 }
 
-/// [`TimeZoneFormatter`] uses data from the [data provider], the selected locale, and the provided
-/// [`TimeZoneFormatterConfig`] to collect all data necessary to format time zones into that locale.
+/// [`TimeZoneFormatter`] uses data from the [data provider] and the selected locale
+/// to format time zones into that locale.
 ///
 /// The various time-zone configs specified in UTS-35 require different sets of data for
 /// formatting. As such,[`TimeZoneFormatter`] will pull in only the resources needed to format the
@@ -97,6 +97,7 @@ where
 /// ```
 ///
 /// [data provider]: icu_provider
+/// [`CustomTimeZone`]: icu_timezone::CustomTimeZone
 pub struct TimeZoneFormatter {
     pub(super) locale: DataLocale,
     pub(super) data_payloads: TimeZoneDataPayloads,
@@ -611,7 +612,7 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterConfig, TimeZoneFormatterOptions};
+    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
     /// let provider = icu_testdata::get_provider();
