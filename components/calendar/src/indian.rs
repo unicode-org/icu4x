@@ -18,14 +18,14 @@
 //! let datetime_indian = DateTime::new_from_iso(datetime_iso, Indian);
 //!
 //! // `Date` checks
-//! assert_eq!(date_indian.year().number, 1892);
-//! assert_eq!(date_indian.month().ordinal, 1);
-//! assert_eq!(date_indian.day_of_month().0, 2);
+//! assert_eq!(date_indian.year().number, 1891);
+//! assert_eq!(date_indian.month().ordinal, 10);
+//! assert_eq!(date_indian.day_of_month().0, 12);
 //!
 //! // `DateTime` type
-//! assert_eq!(datetime_indian.date.year().number, 1892);
-//! assert_eq!(datetime_indian.date.month().ordinal, 1);
-//! assert_eq!(datetime_indian.date.day_of_month().0, 2);
+//! assert_eq!(datetime_indian.date.year().number, 1891);
+//! assert_eq!(datetime_indian.date.month().ordinal, 10);
+//! assert_eq!(datetime_indian.date.day_of_month().0, 12);
 //! assert_eq!(datetime_indian.time.hour.number(), 13);
 //! assert_eq!(datetime_indian.time.minute.number(), 1);
 //! assert_eq!(datetime_indian.time.second.number(), 0);
