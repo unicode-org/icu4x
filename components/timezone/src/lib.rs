@@ -91,7 +91,7 @@
 //! )
 //! .unwrap();
 //! let datetime = DateTime::new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
-//! time_zone.maybe_calculate_meta_zone(&datetime, &mzc);
+//! time_zone.maybe_calculate_meta_zone(&mzc, &datetime);
 //!
 //! assert_eq!("amce", time_zone.meta_zone_id.unwrap().0.as_str());
 //! ```

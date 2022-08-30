@@ -275,5 +275,5 @@ export class ICU4XCustomTimeZone {
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone 1}
    */
-  maybe_calculate_meta_zone(local_datetime: ICU4XIsoDateTime, metazone_calculator: ICU4XMetaZoneCalculator): void;
+  maybe_calculate_meta_zone(metazone_calculator: ICU4XMetaZoneCalculator, local_datetime: ICU4XIsoDateTime): void;
 }

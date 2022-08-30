@@ -78,7 +78,7 @@ where
 /// .unwrap();
 /// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
 /// .unwrap();
-/// time_zone.maybe_calculate_meta_zone(&datetime, &mzc);
+/// time_zone.maybe_calculate_meta_zone(&mzc, &datetime);
 ///
 /// // Set up the formatter:
 /// let mut tzf = TimeZoneFormatter::try_new_with_buffer_provider(

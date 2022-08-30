@@ -258,7 +258,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. cpp:function:: void maybe_calculate_meta_zone(const ICU4XIsoDateTime& local_datetime, const ICU4XMetaZoneCalculator& metazone_calculator)
+    .. cpp:function:: void maybe_calculate_meta_zone(const ICU4XMetaZoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime)
 
         Sets the meta zone based on the time zone and the local timestamp.
 

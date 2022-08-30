@@ -289,11 +289,11 @@ pub mod ffi {
         )]
         pub fn maybe_calculate_meta_zone(
             &mut self,
-            local_datetime: &ICU4XIsoDateTime,
             metazone_calculator: &ICU4XMetaZoneCalculator,
+            local_datetime: &ICU4XIsoDateTime,
         ) {
             self.0
-                .maybe_calculate_meta_zone(&local_datetime.0, &metazone_calculator.0);
+                .maybe_calculate_meta_zone(&metazone_calculator.0, &local_datetime.0);
         }
     }
 
