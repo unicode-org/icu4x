@@ -1,5 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
+import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 
 const ICU4XCodePointMapData8_box_destroy_registry = new FinalizationRegistry(underlying => {
@@ -14,6 +15,14 @@ export class ICU4XCodePointMapData8 {
     if (owned) {
       ICU4XCodePointMapData8_box_destroy_registry.register(this, underlying);
     }
+  }
+
+  get(arg_cp) {
+    return wasm.ICU4XCodePointMapData8_get(this.underlying, diplomatRuntime.extractCodePoint(arg_cp, 'arg_cp'));
+  }
+
+  get_set_for_value(arg_value) {
+    return new ICU4XCodePointSetData(wasm.ICU4XCodePointMapData8_get_set_for_value(this.underlying, arg_value), true, []);
   }
 
   static try_get_general_category(arg_provider) {
@@ -133,9 +142,5 @@ export class ICU4XCodePointMapData8 {
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
-  }
-
-  get(arg_cp) {
-    return wasm.ICU4XCodePointMapData8_get(this.underlying, diplomatRuntime.extractCodePoint(arg_cp, 'arg_cp'));
   }
 }

@@ -14,18 +14,25 @@
     See the `Rust documentation for CodePointMapDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_get_script(provider)
-
-        Gets a map for Unicode property Script from a :js:class:`ICU4XDataProvider`.
-
-        See the `Rust documentation for load_script <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html>`__ for more information.
-
-
     .. js:function:: get(cp)
 
         Gets the value for a code point.
 
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
+
+
+    .. js:function:: get_set_for_value(value)
+
+        Gets a :js:class:`ICU4XCodePointSetData` representing all entries in this map that map to the given value
+
+        See the `Rust documentation for get_set_for_value <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value>`__ for more information.
+
+
+    .. js:staticfunction:: try_get_script(provider)
+
+        Gets a map for Unicode property Script from a :js:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation for load_script <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html>`__ for more information.
 
 
 .. js:class:: ICU4XCodePointMapData8
@@ -39,6 +46,20 @@
     See the `Rust documentation for CodePointMapData <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapData.html>`__ for more information.
 
     See the `Rust documentation for CodePointMapDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html>`__ for more information.
+
+
+    .. js:function:: get(cp)
+
+        Gets the value for a code point.
+
+        See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
+
+
+    .. js:function:: get_set_for_value(value)
+
+        Gets a :js:class:`ICU4XCodePointSetData` representing all entries in this map that map to the given value
+
+        See the `Rust documentation for get_set_for_value <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value>`__ for more information.
 
 
     .. js:staticfunction:: try_get_general_category(provider)
@@ -88,11 +109,4 @@
         Gets a map for Unicode property Sentence_Break from a :js:class:`ICU4XDataProvider`.
 
         See the `Rust documentation for load_sentence_break <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html>`__ for more information.
-
-
-    .. js:function:: get(cp)
-
-        Gets the value for a code point.
-
-        See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 

@@ -1,5 +1,6 @@
 import { u8, char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
+import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 
@@ -16,6 +17,22 @@ import { ICU4XError } from "./ICU4XError";
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html Rust documentation for `CodePointMapDataBorrowed`} for more information.
  */
 export class ICU4XCodePointMapData8 {
+
+  /**
+
+   * Gets the value for a code point.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get Rust documentation for `get`} for more information.
+   */
+  get(cp: char): u8;
+
+  /**
+
+   * Gets a {@link ICU4XCodePointSetData `ICU4XCodePointSetData`} representing all entries in this map that map to the given value
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value Rust documentation for `get_set_for_value`} for more information.
+   */
+  get_set_for_value(value: u8): ICU4XCodePointSetData;
 
   /**
 
@@ -79,12 +96,4 @@ export class ICU4XCodePointMapData8 {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_get_sentence_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
-
-  /**
-
-   * Gets the value for a code point.
-
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get Rust documentation for `get`} for more information.
-   */
-  get(cp: char): u8;
 }

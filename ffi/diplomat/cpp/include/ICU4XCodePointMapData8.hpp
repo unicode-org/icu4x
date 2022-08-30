@@ -11,6 +11,7 @@
 
 #include "ICU4XCodePointMapData8.h"
 
+class ICU4XCodePointSetData;
 class ICU4XDataProvider;
 class ICU4XCodePointMapData8;
 #include "ICU4XError.hpp"
@@ -37,6 +38,20 @@ struct ICU4XCodePointMapData8Deleter {
  */
 class ICU4XCodePointMapData8 {
  public:
+
+  /**
+   * Gets the value for a code point.
+   * 
+   * See the [Rust documentation for `get`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
+   */
+  uint8_t get(char32_t cp) const;
+
+  /**
+   * Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
+   * 
+   * See the [Rust documentation for `get_set_for_value`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
+   */
+  ICU4XCodePointSetData get_set_for_value(uint8_t value) const;
 
   /**
    * Gets a map for Unicode property General_Category from a [`ICU4XDataProvider`].
@@ -86,13 +101,6 @@ class ICU4XCodePointMapData8 {
    * See the [Rust documentation for `load_sentence_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_sentence_break(const ICU4XDataProvider& provider);
-
-  /**
-   * Gets the value for a code point.
-   * 
-   * See the [Rust documentation for `get`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get) for more information.
-   */
-  uint8_t get(char32_t cp) const;
   inline const capi::ICU4XCodePointMapData8* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCodePointMapData8* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCodePointMapData8(capi::ICU4XCodePointMapData8* i) : inner(i) {}
@@ -103,8 +111,15 @@ class ICU4XCodePointMapData8 {
   std::unique_ptr<capi::ICU4XCodePointMapData8, ICU4XCodePointMapData8Deleter> inner;
 };
 
+#include "ICU4XCodePointSetData.hpp"
 #include "ICU4XDataProvider.hpp"
 
+inline uint8_t ICU4XCodePointMapData8::get(char32_t cp) const {
+  return capi::ICU4XCodePointMapData8_get(this->inner.get(), cp);
+}
+inline ICU4XCodePointSetData ICU4XCodePointMapData8::get_set_for_value(uint8_t value) const {
+  return ICU4XCodePointSetData(capi::ICU4XCodePointMapData8_get_set_for_value(this->inner.get(), value));
+}
 inline diplomat::result<ICU4XCodePointMapData8, ICU4XError> ICU4XCodePointMapData8::try_get_general_category(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData8_try_get_general_category(provider.AsFFI());
   diplomat::result<ICU4XCodePointMapData8, ICU4XError> diplomat_result_out_value;
@@ -174,8 +189,5 @@ inline diplomat::result<ICU4XCodePointMapData8, ICU4XError> ICU4XCodePointMapDat
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
-}
-inline uint8_t ICU4XCodePointMapData8::get(char32_t cp) const {
-  return capi::ICU4XCodePointMapData8_get(this->inner.get(), cp);
 }
 #endif

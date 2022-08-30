@@ -14,18 +14,25 @@
     See the `Rust documentation for CodePointMapDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData16, ICU4XError> try_get_script(const ICU4XDataProvider& provider)
-
-        Gets a map for Unicode property Script from a :cpp:class:`ICU4XDataProvider`.
-
-        See the `Rust documentation for load_script <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html>`__ for more information.
-
-
     .. cpp:function:: uint16_t get(char32_t cp) const
 
         Gets the value for a code point.
 
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
+
+
+    .. cpp:function:: ICU4XCodePointSetData get_set_for_value(uint16_t value) const
+
+        Gets a :cpp:class:`ICU4XCodePointSetData` representing all entries in this map that map to the given value
+
+        See the `Rust documentation for get_set_for_value <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<ICU4XCodePointMapData16, ICU4XError> try_get_script(const ICU4XDataProvider& provider)
+
+        Gets a map for Unicode property Script from a :cpp:class:`ICU4XDataProvider`.
+
+        See the `Rust documentation for load_script <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html>`__ for more information.
 
 
 .. cpp:class:: ICU4XCodePointMapData8
@@ -39,6 +46,20 @@
     See the `Rust documentation for CodePointMapData <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapData.html>`__ for more information.
 
     See the `Rust documentation for CodePointMapDataBorrowed <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html>`__ for more information.
+
+
+    .. cpp:function:: uint8_t get(char32_t cp) const
+
+        Gets the value for a code point.
+
+        See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
+
+
+    .. cpp:function:: ICU4XCodePointSetData get_set_for_value(uint8_t value) const
+
+        Gets a :cpp:class:`ICU4XCodePointSetData` representing all entries in this map that map to the given value
+
+        See the `Rust documentation for get_set_for_value <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_get_general_category(const ICU4XDataProvider& provider)
@@ -88,11 +109,4 @@
         Gets a map for Unicode property Sentence_Break from a :cpp:class:`ICU4XDataProvider`.
 
         See the `Rust documentation for load_sentence_break <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html>`__ for more information.
-
-
-    .. cpp:function:: uint8_t get(char32_t cp) const
-
-        Gets the value for a code point.
-
-        See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
