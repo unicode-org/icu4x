@@ -61,8 +61,8 @@
 //! // Conversion into Indian calendar: 1914-08-02.
 //! let date_indian = date_iso.to_calendar(Indian);
 //! assert_eq!(date_indian.year().number, 1914);
-//! assert_eq!(date_indian.month().ordinal, 8);
-//! assert_eq!(date_indian.day_of_month().0, 30);
+//! assert_eq!(date_indian.month().ordinal, 6);
+//! assert_eq!(date_indian.day_of_month().0, 11);
 //!
 //! // Conversion into Buddhist calendar: 2535-09-02.
 //! let date_buddhist = date_iso.to_calendar(Buddhist);
