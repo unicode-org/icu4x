@@ -83,6 +83,12 @@ impl CalendarArithmetic for Indian {
     }
 }
 
+/// The Saka calendar starts on the 81st day of the Gregorian year (March 22 or 21)
+/// which is an 80 day offset. This number should be subtracted from Gregorian dates
+const DAY_OFFSET: u32 = 80;
+/// The Saka calendar is 78 years behind Gregorian. This number should be added to Gregorian dates
+const YEAR_OFFSET: i32 = 78;
+
 impl Calendar for Indian {
     type DateInner = IndianDateInner;
     fn date_from_codes(
@@ -98,17 +104,40 @@ impl Calendar for Indian {
 
         ArithmeticDate::new_from_solar(self, year, month_code, day).map(IndianDateInner)
     }
+
+    //
     fn date_from_iso(&self, iso: Date<Iso>) -> IndianDateInner {
-        let day_of_year = Iso::day_of_year(*iso.inner());
-        IndianDateInner(ArithmeticDate::date_from_year_day(
-            iso.inner().0.year - 78,
-            day_of_year,
-        ))
+        // Get day number in year (1 indexed)
+        let day_of_year_iso = Iso::day_of_year(*iso.inner());
+        // Convert to Saka year
+        let mut year = iso.inner().0.year - YEAR_OFFSET;
+        // This is in the previous Indian year
+        let day_of_year_indian = if day_of_year_iso <= DAY_OFFSET {
+            year -= 1;
+            let n_days = if Self::is_leap_year(year) { 366 } else { 365 };
+
+            // calculate day of year in previous year
+            n_days + day_of_year_iso - DAY_OFFSET
+        } else {
+            day_of_year_iso - DAY_OFFSET
+        };
+        IndianDateInner(ArithmeticDate::date_from_year_day(year, day_of_year_indian))
     }
 
     fn date_to_iso(&self, date: &Self::DateInner) -> Date<Iso> {
-        let day_of_year = date.0.day_of_year();
-        Iso::iso_from_year_day(date.0.year + 78, day_of_year)
+        let day_of_year_indian = date.0.day_of_year();
+        let days_in_year = date.0.days_in_year();
+
+        let mut year = date.0.year + YEAR_OFFSET;
+        let day_of_year_iso = if day_of_year_indian + DAY_OFFSET >= days_in_year {
+            year += 1;
+            // calculate day of year in next year
+            day_of_year_indian + DAY_OFFSET - days_in_year
+        } else {
+            day_of_year_indian + DAY_OFFSET
+        };
+
+        Iso::iso_from_year_day(year, day_of_year_iso)
     }
 
     fn months_in_year(&self, date: &Self::DateInner) -> u8 {
@@ -261,5 +290,65 @@ impl DateTime<Indian> {
             date: Date::new_indian_date(year, month, day)?,
             time: types::Time::try_new(hour, minute, second, 0)?,
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    fn assert_roundtrip(y: i32, m: u8, d: u8, iso_y: i32, iso_m: u8, iso_d: u8) {
+        let indian =
+            Date::new_indian_date(y, m, d).expect("Indian date should construct successfully");
+        let iso = indian.to_iso();
+
+        assert_eq!(
+            iso.year().number,
+            iso_y,
+            "{y}-{m}-{d}: ISO year did not match"
+        );
+        assert_eq!(
+            iso.month().ordinal as u8,
+            iso_m,
+            "{y}-{m}-{d}: ISO month did not match"
+        );
+        assert_eq!(
+            iso.day_of_month().0 as u8,
+            iso_d,
+            "{y}-{m}-{d}: ISO day did not match"
+        );
+
+        let roundtrip = iso.to_calendar(Indian);
+
+        assert_eq!(
+            roundtrip.year().number,
+            indian.year().number,
+            "{y}-{m}-{d}: roundtrip year did not match"
+        );
+        assert_eq!(
+            roundtrip.month().ordinal,
+            indian.month().ordinal,
+            "{y}-{m}-{d}: roundtrip month did not match"
+        );
+        assert_eq!(
+            roundtrip.day_of_month(),
+            indian.day_of_month(),
+            "{y}-{m}-{d}: roundtrip day did not match"
+        );
+    }
+
+    #[test]
+    fn roundtrip_indian() {
+        // Ultimately the day of the year will always be identical regardless of it
+        // being a leap year or not
+        // Test dates that occur after and before Chaitra 1 (March 22/21), in all years of
+        // a four-year leap cycle, to ensure that all code paths are tested
+        assert_roundtrip(1944, 6, 7, 2022, 8, 29);
+        assert_roundtrip(1943, 6, 7, 2021, 8, 29);
+        assert_roundtrip(1942, 6, 7, 2020, 8, 29);
+        assert_roundtrip(1941, 6, 7, 2019, 8, 29);
+        assert_roundtrip(1944, 11, 7, 2023, 1, 27);
+        assert_roundtrip(1943, 11, 7, 2022, 1, 27);
+        assert_roundtrip(1942, 11, 7, 2021, 1, 27);
+        assert_roundtrip(1941, 11, 7, 2020, 1, 27);
     }
 }
