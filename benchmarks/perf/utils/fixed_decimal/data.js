@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661882338907,
+  "lastUpdate": 1661892947350,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48149,6 +48149,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 96,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1b560dff118b8894200688b594d124522947dfc0",
+          "message": "Stop returning error on mismatched locale and type calendar (#2477)",
+          "timestamp": "2022-08-30T13:40:42-07:00",
+          "tree_id": "080e57a9ba6b8153b86d1e7f92aa7e17cbfda279",
+          "url": "https://github.com/unicode-org/icu4x/commit/1b560dff118b8894200688b594d124522947dfc0"
+        },
+        "date": 1661892885738,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123954,
+            "range": "± 6558",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24695,
+            "range": "± 1170",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 71077,
+            "range": "± 2592",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 209,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
