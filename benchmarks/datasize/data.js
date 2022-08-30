@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661815261971,
+  "lastUpdate": 1661835668477,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25643,6 +25643,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a1dff1e5c7fe680bc466a3bf2c60ab4c2851f802"
         },
         "date": 1661815215895,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "84ffc4a2400105162d6a09cc6f7a8a57b74c88b2",
+          "message": "Whack-a-mole part 4: PluralRules, some properties (#2471)\n\n* Some pluralrules fixes\r\n\r\n* regen\r\n\r\n* tests\r\n\r\n* regen\r\n\r\n* pare down properties",
+          "timestamp": "2022-08-30T04:58:52Z",
+          "tree_id": "96ecb18ad3209c5588387b4a857f47953c5ca2eb",
+          "url": "https://github.com/unicode-org/icu4x/commit/84ffc4a2400105162d6a09cc6f7a8a57b74c88b2"
+        },
+        "date": 1661835621836,
         "tool": "ndjson",
         "benches": [
           {
