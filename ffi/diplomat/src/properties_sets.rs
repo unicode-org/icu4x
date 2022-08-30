@@ -24,6 +24,11 @@ pub mod ffi {
             icu::properties::sets::CodePointSetDataBorrowed::contains,
             FnInStruct
         )]
+        #[diplomat::rust_link(
+            icu::properties::sets::CodePointSetDataBorrowed::contains_u32,
+            FnInStruct,
+            hidden
+        )]
         pub fn contains(&self, cp: char) -> bool {
             self.0.as_borrowed().contains(cp)
         }

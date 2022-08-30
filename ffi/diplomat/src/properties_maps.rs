@@ -106,6 +106,11 @@ pub mod ffi {
 
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_u32,
+            FnInStruct,
+            hidden
+        )]
         pub fn get(&self, cp: char) -> u8 {
             self.0.as_borrowed().get(cp)
         }
