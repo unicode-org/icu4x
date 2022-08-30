@@ -318,7 +318,7 @@ impl From<Sign> for ffi::ICU4XFixedDecimalSign {
             Sign::None => Self::None,
             Sign::Negative => Self::Negative,
             Sign::Positive => Self::Positive,
-            _ => Self::None, // This should not happen, because all the cases are covered.
+            _ => unreachable!("This should not happen, because all the cases are covered."),
         }
     }
 }
