@@ -213,9 +213,14 @@ lazy_static::lazy_static! {
         // Experimental
         "icu::properties::maps::load_canonical_combining_class",
 
-        // Unnecessary for now
+        // Not planned for 1.0
         "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
         "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
+        "icu::properties::maps::CodePointMapData::as_code_point_trie",
+        "icu::properties::maps::CodePointMapData::from_code_point_trie",
+        "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
+        "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
+        "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
 
         // Not planned until someone needs them
         "icu::locid::extensions",
@@ -281,16 +286,11 @@ lazy_static::lazy_static! {
 
         // Properties Rust internals
         "icu::properties::maps::CodePointMapData::as_borrowed",
-        "icu::properties::maps::CodePointMapData::as_code_point_trie",
-        "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::maps::CodePointMapData::from_data",
         "icu::properties::maps::CodePointMapData::to_code_point_trie",
         "icu::properties::maps::CodePointMapData::try_into_converted",
         "icu::properties::sets::CodePointSetData::as_borrowed",
-        "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
-        "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::from_data",
-        "icu::properties::sets::CodePointSetData::to_code_point_invesion_list",
         "icu::properties::sets::CodePointSetDataBorrowed::contains_u32",
 
         // locid macros
