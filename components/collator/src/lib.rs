@@ -201,9 +201,8 @@
 //!                     options).unwrap();
 //!
 //! assert_eq!(primary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
-//! assert_eq!(primary.compare("DEAL", "dejavu"), Ordering::Less);
 //! assert_eq!(primary.compare("dejavu", "dejAvu"), Ordering::Equal);
-//! assert_eq!(primary.compare("dejAvu", "déjavu"), Ordering::Equal);
+//! assert_eq!(primary.compare("dejavu", "déjavu"), Ordering::Equal);
 //!
 //! // Primary with case level on
 //!
@@ -215,9 +214,8 @@
 //!                     options).unwrap();
 //!
 //! assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
-//! assert_eq!(primary_and_case.compare("DEAL", "dejavu"), Ordering::Less);
+//! assert_eq!(primary_and_case.compare("dejavu", "dejAvu"), Ordering::Equal);
 //! assert_eq!(primary_and_case.compare("dejavu", "déjavu"), Ordering::Equal);
-//! assert_eq!(primary_and_case.compare("déjavu", "dejAvu"), Ordering::Equal);
 //!
 //! // Secondary with case level on
 //!
@@ -229,9 +227,8 @@
 //!                     options).unwrap();
 //!
 //! assert_eq!(secondary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
-//! assert_eq!(secondary_and_case.compare("DEAL", "dejavu"), Ordering::Less);
 //! assert_eq!(secondary_and_case.compare("dejavu", "dejAvu"), Ordering::Equal);
-//! assert_eq!(secondary_and_case.compare("dejAvu", "déjavu"), Ordering::Less);  // secondary difference
+//! assert_eq!(secondary_and_case.compare("dejavu", "déjavu"), Ordering::Less);  // secondary difference
 //!
 //! // Tertiary
 //!
@@ -243,9 +240,8 @@
 //!                     options).unwrap();
 //!
 //! assert_eq!(tertiary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
-//! assert_eq!(tertiary.compare("DEAL", "dejavu"), Ordering::Less);
 //! assert_eq!(tertiary.compare("dejavu", "dejAvu"), Ordering::Less);
-//! assert_eq!(tertiary.compare("dejAvu", "déjavu"), Ordering::Less);
+//! assert_eq!(tertiary.compare("dejavu", "déjavu"), Ordering::Less);
 //! ```
 //!
 //! ## Case First
