@@ -41,5 +41,5 @@ export class ICU4XCodePointMapData16 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html Rust documentation for `load_script`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_get_script(provider: ICU4XDataProvider): ICU4XCodePointMapData16 | never;
+  static load_script(provider: ICU4XDataProvider): ICU4XCodePointMapData16 | never;
 }

@@ -58,7 +58,7 @@ class ICU4XCodePointMapData16 {
    * 
    * See the [Rust documentation for `load_script`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html) for more information.
    */
-  static diplomat::result<ICU4XCodePointMapData16, ICU4XError> try_get_script(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XCodePointMapData16, ICU4XError> load_script(const ICU4XDataProvider& provider);
   inline const capi::ICU4XCodePointMapData16* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCodePointMapData16* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCodePointMapData16(capi::ICU4XCodePointMapData16* i) : inner(i) {}
@@ -78,8 +78,8 @@ inline uint16_t ICU4XCodePointMapData16::get(char32_t cp) const {
 inline ICU4XCodePointSetData ICU4XCodePointMapData16::get_set_for_value(uint16_t value) const {
   return ICU4XCodePointSetData(capi::ICU4XCodePointMapData16_get_set_for_value(this->inner.get(), value));
 }
-inline diplomat::result<ICU4XCodePointMapData16, ICU4XError> ICU4XCodePointMapData16::try_get_script(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData16_try_get_script(provider.AsFFI());
+inline diplomat::result<ICU4XCodePointMapData16, ICU4XError> ICU4XCodePointMapData16::load_script(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCodePointMapData16_load_script(provider.AsFFI());
   diplomat::result<ICU4XCodePointMapData16, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCodePointMapData16>(std::move(ICU4XCodePointMapData16(diplomat_result_raw_out_value.ok)));

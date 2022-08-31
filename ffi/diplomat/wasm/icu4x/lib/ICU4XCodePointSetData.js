@@ -37,10 +37,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_ascii_hex_digit(arg_provider) {
+  static load_ascii_hex_digit(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_ascii_hex_digit(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_ascii_hex_digit(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -54,10 +54,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_alnum(arg_provider) {
+  static load_alnum(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_alnum(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_alnum(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -71,10 +71,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_alphabetic(arg_provider) {
+  static load_alphabetic(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_alphabetic(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_alphabetic(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -88,10 +88,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_bidi_control(arg_provider) {
+  static load_bidi_control(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_bidi_control(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_bidi_control(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -105,10 +105,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_bidi_mirrored(arg_provider) {
+  static load_bidi_mirrored(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_bidi_mirrored(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_bidi_mirrored(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -122,10 +122,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_blank(arg_provider) {
+  static load_blank(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_blank(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_blank(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -139,10 +139,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_cased(arg_provider) {
+  static load_cased(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_cased(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_cased(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -156,10 +156,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_case_ignorable(arg_provider) {
+  static load_case_ignorable(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_case_ignorable(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_case_ignorable(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -173,10 +173,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_full_composition_exclusion(arg_provider) {
+  static load_full_composition_exclusion(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_full_composition_exclusion(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_full_composition_exclusion(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -190,10 +190,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_changes_when_casefolded(arg_provider) {
+  static load_changes_when_casefolded(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_changes_when_casefolded(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_changes_when_casefolded(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -207,10 +207,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_changes_when_casemapped(arg_provider) {
+  static load_changes_when_casemapped(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_changes_when_casemapped(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_changes_when_casemapped(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -224,10 +224,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_changes_when_nfkc_casefolded(arg_provider) {
+  static load_changes_when_nfkc_casefolded(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_changes_when_nfkc_casefolded(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_changes_when_nfkc_casefolded(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -241,10 +241,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_changes_when_lowercased(arg_provider) {
+  static load_changes_when_lowercased(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_changes_when_lowercased(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_changes_when_lowercased(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -258,10 +258,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_changes_when_titlecased(arg_provider) {
+  static load_changes_when_titlecased(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_changes_when_titlecased(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_changes_when_titlecased(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -275,10 +275,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_changes_when_uppercased(arg_provider) {
+  static load_changes_when_uppercased(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_changes_when_uppercased(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_changes_when_uppercased(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -292,10 +292,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_dash(arg_provider) {
+  static load_dash(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_dash(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_dash(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -309,10 +309,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_deprecated(arg_provider) {
+  static load_deprecated(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_deprecated(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_deprecated(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -326,10 +326,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_default_ignorable_code_point(arg_provider) {
+  static load_default_ignorable_code_point(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_default_ignorable_code_point(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_default_ignorable_code_point(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -343,10 +343,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_diacritic(arg_provider) {
+  static load_diacritic(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_diacritic(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_diacritic(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -360,10 +360,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_emoji_modifier_base(arg_provider) {
+  static load_emoji_modifier_base(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_emoji_modifier_base(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_emoji_modifier_base(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -377,10 +377,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_emoji_component(arg_provider) {
+  static load_emoji_component(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_emoji_component(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_emoji_component(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -394,10 +394,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_emoji_modifier(arg_provider) {
+  static load_emoji_modifier(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_emoji_modifier(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_emoji_modifier(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -411,10 +411,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_emoji(arg_provider) {
+  static load_emoji(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_emoji(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_emoji(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -428,10 +428,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_emoji_presentation(arg_provider) {
+  static load_emoji_presentation(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_emoji_presentation(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_emoji_presentation(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -445,10 +445,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_extender(arg_provider) {
+  static load_extender(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_extender(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_extender(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -462,10 +462,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_extended_pictographic(arg_provider) {
+  static load_extended_pictographic(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_extended_pictographic(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_extended_pictographic(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -479,10 +479,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_graph(arg_provider) {
+  static load_graph(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_graph(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_graph(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -496,10 +496,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_grapheme_base(arg_provider) {
+  static load_grapheme_base(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_grapheme_base(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_grapheme_base(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -513,10 +513,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_grapheme_extend(arg_provider) {
+  static load_grapheme_extend(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_grapheme_extend(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_grapheme_extend(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -530,10 +530,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_grapheme_link(arg_provider) {
+  static load_grapheme_link(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_grapheme_link(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_grapheme_link(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -547,10 +547,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_hex_digit(arg_provider) {
+  static load_hex_digit(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_hex_digit(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_hex_digit(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -564,10 +564,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_hyphen(arg_provider) {
+  static load_hyphen(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_hyphen(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_hyphen(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -581,10 +581,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_id_continue(arg_provider) {
+  static load_id_continue(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_id_continue(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_id_continue(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -598,10 +598,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_ideographic(arg_provider) {
+  static load_ideographic(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_ideographic(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_ideographic(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -615,10 +615,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_id_start(arg_provider) {
+  static load_id_start(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_id_start(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_id_start(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -632,10 +632,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_ids_binary_operator(arg_provider) {
+  static load_ids_binary_operator(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_ids_binary_operator(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_ids_binary_operator(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -649,10 +649,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_ids_trinary_operator(arg_provider) {
+  static load_ids_trinary_operator(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_ids_trinary_operator(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_ids_trinary_operator(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -666,10 +666,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_join_control(arg_provider) {
+  static load_join_control(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_join_control(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_join_control(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -683,10 +683,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_logical_order_exception(arg_provider) {
+  static load_logical_order_exception(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_logical_order_exception(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_logical_order_exception(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -700,10 +700,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_lowercase(arg_provider) {
+  static load_lowercase(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_lowercase(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_lowercase(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -717,10 +717,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_math(arg_provider) {
+  static load_math(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_math(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_math(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -734,10 +734,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_noncharacter_code_point(arg_provider) {
+  static load_noncharacter_code_point(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_noncharacter_code_point(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_noncharacter_code_point(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -751,10 +751,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_nfc_inert(arg_provider) {
+  static load_nfc_inert(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_nfc_inert(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_nfc_inert(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -768,10 +768,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_nfd_inert(arg_provider) {
+  static load_nfd_inert(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_nfd_inert(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_nfd_inert(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -785,10 +785,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_nfkc_inert(arg_provider) {
+  static load_nfkc_inert(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_nfkc_inert(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_nfkc_inert(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -802,10 +802,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_nfkd_inert(arg_provider) {
+  static load_nfkd_inert(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_nfkd_inert(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_nfkd_inert(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -819,10 +819,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_pattern_syntax(arg_provider) {
+  static load_pattern_syntax(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_pattern_syntax(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_pattern_syntax(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -836,10 +836,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_pattern_white_space(arg_provider) {
+  static load_pattern_white_space(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_pattern_white_space(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_pattern_white_space(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -853,10 +853,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_prepended_concatenation_mark(arg_provider) {
+  static load_prepended_concatenation_mark(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_prepended_concatenation_mark(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_prepended_concatenation_mark(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -870,10 +870,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_print(arg_provider) {
+  static load_print(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_print(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_print(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -887,10 +887,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_quotation_mark(arg_provider) {
+  static load_quotation_mark(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_quotation_mark(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_quotation_mark(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -904,10 +904,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_radical(arg_provider) {
+  static load_radical(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_radical(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_radical(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -921,10 +921,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_regional_indicator(arg_provider) {
+  static load_regional_indicator(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_regional_indicator(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_regional_indicator(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -938,10 +938,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_soft_dotted(arg_provider) {
+  static load_soft_dotted(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_soft_dotted(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_soft_dotted(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -955,10 +955,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_segment_starter(arg_provider) {
+  static load_segment_starter(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_segment_starter(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_segment_starter(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -972,10 +972,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_case_sensitive(arg_provider) {
+  static load_case_sensitive(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_case_sensitive(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_case_sensitive(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -989,10 +989,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_sentence_terminal(arg_provider) {
+  static load_sentence_terminal(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_sentence_terminal(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_sentence_terminal(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -1006,10 +1006,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_terminal_punctuation(arg_provider) {
+  static load_terminal_punctuation(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_terminal_punctuation(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_terminal_punctuation(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -1023,10 +1023,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_unified_ideograph(arg_provider) {
+  static load_unified_ideograph(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_unified_ideograph(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_unified_ideograph(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -1040,10 +1040,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_uppercase(arg_provider) {
+  static load_uppercase(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_uppercase(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_uppercase(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -1057,10 +1057,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_variation_selector(arg_provider) {
+  static load_variation_selector(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_variation_selector(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_variation_selector(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -1074,10 +1074,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_white_space(arg_provider) {
+  static load_white_space(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_white_space(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_white_space(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -1091,10 +1091,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_xdigit(arg_provider) {
+  static load_xdigit(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_xdigit(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_xdigit(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -1108,10 +1108,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_xid_continue(arg_provider) {
+  static load_xid_continue(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_xid_continue(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_xid_continue(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -1125,10 +1125,10 @@ export class ICU4XCodePointSetData {
     })();
   }
 
-  static try_get_xid_start(arg_provider) {
+  static load_xid_start(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_get_xid_start(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointSetData_load_xid_start(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

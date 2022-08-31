@@ -25,10 +25,10 @@ export class ICU4XCodePointMapData16 {
     return new ICU4XCodePointSetData(wasm.ICU4XCodePointMapData16_get_set_for_value(this.underlying, arg_value), true, []);
   }
 
-  static try_get_script(arg_provider) {
+  static load_script(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointMapData16_try_get_script(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointMapData16_load_script(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointMapData16(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

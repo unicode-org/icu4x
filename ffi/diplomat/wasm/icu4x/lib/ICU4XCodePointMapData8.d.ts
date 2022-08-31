@@ -41,7 +41,7 @@ export class ICU4XCodePointMapData8 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_general_category.html Rust documentation for `load_general_category`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_get_general_category(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+  static load_general_category(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
@@ -50,7 +50,7 @@ export class ICU4XCodePointMapData8 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_bidi_class.html Rust documentation for `load_bidi_class`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_get_bidi_class(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+  static load_bidi_class(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
@@ -59,7 +59,7 @@ export class ICU4XCodePointMapData8 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_east_asian_width.html Rust documentation for `load_east_asian_width`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_get_east_asian_width(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+  static load_east_asian_width(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
@@ -68,7 +68,7 @@ export class ICU4XCodePointMapData8 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_line_break.html Rust documentation for `load_line_break`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_get_line_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+  static load_line_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
@@ -86,7 +86,7 @@ export class ICU4XCodePointMapData8 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_word_break.html Rust documentation for `load_word_break`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_get_word_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+  static load_word_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 
   /**
 
@@ -95,5 +95,5 @@ export class ICU4XCodePointMapData8 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html Rust documentation for `load_sentence_break`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_get_sentence_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
+  static load_sentence_break(provider: ICU4XDataProvider): ICU4XCodePointMapData8 | never;
 }

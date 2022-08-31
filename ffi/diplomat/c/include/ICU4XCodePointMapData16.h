@@ -26,7 +26,7 @@ uint16_t ICU4XCodePointMapData16_get(const ICU4XCodePointMapData16* self, char32
 
 ICU4XCodePointSetData* ICU4XCodePointMapData16_get_set_for_value(const ICU4XCodePointMapData16* self, uint16_t value);
 
-diplomat_result_box_ICU4XCodePointMapData16_ICU4XError ICU4XCodePointMapData16_try_get_script(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCodePointMapData16_ICU4XError ICU4XCodePointMapData16_load_script(const ICU4XDataProvider* provider);
 void ICU4XCodePointMapData16_destroy(ICU4XCodePointMapData16* self);
 
 #ifdef __cplusplus
