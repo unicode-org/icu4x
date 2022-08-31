@@ -2,6 +2,7 @@ calendar/japanese@1, und, 111B, d8f6a26d06b5716eb5b37fa97564523ad9bcad9f55f5b783
 calendar/japanext@1, und, 5216B, 3f866b0d931c52affa00fefe22454e6dd8d7d5f39dddf3f6814775feb2758fc4
 collator/data@1, bn, 1304B, d82cb57ef919257ca0be08d9aac81aa52749a03dcee74b9dbaa4d8a9ee7d1c4b
 collator/data@1, es, 1064B, a6c6cd81e6558751590d745c631ff620be8b92d3d6022cddd3521cefec9f9d25
+collator/data@1, es-u-co-trad, 1130B, c042b0ae096ce3a9682ab03119292ddb483a74c0aabeaa16457ba4988e77e86f
 collator/data@1, ja, 84545B, 7a986c8b7ad75d329184dfd6e6abc9538fe737a9224b8548ad350dfa8cd5c0e1
 collator/data@1, th, 1446B, 8ee2db67b610381467e24d07b1d6a1e50b1cab02cc36f0dec60dd946c2905a7c
 collator/data@1, tr, 1421B, d16bea81d6ec743a8d1939664ffc7f5477d2ada84cdfd8532c8ab17a8a2013bb
@@ -10,6 +11,7 @@ collator/dia@1, und, 160B, b0e81f9cb26c08db3856380c605cc4b27d3e4e9b31988016660fd
 collator/jamo@1, und, 1026B, 2ce451aea4291f0050592d855dfa6b9832cc43d8c7248eb3af97d3079d10f96d
 collator/meta@1, bn, 1B, ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee
 collator/meta@1, es, 1B, 2b4c342f5433ebe591a1da77e013d1b72475562d48578dca8b84bac6651c3cb9
+collator/meta@1, es-u-co-trad, 1B, 2b4c342f5433ebe591a1da77e013d1b72475562d48578dca8b84bac6651c3cb9
 collator/meta@1, ja, 1B, ba5ec51d07a4ac0e951608704431d59a02b21a4e951acc10505a8dc407c501ee
 collator/meta@1, th, 2B, f633b98078a97b221cfa9df81de1a8fc55917453a9501920d3a62f1e9aaba81c
 collator/meta@1, tr, 1B, 2b4c342f5433ebe591a1da77e013d1b72475562d48578dca8b84bac6651c3cb9
