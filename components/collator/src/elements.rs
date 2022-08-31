@@ -142,16 +142,18 @@ const NO_CE_VALUE: u64 =
     ((NO_CE_PRIMARY as u64) << 32) | ((NO_CE_SECONDARY as u64) << 16) | (NO_CE_TERTIARY as u64); // 0x101000100
 
 // See ICU4C collation.h and https://www.unicode.org/reports/tr10/#Trailing_Weights
-const FFFD_PRIMARY: u32 = 0xFFFD0000; // U+FFFD
+const FFFD_PRIMARY: u32 = REPLACEMENT_CHARACTER as u32; // U+FFFD
 pub(crate) const FFFD_CE_VALUE: u64 = ((FFFD_PRIMARY as u64) << 32) | COMMON_SEC_AND_TER_CE;
 pub(crate) const FFFD_CE: CollationElement = CollationElement(FFFD_CE_VALUE);
-pub(crate) const FFFD_CE32_VALUE: u32 = 0xFFFD0505;
+pub(crate) const FFFD_CE32_VALUE: u32 = FFFD_PRIMARY | 0x0505;
 pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VALUE);
 
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
 const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
+    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
+        REPLACEMENT_CHARACTER as u16
+    ]));
 
 pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
 
