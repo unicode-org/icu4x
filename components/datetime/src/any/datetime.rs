@@ -184,6 +184,93 @@ impl DateTimeFormatter {
         Self::try_new_unstable(&deserializing, locale, options)
     }
 
+    /// Constructor that supports experimental options.
+    ///
+    /// Enabled by the "experimental" feature.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::DateTime;
+    /// use icu::datetime::{options::components, DateTimeFormatter};
+    /// use icu::locid::locale;
+    /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
+    /// use std::str::FromStr;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let mut options = components::Bag::default();
+    /// options.year = Some(components::Year::Numeric);
+    /// options.month = Some(components::Month::Long);
+    ///
+    /// let dtf = DateTimeFormatter::try_new_experimental_unstable(
+    ///     &provider,
+    ///     &locale!("en-u-ca-gregory").into(),
+    ///     options.into()
+    /// )
+    /// .expect("Failed to create TypedDateTimeFormatter instance.");
+    ///
+    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    ///     .expect("Failed to construct DateTime.");
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// assert_eq!(value, "September 2020");
+    /// ```
+    #[cfg(feature = "experimental")]
+    #[inline(never)]
+    pub fn try_new_experimental_unstable<P>(
+        data_provider: &P,
+        locale: &DataLocale,
+        options: DateTimeFormatterOptions,
+    ) -> Result<Self, DateTimeFormatterError>
+    where
+        P: DataProvider<TimeSymbolsV1Marker>
+            + DataProvider<TimeLengthsV1Marker>
+            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
+            + DataProvider<OrdinalV1Marker>
+            + DataProvider<WeekDataV1Marker>
+            + DataProvider<DecimalSymbolsV1Marker>
+            + DataProvider<GregorianDateLengthsV1Marker>
+            + DataProvider<BuddhistDateLengthsV1Marker>
+            + DataProvider<JapaneseDateLengthsV1Marker>
+            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
+            + DataProvider<CopticDateLengthsV1Marker>
+            + DataProvider<IndianDateLengthsV1Marker>
+            + DataProvider<EthiopianDateLengthsV1Marker>
+            + DataProvider<GregorianDateSymbolsV1Marker>
+            + DataProvider<BuddhistDateSymbolsV1Marker>
+            + DataProvider<JapaneseDateSymbolsV1Marker>
+            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
+            + DataProvider<CopticDateSymbolsV1Marker>
+            + DataProvider<IndianDateSymbolsV1Marker>
+            + DataProvider<EthiopianDateSymbolsV1Marker>
+            + DataProvider<JapaneseErasV1Marker>
+            + DataProvider<JapaneseExtendedErasV1Marker>
+            + ?Sized,
+    {
+        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, locale)?;
+        let kind = calendar.kind();
+
+        let patterns = PatternSelector::for_options_experimental(
+            data_provider,
+            calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
+            locale,
+            &kind.as_bcp47_value(),
+            &options,
+        )?;
+
+        Ok(Self(
+            raw::DateTimeFormatter::try_new(
+                data_provider,
+                patterns,
+                || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
+                locale,
+            )?,
+            calendar,
+        ))
+    }
+
     /// Construct a new [`DateTimeFormatter`] from a data provider that can provide all of the requested data.
     ///
     /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
@@ -218,62 +305,6 @@ impl DateTimeFormatter {
     /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
-    #[cfg(feature = "experimental")]
-    #[inline(never)]
-    pub fn try_new_unstable<P>(
-        data_provider: &P,
-        locale: &DataLocale,
-        options: DateTimeFormatterOptions,
-    ) -> Result<Self, DateTimeFormatterError>
-    where
-        P: DataProvider<TimeSymbolsV1Marker>
-            + DataProvider<TimeLengthsV1Marker>
-            + DataProvider<crate::provider::calendar::DateSkeletonPatternsV1Marker>
-            + DataProvider<OrdinalV1Marker>
-            + DataProvider<WeekDataV1Marker>
-            + DataProvider<DecimalSymbolsV1Marker>
-            + DataProvider<GregorianDateLengthsV1Marker>
-            + DataProvider<BuddhistDateLengthsV1Marker>
-            + DataProvider<JapaneseDateLengthsV1Marker>
-            + DataProvider<JapaneseExtendedDateLengthsV1Marker>
-            + DataProvider<CopticDateLengthsV1Marker>
-            + DataProvider<IndianDateLengthsV1Marker>
-            + DataProvider<EthiopianDateLengthsV1Marker>
-            + DataProvider<GregorianDateSymbolsV1Marker>
-            + DataProvider<BuddhistDateSymbolsV1Marker>
-            + DataProvider<JapaneseDateSymbolsV1Marker>
-            + DataProvider<JapaneseExtendedDateSymbolsV1Marker>
-            + DataProvider<CopticDateSymbolsV1Marker>
-            + DataProvider<IndianDateSymbolsV1Marker>
-            + DataProvider<EthiopianDateSymbolsV1Marker>
-            + DataProvider<JapaneseErasV1Marker>
-            + DataProvider<JapaneseExtendedErasV1Marker>
-            + ?Sized,
-    {
-        let calendar = AnyCalendar::try_new_for_locale_unstable(data_provider, locale)?;
-        let kind = calendar.kind();
-
-        let patterns = PatternSelector::for_options(
-            data_provider,
-            calendar::load_lengths_for_any_calendar_kind(data_provider, locale, kind)?,
-            locale,
-            &kind.as_bcp47_value(),
-            &options,
-        )?;
-
-        Ok(Self(
-            raw::DateTimeFormatter::try_new(
-                data_provider,
-                patterns,
-                || calendar::load_symbols_for_any_calendar_kind(data_provider, locale, kind),
-                locale,
-            )?,
-            calendar,
-        ))
-    }
-
-    #[allow(missing_docs)] // The docs use the "experimental" version
-    #[cfg(not(feature = "experimental"))]
     #[inline(never)]
     pub fn try_new_unstable<P>(
         data_provider: &P,
