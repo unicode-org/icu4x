@@ -143,6 +143,22 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendar::try_new_for_locale_with_buffer_provider",
         "icu::calendar::AnyCalendar::try_new_with_any_provider",
         "icu::calendar::AnyCalendar::try_new_with_buffer_provider",
+        "icu::datetime::TimeZoneFormatter::try_new_with_any_provider",
+        "icu::datetime::TimeZoneFormatter::try_new_with_buffer_provider",
+        "icu::datetime::TypedDateFormatter::try_new_with_any_provider",
+        "icu::datetime::TypedDateFormatter::try_new_with_buffer_provider",
+        "icu::datetime::TypedDateTimeFormatter::try_new_with_any_provider",
+        "icu::datetime::TypedDateTimeFormatter::try_new_with_buffer_provider",
+        "icu::datetime::DateFormatter::try_new_with_any_provider",
+        "icu::datetime::DateFormatter::try_new_with_buffer_provider",
+        "icu::datetime::DateTimeFormatter::try_new_with_any_provider",
+        "icu::datetime::DateTimeFormatter::try_new_with_buffer_provider",
+        "icu::datetime::TimeFormatter::try_new_with_any_provider",
+        "icu::datetime::TimeFormatter::try_new_with_buffer_provider",
+        "icu::datetime::ZonedDateTimeFormatter::try_new_with_any_provider",
+        "icu::datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider",
+        "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_any_provider",
+        "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_buffer_provider",
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
@@ -155,6 +171,20 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendar::convert_any_date",
         "icu::calendar::AnyCalendar::convert_any_datetime",
 
+        // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
+        // Potential solutions:
+        // - borrow and clone (cheap as long it's not json)
+        // - introduce a DTFBorrowed type in Rust and FFI (bunch of work, annoying)
+        // - introduce a DateDataBundle and TimeDataBundle struct to FFI that contains
+        //   basically just DateFormat or TimeFormat but it is explicitly an Option that
+        //   can be destructively passed to these constructors via &mut self. All future
+        //   specialized constructors show up on this type instead.
+        "icu::datetime::DateTimeFormatter::try_from_date_and_time",
+        "icu::datetime::TypedDateTimeFormatter::try_from_date_and_time",
+
+        // experimental
+        "icu::datetime::DateTimeFormatter::resolve_components",
+        "icu::datetime::TypedDateTimeFormatter::resolve_components",
 
         // Individual calendars: Currently the main entry point is AnyCalendar
         "icu::calendar::buddhist",
@@ -190,6 +220,9 @@ lazy_static::lazy_static! {
         // experimental
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
+
+        // Not necessary for now
+        "icu::calendar::Date::day_of_year_info",
 
 
         // Formatting wrappers, may be supported in the future
@@ -252,6 +285,7 @@ lazy_static::lazy_static! {
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
+        "icu::datetime::time_zone::TimeZoneFormatter",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
