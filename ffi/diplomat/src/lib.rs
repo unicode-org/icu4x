@@ -59,6 +59,7 @@ pub mod segmenter_sentence;
 pub mod segmenter_word;
 pub mod time;
 pub mod timezone;
+pub mod timezone_formatter;
 
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;

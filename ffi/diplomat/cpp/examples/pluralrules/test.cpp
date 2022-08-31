@@ -17,7 +17,7 @@ int main() {
     ICU4XPluralRules pr = ICU4XPluralRules::try_new_cardinal(dp, locale).ok().value();
 
     ICU4XPluralOperands op = { .i = 3 };
-    ICU4XPluralCategory cat = pr.select(op);
+    ICU4XPluralCategory cat = pr.category_for(op);
 
     std::cout << "Category is " << static_cast<int32_t>(cat)
                                 << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Few) << ")"
@@ -27,7 +27,7 @@ int main() {
     }
 
     op = ICU4XPluralOperands::create("1011.0").ok().value();
-    cat = pr.select(op);
+    cat = pr.category_for(op);
     std::cout << "Category is " << static_cast<int32_t>(cat)
                                 << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Many) << ")"
                                 << std::endl;

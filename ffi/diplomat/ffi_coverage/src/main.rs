@@ -188,10 +188,38 @@ lazy_static::lazy_static! {
         "icu::datetime::FormattedDateTime",
         "icu::datetime::FormattedZonedDateTime",
 
+        // Rust-specific power user API for rules ASTS and such
+        // could be exposed in the future but it's complicated
+        "icu::plurals::rules",
+
+        // May be exposed when we have associated constants over FFI
+        "icu::properties::BidiClass",
+        "icu::properties::CanonicalCombiningClass",
+        "icu::properties::EastAsianWidth",
+        "icu::properties::GeneralCategory",
+        "icu::properties::GeneralCategoryGroup",
+        "icu::properties::GraphemeClusterBreak",
+        "icu::properties::LineBreak",
+        "icu::properties::Script",
+        "icu::properties::SentenceBreak",
+        "icu::properties::WordBreak",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
         // =========================
+
+        // Provider modules
+        // We could potentially expose them later, but it's hard to expose them
+        // uniformly especially for complex types
+        "icu::calendar::provider",
+        "icu::datetime::provider",
+        "icu::plurals::provider",
+        "icu::properties::provider",
+
+        // Reexports (tool doesn't currently handle these)
+        "icu::calendar::any_calendar::AnyCalendar",
+        "icu::calendar::any_calendar::AnyCalendarKind",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -224,15 +252,11 @@ lazy_static::lazy_static! {
         // (which are hard to do in a zero-cost way over FFI)
         "icu::calendar::types",
 
-        // Provider modules
-        // We could potentially expose them later, but it's hard to expose them
-        // uniformly especially for complex types
-        "icu::calendar::provider",
-        "icu::datetime::provider",
+        // Convenience iterator for Rust
+        "icu::plurals::PluralCategory::all",
+        // associated type
+        "icu::plurals::PluralOperands::Err",
 
-        // Reexports (tool doesn't currently handle these)
-        "icu::calendar::any_calendar::AnyCalendar",
-        "icu::calendar::any_calendar::AnyCalendarKind",
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 

@@ -11,13 +11,27 @@ import { ICU4XMetaZoneCalculator } from "./ICU4XMetaZoneCalculator";
 export class ICU4XCustomTimeZone {
 
   /**
+
+   * Creates a time zone from an offset string.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_str(s: string): ICU4XCustomTimeZone | never;
 
   /**
+
+   * Creates a time zone with no information.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.new_empty Rust documentation for `new_empty`} for more information.
    */
   static create_empty(): ICU4XCustomTimeZone;
+
+  /**
+
+   * Creates a time zone for UTC.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.utc Rust documentation for `utc`} for more information.
+   */
+  static create_utc(): ICU4XCustomTimeZone;
 
   /**
 
@@ -257,9 +271,9 @@ export class ICU4XCustomTimeZone {
 
    * Sets the meta zone based on the time zone and the local timestamp.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_set_meta_zone Rust documentation for `maybe_set_meta_zone`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone Rust documentation for `maybe_calculate_meta_zone`} for more information.
 
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone 1}
    */
-  maybe_set_meta_zone(local_datetime: ICU4XIsoDateTime, metazone_calculator: ICU4XMetaZoneCalculator): void;
+  maybe_calculate_meta_zone(local_datetime: ICU4XIsoDateTime, metazone_calculator: ICU4XMetaZoneCalculator): void;
 }
