@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661958926470,
+  "lastUpdate": 1661972663560,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25943,6 +25943,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/95d977f393ff7f46ce358b9fa12b548cd41b0625"
         },
         "date": 1661958875477,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "cd0f1fe2b14e914e62896b4e3f60a8855f339856",
+          "message": "Whack-a-mole part 4: properties and locale (#2488)\n\n* Add all sets FFI\n\n* Add general category group\n\n* links and stuff\n\n* Add get_set_for_value\n\n* link up bidi_class\n\n* locale paring\n\n* regen\n\n* update tests\n\n* some review fixes\n\n* rename\n\n* gen\n\n* tests\n\n* remove docs\n\n* regen\n\n* add 32\n\n* regen\n\n* post merge coverage regen\n\n* Fix name; fix position in ignorelist\n\n* module doesn't exist anymore\n\n* also filter out properties collections (for now)\n\n* rename",
+          "timestamp": "2022-08-31T12:02:11-07:00",
+          "tree_id": "a020ec0bd06f759c0ab2cef41e50c9e37b08ca9c",
+          "url": "https://github.com/unicode-org/icu4x/commit/cd0f1fe2b14e914e62896b4e3f60a8855f339856"
+        },
+        "date": 1661972616455,
         "tool": "ndjson",
         "benches": [
           {
