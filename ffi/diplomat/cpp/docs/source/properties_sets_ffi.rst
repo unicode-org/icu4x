@@ -19,6 +19,11 @@
         See the `Rust documentation for contains <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains>`__ for more information.
 
 
+    .. cpp:function:: bool contains_u32(uint32_t cp) const
+
+        Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
+
+
     .. cpp:function:: static diplomat::result<ICU4XCodePointSetData, ICU4XError> try_load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group)
 
         which is a mask with the same format as the ``U_GC_XX_MASK`` mask in ICU4C

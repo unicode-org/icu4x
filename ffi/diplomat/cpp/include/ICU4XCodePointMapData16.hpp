@@ -47,6 +47,11 @@ class ICU4XCodePointMapData16 {
   uint16_t get(char32_t cp) const;
 
   /**
+   * Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
+   */
+  uint16_t get_u32(uint32_t cp) const;
+
+  /**
    * Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
    * 
    * See the [Rust documentation for `get_set_for_value`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get_set_for_value) for more information.
@@ -74,6 +79,9 @@ class ICU4XCodePointMapData16 {
 
 inline uint16_t ICU4XCodePointMapData16::get(char32_t cp) const {
   return capi::ICU4XCodePointMapData16_get(this->inner.get(), cp);
+}
+inline uint16_t ICU4XCodePointMapData16::get_u32(uint32_t cp) const {
+  return capi::ICU4XCodePointMapData16_get_u32(this->inner.get(), cp);
 }
 inline ICU4XCodePointSetData ICU4XCodePointMapData16::get_set_for_value(uint16_t value) const {
   return ICU4XCodePointSetData(capi::ICU4XCodePointMapData16_get_set_for_value(this->inner.get(), value));

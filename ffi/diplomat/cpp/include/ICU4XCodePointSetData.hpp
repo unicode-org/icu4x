@@ -44,6 +44,11 @@ class ICU4XCodePointSetData {
   bool contains(char32_t cp) const;
 
   /**
+   * Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
+   */
+  bool contains_u32(uint32_t cp) const;
+
+  /**
    * which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
    * 
    * See the [Rust documentation for `load_for_general_category_group`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_general_category_group.html) for more information.
@@ -518,6 +523,9 @@ class ICU4XCodePointSetData {
 
 inline bool ICU4XCodePointSetData::contains(char32_t cp) const {
   return capi::ICU4XCodePointSetData_contains(this->inner.get(), cp);
+}
+inline bool ICU4XCodePointSetData::contains_u32(uint32_t cp) const {
+  return capi::ICU4XCodePointSetData_contains_u32(this->inner.get(), cp);
 }
 inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData::try_load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group) {
   auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_try_load_for_general_category_group(provider.AsFFI(), group);

@@ -25,6 +25,12 @@ export class ICU4XCodePointSetData {
 
   /**
 
+   * Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
+   */
+  contains_u32(cp: u32): boolean;
+
+  /**
+
    * which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_general_category_group.html Rust documentation for `load_for_general_category_group`} for more information.

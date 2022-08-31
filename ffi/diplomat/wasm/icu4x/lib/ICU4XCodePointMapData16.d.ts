@@ -1,4 +1,4 @@
-import { u16, char } from "./diplomat-runtime"
+import { u16, u32, char } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
@@ -25,6 +25,12 @@ export class ICU4XCodePointMapData16 {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get Rust documentation for `get`} for more information.
    */
   get(cp: char): u16;
+
+  /**
+
+   * Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
+   */
+  get_u32(cp: u32): u16;
 
   /**
 
