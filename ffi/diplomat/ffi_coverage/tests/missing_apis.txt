@@ -161,6 +161,7 @@ icu::datetime::DateFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::DateFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::DateTimeFormatter::resolve_components#FnInStruct
 icu::datetime::DateTimeFormatter::try_from_date_and_time#FnInStruct
+icu::datetime::DateTimeFormatter::try_new_experimental_unstable#FnInStruct
 icu::datetime::DateTimeFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::DateTimeFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::DateTimeFormatterOptions#Enum
@@ -174,12 +175,14 @@ icu::datetime::TypedDateFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::TypedDateFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::TypedDateTimeFormatter::resolve_components#FnInStruct
 icu::datetime::TypedDateTimeFormatter::try_from_date_and_time#FnInStruct
+icu::datetime::TypedDateTimeFormatter::try_new_experimental_unstable#FnInStruct
 icu::datetime::TypedDateTimeFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::TypedDateTimeFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter#Struct
 icu::datetime::TypedZonedDateTimeFormatter::format#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::format_to_string#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::format_to_write#FnInStruct
+icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental_unstable#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::try_new_with_buffer_provider#FnInStruct
@@ -187,6 +190,7 @@ icu::datetime::ZonedDateTimeFormatter#Struct
 icu::datetime::ZonedDateTimeFormatter::format#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::format_to_string#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::format_to_write#FnInStruct
+icu::datetime::ZonedDateTimeFormatter::try_new_experimental_unstable#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::try_new_unstable#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider#FnInStruct
