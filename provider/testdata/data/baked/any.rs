@@ -43,7 +43,7 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_datetime")]
         const COPTICDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY.get_hash();
-        #[cfg(feature = "icu_datetime")]
+        #[cfg(all(feature = "icu_datetime", feature = "experimental"))]
         const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_datetime")]
@@ -425,7 +425,7 @@ impl AnyProvider for BakedDataProvider {
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
-                #[cfg(feature = "icu_datetime")]
+                #[cfg(all(feature = "icu_datetime", feature = "experimental"))]
                 DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1_u_ca::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(|&data| {

@@ -11,7 +11,7 @@
 //! in ICU:
 //! * [`unstable`], [`unstable_no_fallback`]
 //! * [`any`], [`any_no_fallback`]
-//! * [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`serde` feature)
+//! * [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`buffer` feature)
 //!
 //!
 //! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information

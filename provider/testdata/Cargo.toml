@@ -266,10 +266,11 @@ icuexportdata_glob = [
 icuexportdata_gitref = "icu4x/2022-08-17/71.x"
 
 [package.metadata.cargo-all-features]
-# Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
+extra_features = [
+    "icu_datetime",
+    "icu_list",
+]
 
 [dependencies]
 icu_provider = { version = "1.0.0-beta1", path = "../core" }
@@ -310,7 +311,7 @@ zerovec = { version = "0.8", path = "../../utils/zerovec" }
 icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar", default-features = false, optional = true }
 icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", default-features = false, optional = true }
 icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", default-features = false, optional = true }
-icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", features = ["experimental"], default-features = false, optional = true }
+icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", default-features = false, optional = true }
 icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal", default-features = false, optional = true }
 icu_list = { version = "1.0.0-beta1", path = "../../components/list", default-features = false, optional = true }
 icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_transform", default-features = false, optional = true }
@@ -336,8 +337,8 @@ default = [
 experimental = [
     "icu_segmenter",
     "icu_casemapping",
+    "icu_datetime/experimental",
 ]
-
 buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]
 std = []
 bin = [

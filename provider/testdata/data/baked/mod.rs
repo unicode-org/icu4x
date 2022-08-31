@@ -203,7 +203,7 @@ impl DataProvider<::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker>
         })
     }
 }
-#[cfg(feature = "icu_datetime")]
+#[cfg(all(feature = "icu_datetime", feature = "experimental"))]
 impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker> for BakedDataProvider {
     fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker>, DataError> {
         Ok(DataResponse {
