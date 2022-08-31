@@ -1819,8 +1819,10 @@ impl FromStr for FixedDecimal {
         // The string without the exponent (or sign)
         // We do the bulk of the calculation on this string,
         // and extract the exponent at the end
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let no_exponent_str = &no_sign_str[..exponent_index];
+        let no_exponent_str = match no_sign_str.get(..exponent_index) {
+            Some(slice) => slice,
+            None => unreachable!("`exponent_index` must be within range."),
+        };
 
         // If there was no dot, truncate the dot index
         if dot_index > exponent_index {
@@ -1897,12 +1899,14 @@ impl FromStr for FixedDecimal {
         }
 
         // Constructing DecimalFixed.digits
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
-        let v: SmallVec<[u8; 8]> = no_exponent_str[leftmost_digit..rightmost_digit_end]
-            .iter()
-            .filter(|c| **c != b'.')
-            .map(|c| c - b'0')
-            .collect();
+        let v: SmallVec<[u8; 8]> = match no_exponent_str.get(leftmost_digit..rightmost_digit_end) {
+            Some(slice) => slice,
+            None => unreachable!("`leftmost_digit & rightmost_digit_end` must be within range."),
+        }
+        .iter()
+        .filter(|c| **c != b'.')
+        .map(|c| c - b'0')
+        .collect();
 
         let v_len = v.len();
         debug_assert_eq!(v_len, digits_str_len);
@@ -1912,9 +1916,12 @@ impl FromStr for FixedDecimal {
         if has_exponent {
             let mut pow = 0;
             let mut pos_neg = 1;
-            #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
-            for digit in &no_sign_str[exponent_index + 1..] {
+            let no_sign_str_from_exponent = match no_sign_str.get(exponent_index + 1..) {
+                Some(slice) => slice,
+                None => unreachable!("`exponent_index + 1` must be within range."),
+            };
+
+            for digit in no_sign_str_from_exponent {
                 if *digit == b'-' {
                     pos_neg = -1;
                     continue;
