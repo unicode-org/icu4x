@@ -36,8 +36,6 @@ export class ICU4XCodePointMapData16 {
 
   /**
 
-   * Gets a map for Unicode property Script from a {@link ICU4XDataProvider `ICU4XDataProvider`}.
-
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html Rust documentation for `load_script`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */

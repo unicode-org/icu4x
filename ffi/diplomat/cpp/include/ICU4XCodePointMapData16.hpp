@@ -54,7 +54,7 @@ class ICU4XCodePointMapData16 {
   ICU4XCodePointSetData get_set_for_value(uint16_t value) const;
 
   /**
-   * Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
+   * 
    * 
    * See the [Rust documentation for `load_script`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_script.html) for more information.
    */

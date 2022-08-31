@@ -54,49 +54,49 @@ class ICU4XCodePointMapData8 {
   ICU4XCodePointSetData get_set_for_value(uint8_t value) const;
 
   /**
-   * Gets a map for Unicode property General_Category from a [`ICU4XDataProvider`].
+   * 
    * 
    * See the [Rust documentation for `load_general_category`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_general_category.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_general_category(const ICU4XDataProvider& provider);
 
   /**
-   * Gets a map for Unicode property Bidi_Class from a [`ICU4XDataProvider`].
+   * 
    * 
    * See the [Rust documentation for `load_bidi_class`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_bidi_class.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_bidi_class(const ICU4XDataProvider& provider);
 
   /**
-   * Gets a map for Unicode property East_Asian_Width from a [`ICU4XDataProvider`].
+   * 
    * 
    * See the [Rust documentation for `load_east_asian_width`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_east_asian_width.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_east_asian_width(const ICU4XDataProvider& provider);
 
   /**
-   * Gets a map for Unicode property Line_Break from a [`ICU4XDataProvider`].
+   * 
    * 
    * See the [Rust documentation for `load_line_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_line_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_line_break(const ICU4XDataProvider& provider);
 
   /**
-   * Gets a map for Unicode property Grapheme_Cluster_Break from a [`ICU4XDataProvider`].
+   * 
    * 
    * See the [Rust documentation for `load_grapheme_cluster_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_grapheme_cluster_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> try_grapheme_cluster_break(const ICU4XDataProvider& provider);
 
   /**
-   * Gets a map for Unicode property Word_Break from a [`ICU4XDataProvider`].
+   * 
    * 
    * See the [Rust documentation for `load_word_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_word_break.html) for more information.
    */
   static diplomat::result<ICU4XCodePointMapData8, ICU4XError> load_word_break(const ICU4XDataProvider& provider);
 
   /**
-   * Gets a map for Unicode property Sentence_Break from a [`ICU4XDataProvider`].
+   * 
    * 
    * See the [Rust documentation for `load_sentence_break`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/fn.load_sentence_break.html) for more information.
    */
