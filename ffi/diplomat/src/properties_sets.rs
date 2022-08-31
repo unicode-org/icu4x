@@ -33,7 +33,6 @@ pub mod ffi {
             self.0.as_borrowed().contains(cp)
         }
 
-        /// Gets a set for all characters in a particular General Category group,
         /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
         #[diplomat::rust_link(icu::properties::sets::load_for_general_category_group, Fn)]
         pub fn try_load_for_general_category_group(
@@ -48,7 +47,6 @@ pub mod ffi {
                 .into()
         }
 
-        /// Gets a set for Unicode property ascii_hex_digit from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::sets::load_ascii_hex_digit, Fn)]
         pub fn load_ascii_hex_digit(
             provider: &ICU4XDataProvider,
@@ -60,7 +58,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property alnum from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_alnum, Fn)]
         pub fn load_alnum(
             provider: &ICU4XDataProvider,
@@ -72,7 +70,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property alphabetic from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_alphabetic, Fn)]
         pub fn load_alphabetic(
             provider: &ICU4XDataProvider,
@@ -84,7 +82,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property bidi_control from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_bidi_control, Fn)]
         pub fn load_bidi_control(
             provider: &ICU4XDataProvider,
@@ -96,7 +94,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property bidi_mirrored from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_bidi_mirrored, Fn)]
         pub fn load_bidi_mirrored(
             provider: &ICU4XDataProvider,
@@ -108,7 +106,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property blank from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_blank, Fn)]
         pub fn load_blank(
             provider: &ICU4XDataProvider,
@@ -120,7 +118,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_cased, Fn)]
         pub fn load_cased(
             provider: &ICU4XDataProvider,
@@ -132,7 +130,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property case_ignorable from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_case_ignorable, Fn)]
         pub fn load_case_ignorable(
             provider: &ICU4XDataProvider,
@@ -145,7 +143,6 @@ pub mod ffi {
                 .into()
         }
 
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::sets::load_full_composition_exclusion, Fn)]
         pub fn load_full_composition_exclusion(
             provider: &ICU4XDataProvider,
@@ -157,7 +154,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_casefolded, Fn)]
         pub fn load_changes_when_casefolded(
             provider: &ICU4XDataProvider,
@@ -169,7 +166,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_casemapped, Fn)]
         pub fn load_changes_when_casemapped(
             provider: &ICU4XDataProvider,
@@ -181,7 +178,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_nfkc_casefolded, Fn)]
         pub fn load_changes_when_nfkc_casefolded(
             provider: &ICU4XDataProvider,
@@ -193,7 +190,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_lowercased, Fn)]
         pub fn load_changes_when_lowercased(
             provider: &ICU4XDataProvider,
@@ -205,7 +202,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_titlecased, Fn)]
         pub fn load_changes_when_titlecased(
             provider: &ICU4XDataProvider,
@@ -217,7 +214,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_changes_when_uppercased, Fn)]
         pub fn load_changes_when_uppercased(
             provider: &ICU4XDataProvider,
@@ -229,7 +226,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_dash, Fn)]
         pub fn load_dash(
             provider: &ICU4XDataProvider,
@@ -241,7 +238,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_deprecated, Fn)]
         pub fn load_deprecated(
             provider: &ICU4XDataProvider,
@@ -253,7 +250,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_default_ignorable_code_point, Fn)]
         pub fn load_default_ignorable_code_point(
             provider: &ICU4XDataProvider,
@@ -265,7 +262,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_diacritic, Fn)]
         pub fn load_diacritic(
             provider: &ICU4XDataProvider,
@@ -277,7 +274,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_emoji_modifier_base, Fn)]
         pub fn load_emoji_modifier_base(
             provider: &ICU4XDataProvider,
@@ -289,7 +286,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_emoji_component, Fn)]
         pub fn load_emoji_component(
             provider: &ICU4XDataProvider,
@@ -301,7 +298,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_emoji_modifier, Fn)]
         pub fn load_emoji_modifier(
             provider: &ICU4XDataProvider,
@@ -313,7 +310,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_emoji, Fn)]
         pub fn load_emoji(
             provider: &ICU4XDataProvider,
@@ -325,7 +322,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_emoji_presentation, Fn)]
         pub fn load_emoji_presentation(
             provider: &ICU4XDataProvider,
@@ -337,7 +334,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_extender, Fn)]
         pub fn load_extender(
             provider: &ICU4XDataProvider,
@@ -349,7 +346,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_extended_pictographic, Fn)]
         pub fn load_extended_pictographic(
             provider: &ICU4XDataProvider,
@@ -361,7 +358,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_graph, Fn)]
         pub fn load_graph(
             provider: &ICU4XDataProvider,
@@ -373,7 +370,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_grapheme_base, Fn)]
         pub fn load_grapheme_base(
             provider: &ICU4XDataProvider,
@@ -386,7 +383,6 @@ pub mod ffi {
                 .into()
         }
 
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::sets::load_grapheme_extend, Fn)]
         pub fn load_grapheme_extend(
             provider: &ICU4XDataProvider,
@@ -398,7 +394,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_grapheme_link, Fn)]
         pub fn load_grapheme_link(
             provider: &ICU4XDataProvider,
@@ -410,7 +406,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_hex_digit, Fn)]
         pub fn load_hex_digit(
             provider: &ICU4XDataProvider,
@@ -422,7 +418,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_hyphen, Fn)]
         pub fn load_hyphen(
             provider: &ICU4XDataProvider,
@@ -434,7 +430,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_id_continue, Fn)]
         pub fn load_id_continue(
             provider: &ICU4XDataProvider,
@@ -446,7 +442,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_ideographic, Fn)]
         pub fn load_ideographic(
             provider: &ICU4XDataProvider,
@@ -458,7 +454,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_id_start, Fn)]
         pub fn load_id_start(
             provider: &ICU4XDataProvider,
@@ -470,7 +466,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_ids_binary_operator, Fn)]
         pub fn load_ids_binary_operator(
             provider: &ICU4XDataProvider,
@@ -482,7 +478,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_ids_trinary_operator, Fn)]
         pub fn load_ids_trinary_operator(
             provider: &ICU4XDataProvider,
@@ -494,7 +490,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_join_control, Fn)]
         pub fn load_join_control(
             provider: &ICU4XDataProvider,
@@ -506,7 +502,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_logical_order_exception, Fn)]
         pub fn load_logical_order_exception(
             provider: &ICU4XDataProvider,
@@ -518,7 +514,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_lowercase, Fn)]
         pub fn load_lowercase(
             provider: &ICU4XDataProvider,
@@ -530,7 +526,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_math, Fn)]
         pub fn load_math(
             provider: &ICU4XDataProvider,
@@ -542,7 +538,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_noncharacter_code_point, Fn)]
         pub fn load_noncharacter_code_point(
             provider: &ICU4XDataProvider,
@@ -554,7 +550,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_nfc_inert, Fn)]
         pub fn load_nfc_inert(
             provider: &ICU4XDataProvider,
@@ -566,7 +562,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_nfd_inert, Fn)]
         pub fn load_nfd_inert(
             provider: &ICU4XDataProvider,
@@ -578,7 +574,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_nfkc_inert, Fn)]
         pub fn load_nfkc_inert(
             provider: &ICU4XDataProvider,
@@ -590,7 +586,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_nfkd_inert, Fn)]
         pub fn load_nfkd_inert(
             provider: &ICU4XDataProvider,
@@ -602,7 +598,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_pattern_syntax, Fn)]
         pub fn load_pattern_syntax(
             provider: &ICU4XDataProvider,
@@ -614,7 +610,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_pattern_white_space, Fn)]
         pub fn load_pattern_white_space(
             provider: &ICU4XDataProvider,
@@ -627,7 +623,6 @@ pub mod ffi {
                 .into()
         }
 
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::sets::load_prepended_concatenation_mark, Fn)]
         pub fn load_prepended_concatenation_mark(
             provider: &ICU4XDataProvider,
@@ -639,7 +634,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_print, Fn)]
         pub fn load_print(
             provider: &ICU4XDataProvider,
@@ -651,7 +646,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_quotation_mark, Fn)]
         pub fn load_quotation_mark(
             provider: &ICU4XDataProvider,
@@ -663,7 +658,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_radical, Fn)]
         pub fn load_radical(
             provider: &ICU4XDataProvider,
@@ -675,7 +670,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_regional_indicator, Fn)]
         pub fn load_regional_indicator(
             provider: &ICU4XDataProvider,
@@ -687,7 +682,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_soft_dotted, Fn)]
         pub fn load_soft_dotted(
             provider: &ICU4XDataProvider,
@@ -699,7 +694,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_segment_starter, Fn)]
         pub fn load_segment_starter(
             provider: &ICU4XDataProvider,
@@ -711,7 +706,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_case_sensitive, Fn)]
         pub fn load_case_sensitive(
             provider: &ICU4XDataProvider,
@@ -723,7 +718,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_sentence_terminal, Fn)]
         pub fn load_sentence_terminal(
             provider: &ICU4XDataProvider,
@@ -735,7 +730,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_terminal_punctuation, Fn)]
         pub fn load_terminal_punctuation(
             provider: &ICU4XDataProvider,
@@ -747,7 +742,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_unified_ideograph, Fn)]
         pub fn load_unified_ideograph(
             provider: &ICU4XDataProvider,
@@ -759,7 +754,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_uppercase, Fn)]
         pub fn load_uppercase(
             provider: &ICU4XDataProvider,
@@ -771,7 +766,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_variation_selector, Fn)]
         pub fn load_variation_selector(
             provider: &ICU4XDataProvider,
@@ -783,7 +778,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_white_space, Fn)]
         pub fn load_white_space(
             provider: &ICU4XDataProvider,
@@ -795,7 +790,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_xdigit, Fn)]
         pub fn load_xdigit(
             provider: &ICU4XDataProvider,
@@ -807,7 +802,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_xid_continue, Fn)]
         pub fn load_xid_continue(
             provider: &ICU4XDataProvider,
@@ -819,7 +814,7 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-        /// Gets a set for Unicode property cased from a [`ICU4XDataProvider`].
+
         #[diplomat::rust_link(icu::properties::sets::load_xid_start, Fn)]
         pub fn load_xid_start(
             provider: &ICU4XDataProvider,

@@ -48,7 +48,6 @@ pub mod ffi {
             ))
         }
 
-        /// Gets a map for Unicode property General_Category from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_general_category, Fn)]
         pub fn load_general_category(
             provider: &ICU4XDataProvider,
@@ -56,7 +55,6 @@ pub mod ffi {
             Self::load_prop_inner(provider, |p| maps::load_general_category(p))
         }
 
-        /// Gets a map for Unicode property Bidi_Class from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Fn)]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
@@ -64,7 +62,6 @@ pub mod ffi {
             Self::load_prop_inner(provider, |p| maps::load_bidi_class(p))
         }
 
-        /// Gets a map for Unicode property East_Asian_Width from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_east_asian_width, Fn)]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
@@ -72,7 +69,6 @@ pub mod ffi {
             Self::load_prop_inner(provider, |p| maps::load_east_asian_width(p))
         }
 
-        /// Gets a map for Unicode property Line_Break from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_line_break, Fn)]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
@@ -80,7 +76,6 @@ pub mod ffi {
             Self::load_prop_inner(provider, |p| maps::load_line_break(p))
         }
 
-        /// Gets a map for Unicode property Grapheme_Cluster_Break from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn)]
         pub fn try_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
@@ -88,7 +83,6 @@ pub mod ffi {
             Self::load_prop_inner(provider, |p| maps::load_grapheme_cluster_break(p))
         }
 
-        /// Gets a map for Unicode property Word_Break from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_word_break, Fn)]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
@@ -96,7 +90,6 @@ pub mod ffi {
             Self::load_prop_inner(provider, |p| maps::load_word_break(p))
         }
 
-        /// Gets a map for Unicode property Sentence_Break from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_sentence_break, Fn)]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
@@ -155,7 +148,6 @@ pub mod ffi {
             ))
         }
 
-        /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_script, Fn)]
         pub fn load_script(
             provider: &ICU4XDataProvider,
