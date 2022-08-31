@@ -146,8 +146,6 @@ lazy_static::lazy_static! {
         // https://github.com/unicode-org/icu4x/issues/2492
         // =========================
 
-        // Largely for use by datetimeformat, not super public (#2421)
-        "icu::calendar::week_of",
         // Largely for use by datetimeformat, not generally useful
         "icu::calendar::AnyCalendar::convert_any_date",
         "icu::calendar::AnyCalendar::convert_any_datetime",
