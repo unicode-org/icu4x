@@ -22,13 +22,11 @@ use core::cmp::Ordering;
 use icu_collator::*;
 use icu_locid::{Locale, langid};
 
-let data_provider = icu_testdata::get_provider();
-
 let locale_es: Locale = langid!("es").into();
 let mut options = CollatorOptions::new();
 options.set_strength(Some(Strength::Primary));
 let collator_es: Collator =
-    Collator::try_new_unstable(&data_provider, &locale_es.into(), options).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &locale_es.into(), options).unwrap();
 
 assert_eq!(collator_es.compare("manna", "mañana"), Ordering::Less);
 
@@ -36,7 +34,7 @@ let locale_en: Locale = langid!("en").into();
 let mut options = CollatorOptions::new();
 options.set_strength(Some(Strength::Primary));
 let collator_en: Collator =
-    Collator::try_new_unstable(&data_provider, &locale_en.into(), options).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &locale_en.into(), options).unwrap();
 
 assert_eq!(collator_en.compare("manna", "mañana"), Ordering::Greater);
 
@@ -55,14 +53,12 @@ The degree of sensitivity in how to determine that strings are distinct.
 use core::cmp::Ordering;
 use icu_collator::*;
 
-let data_provider = icu_testdata::get_provider();
-
 // Primary Level
 
 let mut options_l1 = CollatorOptions::new();
 options_l1.set_strength(Some(Strength::Primary));
 let collator_l1: Collator =
-    Collator::try_new_unstable(&data_provider, &Default::default(), options_l1).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_l1).unwrap();
 
 assert_eq!(collator_l1.compare("a", "b"), Ordering::Less);  // primary
 assert_eq!(collator_l1.compare("as", "às"), Ordering::Equal);  // secondary
@@ -76,7 +72,7 @@ assert_eq!(collator_l1.compare("A", "Ⓐ"), Ordering::Equal);
 let mut options_l2 = CollatorOptions::new();
 options_l2.set_strength(Some(Strength::Secondary));
 let collator_l2: Collator =
-    Collator::try_new_unstable(&data_provider, &Default::default(), options_l2).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_l2).unwrap();
 
 assert_eq!(collator_l2.compare("a", "b"), Ordering::Less);  // primary
 assert_eq!(collator_l2.compare("as", "às"), Ordering::Less);  // secondary
@@ -90,7 +86,7 @@ assert_eq!(collator_l2.compare("A", "Ⓐ"), Ordering::Equal);
 let mut options_l3 = CollatorOptions::new();
 options_l3.set_strength(Some(Strength::Tertiary));
 let collator_l3: Collator =
-    Collator::try_new_unstable(&data_provider, &Default::default(), options_l3).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_l3).unwrap();
 
 assert_eq!(collator_l3.compare("a", "b"), Ordering::Less);  // primary
 assert_eq!(collator_l3.compare("as", "às"), Ordering::Less);  // secondary
@@ -115,8 +111,6 @@ for Thai, whose default is `AlternateHandling::Shifted`.
 use core::cmp::Ordering;
 use icu_collator::*;
 
-let data_provider = icu_testdata::get_provider();
-
 // If alternate handling is set to `NonIgnorable`, then differences among
 // these characters are of the same importance as differences among letters.
 
@@ -124,7 +118,7 @@ let mut options_3n = CollatorOptions::new();
 options_3n.set_strength(Some(Strength::Tertiary));
 options_3n.set_alternate_handling(Some(AlternateHandling::NonIgnorable));
 let collator_3n: Collator =
-    Collator::try_new_unstable(&data_provider, &Default::default(), options_3n).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_3n).unwrap();
 
 assert_eq!(collator_3n.compare("di Silva", "Di Silva"), Ordering::Less);
 assert_eq!(collator_3n.compare("Di Silva", "diSilva"), Ordering::Less);
@@ -139,7 +133,7 @@ let mut options_3s = CollatorOptions::new();
 options_3s.set_strength(Some(Strength::Tertiary));
 options_3s.set_alternate_handling(Some(AlternateHandling::Shifted));
 let collator_3s: Collator =
-    Collator::try_new_unstable(&data_provider, &Default::default(), options_3s).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_3s).unwrap();
 
 assert_eq!(collator_3s.compare("di Silva", "diSilva"), Ordering::Equal);
 assert_eq!(collator_3s.compare("diSilva", "Di Silva"), Ordering::Less);
@@ -150,7 +144,7 @@ let mut options_4s = CollatorOptions::new();
 options_4s.set_strength(Some(Strength::Quaternary));
 options_4s.set_alternate_handling(Some(AlternateHandling::Shifted));
 let collator_4s: Collator =
-    Collator::try_new_unstable(&data_provider, &Default::default(), options_4s).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_4s).unwrap();
 
 assert_eq!(collator_4s.compare("di Silva", "diSilva"), Ordering::Less);
 assert_eq!(collator_4s.compare("diSilva", "Di Silva"), Ordering::Less);
@@ -169,12 +163,11 @@ use icu_collator::*;
 
 // Primary
 
-let data_provider = icu_testdata::get_provider();
 let mut options = CollatorOptions::new();
 options.set_strength(Some(Strength::Primary));
 options.set_case_level(Some(false));
 let primary =
-  Collator::try_new_with_buffer_provider(&data_provider,
+  Collator::try_new_unstable(&icu_testdata::unstable(),
                     &Default::default(),
                     options).unwrap();
 
@@ -188,7 +181,7 @@ assert_eq!(primary.compare("dejAvu", "déjavu"), Ordering::Equal);
 options.set_strength(Some(Strength::Primary));
 options.set_case_level(Some(true));
 let primary_and_case =
-  Collator::try_new_with_buffer_provider(&data_provider,
+  Collator::try_new_unstable(&icu_testdata::unstable(),
                     &Default::default(),
                     options).unwrap();
 
@@ -202,7 +195,7 @@ assert_eq!(primary_and_case.compare("déjavu", "dejAvu"), Ordering::Equal);
 options.set_strength(Some(Strength::Secondary));
 options.set_case_level(Some(true));
 let secondary_and_case =
-  Collator::try_new_with_buffer_provider(&data_provider,
+  Collator::try_new_unstable(&icu_testdata::unstable(),
                     &Default::default(),
                     options).unwrap();
 
@@ -216,7 +209,7 @@ assert_eq!(secondary_and_case.compare("dejAvu", "déjavu"), Ordering::Less);  //
 options.set_strength(Some(Strength::Tertiary));
 options.set_case_level(Some(false));
 let tertiary =
-  Collator::try_new_with_buffer_provider(&data_provider,
+  Collator::try_new_unstable(&icu_testdata::unstable(),
                     &Default::default(),
                     options).unwrap();
 
@@ -245,14 +238,13 @@ numeric value.
 use core::cmp::Ordering;
 use icu_collator::*;
 
-let data_provider = icu_testdata::get_provider();
 
 // Numerical sorting off
 
 let mut options_num_off = CollatorOptions::new();
 options_num_off.set_numeric(Some(false));
 let collator_num_off: Collator =
-    Collator::try_new_unstable(&data_provider, &Default::default(), options_num_off).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_num_off).unwrap();
 assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 
 // Numerical sorting on
@@ -260,7 +252,7 @@ assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
 let mut options_num_on = CollatorOptions::new();
 options_num_on.set_numeric(Some(true));
 let collator_num_on: Collator =
-    Collator::try_new_unstable(&data_provider, &Default::default(), options_num_on).unwrap();
+    Collator::try_new_unstable(&icu_testdata::unstable(), &Default::default(), options_num_on).unwrap();
 assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 ```
 

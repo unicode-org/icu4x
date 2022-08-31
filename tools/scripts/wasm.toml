@@ -35,6 +35,7 @@ args = [
     "wasm-build-release", "--examples", "--workspace",
     "--features", "serde",
     "--exclude", "icu_datagen"
+    "--exclude", "icu_testdata"
 ]
 
 [tasks.wasm-dir]
