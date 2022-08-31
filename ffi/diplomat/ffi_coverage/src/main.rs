@@ -139,7 +139,11 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendar::try_new_with_any_provider",
         "icu::calendar::AnyCalendar::try_new_with_buffer_provider",
 
-        // Stuff that could be exposed over FFI but is not currently planned
+        // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
+        //
+        // Post 1.0 we should go through this and plan them, filing followups
+        // for ones we do plan and adding links here
+        // https://github.com/unicode-org/icu4x/issues/2492
         // =========================
 
         // Largely for use by datetimeformat, not super public (#2421)
