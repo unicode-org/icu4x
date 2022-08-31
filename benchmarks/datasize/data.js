@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661896859120,
+  "lastUpdate": 1661904967469,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25853,6 +25853,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/5e6141a710a913db0139ab63e7e2364f493dbff6"
         },
         "date": 1661896799753,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "780a04bd4c4127f21607b0e2d70d4487116f99d2",
+          "message": "Update collator examples (#2447)",
+          "timestamp": "2022-08-30T17:13:29-07:00",
+          "tree_id": "eeaa627ddfca59daa2f9fcfa341087187877c995",
+          "url": "https://github.com/unicode-org/icu4x/commit/780a04bd4c4127f21607b0e2d70d4487116f99d2"
+        },
+        "date": 1661904918788,
         "tool": "ndjson",
         "benches": [
           {
