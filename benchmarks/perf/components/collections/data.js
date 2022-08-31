@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661905580186,
+  "lastUpdate": 1661925962634,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -10906,6 +10906,126 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains/worst",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90db7c6a5ef3d64e969850c2655e8b9e45948c81",
+          "message": "Use char instead of U24 in normalizer data (#2481)\n\n* Use char instead of U24 in normalizer data\r\n\r\nchar now has the same 3-byte ULE representation as U24, so the postcard and\r\nthe baked form do not change. (The JSON form changes, though.)",
+          "timestamp": "2022-08-31T08:51:46+03:00",
+          "tree_id": "e09bb860703df76840e87b9c870285f830cb12e2",
+          "url": "https://github.com/unicode-org/icu4x/commit/90db7c6a5ef3d64e969850c2655e8b9e45948c81"
+        },
+        "date": 1661925907051,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 681,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 503,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 546,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 613,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 1038,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1088,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 503,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 550,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 614,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 640,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 1173,
+            "range": "± 127",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 45597094,
+            "range": "± 1737978",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           },
