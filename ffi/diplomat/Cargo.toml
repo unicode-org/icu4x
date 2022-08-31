@@ -73,7 +73,7 @@ writeable = { version = "0.4", path = "../../utils/writeable/" }
 # ALSO MAKE SURE TO UPDATE ffi_coverage/Cargo.toml!
 diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "dd70de7573e1ef30b312de04bb7e9f64e67bd19a" }
 diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "dd70de7573e1ef30b312de04bb7e9f64e67bd19a" }
-icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", optional = true, features = ["serde"] }
+icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", optional = true, features = ["buffer"] }
 
 [target.'cfg(not(target_arch = "wasm32"))'.dependencies]
 # Logging is automagical in wasm, we only need this for native

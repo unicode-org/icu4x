@@ -527,6 +527,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
     fn test_basic() {
         use crate::provider::calendar::{GregorianDateSymbolsV1Marker, TimeSymbolsV1Marker};
         use icu_calendar::DateTime;

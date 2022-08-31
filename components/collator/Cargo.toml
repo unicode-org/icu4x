@@ -47,7 +47,7 @@ databake = { version = "0.1.0", path = "../../utils/databake", optional = true, 
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 
 [dev-dependencies]
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_collator_serde", "icu_normalizer"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_collator", "icu_normalizer"] }
 atoi = "1.0.0"
 arraystring = "0.3.0"
 
@@ -60,3 +60,7 @@ default = []
 std = []
 serde = ["dep:serde", "zerovec/serde", "icu_properties/serde", "icu_normalizer/serde", "icu_collections/serde", "icu_provider/serde"]
 datagen = ["serde", "databake", "zerovec/databake", "icu_properties/databake", "icu_normalizer/databake", "icu_collections/databake"]
+
+[[test]]
+name = "tests"
+path = "tests/tests.rs"

@@ -887,6 +887,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
     fn test_japanese() {
         let calendar = Japanese::try_new_unstable(&icu_testdata::buffer().as_deserializing())
             .expect("Cannot load japanese data");

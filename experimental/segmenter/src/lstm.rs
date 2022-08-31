@@ -110,6 +110,7 @@ mod tests {
     use icu_provider::prelude::*;
 
     #[test]
+    #[cfg(feature = "serde")]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 

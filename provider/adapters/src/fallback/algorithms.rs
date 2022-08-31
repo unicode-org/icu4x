@@ -322,6 +322,7 @@ mod tests {
     ];
 
     #[test]
+    #[cfg(feature = "serde")]
     fn test_fallback() {
         let fallbacker_no_data = LocaleFallbacker::new_without_data();
         let fallbacker_with_data =

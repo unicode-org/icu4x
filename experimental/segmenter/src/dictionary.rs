@@ -164,6 +164,7 @@ impl<'l> DictionarySegmenter<'l> {
 }
 
 #[cfg(test)]
+#[cfg(feature = "serde")]
 mod tests {
     use super::*;
     use icu_locid::{locale, Locale};

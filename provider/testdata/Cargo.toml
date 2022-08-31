@@ -337,37 +337,8 @@ experimental = [
     "icu_segmenter",
     "icu_casemapping",
 ]
-icu_datetime = ["icu_calendar", "dep:icu_datetime", "icu_decimal", "icu_plurals"]
 
 buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]
-icu_calendar_serde = ["buffer", "icu_calendar/serde"]
-icu_casemapping_serde = ["buffer", "icu_casemapping/serde"]
-icu_collator_serde = ["buffer", "icu_collator/serde"]
-icu_datetime_serde = ["buffer", "icu_datetime/serde", "icu_calendar/serde", "icu_decimal/serde", "icu_plurals/serde"]
-icu_decimal_serde = ["buffer", "icu_decimal/serde"]
-icu_list_serde = ["buffer", "icu_list/serde"]
-icu_locid_transform_serde = ["buffer", "icu_locid_transform/serde"]
-icu_normalizer_serde = ["buffer", "icu_normalizer/serde"]
-icu_plurals_serde = ["buffer", "icu_plurals/serde"]
-icu_properties_serde = ["buffer", "icu_properties/serde"]
-icu_segmenter_serde = ["buffer", "icu_segmenter/serde"]
-icu_timezone_serde = ["buffer", "icu_timezone/serde"]
-serde = [
-    "icu_calendar_serde",
-    "icu_collator_serde",
-    "icu_datetime_serde",
-    "icu_decimal_serde",
-    "icu_list_serde",
-    "icu_locid_transform_serde",
-    "icu_normalizer_serde",
-    "icu_plurals_serde",
-    "icu_properties_serde",
-    "icu_timezone_serde",
-]
-experimental_serde = [
-    "icu_casemapping_serde",
-    "icu_segmenter_serde",
-]
 std = []
 bin = [
     "bytes",

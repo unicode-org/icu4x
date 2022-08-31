@@ -933,6 +933,7 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
     fn test_any_construction() {
         let buddhist = AnyCalendar::try_new_with_buffer_provider(
             &icu_testdata::buffer(),

@@ -293,6 +293,3 @@ pub use options::CaseFirst;
 pub use options::CollatorOptions;
 pub use options::MaxVariable;
 pub use options::Strength;
-
-#[cfg(test)]
-mod tests;
