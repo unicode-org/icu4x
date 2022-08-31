@@ -60,7 +60,9 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
 }
 
 /// The main collation data either for the root or for a tailoring
-#[icu_provider::data_struct(CollationDataV1Marker = "collator/data@1")]
+#[icu_provider::data_struct(
+    marker(CollationDataV1Marker, "collator/data@1", extension_key = "co")
+)]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]

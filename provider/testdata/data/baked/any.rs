@@ -253,7 +253,7 @@ impl AnyProvider for BakedDataProvider {
                 CASEMAPPINGV1MARKER => props::casemap_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                COLLATIONDATAV1MARKER => collator::data_v1::DATA
+                COLLATIONDATAV1MARKER => collator::data_v1_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 COLLATIONDIACRITICSV1MARKER => collator::dia_v1::DATA

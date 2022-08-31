@@ -1,5 +1,5 @@
 // @generated
-pub mod data_v1;
+pub mod data_v1_u_co;
 pub mod dia_v1;
 pub mod jamo_v1;
 pub mod meta_v1;

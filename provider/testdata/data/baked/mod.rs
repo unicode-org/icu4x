@@ -70,7 +70,7 @@ impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for BakedData
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::data_v1::DATA
+                *collator::data_v1_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDataV1Marker::KEY, req))?,
             ))),
