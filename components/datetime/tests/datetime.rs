@@ -20,7 +20,6 @@ use icu_datetime::provider::time_zones::{
     MetaZoneId, MetaZoneSpecificNamesLongV1Marker, MetaZoneSpecificNamesShortV1Marker,
     TimeZoneBcp47Id, TimeZoneFormatsV1Marker,
 };
-use icu_datetime::time_zone::TimeZoneFormatterConfig;
 use icu_datetime::{
     pattern::runtime,
     provider::calendar::*,
@@ -504,13 +503,13 @@ fn test_time_zone_format_configs() {
         {
             for &config_input in configs {
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
-                    let tzf = TimeZoneFormatter::try_from_config_unstable(
+                    let mut tzf = TimeZoneFormatter::try_new_unstable(
                         &icu_testdata::unstable(),
                         &data_locale,
-                        config_input.into(),
                         fallback_format.into(),
                     )
                     .unwrap();
+                    config_input.set_on_formatter(&mut tzf).unwrap();
                     let mut buffer = String::new();
                     tzf.format_to_write(&mut buffer, &time_zone).unwrap();
                     assert_eq!(
@@ -537,17 +536,16 @@ fn test_time_zone_format_configs() {
 #[cfg(debug_assertions)]
 #[should_panic(expected = "using last-resort time zone fallback")]
 fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
-    let time_zone = CustomTimeZone::new(
-        None,
-        Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-        Some(MetaZoneId(tinystr!(4, "ampa"))),
-        Some(ZoneVariant::daylight()),
-    );
-    let tzf = TimeZoneFormatter::try_from_config_unstable(
+    let time_zone = CustomTimeZone {
+        gmt_offset: None,
+        time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
+        meta_zone_id: Some(MetaZoneId(tinystr!(4, "ampa"))),
+        zone_variant: Some(ZoneVariant::daylight()),
+    };
+    let tzf = TimeZoneFormatter::try_new_unstable(
         &icu_testdata::unstable(),
         &langid!("en").into(),
-        TimeZoneFormatterConfig::LocalizedGMT,
-        TimeZoneFormatterOptions::default(),
+        Default::default(),
     )
     .unwrap();
     let mut buffer = String::new();
@@ -563,11 +561,10 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         Some(MetaZoneId(tinystr!(4, "ampa"))),
         Some(tinystr!(8, "daylight")),
     );
-    let tzf = TimeZoneFormatter::try_from_config(
+    let tzf = TimeZoneFormatter::try_new_unstable(
         &icu_testdata::unstable(),
         &langid!("en").into(),
-        TimeZoneFormatterConfig::LocalizedGMT,
-        TimeZoneFormatterOptions::default(),
+        Default::default(),
     )
     .unwrap();
     let mut buffer = String::new();

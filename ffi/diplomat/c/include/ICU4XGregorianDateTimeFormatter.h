@@ -19,7 +19,7 @@ typedef struct ICU4XGregorianDateTimeFormatter ICU4XGregorianDateTimeFormatter;
 #include "ICU4XDateLength.h"
 #include "ICU4XTimeLength.h"
 #include "diplomat_result_box_ICU4XGregorianDateTimeFormatter_ICU4XError.h"
-#include "ICU4XGregorianDateTime.h"
+#include "ICU4XIsoDateTime.h"
 #include "diplomat_result_void_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
@@ -28,7 +28,7 @@ extern "C" {
 
 diplomat_result_box_ICU4XGregorianDateTimeFormatter_ICU4XError ICU4XGregorianDateTimeFormatter_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
 
-diplomat_result_void_ICU4XError ICU4XGregorianDateTimeFormatter_format_datetime(const ICU4XGregorianDateTimeFormatter* self, const ICU4XGregorianDateTime* value, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XGregorianDateTimeFormatter_format_iso_datetime(const ICU4XGregorianDateTimeFormatter* self, const ICU4XIsoDateTime* value, DiplomatWriteable* write);
 void ICU4XGregorianDateTimeFormatter_destroy(ICU4XGregorianDateTimeFormatter* self);
 
 #ifdef __cplusplus

@@ -12,8 +12,6 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
-use crate::u24::U24;
-
 /// Main data for NFD
 #[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
 #[derive(Debug, PartialEq, Clone)]
@@ -84,7 +82,7 @@ pub struct DecompositionTablesV1<'data> {
     /// Decompositions with at least one character outside
     /// the BMP
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub scalars24: ZeroVec<'data, U24>,
+    pub scalars24: ZeroVec<'data, char>,
 }
 
 /// Non-Hangul canonical compositions
@@ -113,5 +111,5 @@ pub struct NonRecursiveDecompositionSupplementV1<'data> {
     /// Decompositions with at least one character outside
     /// the BMP
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub scalars24: ZeroVec<'data, U24>,
+    pub scalars24: ZeroVec<'data, char>,
 }

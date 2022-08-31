@@ -5,6 +5,8 @@
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
 use crate::types::{self, Time};
 use crate::{AsCalendar, Calendar, Date, DateTimeError, Iso};
+use alloc::rc::Rc;
+use alloc::sync::Arc;
 
 /// A date+time for a given calendar.
 ///
@@ -99,6 +101,28 @@ impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> DateTime<A> {
     }
 }
 
+impl<C: Calendar> DateTime<C> {
+    /// Wrap the calendar type in `Rc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `DateTime<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_rc(self) -> DateTime<Rc<C>> {
+        DateTime {
+            date: self.date.wrap_calendar_in_rc(),
+            time: self.time,
+        }
+    }
+
+    /// Wrap the calendar type in `Arc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `DateTime<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_arc(self) -> DateTime<Arc<C>> {
+        DateTime {
+            date: self.date.wrap_calendar_in_arc(),
+            time: self.time,
+        }
+    }
+}
+
 impl<C, A, B> PartialEq<DateTime<B>> for DateTime<A>
 where
     C: Calendar,
@@ -120,4 +144,11 @@ impl<A: AsCalendar + Clone> Clone for DateTime<A> {
             time: self.time,
         }
     }
+}
+
+impl<A> Copy for DateTime<A>
+where
+    A: AsCalendar + Copy,
+    <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy,
+{
 }

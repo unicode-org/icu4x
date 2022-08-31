@@ -250,18 +250,49 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::Gregorian;
+    /// use icu::calendar::Date;
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     ///
-    /// TypedDateFormatter::<Gregorian>::try_new_unstable(
+    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
-    ///     length::Date::Full,
+    ///     length::Date::Full
     /// )
     /// .unwrap();
+    ///
+    /// assert_eq!(
+    ///     "Monday, August 29, 2022",
+    ///     formatter.format_to_string(&Date::new_gregorian_date(2022, 8, 29).unwrap())
+    /// );
+    /// ```
+    ///
+    /// If the locale has a calendar keyword, the keyword is ignored in favor of the
+    /// type parameter on the [`TypedDateFormatter`]. To obey the calendar keyword,
+    /// use [`DateFormatter`] instead.
+    ///
+    /// ```
+    /// use icu::calendar::indian::Indian;
+    /// use icu::calendar::Date;
+    /// use icu::datetime::{options::length, TypedDateFormatter};
+    /// use icu::locid::locale;
+    ///
+    /// let formatter = TypedDateFormatter::<Indian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en-u-ca-japanese").into(),
+    ///     length::Date::Full
+    /// )
+    /// .unwrap();
+    ///
+    /// // Indian format from type wins over locale keyword
+    /// assert_eq!(
+    ///     "Monday, Bhadra 7, 1944 Saka",
+    ///     formatter.format_to_string(&Date::new_indian_date(1944, 6, 7).unwrap())
+    /// );
     /// ```
     ///
     /// [data provider]: icu_provider
+    /// [`DateFormatter`]: crate::DateFormatter
     #[inline]
     pub fn try_new_unstable<D>(
         data_provider: &D,
@@ -276,7 +307,6 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        calendar::check_locale::<C>(locale)?;
         Ok(Self(
             raw::DateFormatter::try_new(
                 data_provider,
@@ -514,7 +544,6 @@ where {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        calendar::check_locale::<C>(locale)?;
         let patterns = PatternSelector::for_options(
             data_provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
@@ -551,7 +580,6 @@ where {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        calendar::check_locale::<C>(locale)?;
         let patterns = PatternSelector::for_options(
             data_provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,

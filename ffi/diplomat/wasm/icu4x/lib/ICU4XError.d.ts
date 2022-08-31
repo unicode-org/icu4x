@@ -5,7 +5,7 @@
 
  * The error names are stable and can be checked against as strings in the JS API
 
- * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html 1}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.DateTimeError.html 2}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeFormatterError.html 3}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html 4}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html 5}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html 6}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html 7}
+ * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html 1}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.DateTimeError.html 2}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeFormatterError.html 3}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html 4}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html 5}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralRulesError.html 6}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html 7}, {@link https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html 8}
  */
 export enum ICU4XError {
   /**
@@ -147,9 +147,6 @@ export enum ICU4XError {
   /**
    */
   DateTimeFormatMismatchedAnyCalendarError = 'DateTimeFormatMismatchedAnyCalendarError',
-  /**
-   */
-  DateTimeFormatMismatchedCalendarLocaleError = 'DateTimeFormatMismatchedCalendarLocaleError',
   /**
    */
   TinyStrTooLargeError = 'TinyStrTooLargeError',

@@ -74,6 +74,57 @@ where
     T: TimeZoneInput,
 {
     /// Write time zone with no fallback.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::timezone::CustomTimeZone;
+    /// use icu_datetime::{TimeZoneFormatter, DateTimeFormatterError};
+    /// use icu_locid::locale;
+    /// use tinystr::tinystr;
+    /// use writeable::Writeable;
+    ///
+    /// let mut tzf = TimeZoneFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let mut time_zone = "Z".parse::<CustomTimeZone>().unwrap();
+    /// time_zone.time_zone_id = Some(tinystr!(8, "gblon").into());
+    /// let mut sink = String::new();
+    ///
+    /// // There are no non-fallback formats enabled:
+    /// assert!(matches!(
+    ///     tzf.format(&time_zone).write_no_fallback(&mut sink),
+    ///     Err(DateTimeFormatterError::UnsupportedOptions)
+    /// ));
+    /// assert!(sink.is_empty());
+    ///
+    /// // Enable a non-fallback format:
+    /// tzf.load_generic_location_format(&icu_testdata::unstable()).unwrap();
+    /// assert!(matches!(
+    ///     tzf.format(&time_zone).write_no_fallback(&mut sink),
+    ///     Ok(Ok(_))
+    /// ));
+    /// assert_eq!("London Time", sink);
+    ///
+    /// // Errors still occur if the time zone is not supported:
+    /// sink.clear();
+    /// time_zone.time_zone_id = Some(tinystr!(8, "zzzzz").into());
+    /// assert!(matches!(
+    ///     tzf.format(&time_zone).write_no_fallback(&mut sink),
+    ///     Err(DateTimeFormatterError::UnsupportedOptions)
+    /// ));
+    ///
+    /// // Use `write` instead to enable infallible formatting:
+    /// assert!(matches!(
+    ///     tzf.format(&time_zone).write_to(&mut sink),
+    ///     Ok(_)
+    /// ));
+    /// assert_eq!("GMT", sink);
+    /// ```
     pub fn write_no_fallback<W>(&self, w: &mut W) -> Result<fmt::Result, Error>
     where
         W: core::fmt::Write + ?Sized,

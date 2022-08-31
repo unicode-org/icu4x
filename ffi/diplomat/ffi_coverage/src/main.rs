@@ -84,6 +84,7 @@ lazy_static::lazy_static! {
         "Into",
         "Iterator", // ???
         "Ord",
+        "Provider", // new error handling stuff
         "PartialEq",
         "PartialOrd",
         "RefUnwindSafe",
@@ -119,6 +120,7 @@ lazy_static::lazy_static! {
         "Calendar",
         // Rust-specific conversion trait
         "AsCalendar",
+        "IntoAnyCalendar",
     ].into_iter().collect();
 
     // Paths which are not checked for FFI coverage. Naming a type or module here
@@ -153,31 +155,108 @@ lazy_static::lazy_static! {
         "icu::calendar::japanese",
         "icu::calendar::julian",
         "icu::calendar::any_calendar::IntoAnyCalendar",
+        "icu::calendar::Date::new_gregorian_date",
+        "icu::calendar::Date::new_buddhist_date",
+        "icu::calendar::Date::new_coptic_date",
+        "icu::calendar::Date::new_ethiopian_date",
+        "icu::calendar::Date::new_indian_date",
+        "icu::calendar::Date::new_japanese_date",
+        "icu::calendar::Date::new_japanese_extended_date",
+        "icu::calendar::Date::new_julian_date",
+        "icu::calendar::DateTime::new_gregorian_datetime",
+        "icu::calendar::DateTime::new_buddhist_datetime",
+        "icu::calendar::DateTime::new_coptic_datetime",
+        "icu::calendar::DateTime::new_ethiopian_datetime",
+        "icu::calendar::DateTime::new_indian_datetime",
+        "icu::calendar::DateTime::new_japanese_datetime",
+        "icu::calendar::DateTime::new_japanese_extended_datetime",
+        "icu::calendar::DateTime::new_julian_datetime",
 
         // Arithmetic APIs are still experimental/hidden for 1.0
         "icu::calendar::DateDuration",
         "icu::calendar::DateDurationUnit",
 
+        // mostly used for provider, may in the future be exposed for options
+        "icu::datetime::fields",
+        // experimental
+        "icu::datetime::options::components",
+        "icu::datetime::options::preferences",
+
+
+        // Formatting wrappers, may be supported in the future
+        "icu::datetime::FormattedTimeZone",
+        "icu::datetime::FormattedDateTime",
+        "icu::datetime::FormattedZonedDateTime",
+
+        // Rust-specific power user API for rules ASTS and such
+        // could be exposed in the future but it's complicated
+        "icu::plurals::rules",
+
+        // May be exposed when we have associated constants over FFI
+        "icu::properties::BidiClass",
+        "icu::properties::CanonicalCombiningClass",
+        "icu::properties::EastAsianWidth",
+        "icu::properties::GeneralCategory",
+        "icu::properties::GeneralCategoryGroup",
+        "icu::properties::GraphemeClusterBreak",
+        "icu::properties::LineBreak",
+        "icu::properties::Script",
+        "icu::properties::SentenceBreak",
+        "icu::properties::WordBreak",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
         // =========================
 
-        // "Internal" trait that should never be called directly
-        "icu::calendar::Calendar",
-        // Used for rust-specific type transforms
-        "icu::calendar::AsCalendar",
-
-        // FFI largely deals with primitives rather than Rust's nice wrapper types
-        // (which are hard to do in a zero-cost way over FFI)
-        "icu::calendar::types",
-
         // Provider modules
         // We could potentially expose them later, but it's hard to expose them
         // uniformly especially for complex types
         "icu::calendar::provider",
         "icu::datetime::provider",
+        "icu::plurals::provider",
+        "icu::properties::provider",
+
+        // Reexports (tool doesn't currently handle these)
+        "icu::calendar::any_calendar::AnyCalendar",
+        "icu::calendar::any_calendar::AnyCalendarKind",
+
+        // "Internal" trait that should never be called directly
+        "icu::calendar::Calendar",
+        // Rust-specific calendar wrapper stuff
+        "icu::calendar::AsCalendar",
+        "icu::datetime::CldrCalendar",
+        "icu::calendar::Ref",
+        "icu::calendar::Date::wrap_calendar_in_rc",
+        "icu::calendar::Date::wrap_calendar_in_arc",
+        "icu::calendar::DateTime::wrap_calendar_in_rc",
+        "icu::calendar::DateTime::wrap_calendar_in_arc",
+
+        // Individual markerlike calendar types and inner types
+        // inner types are only public for associated type reasons, and the markerlike
+        // calendar types exist to implement the trait
+        "icu::calendar::Date::from_raw",
+        "icu::calendar::Date::inner",
+        "icu::calendar::Iso",
+        "icu::calendar::iso::Iso",
+        "icu::calendar::iso::IsoDateInner",
+        "icu::calendar::Gregorian",
+        "icu::calendar::gregorian::Gregorian",
+        "icu::calendar::gregorian::GregorianDateInner",
+        "icu::calendar::any_calendar::AnyDateInner",
+
+        // Rusty input trait
+        "icu::datetime::input",
+
+        // FFI largely deals with primitives rather than Rust's nice wrapper types
+        // (which are hard to do in a zero-cost way over FFI)
+        "icu::calendar::types",
+
+        // Convenience iterator for Rust
+        "icu::plurals::PluralCategory::all",
+        // associated type
+        "icu::plurals::PluralOperands::Err",
+
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 

@@ -69,20 +69,6 @@ fn check_expectations(
 }
 
 #[test]
-fn test_basic() {
-    let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
-
-    let collator: Collator = Collator::try_new_unstable(
-        &icu_testdata::buffer().as_deserializing(),
-        &Default::default(),
-        options,
-    )
-    .unwrap();
-    assert_eq!(collator.compare("ac", "äb"), Ordering::Greater);
-}
-
-#[test]
 fn test_implicit_unihan() {
     // Adapted from `CollationTest::TestImplicits()` in collationtest.cpp of ICU4C.
     // The radical-stroke order of the characters tested agrees with their code point
@@ -1237,34 +1223,6 @@ fn test_basics() {
         .unwrap();
         check_expectations(&collator, &left, &right, &expectations);
     }
-}
-
-#[test]
-fn test_numeric_off() {
-    let mut options = CollatorOptions::new();
-    options.set_numeric(Some(false));
-
-    let collator: Collator = Collator::try_new_unstable(
-        &icu_testdata::buffer().as_deserializing(),
-        &Default::default(),
-        options,
-    )
-    .unwrap();
-    assert_eq!(collator.compare("a10b", "a2b"), Ordering::Less);
-}
-
-#[test]
-fn test_numeric_on() {
-    let mut options = CollatorOptions::new();
-    options.set_numeric(Some(true));
-
-    let collator: Collator = Collator::try_new_unstable(
-        &icu_testdata::buffer().as_deserializing(),
-        &Default::default(),
-        options,
-    )
-    .unwrap();
-    assert_eq!(collator.compare("a10b", "a2b"), Ordering::Greater);
 }
 
 #[test]

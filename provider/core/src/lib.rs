@@ -212,6 +212,7 @@ pub use prelude::*;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::FallbackPriority;
 pub use crate::response::RcWrap;
+pub use crate::response::RcWrapBounds;
 
 // For macros
 #[doc(hidden)]

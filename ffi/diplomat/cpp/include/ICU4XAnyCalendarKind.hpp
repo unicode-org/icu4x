@@ -14,7 +14,7 @@
 
 
 /**
- * 
+ * The various calendar types currently supported by [`ICU4XCalendar`]
  * 
  * See the [Rust documentation for `AnyCalendarKind`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendarKind.html) for more information.
  */
@@ -65,5 +65,8 @@ enum struct ICU4XAnyCalendarKind {
    */
   Coptic = 8,
 };
+class ICU4XLocale;
+#include "ICU4XError.hpp"
 
+#include "ICU4XLocale.hpp"
 #endif

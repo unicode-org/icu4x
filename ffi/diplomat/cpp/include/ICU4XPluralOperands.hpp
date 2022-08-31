@@ -38,7 +38,7 @@ struct ICU4XPluralOperands {
   size_t c;
 
   /**
-   * FFI version of `PluralOperands::from_str()`.
+   * Construct for a given string representing a number
    * 
    * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
    */

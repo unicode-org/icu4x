@@ -241,14 +241,17 @@ pub enum MaxVariable {
 ///
 /// # Options
 ///
+/// Examples for using the different options below can be found in the [crate-level docs](crate).
+///
 /// ## Strength
 ///
 /// This is the BCP47 key `ks`. The default is `Strength::Tertiary`.
 ///
 /// ## Alternate Handling
 ///
-/// This is the BCP47 key `ka`. Note that `ShiftTrimmed` and `Blanked` are
-/// unimplemented. The default is `AlternateHandling::NonIgnorable`, except
+/// This is the BCP47 key `ka`. Note that `AlternateHandling::ShiftTrimmed` and
+/// `AlternateHandling::Blanked` are unimplemented. The default is
+/// `AlternateHandling::NonIgnorable`, except
 /// for Thai, whose default is `AlternateHandling::Shifted`.
 ///
 /// ## Case Level
@@ -269,7 +272,7 @@ pub enum MaxVariable {
 /// is prohibited by ECMA 402. The default is `false` (off), except for Canadian
 /// French.
 ///
-/// # Numeric
+/// ## Numeric
 ///
 /// This is the BCP47 key `kn`. When set to `true` (on), any sequence of decimal
 /// digits (General_Category = Nd) is sorted at a primary level accoding to the
@@ -427,31 +430,6 @@ impl CollatorOptions {
     /// "case".
     ///
     /// See [the ICU guide](https://unicode-org.github.io/icu/userguide/collation/concepts.html#caselevel).
-    ///
-    /// ```
-    /// use icu_collator::*;
-    ///
-    /// let mut options = CollatorOptions::new();
-    /// options.set_strength(Some(Strength::Tertiary));
-    /// let tertiary = Collator::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &Default::default(),
-    ///     options,
-    /// )
-    /// .unwrap();
-    /// // The first string starts with full-width a
-    /// assert_eq!(tertiary.compare("ａa", "aA"), core::cmp::Ordering::Greater);
-    ///
-    /// options.set_case_level(Some(true));
-    /// let tertiary_and_case = Collator::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &Default::default(),
-    ///     options,
-    /// )
-    /// .unwrap();
-    /// // The first string starts with full-width a
-    /// // TODO!!!!
-    /// ```
     pub fn set_case_level(&mut self, case_level: Option<bool>) {
         self.0 &= !CollatorOptions::CASE_LEVEL_MASK;
         if let Some(case_level) = case_level {
