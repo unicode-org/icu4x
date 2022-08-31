@@ -8,7 +8,6 @@
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::*;
-use icu_normalizer::u24::U24;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use std::convert::TryFrom;
@@ -92,7 +91,7 @@ macro_rules! normalization_tables_provider {
             DecompositionTables,
             $file_name,
             {
-                let mut scalars24: Vec<U24> = Vec::new();
+                let mut scalars24: Vec<char> = Vec::new();
                 for &u in toml_data.scalars32.iter() {
                     scalars24.push(
                         u.try_into()
@@ -142,7 +141,7 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
             {
                 let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
                     .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
-                let mut scalars24: Vec<U24> = Vec::new();
+                let mut scalars24: Vec<char> = Vec::new();
                 for &u in toml_data.scalars32.iter() {
                     scalars24.push(
                         u.try_into()
