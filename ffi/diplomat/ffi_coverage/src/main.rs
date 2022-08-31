@@ -219,6 +219,8 @@ lazy_static::lazy_static! {
         "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
+        "icu::collections::codepointinvlist",
+        "icu::collections::codepointtrie",
 
         // Not planned until someone needs them
         "icu::locid::extensions",
