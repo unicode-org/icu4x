@@ -256,16 +256,16 @@ impl AnyProvider for BakedDataProvider {
                 COLLATIONDATAV1MARKER => collator::data_v1_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                COLLATIONDIACRITICSV1MARKER => collator::dia_v1::DATA
+                COLLATIONDIACRITICSV1MARKER => collator::dia_v1_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 COLLATIONJAMOV1MARKER => collator::jamo_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                COLLATIONMETADATAV1MARKER => collator::meta_v1::DATA
+                COLLATIONMETADATAV1MARKER => collator::meta_v1_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
-                COLLATIONREORDERINGV1MARKER => collator::reord_v1::DATA
+                COLLATIONREORDERINGV1MARKER => collator::reord_v1_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(AnyPayload::from_static_ref),
                 COLLATIONSPECIALPRIMARIESV1MARKER => collator::prim_v1::DATA

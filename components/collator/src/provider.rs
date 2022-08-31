@@ -168,7 +168,11 @@ impl<'data> CollationDataV1<'data> {
 }
 
 /// Secondary weights for the start of the Combining Diacritics block.
-#[icu_provider::data_struct(CollationDiacriticsV1Marker = "collator/dia@1")]
+#[icu_provider::data_struct(marker(
+    CollationDiacriticsV1Marker,
+    "collator/dia@1",
+    extension_key = "co"
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -194,7 +198,11 @@ pub struct CollationJamoV1<'data> {
 }
 
 /// Script reordering data
-#[icu_provider::data_struct(CollationReorderingV1Marker = "collator/reord@1")]
+#[icu_provider::data_struct(marker(
+    CollationReorderingV1Marker,
+    "collator/reord@1",
+    extension_key = "co"
+))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
@@ -272,7 +280,11 @@ impl<'data> CollationReorderingV1<'data> {
 /// Each non-alias collation that the data provider knows
 /// about explicitly has an data entry at least for this
 /// struct.
-#[icu_provider::data_struct(CollationMetadataV1Marker = "collator/meta@1")]
+#[icu_provider::data_struct(marker(
+    CollationMetadataV1Marker,
+    "collator/meta@1",
+    extension_key = "co"
+))]
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
