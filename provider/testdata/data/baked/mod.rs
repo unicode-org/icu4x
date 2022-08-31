@@ -70,7 +70,7 @@ impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for BakedData
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::data_v1_u_co::DATA
+                *collator::data_v1_c_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDataV1Marker::KEY, req))?,
             ))),
@@ -82,7 +82,7 @@ impl DataProvider<::icu_collator::provider::CollationDiacriticsV1Marker> for Bak
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::dia_v1_u_co::DATA
+                *collator::dia_v1_c_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDiacriticsV1Marker::KEY, req))?,
             ))),
@@ -106,7 +106,7 @@ impl DataProvider<::icu_collator::provider::CollationMetadataV1Marker> for Baked
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::meta_v1_u_co::DATA
+                *collator::meta_v1_c_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationMetadataV1Marker::KEY, req))?,
             ))),
@@ -118,7 +118,7 @@ impl DataProvider<::icu_collator::provider::CollationReorderingV1Marker> for Bak
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::reord_v1_u_co::DATA
+                *collator::reord_v1_c_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationReorderingV1Marker::KEY, req))?,
             ))),

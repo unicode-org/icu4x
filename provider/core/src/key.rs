@@ -91,6 +91,10 @@ pub enum FallbackPriority {
     ///
     /// For example, `"en-US"` should go to `"und-US"` and then `"und"`.
     Region,
+    /// Collation-specific fallback rules. Similar to language priority.
+    ///
+    /// For example, `"zh-Hant"` goes to `"zh"` before `"und"`.
+    Collation,
 }
 
 impl FallbackPriority {
@@ -298,6 +302,10 @@ impl DataKey {
                 (Version | MetaAfter, Some(b'[')) => MetaOpen,
                 (MetaOpen, Some(b'R')) => {
                     fallback_priority = FallbackPriority::Region;
+                    MetaClose
+                }
+                (MetaOpen, Some(b'C')) => {
+                    fallback_priority = FallbackPriority::Collation;
                     MetaClose
                 }
                 (MetaOpen, Some(b'u')) => MetaU,
