@@ -1,13 +1,7 @@
 icu::calendar::Date::week_of_month#FnInStruct
 icu::calendar::Date::week_of_year#FnInStruct
-icu::calendar::week::RelativeUnit#Enum
-icu::calendar::week::WeekCalculator#Struct
-icu::calendar::week::WeekCalculator::try_new_unstable#FnInStruct
-icu::calendar::week::WeekCalculator::try_new_with_any_provider#FnInStruct
-icu::calendar::week::WeekCalculator::try_new_with_buffer_provider#FnInStruct
 icu::calendar::week::WeekCalculator::week_of_month#FnInStruct
 icu::calendar::week::WeekCalculator::week_of_year#FnInStruct
-icu::calendar::week::WeekOf#Struct
 icu::casemapping::CaseMapping#Struct
 icu::casemapping::CaseMapping::fold#FnInStruct
 icu::casemapping::CaseMapping::fold_turkic#FnInStruct

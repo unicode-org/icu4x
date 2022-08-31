@@ -159,6 +159,8 @@ lazy_static::lazy_static! {
         "icu::datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider",
         "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_any_provider",
         "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_buffer_provider",
+        "icu::calendar::week::WeekCalculator::try_new_with_any_provider",
+        "icu::calendar::week::WeekCalculator::try_new_with_buffer_provider",
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
