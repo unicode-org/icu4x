@@ -346,10 +346,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         CRATES.get(krate).unwrap()
     }
 
-    enum In {
+    enum In<'a> {
         Trait,
-        Enum,
-        Struct,
+        // The Option<String> is for the trait name
+        Enum(Option<&'a str>),
+        Struct(Option<&'a str>),
     }
 
     fn recurse(
@@ -434,11 +435,13 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     ItemEnum::Struct(structt) => {
                         for id in &structt.impls {
                             if let ItemEnum::Impl(inner) = &krate.index[id].inner {
+                                let mut trait_name = None;
                                 if let Some(path) = &inner.trait_ {
                                     let name = &path.name;
                                     if IGNORED_TRAITS.contains(name.as_str()) {
                                         continue;
                                     }
+                                    trait_name = Some(&*path.name);
                                 }
                                 for id in &inner.items {
                                     recurse(
@@ -447,7 +450,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                         types,
                                         path.clone(),
                                         false,
-                                        Some(In::Struct),
+                                        Some(In::Struct(trait_name)),
                                     );
                                 }
                                 for name in &inner.provided_trait_methods {
@@ -467,11 +470,13 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
                         for id in &enumm.impls {
                             if let ItemEnum::Impl(inner) = &krate.index[id].inner {
+                                let mut trait_name = None;
                                 if let Some(path) = &inner.trait_ {
                                     let name = &path.name;
                                     if IGNORED_TRAITS.contains(name.as_str()) {
                                         continue;
                                     }
+                                    trait_name = Some(&*path.name);
                                 }
                                 for id in &inner.items {
                                     recurse(
@@ -480,7 +485,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                         types,
                                         path.clone(),
                                         false,
-                                        Some(In::Enum),
+                                        Some(In::Enum(trait_name)),
                                     );
                                 }
                                 for name in &inner.provided_trait_methods {
@@ -519,43 +524,34 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Method(_) => {
-                        insert_ty(
-                            types,
-                            path,
-                            match inside {
-                                Some(In::Enum) => ast::DocType::FnInEnum,
-                                Some(In::Trait) => ast::DocType::FnInTrait,
-                                Some(In::Struct) => ast::DocType::FnInStruct,
-                                _ => panic!("Method needs In"),
-                            },
-                        );
+                        let doc_type = match inside {
+                            Some(In::Enum(_)) => ast::DocType::FnInEnum,
+                            Some(In::Trait) => ast::DocType::FnInTrait,
+                            Some(In::Struct(_)) => ast::DocType::FnInStruct,
+                            _ => panic!("Method needs In"),
+                        };
+                        insert_ty(types, path, doc_type);
                     }
                     ItemEnum::Variant(_) => {
                         insert_ty(types, path, ast::DocType::EnumVariant);
                     }
                     ItemEnum::AssocConst { .. } => {
-                        insert_ty(
-                            types,
-                            path,
-                            match inside {
-                                Some(In::Enum) => ast::DocType::AssociatedConstantInEnum,
-                                Some(In::Trait) => ast::DocType::AssociatedConstantInTrait,
-                                Some(In::Struct) => ast::DocType::AssociatedConstantInStruct,
-                                _ => panic!("AssocConst needs In"),
-                            },
-                        );
+                        let doc_type = match inside {
+                            Some(In::Enum(_)) => ast::DocType::AssociatedConstantInEnum,
+                            Some(In::Trait) => ast::DocType::AssociatedConstantInTrait,
+                            Some(In::Struct(_)) => ast::DocType::AssociatedConstantInStruct,
+                            _ => panic!("AssocConst needs In"),
+                        };
+                        insert_ty(types, path, doc_type);
                     }
                     ItemEnum::AssocType { .. } => {
-                        insert_ty(
-                            types,
-                            path,
-                            match inside {
-                                Some(In::Enum) => ast::DocType::AssociatedTypeInEnum,
-                                Some(In::Trait) => ast::DocType::AssociatedTypeInTrait,
-                                Some(In::Struct) => ast::DocType::AssociatedTypeInStruct,
-                                _ => panic!("AssocType needs In"),
-                            },
-                        );
+                        let doc_type = match inside {
+                            Some(In::Enum(_)) => ast::DocType::AssociatedTypeInEnum,
+                            Some(In::Trait) => ast::DocType::AssociatedTypeInTrait,
+                            Some(In::Struct(_)) => ast::DocType::AssociatedTypeInStruct,
+                            _ => panic!("AssocType needs In"),
+                        };
+                        insert_ty(types, path, doc_type);
                     }
                     _ => todo!("{:?}", item),
                 }
