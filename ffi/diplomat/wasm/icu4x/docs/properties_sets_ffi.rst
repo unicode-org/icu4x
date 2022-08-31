@@ -24,7 +24,7 @@
         Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
 
 
-    .. js:staticfunction:: try_load_for_general_category_group(provider, group)
+    .. js:staticfunction:: load_for_general_category_group(provider, group)
 
         which is a mask with the same format as the ``U_GC_XX_MASK`` mask in ICU4C
 

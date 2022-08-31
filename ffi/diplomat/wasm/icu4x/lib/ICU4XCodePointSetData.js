@@ -24,10 +24,10 @@ export class ICU4XCodePointSetData {
     return wasm.ICU4XCodePointSetData_contains_u32(this.underlying, arg_cp);
   }
 
-  static try_load_for_general_category_group(arg_provider, arg_group) {
+  static load_for_general_category_group(arg_provider, arg_group) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointSetData_try_load_for_general_category_group(diplomat_receive_buffer, arg_provider.underlying, arg_group);
+      wasm.ICU4XCodePointSetData_load_for_general_category_group(diplomat_receive_buffer, arg_provider.underlying, arg_group);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointSetData(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

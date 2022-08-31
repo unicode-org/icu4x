@@ -53,7 +53,7 @@ class ICU4XCodePointSetData {
    * 
    * See the [Rust documentation for `load_for_general_category_group`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_general_category_group.html) for more information.
    */
-  static diplomat::result<ICU4XCodePointSetData, ICU4XError> try_load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group);
+  static diplomat::result<ICU4XCodePointSetData, ICU4XError> load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group);
 
   /**
    * 
@@ -527,8 +527,8 @@ inline bool ICU4XCodePointSetData::contains(char32_t cp) const {
 inline bool ICU4XCodePointSetData::contains_u32(uint32_t cp) const {
   return capi::ICU4XCodePointSetData_contains_u32(this->inner.get(), cp);
 }
-inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData::try_load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_try_load_for_general_category_group(provider.AsFFI(), group);
+inline diplomat::result<ICU4XCodePointSetData, ICU4XError> ICU4XCodePointSetData::load_for_general_category_group(const ICU4XDataProvider& provider, uint32_t group) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCodePointSetData_load_for_general_category_group(provider.AsFFI(), group);
   diplomat::result<ICU4XCodePointSetData, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCodePointSetData>(std::move(ICU4XCodePointSetData(diplomat_result_raw_out_value.ok)));

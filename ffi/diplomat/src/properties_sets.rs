@@ -38,7 +38,7 @@ pub mod ffi {
         }
         /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
         #[diplomat::rust_link(icu::properties::sets::load_for_general_category_group, Fn)]
-        pub fn try_load_for_general_category_group(
+        pub fn load_for_general_category_group(
             provider: &ICU4XDataProvider,
             group: u32,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {

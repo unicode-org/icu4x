@@ -36,7 +36,7 @@ export class ICU4XCodePointSetData {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/fn.load_for_general_category_group.html Rust documentation for `load_for_general_category_group`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_load_for_general_category_group(provider: ICU4XDataProvider, group: u32): ICU4XCodePointSetData | never;
+  static load_for_general_category_group(provider: ICU4XDataProvider, group: u32): ICU4XCodePointSetData | never;
 
   /**
 
