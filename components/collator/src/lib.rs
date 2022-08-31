@@ -287,6 +287,7 @@
 //! ```
 
 mod comparison;
+#[cfg(doc)]
 pub mod docs;
 mod elements;
 pub mod error;
