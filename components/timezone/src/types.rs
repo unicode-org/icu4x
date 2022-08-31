@@ -9,8 +9,14 @@ use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroSlice, ZeroVec};
 
 /// The GMT offset in seconds for a timezone
-#[derive(Copy, Clone, Debug, Default)]
+#[derive(Copy, Clone, Debug)]
 pub struct GmtOffset(i32);
+
+impl Default for GmtOffset {
+    fn default() -> Self {
+        Self::utc()
+    }
+}
 
 impl GmtOffset {
     /// Attempt to create a [`GmtOffset`] from a seconds input. It returns an error when the seconds
@@ -22,6 +28,11 @@ impl GmtOffset {
         } else {
             Ok(Self(seconds))
         }
+    }
+
+    /// Creates a [`GmtOffset`] at UTC.
+    pub const fn utc() -> Self {
+        Self(0)
     }
 
     /// Create a [`GmtOffset`] from a seconds input without checking bounds.

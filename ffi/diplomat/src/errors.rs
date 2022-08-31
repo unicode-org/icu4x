@@ -104,7 +104,6 @@ pub mod ffi {
         DateTimeFormatMissingMonthSymbolError = 0x8_06,
         DateTimeFormatFixedDecimalError = 0x8_07,
         DateTimeFormatMismatchedAnyCalendarError = 0x8_08,
-        DateTimeFormatMismatchedCalendarLocaleError = 0x8_09,
 
         // tinystr errors
         TinyStrTooLargeError = 0x9_00,
@@ -233,9 +232,6 @@ impl From<DateTimeFormatterError> for ICU4XError {
             DateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
             DateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
                 ICU4XError::DateTimeFormatMismatchedAnyCalendarError
-            }
-            DateTimeFormatterError::MismatchedCalendarLocale(_, _) => {
-                ICU4XError::DateTimeFormatMismatchedCalendarLocaleError
             }
             _ => ICU4XError::UnknownError,
         };

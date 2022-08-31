@@ -111,8 +111,6 @@
 
     .. cpp:enumerator:: DateTimeFormatMismatchedAnyCalendarError
 
-    .. cpp:enumerator:: DateTimeFormatMismatchedCalendarLocaleError
-
     .. cpp:enumerator:: TinyStrTooLargeError
 
     .. cpp:enumerator:: TinyStrContainsNullError

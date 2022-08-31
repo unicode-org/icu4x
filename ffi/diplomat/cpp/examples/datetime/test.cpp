@@ -66,7 +66,7 @@ int main() {
         return 1;
     }
     ICU4XIsoDateTime local_datetime = ICU4XIsoDateTime::try_new(2022, 8, 25, 0, 0, 0, 0).ok().value();
-    time_zone.maybe_set_meta_zone(local_datetime, mzcalc);
+    time_zone.maybe_calculate_meta_zone(local_datetime, mzcalc);
     std::string meta_zone_id_return = time_zone.meta_zone_id().ok().value();
     if (meta_zone_id_return != "amce") {
         std::cout << "Meta zone ID not calculated correctly; got " << meta_zone_id_return << std::endl;
