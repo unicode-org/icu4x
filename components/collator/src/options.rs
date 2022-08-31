@@ -591,7 +591,7 @@ impl CollatorOptionsBitField {
             Some(BackwardSecondLevel::Off) => {
                 self.set_backward_second_level(Some(false));
             }
-            _ => self.set_backward_second_level(None),
+            None => self.set_backward_second_level(None),
         }
     }
 
@@ -623,7 +623,7 @@ impl CollatorOptionsBitField {
             Some(Numeric::Off) => {
                 self.set_numeric(Some(false));
             }
-            _ => self.set_numeric(None),
+            None => self.set_numeric(None),
         }
     }
 
