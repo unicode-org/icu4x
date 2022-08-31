@@ -28,13 +28,18 @@ pub mod ffi {
     impl ICU4XCodePointMapData8 {
         /// Gets the value for a code point.
         #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
+        pub fn get(&self, cp: char) -> u8 {
+            self.0.as_borrowed().get(cp)
+        }
+
+        /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
         #[diplomat::rust_link(
             icu::properties::maps::CodePointMapDataBorrowed::get_u32,
             FnInStruct,
             hidden
         )]
-        pub fn get(&self, cp: char) -> u8 {
-            self.0.as_borrowed().get(cp)
+        pub fn get_u32(&self, cp: u32) -> u8 {
+            self.0.as_borrowed().get_u32(cp)
         }
 
         /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
@@ -135,6 +140,16 @@ pub mod ffi {
         #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
         pub fn get(&self, cp: char) -> u16 {
             self.0.as_borrowed().get(cp)
+        }
+
+        /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_u32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn get_u32(&self, cp: u32) -> u16 {
+            self.0.as_borrowed().get_u32(cp)
         }
 
         /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
