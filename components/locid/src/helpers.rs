@@ -295,8 +295,7 @@ macro_rules! impl_tinystr_subtag {
                 }
 
                 match tinystr::TinyAsciiStr::from_bytes_manual_slice(v, start, end) {
-                    // The TinyAsciiStr's length might be less than the slice's, so we have to check again
-                    Ok($tinystr_ident) if $tinystr_ident.len() >= $len_start && $validate => Ok(Self($normalize)),
+                    Ok($tinystr_ident) if $validate => Ok(Self($normalize)),
                     _ => Err(crate::parser::errors::ParserError::$error),
                 }
             }
@@ -304,13 +303,15 @@ macro_rules! impl_tinystr_subtag {
             #[doc = concat!("Safely creates a [`", stringify!($name), "`] from its raw format")]
             /// as returned by [`Self::into_raw`]. Unlike [`Self::from_bytes`],
             /// this constructor only takes normalized values.
-            pub fn try_from_raw(
+            pub const fn try_from_raw(
                 v: [u8; $len_end],
             ) -> Result<Self, crate::parser::errors::ParserError> {
-                let $tinystr_ident = tinystr::TinyAsciiStr::<$len_end>::try_from_raw(v)
-                    .map_err(|_| crate::parser::errors::ParserError::$error)?;
-                if $tinystr_ident.len() >= $len_start && $is_normalized {
-                    Ok(Self($tinystr_ident))
+                if let Ok($tinystr_ident) = tinystr::TinyAsciiStr::<$len_end>::try_from_raw(v) {
+                    if $tinystr_ident.len() >= $len_start && $is_normalized {
+                        Ok(Self($tinystr_ident))
+                    } else {
+                        Err(crate::parser::errors::ParserError::$error)
+                    }
                 } else {
                     Err(crate::parser::errors::ParserError::$error)
                 }
@@ -348,7 +349,7 @@ macro_rules! impl_tinystr_subtag {
             ///
             /// This function is case-sensitive and results in a *total order*, so it is appropriate for
             /// binary search. The only argument producing [`Ordering::Equal`](core::cmp::Ordering::Equal)
-            /// is `self.to_string().as_bytes()`.
+            /// is `self.as_str().as_bytes()`.
             #[inline]
             pub fn strict_cmp(&self, other: &[u8]) -> core::cmp::Ordering {
                 self.as_str().as_bytes().cmp(other)
