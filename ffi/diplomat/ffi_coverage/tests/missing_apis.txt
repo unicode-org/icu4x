@@ -612,9 +612,6 @@ icu::normalizer::provider::DecompositionTablesV1#Struct
 icu::normalizer::provider::NonRecursiveDecompositionSupplementV1#Struct
 icu::normalizer::provider::NonRecursiveDecompositionSupplementV1Marker#Struct
 icu::normalizer::provider::Uts46DecompositionSupplementV1Marker#Struct
-icu::normalizer::u24::EMPTY_U24#Constant
-icu::normalizer::u24::U24#Struct
-icu::normalizer::u24::U24Error#Enum
 icu::plurals::PluralOperands::n#FnInStruct
 icu::plurals::PluralRules::try_new_cardinal_with_any_provider#FnInStruct
 icu::plurals::PluralRules::try_new_cardinal_with_buffer_provider#FnInStruct
