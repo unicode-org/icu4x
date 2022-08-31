@@ -363,7 +363,7 @@ impl CollatorOptions {
     /// Create a new `CollatorOptions` with the defaults.
     pub const fn new() -> Self {
         Self {
-            strength: Some(Strength::Tertiary),
+            strength: None,
             alternate_handling: None,
             case_first: None,
             max_variable: None,
@@ -375,7 +375,7 @@ impl CollatorOptions {
 }
 
 #[derive(Copy, Clone, Debug)]
-pub struct CollatorOptionsBitField(u32);
+pub(crate) struct CollatorOptionsBitField(u32);
 
 impl CollatorOptionsBitField {
     /// Bits 0..2 : Strength
