@@ -12,11 +12,17 @@ import { ICU4XOrdering } from "./ICU4XOrdering";
 export class ICU4XCollator {
 
   /**
+
+   * Construct a new Collator instance.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XCollatorOptions): ICU4XCollator | never;
 
   /**
+
+   * Compare guaranteed well-formed UTF-8 strings.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare Rust documentation for `compare`} for more information.
    */
@@ -24,11 +30,15 @@ export class ICU4XCollator {
 
   /**
 
+   * Compare potentially ill-formed UTF-8 strings.
+
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8 Rust documentation for `compare_utf8`} for more information.
    */
   compare_utf8(left: Uint8Array, right: Uint8Array): ICU4XOrdering;
 
   /**
+
+   * Compare potentially ill-formed UTF-16 strings.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16 Rust documentation for `compare_utf16`} for more information.
    */

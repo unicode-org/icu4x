@@ -8,12 +8,21 @@
 
     .. js:staticfunction:: try_new(provider, locale, options)
 
+        Construct a new Collator instance.
+
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.try_new_unstable>`__ for more information.
+
+
     .. js:function:: compare(left, right)
+
+        Compare guaranteed well-formed UTF-8 strings.
 
         See the `Rust documentation for compare <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare>`__ for more information.
 
 
     .. js:function:: compare_utf8(left, right)
+
+        Compare potentially ill-formed UTF-8 strings.
 
         See the `Rust documentation for compare_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8>`__ for more information.
 
@@ -23,6 +32,8 @@
         - Note: ``right`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
 
     .. js:function:: compare_utf16(left, right)
+
+        Compare potentially ill-formed UTF-16 strings.
 
         See the `Rust documentation for compare_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16>`__ for more information.
 
