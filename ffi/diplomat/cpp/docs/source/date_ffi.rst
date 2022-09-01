@@ -50,6 +50,22 @@
         See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
 
 
+    .. cpp:function:: uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const
+
+        Returns the week number in this month, 1-indexed, based on what day of the week is considered the "default" for this locale.
+
+        ``first_weekday`` can be obtained via ``first_weekday()`` on :cpp:class:`ICU4XWeekCalculator`
+
+        See the `Rust documentation for week_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<ICU4XWeekOf, ICU4XError> week_of_year(const ICU4XWeekCalculator& calculator) const
+
+        Returns the week number in this year, using week data
+
+        See the `Rust documentation for week_of_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_year>`__ for more information.
+
+
     .. cpp:function:: uint32_t ordinal_month() const
 
         Returns 1-indexed number of the month of this date in its year
@@ -164,6 +180,22 @@
         Returns the day in the week for this day
 
         See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
+
+
+    .. cpp:function:: uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const
+
+        Returns the week number in this month, 1-indexed, based on what day of the week is considered the "default" for this locale.
+
+        ``first_weekday`` can be obtained via ``first_weekday()`` on :cpp:class:`ICU4XWeekCalculator`
+
+        See the `Rust documentation for week_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<ICU4XWeekOf, ICU4XError> week_of_year(const ICU4XWeekCalculator& calculator) const
+
+        Returns the week number in this year, using week data
+
+        See the `Rust documentation for week_of_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_year>`__ for more information.
 
 
     .. cpp:function:: uint32_t month() const
