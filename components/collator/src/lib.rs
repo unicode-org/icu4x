@@ -48,7 +48,7 @@
 //!
 //! let locale_es: Locale = langid!("es").into();
 //! let mut options = CollatorOptions::new();
-//! options.set_strength(Some(Strength::Primary));
+//! options.strength = Some(Strength::Primary);
 //! let collator_es: Collator =
 //!     Collator::try_new_unstable(&data_provider, &locale_es.into(), options).unwrap();
 //!
@@ -56,7 +56,7 @@
 //!
 //! let locale_en: Locale = langid!("en").into();
 //! let mut options = CollatorOptions::new();
-//! options.set_strength(Some(Strength::Primary));
+//! options.strength = Some(Strength::Primary);
 //! let collator_en: Collator =
 //!     Collator::try_new_unstable(&data_provider, &locale_en.into(), options).unwrap();
 //!
@@ -82,7 +82,7 @@
 //! // Primary Level
 //!
 //! let mut options_l1 = CollatorOptions::new();
-//! options_l1.set_strength(Some(Strength::Primary));
+//! options_l1.strength = Some(Strength::Primary);
 //! let collator_l1: Collator =
 //!     Collator::try_new_unstable(&data_provider, &Default::default(), options_l1).unwrap();
 //!
@@ -96,7 +96,7 @@
 //! // Secondary Level
 //!
 //! let mut options_l2 = CollatorOptions::new();
-//! options_l2.set_strength(Some(Strength::Secondary));
+//! options_l2.strength = Some(Strength::Secondary);
 //! let collator_l2: Collator =
 //!     Collator::try_new_unstable(&data_provider, &Default::default(), options_l2).unwrap();
 //!
@@ -110,7 +110,7 @@
 //! // Tertiary Level
 //!
 //! let mut options_l3 = CollatorOptions::new();
-//! options_l3.set_strength(Some(Strength::Tertiary));
+//! options_l3.strength = Some(Strength::Tertiary);
 //! let collator_l3: Collator =
 //!     Collator::try_new_unstable(&data_provider, &Default::default(), options_l3).unwrap();
 //!
@@ -143,8 +143,8 @@
 //! // these characters are of the same importance as differences among letters.
 //!
 //! let mut options_3n = CollatorOptions::new();
-//! options_3n.set_strength(Some(Strength::Tertiary));
-//! options_3n.set_alternate_handling(Some(AlternateHandling::NonIgnorable));
+//! options_3n.strength = Some(Strength::Tertiary);
+//! options_3n.alternate_handling = Some(AlternateHandling::NonIgnorable);
 //! let collator_3n: Collator =
 //!     Collator::try_new_unstable(&data_provider, &Default::default(), options_3n).unwrap();
 //!
@@ -158,8 +158,8 @@
 //! // set to Quaternary.
 //!
 //! let mut options_3s = CollatorOptions::new();
-//! options_3s.set_strength(Some(Strength::Tertiary));
-//! options_3s.set_alternate_handling(Some(AlternateHandling::Shifted));
+//! options_3s.strength = Some(Strength::Tertiary);
+//! options_3s.alternate_handling = Some(AlternateHandling::Shifted);
 //! let collator_3s: Collator =
 //!     Collator::try_new_unstable(&data_provider, &Default::default(), options_3s).unwrap();
 //!
@@ -169,8 +169,8 @@
 //! assert_eq!(collator_3s.compare("U.S.A.", "USA"), Ordering::Equal);
 //!
 //! let mut options_4s = CollatorOptions::new();
-//! options_4s.set_strength(Some(Strength::Quaternary));
-//! options_4s.set_alternate_handling(Some(AlternateHandling::Shifted));
+//! options_4s.strength = Some(Strength::Quaternary);
+//! options_4s.alternate_handling = Some(AlternateHandling::Shifted);
 //! let collator_4s: Collator =
 //!     Collator::try_new_unstable(&data_provider, &Default::default(), options_4s).unwrap();
 //!
@@ -193,59 +193,55 @@
 //!
 //! let data_provider = icu_testdata::get_provider();
 //! let mut options = CollatorOptions::new();
-//! options.set_strength(Some(Strength::Primary));
-//! options.set_case_level(Some(false));
+//! options.strength = Some(Strength::Primary);
+//! options.case_level = Some(CaseLevel::Off);
 //! let primary =
 //!   Collator::try_new_with_buffer_provider(&data_provider,
 //!                     &Default::default(),
 //!                     options).unwrap();
 //!
 //! assert_eq!(primary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
-//! assert_eq!(primary.compare("DEAL", "dejavu"), Ordering::Less);
 //! assert_eq!(primary.compare("dejavu", "dejAvu"), Ordering::Equal);
-//! assert_eq!(primary.compare("dejAvu", "déjavu"), Ordering::Equal);
+//! assert_eq!(primary.compare("dejavu", "déjavu"), Ordering::Equal);
 //!
 //! // Primary with case level on
 //!
-//! options.set_strength(Some(Strength::Primary));
-//! options.set_case_level(Some(true));
+//! options.strength = Some(Strength::Primary);
+//! options.case_level = Some(CaseLevel::On);
 //! let primary_and_case =
 //!   Collator::try_new_with_buffer_provider(&data_provider,
 //!                     &Default::default(),
 //!                     options).unwrap();
 //!
 //! assert_eq!(primary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
-//! assert_eq!(primary_and_case.compare("DEAL", "dejavu"), Ordering::Less);
+//! assert_eq!(primary_and_case.compare("dejavu", "dejAvu"), Ordering::Equal);
 //! assert_eq!(primary_and_case.compare("dejavu", "déjavu"), Ordering::Equal);
-//! assert_eq!(primary_and_case.compare("déjavu", "dejAvu"), Ordering::Equal);
 //!
 //! // Secondary with case level on
 //!
-//! options.set_strength(Some(Strength::Secondary));
-//! options.set_case_level(Some(true));
+//! options.strength = Some(Strength::Secondary);
+//! options.case_level = Some(CaseLevel::On);
 //! let secondary_and_case =
 //!   Collator::try_new_with_buffer_provider(&data_provider,
 //!                     &Default::default(),
 //!                     options).unwrap();
 //!
 //! assert_eq!(secondary_and_case.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Equal);
-//! assert_eq!(secondary_and_case.compare("DEAL", "dejavu"), Ordering::Less);
 //! assert_eq!(secondary_and_case.compare("dejavu", "dejAvu"), Ordering::Equal);
-//! assert_eq!(secondary_and_case.compare("dejAvu", "déjavu"), Ordering::Less);  // secondary difference
+//! assert_eq!(secondary_and_case.compare("dejavu", "déjavu"), Ordering::Less);  // secondary difference
 //!
 //! // Tertiary
 //!
-//! options.set_strength(Some(Strength::Tertiary));
-//! options.set_case_level(Some(false));
+//! options.strength = Some(Strength::Tertiary);
+//! options.case_level = Some(CaseLevel::Off);
 //! let tertiary =
 //!   Collator::try_new_with_buffer_provider(&data_provider,
 //!                     &Default::default(),
 //!                     options).unwrap();
 //!
 //! assert_eq!(tertiary.compare("ⓓⓔⓐⓛ", "DEAL"), Ordering::Less);
-//! assert_eq!(tertiary.compare("DEAL", "dejavu"), Ordering::Less);
 //! assert_eq!(tertiary.compare("dejavu", "dejAvu"), Ordering::Less);
-//! assert_eq!(tertiary.compare("dejAvu", "déjavu"), Ordering::Less);
+//! assert_eq!(tertiary.compare("dejavu", "déjavu"), Ordering::Less);
 //! ```
 //!
 //! ## Case First
@@ -272,7 +268,7 @@
 //! // Numerical sorting off
 //!
 //! let mut options_num_off = CollatorOptions::new();
-//! options_num_off.set_numeric(Some(false));
+//! options_num_off.numeric = Some(Numeric::Off);
 //! let collator_num_off: Collator =
 //!     Collator::try_new_unstable(&data_provider, &Default::default(), options_num_off).unwrap();
 //! assert_eq!(collator_num_off.compare("a10b", "a2b"), Ordering::Less);
@@ -280,13 +276,14 @@
 //! // Numerical sorting on
 //!
 //! let mut options_num_on = CollatorOptions::new();
-//! options_num_on.set_numeric(Some(true));
+//! options_num_on.numeric = Some(Numeric::On);
 //! let collator_num_on: Collator =
 //!     Collator::try_new_unstable(&data_provider, &Default::default(), options_num_on).unwrap();
 //! assert_eq!(collator_num_on.compare("a10b", "a2b"), Ordering::Greater);
 //! ```
 
 mod comparison;
+#[cfg(doc)]
 pub mod docs;
 mod elements;
 pub mod error;
@@ -297,9 +294,12 @@ extern crate alloc;
 
 pub use comparison::Collator;
 pub use options::AlternateHandling;
+pub use options::BackwardSecondLevel;
 pub use options::CaseFirst;
+pub use options::CaseLevel;
 pub use options::CollatorOptions;
 pub use options::MaxVariable;
+pub use options::Numeric;
 pub use options::Strength;
 
 #[cfg(all(test, feature = "serde"))]
