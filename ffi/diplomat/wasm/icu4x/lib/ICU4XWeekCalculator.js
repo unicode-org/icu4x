@@ -34,7 +34,15 @@ export class ICU4XWeekCalculator {
     })();
   }
 
+  static new_with_first_day_of_week_and_min_week_days(arg_first_weekday, arg_min_week_days) {
+    return new ICU4XWeekCalculator(wasm.ICU4XWeekCalculator_new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday_js_to_rust[arg_first_weekday], arg_min_week_days), true, []);
+  }
+
   first_weekday() {
     return ICU4XIsoWeekday_rust_to_js[wasm.ICU4XWeekCalculator_first_weekday(this.underlying)];
+  }
+
+  min_week_days() {
+    return wasm.ICU4XWeekCalculator_min_week_days(this.underlying);
   }
 }

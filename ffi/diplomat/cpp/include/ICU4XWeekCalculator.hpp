@@ -42,11 +42,26 @@ class ICU4XWeekCalculator {
   static diplomat::result<ICU4XWeekCalculator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
+   * 
+   * 
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
+   */
+  static ICU4XWeekCalculator new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
+
+  /**
    * Returns the weekday that starts the week for this object's locale
    * 
    * See the [Rust documentation for `first_weekday`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday) for more information.
    */
   ICU4XIsoWeekday first_weekday() const;
+
+  /**
+   * The minimum number of days overlapping a year required for a week to be
+   * considered part of that year
+   * 
+   * See the [Rust documentation for `min_week_days`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days) for more information.
+   */
+  uint8_t min_week_days() const;
   inline const capi::ICU4XWeekCalculator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XWeekCalculator* AsFFIMut() { return this->inner.get(); }
   inline ICU4XWeekCalculator(capi::ICU4XWeekCalculator* i) : inner(i) {}
@@ -70,7 +85,13 @@ inline diplomat::result<ICU4XWeekCalculator, ICU4XError> ICU4XWeekCalculator::tr
   }
   return diplomat_result_out_value;
 }
+inline ICU4XWeekCalculator ICU4XWeekCalculator::new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days) {
+  return ICU4XWeekCalculator(capi::ICU4XWeekCalculator_new_with_first_day_of_week_and_min_week_days(static_cast<capi::ICU4XIsoWeekday>(first_weekday), min_week_days));
+}
 inline ICU4XIsoWeekday ICU4XWeekCalculator::first_weekday() const {
   return static_cast<ICU4XIsoWeekday>(capi::ICU4XWeekCalculator_first_weekday(this->inner.get()));
+}
+inline uint8_t ICU4XWeekCalculator::min_week_days() const {
+  return capi::ICU4XWeekCalculator_min_week_days(this->inner.get());
 }
 #endif

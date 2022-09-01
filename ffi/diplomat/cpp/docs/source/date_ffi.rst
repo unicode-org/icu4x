@@ -52,7 +52,7 @@
 
     .. cpp:function:: uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const
 
-        Returns the week number in this month, 1-indexed, based on what day of the week is considered the "default" for this locale.
+        Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
         ``first_weekday`` can be obtained via ``first_weekday()`` on :cpp:class:`ICU4XWeekCalculator`
 
@@ -184,7 +184,7 @@
 
     .. cpp:function:: uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const
 
-        Returns the week number in this month, 1-indexed, based on what day of the week is considered the "default" for this locale.
+        Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
         ``first_weekday`` can be obtained via ``first_weekday()`` on :cpp:class:`ICU4XWeekCalculator`
 

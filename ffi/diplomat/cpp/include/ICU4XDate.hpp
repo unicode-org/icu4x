@@ -81,7 +81,7 @@ class ICU4XDate {
 
   /**
    * Returns the week number in this month, 1-indexed, based on what
-   * day of the week is considered the "default" for this locale.
+   * is considered the first day of the week (often a locale preference).
    * 
    * `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
    * 

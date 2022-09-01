@@ -101,7 +101,7 @@
 
     .. js:function:: week_of_month(first_weekday)
 
-        Returns the week number in this month, 1-indexed, based on what day of the week is considered the "default" for this locale.
+        Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
         ``first_weekday`` can be obtained via ``first_weekday()`` on :js:class:`ICU4XWeekCalculator`
 
@@ -280,7 +280,7 @@
 
     .. js:function:: week_of_month(first_weekday)
 
-        Returns the week number in this month, 1-indexed, based on what day of the week is considered the "default" for this locale.
+        Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
 
         ``first_weekday`` can be obtained via ``first_weekday()`` on :js:class:`ICU4XWeekCalculator`
 

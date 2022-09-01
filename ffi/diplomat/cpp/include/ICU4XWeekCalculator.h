@@ -25,7 +25,11 @@ extern "C" {
 
 diplomat_result_box_ICU4XWeekCalculator_ICU4XError ICU4XWeekCalculator_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
+ICU4XWeekCalculator* ICU4XWeekCalculator_new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
+
 ICU4XIsoWeekday ICU4XWeekCalculator_first_weekday(const ICU4XWeekCalculator* self);
+
+uint8_t ICU4XWeekCalculator_min_week_days(const ICU4XWeekCalculator* self);
 void ICU4XWeekCalculator_destroy(ICU4XWeekCalculator* self);
 
 #ifdef __cplusplus
