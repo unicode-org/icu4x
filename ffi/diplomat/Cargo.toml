@@ -51,7 +51,7 @@ simple_logger = ["dep:simple_logger"]
 [dependencies]
 fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar"}
-icu_collator = { version = "1.0.0-beta1", path = "../../components/collator"}
+icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", features = ["serde"] }
 icu_collections = { version = "1.0.0-beta1", path = "../../components/collections"}
 icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime/", features = ["serde"] }
 icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal/", features = ["serde"] }
