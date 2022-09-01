@@ -28,6 +28,7 @@ Documentation
    time_ffi
    timezone_ffi
    timezone_formatter_ffi
+   zoned_formatter_ffi
 
 Indices and tables
 ==================

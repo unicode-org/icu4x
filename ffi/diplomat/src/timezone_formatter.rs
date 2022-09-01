@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datetime::{time_zone::FallbackFormat, TimeZoneFormatterOptions};
+
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
@@ -92,19 +94,10 @@ pub mod ffi {
 
             let locale = locale.to_datalocale();
 
-            TimeZoneFormatter::try_new_unstable(
-                &provider,
-                &locale,
-                FallbackFormat::Iso8601(
-                    options.format.into(),
-                    options.minutes.into(),
-                    options.seconds.into(),
-                )
-                .into(),
-            )
-            .map(|tf| Box::new(ICU4XTimeZoneFormatter(tf)))
-            .map_err(Into::into)
-            .into()
+            TimeZoneFormatter::try_new_unstable(&provider, &locale, options.into())
+                .map(|tf| Box::new(ICU4XTimeZoneFormatter(tf)))
+                .map_err(Into::into)
+                .into()
         }
 
         #[diplomat::rust_link(
@@ -237,5 +230,16 @@ pub mod ffi {
             write.flush();
             result
         }
+    }
+}
+
+impl From<ffi::ICU4XIsoTimeZoneOptions> for TimeZoneFormatterOptions {
+    fn from(other: ffi::ICU4XIsoTimeZoneOptions) -> Self {
+        FallbackFormat::Iso8601(
+            other.format.into(),
+            other.minutes.into(),
+            other.seconds.into(),
+        )
+        .into()
     }
 }

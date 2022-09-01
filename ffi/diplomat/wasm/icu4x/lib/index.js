@@ -65,3 +65,4 @@ export { ICU4XWordBreakIteratorUtf16 } from './ICU4XWordBreakIteratorUtf16.js';
 export { ICU4XWordBreakIteratorUtf8 } from './ICU4XWordBreakIteratorUtf8.js';
 export { ICU4XWordBreakRule } from './ICU4XWordBreakRule.js';
 export { ICU4XWordBreakSegmenter } from './ICU4XWordBreakSegmenter.js';
+export { ICU4XZonedDateTimeFormatter } from './ICU4XZonedDateTimeFormatter.js';
