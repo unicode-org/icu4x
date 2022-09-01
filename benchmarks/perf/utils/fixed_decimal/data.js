@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661973273908,
+  "lastUpdate": 1662043391774,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48563,6 +48563,66 @@ window.BENCHMARK_DATA = {
             "name": "to_string/write_to/908070605040302010",
             "value": 95,
             "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "faec6f178c3becaa6a6b903eef1cd087f3a51bad",
+          "message": "Create options bag for CollatorOptions (#2475)",
+          "timestamp": "2022-09-01T14:30:45Z",
+          "tree_id": "2262a265c71c3514bfdd2157fde350b10e0395c1",
+          "url": "https://github.com/unicode-org/icu4x/commit/faec6f178c3becaa6a6b903eef1cd087f3a51bad"
+        },
+        "date": 1662043341719,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 105306,
+            "range": "± 386",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 22209,
+            "range": "± 216",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 67072,
+            "range": "± 660",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 174,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 1",
             "unit": "ns/iter"
           },
           {
