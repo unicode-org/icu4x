@@ -16,6 +16,7 @@ class ICU4XLocale;
 struct ICU4XCollatorOptions;
 class ICU4XCollator;
 #include "ICU4XError.hpp"
+#include "ICU4XOrdering.hpp"
 
 /**
  * A destruction policy for using ICU4XCollator with std::unique_ptr.
@@ -34,6 +35,27 @@ struct ICU4XCollatorDeleter {
 class ICU4XCollator {
  public:
   static diplomat::result<ICU4XCollator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptions options);
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `compare`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare) for more information.
+   */
+  ICU4XOrdering compare(const std::string_view left, const std::string_view right) const;
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `compare_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8) for more information.
+   */
+  ICU4XOrdering compare_utf8(const diplomat::span<uint8_t> left, const diplomat::span<uint8_t> right) const;
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `compare_utf16`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
+   */
+  ICU4XOrdering compare_utf16(const diplomat::span<uint16_t> left, const diplomat::span<uint16_t> right) const;
   inline const capi::ICU4XCollator* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCollator* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCollator(capi::ICU4XCollator* i) : inner(i) {}
@@ -58,5 +80,14 @@ inline diplomat::result<ICU4XCollator, ICU4XError> ICU4XCollator::try_new(const 
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value;
+}
+inline ICU4XOrdering ICU4XCollator::compare(const std::string_view left, const std::string_view right) const {
+  return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
+}
+inline ICU4XOrdering ICU4XCollator::compare_utf8(const diplomat::span<uint8_t> left, const diplomat::span<uint8_t> right) const {
+  return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare_utf8(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
+}
+inline ICU4XOrdering ICU4XCollator::compare_utf16(const diplomat::span<uint16_t> left, const diplomat::span<uint16_t> right) const {
+  return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare_utf16(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
 }
 #endif

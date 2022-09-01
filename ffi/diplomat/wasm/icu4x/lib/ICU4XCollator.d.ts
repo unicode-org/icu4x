@@ -3,6 +3,7 @@ import { ICU4XCollatorOptions } from "./ICU4XCollatorOptions";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XLocale } from "./ICU4XLocale";
+import { ICU4XOrdering } from "./ICU4XOrdering";
 
 /**
 
@@ -14,4 +15,22 @@ export class ICU4XCollator {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XCollatorOptions): ICU4XCollator | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare Rust documentation for `compare`} for more information.
+   */
+  compare(left: string, right: string): ICU4XOrdering;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8 Rust documentation for `compare_utf8`} for more information.
+   */
+  compare_utf8(left: Uint8Array, right: Uint8Array): ICU4XOrdering;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16 Rust documentation for `compare_utf16`} for more information.
+   */
+  compare_utf16(left: Uint16Array, right: Uint16Array): ICU4XOrdering;
 }

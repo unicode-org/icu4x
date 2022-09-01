@@ -8,6 +8,21 @@
 
     .. cpp:function:: static diplomat::result<ICU4XCollator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptions options)
 
+    .. cpp:function:: ICU4XOrdering compare(const std::string_view left, const std::string_view right) const
+
+        See the `Rust documentation for compare <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare>`__ for more information.
+
+
+    .. cpp:function:: ICU4XOrdering compare_utf8(const diplomat::span<uint8_t> left, const diplomat::span<uint8_t> right) const
+
+        See the `Rust documentation for compare_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8>`__ for more information.
+
+
+    .. cpp:function:: ICU4XOrdering compare_utf16(const diplomat::span<uint16_t> left, const diplomat::span<uint16_t> right) const
+
+        See the `Rust documentation for compare_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16>`__ for more information.
+
+
 .. cpp:enum-struct:: ICU4XCollatorAlternateHandling
 
     See the `Rust documentation for AlternateHandling <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.AlternateHandling.html>`__ for more information.
@@ -115,3 +130,14 @@
     .. cpp:enumerator:: Quaternary
 
     .. cpp:enumerator:: Identical
+
+.. cpp:enum-struct:: ICU4XOrdering
+
+    See the `Rust documentation for Ordering <https://unicode-org.github.io/icu4x-docs/doc/core/cmp/enum.Ordering.html>`__ for more information.
+
+
+    .. cpp:enumerator:: Less
+
+    .. cpp:enumerator:: Equal
+
+    .. cpp:enumerator:: Greater

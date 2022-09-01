@@ -8,6 +8,7 @@ import { ICU4XCollatorMaxVariable_js_to_rust, ICU4XCollatorMaxVariable_rust_to_j
 import { ICU4XCollatorNumeric_js_to_rust, ICU4XCollatorNumeric_rust_to_js } from "./ICU4XCollatorNumeric.js"
 import { ICU4XCollatorStrength_js_to_rust, ICU4XCollatorStrength_rust_to_js } from "./ICU4XCollatorStrength.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
+import { ICU4XOrdering_js_to_rust, ICU4XOrdering_rust_to_js } from "./ICU4XOrdering.js"
 
 const ICU4XCollator_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XCollator_destroy(underlying);
@@ -45,5 +46,32 @@ export class ICU4XCollator {
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
+  }
+
+  compare(arg_left, arg_right) {
+    const buf_arg_left = diplomatRuntime.DiplomatBuf.str(wasm, arg_left);
+    const buf_arg_right = diplomatRuntime.DiplomatBuf.str(wasm, arg_right);
+    const diplomat_out = ICU4XOrdering_rust_to_js[wasm.ICU4XCollator_compare(this.underlying, buf_arg_left.ptr, buf_arg_left.size, buf_arg_right.ptr, buf_arg_right.size)];
+    buf_arg_left.free();
+    buf_arg_right.free();
+    return diplomat_out;
+  }
+
+  compare_utf8(arg_left, arg_right) {
+    const buf_arg_left = diplomatRuntime.DiplomatBuf.slice(wasm, arg_left, 1);
+    const buf_arg_right = diplomatRuntime.DiplomatBuf.slice(wasm, arg_right, 1);
+    const diplomat_out = ICU4XOrdering_rust_to_js[wasm.ICU4XCollator_compare_utf8(this.underlying, buf_arg_left.ptr, buf_arg_left.size, buf_arg_right.ptr, buf_arg_right.size)];
+    buf_arg_left.free();
+    buf_arg_right.free();
+    return diplomat_out;
+  }
+
+  compare_utf16(arg_left, arg_right) {
+    const buf_arg_left = diplomatRuntime.DiplomatBuf.slice(wasm, arg_left, 2);
+    const buf_arg_right = diplomatRuntime.DiplomatBuf.slice(wasm, arg_right, 2);
+    const diplomat_out = ICU4XOrdering_rust_to_js[wasm.ICU4XCollator_compare_utf16(this.underlying, buf_arg_left.ptr, buf_arg_left.size, buf_arg_right.ptr, buf_arg_right.size)];
+    buf_arg_left.free();
+    buf_arg_right.free();
+    return diplomat_out;
   }
 }

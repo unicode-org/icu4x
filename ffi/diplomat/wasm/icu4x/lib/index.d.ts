@@ -55,6 +55,7 @@ export { ICU4XLocaleCanonicalizer } from './ICU4XLocaleCanonicalizer.js';
 export { ICU4XLocaleExpander } from './ICU4XLocaleExpander.js';
 export { ICU4XLogger } from './ICU4XLogger.js';
 export { ICU4XMetaZoneCalculator } from './ICU4XMetaZoneCalculator.js';
+export { ICU4XOrdering } from './ICU4XOrdering.js';
 export { ICU4XPluralCategories } from './ICU4XPluralCategories.js';
 export { ICU4XPluralCategory } from './ICU4XPluralCategory.js';
 export { ICU4XPluralOperands } from './ICU4XPluralOperands.js';

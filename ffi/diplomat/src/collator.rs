@@ -16,6 +16,14 @@ pub mod ffi {
     #[diplomat::rust_link(icu_collator::Collator, Struct)]
     pub struct ICU4XCollator(pub Collator);
 
+    #[diplomat::enum_convert(core::cmp::Ordering)]
+    #[diplomat::rust_link(core::cmp::Ordering, Enum)]
+    pub enum ICU4XOrdering {
+        Less = 0,
+        Equal = 1,
+        Greater = 2,
+    }
+
     #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::CollatorOptions, Struct)]
     pub struct ICU4XCollatorOptions {
@@ -105,6 +113,21 @@ pub mod ffi {
                 .map(|o| Box::new(ICU4XCollator(o)))
                 .map_err(Into::into)
                 .into()
+        }
+
+        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
+        pub fn compare(&self, left: &str, right: &str) -> ICU4XOrdering {
+            self.0.compare(left, right).into()
+        }
+
+        #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
+        pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> ICU4XOrdering {
+            self.0.compare_utf8(left, right).into()
+        }
+
+        #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
+        pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> ICU4XOrdering {
+            self.0.compare_utf16(left, right).into()
         }
     }
 }

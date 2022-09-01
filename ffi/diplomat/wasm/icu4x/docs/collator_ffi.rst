@@ -8,6 +8,29 @@
 
     .. js:staticfunction:: try_new(provider, locale, options)
 
+    .. js:function:: compare(left, right)
+
+        See the `Rust documentation for compare <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare>`__ for more information.
+
+
+    .. js:function:: compare_utf8(left, right)
+
+        See the `Rust documentation for compare_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8>`__ for more information.
+
+
+        - Note: ``left`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
+        - Note: ``right`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
+    .. js:function:: compare_utf16(left, right)
+
+        See the `Rust documentation for compare_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16>`__ for more information.
+
+
+        - Note: ``left`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
+        - Note: ``right`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+
 .. js:class:: ICU4XCollatorAlternateHandling
 
     See the `Rust documentation for AlternateHandling <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.AlternateHandling.html>`__ for more information.
@@ -60,4 +83,9 @@
 .. js:class:: ICU4XCollatorStrength
 
     See the `Rust documentation for Strength <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.Strength.html>`__ for more information.
+
+
+.. js:class:: ICU4XOrdering
+
+    See the `Rust documentation for Ordering <https://unicode-org.github.io/icu4x-docs/doc/core/cmp/enum.Ordering.html>`__ for more information.
 
