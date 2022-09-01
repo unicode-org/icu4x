@@ -93,9 +93,9 @@
         See the `Rust documentation for from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
 
 
-    .. js:function:: tostring()
+    .. js:function:: to_string()
 
         Write a string representation of :js:class:`ICU4XLocale` to ``write``
 
-        See the `Rust documentation for Locale <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
+        See the `Rust documentation for write_to <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to>`__ for more information.
 

@@ -14,6 +14,7 @@ typedef struct ICU4XCodePointMapData8 ICU4XCodePointMapData8;
 #ifdef __cplusplus
 } // namespace capi
 #endif
+#include "ICU4XCodePointSetData.h"
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XCodePointMapData8_ICU4XError.h"
 #ifdef __cplusplus
@@ -21,21 +22,25 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_try_get_general_category(const ICU4XDataProvider* provider);
+uint8_t ICU4XCodePointMapData8_get(const ICU4XCodePointMapData8* self, char32_t cp);
 
-diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_try_get_bidi_class(const ICU4XDataProvider* provider);
+uint8_t ICU4XCodePointMapData8_get_u32(const ICU4XCodePointMapData8* self, uint32_t cp);
 
-diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_try_get_east_asian_width(const ICU4XDataProvider* provider);
+ICU4XCodePointSetData* ICU4XCodePointMapData8_get_set_for_value(const ICU4XCodePointMapData8* self, uint8_t value);
 
-diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_try_get_line_break(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_load_general_category(const ICU4XDataProvider* provider);
+
+diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_load_bidi_class(const ICU4XDataProvider* provider);
+
+diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_load_east_asian_width(const ICU4XDataProvider* provider);
+
+diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_load_line_break(const ICU4XDataProvider* provider);
 
 diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_try_grapheme_cluster_break(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_try_get_word_break(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_load_word_break(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_try_get_sentence_break(const ICU4XDataProvider* provider);
-
-uint8_t ICU4XCodePointMapData8_get(const ICU4XCodePointMapData8* self, char32_t cp);
+diplomat_result_box_ICU4XCodePointMapData8_ICU4XError ICU4XCodePointMapData8_load_sentence_break(const ICU4XDataProvider* provider);
 void ICU4XCodePointMapData8_destroy(ICU4XCodePointMapData8* self);
 
 #ifdef __cplusplus

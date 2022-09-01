@@ -156,16 +156,16 @@ class ICU4XLocale {
   /**
    * Write a string representation of [`ICU4XLocale`] to `write`
    * 
-   * See the [Rust documentation for `Locale`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * See the [Rust documentation for `write_to`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to) for more information.
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> tostring_to_writeable(W& write) const;
+  template<typename W> diplomat::result<std::monostate, ICU4XError> to_string_to_writeable(W& write) const;
 
   /**
    * Write a string representation of [`ICU4XLocale`] to `write`
    * 
-   * See the [Rust documentation for `Locale`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html) for more information.
+   * See the [Rust documentation for `write_to`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to) for more information.
    */
-  diplomat::result<std::string, ICU4XError> tostring() const;
+  diplomat::result<std::string, ICU4XError> to_string() const;
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocale* AsFFIMut() { return this->inner.get(); }
   inline ICU4XLocale(capi::ICU4XLocale* i) : inner(i) {}
@@ -344,9 +344,9 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_script(cons
   }
   return diplomat_result_out_value;
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::tostring_to_writeable(W& write) const {
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::to_string_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XLocale_tostring(this->inner.get(), &write_writer);
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_to_string(this->inner.get(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
@@ -355,10 +355,10 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLo
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XLocale::tostring() const {
+inline diplomat::result<std::string, ICU4XError> ICU4XLocale::to_string() const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XLocale_tostring(this->inner.get(), &diplomat_writeable_out);
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_to_string(this->inner.get(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
