@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1661972663560,
+  "lastUpdate": 1662042813317,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -25973,6 +25973,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cd0f1fe2b14e914e62896b4e3f60a8855f339856"
         },
         "date": 1661972616455,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "faec6f178c3becaa6a6b903eef1cd087f3a51bad",
+          "message": "Create options bag for CollatorOptions (#2475)",
+          "timestamp": "2022-09-01T14:30:45Z",
+          "tree_id": "2262a265c71c3514bfdd2157fde350b10e0395c1",
+          "url": "https://github.com/unicode-org/icu4x/commit/faec6f178c3becaa6a6b903eef1cd087f3a51bad"
+        },
+        "date": 1662042750774,
         "tool": "ndjson",
         "benches": [
           {
