@@ -183,11 +183,6 @@ icu::datetime::TypedZonedDateTimeFormatter::format_to_write#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::try_new_with_buffer_provider#FnInStruct
-icu::datetime::ZonedDateTimeFormatter#Struct
-icu::datetime::ZonedDateTimeFormatter::format#FnInStruct
-icu::datetime::ZonedDateTimeFormatter::format_to_string#FnInStruct
-icu::datetime::ZonedDateTimeFormatter::format_to_write#FnInStruct
-icu::datetime::ZonedDateTimeFormatter::try_new_unstable#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::try_new_with_any_provider#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider#FnInStruct
 icu::datetime::options::DateTimeFormatterOptions#Enum
