@@ -2,9 +2,7 @@ import { FFIError } from "./diplomat-runtime"
 import { ICU4XCustomTimeZone } from "./ICU4XCustomTimeZone";
 import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XError } from "./ICU4XError";
-import { ICU4XIsoTimeZoneFormat } from "./ICU4XIsoTimeZoneFormat";
-import { ICU4XIsoTimeZoneMinuteDisplay } from "./ICU4XIsoTimeZoneMinuteDisplay";
-import { ICU4XIsoTimeZoneSecondDisplay } from "./ICU4XIsoTimeZoneSecondDisplay";
+import { ICU4XIsoTimeZoneOptions } from "./ICU4XIsoTimeZoneOptions";
 import { ICU4XLocale } from "./ICU4XLocale";
 
 /**
@@ -39,7 +37,7 @@ export class ICU4XTimeZoneFormatter {
    * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.FallbackFormat.html 1}
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_with_iso_8601_fallback(provider: ICU4XDataProvider, locale: ICU4XLocale, format: ICU4XIsoTimeZoneFormat, minutes: ICU4XIsoTimeZoneMinuteDisplay, seconds: ICU4XIsoTimeZoneSecondDisplay): ICU4XTimeZoneFormatter | never;
+  static try_new_with_iso_8601_fallback(provider: ICU4XDataProvider, locale: ICU4XLocale, options: ICU4XIsoTimeZoneOptions): ICU4XTimeZoneFormatter | never;
 
   /**
 
@@ -88,7 +86,7 @@ export class ICU4XTimeZoneFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_iso_8601_format Rust documentation for `load_iso_8601_format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  load_iso_8601_format(format: ICU4XIsoTimeZoneFormat, minutes: ICU4XIsoTimeZoneMinuteDisplay, seconds: ICU4XIsoTimeZoneSecondDisplay): void | never;
+  load_iso_8601_format(options: ICU4XIsoTimeZoneOptions): void | never;
 
   /**
 

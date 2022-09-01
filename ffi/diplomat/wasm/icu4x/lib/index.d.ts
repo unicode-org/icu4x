@@ -33,6 +33,7 @@ export { ICU4XIsoDate } from './ICU4XIsoDate.js';
 export { ICU4XIsoDateTime } from './ICU4XIsoDateTime.js';
 export { ICU4XIsoTimeZoneFormat } from './ICU4XIsoTimeZoneFormat.js';
 export { ICU4XIsoTimeZoneMinuteDisplay } from './ICU4XIsoTimeZoneMinuteDisplay.js';
+export { ICU4XIsoTimeZoneOptions } from './ICU4XIsoTimeZoneOptions.js';
 export { ICU4XIsoTimeZoneSecondDisplay } from './ICU4XIsoTimeZoneSecondDisplay.js';
 export { ICU4XIsoWeekday } from './ICU4XIsoWeekday.js';
 export { ICU4XLineBreakIteratorLatin1 } from './ICU4XLineBreakIteratorLatin1.js';

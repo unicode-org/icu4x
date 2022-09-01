@@ -44,6 +44,12 @@ pub mod ffi {
         Never,
     }
 
+    pub struct ICU4XIsoTimeZoneOptions {
+        pub format: ICU4XIsoTimeZoneFormat,
+        pub minutes: ICU4XIsoTimeZoneMinuteDisplay,
+        pub seconds: ICU4XIsoTimeZoneSecondDisplay,
+    }
+
     impl ICU4XTimeZoneFormatter {
         /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
         ///
@@ -79,9 +85,7 @@ pub mod ffi {
         pub fn try_new_with_iso_8601_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-            format: ICU4XIsoTimeZoneFormat,
-            minutes: ICU4XIsoTimeZoneMinuteDisplay,
-            seconds: ICU4XIsoTimeZoneSecondDisplay,
+            options: ICU4XIsoTimeZoneOptions,
         ) -> DiplomatResult<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
@@ -91,7 +95,12 @@ pub mod ffi {
             TimeZoneFormatter::try_new_unstable(
                 &provider,
                 &locale,
-                FallbackFormat::Iso8601(format.into(), minutes.into(), seconds.into()).into(),
+                FallbackFormat::Iso8601(
+                    options.format.into(),
+                    options.minutes.into(),
+                    options.seconds.into(),
+                )
+                .into(),
             )
             .map(|tf| Box::new(ICU4XTimeZoneFormatter(tf)))
             .map_err(Into::into)
@@ -198,12 +207,14 @@ pub mod ffi {
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::load_iso_8601_format, FnInStruct)]
         pub fn load_iso_8601_format(
             &mut self,
-            format: ICU4XIsoTimeZoneFormat,
-            minutes: ICU4XIsoTimeZoneMinuteDisplay,
-            seconds: ICU4XIsoTimeZoneSecondDisplay,
+            options: ICU4XIsoTimeZoneOptions,
         ) -> DiplomatResult<(), ICU4XError> {
             self.0
-                .load_iso_8601_format(format.into(), minutes.into(), seconds.into())
+                .load_iso_8601_format(
+                    options.format.into(),
+                    options.minutes.into(),
+                    options.seconds.into(),
+                )
                 .map(|_| ())
                 .map_err(Into::into)
                 .into()
