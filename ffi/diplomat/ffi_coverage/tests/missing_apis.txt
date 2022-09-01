@@ -43,9 +43,6 @@ icu::collator::BackwardSecondLevel#Enum
 icu::collator::CaseFirst#Enum
 icu::collator::CaseLevel#Enum
 icu::collator::Collator#Struct
-icu::collator::Collator::compare#FnInStruct
-icu::collator::Collator::compare_utf16#FnInStruct
-icu::collator::Collator::compare_utf8#FnInStruct
 icu::collator::Collator::try_new_unstable#FnInStruct
 icu::collator::Collator::try_new_with_any_provider#FnInStruct
 icu::collator::Collator::try_new_with_buffer_provider#FnInStruct
