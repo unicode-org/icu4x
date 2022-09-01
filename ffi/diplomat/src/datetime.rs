@@ -18,8 +18,7 @@ pub mod ffi {
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate, ICU4XIsoWeekday};
     use crate::errors::ffi::ICU4XError;
     use crate::time::ffi::ICU4XTime;
-    #[allow(unused)] // https://github.com/rust-diplomat/diplomat/issues/248
-    use crate::week::ffi::{ICU4XWeekCalculator, ICU4XWeekOf, ICU4XWeekRelativeUnit};
+    use crate::week::ffi::{ICU4XWeekCalculator, ICU4XWeekOf};
 
     #[diplomat::opaque]
     /// An ICU4X DateTime object capable of containing a ISO-8601 date and time.

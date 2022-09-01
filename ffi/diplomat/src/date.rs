@@ -14,8 +14,7 @@ pub mod ffi {
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::errors::ffi::ICU4XError;
-    #[allow(unused)] // https://github.com/rust-diplomat/diplomat/issues/248
-    use crate::week::ffi::{ICU4XWeekCalculator, ICU4XWeekOf, ICU4XWeekRelativeUnit};
+    use crate::week::ffi::{ICU4XWeekCalculator, ICU4XWeekOf};
 
     #[diplomat::enum_convert(IsoWeekday)]
     pub enum ICU4XIsoWeekday {
