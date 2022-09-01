@@ -99,6 +99,8 @@ pub mod ffi {
     }
 
     impl ICU4XCollator {
+        /// Construct a new Collator instance.
+        #[diplomat::rust_link(icu::collator::Collator::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
