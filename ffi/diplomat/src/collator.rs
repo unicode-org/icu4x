@@ -16,6 +16,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu_collator::Collator, Struct)]
     pub struct ICU4XCollator(pub Collator);
 
+    #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::CollatorOptions, Struct)]
     pub struct ICU4XCollatorOptions {
         pub strength: ICU4XCollatorStrength,
@@ -27,6 +28,7 @@ pub mod ffi {
         pub backward_second_level: ICU4XCollatorBackwardSecondLevel,
     }
 
+    #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::Strength, Enum)]
     pub enum ICU4XCollatorStrength {
         Auto = 0,
@@ -37,6 +39,7 @@ pub mod ffi {
         Identical = 5,
     }
 
+    #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::AlternateHandling, Enum)]
     pub enum ICU4XCollatorAlternateHandling {
         Auto = 0,
@@ -44,6 +47,7 @@ pub mod ffi {
         Shifted = 2,
     }
 
+    #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::CaseFirst, Enum)]
     pub enum ICU4XCollatorCaseFirst {
         Auto = 0,
@@ -52,6 +56,7 @@ pub mod ffi {
         UpperFirst = 3,
     }
 
+    #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::MaxVariable, Enum)]
     pub enum ICU4XCollatorMaxVariable {
         Auto = 0,
@@ -61,6 +66,7 @@ pub mod ffi {
         Currency = 4,
     }
 
+    #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::CaseLevel, Enum)]
     pub enum ICU4XCollatorCaseLevel {
         Auto = 0,
@@ -68,6 +74,7 @@ pub mod ffi {
         On = 2,
     }
 
+    #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::Numeric, Enum)]
     pub enum ICU4XCollatorNumeric {
         Auto = 0,
@@ -75,6 +82,7 @@ pub mod ffi {
         On = 2,
     }
 
+    #[non_exhaustive]
     #[diplomat::rust_link(icu_collator::BackwardSecondLevel, Enum)]
     pub enum ICU4XCollatorBackwardSecondLevel {
         Auto = 0,
