@@ -334,9 +334,7 @@ default = [
     "icu_properties",
     "icu_timezone",
 ]
-experimental = [
-    "icu_segmenter",
-    "icu_casemapping",
+icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
 buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]

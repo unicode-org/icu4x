@@ -236,7 +236,7 @@ impl DataExporter for BakedDataExporter {
                     ::icu_datetime::pattern::runtime::PatternPlurals<'static>
                 )]
             };
-            feature = quote! { #![cfg(all(feature = "icu_datetime", feature = "experimental"))] }
+            feature = quote! { #![cfg(feature = "icu_datetime_experimental")] }
         }
 
         let mut path = PathBuf::new();
