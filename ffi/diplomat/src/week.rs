@@ -50,10 +50,36 @@ pub mod ffi {
                 .into()
         }
 
+        #[diplomat::rust_link(
+            icu::calendar::week::WeekCalculator::first_weekday,
+            StructField,
+            compact
+        )]
+        #[diplomat::rust_link(
+            icu::calendar::week::WeekCalculator::min_week_days,
+            StructField,
+            compact
+        )]
+        pub fn new_with_first_day_of_week_and_min_week_days(
+            first_weekday: ICU4XIsoWeekday,
+            min_week_days: u8,
+        ) -> Box<ICU4XWeekCalculator> {
+            let mut calculator = WeekCalculator::default();
+            calculator.first_weekday = first_weekday.into();
+            calculator.min_week_days = min_week_days;
+            Box::new(ICU4XWeekCalculator(calculator))
+        }
+
         /// Returns the weekday that starts the week for this object's locale
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::first_weekday, StructField)]
         pub fn first_weekday(&self) -> ICU4XIsoWeekday {
             self.0.first_weekday.into()
+        }
+        /// The minimum number of days overlapping a year required for a week to be
+        /// considered part of that year
+        #[diplomat::rust_link(icu::calendar::week::WeekCalculator::min_week_days, StructField)]
+        pub fn min_week_days(&self) -> u8 {
+            self.0.min_week_days
         }
     }
 }
