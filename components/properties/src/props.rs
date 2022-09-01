@@ -379,7 +379,11 @@ impl From<GeneralCategory> for GeneralCategoryGroup {
         GeneralCategoryGroup(1 << (subcategory as u32))
     }
 }
-
+impl From<u32> for GeneralCategoryGroup {
+    fn from(mask: u32) -> Self {
+        GeneralCategoryGroup(mask)
+    }
+}
 /// Enumerated property Script.
 ///
 /// This is used with both the Script and Script_Extensions Unicode properties.

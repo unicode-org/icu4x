@@ -66,6 +66,8 @@ lazy_static::lazy_static! {
     static ref IGNORED_TRAITS: HashSet<&'static str> = [
         // Rust and Rust ecosystem types
         "Any",
+        "AsMut",
+        "AsRef",
         "Bake",
         "Borrow",
         "BorrowMut",
@@ -137,11 +139,13 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendar::try_new_with_any_provider",
         "icu::calendar::AnyCalendar::try_new_with_buffer_provider",
 
-        // Stuff that could be exposed over FFI but is not currently planned
+        // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
+        //
+        // Post 1.0 we should go through this and plan them, filing followups
+        // for ones we do plan and adding links here
+        // https://github.com/unicode-org/icu4x/issues/2492
         // =========================
 
-        // Largely for use by datetimeformat, not super public (#2421)
-        "icu::calendar::week_of",
         // Largely for use by datetimeformat, not generally useful
         "icu::calendar::AnyCalendar::convert_any_date",
         "icu::calendar::AnyCalendar::convert_any_datetime",
@@ -204,6 +208,29 @@ lazy_static::lazy_static! {
         "icu::properties::SentenceBreak",
         "icu::properties::WordBreak",
 
+        // Experimental
+        "icu::properties::maps::load_canonical_combining_class",
+
+        // Not planned for 1.0
+        "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
+        "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
+        "icu::properties::maps::CodePointMapData::as_code_point_trie",
+        "icu::properties::maps::CodePointMapData::from_code_point_trie",
+        "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
+        "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
+        "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
+        "icu::collections::codepointinvlist",
+        "icu::collections::codepointtrie",
+
+        // Not planned until someone needs them
+        "icu::locid::extensions",
+        "icu::locid::subtags",
+        "icu::locid::LanguageIdentifier",
+
+        // We currently do support this, but diplomat panics on the doc specifier
+        // https://github.com/rust-diplomat/diplomat/pull/244
+        "icu::locid::Locale::UND",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -257,6 +284,30 @@ lazy_static::lazy_static! {
         // associated type
         "icu::plurals::PluralOperands::Err",
 
+        // Properties Rust internals
+        "icu::properties::maps::CodePointMapData::as_borrowed",
+        "icu::properties::maps::CodePointMapData::from_data",
+        "icu::properties::maps::CodePointMapData::to_code_point_trie",
+        "icu::properties::maps::CodePointMapData::try_into_converted",
+        "icu::properties::sets::CodePointSetData::as_borrowed",
+        "icu::properties::sets::CodePointSetData::from_data",
+        "icu::properties::sets::CodePointSetDataBorrowed::contains_u32",
+
+        // locid macros
+        "icu::locid::langid",
+        "icu::locid::locale",
+        "icu::locid::extensions_other_key",
+        "icu::locid::extensions_private_key",
+        "icu::locid::extensions_transform_key",
+        "icu::locid::extensions_unicode_attribute",
+        "icu::locid::extensions_unicode_key",
+        "icu::locid::extensions_unicode_value",
+        "icu::locid::subtags_language",
+        "icu::locid::subtags_region",
+        "icu::locid::subtags_script",
+        "icu::locid::subtags_variant",
+        // assoc type
+        "icu::locale::Locale::Err",
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 
