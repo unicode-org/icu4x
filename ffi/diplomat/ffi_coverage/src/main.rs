@@ -4,7 +4,7 @@
 
 use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum};
-use std::collections::{BTreeSet, HashSet, HashMap};
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::fmt;
 use std::fs::File;
 use std::path::PathBuf;
@@ -570,7 +570,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     }
                     ItemEnum::Method(_) => {
                         let doc_type = match inside {
-                            Some(In::Enum(tr)) | Some(In::Struct(tr)) if check_ignored_assoc_item(item_name, tr) => return,
+                            Some(In::Enum(tr)) | Some(In::Struct(tr))
+                                if check_ignored_assoc_item(item_name, tr) =>
+                            {
+                                return
+                            }
                             Some(In::Enum(_)) => ast::DocType::FnInEnum,
                             Some(In::Trait) => ast::DocType::FnInTrait,
                             Some(In::Struct(_)) => ast::DocType::FnInStruct,
@@ -583,7 +587,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     }
                     ItemEnum::AssocConst { .. } => {
                         let doc_type = match inside {
-                            Some(In::Enum(tr)) | Some(In::Struct(tr)) if check_ignored_assoc_item(item_name, tr) => return,
+                            Some(In::Enum(tr)) | Some(In::Struct(tr))
+                                if check_ignored_assoc_item(item_name, tr) =>
+                            {
+                                return
+                            }
                             Some(In::Enum(_)) => ast::DocType::AssociatedConstantInEnum,
                             Some(In::Trait) => ast::DocType::AssociatedConstantInTrait,
                             Some(In::Struct(_)) => ast::DocType::AssociatedConstantInStruct,
@@ -593,7 +601,11 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     }
                     ItemEnum::AssocType { .. } => {
                         let doc_type = match inside {
-                            Some(In::Enum(tr)) | Some(In::Struct(tr)) if check_ignored_assoc_item(item_name, tr) => return,
+                            Some(In::Enum(tr)) | Some(In::Struct(tr))
+                                if check_ignored_assoc_item(item_name, tr) =>
+                            {
+                                return
+                            }
                             Some(In::Enum(_)) => ast::DocType::AssociatedTypeInEnum,
                             Some(In::Trait) => ast::DocType::AssociatedTypeInTrait,
                             Some(In::Struct(_)) => ast::DocType::AssociatedTypeInStruct,
