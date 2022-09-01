@@ -117,16 +117,19 @@ pub mod ffi {
                 .into()
         }
 
+        /// Compare guaranteed well-formed UTF-8 strings.
         #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
         pub fn compare(&self, left: &str, right: &str) -> ICU4XOrdering {
             self.0.compare(left, right).into()
         }
 
+        /// Compare potentially ill-formed UTF-8 strings.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
         pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> ICU4XOrdering {
             self.0.compare_utf8(left, right).into()
         }
 
+        /// Compare potentially ill-formed UTF-16 strings.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
         pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> ICU4XOrdering {
             self.0.compare_utf16(left, right).into()
