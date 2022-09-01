@@ -120,8 +120,8 @@ export class ICU4XLocale {
 
    * Write a string representation of {@link ICU4XLocale `ICU4XLocale`} to `write`
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html Rust documentation for `Locale`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to Rust documentation for `write_to`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  tostring(): string | never;
+  to_string(): string | never;
 }

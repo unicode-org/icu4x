@@ -210,11 +210,11 @@ export class ICU4XLocale {
     return diplomat_out;
   }
 
-  tostring() {
+  to_string() {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XLocale_tostring(diplomat_receive_buffer, this.underlying, writeable);
+        wasm.ICU4XLocale_to_string(diplomat_receive_buffer, this.underlying, writeable);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};

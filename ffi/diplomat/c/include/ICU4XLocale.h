@@ -47,7 +47,7 @@ diplomat_result_void_ICU4XError ICU4XLocale_script(const ICU4XLocale* self, Dipl
 
 diplomat_result_void_ICU4XError ICU4XLocale_set_script(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
 
-diplomat_result_void_ICU4XError ICU4XLocale_tostring(const ICU4XLocale* self, DiplomatWriteable* write);
+diplomat_result_void_ICU4XError ICU4XLocale_to_string(const ICU4XLocale* self, DiplomatWriteable* write);
 void ICU4XLocale_destroy(ICU4XLocale* self);
 
 #ifdef __cplusplus
