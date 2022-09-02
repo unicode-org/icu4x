@@ -18,8 +18,8 @@ typedef struct ICU4XCustomTimeZone ICU4XCustomTimeZone;
 #include "diplomat_result_void_ICU4XError.h"
 #include "diplomat_result_int32_t_ICU4XError.h"
 #include "diplomat_result_bool_ICU4XError.h"
-#include "ICU4XIsoDateTime.h"
 #include "ICU4XMetaZoneCalculator.h"
+#include "ICU4XIsoDateTime.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -71,7 +71,7 @@ diplomat_result_bool_ICU4XError ICU4XCustomTimeZone_is_standard_time(const ICU4X
 
 diplomat_result_bool_ICU4XError ICU4XCustomTimeZone_is_daylight_time(const ICU4XCustomTimeZone* self);
 
-void ICU4XCustomTimeZone_maybe_calculate_meta_zone(ICU4XCustomTimeZone* self, const ICU4XIsoDateTime* local_datetime, const ICU4XMetaZoneCalculator* metazone_calculator);
+void ICU4XCustomTimeZone_maybe_calculate_meta_zone(ICU4XCustomTimeZone* self, const ICU4XMetaZoneCalculator* metazone_calculator, const ICU4XIsoDateTime* local_datetime);
 void ICU4XCustomTimeZone_destroy(ICU4XCustomTimeZone* self);
 
 #ifdef __cplusplus
