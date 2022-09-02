@@ -70,7 +70,6 @@ extern crate alloc;
 pub mod error;
 pub mod properties;
 pub mod provider;
-pub mod u24;
 
 use crate::error::NormalizerError;
 use crate::provider::CanonicalDecompositionDataV1Marker;
@@ -94,8 +93,6 @@ use provider::CompatibilityDecompositionTablesV1Marker;
 use provider::DecompositionSupplementV1;
 use provider::DecompositionTablesV1;
 use smallvec::SmallVec;
-use u24::EMPTY_U24;
-use u24::U24;
 use utf16_iter::Utf16CharsEx;
 use utf8_iter::Utf8CharsEx;
 use write16::Write16;
@@ -242,14 +239,10 @@ fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
 }
 
-/// Convert a `U24` _obtained from data provider data_ to `char`.
-#[inline(always)]
-fn char_from_u24(u: U24) -> char {
-    char_from_u32(u.into())
-}
-
 const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
+
+const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
 
 #[inline(always)]
 fn in_inclusive_range(c: char, start: char, end: char) -> bool {
@@ -517,9 +510,9 @@ where
     trie: &'data CodePointTrie<'data, u32>,
     supplementary_trie: Option<&'data CodePointTrie<'data, u32>>,
     scalars16: &'data ZeroSlice<u16>,
-    scalars24: &'data ZeroSlice<U24>,
+    scalars24: &'data ZeroSlice<char>,
     supplementary_scalars16: &'data ZeroSlice<u16>,
-    supplementary_scalars24: &'data ZeroSlice<U24>,
+    supplementary_scalars24: &'data ZeroSlice<char>,
     half_width_voicing_marks_become_non_starters: bool,
     /// The lowest character for which either of the following does
     /// not hold:
@@ -589,7 +582,7 @@ where
             supplementary_scalars24: if let Some(supplementary) = supplementary_tables {
                 &supplementary.scalars24
             } else {
-                EMPTY_U24
+                EMPTY_CHAR
             },
             half_width_voicing_marks_become_non_starters,
             decomposition_passthrough_bound: u32::from(decomposition_passthrough_bound),
@@ -647,32 +640,28 @@ where
         &mut self,
         low: u16,
         offset: usize,
-        slice32: &ZeroSlice<U24>,
+        slice32: &ZeroSlice<char>,
     ) -> (char, usize) {
         let len = usize::from(low >> 13) + 1;
         let (starter, tail) = slice32
             .get_subslice(offset..offset + len)
             .and_then(|slice| slice.split_first())
-            .map_or_else(
-                || {
-                    // GIGO case
-                    debug_assert!(false);
-                    (REPLACEMENT_CHARACTER, EMPTY_U24)
-                },
-                |(first, trail)| (char_from_u24(first), trail),
-            );
+            .unwrap_or_else(|| {
+                // GIGO case
+                debug_assert!(false);
+                (REPLACEMENT_CHARACTER, EMPTY_CHAR)
+            });
         if low & 0x1000 != 0 {
             // All the rest are combining
-            for u in tail.iter() {
+            for ch in tail.iter() {
                 self.buffer
-                    .push(CharacterAndClass::new_with_placeholder(char_from_u24(u)));
+                    .push(CharacterAndClass::new_with_placeholder(ch));
             }
             (starter, 0)
         } else {
             let mut i = 0;
             let mut combining_start = 0;
-            for u in tail.iter() {
-                let ch = char_from_u24(u);
+            for ch in tail.iter() {
                 let trie_value = self.trie.get(u32::from(ch));
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
                     CharacterAndTrieValue::new(ch, trie_value),

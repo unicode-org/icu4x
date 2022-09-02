@@ -111,8 +111,6 @@
 
     .. cpp:enumerator:: DateTimeFormatMismatchedAnyCalendarError
 
-    .. cpp:enumerator:: DateTimeFormatMismatchedCalendarLocaleError
-
     .. cpp:enumerator:: TinyStrTooLargeError
 
     .. cpp:enumerator:: TinyStrContainsNullError
@@ -122,3 +120,5 @@
     .. cpp:enumerator:: TimeZoneOffsetOutOfBoundsError
 
     .. cpp:enumerator:: TimeZoneInvalidOffsetError
+
+    .. cpp:enumerator:: TimeZoneMissingInputError

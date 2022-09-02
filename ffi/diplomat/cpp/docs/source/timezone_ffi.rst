@@ -45,7 +45,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
 
 
-    .. cpp:function:: diplomat::result<int32_t, std::monostate> gmt_offset_seconds() const
+    .. cpp:function:: diplomat::result<int32_t, ICU4XError> gmt_offset_seconds() const
 
         Returns the value of the ``gmt_offset`` field as offset seconds.
 
@@ -56,7 +56,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html>`__
 
 
-    .. cpp:function:: diplomat::result<bool, std::monostate> is_gmt_offset_positive() const
+    .. cpp:function:: diplomat::result<bool, ICU4XError> is_gmt_offset_positive() const
 
         Returns whether the ``gmt_offset`` field is positive.
 
@@ -65,7 +65,7 @@
         See the `Rust documentation for is_positive <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_positive>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<bool, std::monostate> is_gmt_offset_zero() const
+    .. cpp:function:: diplomat::result<bool, ICU4XError> is_gmt_offset_zero() const
 
         Returns whether the ``gmt_offset`` field is zero.
 
@@ -74,7 +74,7 @@
         See the `Rust documentation for is_zero <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.is_zero>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<bool, std::monostate> gmt_offset_has_minutes() const
+    .. cpp:function:: diplomat::result<bool, ICU4XError> gmt_offset_has_minutes() const
 
         Returns whether the ``gmt_offset`` field has nonzero minutes.
 
@@ -83,7 +83,7 @@
         See the `Rust documentation for has_minutes <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.GmtOffset.html#method.has_minutes>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<bool, std::monostate> gmt_offset_has_seconds() const
+    .. cpp:function:: diplomat::result<bool, ICU4XError> gmt_offset_has_seconds() const
 
         Returns whether the ``gmt_offset`` field has nonzero seconds.
 
@@ -112,7 +112,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> time_zone_id_to_writeable(W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> time_zone_id_to_writeable(W& write) const
 
         Writes the value of the ``time_zone_id`` field as a string.
 
@@ -123,7 +123,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
-    .. cpp:function:: diplomat::result<std::string, std::monostate> time_zone_id() const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> time_zone_id() const
 
         Writes the value of the ``time_zone_id`` field as a string.
 
@@ -154,7 +154,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> meta_zone_id_to_writeable(W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> meta_zone_id_to_writeable(W& write) const
 
         Writes the value of the ``meta_zone_id`` field as a string.
 
@@ -165,7 +165,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
 
 
-    .. cpp:function:: diplomat::result<std::string, std::monostate> meta_zone_id() const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> meta_zone_id() const
 
         Writes the value of the ``meta_zone_id`` field as a string.
 
@@ -196,7 +196,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
 
 
-    .. cpp:function:: template<typename W> diplomat::result<std::monostate, std::monostate> zone_variant_to_writeable(W& write) const
+    .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> zone_variant_to_writeable(W& write) const
 
         Writes the value of the ``zone_variant`` field as a string.
 
@@ -207,7 +207,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.ZoneVariant.html>`__
 
 
-    .. cpp:function:: diplomat::result<std::string, std::monostate> zone_variant() const
+    .. cpp:function:: diplomat::result<std::string, ICU4XError> zone_variant() const
 
         Writes the value of the ``zone_variant`` field as a string.
 
@@ -236,7 +236,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. cpp:function:: diplomat::result<bool, std::monostate> is_standard_time() const
+    .. cpp:function:: diplomat::result<bool, ICU4XError> is_standard_time() const
 
         Returns whether the ``zone_variant`` field is standard time.
 
@@ -247,7 +247,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. cpp:function:: diplomat::result<bool, std::monostate> is_daylight_time() const
+    .. cpp:function:: diplomat::result<bool, ICU4XError> is_daylight_time() const
 
         Returns whether the ``zone_variant`` field is daylight time.
 

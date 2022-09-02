@@ -103,7 +103,7 @@ impl CodePointSetData {
     ///
     /// The performance of the conversion to this specific return type will vary
     /// depending on the data structure that is backing `self`.
-    pub fn to_code_point_invesion_list(&self) -> CodePointInversionList<'_> {
+    pub fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
         self.data.get().to_code_point_inversion_list()
     }
 }

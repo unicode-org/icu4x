@@ -54,12 +54,12 @@ typedef enum ICU4XError {
   ICU4XError_DateTimeFormatMissingMonthSymbolError = 2054,
   ICU4XError_DateTimeFormatFixedDecimalError = 2055,
   ICU4XError_DateTimeFormatMismatchedAnyCalendarError = 2056,
-  ICU4XError_DateTimeFormatMismatchedCalendarLocaleError = 2057,
   ICU4XError_TinyStrTooLargeError = 2304,
   ICU4XError_TinyStrContainsNullError = 2305,
   ICU4XError_TinyStrNonAsciiError = 2306,
   ICU4XError_TimeZoneOffsetOutOfBoundsError = 2560,
   ICU4XError_TimeZoneInvalidOffsetError = 2561,
+  ICU4XError_TimeZoneMissingInputError = 2562,
 } ICU4XError;
 #ifdef __cplusplus
 } // namespace capi

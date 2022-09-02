@@ -45,12 +45,12 @@ export const ICU4XError_js_to_rust = {
   "DateTimeFormatMissingMonthSymbolError": 2054,
   "DateTimeFormatFixedDecimalError": 2055,
   "DateTimeFormatMismatchedAnyCalendarError": 2056,
-  "DateTimeFormatMismatchedCalendarLocaleError": 2057,
   "TinyStrTooLargeError": 2304,
   "TinyStrContainsNullError": 2305,
   "TinyStrNonAsciiError": 2306,
   "TimeZoneOffsetOutOfBoundsError": 2560,
   "TimeZoneInvalidOffsetError": 2561,
+  "TimeZoneMissingInputError": 2562,
 };
 
 export const ICU4XError_rust_to_js = {
@@ -97,12 +97,12 @@ export const ICU4XError_rust_to_js = {
   2054: "DateTimeFormatMissingMonthSymbolError",
   2055: "DateTimeFormatFixedDecimalError",
   2056: "DateTimeFormatMismatchedAnyCalendarError",
-  2057: "DateTimeFormatMismatchedCalendarLocaleError",
   2304: "TinyStrTooLargeError",
   2305: "TinyStrContainsNullError",
   2306: "TinyStrNonAsciiError",
   2560: "TimeZoneOffsetOutOfBoundsError",
   2561: "TimeZoneInvalidOffsetError",
+  2562: "TimeZoneMissingInputError",
 };
 
 export const ICU4XError = {
@@ -149,10 +149,10 @@ export const ICU4XError = {
   "DateTimeFormatMissingMonthSymbolError": "DateTimeFormatMissingMonthSymbolError",
   "DateTimeFormatFixedDecimalError": "DateTimeFormatFixedDecimalError",
   "DateTimeFormatMismatchedAnyCalendarError": "DateTimeFormatMismatchedAnyCalendarError",
-  "DateTimeFormatMismatchedCalendarLocaleError": "DateTimeFormatMismatchedCalendarLocaleError",
   "TinyStrTooLargeError": "TinyStrTooLargeError",
   "TinyStrContainsNullError": "TinyStrContainsNullError",
   "TinyStrNonAsciiError": "TinyStrNonAsciiError",
   "TimeZoneOffsetOutOfBoundsError": "TimeZoneOffsetOutOfBoundsError",
   "TimeZoneInvalidOffsetError": "TimeZoneInvalidOffsetError",
+  "TimeZoneMissingInputError": "TimeZoneMissingInputError",
 };

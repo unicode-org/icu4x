@@ -10,6 +10,7 @@ pub mod ffi {
     use icu_properties::{maps, PropertiesError};
 
     use crate::errors::ffi::ICU4XError;
+    use crate::properties_sets::ffi::ICU4XCodePointSetData;
     use diplomat_runtime::DiplomatResult;
 
     use icu_provider::prelude::BufferProvider;
@@ -25,63 +26,83 @@ pub mod ffi {
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
 
     impl ICU4XCodePointMapData8 {
-        /// Gets a map for Unicode property General_Category from a [`ICU4XDataProvider`].
+        /// Gets the value for a code point.
+        #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
+        pub fn get(&self, cp: char) -> u8 {
+            self.0.as_borrowed().get(cp)
+        }
+
+        /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_u32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn get_u32(&self, cp: u32) -> u8 {
+            self.0.as_borrowed().get_u32(cp)
+        }
+
+        /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_set_for_value,
+            FnInStruct
+        )]
+        pub fn get_set_for_value(&self, value: u8) -> Box<ICU4XCodePointSetData> {
+            Box::new(ICU4XCodePointSetData(
+                self.0.as_borrowed().get_set_for_value(value),
+            ))
+        }
+
         #[diplomat::rust_link(icu::properties::maps::load_general_category, Fn)]
-        pub fn try_get_general_category(
+        pub fn load_general_category(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::try_get_prop_inner(provider, |p| maps::load_general_category(p))
+            Self::load_prop_inner(provider, |p| maps::load_general_category(p))
         }
 
-        /// Gets a map for Unicode property Bidi_Class from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Fn)]
-        pub fn try_get_bidi_class(
+        pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::try_get_prop_inner(provider, |p| maps::load_bidi_class(p))
+            Self::load_prop_inner(provider, |p| maps::load_bidi_class(p))
         }
 
-        /// Gets a map for Unicode property East_Asian_Width from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_east_asian_width, Fn)]
-        pub fn try_get_east_asian_width(
+        pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::try_get_prop_inner(provider, |p| maps::load_east_asian_width(p))
+            Self::load_prop_inner(provider, |p| maps::load_east_asian_width(p))
         }
 
-        /// Gets a map for Unicode property Line_Break from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_line_break, Fn)]
-        pub fn try_get_line_break(
+        pub fn load_line_break(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::try_get_prop_inner(provider, |p| maps::load_line_break(p))
+            Self::load_prop_inner(provider, |p| maps::load_line_break(p))
         }
 
-        /// Gets a map for Unicode property Grapheme_Cluster_Break from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn)]
         pub fn try_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::try_get_prop_inner(provider, |p| maps::load_grapheme_cluster_break(p))
+            Self::load_prop_inner(provider, |p| maps::load_grapheme_cluster_break(p))
         }
 
-        /// Gets a map for Unicode property Word_Break from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_word_break, Fn)]
-        pub fn try_get_word_break(
+        pub fn load_word_break(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::try_get_prop_inner(provider, |p| maps::load_word_break(p))
+            Self::load_prop_inner(provider, |p| maps::load_word_break(p))
         }
 
-        /// Gets a map for Unicode property Sentence_Break from a [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu::properties::maps::load_sentence_break, Fn)]
-        pub fn try_get_sentence_break(
+        pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::try_get_prop_inner(provider, |p| maps::load_sentence_break(p))
+            Self::load_prop_inner(provider, |p| maps::load_sentence_break(p))
         }
 
-        fn try_get_prop_inner<P, F>(
+        fn load_prop_inner<P, F>(
             provider: &ICU4XDataProvider,
             f: F,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError>
@@ -103,12 +124,6 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
-
-        /// Gets the value for a code point.
-        #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
-        pub fn get(&self, cp: char) -> u8 {
-            self.0.as_borrowed().get(cp)
-        }
     }
 
     #[diplomat::opaque]
@@ -121,9 +136,35 @@ pub mod ffi {
     pub struct ICU4XCodePointMapData16(maps::CodePointMapData<u16>);
 
     impl ICU4XCodePointMapData16 {
-        /// Gets a map for Unicode property Script from a [`ICU4XDataProvider`].
+        /// Gets the value for a code point.
+        #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
+        pub fn get(&self, cp: char) -> u16 {
+            self.0.as_borrowed().get(cp)
+        }
+
+        /// Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_u32,
+            FnInStruct,
+            hidden
+        )]
+        pub fn get_u32(&self, cp: u32) -> u16 {
+            self.0.as_borrowed().get_u32(cp)
+        }
+
+        /// Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
+        #[diplomat::rust_link(
+            icu::properties::maps::CodePointMapDataBorrowed::get_set_for_value,
+            FnInStruct
+        )]
+        pub fn get_set_for_value(&self, value: u16) -> Box<ICU4XCodePointSetData> {
+            Box::new(ICU4XCodePointSetData(
+                self.0.as_borrowed().get_set_for_value(value),
+            ))
+        }
+
         #[diplomat::rust_link(icu::properties::maps::load_script, Fn)]
-        pub fn try_get_script(
+        pub fn load_script(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData16>, ICU4XError> {
             let provider = provider.0.as_deserializing();
@@ -137,12 +178,6 @@ pub mod ffi {
                 })
                 .map_err(Into::into)
                 .into()
-        }
-
-        /// Gets the value for a code point.
-        #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed::get, FnInStruct)]
-        pub fn get(&self, cp: char) -> u16 {
-            self.0.as_borrowed().get(cp)
         }
     }
 }

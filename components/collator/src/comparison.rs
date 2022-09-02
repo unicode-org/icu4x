@@ -14,6 +14,7 @@ use crate::elements::{
     NO_CE_SECONDARY, NO_CE_TERTIARY, OPTIMIZED_DIACRITICS_MAX_COUNT, QUATERNARY_MASK,
 };
 use crate::error::CollatorError;
+use crate::options::CollatorOptionsBitField;
 use crate::provider::CollationDataV1Marker;
 use crate::provider::CollationDiacriticsV1Marker;
 use crate::provider::CollationJamoV1Marker;
@@ -59,7 +60,7 @@ pub struct Collator {
     tailoring: Option<DataPayload<CollationDataV1Marker>>,
     jamo: DataPayload<CollationJamoV1Marker>,
     diacritics: DataPayload<CollationDiacriticsV1Marker>,
-    options: CollatorOptions,
+    options: CollatorOptionsBitField,
     reordering: Option<DataPayload<CollationReorderingV1Marker>>,
     decompositions: DataPayload<CanonicalDecompositionDataV1Marker>,
     tables: DataPayload<CanonicalDecompositionTablesV1Marker>,
@@ -180,7 +181,7 @@ impl Collator {
         let tables: DataPayload<CanonicalDecompositionTablesV1Marker> =
             data_provider.load(Default::default())?.take_payload()?;
 
-        let mut altered_defaults = CollatorOptions::new();
+        let mut altered_defaults = CollatorOptionsBitField::new();
 
         if metadata.alternate_shifted() {
             altered_defaults.set_alternate_handling(Some(AlternateHandling::Shifted));
@@ -192,7 +193,7 @@ impl Collator {
         altered_defaults.set_case_first(Some(metadata.case_first()));
         altered_defaults.set_max_variable(Some(metadata.max_variable()));
 
-        let mut merged_options = options;
+        let mut merged_options = CollatorOptionsBitField::from(options);
         merged_options.set_defaults(altered_defaults);
 
         let special_primaries = if merged_options.alternate_handling() == AlternateHandling::Shifted
@@ -230,7 +231,7 @@ impl Collator {
         error: CollatorError
     );
 
-    /// Compare potentially-invalid UTF-16 slices. Unpaired surrogates
+    /// Compare potentially ill-formed UTF-16 slices. Unpaired surrogates
     /// are compared as if each one was a REPLACEMENT CHARACTER.
     pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
@@ -246,7 +247,7 @@ impl Collator {
         ret
     }
 
-    /// Compare guaranteed-valid UTF-8 slices.
+    /// Compare guaranteed well-formed UTF-8 slices.
     pub fn compare(&self, left: &str, right: &str) -> Ordering {
         // TODO(#2010): Identical prefix skipping not implemented.
         let ret = self.compare_impl(left.chars(), right.chars());
@@ -261,7 +262,7 @@ impl Collator {
         ret
     }
 
-    /// Compare potentially-valid UTF-8 slices. Invalid input is compared
+    /// Compare potentially well-formed UTF-8 slices. Ill-formed input is compared
     /// as if errors had been replaced with REPLACEMENT CHARACTERs according
     /// to the WHATWG Encoding Standard.
     pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> Ordering {

@@ -16,7 +16,7 @@ bool test_locale(ICU4XLocale* locale, const char* message, const char* expected)
 
     // Test setters
     DiplomatWriteable write = diplomat_simple_writeable(output, 40);
-    diplomat_result_void_ICU4XError result = ICU4XLocale_tostring(locale, &write);
+    diplomat_result_void_ICU4XError result = ICU4XLocale_to_string(locale, &write);
     if (!result.is_ok) {
         return 1;
     }
@@ -48,7 +48,7 @@ int main() {
         return 1;
     }
     ICU4XLocale* locale = locale_result.ok;
-    diplomat_result_void_ICU4XError result = ICU4XLocale_tostring(locale, &write);
+    diplomat_result_void_ICU4XError result = ICU4XLocale_to_string(locale, &write);
     if (!result.is_ok) {
         return 1;
     }
@@ -206,7 +206,7 @@ int main() {
     }
     locale = locale_result.ok;
     ICU4XLocaleExpander_maximize(le, locale);
-    result = ICU4XLocale_tostring(locale, &write);
+    result = ICU4XLocale_to_string(locale, &write);
     if (!result.is_ok) {
         return 1;
     }
@@ -227,7 +227,7 @@ int main() {
     }
     locale = locale_result.ok;
     ICU4XLocaleExpander_minimize(le, locale);
-    result = ICU4XLocale_tostring(locale, &write);
+    result = ICU4XLocale_to_string(locale, &write);
     if (!result.is_ok) {
         return 1;
     }
@@ -248,7 +248,7 @@ int main() {
     }
     locale = locale_result.ok;
     ICU4XLocaleCanonicalizer_canonicalize(lc, locale);
-    result = ICU4XLocale_tostring(locale, &write);
+    result = ICU4XLocale_to_string(locale, &write);
     if (!result.is_ok) {
         return 1;
     }

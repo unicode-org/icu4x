@@ -149,9 +149,6 @@ export enum ICU4XError {
   DateTimeFormatMismatchedAnyCalendarError = 'DateTimeFormatMismatchedAnyCalendarError',
   /**
    */
-  DateTimeFormatMismatchedCalendarLocaleError = 'DateTimeFormatMismatchedCalendarLocaleError',
-  /**
-   */
   TinyStrTooLargeError = 'TinyStrTooLargeError',
   /**
    */
@@ -165,4 +162,7 @@ export enum ICU4XError {
   /**
    */
   TimeZoneInvalidOffsetError = 'TimeZoneInvalidOffsetError',
+  /**
+   */
+  TimeZoneMissingInputError = 'TimeZoneMissingInputError',
 }

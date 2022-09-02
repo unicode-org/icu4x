@@ -68,18 +68,6 @@ fn check_expectations(
 }
 
 #[test]
-fn test_basic() {
-    let data_provider = icu_testdata::get_provider();
-
-    let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
-
-    let collator: Collator =
-        Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
-    assert_eq!(collator.compare("ac", "äb"), Ordering::Greater);
-}
-
-#[test]
 fn test_implicit_unihan() {
     // Adapted from `CollationTest::TestImplicits()` in collationtest.cpp of ICU4C.
     // The radical-stroke order of the characters tested agrees with their code point
@@ -87,7 +75,7 @@ fn test_implicit_unihan() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
+    options.strength = Some(Strength::Quaternary);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
@@ -107,7 +95,7 @@ fn test_currency() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
+    options.strength = Some(Strength::Quaternary);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
@@ -180,7 +168,7 @@ fn test_de() {
     ];
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Primary));
+    options.strength = Some(Strength::Primary);
 
     let data_provider = icu_testdata::get_provider();
     {
@@ -190,7 +178,7 @@ fn test_de() {
         check_expectations(&collator, &left, &right, &expect_primary);
     }
 
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
 
     {
         // Note: German uses the root collation
@@ -367,7 +355,7 @@ fn test_en() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
 
     {
         // Note: English uses the root collation
@@ -376,7 +364,7 @@ fn test_en() {
         check_expectations(&collator, &left[..38], &right[..38], &expectations[..38]);
     }
 
-    options.set_strength(Some(Strength::Primary));
+    options.strength = Some(Strength::Primary);
 
     {
         // Note: English uses the root collation
@@ -390,7 +378,7 @@ fn test_en() {
         );
     }
 
-    options.set_strength(Some(Strength::Secondary));
+    options.strength = Some(Strength::Secondary);
 
     {
         // Note: English uses the root collation
@@ -409,7 +397,7 @@ fn test_en_bugs() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
 
     {
         let collator: Collator =
@@ -455,8 +443,8 @@ fn test_ja_tertiary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
-    options.set_case_level(Some(true));
+    options.strength = Some(Strength::Tertiary);
+    options.case_level = Some(CaseLevel::On);
 
     {
         let collator: Collator =
@@ -474,7 +462,7 @@ fn test_ja_base() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Primary));
+    options.strength = Some(Strength::Primary);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &locale.into(), options).unwrap();
@@ -496,7 +484,7 @@ fn test_ja_plain_dakuten_handakuten() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Secondary));
+    options.strength = Some(Strength::Secondary);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &locale.into(), options).unwrap();
@@ -518,8 +506,8 @@ fn test_ja_small_large() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
-    options.set_case_level(Some(true));
+    options.strength = Some(Strength::Tertiary);
+    options.case_level = Some(CaseLevel::On);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &locale.into(), options).unwrap();
@@ -541,8 +529,8 @@ fn test_ja_hiragana_katakana() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
-    options.set_case_level(Some(true));
+    options.strength = Some(Strength::Quaternary);
+    options.case_level = Some(CaseLevel::On);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &locale.into(), options).unwrap();
@@ -569,8 +557,8 @@ fn test_ja_hiragana_katakana_utf16() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
-    options.set_case_level(Some(true));
+    options.strength = Some(Strength::Quaternary);
+    options.case_level = Some(CaseLevel::On);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &locale.into(), options).unwrap();
@@ -604,8 +592,8 @@ fn test_ja_chooon_kigoo() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
-    options.set_case_level(Some(true));
+    options.strength = Some(Strength::Quaternary);
+    options.case_level = Some(CaseLevel::On);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &locale.into(), options).unwrap();
@@ -806,7 +794,7 @@ fn test_es_tertiary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
 
     {
         let collator: Collator =
@@ -830,7 +818,7 @@ fn test_es_primary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Primary));
+    options.strength = Some(Strength::Primary);
 
     {
         let collator: Collator =
@@ -846,7 +834,7 @@ fn test_el_secondary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Secondary));
+    options.strength = Some(Strength::Secondary);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &locale.into(), options).unwrap();
@@ -863,7 +851,7 @@ fn test_th_dictionary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
+    options.strength = Some(Strength::Quaternary);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &locale.into(), options).unwrap();
@@ -991,7 +979,7 @@ fn test_th_reordering() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Secondary));
+    options.strength = Some(Strength::Secondary);
 
     {
         let collator: Collator =
@@ -1019,7 +1007,7 @@ fn test_tr_tertiary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
 
     {
         let collator: Collator =
@@ -1038,7 +1026,7 @@ fn test_tr_primary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
 
     {
         let collator: Collator =
@@ -1075,7 +1063,7 @@ fn test_lt_tertiary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
 
     {
         let collator: Collator =
@@ -1094,7 +1082,7 @@ fn test_lt_primary() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Primary));
+    options.strength = Some(Strength::Primary);
 
     {
         let collator: Collator =
@@ -1119,7 +1107,7 @@ fn test_basics() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
 
     {
         let collator: Collator =
@@ -1129,35 +1117,11 @@ fn test_basics() {
 }
 
 #[test]
-fn test_numeric_off() {
-    let data_provider = icu_testdata::get_provider();
-
-    let mut options = CollatorOptions::new();
-    options.set_numeric(Some(false));
-
-    let collator: Collator =
-        Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
-    assert_eq!(collator.compare("a10b", "a2b"), Ordering::Less);
-}
-
-#[test]
-fn test_numeric_on() {
-    let data_provider = icu_testdata::get_provider();
-
-    let mut options = CollatorOptions::new();
-    options.set_numeric(Some(true));
-
-    let collator: Collator =
-        Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
-    assert_eq!(collator.compare("a10b", "a2b"), Ordering::Greater);
-}
-
-#[test]
 fn test_numeric_long() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_numeric(Some(true));
+    options.numeric = Some(Numeric::On);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
@@ -1195,7 +1159,7 @@ fn test_numeric_after() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_numeric(Some(true));
+    options.numeric = Some(Numeric::On);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
@@ -1207,7 +1171,7 @@ fn test_unpaired_surrogates() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
+    options.strength = Some(Strength::Quaternary);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
@@ -1222,7 +1186,7 @@ fn test_backward_second_level() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Secondary));
+    options.strength = Some(Strength::Secondary);
 
     {
         let collator: Collator =
@@ -1238,7 +1202,7 @@ fn test_backward_second_level() {
         }
     }
 
-    options.set_backward_second_level(Some(true));
+    options.backward_second_level = Some(BackwardSecondLevel::On);
 
     {
         let collator: Collator =
@@ -1273,7 +1237,7 @@ fn test_cantillation() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
+    options.strength = Some(Strength::Quaternary);
 
     {
         let collator: Collator =
@@ -1287,7 +1251,7 @@ fn test_cantillation() {
         );
     }
 
-    options.set_strength(Some(Strength::Identical));
+    options.strength = Some(Strength::Identical);
 
     {
         let collator: Collator =
@@ -1308,7 +1272,7 @@ fn test_cantillation_utf8() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
+    options.strength = Some(Strength::Quaternary);
 
     {
         let collator: Collator =
@@ -1322,7 +1286,7 @@ fn test_cantillation_utf8() {
         );
     }
 
-    options.set_strength(Some(Strength::Identical));
+    options.strength = Some(Strength::Identical);
 
     {
         let collator: Collator =
@@ -1345,8 +1309,8 @@ fn test_conformance_shifted() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
-    options.set_alternate_handling(Some(AlternateHandling::Shifted));
+    options.strength = Some(Strength::Quaternary);
+    options.alternate_handling = Some(AlternateHandling::Shifted);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();
@@ -1390,8 +1354,8 @@ fn test_conformance_non_ignorable() {
     let data_provider = icu_testdata::get_provider();
 
     let mut options = CollatorOptions::new();
-    options.set_strength(Some(Strength::Quaternary));
-    options.set_alternate_handling(Some(AlternateHandling::NonIgnorable));
+    options.strength = Some(Strength::Quaternary);
+    options.alternate_handling = Some(AlternateHandling::NonIgnorable);
 
     let collator: Collator =
         Collator::try_new_unstable(&data_provider, &Default::default(), options).unwrap();

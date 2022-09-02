@@ -87,12 +87,12 @@ enum struct ICU4XError {
   DateTimeFormatMissingMonthSymbolError = 2054,
   DateTimeFormatFixedDecimalError = 2055,
   DateTimeFormatMismatchedAnyCalendarError = 2056,
-  DateTimeFormatMismatchedCalendarLocaleError = 2057,
   TinyStrTooLargeError = 2304,
   TinyStrContainsNullError = 2305,
   TinyStrNonAsciiError = 2306,
   TimeZoneOffsetOutOfBoundsError = 2560,
   TimeZoneInvalidOffsetError = 2561,
+  TimeZoneMissingInputError = 2562,
 };
 
 #endif
