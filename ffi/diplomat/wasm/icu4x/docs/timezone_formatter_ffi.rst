@@ -11,6 +11,14 @@
     See the `Rust documentation for IsoMinutes <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.IsoMinutes.html>`__ for more information.
 
 
+.. js:class:: ICU4XIsoTimeZoneOptions
+
+    .. js:attribute:: format
+
+    .. js:attribute:: minutes
+
+    .. js:attribute:: seconds
+
 .. js:class:: ICU4XIsoTimeZoneSecondDisplay
 
     See the `Rust documentation for IsoSeconds <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.IsoSeconds.html>`__ for more information.
@@ -34,7 +42,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.FallbackFormat.html>`__
 
 
-    .. js:staticfunction:: try_new_with_iso_8601_fallback(provider, locale, format, minutes, seconds)
+    .. js:staticfunction:: try_new_with_iso_8601_fallback(provider, locale, options)
 
         Creates a new :js:class:`ICU4XTimeZoneFormatter` from locale data.
 
@@ -87,7 +95,7 @@
         See the `Rust documentation for load_localized_gmt_format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_localized_gmt_format>`__ for more information.
 
 
-    .. js:function:: load_iso_8601_format(format, minutes, seconds)
+    .. js:function:: load_iso_8601_format(options)
 
         Loads ISO-8601 format. Example: "-07:00"
 
