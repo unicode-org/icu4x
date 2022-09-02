@@ -1640,7 +1640,8 @@ impl DecomposingNormalizer {
     /// canonically equivant with each other if they differ by how U+0345 is ordered relative
     /// to other reorderable characters.
     ///
-    /// Deliberately private and not available outside the crate.
+    /// Public for testing only.
+    #[doc(hidden)]
     #[cfg(feature = "experimental")]
     pub fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
         data_provider: &D,
