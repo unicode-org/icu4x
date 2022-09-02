@@ -225,14 +225,13 @@ impl From<ffi::ICU4XCollatorBackwardSecondLevel> for Option<BackwardSecondLevel>
 impl From<ffi::ICU4XCollatorOptions> for CollatorOptions {
     fn from(options: ffi::ICU4XCollatorOptions) -> CollatorOptions {
         let mut result = CollatorOptions::new();
-        result.strength = Option::<Strength>::from(options.strength);
-        result.alternate_handling = Option::<AlternateHandling>::from(options.alternate_handling);
-        result.case_first = Option::<CaseFirst>::from(options.case_first);
-        result.max_variable = Option::<MaxVariable>::from(options.max_variable);
-        result.case_level = Option::<CaseLevel>::from(options.case_level);
-        result.numeric = Option::<Numeric>::from(options.numeric);
-        result.backward_second_level =
-            Option::<BackwardSecondLevel>::from(options.backward_second_level);
+        result.strength = options.strength.into();
+        result.alternate_handling = options.alternate_handling.into();
+        result.case_first = options.case_first.into();
+        result.max_variable = options.max_variable.into();
+        result.case_level = options.case_level.into();
+        result.numeric = options.numeric.into();
+        result.backward_second_level = options.backward_second_level.into();
 
         result
     }
