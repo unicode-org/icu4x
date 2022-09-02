@@ -155,7 +155,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
                 // We always fall back from language-script to und
                 continue;
             }
-            parents.insert(source.write_to_string().as_bytes(), &target.into());
+            parents.insert(source.write_to_string().as_bytes().into(), &target.into());
         }
 
         LocaleFallbackParentsV1 { parents }

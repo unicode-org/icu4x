@@ -103,7 +103,7 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         if let Some(parent) = self
             .parents
             .parents
-            .get_copied_by(|bytes| locale.strict_cmp(bytes).reverse())
+            .get_copied_by(|uvstr| locale.strict_cmp(&uvstr.0).reverse())
         {
             let lid = LanguageIdentifier::from(parent);
             locale.set_langid(lid);

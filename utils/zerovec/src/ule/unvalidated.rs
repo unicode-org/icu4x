@@ -31,7 +31,7 @@ use core::fmt;
 /// ].into_iter().collect();
 ///
 /// let key = "abc";
-/// let value = map.get_copied_by(|probe| probe.0.cmp(key.as_bytes()));
+/// let value = map.get_copied_by(|uvstr| uvstr.0.cmp(key.as_bytes()));
 /// assert_eq!(Some(11), value);
 /// ```
 ///
