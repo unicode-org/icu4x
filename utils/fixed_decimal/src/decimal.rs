@@ -1897,7 +1897,8 @@ impl FromStr for FixedDecimal {
         }
 
         // Constructing DecimalFixed.digits
-        #[allow(clippy::indexing_slicing)] // leftmost_digit  and rightmost_digit_end are in range.
+        #[allow(clippy::indexing_slicing)]
+        // leftmost_digit  and rightmost_digit_end come from Iterator::position and Iterator::rposition.
         let v: SmallVec<[u8; 8]> = no_exponent_str[leftmost_digit..rightmost_digit_end]
             .iter()
             .filter(|c| **c != b'.')
