@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662153744271,
+  "lastUpdate": 1662157096407,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26183,6 +26183,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/47c8b13a32a824562e1261b1b0877365985ab972"
         },
         "date": 1662153688234,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "6e6ea16c1ead141900defedd1ede50a671684b1d",
+          "message": "Generate consistent Locale subtag APIs (#1932)\n\n* wip\r\n\r\n* comments\r\n\r\n* recover macros mod\r\n\r\n* fix",
+          "timestamp": "2022-09-02T15:15:51-07:00",
+          "tree_id": "51503c59bef5e92faeb7799dc7f94db3a2e1e7cf",
+          "url": "https://github.com/unicode-org/icu4x/commit/6e6ea16c1ead141900defedd1ede50a671684b1d"
+        },
+        "date": 1662157039845,
         "tool": "ndjson",
         "benches": [
           {
