@@ -53,23 +53,27 @@ impl fmt::Debug for UnvalidatedStr {
 
 impl UnvalidatedStr {
     /// Create a [`UnvalidatedStr`] from a byte slice.
+    #[inline]
     pub const fn from_byte_slice(other: &[u8]) -> &Self {
         // Safety: UnvalidatedStr is transparent over [u8]
         unsafe { core::mem::transmute(other) }
     }
 
     /// Create a [`UnvalidatedStr`] from a string slice.
+    #[inline]
     pub const fn from_str(s: &str) -> &Self {
         Self::from_byte_slice(s.as_bytes())
     }
 
     /// Create a [`UnvalidatedStr`] from boxed bytes.
+    #[inline]
     pub fn from_boxed_bytes(other: Box<[u8]>) -> Box<Self> {
         // Safety: UnvalidatedStr is transparent over [u8]
         unsafe { core::mem::transmute(other) }
     }
 
     /// Get the bytes from a [`UnvalidatedStr].
+    #[inline]
     pub const fn as_bytes(&self) -> &[u8] {
         &self.0
     }
@@ -87,42 +91,49 @@ impl UnvalidatedStr {
     /// assert_eq!(b, "abc");
     /// ```
     // Note: this is const starting in 1.63
+    #[inline]
     pub fn try_as_str(&self) -> Result<&str, core::str::Utf8Error> {
         core::str::from_utf8(&self.0)
     }
 }
 
 impl<'a> From<&'a [u8]> for &'a UnvalidatedStr {
+    #[inline]
     fn from(other: &'a [u8]) -> Self {
         UnvalidatedStr::from_byte_slice(other)
     }
 }
 
 impl From<Box<[u8]>> for Box<UnvalidatedStr> {
+    #[inline]
     fn from(other: Box<[u8]>) -> Self {
         UnvalidatedStr::from_boxed_bytes(other)
     }
 }
 
 impl<'a, const N: usize> From<&'a [u8; N]> for &'a UnvalidatedStr {
+    #[inline]
     fn from(other: &'a [u8; N]) -> Self {
         UnvalidatedStr::from_byte_slice(other)
     }
 }
 
 impl<'a> From<&'a str> for &'a UnvalidatedStr {
+    #[inline]
     fn from(other: &'a str) -> Self {
         other.as_bytes().into()
     }
 }
 
 impl From<Box<str>> for Box<UnvalidatedStr> {
+    #[inline]
     fn from(other: Box<str>) -> Self {
         other.into_boxed_bytes().into()
     }
 }
 
 impl<'a> From<&'a UnvalidatedStr> for &'a [u8] {
+    #[inline]
     fn from(other: &'a UnvalidatedStr) -> Self {
         &other.0
     }
@@ -130,6 +141,7 @@ impl<'a> From<&'a UnvalidatedStr> for &'a [u8] {
 
 impl<'a> TryFrom<&'a UnvalidatedStr> for &'a str {
     type Error = core::str::Utf8Error;
+    #[inline]
     fn try_from(other: &'a UnvalidatedStr) -> Result<Self, Self::Error> {
         other.try_as_str()
     }
