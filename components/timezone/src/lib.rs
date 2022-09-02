@@ -46,9 +46,9 @@
 //! As with time zone IDs, there are two interchangeable forms:
 //!
 //! 1. Long form, like `"America_Central"`
-//! 2. BCP-47 form, like `"amce"`
+//! 2. Short form compatible with BCP-47, like `"amce"`
 //!
-//! ICU4X uses the short (BCP-47) form.
+//! ICU4X uses the short form.
 //!
 //! ## Zone Variant
 //!
