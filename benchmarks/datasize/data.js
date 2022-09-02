@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662153647810,
+  "lastUpdate": 1662153672477,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26123,6 +26123,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/81b3c7ecd66219f6b62bc3ed248cafdccb81505e"
         },
         "date": 1662153601432,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "799297f0b31abb5cd8e04bcb756d16788b35f04f",
+          "message": "Split experimental and non-experimental DateTimeFormatter constructors (#2495)",
+          "timestamp": "2022-09-02T14:19:04-07:00",
+          "tree_id": "9c406843873644a1141f0a8fb5d1e358150f5ce1",
+          "url": "https://github.com/unicode-org/icu4x/commit/799297f0b31abb5cd8e04bcb756d16788b35f04f"
+        },
+        "date": 1662153625461,
         "tool": "ndjson",
         "benches": [
           {
