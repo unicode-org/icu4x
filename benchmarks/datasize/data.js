@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662153536441,
+  "lastUpdate": 1662153647810,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26093,6 +26093,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/19ce9fea2a752adfd3b4d4cc0b7434aa253bef6a"
         },
         "date": 1662153479821,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "81b3c7ecd66219f6b62bc3ed248cafdccb81505e",
+          "message": "Assorted TimeZone fixes (#2478)",
+          "timestamp": "2022-09-02T14:18:44-07:00",
+          "tree_id": "36a4c7793d78bf85a50383803a6a40d87fbf9621",
+          "url": "https://github.com/unicode-org/icu4x/commit/81b3c7ecd66219f6b62bc3ed248cafdccb81505e"
+        },
+        "date": 1662153601432,
         "tool": "ndjson",
         "benches": [
           {
