@@ -38,6 +38,7 @@ use core::fmt;
 /// [`ZeroMap`]: crate::ZeroMap
 #[repr(transparent)]
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
+#[allow(clippy::exhaustive_structs)] // transparent newtype
 pub struct UnvalidatedStr(pub [u8]);
 
 impl fmt::Debug for UnvalidatedStr {
