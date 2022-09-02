@@ -888,11 +888,11 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// assert_eq!(cp, 0x1158E);
     ///
     /// let plane_num: u8 = trie.get(cp);
-    /// assert_eq!(trie.get32(cp), plane_num as u32);
+    /// assert_eq!(trie.get32_u32(cp), plane_num as u32);
     /// ```
     // Note: This API method maintains consistency with the corresponding
     // original ICU APIs.
-    pub fn get32(&self, code_point: u32) -> u32 {
+    pub fn get32_u32(&self, code_point: u32) -> u32 {
         self.get(code_point).into()
     }
 }
