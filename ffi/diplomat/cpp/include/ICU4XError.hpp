@@ -92,6 +92,7 @@ enum struct ICU4XError {
   TinyStrNonAsciiError = 2306,
   TimeZoneOffsetOutOfBoundsError = 2560,
   TimeZoneInvalidOffsetError = 2561,
+  TimeZoneMissingInputError = 2562,
 };
 
 #endif
