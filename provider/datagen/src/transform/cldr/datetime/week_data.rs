@@ -6,8 +6,7 @@ use crate::transform::cldr::cldr_serde::{
     self,
     week_data::{Territory, DEFAULT_TERRITORY},
 };
-use icu_calendar::week_of::CalendarInfo;
-use icu_datetime::provider::week_data::*;
+use icu_calendar::provider::{WeekDataV1, WeekDataV1Marker};
 use icu_locid::LanguageIdentifier;
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
@@ -55,7 +54,7 @@ impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
 
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(WeekDataV1(CalendarInfo {
+            payload: Some(DataPayload::from_owned(WeekDataV1 {
                 first_weekday: week_data
                     .first_day
                     .get(&territory)
@@ -72,7 +71,7 @@ impl DataProvider<WeekDataV1Marker> for crate::DatagenProvider {
                         "Missing default entry for minDays in weekData.json",
                     ))?
                     .0,
-            }))),
+            })),
         })
     }
 }
@@ -89,8 +88,8 @@ fn basic_cldr_week_data() {
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(1, default_week_data.get().0.min_week_days);
-    assert_eq!(IsoWeekday::Monday, default_week_data.get().0.first_weekday);
+    assert_eq!(1, default_week_data.get().min_week_days);
+    assert_eq!(IsoWeekday::Monday, default_week_data.get().first_weekday);
 
     let fr_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
@@ -100,8 +99,8 @@ fn basic_cldr_week_data() {
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(4, fr_week_data.get().0.min_week_days);
-    assert_eq!(IsoWeekday::Monday, fr_week_data.get().0.first_weekday);
+    assert_eq!(4, fr_week_data.get().min_week_days);
+    assert_eq!(IsoWeekday::Monday, fr_week_data.get().first_weekday);
 
     let iq_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
@@ -113,10 +112,10 @@ fn basic_cldr_week_data() {
         .unwrap();
     // Only first_weekday is defined for IQ, min_week_days uses the default.
     assert_eq!(
-        default_week_data.get().0.min_week_days,
-        iq_week_data.get().0.min_week_days
+        default_week_data.get().min_week_days,
+        iq_week_data.get().min_week_days
     );
-    assert_eq!(IsoWeekday::Saturday, iq_week_data.get().0.first_weekday);
+    assert_eq!(IsoWeekday::Saturday, iq_week_data.get().first_weekday);
 
     let gg_week_data: DataPayload<WeekDataV1Marker> = provider
         .load(DataRequest {
@@ -126,10 +125,10 @@ fn basic_cldr_week_data() {
         .unwrap()
         .take_payload()
         .unwrap();
-    assert_eq!(4, gg_week_data.get().0.min_week_days);
+    assert_eq!(4, gg_week_data.get().min_week_days);
     // Only min_week_days is defined for GG, first_weekday uses the default.
     assert_eq!(
-        default_week_data.get().0.first_weekday,
-        gg_week_data.get().0.first_weekday
+        default_week_data.get().first_weekday,
+        gg_week_data.get().first_weekday
     );
 }

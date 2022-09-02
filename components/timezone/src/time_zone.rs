@@ -9,24 +9,30 @@ use crate::{GmtOffset, TimeZoneError, ZoneVariant};
 use core::str::FromStr;
 use icu_calendar::{DateTime, Iso};
 
-/// A utility type that can hold time zone information
+/// A utility type that can hold time zone information.
+///
+/// The GMT offset is used as a final fallback for formatting. The other three fields are used
+/// for more human-friendly rendering of the time zone.
+///
+/// This type does not enforce that the four fields are consistent with each other. If they do not
+/// represent a real time zone, unexpected results when formatting may occur.
 ///
 /// # Examples
 ///
 /// ```
 /// use icu::timezone::{GmtOffset, CustomTimeZone};
 ///
-/// let tz1 = CustomTimeZone::new(
-///     Some(GmtOffset::default()),
-///     /* time_zone_id */ None,
-///     /* meta_zone_id */ None,
-///     /* time_variaint */ None,
-/// );
+/// let tz1 = CustomTimeZone {
+///     gmt_offset: Some(GmtOffset::default()),
+///     time_zone_id: None,
+///     meta_zone_id: None,
+///     zone_variant: None,
+/// };
 ///
 /// let tz2: CustomTimeZone = "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
-#[derive(Debug, Default)]
-#[allow(clippy::exhaustive_structs)] // this type will not add fields (it is largely an example type)
+#[derive(Debug)]
+#[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
 pub struct CustomTimeZone {
     /// The GMT offset in seconds.
     pub gmt_offset: Option<GmtOffset>,
@@ -39,20 +45,37 @@ pub struct CustomTimeZone {
 }
 
 impl CustomTimeZone {
-    /// Creates a new [`CustomTimeZone`].
-    /// A GMT offset is required, as it is used as a final fallback for formatting.
-    /// The other arguments optionally allow access to more robust formats.
-    pub fn new(
-        gmt_offset: Option<GmtOffset>,
-        time_zone_id: Option<TimeZoneBcp47Id>,
-        meta_zone_id: Option<MetaZoneId>,
-        zone_variant: Option<ZoneVariant>,
-    ) -> Self {
+    /// Creates a new [`CustomTimeZone`] with the given GMT offset.
+    pub const fn new_with_offset(gmt_offset: GmtOffset) -> Self {
         Self {
-            gmt_offset,
-            time_zone_id,
-            meta_zone_id,
-            zone_variant,
+            gmt_offset: Some(gmt_offset),
+            time_zone_id: None,
+            meta_zone_id: None,
+            zone_variant: None,
+        }
+    }
+
+    /// Creates a time zone with no information.
+    ///
+    /// One or more fields must be specified before this time zone is usable.
+    pub const fn new_empty() -> Self {
+        Self {
+            gmt_offset: None,
+            time_zone_id: None,
+            meta_zone_id: None,
+            zone_variant: None,
+        }
+    }
+
+    /// Creates a new [`CustomTimeZone`] with the GMT offset set to UTC.
+    ///
+    /// All other fields are left empty.
+    pub const fn utc() -> Self {
+        Self {
+            gmt_offset: Some(GmtOffset::utc()),
+            time_zone_id: None,
+            meta_zone_id: None,
+            zone_variant: None,
         }
     }
 
@@ -71,19 +94,19 @@ impl CustomTimeZone {
     ///
     /// let provider = icu_testdata::get_provider();
     /// let mzc = MetaZoneCalculator::try_new_with_buffer_provider(&provider).expect("data exists");
-    /// let mut tz = CustomTimeZone::new(
-    ///     /* gmt_offset */ Some("+11".parse().expect("Failed to parse a GMT offset.")),
-    ///     /* time_zone_id */ Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
-    ///     /* meta_zone_id */ None,
-    ///     /* time_variaint */ None,
-    /// );
-    /// tz.maybe_set_meta_zone(
+    /// let mut tz = CustomTimeZone {
+    ///     gmt_offset: Some("+11".parse().expect("Failed to parse a GMT offset.")),
+    ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
+    ///     meta_zone_id: None,
+    ///     zone_variant: None,
+    /// };
+    /// tz.maybe_calculate_meta_zone(
     ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     ///     &mzc,
     /// );
     /// assert_eq!(tz.meta_zone_id, Some(MetaZoneId(tinystr!(4, "guam"))));
     /// ```
-    pub fn maybe_set_meta_zone(
+    pub fn maybe_calculate_meta_zone(
         &mut self,
         local_datetime: &DateTime<Iso>,
         metazone_calculator: &MetaZoneCalculator,

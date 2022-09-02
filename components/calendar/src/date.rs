@@ -3,6 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::any_calendar::{AnyCalendar, IntoAnyCalendar};
+use crate::week::{WeekCalculator, WeekOf};
 use crate::{types, Calendar, DateDuration, DateDurationUnit, DateTimeError, Iso};
 use alloc::rc::Rc;
 use alloc::sync::Arc;
@@ -231,6 +232,61 @@ impl<A: AsCalendar> Date<A> {
         self.calendar.as_calendar().day_of_year_info(&self.inner)
     }
 
+    /// The week of the month containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::WeekOfMonth;
+    /// use icu::calendar::types::IsoWeekday;
+    ///
+    /// let date = Date::new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
+    ///
+    /// // The following info is usually locale-specific
+    /// let first_weekday = IsoWeekday::Sunday;
+    ///
+    /// assert_eq!(
+    ///     date.week_of_month(first_weekday),
+    ///     WeekOfMonth(2)
+    /// );
+    /// ```
+    pub fn week_of_month(&self, first_weekday: types::IsoWeekday) -> types::WeekOfMonth {
+        let config = WeekCalculator {
+            first_weekday,
+            min_week_days: 0, // ignored
+        };
+        config.week_of_month(self.day_of_month(), self.day_of_week())
+    }
+
+    /// The week of the year containing this date.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::Date;
+    /// use icu::calendar::types::IsoWeekday;
+    /// use icu::calendar::week::WeekCalculator;
+    /// use icu::calendar::week::RelativeUnit;
+    /// use icu::calendar::week::WeekOf;
+    ///
+    /// let date = Date::new_iso_date(2022, 8, 26).unwrap();
+    ///
+    /// // The following info is usually locale-specific
+    /// let week_calculator = WeekCalculator::default();
+    ///
+    /// assert_eq!(
+    ///     date.week_of_year(&week_calculator),
+    ///     Ok(WeekOf {
+    ///         week: 35,
+    ///         unit: RelativeUnit::Current
+    ///     })
+    /// );
+    /// ```
+    pub fn week_of_year(&self, config: &WeekCalculator) -> Result<WeekOf, DateTimeError> {
+        config.week_of_year(self.day_of_year_info(), self.day_of_week())
+    }
+
     /// Construct a date from raw values for a given calendar. This does not check any
     /// invariants for the date and calendar, and should only be called by calendar implementations.
     ///
@@ -255,6 +311,14 @@ impl<A: AsCalendar> Date<A> {
     pub fn calendar(&self) -> &A::Calendar {
         self.calendar.as_calendar()
     }
+
+    /// Get a reference to the contained calendar wrapper
+    ///
+    /// (Useful in case the user wishes to e.g. clone an Rc)
+    #[inline]
+    pub fn calendar_wrapper(&self) -> &A {
+        &self.calendar
+    }
 }
 
 impl<C: IntoAnyCalendar, A: AsCalendar<Calendar = C>> Date<A> {
@@ -271,6 +335,13 @@ impl<C: Calendar> Date<C> {
     /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
     pub fn wrap_calendar_in_rc(self) -> Date<Rc<C>> {
         Date::from_raw(self.inner, Rc::new(self.calendar))
+    }
+
+    /// Wrap the calendar type in `Arc<T>`
+    ///
+    /// Useful when paired with [`Self::to_any()`] to obtain a `Date<Rc<AnyCalendar>>`
+    pub fn wrap_calendar_in_arc(self) -> Date<Arc<C>> {
+        Date::from_raw(self.inner, Arc::new(self.calendar))
     }
 }
 
@@ -305,4 +376,11 @@ impl<A: AsCalendar + Clone> Clone for Date<A> {
             calendar: self.calendar.clone(),
         }
     }
+}
+
+impl<A> Copy for Date<A>
+where
+    A: AsCalendar + Copy,
+    <<A as AsCalendar>::Calendar as Calendar>::DateInner: Copy,
+{
 }

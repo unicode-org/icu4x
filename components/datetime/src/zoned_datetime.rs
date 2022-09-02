@@ -4,7 +4,7 @@
 
 use alloc::string::String;
 use core::marker::PhantomData;
-use icu_calendar::provider::JapaneseErasV1Marker;
+use icu_calendar::provider::{JapaneseErasV1Marker, WeekDataV1Marker};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
@@ -18,7 +18,6 @@ use crate::{
         self,
         calendar::{TimeLengthsV1Marker, TimeSymbolsV1Marker},
         date_time::PatternSelector,
-        week_data::WeekDataV1Marker,
     },
     raw,
     time_zone::TimeZoneFormatterOptions,
@@ -124,7 +123,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        calendar::check_locale::<C>(locale)?;
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
@@ -170,7 +168,6 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        calendar::check_locale::<C>(locale)?;
         let patterns = PatternSelector::for_options(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,

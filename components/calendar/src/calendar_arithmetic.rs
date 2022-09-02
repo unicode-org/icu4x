@@ -22,6 +22,21 @@ pub trait CalendarArithmetic: Calendar {
     fn month_days(year: i32, month: u8) -> u8;
     fn months_for_every_year(year: i32) -> u8;
     fn is_leap_year(year: i32) -> bool;
+
+    /// Calculate the days in a given year
+    /// Can be overridden with simpler implementations for solar calendars
+    /// (typically, 366 in leap, 365 otgerwuse) Leave this as the default
+    /// for lunar calendars
+    ///
+    /// The name has `provided` in it to avoid clashes with Calendar
+    fn days_in_provided_year(year: i32) -> u32 {
+        let months_in_year = Self::months_for_every_year(year);
+        let mut days: u32 = 0;
+        for month in 1..=months_in_year {
+            days += Self::month_days(year, month) as u32;
+        }
+        days
+    }
 }
 
 impl<C: CalendarArithmetic> ArithmeticDate<C> {
@@ -98,12 +113,7 @@ impl<C: CalendarArithmetic> ArithmeticDate<C> {
 
     #[inline]
     pub fn days_in_year(&self) -> u32 {
-        let months_in_year = C::months_for_every_year(self.year);
-        let mut days: u32 = 0;
-        for month in 1..=months_in_year {
-            days += C::month_days(self.year, month) as u32;
-        }
-        days
+        C::days_in_provided_year(self.year)
     }
 
     #[inline]

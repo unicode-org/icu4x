@@ -23,11 +23,10 @@ use icu_collections::char16trie::TrieResult;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
-use icu_normalizer::u24::EMPTY_U24;
-use icu_normalizer::u24::U24;
 use icu_properties::CanonicalCombiningClass;
 use smallvec::SmallVec;
 use zerovec::ule::AsULE;
+use zerovec::ule::CharULE;
 use zerovec::ule::RawBytesULE;
 use zerovec::ZeroSlice;
 
@@ -151,12 +150,14 @@ pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VA
 
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
-const SINGLE_U16: &ZeroSlice<u16> =
+const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
 
-const SINGLE_U24_ARR: [u8; 3] = [0xFD, 0xFF, 00];
-const SINGLE_U24_SLICE: &[U24] = &[U24(SINGLE_U24_ARR)];
-const SINGLE_U24: &ZeroSlice<U24> = unsafe { core::mem::transmute(SINGLE_U24_SLICE) };
+pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
+
+const SINGLE_REPLACEMENT_CHARACTER_CHAR: &ZeroSlice<char> = ZeroSlice::from_ule_slice(&[unsafe {
+    core::mem::transmute::<[u8; 3], CharULE>([0xFDu8, 0xFFu8, 0u8])
+}]);
 
 /// If `opt` is `Some`, unwrap it. If `None`, panic if debug assertions
 /// are enabled and return `default` if debug assertions are not enabled.
@@ -184,46 +185,6 @@ fn char_from_u32(u: u32) -> char {
 #[inline(always)]
 fn char_from_u16(u: u16) -> char {
     char_from_u32(u32::from(u))
-}
-
-/// Convert a `U24` _obtained from data provider data_ to `char`.
-#[inline(always)]
-fn char_from_u24(u: U24) -> char {
-    char_from_u32(u.into())
-}
-
-#[inline(always)]
-fn split_first_u16(s: Option<&ZeroSlice<u16>>) -> (char, &ZeroSlice<u16>) {
-    if let Some(slice) = s {
-        if let Some(first) = slice.first() {
-            return (
-                char_from_u16(first),
-                // `unwrap()` must succeed, because `first()` returned `Some`.
-                #[allow(clippy::unwrap_used)]
-                slice.get_subslice(1..slice.len()).unwrap(),
-            );
-        }
-    }
-    // GIGO case
-    debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U16)
-}
-
-#[inline(always)]
-fn split_first_u32(s: Option<&ZeroSlice<U24>>) -> (char, &ZeroSlice<U24>) {
-    if let Some(slice) = s {
-        if let Some(first) = slice.first() {
-            return (
-                char_from_u24(first),
-                // `unwrap()` must succeed, because `first()` returned `Some`.
-                #[allow(clippy::unwrap_used)]
-                slice.get_subslice(1..slice.len()).unwrap(),
-            );
-        }
-    }
-    // GIGO case
-    debug_assert!(false);
-    (REPLACEMENT_CHARACTER, EMPTY_U24)
 }
 
 #[inline(always)]
@@ -839,7 +800,7 @@ where
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
     /// NFD complex decompositions on supplementary planes
-    scalars32: &'data ZeroSlice<U24>,
+    scalars32: &'data ZeroSlice<char>,
     /// If numeric mode is enabled, the 8 high bits of the numeric primary.
     /// `None` if disabled.
     numeric_primary: Option<u8>,
@@ -1135,7 +1096,7 @@ where
                     let len = usize::from(trail_or_complex >> 13) + 2;
                     for u in unwrap_or_gigo(
                         self.scalars16.get_subslice(offset..offset + len),
-                        SINGLE_U16, // single instead of empty for consistency with the other code path
+                        SINGLE_REPLACEMENT_CHARACTER_U16, // single instead of empty for consistency with the other code path
                     )
                     .iter()
                     {
@@ -1147,13 +1108,12 @@ where
                 } else {
                     let len = usize::from(trail_or_complex >> 13) + 1;
                     let offset32 = offset - self.scalars16.len();
-                    for u in unwrap_or_gigo(
+                    for ch in unwrap_or_gigo(
                         self.scalars32.get_subslice(offset32..offset32 + len),
-                        SINGLE_U24, // single instead of empty for consistency with the other code path
+                        SINGLE_REPLACEMENT_CHARACTER_CHAR, // single instead of empty for consistency with the other code path
                     )
                     .iter()
                     {
-                        let ch = char_from_u24(u);
                         let trie_value = self.trie.get(u32::from(ch));
                         self.upcoming
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
@@ -1477,8 +1437,18 @@ where
                         let offset = usize::from(trail_or_complex & 0xFFF);
                         if offset < self.scalars16.len() {
                             let len = usize::from(trail_or_complex >> 13) + 2;
-                            let (starter, tail) =
-                                split_first_u16(self.scalars16.get_subslice(offset..offset + len));
+                            let (starter, tail) = self
+                                .scalars16
+                                .get_subslice(offset..offset + len)
+                                .and_then(ZeroSlice::split_first)
+                                .map_or_else(
+                                    || {
+                                        // GIGO case
+                                        debug_assert!(false);
+                                        (REPLACEMENT_CHARACTER, EMPTY_U16)
+                                    },
+                                    |(first, tail)| (char_from_u16(first), tail),
+                                );
                             c = starter;
                             if trail_or_complex & 0x1000 != 0 {
                                 for u in tail.iter() {
@@ -1519,22 +1489,26 @@ where
                         } else {
                             let len = usize::from(trail_or_complex >> 13) + 1;
                             let offset32 = offset - self.scalars16.len();
-                            let (starter, tail) = split_first_u32(
-                                self.scalars32.get_subslice(offset32..offset32 + len),
-                            );
+                            let (starter, tail) = self
+                                .scalars32
+                                .get_subslice(offset32..offset32 + len)
+                                .and_then(|slice| slice.split_first())
+                                .unwrap_or_else(|| {
+                                    // GIGO case
+                                    debug_assert!(false);
+                                    (REPLACEMENT_CHARACTER, EMPTY_CHAR)
+                                });
+
                             c = starter;
                             if trail_or_complex & 0x1000 != 0 {
-                                for u in tail.iter() {
-                                    let char_from_u = char_from_u24(u);
-                                    let trie_value = self.trie.get(u32::from(char_from_u));
+                                for ch in tail.iter() {
+                                    let trie_value = self.trie.get(u32::from(ch));
                                     let ccc = ccc_from_trie_value(trie_value);
-                                    combining_characters
-                                        .push(CharacterAndClass::new(char_from_u, ccc));
+                                    combining_characters.push(CharacterAndClass::new(ch, ccc));
                                 }
                             } else {
                                 let mut it = tail.iter();
-                                while let Some(u) = it.next() {
-                                    let ch = char_from_u24(u);
+                                while let Some(ch) = it.next() {
                                     let ccc = ccc_from_trie_value(self.trie.get(u32::from(ch)));
                                     if ccc != CanonicalCombiningClass::NotReordered {
                                         // As of Unicode 14, this branch is never taken.
@@ -1549,8 +1523,7 @@ where
                                     // sort the right characters.
                                     self.maybe_gather_combining();
 
-                                    while let Some(u) = it.next_back() {
-                                        let tail_char = char_from_u24(u);
+                                    while let Some(tail_char) = it.next_back() {
                                         let trie_value = self.trie.get(u32::from(tail_char));
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
                                     }

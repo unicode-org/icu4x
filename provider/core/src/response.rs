@@ -8,6 +8,7 @@ use crate::marker::DataMarker;
 use crate::request::DataLocale;
 use crate::yoke::trait_hack::YokeTraitHack;
 use crate::yoke::*;
+use core::any::Any;
 use core::convert::TryFrom;
 use core::fmt::Debug;
 use core::marker::PhantomData;
@@ -128,6 +129,7 @@ where
 /// A wrapper type that wraps either an [`Rc`](alloc::rc::Rc) or an
 /// [`Arc`](alloc::sync::Arc), depending on the "sync" feature. Create
 /// this from a `&[T]`.
+#[derive(Debug)]
 pub struct RcWrap<T: ?Sized>(
     #[cfg(not(feature = "sync"))] alloc::rc::Rc<T>,
     #[cfg(feature = "sync")] alloc::sync::Arc<T>,
@@ -171,6 +173,74 @@ impl From<&[u8]> for RcWrap<[u8]> {
         Self(other.into())
     }
 }
+
+#[cfg(feature = "sync")]
+impl RcWrap<dyn Any + Send + Sync> {
+    /// Attempt to downcast the `RcWrap<dyn Any + Send + Sync>` to a concrete type.
+    pub fn downcast<T: Any + Send + Sync>(
+        self,
+    ) -> Result<RcWrap<T>, RcWrap<dyn Any + Send + Sync>> {
+        match self.0.downcast() {
+            Ok(s) => Ok(RcWrap(s)),
+            Err(e) => Err(RcWrap(e)),
+        }
+    }
+}
+
+#[cfg(not(feature = "sync"))]
+impl RcWrap<dyn Any> {
+    /// Attempt to downcast the `RcWrap<dyn Any>` to a concrete type.
+    pub fn downcast<T: Any>(self) -> Result<RcWrap<T>, RcWrap<dyn Any>> {
+        match self.0.downcast() {
+            Ok(s) => Ok(RcWrap(s)),
+            Err(e) => Err(RcWrap(e)),
+        }
+    }
+}
+
+#[cfg(feature = "sync")]
+impl<T: Send + Sync + 'static> RcWrap<T> {
+    /// Creates an `RcWrap<dyn Any + Send + Sync>` from an `RcWrap<T>`.
+    pub fn into_dyn_any(self) -> RcWrap<dyn Any + Send + Sync> {
+        RcWrap(self.0)
+    }
+
+    /// Returns the inner value, if the `RcWrap` has exactly one strong reference.
+    pub fn try_unwrap(self) -> Result<T, Self> {
+        match alloc::sync::Arc::try_unwrap(self.0) {
+            Ok(t) => Ok(t),
+            Err(e) => Err(RcWrap(e)),
+        }
+    }
+}
+
+#[cfg(not(feature = "sync"))]
+impl<T: 'static> RcWrap<T> {
+    /// Creates an `RcWrap<dyn Any>` from an `RcWrap<T>`.
+    pub fn into_dyn_any(self) -> RcWrap<dyn Any> {
+        RcWrap(self.0)
+    }
+
+    /// Returns the inner value, if the `RcWrap` has exactly one strong reference.
+    pub fn try_unwrap(self) -> Result<T, Self> {
+        match alloc::rc::Rc::try_unwrap(self.0) {
+            Ok(t) => Ok(t),
+            Err(e) => Err(RcWrap(e)),
+        }
+    }
+}
+
+/// A trait that allows to specify bounds for RcWrap value when the "sync" feature is on.
+#[cfg(feature = "sync")]
+pub trait RcWrapBounds: Send + Sync {}
+#[cfg(feature = "sync")]
+impl<T: Send + Sync> RcWrapBounds for T {}
+
+/// A trait that allows to specify bounds for RcWrap value when the "sync" feature is off.
+#[cfg(not(feature = "sync"))]
+pub trait RcWrapBounds {}
+#[cfg(not(feature = "sync"))]
+impl<T> RcWrapBounds for T {}
 
 #[test]
 fn test_clone_eq() {

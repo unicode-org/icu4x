@@ -79,9 +79,9 @@ export class ICU4XFixedDecimal {
 
    * Construct an {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} from an float, with enough digits to recover the original floating point in IEEE 754 without needing trailing zeros
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.try_from_f64 Rust documentation for `try_from_f64`} for more information.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/enum.DoublePrecision.html Rust documentation for `DoublePrecision`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html Rust documentation for `DoublePrecision`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_f64_with_floating_precision(f: f64): ICU4XFixedDecimal | never;
@@ -90,44 +90,44 @@ export class ICU4XFixedDecimal {
 
    * Construct an {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} from a string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html Rust documentation for `FixedDecimal`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.from_str Rust documentation for `from_str`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_str(v: string): ICU4XFixedDecimal | never;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.digit_at Rust documentation for `digit_at`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.digit_at Rust documentation for `digit_at`} for more information.
    */
   digit_at(magnitude: i16): u8;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.magnitude_range Rust documentation for `magnitude_range`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range Rust documentation for `magnitude_range`} for more information.
    */
   magnitude_start(): i16;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.magnitude_range Rust documentation for `magnitude_range`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.magnitude_range Rust documentation for `magnitude_range`} for more information.
    */
   magnitude_end(): i16;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start Rust documentation for `nonzero_magnitude_start`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_start Rust documentation for `nonzero_magnitude_start`} for more information.
    */
   nonzero_magnitude_start(): i16;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end Rust documentation for `nonzero_magnitude_end`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.nonzero_magnitude_end Rust documentation for `nonzero_magnitude_end`} for more information.
    */
   nonzero_magnitude_end(): i16;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.is_zero Rust documentation for `is_zero`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.is_zero Rust documentation for `is_zero`} for more information.
    */
   is_zero(): boolean;
 
@@ -141,7 +141,7 @@ export class ICU4XFixedDecimal {
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.sign Rust documentation for `sign`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.sign Rust documentation for `sign`} for more information.
    */
   sign(): ICU4XFixedDecimalSign;
 
@@ -155,19 +155,19 @@ export class ICU4XFixedDecimal {
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.apply_sign_display Rust documentation for `apply_sign_display`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.apply_sign_display Rust documentation for `apply_sign_display`} for more information.
    */
   apply_sign_display(sign_display: ICU4XFixedDecimalSignDisplay): void;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.trim_start Rust documentation for `trim_start`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trim_start Rust documentation for `trim_start`} for more information.
    */
   trim_start(): void;
 
   /**
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.trim_end Rust documentation for `trim_end`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.trim_end Rust documentation for `trim_end`} for more information.
    */
   trim_end(): void;
 
@@ -183,7 +183,7 @@ export class ICU4XFixedDecimal {
 
    * Zero-pad the {@link ICU4XFixedDecimal `ICU4XFixedDecimal`} on the right to a particular position
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/decimal/struct.FixedDecimal.html#method.pad_end Rust documentation for `pad_end`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.pad_end Rust documentation for `pad_end`} for more information.
    */
   pad_end(position: i16): void;
 

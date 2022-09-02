@@ -118,8 +118,8 @@ pub struct FixedDecimal {
 }
 
 /// A specification of the sign used when formatting a number.
+#[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq, Debug)]
-#[allow(clippy::exhaustive_enums)] // TODO(#1668)
 pub enum Sign {
     /// No sign (implicitly positive, e.g., 1729).
     None,
@@ -1945,9 +1945,9 @@ impl FromStr for FixedDecimal {
 /// specifies not only the point on the number line but also the precision of the number to a
 /// specific power of 10. This enum augments a floating-point value with the additional
 /// information required by FixedDecimal.
+#[non_exhaustive]
 #[cfg(feature = "ryu")]
 #[derive(Debug, Clone, Copy)]
-#[allow(clippy::exhaustive_enums)] // TODO(#1668)
 pub enum DoublePrecision {
     /// Specify that the floating point number is integer-valued.
     ///

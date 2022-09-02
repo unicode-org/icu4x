@@ -8,6 +8,23 @@
 
     .. js:staticfunction:: create_from_str(s)
 
+        Creates a time zone from an offset string.
+
+
+    .. js:staticfunction:: create_empty()
+
+        Creates a time zone with no information.
+
+        See the `Rust documentation for new_empty <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.new_empty>`__ for more information.
+
+
+    .. js:staticfunction:: create_utc()
+
+        Creates a time zone for UTC.
+
+        See the `Rust documentation for utc <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.utc>`__ for more information.
+
+
     .. js:function:: try_set_gmt_offset_seconds(offset_seconds)
 
         Sets the ``gmt_offset`` field from offset seconds.
@@ -208,11 +225,11 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. js:function:: maybe_set_meta_zone(local_datetime, metazone_calculator)
+    .. js:function:: maybe_calculate_meta_zone(local_datetime, metazone_calculator)
 
         Sets the meta zone based on the time zone and the local timestamp.
 
-        See the `Rust documentation for maybe_set_meta_zone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_set_meta_zone>`__ for more information.
+        See the `Rust documentation for maybe_calculate_meta_zone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone>`__ for more information.
 
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone>`__
 

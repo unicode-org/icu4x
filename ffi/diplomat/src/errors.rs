@@ -29,6 +29,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::datetime::DateTimeFormatterError, Enum, compact)]
     #[diplomat::rust_link(icu::locid::ParserError, Enum, compact)]
     #[diplomat::rust_link(icu::properties::PropertiesError, Enum, compact)]
+    #[diplomat::rust_link(icu::plurals::PluralRulesError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     pub enum ICU4XError {
@@ -103,7 +104,6 @@ pub mod ffi {
         DateTimeFormatMissingMonthSymbolError = 0x8_06,
         DateTimeFormatFixedDecimalError = 0x8_07,
         DateTimeFormatMismatchedAnyCalendarError = 0x8_08,
-        DateTimeFormatMismatchedCalendarLocaleError = 0x8_09,
 
         // tinystr errors
         TinyStrTooLargeError = 0x9_00,
@@ -113,6 +113,7 @@ pub mod ffi {
         // timezone errors
         TimeZoneOffsetOutOfBoundsError = 0xA_00,
         TimeZoneInvalidOffsetError = 0xA_01,
+        TimeZoneMissingInputError = 0xA_02,
     }
 }
 
@@ -232,9 +233,6 @@ impl From<DateTimeFormatterError> for ICU4XError {
             DateTimeFormatterError::FixedDecimalFormatter(err) => err.into(),
             DateTimeFormatterError::MismatchedAnyCalendar(_, _) => {
                 ICU4XError::DateTimeFormatMismatchedAnyCalendarError
-            }
-            DateTimeFormatterError::MismatchedCalendarLocale(_, _) => {
-                ICU4XError::DateTimeFormatMismatchedCalendarLocaleError
             }
             _ => ICU4XError::UnknownError,
         };

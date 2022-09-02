@@ -32,8 +32,7 @@ all-features = true
 syn-inline-mod = { version =  "0.4.0" }
 serde_json = { version =  "1" }
 rustdoc-types = { version =  "0.14" }
-# Rely on cargo unifying the revision with the rest of the workspace
-diplomat_core = { git = "https://github.com/rust-diplomat/diplomat" }
+diplomat_core = { git = "https://github.com/rust-diplomat/diplomat", rev = "839ff1c35e473d92cd9f0bbeea65c8337981e9da" }
 lazy_static = { version =  "1" }
 elsa = { version = "1" }
 

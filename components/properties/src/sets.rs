@@ -103,7 +103,7 @@ impl CodePointSetData {
     ///
     /// The performance of the conversion to this specific return type will vary
     /// depending on the data structure that is backing `self`.
-    pub fn to_code_point_invesion_list(&self) -> CodePointInversionList<'_> {
+    pub fn to_code_point_inversion_list(&self) -> CodePointInversionList<'_> {
         self.data.get().to_code_point_inversion_list()
     }
 }
@@ -1632,7 +1632,7 @@ make_set_property! {
     marker: XidContinueProperty;
     keyed_data_marker: XidContinueV1Marker;
     func:
-    /// Characters that can begin an identifier.  See [`Unicode Standard Annex
+    /// Characters that can come after the first character in an identifier.  See [`Unicode Standard Annex
     /// #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more details.
     ///
     /// # Example
@@ -1662,7 +1662,7 @@ make_set_property! {
     marker: XidStartProperty;
     keyed_data_marker: XidStartV1Marker;
     func:
-    /// Characters that can come after the first character in an identifier. See [`Unicode
+    /// Characters that can begin an identifier. See [`Unicode
     /// Standard Annex #31`](https://www.unicode.org/reports/tr31/tr31-35.html) for more
     /// details.
     ///

@@ -12,12 +12,12 @@ const std::string_view path = "../../../../../provider/testdata/data/json/";
 int main() {
     ICU4XLogger::init_simple_logger();
     ICU4XLocale locale = ICU4XLocale::create("ar").ok().value();
-    std::cout << "Running test for locale " << locale.tostring().ok().value() << std::endl;
+    std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_fs(path).ok().value();
     ICU4XPluralRules pr = ICU4XPluralRules::try_new_cardinal(dp, locale).ok().value();
 
     ICU4XPluralOperands op = { .i = 3 };
-    ICU4XPluralCategory cat = pr.select(op);
+    ICU4XPluralCategory cat = pr.category_for(op);
 
     std::cout << "Category is " << static_cast<int32_t>(cat)
                                 << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Few) << ")"
@@ -27,7 +27,7 @@ int main() {
     }
 
     op = ICU4XPluralOperands::create("1011.0").ok().value();
-    cat = pr.select(op);
+    cat = pr.category_for(op);
     std::cout << "Category is " << static_cast<int32_t>(cat)
                                 << " (should be " << static_cast<int32_t>(ICU4XPluralCategory::Many) << ")"
                                 << std::endl;

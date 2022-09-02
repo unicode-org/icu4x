@@ -12,7 +12,6 @@
 //! glyph-availability-guided custom normalizer.
 
 use crate::char_from_u16;
-use crate::char_from_u24;
 use crate::error::NormalizerError;
 use crate::in_inclusive_range;
 use crate::provider::CanonicalCompositionsV1Marker;
@@ -269,13 +268,11 @@ impl CanonicalDecomposition {
                 break;
             }
             let offset24 = offset - tables.scalars16.len();
-            if let Some(first) = tables.scalars24.get(offset24) {
-                let first_c = char_from_u24(first);
+            if let Some(first_c) = tables.scalars24.get(offset24) {
                 if len == 1 {
                     return Decomposed::Singleton(first_c);
                 }
-                if let Some(second) = tables.scalars24.get(offset24 + 1) {
-                    let second_c = char_from_u24(second);
+                if let Some(second_c) = tables.scalars24.get(offset24 + 1) {
                     return Decomposed::Expansion(first_c, second_c);
                 }
             }
@@ -305,7 +302,7 @@ impl CanonicalDecomposition {
         let offset = usize::from(trail_or_complex - 1);
         if let Some(first) = non_recursive.scalars24.get(offset) {
             if let Some(second) = non_recursive.scalars24.get(offset + 1) {
-                return Decomposed::Expansion(char_from_u24(first), char_from_u24(second));
+                return Decomposed::Expansion(first, second);
             }
         }
         // GIGO case

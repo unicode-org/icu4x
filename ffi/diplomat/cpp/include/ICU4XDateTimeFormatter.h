@@ -21,6 +21,7 @@ typedef struct ICU4XDateTimeFormatter ICU4XDateTimeFormatter;
 #include "diplomat_result_box_ICU4XDateTimeFormatter_ICU4XError.h"
 #include "ICU4XDateTime.h"
 #include "diplomat_result_void_ICU4XError.h"
+#include "ICU4XIsoDateTime.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -29,6 +30,8 @@ extern "C" {
 diplomat_result_box_ICU4XDateTimeFormatter_ICU4XError ICU4XDateTimeFormatter_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
 
 diplomat_result_void_ICU4XError ICU4XDateTimeFormatter_format_datetime(const ICU4XDateTimeFormatter* self, const ICU4XDateTime* value, DiplomatWriteable* write);
+
+diplomat_result_void_ICU4XError ICU4XDateTimeFormatter_format_iso_datetime(const ICU4XDateTimeFormatter* self, const ICU4XIsoDateTime* value, DiplomatWriteable* write);
 void ICU4XDateTimeFormatter_destroy(ICU4XDateTimeFormatter* self);
 
 #ifdef __cplusplus

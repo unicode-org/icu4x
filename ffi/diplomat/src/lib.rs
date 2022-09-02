@@ -34,10 +34,15 @@ extern crate std as rust_std;
 
 extern crate alloc;
 
+#[macro_use]
+mod utils;
+
 pub mod bidi;
 pub mod calendar;
 pub mod data_struct;
+pub mod date;
 pub mod datetime;
+pub mod datetime_formatter;
 pub mod decimal;
 pub mod errors;
 pub mod fixed_decimal;
@@ -52,7 +57,10 @@ pub mod segmenter_grapheme;
 pub mod segmenter_line;
 pub mod segmenter_sentence;
 pub mod segmenter_word;
+pub mod time;
 pub mod timezone;
+pub mod timezone_formatter;
+pub mod week;
 
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;

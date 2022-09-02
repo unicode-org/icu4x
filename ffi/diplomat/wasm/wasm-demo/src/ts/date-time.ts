@@ -21,7 +21,7 @@ export class DateTimeDemo {
         this.#dataProvider = dataProvider;
 
         this.#locale = Ok(ICU4XLocale.create("en-u-ca-gregory"));
-        this.#calendar = Ok(ICU4XCalendar.try_new(dataProvider, unwrap(this.#locale)));
+        this.#calendar = Ok(ICU4XCalendar.try_new_for_locale(dataProvider, unwrap(this.#locale)));
         this.#dateLength = ICU4XDateLength.Short;
         this.#timeLength = ICU4XTimeLength.Short;
         this.#dateTime = null;
@@ -48,7 +48,7 @@ export class DateTimeDemo {
             this.#localeStr :
             `${this.#localeStr}-u-ca-${this.#calendarStr}`;
         this.#locale = result(() => ICU4XLocale.create(locid));
-        this.#calendar = result(() => ICU4XCalendar.try_new(this.#dataProvider, unwrap(this.#locale) ));
+        this.#calendar = result(() => ICU4XCalendar.try_new_for_locale(this.#dataProvider, unwrap(this.#locale) ));
         this.#updateDateTime();
     }
 
@@ -78,6 +78,7 @@ export class DateTimeDemo {
             date.getHours(),
             date.getMinutes(),
             date.getSeconds(),
+            0,
             unwrap(this.#calendar)
         ));
     }

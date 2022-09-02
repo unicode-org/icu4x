@@ -3,6 +3,7 @@ import { ICU4XDataProvider } from "./ICU4XDataProvider";
 import { ICU4XDateLength } from "./ICU4XDateLength";
 import { ICU4XDateTime } from "./ICU4XDateTime";
 import { ICU4XError } from "./ICU4XError";
+import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
 import { ICU4XLocale } from "./ICU4XLocale";
 import { ICU4XTimeLength } from "./ICU4XTimeLength";
 
@@ -31,4 +32,15 @@ export class ICU4XDateTimeFormatter {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_datetime(value: ICU4XDateTime): string | never;
+
+  /**
+
+   * Formats a {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} to a string.
+
+   * Will convert to this formatter's calendar first
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  format_iso_datetime(value: ICU4XIsoDateTime): string | never;
 }

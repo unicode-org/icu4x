@@ -1,4 +1,4 @@
-function readString(wasm, ptr, len) {
+export function readString(wasm, ptr, len) {
   const buf = new Uint8Array(wasm.memory.buffer, ptr, len);
   return (new TextDecoder("utf-8")).decode(buf)
 }

@@ -137,6 +137,5 @@ pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
 pub use time_zone::TimeZoneFormatter;
-pub use time_zone::TimeZoneFormatterConfig;
 pub use time_zone::TimeZoneFormatterOptions;
 pub use zoned_datetime::TypedZonedDateTimeFormatter;
