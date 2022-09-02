@@ -319,7 +319,7 @@ icu::collections::codepointinvlist::CodePointInversionList::clone_from_inversion
 icu::collections::codepointinvlist::CodePointInversionList::contains#FnInStruct
 icu::collections::codepointinvlist::CodePointInversionList::contains_range#FnInStruct
 icu::collections::codepointinvlist::CodePointInversionList::contains_set#FnInStruct
-icu::collections::codepointinvlist::CodePointInversionList::contains_u32#FnInStruct
+icu::collections::codepointinvlist::CodePointInversionList::contains32#FnInStruct
 icu::collections::codepointinvlist::CodePointInversionList::from_inversion_list#FnInStruct
 icu::collections::codepointinvlist::CodePointInversionList::from_inversion_list_slice#FnInStruct
 icu::collections::codepointinvlist::CodePointInversionList::from_iter#FnInStruct
@@ -366,7 +366,7 @@ icu::collections::codepointtrie::CodePointTrie::get#FnInStruct
 icu::collections::codepointtrie::CodePointTrie::get_range#FnInStruct
 icu::collections::codepointtrie::CodePointTrie::get_ranges_for_value#FnInStruct
 icu::collections::codepointtrie::CodePointTrie::get_set_for_value#FnInStruct
-icu::collections::codepointtrie::CodePointTrie::get_u32#FnInStruct
+icu::collections::codepointtrie::CodePointTrie::get32_u32#FnInStruct
 icu::collections::codepointtrie::CodePointTrie::get_ule#FnInStruct
 icu::collections::codepointtrie::CodePointTrie::iter_ranges#FnInStruct
 icu::collections::codepointtrie::CodePointTrie::try_into_converted#FnInStruct
@@ -1068,7 +1068,7 @@ icu::normalizer::error::NormalizerError#Enum
 icu::normalizer::error::NormalizerError::provide#FnInEnum
 icu::normalizer::properties::CanonicalCombiningClassMap#Struct
 icu::normalizer::properties::CanonicalCombiningClassMap::get#FnInStruct
-icu::normalizer::properties::CanonicalCombiningClassMap::get_u32#FnInStruct
+icu::normalizer::properties::CanonicalCombiningClassMap::get32#FnInStruct
 icu::normalizer::properties::CanonicalCombiningClassMap::try_new_unstable#FnInStruct
 icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_any_provider#FnInStruct
 icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider#FnInStruct
@@ -1606,7 +1606,7 @@ icu::properties::maps::CodePointMapData::to_code_point_trie#FnInStruct
 icu::properties::maps::CodePointMapData::try_into_converted#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::get#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::get_set_for_value#FnInStruct
-icu::properties::maps::CodePointMapDataBorrowed::get_u32#FnInStruct
+icu::properties::maps::CodePointMapDataBorrowed::get32#FnInStruct
 icu::properties::maps::CodePointMapDataBorrowed::iter_ranges#FnInStruct
 icu::properties::maps::load_bidi_class#Fn
 icu::properties::maps::load_canonical_combining_class#Fn
@@ -1714,7 +1714,7 @@ icu::properties::sets::CodePointSetData::from_code_point_inversion_list#FnInStru
 icu::properties::sets::CodePointSetData::from_data#FnInStruct
 icu::properties::sets::CodePointSetData::to_code_point_invesion_list#FnInStruct
 icu::properties::sets::CodePointSetDataBorrowed::contains#FnInStruct
-icu::properties::sets::CodePointSetDataBorrowed::contains_u32#FnInStruct
+icu::properties::sets::CodePointSetDataBorrowed::contains32#FnInStruct
 icu::properties::sets::CodePointSetDataBorrowed::iter_ranges#FnInStruct
 icu::properties::sets::load_alnum#Fn
 icu::properties::sets::load_alphabetic#Fn
