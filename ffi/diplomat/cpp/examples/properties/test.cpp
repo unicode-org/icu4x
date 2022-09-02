@@ -52,7 +52,7 @@ int main() {
     int result;
 
     result = test_set_property(
-        ICU4XCodePointSetData::try_get_ascii_hex_digit(dp).ok().value(),
+        ICU4XCodePointSetData::load_ascii_hex_digit(dp).ok().value(),
         u'3',
         u'੩'
     );
@@ -61,7 +61,7 @@ int main() {
     }
 
     result = test_map_16_property(
-        ICU4XCodePointMapData16::try_get_script(dp).ok().value(),
+        ICU4XCodePointMapData16::load_script(dp).ok().value(),
         u'木',
         17 // Script::Han
     );
@@ -70,7 +70,7 @@ int main() {
     }
 
     result = test_map_8_property(
-        ICU4XCodePointMapData8::try_get_general_category(dp).ok().value(),
+        ICU4XCodePointMapData8::load_general_category(dp).ok().value(),
         u'木',
         5 // GeneralCategory::OtherLetter
     );
@@ -79,7 +79,7 @@ int main() {
     }
 
     result = test_map_8_property(
-        ICU4XCodePointMapData8::try_get_bidi_class(dp).ok().value(),
+        ICU4XCodePointMapData8::load_bidi_class(dp).ok().value(),
         u'ع',
         13 // GeneralCategory::ArabicLetter
     );

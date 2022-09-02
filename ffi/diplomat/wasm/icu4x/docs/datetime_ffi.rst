@@ -99,6 +99,22 @@
         See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
 
 
+    .. js:function:: week_of_month(first_weekday)
+
+        Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
+
+        ``first_weekday`` can be obtained via ``first_weekday()`` on :js:class:`ICU4XWeekCalculator`
+
+        See the `Rust documentation for week_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month>`__ for more information.
+
+
+    .. js:function:: week_of_year(calculator)
+
+        Returns the week number in this year, using week data
+
+        See the `Rust documentation for week_of_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_year>`__ for more information.
+
+
     .. js:function:: ordinal_month()
 
         Returns 1-indexed number of the month of this date in its year
@@ -260,6 +276,22 @@
         Returns the day in the week for this day
 
         See the `Rust documentation for day_of_week <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week>`__ for more information.
+
+
+    .. js:function:: week_of_month(first_weekday)
+
+        Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
+
+        ``first_weekday`` can be obtained via ``first_weekday()`` on :js:class:`ICU4XWeekCalculator`
+
+        See the `Rust documentation for week_of_month <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month>`__ for more information.
+
+
+    .. js:function:: week_of_year(calculator)
+
+        Returns the week number in this year, using week data
+
+        See the `Rust documentation for week_of_year <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_year>`__ for more information.
 
 
     .. js:function:: month()

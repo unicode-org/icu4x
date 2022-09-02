@@ -1,5 +1,6 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
+import { ICU4XCodePointSetData } from "./ICU4XCodePointSetData.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 
 const ICU4XCodePointMapData16_box_destroy_registry = new FinalizationRegistry(underlying => {
@@ -16,10 +17,22 @@ export class ICU4XCodePointMapData16 {
     }
   }
 
-  static try_get_script(arg_provider) {
+  get(arg_cp) {
+    return wasm.ICU4XCodePointMapData16_get(this.underlying, diplomatRuntime.extractCodePoint(arg_cp, 'arg_cp'));
+  }
+
+  get_u32(arg_cp) {
+    return wasm.ICU4XCodePointMapData16_get_u32(this.underlying, arg_cp);
+  }
+
+  get_set_for_value(arg_value) {
+    return new ICU4XCodePointSetData(wasm.ICU4XCodePointMapData16_get_set_for_value(this.underlying, arg_value), true, []);
+  }
+
+  static load_script(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCodePointMapData16_try_get_script(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XCodePointMapData16_load_script(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCodePointMapData16(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -31,9 +44,5 @@ export class ICU4XCodePointMapData16 {
         throw new diplomatRuntime.FFIError(throw_value);
       }
     })();
-  }
-
-  get(arg_cp) {
-    return wasm.ICU4XCodePointMapData16_get(this.underlying, diplomatRuntime.extractCodePoint(arg_cp, 'arg_cp'));
   }
 }
