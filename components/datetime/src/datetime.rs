@@ -497,32 +497,39 @@ where {
         ))
     }
 
-    /// Constructor that takes a selected locale, reference to a [data provider] and
-    /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    /// Constructor that supports experimental options.
+    ///
+    /// Enabled by the "experimental" feature.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{options::length, TypedDateTimeFormatter};
+    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let options = length::Bag::from_time_style(length::Time::Medium);
+    /// let mut options = components::Bag::default();
+    /// options.year = Some(components::Year::Numeric);
+    /// options.month = Some(components::Month::Long);
     ///
-    /// TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
     ///     &provider,
     ///     &locale!("en").into(),
     ///     options.into(),
     /// )
     /// .unwrap();
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    ///
+    /// assert_eq!("August 2022", dtf.format_to_string(&datetime));
     /// ```
     ///
     /// [data provider]: icu_provider
     #[cfg(feature = "experimental")]
     #[inline]
-    pub fn try_new_unstable<D>(
+    pub fn try_new_experimental_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
@@ -538,7 +545,7 @@ where {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        let patterns = PatternSelector::for_options(
+        let patterns = PatternSelector::for_options_experimental(
             data_provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
             locale,
@@ -556,8 +563,33 @@ where {
         ))
     }
 
-    #[allow(missing_docs)] // The docs use the "experimental" version
-    #[cfg(not(feature = "experimental"))]
+    /// Constructor that takes a selected locale, reference to a [data provider] and
+    /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::datetime::{options::length, TypedDateTimeFormatter};
+    /// use icu::locid::locale;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Medium);
+    ///
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
+    ///     &provider,
+    ///     &locale!("en").into(),
+    ///     options.into(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    ///
+    /// assert_eq!("Aug 31, 2022, 1:02:03 AM", dtf.format_to_string(&datetime));
+    /// ```
+    ///
+    /// [data provider]: icu_provider
     #[inline]
     pub fn try_new_unstable<D>(
         data_provider: &D,

@@ -77,29 +77,40 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{DateTimeFormatterOptions, TypedZonedDateTimeFormatter};
+    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::datetime::{options::components, TypedZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_datetime::TimeZoneFormatterOptions;
+    /// use icu_timezone::CustomTimeZone;
     ///
     /// let provider = icu_testdata::get_provider();
     ///
-    /// let options = DateTimeFormatterOptions::default();
+    /// let mut options = components::Bag::default();
+    /// options.year = Some(components::Year::Numeric);
+    /// options.month = Some(components::Month::Long);
+    /// options.hour = Some(components::Numeric::Numeric);
+    /// options.minute = Some(components::Numeric::Numeric);
+    /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
-    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
+    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
     ///     &provider,
     ///     &locale!("en").into(),
-    ///     options,
+    ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
-    /// );
+    /// ).unwrap();
     ///
-    /// assert_eq!(zdtf.is_ok(), true);
+    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    ///
+    /// assert_eq!(
+    ///     "August 2022 at 01:02 GMT",
+    ///     zdtf.format_to_string(&datetime, &CustomTimeZone::utc())
+    /// );
     /// ```
     ///
     /// [data provider]: icu_provider
     #[cfg(feature = "experimental")]
     #[inline]
-    pub fn try_new_unstable<P>(
+    pub fn try_new_experimental_unstable<P>(
         provider: &P,
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
@@ -123,7 +134,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
             + DataProvider<JapaneseErasV1Marker>
             + ?Sized,
     {
-        let patterns = PatternSelector::for_options(
+        let patterns = PatternSelector::for_options_experimental(
             provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(provider, locale)?,
             locale,
@@ -142,8 +153,39 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
         ))
     }
 
-    #[allow(missing_docs)] // The docs use the "experimental" version
-    #[cfg(not(feature = "experimental"))]
+    /// Constructor that takes a selected locale, a reference to a [data provider] for
+    /// dates, a [data provider] for time zones, and a list of [`DateTimeFormatterOptions`].
+    /// It collects all data necessary to format zoned datetime values into the given locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
+    /// use icu::locid::locale;
+    /// use icu_datetime::TimeZoneFormatterOptions;
+    /// use icu_timezone::CustomTimeZone;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    ///
+    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
+    ///     &provider,
+    ///     &locale!("en").into(),
+    ///     options.into(),
+    ///     TimeZoneFormatterOptions::default(),
+    /// ).unwrap();
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    ///
+    /// assert_eq!(
+    ///     "Aug 31, 2022, 1:02:03 AM GMT",
+    ///     zdtf.format_to_string(&datetime, &CustomTimeZone::utc())
+    /// );
+    /// ```
+    ///
+    /// [data provider]: icu_provider
     #[inline]
     pub fn try_new_unstable<P>(
         provider: &P,
