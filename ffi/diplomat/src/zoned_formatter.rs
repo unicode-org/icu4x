@@ -31,7 +31,10 @@ pub mod ffi {
 
     impl ICU4XGregorianZonedDateTimeFormatter {
         /// Creates a new [`ICU4XGregorianZonedDateTimeFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
+        /// 
+        /// This function has `date_length` and `time_length` arguments and uses default options
+        /// for the time zone.
+        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -55,7 +58,10 @@ pub mod ffi {
         }
 
         /// Creates a new [`ICU4XGregorianZonedDateTimeFormatter`] from locale data.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
+        /// 
+        /// This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
+        /// fallback for the time zone with the given configurations.
+        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new_with_iso_8601_time_zone_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -80,8 +86,8 @@ pub mod ffi {
         }
 
         /// Formats a [`ICU4XIsoDateTime`] and [`ICU4XCustomTimeZone`] to a string.
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format_to_write, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::format, FnInStruct, hidden)]
+        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::format_to_write, FnInStruct)]
+        #[diplomat::rust_link(icu::datetime::TypedZonedDateTimeFormatter::format, FnInStruct, hidden)]
         #[diplomat::rust_link(
             icu::datetime::ZonedDateTimeFormatter::format_to_string,
             FnInStruct,
@@ -111,6 +117,9 @@ pub mod ffi {
 
     impl ICU4XZonedDateTimeFormatter {
         /// Creates a new [`ICU4XZonedDateTimeFormatter`] from locale data.
+        /// 
+        /// This function has `date_length` and `time_length` arguments and uses default options
+        /// for the time zone.
         #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
@@ -135,6 +144,9 @@ pub mod ffi {
         }
 
         /// Creates a new [`ICU4XZonedDateTimeFormatter`] from locale data.
+        /// 
+        /// This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
+        /// fallback for the time zone with the given configurations.
         #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new_with_iso_8601_time_zone_fallback(
             provider: &ICU4XDataProvider,
