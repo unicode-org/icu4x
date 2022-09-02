@@ -42,25 +42,27 @@
 //! ```
 //! use core::cmp::Ordering;
 //! use icu_collator::*;
-//! use icu_locid::{Locale, langid};
+//! use icu_locid::{Locale, locale};
 //!
 //! let data_provider = icu_testdata::get_provider();
 //!
-//! let locale_es: Locale = langid!("es").into();
+//! let locale_es: Locale = locale!("es-u-co-trad");
 //! let mut options = CollatorOptions::new();
 //! options.strength = Some(Strength::Primary);
 //! let collator_es: Collator =
 //!     Collator::try_new_unstable(&data_provider, &locale_es.into(), options).unwrap();
 //!
-//! assert_eq!(collator_es.compare("manna", "mañana"), Ordering::Less);
+//! // "pollo" > "polvo" in traditional Spanish
+//! assert_eq!(collator_es.compare("pollo", "polvo"), Ordering::Greater);
 //!
-//! let locale_en: Locale = langid!("en").into();
+//! let locale_en: Locale = locale!("en");
 //! let mut options = CollatorOptions::new();
 //! options.strength = Some(Strength::Primary);
 //! let collator_en: Collator =
 //!     Collator::try_new_unstable(&data_provider, &locale_en.into(), options).unwrap();
 //!
-//! assert_eq!(collator_en.compare("manna", "mañana"), Ordering::Greater);
+//! // "pollo" < "polvo" according to English rules
+//! assert_eq!(collator_en.compare("pollo", "polvo"), Ordering::Less);
 //!
 //! ```
 //!

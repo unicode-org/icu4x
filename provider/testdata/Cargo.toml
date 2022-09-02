@@ -146,6 +146,8 @@ icuexportdata_glob = [
     "collation/implicithan/ee_standard_dia.toml",
     "collation/implicithan/es_standard_data.toml",
     "collation/implicithan/es_standard_meta.toml",
+    "collation/implicithan/es_traditional_data.toml",
+    "collation/implicithan/es_traditional_meta.toml",
     "collation/implicithan/fi_standard_data.toml",
     "collation/implicithan/fi_standard_meta.toml",
     "collation/implicithan/ja_standard_data.toml",
