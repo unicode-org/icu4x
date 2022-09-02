@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662144080259,
+  "lastUpdate": 1662153536441,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26063,6 +26063,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7ca3a778149dfdc493480eac35971c42a087f464"
         },
         "date": 1662144022962,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19ce9fea2a752adfd3b4d4cc0b7434aa253bef6a",
+          "message": "Clean up FFFD magic numbers in Collator with REPLACEMENT_CHAR (#2496)",
+          "timestamp": "2022-09-02T21:16:27Z",
+          "tree_id": "7bffd49ec8cb11205da6d816f8bef818586907db",
+          "url": "https://github.com/unicode-org/icu4x/commit/19ce9fea2a752adfd3b4d4cc0b7434aa253bef6a"
+        },
+        "date": 1662153479821,
         "tool": "ndjson",
         "benches": [
           {
