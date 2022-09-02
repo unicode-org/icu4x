@@ -20,8 +20,8 @@ export class ICU4XCodePointSetData {
     return wasm.ICU4XCodePointSetData_contains(this.underlying, diplomatRuntime.extractCodePoint(arg_cp, 'arg_cp'));
   }
 
-  contains_u32(arg_cp) {
-    return wasm.ICU4XCodePointSetData_contains_u32(this.underlying, arg_cp);
+  contains32(arg_cp) {
+    return wasm.ICU4XCodePointSetData_contains32(this.underlying, arg_cp);
   }
 
   static load_for_general_category_group(arg_provider, arg_group) {

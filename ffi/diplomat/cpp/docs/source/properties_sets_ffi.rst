@@ -19,7 +19,7 @@
         See the `Rust documentation for contains <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains>`__ for more information.
 
 
-    .. cpp:function:: bool contains_u32(uint32_t cp) const
+    .. cpp:function:: bool contains32(uint32_t cp) const
 
         Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
 

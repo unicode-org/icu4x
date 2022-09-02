@@ -21,8 +21,8 @@ export class ICU4XCodePointMapData8 {
     return wasm.ICU4XCodePointMapData8_get(this.underlying, diplomatRuntime.extractCodePoint(arg_cp, 'arg_cp'));
   }
 
-  get_u32(arg_cp) {
-    return wasm.ICU4XCodePointMapData8_get_u32(this.underlying, arg_cp);
+  get32(arg_cp) {
+    return wasm.ICU4XCodePointMapData8_get32(this.underlying, arg_cp);
   }
 
   get_set_for_value(arg_value) {

@@ -23,7 +23,7 @@ extern "C" {
 
 bool ICU4XCodePointSetData_contains(const ICU4XCodePointSetData* self, char32_t cp);
 
-bool ICU4XCodePointSetData_contains_u32(const ICU4XCodePointSetData* self, uint32_t cp);
+bool ICU4XCodePointSetData_contains32(const ICU4XCodePointSetData* self, uint32_t cp);
 
 diplomat_result_box_ICU4XCodePointSetData_ICU4XError ICU4XCodePointSetData_load_for_general_category_group(const ICU4XDataProvider* provider, uint32_t group);
 
