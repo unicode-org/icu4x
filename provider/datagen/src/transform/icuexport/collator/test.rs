@@ -73,10 +73,10 @@ fn test_fi() {
     let locale: DataLocale = langid!("fi").into();
     let mut options = CollatorOptions::new();
 
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
     check_expectations(&locale, options, &cases);
 
-    options.set_strength(Some(Strength::Primary));
+    options.strength = Some(Strength::Primary);
     check_expectations(&locale, options, &cases);
 }
 
@@ -128,10 +128,10 @@ fn test_sv() {
     let locale: DataLocale = langid!("sv").into();
     let mut options = CollatorOptions::new();
 
-    options.set_strength(Some(Strength::Tertiary));
+    options.strength = Some(Strength::Tertiary);
     check_expectations(&locale, options, &cases);
 
-    options.set_strength(Some(Strength::Primary));
+    options.strength = Some(Strength::Primary);
     check_expectations(&locale, options, &cases);
 }
 
