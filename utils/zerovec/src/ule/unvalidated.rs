@@ -103,6 +103,12 @@ impl From<Box<[u8]>> for Box<UnvalidatedStr> {
     }
 }
 
+impl<'a, const N: usize> From<&'a [u8; N]> for &'a UnvalidatedStr {
+    fn from(other: &'a [u8; N]) -> Self {
+        UnvalidatedStr::from_byte_slice(other)
+    }
+}
+
 impl<'a> From<&'a str> for &'a UnvalidatedStr {
     fn from(other: &'a str) -> Self {
         other.as_bytes().into()

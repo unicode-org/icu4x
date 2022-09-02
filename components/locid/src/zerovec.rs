@@ -19,24 +19,27 @@
 //! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
 //! and then use [`Locale::strict_cmp()`] to perform an efficient, zero-allocation lookup.
 //!
+//! To produce more human-readable serialized output, you can use [`UnvalidatedStr`].
+//!
 //! ```
 //! use icu_locid::Locale;
 //! use std::str::FromStr;
 //! use zerovec::ZeroMap;
+//! use zerovec::ule::UnvalidatedStr;
 //!
 //! // ZeroMap from locales to integers
-//! let data: &[(&[u8], u32)] = &[
-//!     (b"de-DE-u-hc-h12", 5),
-//!     (b"en-US-u-ca-buddhist", 10),
-//!     (b"my-MM", 15),
-//!     (b"sr-Cyrl-ME", 20),
-//!     (b"zh-TW", 25),
+//! let data: &[(&UnvalidatedStr, u32)] = &[
+//!     (b"de-DE-u-hc-h12".into(), 5),
+//!     (b"en-US-u-ca-buddhist".into(), 10),
+//!     (b"my-MM".into(), 15),
+//!     (b"sr-Cyrl-ME".into(), 20),
+//!     (b"zh-TW".into(), 25),
 //! ];
-//! let zm: ZeroMap<[u8], u32> = data.iter().copied().collect();
+//! let zm: ZeroMap<UnvalidatedStr, u32> = data.iter().copied().collect();
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
-//! let value = zm.get_copied_by(|bytes| loc.strict_cmp(bytes).reverse());
+//! let value = zm.get_copied_by(|uvstr| loc.strict_cmp(&uvstr.0).reverse());
 //! assert_eq!(value, Some(10));
 //! ```
 //!
@@ -90,36 +93,40 @@
 //! for a discussion on potential data models that could ensure that the locale is valid during
 //! deserialization.
 //!
+//! As above, to produce more human-readable serialized output, you can use [`UnvalidatedStr`].
+//!
 //! ```
 //! use icu_locid::langid;
 //! use icu_locid::Locale;
 //! use zerovec::ZeroMap;
+//! use zerovec::ule::UnvalidatedStr;
 //!
 //! // ZeroMap from integer to locale string
-//! let data: &[(u32, &[u8])] = &[
-//!     (5, b"de-DE-u-hc-h12"),
-//!     (10, b"en-US-u-ca-buddhist"),
-//!     (15, b"my-MM"),
-//!     (20, b"sr-Cyrl-ME"),
-//!     (25, b"zh-TW"),
-//!     (30, b"INVALID"),
+//! let data: &[(u32, &UnvalidatedStr)] = &[
+//!     (5, b"de-DE-u-hc-h12".into()),
+//!     (10, b"en-US-u-ca-buddhist".into()),
+//!     (15, b"my-MM".into()),
+//!     (20, b"sr-Cyrl-ME".into()),
+//!     (25, b"zh-TW".into()),
+//!     (30, b"INVALID".into()),
 //! ];
-//! let zm: ZeroMap<u32, [u8]> = data.iter().copied().collect();
+//! let zm: ZeroMap<u32, UnvalidatedStr> = data.iter().copied().collect();
 //!
 //! // Construct a Locale by parsing the string.
 //! let value = zm.get(&25).expect("element is present");
-//! let loc = Locale::from_bytes(value);
+//! let loc = Locale::from_bytes(&value.0);
 //! assert_eq!(loc, Ok(langid!("zh-TW").into()));
 //!
 //! // Invalid entries are fallible
 //! let err_value = zm.get(&30).expect("element is present");
-//! let err_loc = Locale::from_bytes(err_value);
+//! let err_loc = Locale::from_bytes(&err_value.0);
 //! assert!(matches!(err_loc, Err(_)));
 //! ```
 //!
 //! [`Locale`]: crate::Locale
 //! [`Locale::strict_cmp()`]: crate::Locale::strict_cmp()
 //! [`LanguageIdentifier`]: crate::LanguageIdentifier
+//! [`UnvalidatedStr`]: zerovec::ule::UnvalidatedStr
 
 use crate::subtags::{Language, Region, Script, Variant};
 use zerovec::ule::{AsULE, ULE};
