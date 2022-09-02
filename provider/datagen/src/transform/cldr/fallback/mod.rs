@@ -208,7 +208,7 @@ fn test_basic() {
         parents
             .get()
             .parents
-            .get_copied(b"zh-Hant-MO")
+            .get_copied(b"zh-Hant-MO".into())
             .map(LanguageIdentifier::from),
         Some(langid!("zh-Hant-HK"))
     );
