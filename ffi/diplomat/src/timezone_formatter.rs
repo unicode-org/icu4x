@@ -98,6 +98,7 @@ pub mod ffi {
             .into()
         }
 
+        /// Loads generic non-location long format. Example: "Pacific Time"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_generic_non_location_long,
             FnInStruct
@@ -115,6 +116,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads generic non-location short format. Example: "PT"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_generic_non_location_short,
             FnInStruct
@@ -132,6 +134,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads specific non-location long format. Example: "Pacific Standard Time"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_specific_non_location_long,
             FnInStruct
@@ -149,6 +152,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads specific non-location short format. Example: "PST"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_specific_non_location_short,
             FnInStruct
@@ -166,6 +170,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads generic location format. Example: "Los Angeles Time"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_generic_location_format,
             FnInStruct
@@ -183,6 +188,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads localized GMT format. Example: "GMT-07:00"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_localized_gmt_format,
             FnInStruct
@@ -195,6 +201,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads ISO-8601 format. Example: "-07:00"
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::load_iso_8601_format, FnInStruct)]
         pub fn load_iso_8601_format(
             &mut self,

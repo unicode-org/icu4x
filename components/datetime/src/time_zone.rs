@@ -78,7 +78,7 @@ where
 /// .unwrap();
 /// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
 /// .unwrap();
-/// time_zone.maybe_calculate_meta_zone(&datetime, &mzc);
+/// time_zone.maybe_calculate_meta_zone(&mzc, &datetime);
 ///
 /// // Set up the formatter:
 /// let mut tzf = TimeZoneFormatter::try_new_with_buffer_provider(
@@ -757,7 +757,7 @@ pub enum IsoSeconds {
 /// Whether a field should be zero-padded in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
-pub enum ZeroPadding {
+pub(crate) enum ZeroPadding {
     /// Add zero-padding.
     On,
 
