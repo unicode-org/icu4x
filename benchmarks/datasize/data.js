@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662042813317,
+  "lastUpdate": 1662139936976,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26003,6 +26003,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/faec6f178c3becaa6a6b903eef1cd087f3a51bad"
         },
         "date": 1662042750774,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3917801,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "237e9211c74394342ec42eae7cde565687ea005e",
+          "message": "Whack-a-mole part 5: WeekCalculator, ignorelisting assoc items (#2499)\n\n* Track which trait you are in\r\n\r\n* Add support for ignoring associated items\r\n\r\n* Add WeekCalculator\r\n\r\n* add week_of functions\r\n\r\n* Update diplomat",
+          "timestamp": "2022-09-02T17:30:07Z",
+          "tree_id": "02a82a9a5bebff1135dc894a044b696d46dfa2f3",
+          "url": "https://github.com/unicode-org/icu4x/commit/237e9211c74394342ec42eae7cde565687ea005e"
+        },
+        "date": 1662139889797,
         "tool": "ndjson",
         "benches": [
           {
