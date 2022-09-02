@@ -120,3 +120,5 @@
     .. cpp:enumerator:: TimeZoneOffsetOutOfBoundsError
 
     .. cpp:enumerator:: TimeZoneInvalidOffsetError
+
+    .. cpp:enumerator:: TimeZoneMissingInputError

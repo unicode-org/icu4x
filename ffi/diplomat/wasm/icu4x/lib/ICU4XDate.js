@@ -4,6 +4,8 @@ import { ICU4XCalendar } from "./ICU4XCalendar.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 import { ICU4XIsoDate } from "./ICU4XIsoDate.js"
 import { ICU4XIsoWeekday_js_to_rust, ICU4XIsoWeekday_rust_to_js } from "./ICU4XIsoWeekday.js"
+import { ICU4XWeekOf } from "./ICU4XWeekOf.js"
+import { ICU4XWeekRelativeUnit_js_to_rust, ICU4XWeekRelativeUnit_rust_to_js } from "./ICU4XWeekRelativeUnit.js"
 
 const ICU4XDate_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XDate_destroy(underlying);
@@ -72,6 +74,27 @@ export class ICU4XDate {
 
   day_of_week() {
     return ICU4XIsoWeekday_rust_to_js[wasm.ICU4XDate_day_of_week(this.underlying)];
+  }
+
+  week_of_month(arg_first_weekday) {
+    return wasm.ICU4XDate_week_of_month(this.underlying, ICU4XIsoWeekday_js_to_rust[arg_first_weekday]);
+  }
+
+  week_of_year(arg_calculator) {
+    return (() => {
+      const diplomat_receive_buffer = wasm.diplomat_alloc(9, 4);
+      wasm.ICU4XDate_week_of_year(diplomat_receive_buffer, this.underlying, arg_calculator.underlying);
+      const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 8);
+      if (is_ok) {
+        const ok_value = new ICU4XWeekOf(diplomat_receive_buffer);
+        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
+        return ok_value;
+      } else {
+        const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+        wasm.diplomat_free(diplomat_receive_buffer, 9, 4);
+        throw new diplomatRuntime.FFIError(throw_value);
+      }
+    })();
   }
 
   ordinal_month() {
