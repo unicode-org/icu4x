@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662144744396,
+  "lastUpdate": 1662154209238,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -48742,6 +48742,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/write_to/908070605040302010",
             "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "elango@unicode.org",
+            "name": "Elango",
+            "username": "echeran"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "19ce9fea2a752adfd3b4d4cc0b7434aa253bef6a",
+          "message": "Clean up FFFD magic numbers in Collator with REPLACEMENT_CHAR (#2496)",
+          "timestamp": "2022-09-02T21:16:27Z",
+          "tree_id": "7bffd49ec8cb11205da6d816f8bef818586907db",
+          "url": "https://github.com/unicode-org/icu4x/commit/19ce9fea2a752adfd3b4d4cc0b7434aa253bef6a"
+        },
+        "date": 1662154161863,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115413,
+            "range": "± 466",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23303,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 61010,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 205,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 94,
             "range": "± 0",
             "unit": "ns/iter"
           },
