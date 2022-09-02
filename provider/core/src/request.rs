@@ -33,11 +33,14 @@ impl fmt::Display for DataRequest<'_> {
     }
 }
 
-/// Metadata for data requests. This is currently empty, but it may be extended with options
-/// for tuning locale fallback, buffer layout, and so forth.
+/// Metadata for data requests.
+///
+/// This may be extended with options for tuning locale fallback, buffer layout, and so forth.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
-pub struct DataRequestMetadata;
+pub struct DataRequestMetadata {
+    pub fallback_supplement_key: Option<crate::DataKey>,
+}
 
 /// The main locale type used by the ICU4X data provider.
 ///

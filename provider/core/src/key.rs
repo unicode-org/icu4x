@@ -189,6 +189,18 @@ impl PartialEq for DataKey {
 
 impl Eq for DataKey {}
 
+impl Ord for DataKey {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.get_path().cmp(other.get_path())
+    }
+}
+
+impl PartialOrd for DataKey {
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
+
 impl core::hash::Hash for DataKey {
     #[inline]
     fn hash<H: core::hash::Hasher>(&self, state: &mut H) {

@@ -77,4 +77,6 @@ pub trait DataMarker {
 pub trait KeyedDataMarker: DataMarker {
     /// The single [`DataKey`] associated with this marker.
     const KEY: DataKey;
+    /// [`DataKey`] for additional fallbacking data required for loading this marker.
+    const FALLBACK_SUPPLEMENT_KEY: Option<DataKey>;
 }

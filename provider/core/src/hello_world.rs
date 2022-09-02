@@ -47,6 +47,7 @@ impl DataMarker for HelloWorldV1Marker {
 
 impl KeyedDataMarker for HelloWorldV1Marker {
     const KEY: DataKey = crate::data_key!("core/helloworld@1");
+    const FALLBACK_SUPPLEMENT_KEY: Option<DataKey> = None;
 }
 
 /// A data provider returning Hello World strings in different languages.

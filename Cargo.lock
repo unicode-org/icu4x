@@ -1750,6 +1750,7 @@ dependencies = [
  "icu_provider",
  "icu_provider_fs",
  "icu_testdata",
+ "litemap",
  "serde",
  "tinystr 0.6.2",
  "yoke",

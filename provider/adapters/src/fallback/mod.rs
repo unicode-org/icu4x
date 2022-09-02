@@ -47,6 +47,7 @@ use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
 use icu_provider::{DataKeyMetadata, FallbackPriority};
+use litemap::LiteMap;
 
 mod adapter;
 mod algorithms;
@@ -171,6 +172,7 @@ impl From<DataKeyMetadata> for LocaleFallbackConfig {
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
     parents: DataPayload<LocaleFallbackParentsV1Marker>,
+    supplements: LiteMap<DataKeyHash, DataPayload<LocaleFallbackSupplementV1Marker>>,
 }
 
 /// Intermediate type for spawning locale fallback iterators based on a specific configuration.
@@ -214,6 +216,8 @@ impl LocaleFallbacker {
         Ok(LocaleFallbacker {
             likely_subtags,
             parents,
+            // FIXME
+            supplements: LiteMap::new(),
         })
     }
 
@@ -225,6 +229,8 @@ impl LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_owned(Default::default()),
             parents: DataPayload::from_owned(Default::default()),
+            // FIXME
+            supplements: LiteMap::new(),
         }
     }
 

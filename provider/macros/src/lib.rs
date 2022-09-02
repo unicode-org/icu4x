@@ -234,6 +234,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
             result.extend(quote!(
                 impl icu_provider::KeyedDataMarker for #marker_name {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str);
+                    const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = None;
                 }
             ));
         }
