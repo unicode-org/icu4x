@@ -5,7 +5,7 @@
 
     An ICU4X DateFormatter object capable of formatting a :cpp:class:`ICU4XDate` as a string, using some calendar specified at runtime in the locale.
 
-    See the `Rust documentation for date_length <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.date_length.html>`__ for more information.
+    See the `Rust documentation for DateFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XDateFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length)
@@ -146,7 +146,7 @@
 
         Creates a new :cpp:class:`ICU4XGregorianDateFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.try_new_unstable>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_iso_date_to_writeable(const ICU4XIsoDate& value, W& write) const
@@ -216,7 +216,7 @@
 
         Creates a new :cpp:class:`ICU4XTimeFormatter` from locale data.
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.TimeFormatter.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_time_to_writeable(const ICU4XTime& value, W& write) const

@@ -34,7 +34,7 @@ struct ICU4XDateFormatterDeleter {
  * An ICU4X DateFormatter object capable of formatting a [`ICU4XDate`] as a string,
  * using some calendar specified at runtime in the locale.
  * 
- * See the [Rust documentation for `date_length`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.date_length.html) for more information.
+ * See the [Rust documentation for `DateFormatter`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html) for more information.
  */
 class ICU4XDateFormatter {
  public:
