@@ -114,3 +114,8 @@ pub struct LocaleFallbackSupplementV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub unicode_extension_defaults: ZeroMap2d<'data, Key, str, [u8]>,
 }
+
+icu_provider::impl_casting_upcast!(
+    LocaleFallbackSupplementV1Marker,
+    [CollationFallbackSupplementV1Marker,]
+);
