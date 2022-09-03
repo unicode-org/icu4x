@@ -73,6 +73,7 @@ fn test_errors() {
         }
         impl KeyedDataMarker for WrongV1Marker {
             const KEY: DataKey = data_key!("nope@1");
+            const FALLBACK_SUPPLEMENT_KEY: Option<DataKey> = None;
         }
 
         let err: Result<DataResponse<WrongV1Marker>, DataError> = provider.load(Default::default());

@@ -70,7 +70,7 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
 impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
     fn load(
         &self,
-        req: DataRequest,
+        _req: DataRequest,
     ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
         // TODO(#1964): Load this data from its proper sources. For now, it is copied from:
         // https://github.com/unicode-org/icu/blob/main/tools/cldr/cldr-to-icu/build-icu-data.xml

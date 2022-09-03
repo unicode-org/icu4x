@@ -157,6 +157,9 @@ pub struct LocaleFallbackConfig {
     pub extension_key: Option<Key>,
     /// Fallback supplement data key to customize fallback rules.
     ///
+    /// For example, most data keys for collation add additional parent locales, such as
+    /// "yue" to "zh-Hant", and data used for the `"-u-co"` extension keyword fallback.
+    ///
     /// # Examples
     ///
     /// ```
