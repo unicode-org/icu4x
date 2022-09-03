@@ -9,7 +9,7 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs)]
 
-use icu_locid::extensions::unicode::{Key, Value};
+use icu_locid::extensions::unicode::Key;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{subtags_region as region, subtags_script as script};
 use tinystr::TinyAsciiStr;

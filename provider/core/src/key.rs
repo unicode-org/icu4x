@@ -166,13 +166,11 @@ impl DataKeyPathImpl {
             DataKeyPathImpl::Plain(s) => s,
             DataKeyPathImpl::Tagged(s) => unsafe {
                 // This becomes const in 1.64
-                unsafe {
-                    // Safe due to invariant that self.path is tagged correctly
-                    core::str::from_utf8_unchecked(core::slice::from_raw_parts(
-                        s.as_ptr().add(leading_tag!().len()),
-                        s.len() - trailing_tag!().len() - leading_tag!().len(),
-                    ))
-                }
+                // Safe due to invariant that self.path is tagged correctly
+                core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+                    s.as_ptr().add(leading_tag!().len()),
+                    s.len() - trailing_tag!().len() - leading_tag!().len(),
+                ))
             },
         }
     }
