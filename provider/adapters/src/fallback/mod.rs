@@ -326,6 +326,8 @@ impl LocaleFallbacker {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
+    ///
+    /// [`DataRequestMetadata`]: icu_provider::DataRequestMetadata
     pub fn for_key_and_fallback_supplement_key(
         &self,
         data_key: DataKey,
