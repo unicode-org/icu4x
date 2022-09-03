@@ -46,7 +46,7 @@
 use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
-use icu_provider::{DataKeyMetadata, FallbackPriority};
+use icu_provider::FallbackPriority;
 use litemap::LiteMap;
 
 mod adapter;
@@ -191,16 +191,6 @@ pub struct LocaleFallbackConfig {
     pub fallback_supplement_key: Option<DataKey>,
 }
 
-impl From<DataKeyMetadata> for LocaleFallbackConfig {
-    fn from(key_metadata: DataKeyMetadata) -> Self {
-        LocaleFallbackConfig {
-            priority: key_metadata.fallback_priority,
-            extension_key: key_metadata.extension_key,
-            fallback_supplement_key: None,
-        }
-    }
-}
-
 /// Entry type for locale fallbacking.
 ///
 /// See the module-level documentation for an example.
@@ -299,7 +289,8 @@ impl LocaleFallbacker {
         }
     }
 
-    /// Creates the intermediate [`LocaleFallbackerWithConfig`] based on a [`DataKey`].
+    /// Creates the intermediate [`LocaleFallbackerWithConfig`] based on a
+    /// [`DataKey`] and a [`DataRequestMetadata`].
     ///
     /// # Examples
     ///
@@ -321,7 +312,7 @@ impl LocaleFallbacker {
     /// // Set up the fallback iterator.
     /// let provider = icu_testdata::get_provider();
     /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
-    /// let key_fallbacker = fallbacker.for_key(FooV1Marker::KEY);
+    /// let key_fallbacker = fallbacker.for_key_and_fallback_supplement_key(FooV1Marker::KEY, FooV1Marker::FALLBACK_SUPPLEMENT_KEY);
     /// let mut fallback_iterator = key_fallbacker
     ///     .fallback_for(icu_locid::locale!("en-GB").into());
     ///
@@ -332,8 +323,18 @@ impl LocaleFallbacker {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
-    pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
-        self.for_config(data_key.get_metadata().into())
+    pub fn for_key_and_fallback_supplement_key(
+        &self,
+        data_key: DataKey,
+        fallback_supplement_key: Option<DataKey>,
+    ) -> LocaleFallbackerWithConfig {
+        let priority = data_key.get_metadata().fallback_priority;
+        let extension_key = data_key.get_metadata().extension_key;
+        self.for_config(LocaleFallbackConfig {
+            priority,
+            extension_key,
+            fallback_supplement_key,
+        })
     }
 }
 

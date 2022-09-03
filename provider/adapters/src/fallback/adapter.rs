@@ -179,6 +179,7 @@ impl<P> LocaleFallbackProvider<P> {
     fn run_fallback<F1, F2, R>(
         &self,
         key: DataKey,
+        fallback_supplement_key: Option<DataKey>,
         base_req: DataRequest,
         mut f1: F1,
         mut f2: F2,
@@ -187,7 +188,9 @@ impl<P> LocaleFallbackProvider<P> {
         F1: FnMut(DataRequest) -> Result<R, DataError>,
         F2: FnMut(&mut R) -> &mut DataResponseMetadata,
     {
-        let key_fallbacker = self.fallbacker.for_key(key);
+        let key_fallbacker = self
+            .fallbacker
+            .for_key_and_fallback_supplement_key(key, fallback_supplement_key);
         let mut fallback_iterator = key_fallbacker.fallback_for(base_req.locale.clone());
         loop {
             let result = f1(DataRequest {
@@ -220,6 +223,7 @@ where
     fn load_any(&self, key: DataKey, base_req: DataRequest) -> Result<AnyResponse, DataError> {
         self.run_fallback(
             key,
+            base_req.metadata.fallback_supplement_key,
             base_req,
             |req| self.inner.load_any(key, req),
             |res| &mut res.metadata,
@@ -238,6 +242,7 @@ where
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         self.run_fallback(
             key,
+            base_req.metadata.fallback_supplement_key,
             base_req,
             |req| self.inner.load_buffer(key, req),
             |res| &mut res.metadata,
@@ -253,6 +258,7 @@ where
     fn load_data(&self, key: DataKey, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(
             key,
+            base_req.metadata.fallback_supplement_key,
             base_req,
             |req| self.inner.load_data(key, req),
             |res| &mut res.metadata,
@@ -268,6 +274,7 @@ where
     fn load(&self, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(
             M::KEY,
+            M::FALLBACK_SUPPLEMENT_KEY,
             base_req,
             |req| self.inner.load(req),
             |res| &mut res.metadata,

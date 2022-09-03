@@ -349,7 +349,8 @@ where
     M::Yokeable: RcWrapBounds,
 {
     #[inline]
-    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, mut req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        req.metadata.fallback_supplement_key = M::FALLBACK_SUPPLEMENT_KEY;
         self.0.load_any(M::KEY, req)?.downcast()
     }
 }
