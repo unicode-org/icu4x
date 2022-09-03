@@ -354,6 +354,20 @@ where
     }
 }
 
+impl<M, P> DynamicDataProvider<M> for DowncastingAnyProvider<'_, P>
+where
+    P: AnyProvider + ?Sized,
+    M: DataMarker + 'static,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+    M::Yokeable: RcWrapBounds,
+{
+    #[inline]
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.0.load_any(key, req)?.downcast()
+    }
+}
+
 #[cfg(test)]
 mod test {
     use super::*;

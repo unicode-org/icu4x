@@ -94,6 +94,7 @@ pub(crate) static SUPPLEMENT_KEY_PATHS: &[&str] = &[
 
 /// Key-specific supplemental fallback data.
 #[icu_provider::data_struct(
+    marker(LocaleFallbackSupplementV1Marker),
     // Make sure this list is consistent with the string list above
     marker(CollationFallbackSupplementV1Marker, "fallback/supplement/co@1")
 )]
@@ -112,9 +113,4 @@ pub struct LocaleFallbackSupplementV1<'data> {
     /// Default values for Unicode extension keywords.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub unicode_extension_defaults: ZeroMap2d<'data, Key, str, [u8]>,
-}
-
-pub(crate) struct ErasedLocaleFallbackSupplementV1Marker;
-impl DataMarker for ErasedLocaleFallbackSupplementV1Marker {
-    type Yokeable = LocaleFallbackSupplementV1<'static>;
 }

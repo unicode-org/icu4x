@@ -172,7 +172,7 @@ impl From<DataKeyMetadata> for LocaleFallbackConfig {
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
     parents: DataPayload<LocaleFallbackParentsV1Marker>,
-    supplements: LiteMap<DataKeyHash, DataPayload<ErasedLocaleFallbackSupplementV1Marker>>,
+    supplements: LiteMap<DataKey, DataPayload<LocaleFallbackSupplementV1Marker>>,
 }
 
 /// Intermediate type for spawning locale fallback iterators based on a specific configuration.
@@ -209,15 +209,28 @@ impl LocaleFallbacker {
     where
         P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
             + DataProvider<LocaleFallbackParentsV1Marker>
+            + DynamicDataProvider<LocaleFallbackSupplementV1Marker>
             + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.take_payload()?;
         let parents = provider.load(Default::default())?.take_payload()?;
+        let mut supplements = LiteMap::new();
+        for key_path in provider::SUPPLEMENT_KEY_PATHS {
+            #[allow(clippy::unwrap_used)] // The strings are hard-coded and are valid
+            let key = DataKey::try_new(key_path).unwrap();
+            match provider.load_data(key, Default::default()) {
+                #[allow(clippy::unwrap_used)] // The strings are in the correct order
+                Ok(response) => supplements
+                    .try_insert(key, response.take_payload()?)
+                    .unwrap(),
+                // It is expected that not all keys are present
+                Err(_) => continue,
+            };
+        }
         Ok(LocaleFallbacker {
             likely_subtags,
             parents,
-            // FIXME
-            supplements: LiteMap::new(),
+            supplements,
         })
     }
 
@@ -229,7 +242,6 @@ impl LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_owned(Default::default()),
             parents: DataPayload::from_owned(Default::default()),
-            // FIXME
             supplements: LiteMap::new(),
         }
     }

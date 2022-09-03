@@ -55,7 +55,8 @@ pub struct LocaleFallbackProvider<P> {
 impl<P> LocaleFallbackProvider<P>
 where
     P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
-        + DataProvider<LocaleFallbackParentsV1Marker>,
+        + DataProvider<LocaleFallbackParentsV1Marker>
+        + DynamicDataProvider<LocaleFallbackSupplementV1Marker>,
 {
     /// Create a [`LocaleFallbackProvider`] by wrapping another data provider and then loading
     /// fallback data from it.
