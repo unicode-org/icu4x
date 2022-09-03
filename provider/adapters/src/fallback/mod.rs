@@ -155,6 +155,40 @@ pub struct LocaleFallbackConfig {
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
     pub extension_key: Option<Key>,
+    /// Fallback supplement data key to customize fallback rules.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::FallbackPriority;
+    /// use icu_provider_adapters::fallback::LocaleFallbackConfig;
+    /// use icu_provider_adapters::fallback::LocaleFallbacker;
+    /// use icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker;
+    ///
+    /// // Set up the fallback iterator.
+    /// let provider = icu_testdata::get_provider();
+    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
+    /// let mut config = LocaleFallbackConfig::default();
+    /// config.priority = FallbackPriority::Collation;
+    /// config.fallback_supplement_key = Some(CollationFallbackSupplementV1Marker::KEY);
+    /// let key_fallbacker = fallbacker.for_config(config);
+    /// let mut fallback_iterator = key_fallbacker.fallback_for(
+    ///     icu_locid::locale!("yue-HK")
+    ///         .into(),
+    /// );
+    ///
+    /// // Run the algorithm and check the results.
+    /// // TODO(#1964): add "zh" as a target.
+    /// assert_eq!(fallback_iterator.get().to_string(), "yue-HK");
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get().to_string(), "yue");
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get().to_string(), "zh-Hant");
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get().to_string(), "und");
+    /// ```
+    pub fallback_supplement_key: Option<DataKey>,
 }
 
 impl From<DataKeyMetadata> for LocaleFallbackConfig {
@@ -162,6 +196,7 @@ impl From<DataKeyMetadata> for LocaleFallbackConfig {
         LocaleFallbackConfig {
             priority: key_metadata.fallback_priority,
             extension_key: key_metadata.extension_key,
+            fallback_supplement_key: None,
         }
     }
 }
@@ -181,6 +216,7 @@ pub struct LocaleFallbacker {
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
+    supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
     config: LocaleFallbackConfig,
 }
 
@@ -188,6 +224,7 @@ pub struct LocaleFallbackerWithConfig<'a> {
 struct LocaleFallbackIteratorInner<'a, 'b> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
+    supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
     config: &'b LocaleFallbackConfig,
     backup_extension: Option<Value>,
     backup_subdivision: Option<Value>,
@@ -221,8 +258,9 @@ impl LocaleFallbacker {
             match provider.load_data(key, Default::default()) {
                 #[allow(clippy::unwrap_used)] // The strings are in the correct order
                 Ok(response) => supplements
-                    .try_insert(key, response.take_payload()?)
-                    .unwrap(),
+                    .try_append(key, response.take_payload()?)
+                    .ok_or(())
+                    .unwrap_err(),
                 // It is expected that not all keys are present
                 Err(_) => continue,
             };
@@ -248,9 +286,15 @@ impl LocaleFallbacker {
 
     /// Creates the intermediate [`LocaleFallbackerWithConfig`] with configuration options.
     pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
+        let supplement = config
+            .fallback_supplement_key
+            .as_ref()
+            .and_then(|key| self.supplements.get(key))
+            .map(|payload| payload.get());
         LocaleFallbackerWithConfig {
             likely_subtags: self.likely_subtags.get(),
             parents: self.parents.get(),
+            supplement,
             config,
         }
     }
@@ -306,6 +350,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             inner: LocaleFallbackIteratorInner {
                 likely_subtags: self.likely_subtags,
                 parents: self.parents,
+                supplement: self.supplement,
                 config: &self.config,
                 backup_extension: None,
                 backup_subdivision: None,
