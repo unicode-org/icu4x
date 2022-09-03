@@ -46,11 +46,14 @@ macro_rules! tagged {
 pub struct DataKeyHash([u8; 4]);
 
 impl DataKeyHash {
-    const fn compute_from_str(path: &str) -> Self {
-        Self(
-            helpers::fxhash_32(path.as_bytes(), leading_tag!().len(), trailing_tag!().len())
-                .to_le_bytes(),
-        )
+    const fn compute_from_path(path: &DataKeyPathImpl) -> Self {
+        let hash = match path {
+            DataKeyPathImpl::Tagged(s) => {
+                helpers::fxhash_32(s.as_bytes(), leading_tag!().len(), trailing_tag!().len())
+            }
+            DataKeyPathImpl::Plain(s) => helpers::fxhash_32(s.as_bytes(), 0, 0),
+        };
+        Self(hash.to_le_bytes())
     }
 }
 
@@ -148,6 +151,33 @@ impl Default for DataKeyMetadata {
     }
 }
 
+#[derive(Copy, Clone)]
+enum DataKeyPathImpl {
+    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
+    // in a compiled binary.
+    Tagged(&'static str),
+    // For runtime-created data keys, we don't include the tags.
+    Plain(&'static str),
+}
+
+impl DataKeyPathImpl {
+    pub fn get(&self) -> &'static str {
+        match self {
+            DataKeyPathImpl::Plain(s) => s,
+            DataKeyPathImpl::Tagged(s) => unsafe {
+                // This becomes const in 1.64
+                unsafe {
+                    // Safe due to invariant that self.path is tagged correctly
+                    core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+                        s.as_ptr().add(leading_tag!().len()),
+                        s.len() - trailing_tag!().len() - leading_tag!().len(),
+                    ))
+                }
+            },
+        }
+    }
+}
+
 /// Used for loading data from an ICU4X data provider.
 ///
 /// A resource key is tightly coupled with the code that uses it to load data at runtime.
@@ -173,9 +203,7 @@ impl Default for DataKeyMetadata {
 /// ```
 #[derive(Copy, Clone)]
 pub struct DataKey {
-    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
-    // in a compiled binary.
-    path: &'static str,
+    path: DataKeyPathImpl,
     hash: DataKeyHash,
     metadata: DataKeyMetadata,
 }
@@ -217,14 +245,7 @@ impl DataKey {
     /// Useful for reading and writing data to a file system.
     #[inline]
     pub fn get_path(&self) -> &'static str {
-        // This becomes const in 1.64
-        unsafe {
-            // Safe due to invariant that self.path is tagged correctly
-            core::str::from_utf8_unchecked(core::slice::from_raw_parts(
-                self.path.as_ptr().add(leading_tag!().len()),
-                self.path.len() - trailing_tag!().len() - leading_tag!().len(),
-            ))
-        }
+        self.path.get()
     }
 
     /// Gets a platform-independent hash of a [`DataKey`].
@@ -239,6 +260,35 @@ impl DataKey {
     #[inline]
     pub const fn get_metadata(&self) -> DataKeyMetadata {
         self.metadata
+    }
+
+    /// Constructs a new [`DataKey`] at runtime from a path string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::DataKey;
+    ///
+    /// const const_key: DataKey = icu_provider::data_key!("foo/bar@1");
+    /// let runtime_key = DataKey::try_new("foo/bar@1").unwrap();
+    ///
+    /// assert_eq!(const_key, runtime_key);
+    /// assert_eq!(const_key.get_path(), runtime_key.get_path());
+    /// assert_eq!(const_key.get_hash(), runtime_key.get_hash());
+    /// ```
+    #[doc(hidden)]
+    pub fn try_new(path: &'static str) -> Result<Self, (&'static str, usize)> {
+        let (fallback_priority, extension_key) =
+            Self::read_and_validate_path_manual_slice(path, 0, path.len())?;
+        let path = DataKeyPathImpl::Plain(path);
+        Ok(Self {
+            path,
+            hash: DataKeyHash::compute_from_path(&path),
+            metadata: DataKeyMetadata {
+                fallback_priority,
+                extension_key,
+            },
+        })
     }
 
     #[doc(hidden)]
@@ -269,6 +319,35 @@ impl DataKey {
             i += 1;
         }
 
+        let (fallback_priority, extension_key) =
+            match Self::read_and_validate_path_manual_slice(path, start, end) {
+                Ok(tpl) => tpl,
+                Err(tpl) => return Err(tpl),
+            };
+
+        let path = DataKeyPathImpl::Tagged(path);
+
+        Ok(Self {
+            path,
+            hash: DataKeyHash::compute_from_path(&path),
+            metadata: DataKeyMetadata {
+                fallback_priority,
+                extension_key,
+            },
+        })
+    }
+
+    const fn read_and_validate_path_manual_slice(
+        path: &'static str,
+        start: usize,
+        end: usize,
+    ) -> Result<
+        (
+            FallbackPriority,
+            Option<icu_locid::extensions::unicode::Key>,
+        ),
+        (&'static str, usize),
+    > {
         // Regex: [a-zA-Z0-9_][a-zA-Z0-9_/]*@[0-9]+
         enum State {
             Empty,
@@ -283,7 +362,7 @@ impl DataKey {
             MetaAfter,
         }
         use State::*;
-        i = start;
+        let mut i = start;
         let mut state = Empty;
         let mut fallback_priority = FallbackPriority::const_default();
         let mut extension_key_first_byte = b'\0';
@@ -301,14 +380,7 @@ impl DataKey {
                 (At | Version, Some(b'0'..=b'9')) => Version,
                 // One of these cases will be hit at the latest when i == end, so the loop converges.
                 (Version | MetaAfter, None) => {
-                    return Ok(Self {
-                        path,
-                        hash: DataKeyHash::compute_from_str(path),
-                        metadata: DataKeyMetadata {
-                            fallback_priority,
-                            extension_key,
-                        },
-                    })
+                    return Ok((fallback_priority, extension_key));
                 }
 
                 (Version | MetaAfter, Some(b'[')) => MetaOpen,
@@ -580,5 +652,43 @@ fn test_key_to_string() {
     ] {
         assert_eq!(cas.expected, cas.key.to_string());
         writeable::assert_writeable_eq!(&cas.key, cas.expected);
+    }
+}
+
+#[test]
+fn test_try_new_and_key_hash() {
+    struct KeyTestCase {
+        pub key: DataKey,
+        pub hash: DataKeyHash,
+        pub path: &'static str,
+    }
+
+    for cas in [
+        KeyTestCase {
+            key: data_key!("core/cardinal@1"),
+            hash: DataKeyHash([172, 207, 42, 236]),
+            path: "core/cardinal@1",
+        },
+        KeyTestCase {
+            key: data_key!("core/maxlengthsubcatg@1"),
+            hash: DataKeyHash([193, 6, 79, 61]),
+            path: "core/maxlengthsubcatg@1",
+        },
+        KeyTestCase {
+            key: data_key!("core/cardinal@65535"),
+            hash: DataKeyHash([176, 131, 182, 223]),
+            path: "core/cardinal@65535",
+        },
+    ] {
+        let runtime_key = DataKey::try_new(cas.path).expect(cas.path);
+        assert_eq!(cas.key, runtime_key, "{}", cas.path);
+        assert_eq!(
+            cas.hash,
+            DataKeyHash::compute_from_path(&DataKeyPathImpl::Plain(cas.path))
+        );
+        assert_eq!(cas.hash, runtime_key.get_hash(), "{}", cas.path);
+        assert_eq!(cas.hash, cas.key.get_hash(), "{}", cas.path);
+        assert_eq!(cas.path, runtime_key.get_path(), "{}", cas.path);
+        assert_eq!(cas.path, cas.key.get_path(), "{}", cas.path);
     }
 }
