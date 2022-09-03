@@ -111,7 +111,7 @@ pub struct LocaleFallbackSupplementV1<'data> {
     pub parents: ZeroMap<'data, [u8], (Language, Option<Script>, Option<Region>)>,
     /// Default values for Unicode extension keywords.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unicode_extension_defaults: ZeroMap2d<'data, Key, [u8], [u8]>,
+    pub unicode_extension_defaults: ZeroMap2d<'data, Key, str, [u8]>,
 }
 
 pub(crate) struct ErasedLocaleFallbackSupplementV1Marker;

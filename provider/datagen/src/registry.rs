@@ -87,6 +87,7 @@ registry!(
     ChangesWhenUppercasedV1Marker,
     CollationDataV1Marker,
     CollationDiacriticsV1Marker,
+    CollationFallbackSupplementV1Marker,
     CollationJamoV1Marker,
     CollationMetadataV1Marker,
     CollationReorderingV1Marker,

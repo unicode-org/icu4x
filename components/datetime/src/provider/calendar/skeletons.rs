@@ -37,6 +37,7 @@ impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
 #[cfg(feature = "experimental")]
 impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
     const KEY: icu_provider::DataKey = icu_provider::data_key!("datetime/skeletons@1[u-ca]");
+    const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = None;
 }
 
 /// This struct is a public wrapper around the internal `Skeleton` struct. This allows
