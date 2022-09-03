@@ -13,7 +13,6 @@ pub mod ffi {
     };
     use icu_locid::Locale;
     use icu_provider::DataProvider;
-    use icu_provider::KeyedDataMarker;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use writeable::Writeable;
 
@@ -59,11 +58,10 @@ pub mod ffi {
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
             use icu_provider::prelude::AsDowncastingAnyProvider;
-            let provider = AnyPayloadProvider {
-                key: DecimalSymbolsV1Marker::KEY,
+            let provider = AnyPayloadProvider::from_any_payload::<DecimalSymbolsV1Marker>(
                 // None: This clone is free, since cloning AnyPayload is free.
-                data: data_struct.0.clone(),
-            };
+                data_struct.0.clone(),
+            );
             Self::try_new_impl(
                 &provider.as_downcasting(),
                 &ICU4XLocale(Locale::UND),

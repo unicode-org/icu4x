@@ -44,9 +44,9 @@ use zerofrom::ZeroFrom;
 pub struct AnyPayloadProvider {
     /// The [`DataKey`] for which to provide data. All others will receive a
     /// [`DataErrorKind::MissingDataKey`].
-    pub key: DataKey,
+    key: DataKey,
     /// The [`AnyPayload`] to return on matching requests.
-    pub data: AnyPayload,
+    data: AnyPayload,
 }
 
 impl AnyPayloadProvider {
@@ -68,6 +68,25 @@ impl AnyPayloadProvider {
         AnyPayloadProvider {
             key: M::KEY,
             data: AnyPayload::from_static_ref(data),
+        }
+    }
+
+    /// Creates an `AnyPayloadProvider` from an existing [`DataPayload`].
+    pub fn from_payload<M: KeyedDataMarker + 'static>(payload: DataPayload<M>) -> Self
+    where
+        M::Yokeable: icu_provider::RcWrapBounds,
+    {
+        AnyPayloadProvider {
+            key: M::KEY,
+            data: payload.wrap_into_any_payload(),
+        }
+    }
+
+    /// Creates an `AnyPayloadProvider` from an existing [`AnyPayload`].
+    pub fn from_any_payload<M: KeyedDataMarker + 'static>(payload: AnyPayload) -> Self {
+        AnyPayloadProvider {
+            key: M::KEY,
+            data: payload,
         }
     }
 
