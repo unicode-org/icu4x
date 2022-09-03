@@ -69,6 +69,7 @@ fn test_keyed_data_marker() {
             }
             impl icu_provider::KeyedDataMarker for BarV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!("demo/bar@1");
+                const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = None;
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
             pub struct FooV1;
@@ -101,6 +102,7 @@ fn test_multi_named_keyed_data_marker() {
             }
             impl icu_provider::KeyedDataMarker for BarV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!("demo/bar@1");
+                const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = None;
             }
             #[doc = "Marker type for [`FooV1`]: \"demo/baz@1\"\n\n- Fallback priority: language (default)\n- Extension keyword: none (default)"]
             pub struct BazV1Marker;
@@ -109,6 +111,7 @@ fn test_multi_named_keyed_data_marker() {
             }
             impl icu_provider::KeyedDataMarker for BazV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!("demo/baz@1");
+                const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = None;
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;
@@ -134,6 +137,7 @@ fn test_databake() {
             }
             impl icu_provider::KeyedDataMarker for BarV1Marker {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!("demo/bar@1");
+                const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = None;
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
             #[databake(path = test::path)]
@@ -152,7 +156,8 @@ fn test_attributes() {
                 BarV1Marker,
                 "demo/bar@1",
                 fallback_by = "region",
-                extension_key = "ca"
+                extension_key = "ca",
+                fallback_supplement = "fallback/supplement/co@1"
             )),
         ],
         quote!(
@@ -173,6 +178,9 @@ fn test_attributes() {
                 const KEY: icu_provider::DataKey = icu_provider::data_key!(
                     "demo/bar@1[R][u-ca]"
                 );
+                const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = Some(icu_provider::data_key!(
+                    "fallback/supplement/co@1"
+                ));
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
             pub struct FooV1<'data>;

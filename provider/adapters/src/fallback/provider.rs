@@ -87,8 +87,16 @@ pub struct LocaleFallbackParentsV1<'data> {
     pub parents: ZeroMap<'data, [u8], (Language, Option<Script>, Option<Region>)>,
 }
 
+pub(crate) static SUPPLEMENT_KEY_PATHS: &[&str] = &[
+    // Make sure this list is consistent with the macro list below
+    "fallback/supplement/co@1",
+];
+
 /// Key-specific supplemental fallback data.
-#[icu_provider::data_struct(LocaleFallbackSupplementV1Marker)]
+#[icu_provider::data_struct(
+    // Make sure this list is consistent with the string list above
+    marker(CollationFallbackSupplementV1Marker, "fallback/supplement/co@1")
+)]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -104,4 +112,9 @@ pub struct LocaleFallbackSupplementV1<'data> {
     /// Default values for Unicode extension keywords.
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub unicode_extension_defaults: ZeroMap2d<'data, Key, [u8], [u8]>,
+}
+
+pub(crate) struct ErasedLocaleFallbackSupplementV1Marker;
+impl DataMarker for ErasedLocaleFallbackSupplementV1Marker {
+    type Yokeable = LocaleFallbackSupplementV1<'static>;
 }

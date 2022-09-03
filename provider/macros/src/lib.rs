@@ -141,6 +141,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
         let mut key_lit: Option<syn::LitStr> = None;
         let mut fallback_by: Option<syn::LitStr> = None;
         let mut extension_key: Option<syn::LitStr> = None;
+        let mut fallback_supplement: Option<syn::LitStr> = None;
 
         match single_attr {
             NestedMeta::Meta(Meta::List(meta_list)) => {
@@ -168,6 +169,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                             match name_ident_str.as_str() {
                                 "fallback_by" => fallback_by = Some(lit_str),
                                 "extension_key" => extension_key = Some(lit_str),
+                                "fallback_supplement" => fallback_supplement = Some(lit_str),
                                 _ => panic!("Invalid argument name in marker()"),
                             }
                         }
@@ -231,10 +233,15 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
             if let Some(extension_key_lit) = extension_key {
                 write!(key_str, "[u-{}]", extension_key_lit.value()).unwrap();
             }
+            let mut fallback_supplement_key = quote! {None};
+            if let Some(fallback_supplement_lit) = fallback_supplement {
+                fallback_supplement_key =
+                    quote! {Some(icu_provider::data_key!(#fallback_supplement_lit))};
+            }
             result.extend(quote!(
                 impl icu_provider::KeyedDataMarker for #marker_name {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str);
-                    const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = None;
+                    const FALLBACK_SUPPLEMENT_KEY: Option<icu_provider::DataKey> = #fallback_supplement_key;
                 }
             ));
         }

@@ -172,7 +172,7 @@ impl From<DataKeyMetadata> for LocaleFallbackConfig {
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
     parents: DataPayload<LocaleFallbackParentsV1Marker>,
-    supplements: LiteMap<DataKeyHash, DataPayload<LocaleFallbackSupplementV1Marker>>,
+    supplements: LiteMap<DataKeyHash, DataPayload<ErasedLocaleFallbackSupplementV1Marker>>,
 }
 
 /// Intermediate type for spawning locale fallback iterators based on a specific configuration.
