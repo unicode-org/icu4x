@@ -93,22 +93,22 @@ impl LengthHint {
         Self(0, None)
     }
 
-    /// This is the exact length from `write_to`.
+    /// `write_to` will use exactly n bytes.
     pub fn exact(n: usize) -> Self {
         Self(n, Some(n))
     }
 
-    /// This is at least the length from `write_to`.
+    /// `write_to` will use at least n bytes.
     pub fn at_least(n: usize) -> Self {
         Self(n, None)
     }
 
-    /// This is at most the length from `write_to`.
+    /// `write_to` will use at most n bytes.
     pub fn at_most(n: usize) -> Self {
         Self(0, Some(n))
     }
 
-    /// The length from `write_to` is in between `n` and `m`.
+    /// `write_to` will use between `n` and `m` bytes.
     pub fn between(n: usize, m: usize) -> Self {
         Self(Ord::min(n, m), Some(Ord::max(n, m)))
     }
@@ -127,10 +127,7 @@ impl LengthHint {
     /// }
     /// ```
     pub fn capacity(&self) -> usize {
-        match self {
-            Self(lower_bound, None) => *lower_bound,
-            Self(_lower_bound, Some(upper_bound)) => *upper_bound,
-        }
+        self.1.unwrap_or(self.0)
     }
 
     /// Returns whether the `LengthHint` indicates that the string is exactly 0 bytes long.
@@ -159,7 +156,7 @@ pub trait PartsWrite: fmt::Write {
 
 /// `Writeable` is an alternative to `std::fmt::Display` with the addition of a length function.
 pub trait Writeable {
-    /// Writes bytes to the given sink. Errors from the sink are bubbled up.
+    /// Writes a string to the given sink. Errors from the sink are bubbled up.
     /// The default implementation delegates to `write_to_parts`, and discards any
     /// `Part` annotations.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -196,7 +193,7 @@ pub trait Writeable {
         self.write_to(sink)
     }
 
-    /// Returns a hint for the number of bytes that will be written to the sink.
+    /// Returns a hint for the number of UTF-8 bytes that will be written to the sink.
     ///
     /// Override this method if it can be computed quickly.
     fn write_len(&self) -> LengthHint {
@@ -209,7 +206,7 @@ pub trait Writeable {
     /// The default impl allocates an owned `String`. However, if it is possible to return a
     /// borrowed string, overwrite this method to return a `Cow::Borrowed`.
     ///
-    /// To remove the `Cow` wrapper, call `.into_owned()`.
+    /// To remove the `Cow` wrapper, call `.into_owned()` or `.as_str()` as appropriate.
     ///
     /// # Examples
     ///
