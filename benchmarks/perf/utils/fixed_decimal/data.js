@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662376700194,
+  "lastUpdate": 1662383848926,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49229,6 +49229,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 82,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b85d15e625fcd37f768b9b5e0d1d7df62e9c9bf",
+          "message": "Fix indexing_slicing clippy issue. (#2493)\n\nFix indexing_slicing clippy issues.",
+          "timestamp": "2022-09-05T15:04:46+02:00",
+          "tree_id": "c7a609b255f1a972b2fe5f38a890354a28bd1352",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b85d15e625fcd37f768b9b5e0d1d7df62e9c9bf"
+        },
+        "date": 1662383789652,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 137165,
+            "range": "± 3746",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 27484,
+            "range": "± 823",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72023,
+            "range": "± 3121",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 228,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 112,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
