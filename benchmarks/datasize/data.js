@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662383223356,
+  "lastUpdate": 1662385338739,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26333,6 +26333,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/0b85d15e625fcd37f768b9b5e0d1d7df62e9c9bf"
         },
         "date": 1662383172397,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4e9ba58d0288c90a5aa04b2982af4eb2aa476f4b",
+          "message": "Fix typo (#2516)",
+          "timestamp": "2022-09-05T15:40:03+02:00",
+          "tree_id": "a733e96f614841f4dee9d35d94f225f2f8721da4",
+          "url": "https://github.com/unicode-org/icu4x/commit/4e9ba58d0288c90a5aa04b2982af4eb2aa476f4b"
+        },
+        "date": 1662385288039,
         "tool": "ndjson",
         "benches": [
           {
