@@ -1913,7 +1913,8 @@ impl FromStr for FixedDecimal {
         if has_exponent {
             let mut pow = 0;
             let mut pos_neg = 1;
-            #[allow(clippy::indexing_slicing)] // exponent_index comes from enumerate
+            #[allow(clippy::indexing_slicing)]
+            // exponent_index is exist, then exponent_index + 1 will equal at most no_sign_str.len().
             for digit in &no_sign_str[exponent_index + 1..] {
                 if *digit == b'-' {
                     pos_neg = -1;
