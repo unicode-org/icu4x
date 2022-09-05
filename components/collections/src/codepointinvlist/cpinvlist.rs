@@ -374,9 +374,7 @@ impl<'data> CodePointInversionList<'data> {
     /// Checks to see the query is in the [`CodePointInversionList`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using [`core`] implementation. Note that due to the nature of binary search,
-    /// the extremes of the Unicode range have worst-case performance, and ASCII is at the low
-    /// extreme end of the Unicode range.
+    /// in the set using [`core`] implementation
     ///
     /// # Examples
     ///
@@ -399,9 +397,7 @@ impl<'data> CodePointInversionList<'data> {
     /// the range from 0 to the maximum valid Unicode Scalar Value.
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using [`core`] implementation. Note that due to the nature of binary search,
-    /// the extremes of the Unicode range have worst-case performance, and ASCII is at the low
-    /// extreme end of the Unicode range.
+    /// in the set using [`core`] implementation
     ///
     /// # Examples
     ///
