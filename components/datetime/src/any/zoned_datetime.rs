@@ -103,10 +103,10 @@ impl ZonedDateTimeFormatter {
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_experimental_unstable(
-    ///     &icu_provider::unstable(),
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into(),
-    ///     TimeZoneFormatterOptions::default(),
+    ///     Default::default(),
     /// ).expect("Construction should succeed");
     ///
     /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
