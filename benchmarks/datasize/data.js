@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662376003465,
+  "lastUpdate": 1662383223356,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26303,6 +26303,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a03ec6f259bf2256ffcddca1a20589f9c59d38d8"
         },
         "date": 1662375947583,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b85d15e625fcd37f768b9b5e0d1d7df62e9c9bf",
+          "message": "Fix indexing_slicing clippy issue. (#2493)\n\nFix indexing_slicing clippy issues.",
+          "timestamp": "2022-09-05T15:04:46+02:00",
+          "tree_id": "c7a609b255f1a972b2fe5f38a890354a28bd1352",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b85d15e625fcd37f768b9b5e0d1d7df62e9c9bf"
+        },
+        "date": 1662383172397,
         "tool": "ndjson",
         "benches": [
           {
