@@ -181,22 +181,45 @@ fn assert_fixture_element<A>(
 {
     let any_input = input_value.to_any();
     let iso_any_input = input_iso.to_any();
-    let dtf = TypedDateTimeFormatter::<A::Calendar>::try_new_unstable(
-        &icu_testdata::unstable(),
-        &locale.into(),
-        options.clone(),
-    )
-    .expect(description);
+    #[cfg(feature = "experimental")]
+    let (dtf, any_dtf) = {
+        (
+            TypedDateTimeFormatter::<A::Calendar>::try_new_experimental_unstable(
+                &icu_testdata::unstable(),
+                &locale.into(),
+                options.clone(),
+            )
+            .expect(description),
+            DateTimeFormatter::try_new_experimental_unstable(
+                &icu_testdata::unstable(),
+                &locale.into(),
+                options.clone(),
+            )
+            .expect(description),
+        )
+    };
+    #[cfg(not(feature = "experimental"))]
+    let (dtf, any_dtf) = {
+        (
+            TypedDateTimeFormatter::<A::Calendar>::try_new_unstable(
+                &icu_testdata::unstable(),
+                &locale.into(),
+                options.clone(),
+            )
+            .expect(description),
+            DateTimeFormatter::try_new_unstable(
+                &icu_testdata::unstable(),
+                &locale.into(),
+                options.clone(),
+            )
+            .expect(description),
+        )
+    };
+
     let result = dtf.format_to_string(input_value);
 
     assert_eq!(result, output_value, "{}", description);
 
-    let any_dtf = DateTimeFormatter::try_new_unstable(
-        &icu_testdata::unstable(),
-        &locale.into(),
-        options.clone(),
-    )
-    .expect(description);
     let result = any_dtf.format_to_string(&any_input).unwrap();
 
     assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
@@ -331,13 +354,26 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         };
         for (locale, output_value) in fx.output.values.into_iter() {
             let locale: Locale = locale.parse().unwrap();
-            let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                &icu_testdata::unstable(),
-                &locale.into(),
-                options.clone(),
-                TimeZoneFormatterOptions::default(),
-            )
-            .unwrap();
+            #[cfg(feature = "experimental")]
+            let dtf = {
+                TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
+                    &icu_testdata::unstable(),
+                    &locale.into(),
+                    options.clone(),
+                    TimeZoneFormatterOptions::default(),
+                )
+                .unwrap()
+            };
+            #[cfg(not(feature = "experimental"))]
+            let dtf = {
+                TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+                    &icu_testdata::unstable(),
+                    &locale.into(),
+                    options.clone(),
+                    TimeZoneFormatterOptions::default(),
+                )
+                .unwrap()
+            };
             let result = dtf.format_to_string(&input_date, &time_zone);
 
             assert_eq!(result, output_value, "{}", description);

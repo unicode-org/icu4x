@@ -12,7 +12,7 @@ import { ICU4XLocale } from "./ICU4XLocale";
 
  * An ICU4X DateFormatter object capable of formatting a {@link ICU4XDate `ICU4XDate`} as a string, using some calendar specified at runtime in the locale.
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.date_length.html Rust documentation for `date_length`} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html Rust documentation for `DateFormatter`} for more information.
  */
 export class ICU4XDateFormatter {
 

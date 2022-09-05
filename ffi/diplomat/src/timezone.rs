@@ -81,11 +81,11 @@ pub mod ffi {
         /// Errors if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
-        pub fn gmt_offset_seconds(&self) -> DiplomatResult<i32, ()> {
+        pub fn gmt_offset_seconds(&self) -> DiplomatResult<i32, ICU4XError> {
             self.0
                 .gmt_offset
                 .map(|v| v.offset_seconds())
-                .ok_or(())
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -93,32 +93,48 @@ pub mod ffi {
         ///
         /// Errors if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::is_positive, FnInStruct)]
-        pub fn is_gmt_offset_positive(&self) -> DiplomatResult<bool, ()> {
-            self.0.gmt_offset.map(|v| v.is_positive()).ok_or(()).into()
+        pub fn is_gmt_offset_positive(&self) -> DiplomatResult<bool, ICU4XError> {
+            self.0
+                .gmt_offset
+                .map(|v| v.is_positive())
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
+                .into()
         }
 
         /// Returns whether the `gmt_offset` field is zero.
         ///
         /// Errors if the `gmt_offset` field is empty (which is not the same as zero).
         #[diplomat::rust_link(icu::timezone::GmtOffset::is_zero, FnInStruct)]
-        pub fn is_gmt_offset_zero(&self) -> DiplomatResult<bool, ()> {
-            self.0.gmt_offset.map(|v| v.is_zero()).ok_or(()).into()
+        pub fn is_gmt_offset_zero(&self) -> DiplomatResult<bool, ICU4XError> {
+            self.0
+                .gmt_offset
+                .map(|v| v.is_zero())
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
+                .into()
         }
 
         /// Returns whether the `gmt_offset` field has nonzero minutes.
         ///
         /// Errors if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::has_minutes, FnInStruct)]
-        pub fn gmt_offset_has_minutes(&self) -> DiplomatResult<bool, ()> {
-            self.0.gmt_offset.map(|v| v.has_minutes()).ok_or(()).into()
+        pub fn gmt_offset_has_minutes(&self) -> DiplomatResult<bool, ICU4XError> {
+            self.0
+                .gmt_offset
+                .map(|v| v.has_minutes())
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
+                .into()
         }
 
         /// Returns whether the `gmt_offset` field has nonzero seconds.
         ///
         /// Errors if the `gmt_offset` field is empty.
         #[diplomat::rust_link(icu::timezone::GmtOffset::has_seconds, FnInStruct)]
-        pub fn gmt_offset_has_seconds(&self) -> DiplomatResult<bool, ()> {
-            self.0.gmt_offset.map(|v| v.has_seconds()).ok_or(()).into()
+        pub fn gmt_offset_has_seconds(&self) -> DiplomatResult<bool, ICU4XError> {
+            self.0
+                .gmt_offset
+                .map(|v| v.has_seconds())
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
+                .into()
         }
 
         /// Sets the `time_zone_id` field from a string.
@@ -152,12 +168,14 @@ pub mod ffi {
         pub fn time_zone_id(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ()> {
-            match self.0.time_zone_id {
-                Some(v) => write.write_str(v.0.as_str()).map_err(|_| ()),
-                None => Err(()),
+        ) -> DiplomatResult<(), ICU4XError> {
+            let result = match self.0.time_zone_id {
+                Some(v) => write.write_str(v.0.as_str()).map_err(Into::into),
+                None => Err(ICU4XError::TimeZoneMissingInputError),
             }
-            .into()
+            .into();
+            write.flush();
+            result
         }
 
         /// Sets the `meta_zone_id` field from a string.
@@ -191,12 +209,14 @@ pub mod ffi {
         pub fn meta_zone_id(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ()> {
-            match self.0.meta_zone_id {
-                Some(v) => write.write_str(v.0.as_str()).map_err(|_| ()),
-                None => Err(()),
+        ) -> DiplomatResult<(), ICU4XError> {
+            let result = match self.0.meta_zone_id {
+                Some(v) => write.write_str(v.0.as_str()).map_err(Into::into),
+                None => Err(ICU4XError::TimeZoneMissingInputError),
             }
-            .into()
+            .into();
+            write.flush();
+            result
         }
 
         /// Sets the `zone_variant` field from a string.
@@ -230,12 +250,14 @@ pub mod ffi {
         pub fn zone_variant(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
-        ) -> DiplomatResult<(), ()> {
-            match self.0.zone_variant {
-                Some(v) => write.write_str(v.0.as_str()).map_err(|_| ()),
-                None => Err(()),
+        ) -> DiplomatResult<(), ICU4XError> {
+            let result = match self.0.zone_variant {
+                Some(v) => write.write_str(v.0.as_str()).map_err(Into::into),
+                None => Err(ICU4XError::TimeZoneMissingInputError),
             }
-            .into()
+            .into();
+            write.flush();
+            result
         }
 
         /// Sets the `zone_variant` field to standard time.
@@ -257,12 +279,12 @@ pub mod ffi {
         /// Errors if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::standard, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        pub fn is_standard_time(&self) -> DiplomatResult<bool, ()> {
+        pub fn is_standard_time(&self) -> DiplomatResult<bool, ICU4XError> {
             self.0
                 .zone_variant
                 .as_ref()
                 .map(|v| v == &ZoneVariant::standard())
-                .ok_or(())
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -271,12 +293,12 @@ pub mod ffi {
         /// Errors if the `zone_variant` field is empty.
         #[diplomat::rust_link(icu::timezone::ZoneVariant::daylight, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField, compact)]
-        pub fn is_daylight_time(&self) -> DiplomatResult<bool, ()> {
+        pub fn is_daylight_time(&self) -> DiplomatResult<bool, ICU4XError> {
             self.0
                 .zone_variant
                 .as_ref()
                 .map(|v| v == &ZoneVariant::daylight())
-                .ok_or(())
+                .ok_or(ICU4XError::TimeZoneMissingInputError)
                 .into()
         }
 
@@ -289,11 +311,11 @@ pub mod ffi {
         )]
         pub fn maybe_calculate_meta_zone(
             &mut self,
-            local_datetime: &ICU4XIsoDateTime,
             metazone_calculator: &ICU4XMetaZoneCalculator,
+            local_datetime: &ICU4XIsoDateTime,
         ) {
             self.0
-                .maybe_calculate_meta_zone(&local_datetime.0, &metazone_calculator.0);
+                .maybe_calculate_meta_zone(&metazone_calculator.0, &local_datetime.0);
         }
     }
 

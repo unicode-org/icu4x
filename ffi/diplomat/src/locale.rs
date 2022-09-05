@@ -193,9 +193,6 @@ pub mod ffi {
 
         /// Write a string representation of [`ICU4XLocale`] to `write`
         #[diplomat::rust_link(icu::locid::Locale::write_to, FnInStruct)]
-        #[diplomat::rust_link(icu::locid::Locale::write_to_parts, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::locid::Locale::write_to_string, FnInStruct, hidden)]
-        #[diplomat::rust_link(icu::locid::Locale::write_len, FnInStruct, hidden)]
         pub fn to_string(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,

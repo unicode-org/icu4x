@@ -43,7 +43,7 @@ impl AnyProvider for BakedDataProvider {
         #[cfg(feature = "icu_datetime")]
         const COPTICDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY.get_hash();
-        #[cfg(all(feature = "icu_datetime", feature = "experimental"))]
+        #[cfg(feature = "icu_datetime_experimental")]
         const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
         #[cfg(feature = "icu_datetime")]
@@ -376,12 +376,12 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONDATAV1MARKER => collator::data_v1::DATA
+                COLLATIONDATAV1MARKER => collator::data_v1_c_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONDIACRITICSV1MARKER => collator::dia_v1::DATA
+                COLLATIONDIACRITICSV1MARKER => collator::dia_v1_c_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -391,12 +391,12 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONMETADATAV1MARKER => collator::meta_v1::DATA
+                COLLATIONMETADATAV1MARKER => collator::meta_v1_c_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONREORDERINGV1MARKER => collator::reord_v1::DATA
+                COLLATIONREORDERINGV1MARKER => collator::reord_v1_c_u_co::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -425,7 +425,7 @@ impl AnyProvider for BakedDataProvider {
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
-                #[cfg(all(feature = "icu_datetime", feature = "experimental"))]
+                #[cfg(feature = "icu_datetime_experimental")]
                 DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1_u_ca::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(|&data| {

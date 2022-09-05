@@ -91,15 +91,6 @@ pub enum ZeroPadding {
     Off,
 }
 
-impl From<ZeroPadding> for time_zone::ZeroPadding {
-    fn from(other: ZeroPadding) -> time_zone::ZeroPadding {
-        match other {
-            ZeroPadding::On => time_zone::ZeroPadding::On,
-            ZeroPadding::Off => time_zone::ZeroPadding::Off,
-        }
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum IsoFormat {
     Basic,

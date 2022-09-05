@@ -23,6 +23,14 @@
 
     .. cpp:enumerator:: Optional
 
+.. cpp:struct:: ICU4XIsoTimeZoneOptions
+
+    .. cpp:member:: ICU4XIsoTimeZoneFormat format
+
+    .. cpp:member:: ICU4XIsoTimeZoneMinuteDisplay minutes
+
+    .. cpp:member:: ICU4XIsoTimeZoneSecondDisplay seconds
+
 .. cpp:enum-struct:: ICU4XIsoTimeZoneSecondDisplay
 
     See the `Rust documentation for IsoSeconds <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.IsoSeconds.html>`__ for more information.
@@ -50,7 +58,7 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.FallbackFormat.html>`__
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> try_new_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneFormat format, ICU4XIsoTimeZoneMinuteDisplay minutes, ICU4XIsoTimeZoneSecondDisplay seconds)
+    .. cpp:function:: static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> try_new_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneOptions options)
 
         Creates a new :cpp:class:`ICU4XTimeZoneFormatter` from locale data.
 
@@ -63,35 +71,49 @@
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_generic_non_location_long(const ICU4XDataProvider& provider)
 
+        Loads generic non-location long format. Example: "Pacific Time"
+
         See the `Rust documentation for load_generic_non_location_long <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_non_location_long>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_generic_non_location_short(const ICU4XDataProvider& provider)
+
+        Loads generic non-location short format. Example: "PT"
 
         See the `Rust documentation for load_generic_non_location_short <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_non_location_short>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_specific_non_location_long(const ICU4XDataProvider& provider)
 
+        Loads specific non-location long format. Example: "Pacific Standard Time"
+
         See the `Rust documentation for load_specific_non_location_long <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_specific_non_location_long>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_specific_non_location_short(const ICU4XDataProvider& provider)
+
+        Loads specific non-location short format. Example: "PST"
 
         See the `Rust documentation for load_specific_non_location_short <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_specific_non_location_short>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_generic_location_format(const ICU4XDataProvider& provider)
 
+        Loads generic location format. Example: "Los Angeles Time"
+
         See the `Rust documentation for load_generic_location_format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_generic_location_format>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_localized_gmt_format()
 
+        Loads localized GMT format. Example: "GMT-07:00"
+
         See the `Rust documentation for load_localized_gmt_format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_localized_gmt_format>`__ for more information.
 
 
-    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_iso_8601_format(ICU4XIsoTimeZoneFormat format, ICU4XIsoTimeZoneMinuteDisplay minutes, ICU4XIsoTimeZoneSecondDisplay seconds)
+    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> load_iso_8601_format(ICU4XIsoTimeZoneOptions options)
+
+        Loads ISO-8601 format. Example: "-07:00"
 
         See the `Rust documentation for load_iso_8601_format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.load_iso_8601_format>`__ for more information.
 

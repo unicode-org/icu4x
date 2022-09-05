@@ -89,22 +89,25 @@ impl ZonedDateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::options::length;
+    /// use icu::datetime::options::components;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
-    /// let locale = locale!("en-u-ca-gregory");
+    /// let mut options = components::Bag::default();
+    /// options.year = Some(components::Year::Numeric);
+    /// options.month = Some(components::Month::Long);
+    /// options.hour = Some(components::Numeric::Numeric);
+    /// options.minute = Some(components::Numeric::Numeric);
+    /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
-    /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale.into(),
-    ///     options,
-    ///     Default::default(),
-    /// )
-    /// .expect("Construction should succeed");
+    /// let zdtf = ZonedDateTimeFormatter::try_new_experimental_unstable(
+    ///     &icu_provider::unstable(),
+    ///     &locale!("en-u-ca-gregory").into(),
+    ///     options.into(),
+    ///     TimeZoneFormatterOptions::default(),
+    /// ).expect("Construction should succeed");
     ///
     /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
@@ -112,7 +115,7 @@ impl ZonedDateTimeFormatter {
     ///
     /// assert_eq!(
     ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
-    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    ///     "April 2021 at 16:12 GMT-07:00"
     /// );
     /// ```
     ///
@@ -120,7 +123,7 @@ impl ZonedDateTimeFormatter {
     #[cfg(feature = "experimental")]
     #[inline]
     #[allow(clippy::too_many_arguments)]
-    pub fn try_new_unstable<P>(
+    pub fn try_new_experimental_unstable<P>(
         provider: &P,
         locale: &DataLocale,
         date_time_format_options: DateTimeFormatterOptions,
@@ -160,7 +163,7 @@ impl ZonedDateTimeFormatter {
         let calendar = AnyCalendar::try_new_for_locale_unstable(provider, locale)?;
         let kind = calendar.kind();
 
-        let patterns = PatternSelector::for_options(
+        let patterns = PatternSelector::for_options_experimental(
             provider,
             calendar::load_lengths_for_any_calendar_kind(provider, locale, kind)?,
             locale,
@@ -180,8 +183,52 @@ impl ZonedDateTimeFormatter {
         ))
     }
 
-    #[allow(missing_docs)] // The docs use the "experimental" version
-    #[cfg(not(feature = "experimental"))]
+    /// Constructor that takes a selected [`DataLocale`], a reference to a [data provider] for
+    /// dates, a [data provider] for time zones, a [data provider] for calendars, and a list of [`DateTimeFormatterOptions`].
+    /// It collects all data necessary to format zoned datetime values into the given locale.
+    ///
+    /// This method is **unstable**, more bounds may be added in the future as calendar support is added. It is
+    /// preferable to use a provider that implements `DataProvider<D>` for all `D`, and ensure data is loaded as
+    /// appropriate. The [`Self::try_new_with_buffer_provider()`], [`Self::try_new_with_any_provider()`] constructors
+    /// may also be used if compile stability is desired.
+    ///
+    /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
+    /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{DateTime, Gregorian};
+    /// use icu::datetime::options::length;
+    /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
+    /// use icu::locid::locale;
+    /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use icu::timezone::CustomTimeZone;
+    /// use std::str::FromStr;
+    ///
+    /// let provider = icu_testdata::get_provider();
+    ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    /// let locale = locale!("en-u-ca-gregory");
+    ///
+    /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
+    ///     &provider,
+    ///     &locale.into(),
+    ///     options.into(),
+    ///     TimeZoneFormatterOptions::default(),
+    /// ).expect("Construction should succeed");
+    ///
+    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
+    /// let any_datetime = datetime.to_any();
+    ///
+    /// assert_eq!(
+    ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
+    ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
+    /// );
+    /// ```
+    ///
+    /// [data provider]: icu_provider
     #[inline]
     #[allow(clippy::too_many_arguments)]
     pub fn try_new_unstable<P>(

@@ -15,7 +15,7 @@ fn assert_resolved_components(
     bag: &components::Bag,
     locale: Locale,
 ) {
-    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
         &icu_testdata::unstable(),
         &locale.into(),
         options,

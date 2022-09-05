@@ -73,9 +73,19 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         match self.config.priority {
             FallbackPriority::Language => self.step_language(locale),
             FallbackPriority::Region => self.step_region(locale),
+            // TODO(#1964): Change the collation fallback rules to be different
+            // from the language fallback fules.
+            FallbackPriority::Collation => self.step_language(locale),
             // This case should not normally happen, but `FallbackPriority` is non_exhaustive.
             // Make it go directly to `und`.
-            _ => *locale = Default::default(),
+            _ => {
+                debug_assert!(
+                    false,
+                    "Unknown FallbackPriority: {:?}",
+                    self.config.priority
+                );
+                *locale = Default::default()
+            }
         }
     }
 

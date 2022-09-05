@@ -101,15 +101,15 @@ impl CustomTimeZone {
     ///     zone_variant: None,
     /// };
     /// tz.maybe_calculate_meta_zone(
-    ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     ///     &mzc,
+    ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     /// );
     /// assert_eq!(tz.meta_zone_id, Some(MetaZoneId(tinystr!(4, "guam"))));
     /// ```
     pub fn maybe_calculate_meta_zone(
         &mut self,
-        local_datetime: &DateTime<Iso>,
         metazone_calculator: &MetaZoneCalculator,
+        local_datetime: &DateTime<Iso>,
     ) -> &mut Self {
         if let Some(time_zone_id) = self.time_zone_id {
             self.meta_zone_id =
