@@ -358,7 +358,7 @@ macro_rules! impl_tinystr_subtag {
             /// Compare with a potentially unnormalized BCP-47 string.
             ///
             /// The return value is equivalent to what would happen if you first parsed the
-            /// BCP-47 string and then performed a structucal comparison.
+            /// BCP-47 string and then performed a structural comparison.
             ///
             #[inline]
             pub fn normalizing_eq(&self, other: &str) -> bool {
