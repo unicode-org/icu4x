@@ -579,12 +579,10 @@ where {
     /// use icu::datetime::{options::length, TypedDateTimeFormatter};
     /// use icu::locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Medium);
     ///
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     options.into(),
     /// )

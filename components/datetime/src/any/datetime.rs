@@ -206,14 +206,12 @@ impl DateTimeFormatter {
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
     /// let dtf = DateTimeFormatter::try_new_experimental_unstable(
-    ///     &provider,
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into()
     /// )

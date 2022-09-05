@@ -362,7 +362,7 @@ metadata = [
     "cargo_metadata",
     "icu_locid/serde",
     "serde_json",
-    "dep:serde",
+    "serde",
     "displaydoc",
     "writeable",
     "std"

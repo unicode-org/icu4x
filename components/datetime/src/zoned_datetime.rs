@@ -165,12 +165,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// use icu_timezone::CustomTimeZone;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
     ///
-    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),

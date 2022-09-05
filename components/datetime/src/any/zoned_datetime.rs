@@ -206,13 +206,11 @@ impl ZonedDateTimeFormatter {
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
     /// let locale = locale!("en-u-ca-gregory");
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_unstable(
-    ///     &provider,
+    ///     &icu_testdata::unstable(),
     ///     &locale.into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
