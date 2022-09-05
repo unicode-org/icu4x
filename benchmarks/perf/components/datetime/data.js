@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662376753317,
+  "lastUpdate": 1662383815585,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -67421,6 +67421,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6573,
             "range": "± 394",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "younies.mahmoud@gmail.com",
+            "name": "Younies Mahmoud",
+            "username": "younies"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0b85d15e625fcd37f768b9b5e0d1d7df62e9c9bf",
+          "message": "Fix indexing_slicing clippy issue. (#2493)\n\nFix indexing_slicing clippy issues.",
+          "timestamp": "2022-09-05T15:04:46+02:00",
+          "tree_id": "c7a609b255f1a972b2fe5f38a890354a28bd1352",
+          "url": "https://github.com/unicode-org/icu4x/commit/0b85d15e625fcd37f768b9b5e0d1d7df62e9c9bf"
+        },
+        "date": 1662383764978,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 92334,
+            "range": "± 430",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 175100,
+            "range": "± 212",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 84346,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 92534,
+            "range": "± 740",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 92582,
+            "range": "± 1012",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 101078,
+            "range": "± 90",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 165738,
+            "range": "± 182",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 176936,
+            "range": "± 204",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 174935,
+            "range": "± 207",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 188624,
+            "range": "± 189",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 4726,
+            "range": "± 20",
             "unit": "ns/iter"
           }
         ]
