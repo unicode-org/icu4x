@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662375746892,
+  "lastUpdate": 1662376700194,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49169,6 +49169,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 87,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a03ec6f259bf2256ffcddca1a20589f9c59d38d8",
+          "message": "Revert \"Add a remark about inversion list  worst-case performance (#2388)\" (#2515)\n\nThis reverts commit 5a6471da1068173ad9172d0f9e2d15ee5b73063f.",
+          "timestamp": "2022-09-05T14:04:19+03:00",
+          "tree_id": "008c28de29f4dfb5c5d981aa76080e4c11bad50f",
+          "url": "https://github.com/unicode-org/icu4x/commit/a03ec6f259bf2256ffcddca1a20589f9c59d38d8"
+        },
+        "date": 1662376644515,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 131196,
+            "range": "± 4921",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26254,
+            "range": "± 1024",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 67378,
+            "range": "± 2352",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 230,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 104,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 82,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
