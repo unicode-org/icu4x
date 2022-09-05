@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662375124440,
+  "lastUpdate": 1662376003465,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26273,6 +26273,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/aa7480a6869214956cae821e4a7a385a7df1351d"
         },
         "date": 1662375076431,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a03ec6f259bf2256ffcddca1a20589f9c59d38d8",
+          "message": "Revert \"Add a remark about inversion list  worst-case performance (#2388)\" (#2515)\n\nThis reverts commit 5a6471da1068173ad9172d0f9e2d15ee5b73063f.",
+          "timestamp": "2022-09-05T14:04:19+03:00",
+          "tree_id": "008c28de29f4dfb5c5d981aa76080e4c11bad50f",
+          "url": "https://github.com/unicode-org/icu4x/commit/a03ec6f259bf2256ffcddca1a20589f9c59d38d8"
+        },
+        "date": 1662375947583,
         "tool": "ndjson",
         "benches": [
           {
