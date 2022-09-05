@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662375929766,
+  "lastUpdate": 1662376881267,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -95141,6 +95141,150 @@ window.BENCHMARK_DATA = {
             "name": "plurals/pluralrules/select/fs",
             "value": 2345,
             "range": "± 103",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "hsivonen@hsivonen.fi",
+            "name": "Henri Sivonen",
+            "username": "hsivonen"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a03ec6f259bf2256ffcddca1a20589f9c59d38d8",
+          "message": "Revert \"Add a remark about inversion list  worst-case performance (#2388)\" (#2515)\n\nThis reverts commit 5a6471da1068173ad9172d0f9e2d15ee5b73063f.",
+          "timestamp": "2022-09-05T14:04:19+03:00",
+          "tree_id": "008c28de29f4dfb5c5d981aa76080e4c11bad50f",
+          "url": "https://github.com/unicode-org/icu4x/commit/a03ec6f259bf2256ffcddca1a20589f9c59d38d8"
+        },
+        "date": 1662376833624,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "plurals/operands/overview",
+            "value": 980,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/usize",
+            "value": 13,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/isize",
+            "value": 21,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string",
+            "value": 814,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/0",
+            "value": 16,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/10",
+            "value": 18,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/200",
+            "value": 20,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/3000",
+            "value": 23,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/40000",
+            "value": 24,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/500000",
+            "value": 28,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/6000000",
+            "value": 30,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/string/samples/70000000",
+            "value": 31,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_unequal",
+            "value": 154,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/eq/mostly_equal",
+            "value": 158,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/operands/create/from_fixed_decimal",
+            "value": 141,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/overview",
+            "value": 5096,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/parser/lex",
+            "value": 1679,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/overview",
+            "value": 17356,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/construct/fs",
+            "value": 7323,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "plurals/pluralrules/select/fs",
+            "value": 2724,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
