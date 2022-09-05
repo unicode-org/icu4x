@@ -28,7 +28,7 @@ pub enum Strength {
     /// use icu_collator::*;
     ///
     /// let mut options = CollatorOptions::new();
-    /// options.set_strength(Some(Strength::Primary));
+    /// options.strength = Some(Strength::Primary);
     /// let collator = Collator::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &Default::default(),
@@ -47,7 +47,7 @@ pub enum Strength {
     /// use icu_collator::*;
     ///
     /// let mut options = CollatorOptions::new();
-    /// options.set_strength(Some(Strength::Secondary));
+    /// options.strength = Some(Strength::Secondary);
     /// let collator = Collator::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &Default::default(),

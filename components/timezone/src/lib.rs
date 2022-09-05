@@ -86,7 +86,7 @@
 //! time_zone.time_zone_id = "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
 //!
 //! // Compute the meta zone at January 1, 2022:
-//! let mzc = MetaZoneCalculator::try_new_unstable(&icu_testdata::unstable())).unwrap();
+//! let mzc = MetaZoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
 //! let datetime = DateTime::new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
 //! time_zone.maybe_calculate_meta_zone(&mzc, &datetime);
 //!
