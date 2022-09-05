@@ -1692,7 +1692,7 @@ impl writeable::Writeable for FixedDecimal {
     /// use writeable::Writeable;
     ///
     /// let dec = FixedDecimal::from(42);
-    /// let mut result = String::with_capacity(dec.write_len().capacity());
+    /// let mut result = String::with_capacity(dec.writeable_length_hint().capacity());
     /// dec.write_to(&mut result)
     ///     .expect("write_to(String) should not fail");
     /// assert_eq!("42", result);
@@ -1726,9 +1726,9 @@ impl writeable::Writeable for FixedDecimal {
     /// let dec = FixedDecimal::from(-5000)
     ///     .multiplied_pow10(-2);
     /// let result = dec.write_to_string();
-    /// assert_eq!(LengthHint::exact(6), dec.write_len());
+    /// assert_eq!(LengthHint::exact(6), dec.writeable_length_hint());
     /// ```
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
             + (if self.sign == Sign::None { 0 } else { 1 })

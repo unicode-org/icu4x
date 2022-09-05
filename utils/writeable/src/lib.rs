@@ -52,7 +52,7 @@
 //!         Ok(())
 //!     }
 //!
-//!     fn write_len(&self) -> LengthHint {
+//!     fn writeable_length_hint(&self) -> LengthHint {
 //!         // "Hello, " + '!' + length of name
 //!         LengthHint::exact(8 + self.name.len())
 //!     }
@@ -123,7 +123,7 @@ impl LengthHint {
     /// use writeable::Writeable;
     ///
     /// fn pre_allocate_string(w: &impl Writeable) -> String {
-    ///     String::with_capacity(w.write_len().capacity())
+    ///     String::with_capacity(w.writeable_length_hint().capacity())
     /// }
     /// ```
     pub fn capacity(&self) -> usize {
@@ -196,7 +196,7 @@ pub trait Writeable {
     /// Returns a hint for the number of UTF-8 bytes that will be written to the sink.
     ///
     /// Override this method if it can be computed quickly.
-    fn write_len(&self) -> LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         LengthHint::undefined()
     }
 
@@ -240,7 +240,7 @@ pub trait Writeable {
     /// }
     /// ```
     fn write_to_string(&self) -> Cow<str> {
-        let mut output = String::with_capacity(self.write_len().capacity());
+        let mut output = String::with_capacity(self.writeable_length_hint().capacity());
         let _ = self.write_to(&mut output);
         Cow::Owned(output)
     }
@@ -273,7 +273,7 @@ pub trait Writeable {
 ///     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
 ///         sink.with_part(WORD, |w| w.write_str("foo"))
 ///     }
-///     fn write_len(&self) -> LengthHint {
+///     fn writeable_length_hint(&self) -> LengthHint {
 ///         LengthHint::exact(3)
 ///     }
 /// }
@@ -294,7 +294,7 @@ macro_rules! assert_writeable_eq {
         let (actual_str, _) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
-        let length_hint = $crate::Writeable::write_len(actual_writeable);
+        let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
         assert!(length_hint.0 <= actual_str.len(), $($arg)*);
         if let Some(upper) = length_hint.1 {
             assert!(actual_str.len() <= upper, $($arg)*);
@@ -313,7 +313,7 @@ macro_rules! assert_writeable_parts_eq {
         assert_eq!(actual_str, $expected_str, $($arg)+);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         assert_eq!(actual_parts, $expected_parts, $($arg)+);
-        let length_hint = $crate::Writeable::write_len(actual_writeable);
+        let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
         assert!(length_hint.0 <= actual_str.len(), $($arg)+);
         if let Some(upper) = length_hint.1 {
             assert!(actual_str.len() <= upper, $($arg)+);

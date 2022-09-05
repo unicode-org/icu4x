@@ -86,7 +86,7 @@ impl core::ops::BitOr<LengthHint> for LengthHint {
     ///         sink.write_str(if coin_flip() { &self.0 } else { &self.1 })
     ///     }
     ///
-    ///     fn write_len(&self) -> LengthHint {
+    ///     fn writeable_length_hint(&self) -> LengthHint {
     ///         LengthHint::exact(self.0.len()) | LengthHint::exact(self.1.len())
     ///     }
     /// }

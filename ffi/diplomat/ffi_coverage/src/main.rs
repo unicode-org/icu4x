@@ -126,7 +126,7 @@ lazy_static::lazy_static! {
     ].into_iter().collect();
 
     static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
-        ("Writeable", &["write_len", "write_to_parts", "write_to_string"][..]),
+        ("Writeable", &["writeable_length_hint", "write_to_parts", "write_to_string"][..]),
         ("FromStr", &["Err"][..]),
     ].into_iter().collect();
 

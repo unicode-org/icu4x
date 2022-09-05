@@ -280,7 +280,7 @@ impl Writeable for BiesString<'_> {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         LengthHint::exact(self.0.length)
     }
 }
