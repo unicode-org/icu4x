@@ -57,6 +57,8 @@ where
             .expect("valid pipe");
         // Write each value to the pipe
         let CodePointTrieBuilderData::ValuesByCodePoint(values) = builder.data;
+        writeln!(wasi_stdin, "{}", values.len()).expect("valid pipe");
+
         for value in values {
             let num: u32 = (*value).into();
             writeln!(wasi_stdin, "{}", num).expect("valid pipe");
