@@ -28,10 +28,6 @@
 //! 1. More efficient, since the sink can pre-allocate bytes.
 //! 2. Smaller code, since the format machinery can be short-circuited.
 //!
-//! Types implementing Writeable have a defaulted [`write_to_string`](Writeable::write_to_string)
-//! function. If desired, types implementing `Writeable` can manually implement `ToString`
-//! to wrap `write_to_string`.
-//!
 //! # Examples
 //!
 //! ```
@@ -60,6 +56,10 @@
 //!
 //! let message = WelcomeMessage { name: "Alice" };
 //! assert_writeable_eq!(&message, "Hello, Alice!");
+//!
+//! // Types implementing `Writeable` are required to also implement `fmt::Display`.
+//! // This can be simply done by redirecting to the `Writeable` implementation:
+//! writeable::impl_display_with_writeable!(WelcomeMessage<'_>);
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -158,7 +158,7 @@ pub trait PartsWrite: fmt::Write {
 }
 
 /// `Writeable` is an alternative to `std::fmt::Display` with the addition of a length function.
-pub trait Writeable {
+pub trait Writeable: fmt::Display {
     /// Writes bytes to the given sink. Errors from the sink are bubbled up.
     /// The default implementation delegates to `write_to_parts`, and discards any
     /// `Part` annotations.
@@ -249,6 +249,18 @@ pub trait Writeable {
     }
 }
 
+#[macro_export]
+macro_rules! impl_display_with_writeable {
+    ($type:ty) => {
+        impl core::fmt::Display for $type {
+            #[inline]
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                $crate::Writeable::write_to(&self, f)
+            }
+        }
+    };
+}
+
 /// Testing macros for types implementing Writeable. The first argument should be a
 /// `Writeable`, the second argument a string, and the third argument (*_parts_eq only)
 /// a list of parts (`[(usize, usize, Part)]`).
@@ -280,6 +292,8 @@ pub trait Writeable {
 ///         LengthHint::exact(3)
 ///     }
 /// }
+///
+/// writeable::impl_display_with_writeable!(Demo);
 ///
 /// assert_writeable_eq!(&Demo, "foo");
 /// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
