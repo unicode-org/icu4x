@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662385338739,
+  "lastUpdate": 1662500333038,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26363,6 +26363,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4e9ba58d0288c90a5aa04b2982af4eb2aa476f4b"
         },
         "date": 1662385288039,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "03f8e10dbaa7202df390c2457eb03d53d59097e1",
+          "message": "Remove auto-deserialize implementations from {Blob,Static,Fs}DataProvider and restructure testdata (#2364)",
+          "timestamp": "2022-09-06T14:36:42-07:00",
+          "tree_id": "2ae47ece70256e7ab69ce0f38c975a0ad9a80e80",
+          "url": "https://github.com/unicode-org/icu4x/commit/03f8e10dbaa7202df390c2457eb03d53d59097e1"
+        },
+        "date": 1662500284882,
         "tool": "ndjson",
         "benches": [
           {
