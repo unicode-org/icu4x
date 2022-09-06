@@ -104,7 +104,7 @@ impl ZonedDateTimeFormatter {
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_experimental_unstable(
-    ///     &icu_testdata::buffer().as_deserializing,
+    ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into(),
     ///     Default::default(),
