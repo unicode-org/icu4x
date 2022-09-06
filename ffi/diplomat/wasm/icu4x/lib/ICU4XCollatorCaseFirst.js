@@ -9,10 +9,10 @@ export const ICU4XCollatorCaseFirst_js_to_rust = {
 };
 
 export const ICU4XCollatorCaseFirst_rust_to_js = {
-  0: "Auto",
-  1: "Off",
-  2: "LowerFirst",
-  3: "UpperFirst",
+  [0]: "Auto",
+  [1]: "Off",
+  [2]: "LowerFirst",
+  [3]: "UpperFirst",
 };
 
 export const ICU4XCollatorCaseFirst = {

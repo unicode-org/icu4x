@@ -24,6 +24,8 @@ export class ICU4XCollator {
 
    * Compare guaranteed well-formed UTF-8 strings.
 
+   * Note: passing ill-formed UTF-8 strings is undefined behavior (and may be memory-unsafe to do so, too).
+
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare Rust documentation for `compare`} for more information.
    */
   compare(left: string, right: string): ICU4XOrdering;

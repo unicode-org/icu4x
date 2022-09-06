@@ -10,11 +10,11 @@ export const ICU4XCollatorMaxVariable_js_to_rust = {
 };
 
 export const ICU4XCollatorMaxVariable_rust_to_js = {
-  0: "Auto",
-  1: "Space",
-  2: "Punctuation",
-  3: "Symbol",
-  4: "Currency",
+  [0]: "Auto",
+  [1]: "Space",
+  [2]: "Punctuation",
+  [3]: "Symbol",
+  [4]: "Currency",
 };
 
 export const ICU4XCollatorMaxVariable = {

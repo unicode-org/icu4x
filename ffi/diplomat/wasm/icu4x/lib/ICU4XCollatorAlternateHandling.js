@@ -8,9 +8,9 @@ export const ICU4XCollatorAlternateHandling_js_to_rust = {
 };
 
 export const ICU4XCollatorAlternateHandling_rust_to_js = {
-  0: "Auto",
-  1: "NonIgnorable",
-  2: "Shifted",
+  [0]: "Auto",
+  [1]: "NonIgnorable",
+  [2]: "Shifted",
 };
 
 export const ICU4XCollatorAlternateHandling = {

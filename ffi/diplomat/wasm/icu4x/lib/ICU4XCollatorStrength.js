@@ -11,12 +11,12 @@ export const ICU4XCollatorStrength_js_to_rust = {
 };
 
 export const ICU4XCollatorStrength_rust_to_js = {
-  0: "Auto",
-  1: "Primary",
-  2: "Secondary",
-  3: "Tertiary",
-  4: "Quaternary",
-  5: "Identical",
+  [0]: "Auto",
+  [1]: "Primary",
+  [2]: "Secondary",
+  [3]: "Tertiary",
+  [4]: "Quaternary",
+  [5]: "Identical",
 };
 
 export const ICU4XCollatorStrength = {

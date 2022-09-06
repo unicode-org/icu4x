@@ -8,9 +8,9 @@ export const ICU4XCollatorBackwardSecondLevel_js_to_rust = {
 };
 
 export const ICU4XCollatorBackwardSecondLevel_rust_to_js = {
-  0: "Auto",
-  1: "Off",
-  2: "On",
+  [0]: "Auto",
+  [1]: "Off",
+  [2]: "On",
 };
 
 export const ICU4XCollatorBackwardSecondLevel = {

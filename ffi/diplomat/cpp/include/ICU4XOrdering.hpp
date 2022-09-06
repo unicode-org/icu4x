@@ -19,9 +19,9 @@
  * See the [Rust documentation for `Ordering`](https://unicode-org.github.io/icu4x-docs/doc/core/cmp/enum.Ordering.html) for more information.
  */
 enum struct ICU4XOrdering {
-  Less = 0,
-  Equal = 1,
-  Greater = 2,
+  Less = -1,
+  Equal = 0,
+  Greater = 1,
 };
 
 #endif

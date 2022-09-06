@@ -11,9 +11,9 @@ namespace capi {
 #endif
 
 typedef enum ICU4XOrdering {
-  ICU4XOrdering_Less = 0,
-  ICU4XOrdering_Equal = 1,
-  ICU4XOrdering_Greater = 2,
+  ICU4XOrdering_Less = -1,
+  ICU4XOrdering_Equal = 0,
+  ICU4XOrdering_Greater = 1,
 } ICU4XOrdering;
 #ifdef __cplusplus
 } // namespace capi

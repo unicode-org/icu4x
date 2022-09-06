@@ -8,9 +8,9 @@ export const ICU4XWordBreakRule_js_to_rust = {
 };
 
 export const ICU4XWordBreakRule_rust_to_js = {
-  0: "Normal",
-  1: "BreakAll",
-  2: "KeepAll",
+  [0]: "Normal",
+  [1]: "BreakAll",
+  [2]: "KeepAll",
 };
 
 export const ICU4XWordBreakRule = {
