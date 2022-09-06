@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662385959216,
+  "lastUpdate": 1662500932053,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49331,6 +49331,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 61299,
             "range": "± 745",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 206,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "03f8e10dbaa7202df390c2457eb03d53d59097e1",
+          "message": "Remove auto-deserialize implementations from {Blob,Static,Fs}DataProvider and restructure testdata (#2364)",
+          "timestamp": "2022-09-06T14:36:42-07:00",
+          "tree_id": "2ae47ece70256e7ab69ce0f38c975a0ad9a80e80",
+          "url": "https://github.com/unicode-org/icu4x/commit/03f8e10dbaa7202df390c2457eb03d53d59097e1"
+        },
+        "date": 1662500883902,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 115495,
+            "range": "± 572",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23292,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 60960,
+            "range": "± 155",
             "unit": "ns/iter"
           },
           {
