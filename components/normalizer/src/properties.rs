@@ -160,7 +160,7 @@ impl CanonicalDecomposition {
     /// are reported as `Decomposed::Default`.
     #[inline(always)]
     fn decompose_non_hangul(&self, c: char) -> Decomposed {
-        let decomposition = self.decompositions.get().trie.get32(u32::from(c));
+        let decomposition = self.decompositions.get().trie.get(c);
         if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
             return Decomposed::Default;
         }
@@ -281,7 +281,7 @@ impl CanonicalDecomposition {
             return Decomposed::Default;
         }
         let non_recursive = self.non_recursive.get();
-        let non_recursive_decomposition = non_recursive.trie.get32(u32::from(c));
+        let non_recursive_decomposition = non_recursive.trie.get(c);
         if non_recursive_decomposition == 0 {
             // GIGO case
             debug_assert!(false);

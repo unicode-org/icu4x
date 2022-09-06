@@ -621,7 +621,7 @@ where
             let mut combining_start = 0;
             for u in tail.iter() {
                 let ch = char_from_u16(u);
-                let trie_value = self.trie.get32(u32::from(ch));
+                let trie_value = self.trie.get(ch);
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
                     CharacterAndTrieValue::new(ch, trie_value),
                 ));
@@ -662,7 +662,7 @@ where
             let mut i = 0;
             let mut combining_start = 0;
             for ch in tail.iter() {
-                let trie_value = self.trie.get32(u32::from(ch));
+                let trie_value = self.trie.get(ch);
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
                     CharacterAndTrieValue::new(ch, trie_value),
                 ));
@@ -685,7 +685,7 @@ where
             }
         }
 
-        CharacterAndTrieValue::new(c, self.trie.get32(u32::from(c)))
+        CharacterAndTrieValue::new(c, self.trie.get(c))
     }
 
     #[inline(never)]

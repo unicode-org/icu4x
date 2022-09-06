@@ -335,6 +335,23 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
             .unwrap_or(self.error_value)
     }
 
+    /// Returns the value that is associated with `char` in this [`CodePointTrie`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_collections::codepointtrie::planes;
+    /// let trie = planes::get_planes_trie();
+    ///
+    /// assert_eq!(0, trie.get('A')); // 'A' as u32
+    /// assert_eq!(0, trie.get('Ꮰ')); // 'Ꮰ' as u32
+    /// assert_eq!(1, trie.get('𐁄')); // '𐁄' as u32
+    /// ```
+    #[inline(always)]
+    pub fn get(&self, c: char) -> T {
+        self.get32(u32::from(c))
+    }
+
     /// Returns a reference to the ULE of the value that is associated with `code_point` in this [`CodePointTrie`].
     ///
     /// # Examples
