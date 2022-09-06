@@ -123,7 +123,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     #[inline]
     pub(crate) fn get32(&self, ch: u32) -> T {
         match *self {
-            Self::CodePointTrie(ref t) => t.get(ch),
+            Self::CodePointTrie(ref t) => t.get32(ch),
         }
     }
 

@@ -322,15 +322,15 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_collections::codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
-    /// assert_eq!(0, trie.get(0x41)); // 'A' as u32
-    /// assert_eq!(0, trie.get(0x13E0)); // 'Ꮰ' as u32
-    /// assert_eq!(1, trie.get(0x10044)); // '𐁄' as u32
+    /// assert_eq!(0, trie.get32(0x41)); // 'A' as u32
+    /// assert_eq!(0, trie.get32(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(1, trie.get32(0x10044)); // '𐁄' as u32
     /// ```
     #[inline(always)] // `always` based on normalizer benchmarking
-    pub fn get(&self, code_point: u32) -> T {
+    pub fn get32(&self, code_point: u32) -> T {
         // If we cannot read from the data array, then return the sentinel value
         // self.error_value() for the instance type for T: TrieValue.
-        self.get_ule(code_point)
+        self.get32_ule(code_point)
             .map(|t| T::from_unaligned(*t))
             .unwrap_or(self.error_value)
     }
@@ -343,12 +343,12 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// use icu_collections::codepointtrie::planes;
     /// let trie = planes::get_planes_trie();
     ///
-    /// assert_eq!(Some(&0), trie.get_ule(0x41)); // 'A' as u32
-    /// assert_eq!(Some(&0), trie.get_ule(0x13E0)); // 'Ꮰ' as u32
-    /// assert_eq!(Some(&1), trie.get_ule(0x10044)); // '𐁄' as u32
+    /// assert_eq!(Some(&0), trie.get32_ule(0x41)); // 'A' as u32
+    /// assert_eq!(Some(&0), trie.get32_ule(0x13E0)); // 'Ꮰ' as u32
+    /// assert_eq!(Some(&1), trie.get32_ule(0x10044)); // '𐁄' as u32
     /// ```
     #[inline(always)] // `always` based on normalizer benchmarking
-    pub fn get_ule(&self, code_point: u32) -> Option<&T::ULE> {
+    pub fn get32_ule(&self, code_point: u32) -> Option<&T::ULE> {
         // All code points up to the fast max limit are represented
         // individually in the `index` array to hold their `data` array position, and
         // thus only need 2 lookups for a [CodePointTrie::get()](`crate::codepointtrie::CodePointTrie::get`).
@@ -433,9 +433,9 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// let start = 0x1_0000;
     /// let exp_end = 0x1_ffff;
     ///
-    /// let start_val = trie.get(start);
-    /// assert_eq!(trie.get(exp_end), start_val);
-    /// assert_ne!(trie.get(exp_end + 1), start_val);
+    /// let start_val = trie.get32(start);
+    /// assert_eq!(trie.get32(exp_end), start_val);
+    /// assert_ne!(trie.get32(exp_end + 1), start_val);
     ///
     /// use core::ops::RangeInclusive;
     /// use icu_collections::codepointtrie::CodePointMapRange;
@@ -887,13 +887,13 @@ impl<'trie, T: TrieValue + Into<u32>> CodePointTrie<'trie, T> {
     /// let cp = '𑖎' as u32;
     /// assert_eq!(cp, 0x1158E);
     ///
-    /// let plane_num: u8 = trie.get(cp);
+    /// let plane_num: u8 = trie.get32(cp);
     /// assert_eq!(trie.get32_u32(cp), plane_num as u32);
     /// ```
     // Note: This API method maintains consistency with the corresponding
     // original ICU APIs.
     pub fn get32_u32(&self, code_point: u32) -> u32 {
-        self.get(code_point).into()
+        self.get32(code_point).into()
     }
 }
 

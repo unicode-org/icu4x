@@ -160,7 +160,7 @@ impl CanonicalDecomposition {
     /// are reported as `Decomposed::Default`.
     #[inline(always)]
     fn decompose_non_hangul(&self, c: char) -> Decomposed {
-        let decomposition = self.decompositions.get().trie.get(u32::from(c));
+        let decomposition = self.decompositions.get().trie.get32(u32::from(c));
         if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
             return Decomposed::Default;
         }
@@ -281,7 +281,7 @@ impl CanonicalDecomposition {
             return Decomposed::Default;
         }
         let non_recursive = self.non_recursive.get();
-        let non_recursive_decomposition = non_recursive.trie.get(u32::from(c));
+        let non_recursive_decomposition = non_recursive.trie.get32(u32::from(c));
         if non_recursive_decomposition == 0 {
             // GIGO case
             debug_assert!(false);
@@ -375,7 +375,7 @@ impl CanonicalCombiningClassMap {
     /// represented as `u32`. If the argument is outside the scalar
     /// value range, `CanonicalCombiningClass::NotReordered` is returned.
     pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
-        let trie_value = self.decompositions.get().trie.get(c);
+        let trie_value = self.decompositions.get().trie.get32(c);
         if trie_value_has_ccc(trie_value) {
             CanonicalCombiningClass(trie_value as u8)
         } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {

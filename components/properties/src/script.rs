@@ -313,7 +313,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// assert_ne!(swe.get_script_val(0xFDF2), Script::Thaana);
     /// ```
     pub fn get_script_val(&self, code_point: u32) -> Script {
-        let sc_with_ext = self.trie.get(code_point);
+        let sc_with_ext = self.trie.get32(code_point);
 
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
@@ -413,7 +413,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// );
     /// ```
     pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
-        let sc_with_ext_ule = self.trie.get_ule(code_point);
+        let sc_with_ext_ule = self.trie.get32_ule(code_point);
 
         ScriptExtensionsSet {
             values: match sc_with_ext_ule {
@@ -460,7 +460,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// assert!(swe.has_script(0xFDF2, Script::Thaana));
     /// ```
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
-        let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get_ule(code_point) {
+        let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get32_ule(code_point) {
             scwe_ule
         } else {
             return false;

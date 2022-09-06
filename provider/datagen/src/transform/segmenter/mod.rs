@@ -601,11 +601,11 @@ impl crate::DatagenProvider {
             //     0xe0100..=0xe01ef => CM,
             //     _ => XX,
             // }
-            debug_assert_eq!(property_trie.get(0x20000), ID);
-            debug_assert_eq!(property_trie.get(0x3fffd), ID);
-            debug_assert_eq!(property_trie.get(0xd0000), XX);
-            debug_assert_eq!(property_trie.get(0xe0001), CM);
-            debug_assert_eq!(property_trie.get(0xe0020), CM);
+            debug_assert_eq!(property_trie.get32(0x20000), ID);
+            debug_assert_eq!(property_trie.get32(0x3fffd), ID);
+            debug_assert_eq!(property_trie.get32(0xd0000), XX);
+            debug_assert_eq!(property_trie.get32(0xe0001), CM);
+            debug_assert_eq!(property_trie.get32(0xe0020), CM);
         }
 
         Ok(RuleBreakDataV1 {
