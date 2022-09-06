@@ -205,13 +205,14 @@ impl DateTimeFormatter {
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
+    /// use icu_provider::AsDeserializingBufferProvider;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
     /// let dtf = DateTimeFormatter::try_new_experimental_unstable(
-    ///     &icu_testdata::unstable(),
+    ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into()
     /// )

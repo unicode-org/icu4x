@@ -83,6 +83,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::locid::locale;
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// use icu_timezone::CustomTimeZone;
+    /// use icu_provider::AsDeserializingBufferProvider;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
@@ -92,7 +93,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-    ///     &icu_testdata::unstable(),
+    ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en").into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),

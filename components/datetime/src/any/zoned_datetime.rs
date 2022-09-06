@@ -94,6 +94,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
+    /// use icu_provider::AsDeserializingBufferProvider;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
@@ -103,7 +104,7 @@ impl ZonedDateTimeFormatter {
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
     /// let zdtf = ZonedDateTimeFormatter::try_new_experimental_unstable(
-    ///     &icu_testdata::unstable(),
+    ///     &icu_testdata::buffer().as_deserializing,
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into(),
     ///     Default::default(),

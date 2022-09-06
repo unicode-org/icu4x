@@ -9,6 +9,7 @@ use icu_datetime::{
 };
 use icu_locid::locale;
 use icu_locid::Locale;
+use icu_provider::AsDeserializingBufferProvider;
 
 fn assert_resolved_components(
     options: DateTimeFormatterOptions,
@@ -16,7 +17,7 @@ fn assert_resolved_components(
     locale: Locale,
 ) {
     let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-        &icu_testdata::unstable(),
+        &icu_testdata::buffer().as_deserializing(),
         &locale.into(),
         options,
     )

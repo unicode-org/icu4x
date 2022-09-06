@@ -515,13 +515,14 @@ where {
     /// use icu::calendar::{Gregorian, DateTime};
     /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
+    /// use icu_provider::AsDeserializingBufferProvider;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-    ///     &icu_testdata::unstable(),
+    ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en").into(),
     ///     options.into(),
     /// )

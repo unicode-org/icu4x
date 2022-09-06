@@ -11,13 +11,13 @@ use icu_calendar::{DateTime, Gregorian};
 use icu_datetime::TypedDateTimeFormatter;
 use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormatter};
 use icu_locid::Locale;
+use icu_provider::AsDeserializingBufferProvider;
 use icu_timezone::CustomTimeZone;
 
 #[path = "../tests/mock.rs"]
 mod mock;
 
 fn datetime_benches(c: &mut Criterion) {
-    let provider = icu_testdata::unstable();
     let mut group = c.benchmark_group("datetime");
 
     let mut bench_datetime_with_fixture = |name| {
@@ -38,7 +38,7 @@ fn datetime_benches(c: &mut Criterion) {
                         #[cfg(feature = "experimental")]
                         let dtf = {
                             TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-                                &provider,
+                                &icu_testdata::buffer().as_deserializing(),
                                 &locale.into(),
                                 options.clone(),
                             )
@@ -47,7 +47,7 @@ fn datetime_benches(c: &mut Criterion) {
                         #[cfg(not(feature = "experimental"))]
                         let dtf = {
                             TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                                &provider,
+                                &icu_testdata::unstable(),
                                 &locale.into(),
                                 options.clone(),
                             )
@@ -86,7 +86,7 @@ fn datetime_benches(c: &mut Criterion) {
                     let locale: Locale = setup.locale.parse().unwrap();
                     let options = fixtures::get_options(&setup.options).unwrap();
                     let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                        &provider,
+                        &icu_testdata::unstable(),
                         &locale.into(),
                         options,
                         TimeZoneFormatterOptions::default(),
@@ -125,7 +125,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options).unwrap();
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &provider,
+                            &icu_testdata::unstable(),
                             &locale.into(),
                             options,
                         )
@@ -155,7 +155,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options).unwrap();
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &provider,
+                            &icu_testdata::unstable(),
                             &locale.into(),
                             options,
                         )
@@ -182,7 +182,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options).unwrap();
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &provider,
+                            &icu_testdata::unstable(),
                             &locale.into(),
                             options,
                         )
@@ -213,7 +213,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options).unwrap();
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &provider,
+                            &icu_testdata::unstable(),
                             &locale.into(),
                             options,
                         )
@@ -242,7 +242,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options).unwrap();
                         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &provider,
+                            &icu_testdata::unstable(),
                             &locale.into(),
                             options,
                             TimeZoneFormatterOptions::default(),
@@ -273,7 +273,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options).unwrap();
                         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &provider,
+                            &icu_testdata::unstable(),
                             &locale.into(),
                             options,
                             TimeZoneFormatterOptions::default(),
@@ -301,7 +301,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options).unwrap();
                         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &provider,
+                            &icu_testdata::unstable(),
                             &locale.into(),
                             options,
                             TimeZoneFormatterOptions::default(),
@@ -333,7 +333,7 @@ fn datetime_benches(c: &mut Criterion) {
                         let locale: Locale = setup.locale.parse().unwrap();
                         let options = fixtures::get_options(&setup.options).unwrap();
                         let dtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
-                            &provider,
+                            &icu_testdata::unstable(),
                             &locale.into(),
                             options,
                             TimeZoneFormatterOptions::default(),

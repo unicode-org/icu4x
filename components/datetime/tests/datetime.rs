@@ -185,13 +185,13 @@ fn assert_fixture_element<A>(
     let (dtf, any_dtf) = {
         (
             TypedDateTimeFormatter::<A::Calendar>::try_new_experimental_unstable(
-                &icu_testdata::unstable(),
+                &icu_testdata::buffer().as_deserializing(),
                 &locale.into(),
                 options.clone(),
             )
             .expect(description),
             DateTimeFormatter::try_new_experimental_unstable(
-                &icu_testdata::unstable(),
+                &icu_testdata::buffer().as_deserializing(),
                 &locale.into(),
                 options.clone(),
             )
@@ -357,7 +357,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
             #[cfg(feature = "experimental")]
             let dtf = {
                 TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-                    &icu_testdata::unstable(),
+                    &icu_testdata::buffer().as_deserializing(),
                     &locale.into(),
                     options.clone(),
                     TimeZoneFormatterOptions::default(),
@@ -436,7 +436,8 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         #[cfg(feature = "experimental")]
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = icu_testdata::unstable()
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
             .load(req)
             .unwrap()
             .take_payload()
@@ -641,7 +642,8 @@ fn test_time_zone_patterns() {
             .take_payload()
             .unwrap();
         #[cfg(feature = "experimental")]
-        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = icu_testdata::unstable()
+        let skeleton_data: DataPayload<DateSkeletonPatternsV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
             .load(req)
             .unwrap()
             .take_payload()
