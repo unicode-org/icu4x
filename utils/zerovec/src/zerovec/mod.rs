@@ -263,7 +263,10 @@ where
         /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
         /// ```
         const _: () = ();
-        Self::Borrowed(core::mem::transmute((bytes.as_ptr(), bytes.len() / core::mem::size_of::<T::ULE>())))
+        Self::Borrowed(core::mem::transmute((
+            bytes.as_ptr(),
+            bytes.len() / core::mem::size_of::<T::ULE>(),
+        )))
     }
 
     /// Converts a `ZeroVec<T>` into a `ZeroVec<u8>`, retaining the current ownership model.
