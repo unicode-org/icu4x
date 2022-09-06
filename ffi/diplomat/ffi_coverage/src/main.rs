@@ -22,7 +22,7 @@ impl fmt::Display for RustLinkInfo {
 }
 
 fn main() {
-    let doc_types = ["icu", "fixed_decimal"]
+    let doc_types = ["icu", "fixed_decimal", "icu_provider_adapters"]
         .into_iter()
         .flat_map(collect_public_types)
         .map(|(path, typ)| RustLinkInfo {
