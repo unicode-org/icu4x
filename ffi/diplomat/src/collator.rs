@@ -19,9 +19,9 @@ pub mod ffi {
     #[diplomat::enum_convert(core::cmp::Ordering)]
     #[diplomat::rust_link(core::cmp::Ordering, Enum)]
     pub enum ICU4XOrdering {
-        Less = 0,
-        Equal = 1,
-        Greater = 2,
+        Less = -1,
+        Equal = 0,
+        Greater = 1,
     }
 
     #[diplomat::rust_link(icu_collator::CollatorOptions, Struct)]
