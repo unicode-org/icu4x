@@ -253,6 +253,7 @@ pub struct ScriptWithExtensions<'data> {
     /// When the lower 10 bits of the value are used as an index, that index is
     /// used for the outer-level vector of the nested `extensions` structure.
     #[cfg_attr(feature = "serde", serde(borrow))]
+    #[doc(hidden)] // #2417
     pub trie: CodePointTrie<'data, ScriptWithExt>,
 
     /// This companion structure stores Script_Extensions values, which are
@@ -261,6 +262,7 @@ pub struct ScriptWithExtensions<'data> {
     /// sub-vector represents the Script_Extensions array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
+    #[doc(hidden)] // #2417
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
