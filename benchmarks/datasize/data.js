@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662500333038,
+  "lastUpdate": 1662506073234,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26393,6 +26393,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/03f8e10dbaa7202df390c2457eb03d53d59097e1"
         },
         "date": 1662500284882,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d4c5f6d61686dc35d163d18c4413345d89bb8ef7",
+          "message": "Add canary tests for `core::slice::from_raw_parts`'s constness (#2521)",
+          "timestamp": "2022-09-07T01:12:18+02:00",
+          "tree_id": "b3962c9a0748c8617841e0d20ecf307e5e58586e",
+          "url": "https://github.com/unicode-org/icu4x/commit/d4c5f6d61686dc35d163d18c4413345d89bb8ef7"
+        },
+        "date": 1662506021879,
         "tool": "ndjson",
         "benches": [
           {
