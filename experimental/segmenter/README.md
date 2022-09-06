@@ -23,10 +23,11 @@ Segment a string with default options:
 ```rust
 use icu_segmenter::LineBreakSegmenter;
 
-let provider = icu_testdata::get_provider();
-let segmenter = LineBreakSegmenter::try_new(&provider).expect("Data exists");
+let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable())
+    .expect("Data exists");
 
-let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+let breakpoints: Vec<usize> =
+    segmenter.segment_str("Hello World").collect();
 assert_eq!(&breakpoints, &[6, 11]);
 ```
 
@@ -42,10 +43,12 @@ Segment a string:
 
 ```rust
 use icu_segmenter::WordBreakSegmenter;
-let provider = icu_testdata::get_provider();
-let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
 
-let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
+let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable())
+    .expect("Data exists");
+
+let breakpoints: Vec<usize> =
+    segmenter.segment_str("Hello World").collect();
 assert_eq!(&breakpoints, &[0, 5, 6, 11]);
 ```
 

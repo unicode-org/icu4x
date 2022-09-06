@@ -27,10 +27,12 @@
 //! use icu::locid::locale;
 //! use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 //!
-//! let provider = icu_testdata::get_provider();
-//!
-//! let pr = PluralRules::try_new_with_buffer_provider(&provider, &locale!("en").into(), PluralRuleType::Cardinal)
-//!     .expect("Failed to construct a PluralRules struct.");
+//! let pr = PluralRules::try_new_unstable(
+//!     &icu_testdata::unstable(),
+//!     &locale!("en").into(),
+//!     PluralRuleType::Cardinal,
+//! )
+//! .expect("Failed to construct a PluralRules struct.");
 //!
 //! assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 //! ```
@@ -139,10 +141,12 @@ pub enum PluralRuleType {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
-/// let dp = icu_testdata::get_provider();
-///
-/// let pr = PluralRules::try_new_with_buffer_provider(&dp, &locale!("en").into(), PluralRuleType::Cardinal)
-///     .expect("Failed to construct a PluralRules struct.");
+/// let pr = PluralRules::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en").into(),
+///     PluralRuleType::Cardinal,
+/// )
+/// .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -265,10 +269,12 @@ impl PluralCategory {
 /// use icu::locid::locale;
 /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 ///
-/// let dp = icu_testdata::get_provider();
-///
-/// let pr = PluralRules::try_new_with_buffer_provider(&dp, &locale!("en").into(), PluralRuleType::Cardinal)
-///     .expect("Failed to construct a PluralRules struct.");
+/// let pr = PluralRules::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en").into(),
+///     PluralRuleType::Cardinal,
+/// )
+/// .expect("Failed to construct a PluralRules struct.");
 ///
 /// assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 /// ```
@@ -289,11 +295,11 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralRuleType, PluralRules};
     ///
-    /// let lid = locale!("en");
-    ///
-    /// let dp = icu_testdata::get_provider();
-    ///
-    /// let _ = PluralRules::try_new_with_buffer_provider(&dp, &lid.into(), PluralRuleType::Cardinal);
+    /// let _ = PluralRules::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     PluralRuleType::Cardinal,
+    /// );
     /// ```
     ///
     /// [`type`]: PluralRuleType
@@ -334,9 +340,11 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRules};
     ///
-    /// let dp = icu_testdata::get_provider();
-    ///
-    /// let rules = PluralRules::try_new_cardinal_with_buffer_provider(&dp, &locale!("ru").into()).expect("Data should be present");
+    /// let rules = PluralRules::try_new_cardinal_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("ru").into(),
+    /// )
+    /// .expect("Data should be present");
     ///
     /// assert_eq!(rules.category_for(2_usize), PluralCategory::Few);
     /// ```
@@ -389,9 +397,11 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRules};
     ///
-    /// let dp = icu_testdata::get_provider();
-    ///
-    /// let rules = PluralRules::try_new_ordinal_with_buffer_provider(&dp, &locale!("ru").into()).expect("Data should be present");
+    /// let rules = PluralRules::try_new_ordinal_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("ru").into(),
+    /// )
+    /// .expect("Data should be present");
     ///
     /// assert_eq!(rules.category_for(2_usize), PluralCategory::Other);
     /// ```
@@ -437,10 +447,12 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
-    /// let dp = icu_testdata::get_provider();
-    ///
-    /// let pr = PluralRules::try_new_with_buffer_provider(&dp, &locale!("en").into(), PluralRuleType::Cardinal)
-    ///     .expect("Failed to construct a PluralRules struct.");
+    /// let pr = PluralRules::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     PluralRuleType::Cardinal,
+    /// )
+    /// .expect("Failed to construct a PluralRules struct.");
     ///
     /// match pr.category_for(1_usize) {
     ///     PluralCategory::One => "One item",
@@ -465,9 +477,7 @@ impl PluralRules {
     /// use icu::plurals::{PluralRuleType, PluralRules};
     /// use std::convert::TryFrom;
     /// #
-    /// # let dp = icu_testdata::get_provider();
-    /// #
-    /// # let pr = PluralRules::try_new_with_buffer_provider(&dp, &locale!("en").into(), PluralRuleType::Cardinal)
+    /// # let pr = PluralRules::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), PluralRuleType::Cardinal)
     /// #     .expect("Failed to construct a PluralRules struct.");
     ///
     /// let operands = PluralOperands::try_from(-5).expect("Failed to parse to operands.");
@@ -513,10 +523,12 @@ impl PluralRules {
     /// use icu::locid::locale;
     /// use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
     ///
-    /// let dp = icu_testdata::get_provider();
-    ///
-    /// let pr = PluralRules::try_new_with_buffer_provider(&dp, &locale!("fr").into(), PluralRuleType::Cardinal)
-    ///     .expect("Failed to construct a PluralRules struct.");
+    /// let pr = PluralRules::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("fr").into(),
+    ///     PluralRuleType::Cardinal,
+    /// )
+    /// .expect("Failed to construct a PluralRules struct.");
     ///
     /// let mut categories = pr.categories();
     /// assert_eq!(categories.next(), Some(PluralCategory::One));

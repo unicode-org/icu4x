@@ -16,6 +16,7 @@ fn overview_bench(c: &mut Criterion) {
             let provider = FsDataProvider::try_new("./tests/data/json")
                 .expect("Loading file from testdata directory");
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+                .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     metadata: Default::default(),
@@ -43,6 +44,7 @@ fn json_bench(c: &mut Criterion) {
     c.bench_function("json/generic", |b| {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+                .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     metadata: Default::default(),
@@ -74,6 +76,7 @@ fn bincode_bench(c: &mut Criterion) {
     c.bench_function("bincode/generic", |b| {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+                .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     metadata: Default::default(),
@@ -106,6 +109,7 @@ fn postcard_bench(c: &mut Criterion) {
     c.bench_function("postcard/generic", |b| {
         b.iter(|| {
             let _: DataPayload<HelloWorldV1Marker> = black_box(&provider)
+                .as_deserializing()
                 .load(DataRequest {
                     locale: &langid!("ru").into(),
                     metadata: Default::default(),

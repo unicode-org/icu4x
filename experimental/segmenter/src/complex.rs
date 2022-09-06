@@ -147,16 +147,17 @@ pub fn complex_language_segment_str(
 mod tests {
     use super::*;
     use icu_locid::locale;
-    use icu_provider::{DataLocale, DataProvider, DataRequest};
+    use icu_provider::prelude::*;
 
     #[test]
+    #[cfg(feature = "serde")]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
-        let provider = icu_testdata::get_provider();
-        let locale = locale!("th");
-        let payload = provider
+        let data_locale = locale!("th").into();
+        let payload = icu_testdata::buffer()
+            .as_deserializing()
             .load(DataRequest {
-                locale: &DataLocale::from(locale),
+                locale: &data_locale,
                 metadata: Default::default(),
             })
             .expect("Loading should succeed!")
@@ -169,10 +170,10 @@ mod tests {
             thai: Some(payload),
             cj: None,
         };
-        let locale = locale!("th");
-        let payload = provider
+        let payload = icu_testdata::buffer()
+            .as_deserializing()
             .load(DataRequest {
-                locale: &DataLocale::from(locale),
+                locale: &data_locale,
                 metadata: Default::default(),
             })
             .expect("Loading should succeed!")
