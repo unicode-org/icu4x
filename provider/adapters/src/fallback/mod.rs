@@ -172,8 +172,7 @@ pub struct LocaleFallbackConfig {
     /// use icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker;
     ///
     /// // Set up the fallback iterator.
-    /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
+    /// let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
     /// config.fallback_supplement_key = Some(CollationFallbackSupplementV1Marker::KEY);
@@ -318,7 +317,7 @@ impl LocaleFallbacker {
     /// let fallbacker =
     ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
     ///         .expect("data");
-    /// let key_fallbacker = fallbacker.for_key(FooV1Marker::KEY);
+    /// let key_fallbacker = fallbacker.for_key_and_fallback_supplement_key(FooV1Marker::KEY, None);
     /// let mut fallback_iterator = key_fallbacker
     ///     .fallback_for(icu_locid::locale!("en-GB").into());
     ///
