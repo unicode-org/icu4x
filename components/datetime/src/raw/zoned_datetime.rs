@@ -2,7 +2,6 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use alloc::string::String;
 use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::{
     options::{FixedDecimalFormatterOptions, GroupingStrategy},
@@ -13,10 +12,7 @@ use icu_plurals::{provider::OrdinalV1Marker, PluralRules};
 use icu_provider::prelude::*;
 
 use crate::{
-    format::{
-        datetime,
-        zoned_datetime::{self, FormattedZonedDateTime},
-    },
+    format::{datetime, zoned_datetime::FormattedZonedDateTime},
     input::{DateTimeInput, TimeZoneInput},
     input::{ExtractedDateTimeInput, ExtractedTimeZoneInput},
     pattern::runtime::PatternPlurals,
@@ -145,29 +141,5 @@ impl ZonedDateTimeFormatter {
             datetime: ExtractedDateTimeInput::extract_from(date),
             time_zone: ExtractedTimeZoneInput::extract_from(time_zone),
         }
-    }
-
-    /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write) trait
-    /// and a [`ZonedDateTimeInput`] implementer, then populates the buffer with a formatted value.
-    #[inline(never)]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        date: &impl DateTimeInput,
-        time_zone: &impl TimeZoneInput,
-    ) -> core::fmt::Result {
-        zoned_datetime::write_pattern(self, date, time_zone, w).map_err(|_| core::fmt::Error)
-    }
-
-    /// Takes a [`ZonedDateTimeInput`] implementer and returns it formatted as a string.
-    #[inline]
-    pub fn format_to_string(
-        &self,
-        date: &impl DateTimeInput,
-        time_zone: &impl TimeZoneInput,
-    ) -> String {
-        let mut s = String::new();
-        let _ = self.format_to_write(&mut s, date, time_zone);
-        s
     }
 }

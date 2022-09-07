@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use crate::{calendar, options::DateTimeFormatterOptions, raw, DateFormatter, TimeFormatter};
-use alloc::string::String;
 
 use icu_provider::prelude::*;
 
@@ -19,6 +18,7 @@ use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::DataLocale;
+use writeable::Writeable;
 
 /// [`DateTimeFormatter`] is a formatter capable of formatting
 /// date/times from any calendar, selected at runtime. For the difference between this and [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter),
@@ -39,6 +39,7 @@ use icu_provider::DataLocale;
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
 /// use std::str::FromStr;
+/// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
@@ -56,10 +57,9 @@ use icu_provider::DataLocale;
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let value = dtf
-///     .format_to_string(&any_datetime)
-///     .expect("calendars should match");
-/// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
+/// assert_writeable_eq!(dtf
+///     .format(&any_datetime)
+///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
 /// Since this works with [`AnyCalendar`], you can use [`DateTime`](icu_calendar::DateTime) with [`AnyCalendar`]
@@ -69,6 +69,7 @@ use icu_provider::DataLocale;
 /// use icu::calendar::{AnyCalendar, AnyCalendarKind, DateTime, types::Time};
 /// use icu::datetime::{options::length, DateTimeFormatter};
 /// use icu::locid::locale;
+/// use writeable::assert_writeable_eq;
 /// # use std::str::FromStr;
 /// # use std::rc::Rc;
 /// # use std::convert::TryInto;
@@ -100,11 +101,11 @@ use icu_provider::DataLocale;
 /// let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale.into(), options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let manual_value = dtf.format_to_string(&manual_datetime).expect("calendars should match");
-/// assert_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
+/// let manual_value = dtf.format(&manual_datetime).expect("calendars should match");
+/// assert_writeable_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
 ///
-/// let converted_value = dtf.format_to_string(&iso_converted).expect("calendars should match");
-/// assert_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
+/// let converted_value = dtf.format(&iso_converted).expect("calendars should match");
+/// assert_writeable_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -159,6 +160,7 @@ impl DateTimeFormatter {
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = locale!("en-u-ca-gregory");
@@ -174,10 +176,9 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf
-    ///     .format_to_string(&any_datetime)
-    ///     .expect("calendars should match");
-    /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(dtf
+    ///     .format(&any_datetime)
+    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
@@ -206,6 +207,7 @@ impl DateTimeFormatter {
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     /// use icu_provider::AsDeserializingBufferProvider;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
@@ -222,8 +224,7 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
-    /// assert_eq!(value, "September 2020");
+    /// assert_writeable_eq!(dtf.format(&any_datetime).expect("calendars should match"), "September 2020");
     /// ```
     #[cfg(feature = "experimental")]
     #[inline(never)]
@@ -297,6 +298,7 @@ impl DateTimeFormatter {
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = locale!("en-u-ca-gregory");
@@ -312,10 +314,9 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf
-    ///     .format_to_string(&any_datetime)
-    ///     .expect("calendars should match");
-    /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(dtf
+    ///     .format(&any_datetime)
+    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline(never)]
     pub fn try_new_unstable<P>(
@@ -381,6 +382,7 @@ impl DateTimeFormatter {
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
@@ -405,10 +407,9 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf
-    ///     .format_to_string(&any_datetime)
-    ///     .expect("calendars should match");
-    /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
+    /// assert_writeable_eq!(dtf
+    ///     .format(&any_datetime)
+    ///     .expect("calendars should match"), "Sep 1, 2020, 12:34 PM");
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -445,26 +446,6 @@ where {
         }
     }
 
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
-    ///
-    /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
-    /// will automatically convert and format dates that are associated with the ISO calendar.
-    #[inline]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput<Calendar = AnyCalendar>,
-    ) -> Result<(), DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            self.0.format_to_write(w, &converted)?;
-        } else {
-            self.0.format_to_write(w, value)?;
-        }
-        Ok(())
-    }
-
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
@@ -475,11 +456,7 @@ where {
         &self,
         value: &impl DateTimeInput<Calendar = AnyCalendar>,
     ) -> Result<String, DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            Ok(self.0.format_to_string(&converted))
-        } else {
-            Ok(self.0.format_to_string(value))
-        }
+        Ok(self.format(value)?.write_to_string().into_owned())
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the
@@ -555,24 +532,23 @@ where {
 
 #[cfg(test)]
 mod tests {
-    use core::str::FromStr;
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};
-    use icu::locid::Locale;
+    use icu::locid::{locale, Locale};
 
-    fn test_format(datetime: &DateTime<AnyCalendar>, locale: &str, expected: &str) {
+    fn test_format(datetime: &DateTime<AnyCalendar>, locale: Locale, expected: &str) {
         let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Short);
 
         let dtf = DateTimeFormatter::try_new_unstable(
             &icu_testdata::unstable(),
-            &Locale::from_str(locale).unwrap().into(),
+            &locale.into(),
             options.into(),
         )
         .unwrap();
-        let value = dtf
-            .format_to_string(datetime)
-            .expect("calendars should match");
-        assert_eq!(value, expected);
+        writeable::assert_writeable_eq!(
+            dtf.format(datetime).expect("calendars should match"),
+            expected
+        );
     }
 
     #[test]
@@ -581,12 +557,24 @@ mod tests {
         let datetime = DateTime::new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
-        test_format(&datetime, "fr", "5 avril 2022 à 12:33");
-        test_format(&datetime, "fr-u-ca-blahblah", "5 avril 2022 à 12:33");
+        test_format(&datetime, locale!("fr"), "5 avril 2022 à 12:33");
+        test_format(
+            &datetime,
+            locale!("fr-u-ca-blahblah"),
+            "5 avril 2022 à 12:33",
+        );
         // thai falls back to buddhist
-        test_format(&datetime, "th-u-ca-buddhist", "5 เมษายน 2565 12:33");
-        test_format(&datetime, "th", "5 เมษายน 2565 12:33");
+        test_format(
+            &datetime,
+            locale!("th-u-ca-buddhist"),
+            "5 เมษายน 2565 12:33",
+        );
+        test_format(&datetime, locale!("th"), "5 เมษายน 2565 12:33");
         // except when overridden
-        test_format(&datetime, "th-u-ca-gregory", "5 เมษายน ค.ศ. 2022 12:33");
+        test_format(
+            &datetime,
+            locale!("th-u-ca-gregory"),
+            "5 เมษายน ค.ศ. 2022 12:33",
+        );
     }
 }

@@ -47,28 +47,28 @@ class ICU4XGregorianDateFormatter {
   /**
    * Formats a [`ICU4XIsoDate`] to a string.
    * 
-   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write) for more information.
+   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_iso_date_to_writeable(const ICU4XIsoDate& value, W& write) const;
 
   /**
    * Formats a [`ICU4XIsoDate`] to a string.
    * 
-   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write) for more information.
+   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_iso_date(const ICU4XIsoDate& value) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] to a string.
    * 
-   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write) for more information.
+   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_iso_datetime_to_writeable(const ICU4XIsoDateTime& value, W& write) const;
 
   /**
    * Formats a [`ICU4XIsoDateTime`] to a string.
    * 
-   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write) for more information.
+   * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_iso_datetime(const ICU4XIsoDateTime& value) const;
   inline const capi::ICU4XGregorianDateFormatter* AsFFI() const { return this->inner.get(); }

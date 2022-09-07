@@ -17,6 +17,7 @@ use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 use crate::{
     calendar, input::DateInput, input::DateTimeInput, input::IsoTimeInput, CldrCalendar,
@@ -133,50 +134,12 @@ impl TimeFormatter {
     ///
     /// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
     /// ```
-    ///
-    /// At the moment, there's little value in using that over one of the other `format` methods,
-    /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
-    /// about formatted date and so on.
     #[inline]
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: IsoTimeInput,
     {
         self.0.format(value)
-    }
-
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`IsoTimeInput`] implementer and populates the buffer with a formatted value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::DateTime;
-    /// use icu::datetime::{options::length::Time, TimeFormatter};
-    /// use icu::locid::locale;
-    /// let tf = TimeFormatter::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("en").into(),
-    ///     Time::Short,
-    /// )
-    /// .expect("Failed to create TimeFormatter instance.");
-    ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
-    ///
-    /// let mut buffer = String::new();
-    /// tf.format_to_write(&mut buffer, &datetime)
-    ///     .expect("Failed to write to a buffer.");
-    ///
-    /// assert_eq!(buffer, "12:34 PM");
-    /// ```
-    #[inline]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl IsoTimeInput,
-    ) -> core::fmt::Result {
-        self.0.format_to_write(w, value)
     }
 
     /// Takes a [`IsoTimeInput`] implementer and returns it formatted as a string.
@@ -201,7 +164,7 @@ impl TimeFormatter {
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl IsoTimeInput) -> String {
-        self.0.format_to_string(value)
+        self.format(value).write_to_string().into_owned()
     }
 }
 
@@ -223,6 +186,7 @@ impl TimeFormatter {
 /// use icu::calendar::{Date, Gregorian};
 /// use icu::datetime::{options::length, TypedDateFormatter};
 /// use icu::locid::locale;
+/// use writeable::assert_writeable_eq;
 ///
 /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
 ///     &icu_testdata::unstable(),
@@ -234,7 +198,7 @@ impl TimeFormatter {
 /// let date = Date::new_gregorian_date(2020, 9, 1)
 ///     .expect("Failed to construct Date.");
 ///
-/// assert_eq!(df.format_to_string(&date), "Tuesday, September 1, 2020");
+/// assert_writeable_eq!(df.format(&date), "Tuesday, September 1, 2020");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -253,6 +217,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::calendar::Date;
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = TypedDateFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -261,9 +226,9 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// )
     /// .unwrap();
     ///
-    /// assert_eq!(
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::new_gregorian_date(2022, 8, 29).unwrap()),
     ///     "Monday, August 29, 2022",
-    ///     formatter.format_to_string(&Date::new_gregorian_date(2022, 8, 29).unwrap())
     /// );
     /// ```
     ///
@@ -276,6 +241,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::calendar::Date;
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let formatter = TypedDateFormatter::<Indian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -285,9 +251,9 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// .unwrap();
     ///
     /// // Indian format from type wins over locale keyword
-    /// assert_eq!(
+    /// assert_writeable_eq!(
+    ///     formatter.format(&Date::new_indian_date(1944, 6, 7).unwrap()),
     ///     "Monday, Bhadra 7, 1944 Saka",
-    ///     formatter.format_to_string(&Date::new_indian_date(1944, 6, 7).unwrap())
     /// );
     /// ```
     ///
@@ -347,50 +313,12 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// assert_writeable_eq!(df.format(&date), "Tuesday, September 1, 2020");
     /// ```
-    ///
-    /// At the moment, there's little value in using that over one of the other `format` methods,
-    /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
-    /// about formatted date and so on.
     #[inline]
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: DateInput<Calendar = C>,
     {
         self.0.format(value)
-    }
-
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::{Date, Gregorian};
-    /// use icu::datetime::{options::length, TypedDateFormatter};
-    /// use icu::locid::locale;
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
-    ///     &icu_testdata::unstable(),
-    ///     &locale!("en").into(),
-    ///     length::Date::Short,
-    /// )
-    /// .expect("Failed to create TypedDateFormatter instance.");
-    ///
-    /// let date = Date::new_gregorian_date(2020, 9, 1)
-    ///     .expect("Failed to construct Date.");
-    ///
-    /// let mut buffer = String::new();
-    /// df.format_to_write(&mut buffer, &date)
-    ///     .expect("Failed to write to a buffer.");
-    ///
-    /// assert_eq!(buffer, "9/1/20");
-    /// ```
-    #[inline]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl DateInput<Calendar = C>,
-    ) -> core::fmt::Result {
-        self.0.format_to_write(w, value)
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
@@ -415,7 +343,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateInput<Calendar = C>) -> String {
-        self.0.format_to_string(value)
+        self.format(value).write_to_string().into_owned()
     }
 }
 
@@ -438,6 +366,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::{options::length, TypedDateTimeFormatter};
 /// use icu::locid::locale;
+/// use writeable::assert_writeable_eq;
 ///
 /// let mut options = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
@@ -454,7 +383,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
-/// assert_eq!(dtf.format_to_string(&datetime), "Sep 1, 2020, 12:34 PM");
+/// assert_writeable_eq!(dtf.format(&datetime), "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -516,6 +445,7 @@ where {
     /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu_provider::AsDeserializingBufferProvider;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
@@ -530,7 +460,7 @@ where {
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
-    /// assert_eq!("August 2022", dtf.format_to_string(&datetime));
+    /// assert_writeable_eq!(dtf.format(&datetime), "August 2022");
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -579,6 +509,7 @@ where {
     /// use icu::calendar::{Gregorian, DateTime};
     /// use icu::datetime::{options::length, TypedDateTimeFormatter};
     /// use icu::locid::locale;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Medium);
     ///
@@ -591,7 +522,7 @@ where {
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
-    /// assert_eq!("Aug 31, 2022, 1:02:03 AM", dtf.format_to_string(&datetime));
+    /// assert_writeable_eq!(dtf.format(&datetime), "Aug 31, 2022, 1:02:03 AM");
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -653,47 +584,12 @@ where {
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "12:34:28 PM");
     /// ```
-    ///
-    /// At the moment, there's little value in using that over one of the other `format` methods,
-    /// but [`FormattedDateTime`] will grow with methods for iterating over fields, extracting information
-    /// about formatted date and so on.
     #[inline]
     pub fn format<'l, T>(&'l self, value: &T) -> FormattedDateTime<'l>
     where
         T: DateTimeInput<Calendar = C>,
     {
         self.0.format(value)
-    }
-
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::TypedDateTimeFormatter;
-    /// use icu::locid::locale;
-    /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
-    ///     .expect("Failed to create TypedDateTimeFormatter instance.");
-    ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
-    ///     .expect("Failed to construct DateTime.");
-    ///
-    /// let mut buffer = String::new();
-    /// dtf.format_to_write(&mut buffer, &datetime)
-    ///     .expect("Failed to write to a buffer.");
-    ///
-    /// assert_eq!(buffer, "12:34:28 PM");
-    /// ```
-    #[inline]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput<Calendar = C>,
-    ) -> core::fmt::Result {
-        self.0.format_to_write(w, value)
     }
 
     /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
@@ -715,7 +611,7 @@ where {
     /// ```
     #[inline]
     pub fn format_to_string(&self, value: &impl DateTimeInput<Calendar = C>) -> String {
-        self.0.format_to_string(value)
+        self.format(value).write_to_string().into_owned()
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the

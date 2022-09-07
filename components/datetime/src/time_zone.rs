@@ -65,6 +65,7 @@ where
 /// use icu_datetime::TimeZoneFormatter;
 /// use icu_locid::locale;
 /// use tinystr::tinystr;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Set up the time zone. Note: the inputs here are
 /// //   1. The GMT offset
@@ -88,8 +89,8 @@ where
 /// tzf.load_generic_non_location_long(&icu_testdata::unstable()).unwrap();
 ///
 /// // Check the result:
-/// assert_eq!(
-///     tzf.format_to_string(&time_zone),
+/// assert_writeable_eq!(
+///     tzf.format(&time_zone),
 ///     "Central Time"
 /// );
 /// ```
@@ -367,7 +368,7 @@ impl TimeZoneFormatter {
     /// use icu::timezone::CustomTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
-    ///
+    /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -377,8 +378,8 @@ impl TimeZoneFormatter {
     ///
     /// let time_zone = "-0700".parse::<CustomTimeZone>().unwrap();
     ///
-    /// assert_eq!(
-    ///     tzf.format_to_string(&time_zone),
+    /// assert_writeable_eq!(
+    ///     tzf.format(&time_zone),
     ///     "GMT-07:00"
     /// );
     /// ```
@@ -592,18 +593,6 @@ impl TimeZoneFormatter {
 
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]
     /// that contains all information necessary to display a formatted time zone and operate on it.
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
-    where
-        T: TimeZoneInput,
-    {
-        FormattedTimeZone {
-            time_zone_format: self,
-            time_zone: value,
-        }
-    }
-
-    /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write)
-    /// trait and a [`TimeZoneInput`] implementer that populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
@@ -611,6 +600,7 @@ impl TimeZoneFormatter {
     /// use icu::timezone::CustomTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -621,25 +611,21 @@ impl TimeZoneFormatter {
     ///
     /// let time_zone = CustomTimeZone::utc();
     ///
-    /// let mut buffer = String::new();
-    /// tzf.format_to_write(&mut buffer, &time_zone)
-    ///     .expect("Failed to write to a buffer.");
-    ///
-    /// assert_eq!("GMT", buffer);
+    /// assert_writeable_eq!(tzf.format(&time_zone), "GMT");
     /// ```
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl TimeZoneInput,
-    ) -> fmt::Result {
-        self.format(value).write_to(w)
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
+    where
+        T: TimeZoneInput,
+    {
+        FormattedTimeZone {
+            time_zone_format: self,
+            time_zone: value,
+        }
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.
     pub fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
-        let mut s = String::new();
-        let _ = self.format_to_write(&mut s, value);
-        s
+        self.format(value).write_to_string().into_owned()
     }
 
     /// Formats a time segment with optional zero-padding.

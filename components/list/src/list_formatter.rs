@@ -80,6 +80,15 @@ impl ListFormatter {
             values,
         }
     }
+
+    /// Returns a [`String`] composed of the input [`Writeable`]s and the language-dependent
+    /// formatting.
+    pub fn format_to_string<W: Writeable, I: Iterator<Item = W> + Clone>(
+        &self,
+        values: I,
+    ) -> alloc::string::String {
+        self.format(values).write_to_string().into_owned()
+    }
 }
 
 /// The [`Part`]s used by [`ListFormatter`].

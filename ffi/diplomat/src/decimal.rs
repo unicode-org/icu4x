@@ -97,6 +97,11 @@ pub mod ffi {
 
         /// Formats a [`ICU4XFixedDecimal`] to a string.
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::format, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::decimal::FixedDecimalFormatter::format_to_string,
+            FnInStruct,
+            hidden
+        )]
         pub fn format(
             &self,
             value: &ICU4XFixedDecimal,

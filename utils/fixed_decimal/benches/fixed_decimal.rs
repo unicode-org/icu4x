@@ -118,12 +118,7 @@ fn to_string_benches(c: &mut Criterion) {
             group.bench_with_input(
                 BenchmarkId::from_parameter(object.to_string()),
                 object,
-                |b, object| {
-                    b.iter(|| {
-                        let mut result = String::with_capacity(object.write_len().capacity());
-                        object.write_to(&mut result)
-                    })
-                },
+                |b, object| b.iter(|| object.write_to_string().into_owned()),
             );
         }
         group.finish();

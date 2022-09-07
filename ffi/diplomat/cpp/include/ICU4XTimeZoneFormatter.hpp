@@ -112,8 +112,6 @@ class ICU4XTimeZoneFormatter {
    * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format) for more information.
    * 
    * See the [Rust documentation for `format_to_string`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
-   * 
-   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_write) for more information.
    */
   template<typename W> diplomat::result<std::monostate, ICU4XError> format_custom_time_zone_to_writeable(const ICU4XCustomTimeZone& value, W& write) const;
 
@@ -123,8 +121,6 @@ class ICU4XTimeZoneFormatter {
    * See the [Rust documentation for `format`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format) for more information.
    * 
    * See the [Rust documentation for `format_to_string`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_string) for more information.
-   * 
-   * See the [Rust documentation for `format_to_write`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeZoneFormatter.html#method.format_to_write) for more information.
    */
   diplomat::result<std::string, ICU4XError> format_custom_time_zone(const ICU4XCustomTimeZone& value) const;
   inline const capi::ICU4XTimeZoneFormatter* AsFFI() const { return this->inner.get(); }

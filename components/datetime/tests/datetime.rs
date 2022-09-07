@@ -43,9 +43,9 @@ use patterns::{
         time_zones::{TimeZoneConfig, TimeZoneExpectation},
     },
 };
-use std::fmt::Write;
 use std::str::FromStr;
 use tinystr::tinystr;
+use writeable::{assert_writeable_eq, Writeable};
 
 mod mock;
 
@@ -216,33 +216,21 @@ fn assert_fixture_element<A>(
         )
     };
 
-    let result = dtf.format_to_string(input_value);
+    assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
 
-    assert_eq!(result, output_value, "{}", description);
-
-    let result = any_dtf.format_to_string(&any_input).unwrap();
-
-    assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
-
-    let result = any_dtf.format_to_string(&iso_any_input).unwrap();
-
-    assert_eq!(
-        result, output_value,
-        "(DateTimeFormatter iso conversion) {}",
+    assert_writeable_eq!(
+        any_dtf.format(&any_input).unwrap(),
+        output_value,
+        "(DateTimeFormatter) {}",
         description
     );
 
-    let mut s = String::new();
-    dtf.format_to_write(&mut s, input_value).unwrap();
-    assert_eq!(s, output_value, "{}", description);
-
-    let fdt = dtf.format(input_value);
-    let s = fdt.to_string();
-    assert_eq!(s, output_value, "{}", description);
-
-    let mut s = String::new();
-    write!(s, "{}", fdt).unwrap();
-    assert_eq!(s, output_value, "{}", description);
+    assert_writeable_eq!(
+        any_dtf.format(&iso_any_input).unwrap(),
+        output_value,
+        "(DateTimeFormatter iso conversion) {}",
+        description
+    );
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
@@ -260,21 +248,7 @@ fn assert_fixture_element<A>(
             .unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
-            let result = dtf.format_to_string(input_value);
-
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            dtf.format_to_write(&mut s, input_value).unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = dtf.format(input_value);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
         } else if bag.date.is_some() {
             let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
                 &icu_testdata::unstable(),
@@ -282,21 +256,8 @@ fn assert_fixture_element<A>(
                 bag.date.unwrap(),
             )
             .unwrap();
-            let result = df.format_to_string(input_value);
 
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            df.format_to_write(&mut s, input_value).unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = df.format(input_value);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            assert_writeable_eq!(df.format(input_value), output_value, "{}", description);
         } else if bag.time.is_some() {
             let tf = TimeFormatter::try_new_unstable(
                 &icu_testdata::unstable(),
@@ -305,21 +266,7 @@ fn assert_fixture_element<A>(
             )
             .unwrap();
 
-            let result = tf.format_to_string(input_value);
-
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            tf.format_to_write(&mut s, input_value).unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = tf.format(input_value);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            assert_writeable_eq!(tf.format(input_value), output_value, "{}", description);
         }
     }
 }
@@ -374,22 +321,12 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
                 )
                 .unwrap()
             };
-            let result = dtf.format_to_string(&input_date, &time_zone);
-
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            dtf.format_to_write(&mut s, &input_date, &time_zone)
-                .unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = dtf.format(&input_date, &time_zone);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            assert_writeable_eq!(
+                dtf.format(&input_date, &time_zone),
+                output_value,
+                "{}",
+                description
+            );
         }
     }
 }
@@ -504,8 +441,8 @@ fn test_dayperiod_patterns() {
                             Default::default(),
                         )
                         .unwrap();
-                        assert_eq!(
-                            dtf.format(&datetime).to_string(),
+                        assert_writeable_eq!(
+                            dtf.format(&datetime),
                             *expected,
                             "\n\
                             locale:   `{}`,\n\
@@ -547,10 +484,8 @@ fn test_time_zone_format_configs() {
                     )
                     .unwrap();
                     config_input.set_on_formatter(&mut tzf).unwrap();
-                    let mut buffer = String::new();
-                    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
-                    assert_eq!(
-                        buffer.to_string(),
+                    assert_writeable_eq!(
+                        tzf.format(&time_zone),
                         *expect,
                         "\n\
                     locale:   `{}`,\n\
@@ -585,8 +520,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         Default::default(),
     )
     .unwrap();
-    let mut buffer = String::new();
-    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
+    tzf.format(&time_zone).write_to_string();
 }
 
 #[test]
@@ -604,9 +538,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         Default::default(),
     )
     .unwrap();
-    let mut buffer = String::new();
-    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
-    assert_eq!(buffer.to_string(), "GMT+?".to_string());
+    assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?".to_string());
 }
 
 #[test]
@@ -779,8 +711,8 @@ fn test_time_zone_patterns() {
                     )
                     .unwrap();
 
-                    assert_eq!(
-                        dtf.format(&datetime, &time_zone).to_string(),
+                    assert_writeable_eq!(
+                        dtf.format(&datetime, &time_zone),
                         *expect,
                         "\n\
                     locale:   `{}`,\n\
@@ -913,8 +845,8 @@ fn test_vertical_fallback_disabled() {
     .unwrap();
 
     // This should work for length bag. It doesn't currently work for components bag.
-    assert_eq!(
+    assert_writeable_eq!(
+        dtf.format(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap()),
         "mardi 5 avril 2022 à 12:33",
-        dtf.format_to_string(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap())
     );
 }

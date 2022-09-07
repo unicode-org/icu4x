@@ -18,6 +18,7 @@ use icu_calendar::provider::{
 use icu_calendar::{types::Time, DateTime};
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
+use writeable::Writeable;
 
 /// [`ZonedDateTimeFormatter`] is a formatter capable of formatting
 /// date/times with timezones from any calendar, selected at runtime. For the difference between this and [`TypedZonedDateTimeFormatter`](crate::TypedZonedDateTimeFormatter),
@@ -44,6 +45,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// use icu::datetime::{options::length, ZonedDateTimeFormatter};
 /// use icu::locid::locale;
 /// use icu::timezone::CustomTimeZone;
+/// use writeable::assert_writeable_eq;
 ///
 /// let options = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
@@ -55,7 +57,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///     options.into(),
 ///     Default::default(),
 /// )
-/// .expect("Failed to create TypedDateTimeFormatter instance.");
+/// .expect("Failed to create ZonedDateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -64,11 +66,11 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// let time_zone: CustomTimeZone =
 ///     "+05:00".parse().expect("Timezone should parse");
 ///
-/// let value = zdtf
-///     .format_to_string(&any_datetime, &time_zone)
-///     .expect("calendars should match");
-///
-/// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
+/// assert_writeable_eq!(
+///     zdtf
+///       .format(&any_datetime, &time_zone)
+///       .expect("calendars should match"),
+///     "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
 pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
@@ -95,6 +97,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use icu_provider::AsDeserializingBufferProvider;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
@@ -114,8 +117,8 @@ impl ZonedDateTimeFormatter {
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_eq!(
-    ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
+    /// assert_writeable_eq!(
+    ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
     ///     "April 2021 at 16:12 GMT-07:00"
     /// );
     /// ```
@@ -206,6 +209,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
     /// let locale = locale!("en-u-ca-gregory");
@@ -221,8 +225,8 @@ impl ZonedDateTimeFormatter {
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_eq!(
-    ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
+    /// assert_writeable_eq!(
+    ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
     ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
@@ -314,6 +318,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
     /// let locale = locale!("en-u-ca-gregory");
@@ -330,8 +335,8 @@ impl ZonedDateTimeFormatter {
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_eq!(
-    ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
+    /// assert_writeable_eq!(
+    ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
     ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
@@ -371,6 +376,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long).into();
     /// let locale = locale!("en");
@@ -387,8 +393,8 @@ impl ZonedDateTimeFormatter {
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
-    /// assert_eq!(
-    ///     zdtf.format_to_string(&any_datetime, &time_zone).unwrap(),
+    /// assert_writeable_eq!(
+    ///     zdtf.format(&any_datetime, &time_zone).unwrap(),
     ///     "Apr 8, 2021, 4:12:37 PM GMT-07:00"
     /// );
     /// ```
@@ -414,7 +420,7 @@ impl ZonedDateTimeFormatter {
     /// AnyCalendar. Please convert dates before passing them in if necessary. This function
     /// will automatically convert and format dates that are associated with the ISO calendar.
     #[inline]
-    pub fn format<'l, T>(
+    pub fn format<'l>(
         &'l self,
         date: &impl DateTimeInput<Calendar = AnyCalendar>,
         time_zone: &impl TimeZoneInput,
@@ -424,27 +430,6 @@ impl ZonedDateTimeFormatter {
         } else {
             Ok(self.0.format(date, time_zone))
         }
-    }
-
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] and a [`TimeZoneInput`] and populates the buffer with a formatted value.
-    ///
-    /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
-    /// will automatically convert and format dates that are associated with the ISO calendar.
-    #[inline]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        date: &impl DateTimeInput<Calendar = AnyCalendar>,
-        time_zone: &impl TimeZoneInput,
-    ) -> Result<(), DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(date)? {
-            self.0.format_to_write(w, &converted, time_zone)?;
-        } else {
-            self.0.format_to_write(w, date, time_zone)?;
-        }
-        Ok(())
     }
 
     /// Takes a [`DateTimeInput`] and a [`TimeZoneInput`] and returns it formatted as a string.
@@ -458,11 +443,7 @@ impl ZonedDateTimeFormatter {
         date: &impl DateTimeInput<Calendar = AnyCalendar>,
         time_zone: &impl TimeZoneInput,
     ) -> Result<String, DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(date)? {
-            Ok(self.0.format_to_string(&converted, time_zone))
-        } else {
-            Ok(self.0.format_to_string(date, time_zone))
-        }
+        Ok(self.format(date, time_zone)?.write_to_string().into_owned())
     }
 
     /// Converts a date to the correct calendar if necessary

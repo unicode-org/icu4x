@@ -13,7 +13,6 @@ use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_decimal::FixedDecimalFormatter;
 use icu_locid::Locale;
 use icu_provider_adapters::any_payload::AnyPayloadProvider;
-use writeable::Writeable;
 
 fn triangular_nums(range: f64) -> Vec<isize> {
     // Use Lcg64Xsh32, a small, fast PRNG.
@@ -41,7 +40,7 @@ fn overview_bench(c: &mut Criterion) {
             .unwrap();
             for &num in &nums {
                 let fd = FixedDecimal::from(black_box(num));
-                fdf.format(&fd).write_to_string().into_owned();
+                fdf.format_to_string(&fd);
             }
         });
     });

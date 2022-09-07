@@ -67,13 +67,11 @@ icu::datetime::TypedDateTimeFormatter::try_new_experimental_unstable#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter#Struct
 icu::datetime::TypedZonedDateTimeFormatter::format#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::format_to_string#FnInStruct
-icu::datetime::TypedZonedDateTimeFormatter::format_to_write#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental_unstable#FnInStruct
 icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable#FnInStruct
 icu::datetime::ZonedDateTimeFormatter#Struct
 icu::datetime::ZonedDateTimeFormatter::format#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::format_to_string#FnInStruct
-icu::datetime::ZonedDateTimeFormatter::format_to_write#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::try_new_experimental_unstable#FnInStruct
 icu::datetime::ZonedDateTimeFormatter::try_new_unstable#FnInStruct
 icu::datetime::options::DateTimeFormatterOptions#Enum

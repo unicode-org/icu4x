@@ -1682,21 +1682,17 @@ impl FixedDecimal {
     }
 }
 
+/// Render the `FixedDecimal` as a string of ASCII digits with a possible decimal point.
+///
+/// # Examples
+///
+/// ```
+/// #use fixed_decimal::FixedDecimal;
+/// #use writeable::assert_writeable_eq;
+/// #
+/// assert_writeable_eq!(FixedDecimal::from(42), "42");
+/// ```
 impl writeable::Writeable for FixedDecimal {
-    /// Render the `FixedDecimal` as a string of ASCII digits with a possible decimal point.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// use writeable::Writeable;
-    ///
-    /// let dec = FixedDecimal::from(42);
-    /// let mut result = String::with_capacity(dec.write_len().capacity());
-    /// dec.write_to(&mut result)
-    ///     .expect("write_to(String) should not fail");
-    /// assert_eq!("42", result);
-    /// ```
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
         match self.sign {
             Sign::Negative => sink.write_char('-')?,
@@ -1713,21 +1709,6 @@ impl writeable::Writeable for FixedDecimal {
         Ok(())
     }
 
-    /// The number of bytes that will be written by `FixedDecimal::write_to`. Use this function to
-    /// pre-allocate capacity in the destination buffer.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use fixed_decimal::FixedDecimal;
-    /// use writeable::LengthHint;
-    /// use writeable::Writeable;
-    ///
-    /// let dec = FixedDecimal::from(-5000)
-    ///     .multiplied_pow10(-2);
-    /// let result = dec.write_to_string();
-    /// assert_eq!(LengthHint::exact(6), dec.write_len());
-    /// ```
     fn write_len(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
@@ -1983,35 +1964,35 @@ impl FixedDecimal {
     ///
     /// ```rust
     /// use fixed_decimal::{DoublePrecision, FixedDecimal};
-    /// use writeable::Writeable;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let decimal = FixedDecimal::try_from_f64(
     ///     -5.1,
     ///     DoublePrecision::Magnitude(-2),
     /// )
     /// .expect("Finite quantity with limited precision");
-    /// assert_eq!(decimal.write_to_string(), "-5.10");
+    /// assert_writeable_eq!(decimal, "-5.10");
     ///
     /// let decimal = FixedDecimal::try_from_f64(0.012345678, DoublePrecision::Floating)
     ///     .expect("Finite quantity");
-    /// assert_eq!(decimal.write_to_string(), "0.012345678");
+    /// assert_writeable_eq!(decimal, "0.012345678");
     ///
     /// let decimal = FixedDecimal::try_from_f64(12345678000., DoublePrecision::Integer)
     ///     .expect("Finite, integer-valued quantity");
-    /// assert_eq!(decimal.write_to_string(), "12345678000");
+    /// assert_writeable_eq!(decimal, "12345678000");
     /// ```
     ///
     /// Negative zero is supported.
     ///
     /// ```rust
     /// use fixed_decimal::{DoublePrecision, FixedDecimal};
-    /// use writeable::Writeable;
+    /// use writeable::assert_writeable_eq;
     ///
     /// // IEEE 754 for floating point defines the sign bit separate
     /// // from the mantissa and exponent, allowing for -0.
     /// let negative_zero =
     ///     FixedDecimal::try_from_f64(-0.0, DoublePrecision::Integer).expect("Negative zero");
-    /// assert_eq!(negative_zero.write_to_string(), "-0");
+    /// assert_writeable_eq!(negative_zero, "-0");
     /// ```
     pub fn try_from_f64(float: f64, precision: DoublePrecision) -> Result<Self, Error> {
         let mut decimal = Self::new_from_f64_raw(float)?;
