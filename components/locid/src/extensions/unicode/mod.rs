@@ -194,11 +194,7 @@ impl Unicode {
     }
 }
 
-impl core::fmt::Display for Unicode {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
+writeable::impl_display_with_writeable!(Unicode);
 
 impl writeable::Writeable for Unicode {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {

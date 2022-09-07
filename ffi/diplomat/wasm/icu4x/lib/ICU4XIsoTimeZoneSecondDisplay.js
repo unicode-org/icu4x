@@ -7,8 +7,8 @@ export const ICU4XIsoTimeZoneSecondDisplay_js_to_rust = {
 };
 
 export const ICU4XIsoTimeZoneSecondDisplay_rust_to_js = {
-  0: "Optional",
-  1: "Never",
+  [0]: "Optional",
+  [1]: "Never",
 };
 
 export const ICU4XIsoTimeZoneSecondDisplay = {

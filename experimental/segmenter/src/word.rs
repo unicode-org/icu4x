@@ -32,8 +32,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordBreakSegmenter;
-/// let provider = icu_testdata::get_provider();
-/// let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+/// let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_str("Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);
@@ -43,8 +42,7 @@ pub type WordBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTyp
 ///
 /// ```rust
 /// use icu_segmenter::WordBreakSegmenter;
-/// let provider = icu_testdata::get_provider();
-/// let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+/// let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
 ///
 /// let breakpoints: Vec<usize> = segmenter.segment_latin1(b"Hello World").collect();
 /// assert_eq!(&breakpoints, &[0, 5, 6, 11]);

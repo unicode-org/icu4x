@@ -51,11 +51,12 @@ use crate::{
 /// use icu::timezone::CustomTimeZone;
 /// use std::str::FromStr;
 ///
-/// let provider = icu_testdata::get_provider();
-///
-/// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
-/// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-///     &provider,
+/// let options = length::Bag::from_date_time_style(
+///     length::Date::Medium,
+///     length::Time::Short,
+/// );
+/// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     options.into(),
 ///     TimeZoneFormatterOptions::default(),
@@ -82,8 +83,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::locid::locale;
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// use icu_timezone::CustomTimeZone;
-    ///
-    /// let provider = icu_testdata::get_provider();
+    /// use icu_provider::AsDeserializingBufferProvider;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
@@ -93,7 +93,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// options.time_zone_name = Some(components::TimeZoneName::GmtOffset);
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
-    ///     &provider,
+    ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en").into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
@@ -166,12 +166,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu_datetime::TimeZoneFormatterOptions;
     /// use icu_timezone::CustomTimeZone;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
     ///
-    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     options.into(),
     ///     TimeZoneFormatterOptions::default(),
@@ -243,18 +241,15 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedZonedDateTimeFormatter;
-    /// use icu_datetime::TimeZoneFormatterOptions;
+    /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// # let options = icu::datetime::DateTimeFormatterOptions::default();
-    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
-    ///     &locale.into(),
-    ///     options,
-    ///     TimeZoneFormatterOptions::default(),
+    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    ///     Default::default(),
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
@@ -286,18 +281,15 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedZonedDateTimeFormatter;
-    /// use icu_datetime::TimeZoneFormatterOptions;
+    /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// # let options = icu::datetime::DateTimeFormatterOptions::default();
-    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
-    ///     &locale.into(),
-    ///     options.into(),
-    ///     TimeZoneFormatterOptions::default(),
+    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    ///     Default::default(),
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
@@ -327,18 +319,15 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedZonedDateTimeFormatter;
-    /// use icu_datetime::TimeZoneFormatterOptions;
+    /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// # let options = icu::datetime::DateTimeFormatterOptions::default();
-    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
-    ///     &locale.into(),
-    ///     options.into(),
-    ///     TimeZoneFormatterOptions::default(),
+    /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     Default::default(),
+    ///     Default::default(),
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///

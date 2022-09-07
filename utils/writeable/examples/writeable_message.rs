@@ -37,6 +37,13 @@ impl<V: Writeable> Writeable for WriteableMessage<V> {
     }
 }
 
+impl<V: Writeable> fmt::Display for WriteableMessage<V> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.write_to(f)
+    }
+}
+
 fn main() {
     icu_benchmark_macros::main_setup!();
 

@@ -386,12 +386,6 @@ macro_rules! impl_tinystr_subtag {
             }
         }
 
-        impl core::fmt::Display for $name {
-            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-                f.write_str(&self.0)
-            }
-        }
-
         impl writeable::Writeable for $name {
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 sink.write_str(self.as_str())
@@ -402,6 +396,7 @@ macro_rules! impl_tinystr_subtag {
             }
         }
 
+        writeable::impl_display_with_writeable!($name);
 
         #[doc = concat!("A macro allowing for compile-time construction of valid [`", stringify!($name), "`] subtags.")]
         ///
@@ -552,12 +547,6 @@ macro_rules! impl_tinystr_subtag {
 
 macro_rules! impl_writeable_for_each_subtag_str_no_test {
     ($type:tt) => {
-        impl core::fmt::Display for $type {
-            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-                writeable::Writeable::write_to(self, f)
-            }
-        }
-
         impl writeable::Writeable for $type {
             fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
                 let mut initial = true;
@@ -588,6 +577,8 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
                 result
             }
         }
+
+        writeable::impl_display_with_writeable!($type);
     };
 }
 

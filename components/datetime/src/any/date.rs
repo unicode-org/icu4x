@@ -38,18 +38,18 @@ use icu_provider::DataLocale;
 /// use icu::locid::locale;
 /// use std::str::FromStr;
 ///
-/// let provider = icu_testdata::get_provider();
-///
 /// let length = length::Date::Medium;
 ///
-/// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale!("en-u-ca-gregory").into(), length)
+/// let df = DateFormatter::try_new_unstable(&icu_testdata::unstable(), &locale!("en-u-ca-gregory").into(), length)
 ///     .expect("Failed to create TypedDateFormatter instance.");
 ///
 /// let date = Date::new_iso_date(2020, 9, 1)
 ///     .expect("Failed to construct Date.");
 /// let any_date = date.to_any();
 ///
-/// let value = df.format_to_string(&any_date).expect("calendars should match");
+/// let value = df
+///     .format_to_string(&any_date)
+///     .expect("calendars should match");
 /// assert_eq!(value, "Sep 1, 2020");
 /// ```
 ///
@@ -107,19 +107,23 @@ impl DateFormatter {
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_with_buffer_provider(
+    ///     &icu_testdata::buffer(),
+    ///     &locale.into(),
+    ///     length,
+    /// )
+    /// .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime = Date::new_iso_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = df.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = df
+    ///     .format_to_string(&any_datetime)
+    ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020");
     /// ```
     #[inline]
@@ -155,19 +159,23 @@ impl DateFormatter {
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_unstable(&provider, &locale.into(), length)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale.into(),
+    ///     length,
+    /// )
+    /// .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let datetime = Date::new_iso_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = df.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = df
+    ///     .format_to_string(&any_datetime)
+    ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020");
     /// ```
     #[inline(never)]

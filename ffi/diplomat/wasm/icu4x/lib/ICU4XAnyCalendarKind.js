@@ -15,15 +15,15 @@ export const ICU4XAnyCalendarKind_js_to_rust = {
 };
 
 export const ICU4XAnyCalendarKind_rust_to_js = {
-  0: "Iso",
-  1: "Gregorian",
-  2: "Buddhist",
-  3: "Japanese",
-  4: "JapaneseExtended",
-  5: "Ethiopian",
-  6: "EthiopianAmeteAlem",
-  7: "Indian",
-  8: "Coptic",
+  [0]: "Iso",
+  [1]: "Gregorian",
+  [2]: "Buddhist",
+  [3]: "Japanese",
+  [4]: "JapaneseExtended",
+  [5]: "Ethiopian",
+  [6]: "EthiopianAmeteAlem",
+  [7]: "Indian",
+  [8]: "Coptic",
 };
 
 export const ICU4XAnyCalendarKind = {

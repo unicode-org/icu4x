@@ -9,10 +9,10 @@ export const ICU4XIsoTimeZoneFormat_js_to_rust = {
 };
 
 export const ICU4XIsoTimeZoneFormat_rust_to_js = {
-  0: "Basic",
-  1: "Extended",
-  2: "UtcBasic",
-  3: "UtcExtended",
+  [0]: "Basic",
+  [1]: "Extended",
+  [2]: "UtcBasic",
+  [3]: "UtcExtended",
 };
 
 export const ICU4XIsoTimeZoneFormat = {

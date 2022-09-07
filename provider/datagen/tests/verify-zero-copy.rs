@@ -61,7 +61,7 @@ fn main() {
     .filterable("icu4x-datagen locales")
     .filter_by_langid_allowlist_strict(&selected_locales);
 
-    let provider = icu_testdata::get_postcard_provider();
+    let provider = icu_testdata::buffer_no_fallback();
 
     // violations for net_bytes_allocated
     let mut net_violations = BTreeSet::new();

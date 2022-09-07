@@ -7,8 +7,8 @@ export const ICU4XTransformResult_js_to_rust = {
 };
 
 export const ICU4XTransformResult_rust_to_js = {
-  0: "Modified",
-  1: "Unmodified",
+  [0]: "Modified",
+  [1]: "Unmodified",
 };
 
 export const ICU4XTransformResult = {

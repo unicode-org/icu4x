@@ -207,6 +207,14 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
     }
 }
 
+impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> core::fmt::Display
+    for FormattedList<'a, W, I>
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.write_to(f)
+    }
+}
+
 #[cfg(all(test, feature = "datagen"))]
 mod tests {
     use super::*;

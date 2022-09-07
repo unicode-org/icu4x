@@ -4,20 +4,20 @@
 
 //! `icu_testdata` is a unit testing crate for [`ICU4X`].
 //!
-//! The crate exposes a data provider with stable data useful for unit testing. The data is
+//! The crate exposes data providers with stable data useful for unit testing. The data is
 //! based on a CLDR tag and a short list of locales that, together, cover a range of scenarios.
 //!
-//! There are four modes of operation, enabled by features:
-//! * `static` (default) exposes [`get_postcard_provider`].
-//! * `fs` exposes [`get_json_provider`]
-//! * `baked` exposes [`get_baked_provider`].
-//! * `metadata` exposes the [`metadata`] module which contains information such as the CLDR Gitref
-//!   and the list of included locales.
+//! The crate exposes three kinds of providers, corresponding to the three types of constructors
+//! in ICU:
+//! * [`unstable`], [`unstable_no_fallback`]
+//! * [`any`], [`any_no_fallback`]
+//! * [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`buffer` feature)
 //!
-//! However, clients should not generally choose a specific provider, but rather use [`get_provider`].
-//! This is currently an alias for [`get_postcard_provider`], as it is fast and has few dependencies.
 //!
-//! # Re-generating the data
+//! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
+//! such as the CLDR Gitref  and the list of included locales.
+//!
+//! # `bin` feature
 //!
 //! ## Downloading fresh CLDR data
 //!
@@ -25,7 +25,7 @@
 //! $ cargo run --bin --features=bin icu4x-testdata-download-sources
 //! ```
 //!
-//! ## Regenerating JSON and postcard data
+//! ## Regenerating data
 //!
 //! ```bash
 //! $ cargo run --bin --features=bin icu4x-testdata-datagen
@@ -35,23 +35,51 @@
 //!
 //! ```
 //! use icu_locid::locale;
+//! use icu_provider::hello_world::*;
 //! use icu_provider::prelude::*;
-//! use std::borrow::Cow;
 //!
-//! let data_provider = icu_testdata::get_provider();
+//! let req = DataRequest {
+//!     locale: &locale!("en").into(),
+//!     metadata: Default::default(),
+//! };
 //!
-//! let data: DataPayload<icu_plurals::provider::CardinalV1Marker> = data_provider
-//!     .load(DataRequest {
-//!         locale: &locale!("ru").into(),
-//!         metadata: Default::default(),
-//!     })
+//! assert_eq!(
+//!     DataProvider::<HelloWorldV1Marker>::load(
+//!         &icu_testdata::unstable(),
+//!         req
+//!     )
+//!     .and_then(DataResponse::take_payload)
 //!     .unwrap()
-//!     .take_payload()
-//!     .unwrap();
-//! let rule = "v = 0 and i % 10 = 2..4 and i % 100 != 12..14"
-//!     .parse()
-//!     .expect("Failed to parse plural rule");
-//! assert_eq!(data.get().few, Some(rule));
+//!     .get()
+//!     .message,
+//!     "Hello World"
+//! );
+//!
+//! assert_eq!(
+//!     BufferProvider::load_buffer(
+//!         &icu_testdata::buffer(),
+//!         HelloWorldV1Marker::KEY,
+//!         req
+//!     )
+//!     .and_then(DataResponse::take_payload)
+//!     .unwrap()
+//!     .get(),
+//!     &b"\x0bHello World"
+//! );
+//!
+//! assert_eq!(
+//!     AnyProvider::load_any(
+//!         &icu_testdata::any(),
+//!         HelloWorldV1Marker::KEY,
+//!         req
+//!     )
+//!     .and_then(AnyResponse::downcast::<HelloWorldV1Marker>)
+//!     .and_then(DataResponse::take_payload)
+//!     .unwrap()
+//!     .get()
+//!     .message,
+//!     "Hello World"
+//! );
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -128,73 +156,76 @@ pub mod versions {
 #[cfg(feature = "std")]
 pub mod paths;
 
-#[cfg(feature = "static")]
-use {
-    icu_provider_adapters::fallback::LocaleFallbackProvider, icu_provider_blob::StaticDataProvider,
-};
+use icu_provider::prelude::*;
+use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
-#[cfg(feature = "fs")]
-use icu_provider_fs::FsDataProvider;
+/// A data provider that is compatible with all ICU `_unstable` constructors.
+///
+/// The return type of this method is not considered stable, mirroring the unstable trait
+/// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
+/// these are guaranteed to match.
+pub fn unstable() -> LocaleFallbackProvider<UnstableDataProvider> {
+    // The statically compiled data file is valid.
+    #[allow(clippy::unwrap_used)]
+    LocaleFallbackProvider::try_new_unstable(unstable_no_fallback()).unwrap()
+}
 
-/// Get a data, loading from the test data JSON directory.
+/// A data provider that is compatible with all ICU `_unstable` constructors.
 ///
-/// You can optionally specify your own test data with the
-/// `ICU4X_TESTDATA_DIR` environment variable.
-///
-/// # Panics
-///
-/// Panics if unable to load the data.
-// The function is documented to allow panics.
-#[allow(clippy::panic)]
-#[cfg(feature = "fs")]
-pub fn get_json_provider() -> FsDataProvider {
+/// The return type of this method is not considered stable, mirroring the unstable trait
+/// bounds of the constructors. For matching versions of `icu` and `icu_testdata`, however,
+/// these are guaranteed to match.
+pub fn unstable_no_fallback() -> UnstableDataProvider {
+    UnstableDataProvider
+}
+
+/// An [`AnyProvider`] backed by baked data.
+pub fn any() -> impl AnyProvider {
+    // The baked data is valid.
+    #[allow(clippy::unwrap_used)]
+    LocaleFallbackProvider::try_new_with_any_provider(any_no_fallback()).unwrap()
+}
+
+/// An [`AnyProvider`] backed by baked data.
+pub fn any_no_fallback() -> impl AnyProvider {
+    UnstableDataProvider
+}
+
+/// A [`BufferProvider`] backed by a Postcard blob.
+#[cfg(feature = "buffer")]
+pub fn buffer() -> impl BufferProvider {
+    // The statically compiled data file is valid.
+    #[allow(clippy::unwrap_used)]
+    LocaleFallbackProvider::try_new_with_buffer_provider(buffer_no_fallback()).unwrap()
+}
+
+/// A [`BufferProvider`] backed by a Postcard blob.
+#[cfg(feature = "buffer")]
+pub fn buffer_no_fallback() -> impl BufferProvider {
     lazy_static::lazy_static! {
-        static ref JSON: FsDataProvider = {
-            let path = match std::env::var_os("ICU4X_TESTDATA_DIR") {
-                Some(val) => val.into(),
-                None => paths::data_root().join("json"),
-            };
+        static ref POSTCARD: icu_provider_blob::StaticDataProvider = {
             // The statically compiled data file is valid.
             #[allow(clippy::unwrap_used)]
-            FsDataProvider::try_new(&path).unwrap_or_else(|err| {
-                panic!(
-                    "The test data directory was unable to be opened: {}: {:?}",
-                    err, path
-                )
-            })
+            icu_provider_blob::StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+                env!("CARGO_MANIFEST_DIR"),
+                "/data/testdata.postcard"
+            )))
+            .unwrap()
         };
     }
-    (*JSON).clone()
-}
-
-#[cfg(feature = "static")]
-lazy_static::lazy_static! {
-    static ref POSTCARD: StaticDataProvider = {
-        // The statically compiled data file is valid.
-        #[allow(clippy::unwrap_used)]
-        StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
-            env!("CARGO_MANIFEST_DIR"),
-            "/data/testdata.postcard"
-        )))
-        .unwrap()
-    };
-}
-
-/// Get a data provider, loading from the statically initialized postcard blob.
-#[cfg(feature = "static")]
-pub fn get_postcard_provider() -> StaticDataProvider {
     *POSTCARD
 }
 
-/// Get a small data provider that only contains the `decimal/symbols@1[u-nu]` key
-/// for `en` and `bn`.
-#[cfg(feature = "static")]
-pub fn get_smaller_postcard_provider() -> StaticDataProvider {
+/// A smaller [`BufferProvider`] backed by a Postcard blob.
+///
+/// This provider only contains the `decimal/symbols@1[u-nu]` key for `en` and `bn`.
+#[cfg(feature = "buffer")]
+pub fn small_buffer() -> impl BufferProvider {
     lazy_static::lazy_static! {
-        static ref SMALLER_POSTCARD: StaticDataProvider = {
+        static ref SMALLER_POSTCARD: icu_provider_blob::StaticDataProvider = {
             // The statically compiled data file is valid.
             #[allow(clippy::unwrap_used)]
-            StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+            icu_provider_blob::StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
                 env!("CARGO_MANIFEST_DIR"),
                 "/data/decimal-bn-en.postcard"
             )))
@@ -204,23 +235,10 @@ pub fn get_smaller_postcard_provider() -> StaticDataProvider {
     *SMALLER_POSTCARD
 }
 
-#[cfg(feature = "baked")]
-include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
+#[doc(hidden)]
+pub use baked::BakedDataProvider as UnstableDataProvider;
 
-#[cfg(feature = "baked")]
-include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
-
-#[cfg(feature = "baked")]
-/// Get a data provider that contains hardcoded data without any deserialization overhead.
-pub fn get_baked_provider() -> BakedDataProvider {
-    BakedDataProvider
-}
-
-/// Get a data provider loading from a statically initialized postcard blob
-/// with locale fallbacking enabled.
-#[cfg(feature = "static")]
-pub fn get_provider() -> LocaleFallbackProvider<StaticDataProvider> {
-    // The statically compiled data file is valid.
-    #[allow(clippy::unwrap_used)]
-    LocaleFallbackProvider::try_new_unstable(*POSTCARD).unwrap()
+mod baked {
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/mod.rs"));
+    include!(concat!(env!("CARGO_MANIFEST_DIR"), "/data/baked/any.rs"));
 }
