@@ -38,6 +38,7 @@ icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", default-
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
 default = ["icu_capi/default"]
+any_provider = ["icu_capi/any_provider"]
 serde = ["icu_capi/serde"]
 buffer_provider = ["icu_capi/buffer_provider"]
 provider_fs = ["icu_capi/provider_fs"]

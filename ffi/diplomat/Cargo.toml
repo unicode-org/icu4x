@@ -38,7 +38,8 @@ denylist = ["bench", "serde", "smaller_test", "logging"]
 
 # Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
-default = []
+default = ["any_provider"]
+any_provider = []
 serde = [
     "dep:serde",
     "icu_datetime/serde",
