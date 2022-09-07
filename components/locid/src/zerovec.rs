@@ -102,12 +102,12 @@
 //!
 //! // ZeroMap from integer to locale string
 //! let data: &[(u32, &UnvalidatedStr)] = &[
-//!     (5, b"de-DE-u-hc-h12".into()),
-//!     (10, b"en-US-u-ca-buddhist".into()),
-//!     (15, b"my-MM".into()),
-//!     (20, b"sr-Cyrl-ME".into()),
-//!     (25, b"zh-TW".into()),
-//!     (30, b"INVALID".into()),
+//!     (5, "de-DE-u-hc-h12".into()),
+//!     (10, "en-US-u-ca-buddhist".into()),
+//!     (15, "my-MM".into()),
+//!     (20, "sr-Cyrl-ME".into()),
+//!     (25, "zh-TW".into()),
+//!     (30, "INVALID".into()),
 //! ];
 //! let zm: ZeroMap<u32, UnvalidatedStr> = data.iter().copied().collect();
 //!
