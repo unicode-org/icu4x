@@ -161,6 +161,10 @@ lazy_static::lazy_static! {
         "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_buffer_provider",
         "icu::calendar::week::WeekCalculator::try_new_with_any_provider",
         "icu::calendar::week::WeekCalculator::try_new_with_buffer_provider",
+        "icu::locid_transform::LocaleCanonicalizer::try_new_with_any_provider",
+        "icu::locid_transform::LocaleCanonicalizer::try_new_with_buffer_provider",
+        "icu::locid_transform::LocaleExpander::try_new_with_any_provider",
+        "icu::locid_transform::LocaleExpander::try_new_with_buffer_provider",
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
@@ -281,6 +285,7 @@ lazy_static::lazy_static! {
         // uniformly especially for complex types
         "icu::calendar::provider",
         "icu::datetime::provider",
+        "icu::locid_transform::provider",
         "icu::plurals::provider",
         "icu::properties::provider",
 
