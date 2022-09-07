@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662520219292,
+  "lastUpdate": 1662568764569,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26453,6 +26453,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3651ac087dbe1ec49d590c67592b6be0c9183153"
         },
         "date": 1662520160123,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5cf865d5047d02b78496427da9a50fc9745ed591",
+          "message": "Adding `Display` for our `Writeable` types (#2518)",
+          "timestamp": "2022-09-07T18:37:07+02:00",
+          "tree_id": "e85100ffd3efb400e06607bb429bba5cc96da09b",
+          "url": "https://github.com/unicode-org/icu4x/commit/5cf865d5047d02b78496427da9a50fc9745ed591"
+        },
+        "date": 1662568713045,
         "tool": "ndjson",
         "benches": [
           {
