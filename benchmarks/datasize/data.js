@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662506073234,
+  "lastUpdate": 1662520219292,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26423,6 +26423,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/d4c5f6d61686dc35d163d18c4413345d89bb8ef7"
         },
         "date": 1662506021879,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "3651ac087dbe1ec49d590c67592b6be0c9183153",
+          "message": "Hide fields of certain non-provider library structs (#2524)",
+          "timestamp": "2022-09-06T22:07:42-05:00",
+          "tree_id": "4bf13796f8338c21e124ed4ada0827eaa7aaba3e",
+          "url": "https://github.com/unicode-org/icu4x/commit/3651ac087dbe1ec49d590c67592b6be0c9183153"
+        },
+        "date": 1662520160123,
         "tool": "ndjson",
         "benches": [
           {
