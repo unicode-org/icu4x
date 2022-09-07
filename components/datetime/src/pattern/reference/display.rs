@@ -73,7 +73,6 @@ pub(crate) fn dump_buffer_into_formatter(
 /// this was not done, as this code would need to implement the [`writeable_length_hint()`] method,
 /// which would need to duplicate the branching logic of the [`fmt`](std::fmt) method here. This code
 /// is used in generating the data providers and is not as performance sensitive.
-#[cfg(feature = "datagen")]
 impl fmt::Display for Pattern {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         let mut buffer = String::new();
