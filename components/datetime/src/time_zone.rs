@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! A formatter specifically for the time zone.
+
 use crate::provider::time_zones::TimeZoneBcp47Id;
 use alloc::borrow::Cow;
 use alloc::format;
