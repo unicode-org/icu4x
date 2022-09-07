@@ -29,9 +29,7 @@ fn overview_bench(c: &mut Criterion) {
     #[cfg(feature = "bench")]
     {
         json_bench(c);
-        #[cfg(feature = "deserialize_bincode_1")]
         bincode_bench(c);
-        #[cfg(feature = "deserialize_postcard_07")]
         postcard_bench(c);
     }
 }
@@ -68,7 +66,6 @@ fn json_bench(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench", feature = "deserialize_bincode_1"))]
 fn bincode_bench(c: &mut Criterion) {
     let provider = FsDataProvider::try_new("./tests/data/bincode")
         .expect("Loading file from testdata directory");
@@ -101,7 +98,6 @@ fn bincode_bench(c: &mut Criterion) {
     });
 }
 
-#[cfg(all(feature = "bench", feature = "deserialize_postcard_07"))]
 fn postcard_bench(c: &mut Criterion) {
     let provider = FsDataProvider::try_new("./tests/data/postcard")
         .expect("Loading file from testdata directory");

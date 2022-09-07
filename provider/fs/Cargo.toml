@@ -54,8 +54,6 @@ icu_provider = { version = "1.0.0-beta1", path = "../core", features = ["deseria
 criterion = "0.3.3"
 
 [features]
-deserialize_bincode_1 = ["icu_provider/deserialize_bincode_1"]
-deserialize_postcard_07 = ["icu_provider/deserialize_postcard_07"]
 # Enables the "export" module and FilesystemExporter
 export = [
     "log",
@@ -66,8 +64,6 @@ export = [
     "sha2",
     "icu_provider/datagen",
     "icu_provider/deserialize_json",
-    "deserialize_bincode_1",
-    "deserialize_postcard_07",
 ]
 bench = []
 
