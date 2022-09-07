@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662585078391,
+  "lastUpdate": 1662589781551,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49709,6 +49709,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 83,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "203ba870c401d5167c16eb550842f921199e9f35",
+          "message": "icu::locid_transform rustlink and cleanup (#2523)",
+          "timestamp": "2022-09-07T15:15:01-07:00",
+          "tree_id": "6bd61654e524c145faebd420b42fe952ae6b37b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/203ba870c401d5167c16eb550842f921199e9f35"
+        },
+        "date": 1662589718256,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 142402,
+            "range": "± 6223",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26636,
+            "range": "± 2297",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72531,
+            "range": "± 2993",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 227,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 82,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 95,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
