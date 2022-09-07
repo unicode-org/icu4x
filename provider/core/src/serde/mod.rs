@@ -160,8 +160,7 @@ where
     for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: Deserialize<'de>,
 {
     /// Converts a buffer into a concrete type by deserializing from a supported buffer format.
-    fn load(&self, mut req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        req.metadata.fallback_supplement_key = M::FALLBACK_SUPPLEMENT_KEY;
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.load_data(M::KEY, req)
     }
 }

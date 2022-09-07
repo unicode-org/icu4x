@@ -248,7 +248,7 @@ impl LocaleFallbacker {
         let mut supplements = LiteMap::new();
         for key_path in provider::SUPPLEMENT_KEY_PATHS {
             #[allow(clippy::unwrap_used)] // The strings are hard-coded and are valid
-            let key = DataKey::try_new(key_path).unwrap();
+            let key = DataKey::try_new(key_path, Default::default()).unwrap();
             match provider.load_data(key, Default::default()) {
                 #[allow(clippy::unwrap_used)] // The strings are in the correct order
                 Ok(response) => supplements
@@ -317,7 +317,7 @@ impl LocaleFallbacker {
     /// let fallbacker =
     ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
     ///         .expect("data");
-    /// let key_fallbacker = fallbacker.for_key_and_fallback_supplement_key(FooV1Marker::KEY, None);
+    /// let key_fallbacker = fallbacker.for_key(FooV1Marker::KEY);
     /// let mut fallback_iterator = key_fallbacker
     ///     .fallback_for(icu_locid::locale!("en-GB").into());
     ///
@@ -330,13 +330,13 @@ impl LocaleFallbacker {
     /// ```
     ///
     /// [`DataRequestMetadata`]: icu_provider::DataRequestMetadata
-    pub fn for_key_and_fallback_supplement_key(
-        &self,
-        data_key: DataKey,
-        fallback_supplement_key: Option<DataKey>,
-    ) -> LocaleFallbackerWithConfig {
-        let priority = data_key.get_metadata().fallback_priority;
-        let extension_key = data_key.get_metadata().extension_key;
+    pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
+        let priority = data_key.metadata().fallback_priority;
+        let extension_key = data_key.metadata().extension_key;
+        let fallback_supplement_key = data_key
+            .metadata()
+            .fallback_supplement_key_path
+            .map(|path| DataKey::from_path_and_metadata(path, Default::default()));
         self.for_config(LocaleFallbackConfig {
             priority,
             extension_key,

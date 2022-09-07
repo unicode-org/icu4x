@@ -191,7 +191,6 @@ macro_rules! expand {
                 }
                 impl KeyedDataMarker for $bin_marker {
                     const KEY: DataKey = data_key!(concat!("props/", $bin_s, "@1"));
-                    const FALLBACK_SUPPLEMENT_KEY: Option<DataKey> = None;
                 }
 
                 #[cfg(feature = "datagen")]
@@ -220,7 +219,6 @@ macro_rules! expand {
 
                 impl KeyedDataMarker for $enum_marker {
                     const KEY: DataKey = data_key!(concat!("props/", $enum_s, "@1"));
-                    const FALLBACK_SUPPLEMENT_KEY: Option<DataKey> = None;
                 }
 
                 #[cfg(feature = "datagen")]

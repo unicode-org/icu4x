@@ -38,12 +38,7 @@ impl fmt::Display for DataRequest<'_> {
 /// This may be extended with options for tuning locale fallback, buffer layout, and so forth.
 #[derive(Default, Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord)]
 #[non_exhaustive]
-pub struct DataRequestMetadata {
-    /// A data key with additional data required for locale fallback.
-    ///
-    /// For more information, see `LocaleFallbackConfig::fallback_supplement_key`.
-    pub fallback_supplement_key: Option<crate::DataKey>,
-}
+pub struct DataRequestMetadata {}
 
 /// The main locale type used by the ICU4X data provider.
 ///

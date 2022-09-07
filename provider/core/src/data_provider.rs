@@ -84,7 +84,6 @@ mod test {
 
     impl KeyedDataMarker for HelloAltMarker {
         const KEY: DataKey = HELLO_ALT_KEY;
-        const FALLBACK_SUPPLEMENT_KEY: Option<DataKey> = None;
     }
 
     #[derive(Deserialize, Debug, Clone, Default, PartialEq)]
