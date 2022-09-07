@@ -30,6 +30,12 @@ pub struct EmptyDataProvider {
     error_kind: DataErrorKind,
 }
 
+impl Default for EmptyDataProvider {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 impl EmptyDataProvider {
     /// Creates a data provider that always returns [`DataErrorKind::MissingDataKey`].
     pub fn new() -> Self {
