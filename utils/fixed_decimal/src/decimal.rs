@@ -6,6 +6,7 @@ use smallvec::SmallVec;
 
 use core::cmp;
 use core::cmp::Ordering;
+use core::convert::TryFrom;
 use core::fmt;
 use core::ops::RangeInclusive;
 
@@ -1741,12 +1742,18 @@ writeable::impl_display_with_writeable!(FixedDecimal);
 impl FromStr for FixedDecimal {
     type Err = Error;
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from(input_str.as_bytes())
+    }
+}
+
+impl TryFrom<&[u8]> for FixedDecimal {
+    type Error = Error;
+    fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
         if input_str.is_empty() {
             return Err(Error::Syntax);
         }
-        let input_str = input_str.as_bytes();
         #[allow(clippy::indexing_slicing)] // The string is not empty.
         let sign = match input_str[0] {
             b'-' => Sign::Negative,

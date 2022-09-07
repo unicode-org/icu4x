@@ -4,7 +4,7 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use core::str::FromStr;
+    use core::str::{self, FromStr};
 
     use alloc::boxed::Box;
 
@@ -31,8 +31,10 @@ pub mod ffi {
         /// Construct from a string in the format
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_string, FnInEnum)]
+        #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_bytes, FnInEnum)]
         pub fn from_tr35_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
-            PluralCategory::from_tr35_string(s)
+            let s = s.as_bytes(); // #2520
+            PluralCategory::from_tr35_bytes(s)
                 .map(Into::into)
                 .ok_or(())
                 .into()
@@ -136,6 +138,10 @@ pub mod ffi {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
         pub fn create(s: &str) -> DiplomatResult<ICU4XPluralOperands, ICU4XError> {
+            // #2520
+            if str::from_utf8(s.as_bytes()).is_err() {
+                return Err(ICU4XError::PluralParserError).into();
+            }
             PluralOperands::from_str(s)
                 .map(|ops| ICU4XPluralOperands {
                     i: ops.i,

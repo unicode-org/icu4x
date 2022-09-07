@@ -12,6 +12,8 @@
 
         Construct a new DecimalSymbolsV1 data struct.
 
+        C++ users: All string arguments must be valid UTF8
+
         See the `Rust documentation for DecimalSymbolsV1 <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/provider/struct.DecimalSymbolsV1.html>`__ for more information.
 
 

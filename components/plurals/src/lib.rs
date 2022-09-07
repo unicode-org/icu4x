@@ -258,6 +258,18 @@ impl PluralCategory {
             _ => None,
         }
     }
+    /// Returns the PluralCategory coresponding to given TR35 string as bytes
+    pub fn from_tr35_bytes(category: &[u8]) -> Option<PluralCategory> {
+        match category {
+            b"zero" => Some(PluralCategory::Zero),
+            b"one" => Some(PluralCategory::One),
+            b"two" => Some(PluralCategory::Two),
+            b"few" => Some(PluralCategory::Few),
+            b"many" => Some(PluralCategory::Many),
+            b"other" => Some(PluralCategory::Other),
+            _ => None,
+        }
+    }
 }
 
 /// A struct which provides an ability to retrieve an appropriate
