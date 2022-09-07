@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662584419706,
+  "lastUpdate": 1662589055280,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26543,6 +26543,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/4f1ee6951068465fc81c8d5eb1ad9fadb794f2b4"
         },
         "date": 1662584368468,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "203ba870c401d5167c16eb550842f921199e9f35",
+          "message": "icu::locid_transform rustlink and cleanup (#2523)",
+          "timestamp": "2022-09-07T15:15:01-07:00",
+          "tree_id": "6bd61654e524c145faebd420b42fe952ae6b37b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/203ba870c401d5167c16eb550842f921199e9f35"
+        },
+        "date": 1662588996136,
         "tool": "ndjson",
         "benches": [
           {
