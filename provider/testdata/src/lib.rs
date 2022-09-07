@@ -244,8 +244,8 @@ mod baked {
 }
 
 const _: () = {
-    use icu_provider_adapters::fallback::provider::*;
     use crate::baked::BakedDataProvider;
+    use icu_provider_adapters::fallback::provider::*;
     icu_provider::impl_dynamic_data_provider!(
         BakedDataProvider,
         [CollationFallbackSupplementV1Marker,],

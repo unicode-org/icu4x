@@ -131,7 +131,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
     let keys = strings.iter().map(AsRef::as_ref).collect::<HashSet<&str>>();
     all_keys()
         .into_iter()
-        .filter(|k| keys.contains(k.get_path()))
+        .filter(|k| keys.contains(&*k.path()))
         .collect()
 }
 
@@ -168,7 +168,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
         .collect::<std::io::Result<HashSet<String>>>()?;
     Ok(all_keys()
         .into_iter()
-        .filter(|k| keys.contains(k.get_path()))
+        .filter(|k| keys.contains(&*k.path()))
         .collect())
 }
 
@@ -215,7 +215,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
 
     Ok(all_keys()
         .into_iter()
-        .filter(|k| candidates.contains(k.get_path().as_bytes()))
+        .filter(|k| candidates.contains(k.path().as_bytes()))
         .collect())
 }
 

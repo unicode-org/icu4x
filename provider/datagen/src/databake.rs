@@ -199,7 +199,7 @@ impl DataExporter for BakedDataExporter {
         // Replace non-ident-allowed tokens. This can still fail if a segment starts with
         // a token that is not allowed in an initial position.
         let module_path = syn::parse_str::<syn::Path>(
-            &key.get_path()
+            &key.path()
                 .to_ascii_lowercase()
                 .replace('@', "_v")
                 .replace('/', "::")

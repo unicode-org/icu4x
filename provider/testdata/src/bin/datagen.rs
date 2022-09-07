@@ -72,7 +72,7 @@ fn main() {
         Some(&locales),
         &icu_datagen::all_keys()
             .into_iter()
-            .filter(|k| !IGNORED_KEYS.contains(&k.get_path()))
+            .filter(|k| !IGNORED_KEYS.contains(&&*k.path()))
             .chain(core::iter::once(
                 icu_provider::hello_world::HelloWorldV1Marker::KEY,
             ))

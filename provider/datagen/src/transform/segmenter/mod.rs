@@ -231,7 +231,7 @@ impl crate::DatagenProvider {
             .segmenter()?
             .read_and_parse_toml::<SegmenterRuleTable>(&format!(
                 "{}.toml",
-                key.get_path()
+                key.path()
                     .split(&['/', '@'])
                     .nth(1)
                     .expect("DataKey format should be valid!")
