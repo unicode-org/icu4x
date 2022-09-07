@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_list")]
 type DataStruct = <::icu_list::provider::OrListV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_store_unchecked(&[

@@ -268,16 +268,18 @@ icuexportdata_glob = [
 icuexportdata_gitref = "icu4x/2022-08-17/71.x"
 
 [package.metadata.cargo-all-features]
-# Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
-# Bench feature gets tested separately and is only relevant for CI
-denylist = ["bench"]
+extra_features = [
+    "icu_datetime",
+    "icu_list",
+]
 
 [dependencies]
 icu_provider = { version = "1.0.0-beta1", path = "../core" }
-icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters", optional = true }
+icu_provider_adapters = { version = "1.0.0-beta1", path = "../adapters" }
+
+# serde feature
 icu_provider_blob = { version = "1.0.0-beta1", path = "../blob", optional = true }
-icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", optional = true }
 lazy_static = { version = "1", features = ["spin_no_std"], optional = true }
 
 # bin feature
@@ -285,8 +287,8 @@ bytes = {version = "1.1.0", optional = true }
 clap = { version = "2.33", optional = true }
 eyre = { version = "0.6", optional = true }
 futures = { version = "0.3", optional = true }
+icu_provider_fs = { version = "1.0.0-beta1", path = "../fs", optional = true }
 icu_datagen = { version = "1.0.0-beta1", path = "../datagen", features = ["experimental"], optional = true }
-icu_locid = { version = "1.0.0-beta1", path = "../../components/locid", optional = true }
 log = { version = "0.4", optional = true }
 reqwest = { version = "0.11", features = ["stream"], optional = true }
 simple_logger = { version = "1.12", optional = true, default-features = false }
@@ -301,66 +303,43 @@ displaydoc = { version = "0.2.3", default-features = false, optional = true }
 writeable = { version = "0.4", path = "../../utils/writeable", optional = true }
 
 # databake deps
-icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar", optional = true }
-icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", optional = true }
-icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", optional = true }
-icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", features = ["experimental"], optional = true }
-icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal", optional = true }
-icu_list = { version = "1.0.0-beta1", path = "../../components/list", optional = true }
-icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_transform", optional = true }
-icu_normalizer = { version = "1.0.0-beta1", path = "../../components/normalizer", optional = true }
-icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals", optional = true }
-icu_properties = { version = "1.0.0-beta1", path = "../../components/properties", optional = true }
-icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", optional = true, features = ["lstm"] }
-icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone", optional = true }
-icu_collections = { version = "1.0.0-beta1", path = "../../components/collections", optional = true }
-litemap = { version = "0.5", path = "../../utils/litemap", optional = true, default-features = false }
-tinystr = { version = "0.6", path = "../../utils/tinystr", optional = true }
-zerovec = { version = "0.8", path = "../../utils/zerovec", optional = true }
+icu_locid = { version = "1.0.0-beta1", path = "../../components/locid" }
+icu_collections = { version = "1.0.0-beta1", path = "../../components/collections" }
+litemap = { version = "0.5", path = "../../utils/litemap", default-features = false }
+tinystr = { version = "0.6", path = "../../utils/tinystr" }
+zerovec = { version = "0.8", path = "../../utils/zerovec" }
 
-[dev-dependencies]
-icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals" }
+# databake options
+icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar", default-features = false, optional = true }
+icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", default-features = false, optional = true }
+icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", default-features = false, optional = true }
+icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime", default-features = false, optional = true }
+icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal", default-features = false, optional = true }
+icu_list = { version = "1.0.0-beta1", path = "../../components/list", default-features = false, optional = true }
+icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_transform", default-features = false, optional = true }
+icu_normalizer = { version = "1.0.0-beta1", path = "../../components/normalizer", default-features = false, optional = true }
+icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals", default-features = false, optional = true }
+icu_properties = { version = "1.0.0-beta1", path = "../../components/properties", default-features = false, optional = true }
+icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", features = ["lstm"], default-features = false, optional = true }
+icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone", default-features = false, optional = true }
 
 [features]
-default = ["static"]
-# Enables programmatic access to this Cargo.toml file.
-# If you want this to be made public stable, file an issue on the ICU4X repository.
-metadata = [
-    "cargo_metadata",
-    "icu_locid/serde",
-    "serde_json",
-    "serde",
-    "displaydoc",
-    "writeable",
-    "std"
-]
-fs = ["icu_provider/deserialize_json", "icu_provider_fs", "std", "lazy_static"]
-static = [
-    "icu_provider_blob",
-    "icu_provider_adapters",
-    "icu_provider_adapters/serde",
-    "lazy_static",
-]
-baked = [
+default = [
     "icu_calendar",
-    "icu_casemapping",
     "icu_collator",
     "icu_datetime",
     "icu_decimal",
     "icu_list",
     "icu_locid_transform",
-    "icu_locid",
     "icu_normalizer",
     "icu_plurals",
     "icu_properties",
-    "icu_provider_adapters",
-    "icu_segmenter",
     "icu_timezone",
-    "icu_collections",
-    "litemap",
-    "tinystr",
-    "zerovec",
 ]
+icu_datetime_experimental = [
+    "icu_datetime/experimental",
+]
+buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]
 std = []
 bin = [
     "bytes",
@@ -374,9 +353,19 @@ bin = [
     "std",
     "metadata",
     "icu_datagen",
-    "icu_locid",
-    "fs",
+    "icu_provider_fs",
     "zip",
+]
+# Enables programmatic access to this Cargo.toml file
+# If you want this to be made public stable, file an issue on the ICU4X repository.
+metadata = [
+    "cargo_metadata",
+    "icu_locid/serde",
+    "serde_json",
+    "serde",
+    "displaydoc",
+    "writeable",
+    "std"
 ]
 
 [[bin]]

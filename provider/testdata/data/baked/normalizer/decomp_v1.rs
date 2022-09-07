@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_normalizer")]
 type DataStruct = < :: icu_normalizer :: provider :: NonRecursiveDecompositionSupplementV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);

@@ -14,6 +14,7 @@ fn main() {
         .unwrap();
 
     let hello: DataPayload<HelloWorldV1Marker> = dp
+        .as_deserializing()
         .load(DataRequest {
             locale: &locale!("zh").into(),
             metadata: Default::default(),

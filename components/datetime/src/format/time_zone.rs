@@ -84,10 +84,8 @@ where
     /// use tinystr::tinystr;
     /// use writeable::Writeable;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let mut tzf = TimeZoneFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let mut tzf = TimeZoneFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     Default::default(),
     /// )
@@ -105,7 +103,7 @@ where
     /// assert!(sink.is_empty());
     ///
     /// // Enable a non-fallback format:
-    /// tzf.load_generic_location_format(&provider).unwrap();
+    /// tzf.load_generic_location_format(&icu_testdata::unstable()).unwrap();
     /// assert!(matches!(
     ///     tzf.format(&time_zone).write_no_fallback(&mut sink),
     ///     Ok(Ok(_))

@@ -13,6 +13,7 @@ command = "cargo"
 args = [
     "run",
     "--bin=icu4x-testdata-datagen",
+    "--no-default-features",
     "--features=bin",
 ]
 

@@ -25,10 +25,12 @@ appropriate [`Plural Category`].
 use icu::locid::locale;
 use icu::plurals::{PluralCategory, PluralRuleType, PluralRules};
 
-let provider = icu_testdata::get_provider();
-
-let pr = PluralRules::try_new_with_buffer_provider(&provider, &locale!("en").into(), PluralRuleType::Cardinal)
-    .expect("Failed to construct a PluralRules struct.");
+let pr = PluralRules::try_new_unstable(
+    &icu_testdata::unstable(),
+    &locale!("en").into(),
+    PluralRuleType::Cardinal,
+)
+.expect("Failed to construct a PluralRules struct.");
 
 assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
 ```

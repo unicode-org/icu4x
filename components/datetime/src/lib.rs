@@ -34,25 +34,32 @@
 //! use icu::datetime::{
 //!     options::length, DateTimeFormatter, TypedDateTimeFormatter, DateTimeFormatterOptions,
 //! };
-//! use icu::locid::{Locale, locale};
+//! use icu::locid::{locale, Locale};
 //! use std::str::FromStr;
 //!
-//! let provider = icu_testdata::get_provider();
-//!
 //! // See the next code example for a more ergonomic example with .into().
-//! let options = DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
-//!     length::Date::Medium,
-//!     length::Time::Short,
-//! ));
+//! let options =
+//!     DateTimeFormatterOptions::Length(length::Bag::from_date_time_style(
+//!         length::Date::Medium,
+//!         length::Time::Short,
+//!     ));
 //!
 //! // You can work with a formatter that can select the calendar at runtime:
 //! let locale = Locale::from_str("en-u-ca-gregory").unwrap();
-//! let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.clone())
-//!     .expect("Failed to create DateTimeFormatter instance.");
+//! let dtf = DateTimeFormatter::try_new_unstable(
+//!     &icu_testdata::unstable(),
+//!     &locale.into(),
+//!     options.clone(),
+//! )
+//! .expect("Failed to create DateTimeFormatter instance.");
 //!
 //! // Or one that selects a calendar at compile time:
-//! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale!("en").into(), options)
-//!     .expect("Failed to create TypedDateTimeFormatter instance.");
+//! let typed_dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+//!     &icu_testdata::unstable(),
+//!     &locale!("en").into(),
+//!     options,
+//! )
+//! .expect("Failed to create TypedDateTimeFormatter instance.");
 //!
 //! let typed_date = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 //! // prefer using ISO dates with DateTimeFormatter
@@ -70,13 +77,21 @@
 //!
 //! ```
 //! use icu::calendar::Gregorian;
-//! use icu::datetime::{options::length, TypedDateTimeFormatter, DateTimeFormatterOptions};
-//! # let provider = icu_testdata::get_provider();
-//! # let locale = icu::locid::locale!("en");
-//! let options =
-//!     length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short).into();
+//! use icu::datetime::{
+//!     options::length, DateTimeFormatterOptions, TypedDateTimeFormatter,
+//! };
+//! use icu::locid::locale;
+//! let options = length::Bag::from_date_time_style(
+//!     length::Date::Medium,
+//!     length::Time::Short,
+//! )
+//! .into();
 //!
-//! let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options);
+//! let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+//!     &icu_testdata::unstable(),
+//!     &locale!("en").into(),
+//!     options,
+//! );
 //! ```
 //!
 //! At the moment, the crate provides only options using the [`Length`] bag, but in the future,

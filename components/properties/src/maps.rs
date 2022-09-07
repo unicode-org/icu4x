@@ -49,10 +49,8 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// use icu::properties::{maps, GeneralCategory};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let data =
-    ///     maps::load_general_category(&provider)
+    ///     maps::load_general_category(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     ///
     /// let gc = data.as_borrowed();
@@ -80,10 +78,8 @@ impl<T: TrieValue> CodePointMapData<T> {
     /// use icu::properties::{maps, GeneralCategory};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let data =
-    ///     maps::load_general_category(&provider)
+    ///     maps::load_general_category(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     ///
     /// let gc = data.try_into_converted::<u8>().unwrap();
@@ -162,10 +158,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// use icu::properties::{maps, GeneralCategory};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let data =
-    ///     maps::load_general_category(&provider)
+    ///     maps::load_general_category(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
@@ -184,10 +178,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// use icu::properties::{maps, GeneralCategory};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let data =
-    ///     maps::load_general_category(&provider)
+    ///     maps::load_general_category(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
@@ -206,18 +198,16 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// use icu::properties::{maps, GeneralCategory};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let data =
-    ///     maps::load_general_category(&provider)
-    ///         .expect("The data should be valid");
+    /// let data = maps::load_general_category(&icu_testdata::unstable())
+    ///     .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     ///
-    /// let other_letter_set_data = gc.get_set_for_value(GeneralCategory::OtherLetter);
+    /// let other_letter_set_data =
+    ///     gc.get_set_for_value(GeneralCategory::OtherLetter);
     /// let other_letter_set = other_letter_set_data.as_borrowed();
     ///
-    /// assert!(other_letter_set.contains('木'));  // U+6728
-    /// assert!(!other_letter_set.contains('🎃'));  // U+1F383 JACK-O-LANTERN
+    /// assert!(other_letter_set.contains('木')); // U+6728
+    /// assert!(!other_letter_set.contains('🎃')); // U+1F383 JACK-O-LANTERN
     /// ```
     pub fn get_set_for_value(&self, value: T) -> CodePointSetData {
         let set = self.map.get_set_for_value(value);
@@ -232,8 +222,8 @@ impl<'a, T: TrieValue> CodePointMapDataBorrowed<'a, T> {
     /// ```
     /// use core::ops::RangeInclusive;
     /// use icu::properties::maps::CodePointMapData;
-    /// use icu_collections::codepointtrie::CodePointMapRange;
     /// use icu_collections::codepointtrie::planes;
+    /// use icu_collections::codepointtrie::CodePointMapRange;
     ///
     /// let planes_trie = planes::get_planes_trie();
     /// let cp_map_data = CodePointMapData::from_code_point_trie(planes_trie);
@@ -298,10 +288,8 @@ make_map_property! {
     /// use icu::properties::{maps, GeneralCategory};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let data =
-    ///     maps::load_general_category(&provider)
+    ///     maps::load_general_category(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     /// let gc = data.as_borrowed();
     /// assert_eq!(gc.get('木'), GeneralCategory::OtherLetter);  // U+6728
@@ -326,10 +314,8 @@ make_map_property! {
     /// use icu::properties::{maps, BidiClass};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let data =
-    ///     maps::load_bidi_class(&provider)
+    ///     maps::load_bidi_class(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     /// let bc = data.as_borrowed();
     /// assert_eq!(bc.get('y'), BidiClass::LeftToRight);  // U+0079
@@ -354,10 +340,8 @@ make_map_property! {
     /// use icu::properties::{maps, Script};
     /// use icu_collections::codepointtrie::CodePointTrie;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let data =
-    ///     maps::load_script(&provider)
+    ///     maps::load_script(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
     /// let script = data.as_borrowed();
     /// assert_eq!(script.get('木'), Script::Han);  // U+6728
@@ -382,8 +366,7 @@ make_map_property! {
     /// ```
     /// use icu::properties::{maps, EastAsianWidth};
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let data = maps::load_east_asian_width(&provider).expect("The data should be valid!");
+    /// let data = maps::load_east_asian_width(&icu_testdata::unstable()).expect("The data should be valid!");
     /// let eaw = data.as_borrowed();;
     ///
     /// assert_eq!(eaw.get('ｱ'), EastAsianWidth::Halfwidth); // U+FF71: Halfwidth Katakana Letter A
@@ -408,8 +391,7 @@ make_map_property! {
     /// ```
     /// use icu::properties::{maps, LineBreak};
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let data = maps::load_line_break(&provider).expect("The data should be valid!");
+    /// let data = maps::load_line_break(&icu_testdata::unstable()).expect("The data should be valid!");
     /// let lb = data.as_borrowed();
     ///
     /// assert_eq!(lb.get(')'), LineBreak::CloseParenthesis); // U+0029: Right Parenthesis
@@ -434,8 +416,7 @@ make_map_property! {
     /// ```
     /// use icu::properties::{maps, GraphemeClusterBreak};
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let data = maps::load_grapheme_cluster_break(&provider).expect("The data should be valid!");
+    /// let data = maps::load_grapheme_cluster_break(&icu_testdata::unstable()).expect("The data should be valid!");
     /// let gcb = data.as_borrowed();
     ///
     /// assert_eq!(gcb.get('🇦'), GraphemeClusterBreak::RegionalIndicator); // U+1F1E6: Regional Indicator Symbol Letter A
@@ -460,8 +441,7 @@ make_map_property! {
     /// ```
     /// use icu::properties::{maps, WordBreak};
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let data = maps::load_word_break(&provider).expect("The data should be valid!");
+    /// let data = maps::load_word_break(&icu_testdata::unstable()).expect("The data should be valid!");
     /// let wb = data.as_borrowed();
     ///
     /// assert_eq!(wb.get('.'), WordBreak::MidNumLet); // U+002E: Full Stop
@@ -486,8 +466,7 @@ make_map_property! {
     /// ```
     /// use icu::properties::{maps, SentenceBreak};
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let data = maps::load_sentence_break(&provider).expect("The data should be valid!");
+    /// let data = maps::load_sentence_break(&icu_testdata::unstable()).expect("The data should be valid!");
     /// let sb = data.as_borrowed();;
     ///
     /// assert_eq!(sb.get('９'), SentenceBreak::Numeric); // U+FF19: Fullwidth Digit Nine
@@ -515,8 +494,7 @@ make_map_property! {
     /// ```
     /// use icu::properties::{maps, CanonicalCombiningClass};
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let data = maps::load_canonical_combining_class(&provider).expect("The data should be valid!");
+    /// let data = maps::load_canonical_combining_class(&icu_testdata::unstable()).expect("The data should be valid!");
     /// let sb = data.as_borrowed();;
     ///
     /// assert_eq!(sb.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A

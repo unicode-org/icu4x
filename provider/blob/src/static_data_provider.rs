@@ -34,6 +34,7 @@ use serde::de::Deserialize;
 ///     .expect("Deserialization should succeed");
 ///
 /// let response: DataPayload<HelloWorldV1Marker> = provider
+///     .as_deserializing()
 ///     .load(DataRequest {
 ///         locale: &locale!("la").into(),
 ///         metadata: Default::default(),
@@ -81,7 +82,7 @@ impl StaticDataProvider {
     /// let stub_provider = StaticDataProvider::new_empty();
     ///
     /// DataProvider::<HelloWorldV1Marker>::load(
-    ///     &stub_provider,
+    ///     &stub_provider.as_deserializing(),
     ///     DataRequest {
     ///         locale: &locale!("la").into(),
     ///         metadata: Default::default(),
@@ -126,5 +127,3 @@ impl BufferProvider for StaticDataProvider {
         })
     }
 }
-
-icu_provider::impl_auto_deserializing!(StaticDataProvider);
