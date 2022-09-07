@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_locid_transform")]
 type DataStruct =
     <::icu_locid_transform::provider::AliasesV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =

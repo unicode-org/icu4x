@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_properties")]
 type DataStruct = < :: icu_properties :: provider :: TerminalPunctuationV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);

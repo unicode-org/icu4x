@@ -15,12 +15,10 @@ pub enum ParserError {
     /// # Examples
     ///
     /// ```
-    /// use core::str::FromStr;
-    ///
     /// use icu::locid::subtags::Language;
     /// use icu::locid::ParserError;
     ///
-    /// assert_eq!(Language::from_str("x2"), Err(ParserError::InvalidLanguage));
+    /// assert_eq!("x2".parse::<Language>(), Err(ParserError::InvalidLanguage));
     /// ```
     #[displaydoc("The given language subtag is invalid")]
     InvalidLanguage,
@@ -30,12 +28,10 @@ pub enum ParserError {
     /// # Examples
     ///
     /// ```
-    /// use core::str::FromStr;
-    ///
     /// use icu::locid::subtags::Region;
     /// use icu::locid::ParserError;
     ///
-    /// assert_eq!(Region::from_str("#@2X"), Err(ParserError::InvalidSubtag));
+    /// assert_eq!("#@2X".parse::<Region>(), Err(ParserError::InvalidSubtag));
     /// ```
     #[displaydoc("Invalid subtag")]
     InvalidSubtag,
@@ -45,12 +41,10 @@ pub enum ParserError {
     /// # Examples
     ///
     /// ```
-    /// use core::str::FromStr;
-    ///
     /// use icu::locid::extensions::unicode::Key;
     /// use icu::locid::ParserError;
     ///
-    /// assert_eq!(Key::from_str("#@2X"), Err(ParserError::InvalidExtension));
+    /// assert_eq!("#@2X".parse::<Key>(), Err(ParserError::InvalidExtension));
     /// ```
     #[displaydoc("Invalid extension")]
     InvalidExtension,

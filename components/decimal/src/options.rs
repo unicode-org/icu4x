@@ -25,11 +25,14 @@ pub struct FixedDecimalFormatterOptions {
 /// use writeable::Writeable;
 ///
 /// let locale = Locale::UND;
-/// let provider = icu_testdata::get_provider();
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
 /// options.grouping_strategy = options::GroupingStrategy::Min2;
-/// let fdf = FixedDecimalFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options)
-///     .expect("Data should load successfully");
+/// let fdf = FixedDecimalFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale.into(),
+///     options,
+/// )
+/// .expect("Data should load successfully");
 ///
 /// let one_thousand = 1000.into();
 /// assert_eq!("1000", fdf.format(&one_thousand).write_to_string());

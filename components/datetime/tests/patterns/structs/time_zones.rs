@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datetime::{time_zone, DateTimeFormatterError, TimeZoneFormatter};
-use icu_provider::prelude::*;
 use serde::{Deserialize, Serialize};
 use tinystr::TinyAsciiStr;
 
@@ -92,15 +91,6 @@ pub enum ZeroPadding {
     Off,
 }
 
-impl From<ZeroPadding> for time_zone::ZeroPadding {
-    fn from(other: ZeroPadding) -> time_zone::ZeroPadding {
-        match other {
-            ZeroPadding::On => time_zone::ZeroPadding::On,
-            ZeroPadding::Off => time_zone::ZeroPadding::Off,
-        }
-    }
-}
-
 #[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
 pub enum IsoFormat {
     Basic,
@@ -135,23 +125,22 @@ impl TimeZoneFormatterConfig {
     pub fn set_on_formatter(
         self,
         tzf: &mut TimeZoneFormatter,
-        zone_provider: &impl BufferProvider,
     ) -> Result<(), DateTimeFormatterError> {
         match self {
             TimeZoneFormatterConfig::GenericNonLocationLong => {
-                tzf.load_generic_non_location_long(&zone_provider.as_deserializing())
+                tzf.load_generic_non_location_long(&icu_testdata::unstable())
             }
             TimeZoneFormatterConfig::GenericNonLocationShort => {
-                tzf.load_generic_non_location_short(&zone_provider.as_deserializing())
+                tzf.load_generic_non_location_short(&icu_testdata::unstable())
             }
             TimeZoneFormatterConfig::GenericLocation => {
-                tzf.load_generic_location_format(&zone_provider.as_deserializing())
+                tzf.load_generic_location_format(&icu_testdata::unstable())
             }
             TimeZoneFormatterConfig::SpecificNonLocationLong => {
-                tzf.load_specific_non_location_long(&zone_provider.as_deserializing())
+                tzf.load_specific_non_location_long(&icu_testdata::unstable())
             }
             TimeZoneFormatterConfig::SpecificNonLocationShort => {
-                tzf.load_specific_non_location_short(&zone_provider.as_deserializing())
+                tzf.load_specific_non_location_short(&icu_testdata::unstable())
             }
             TimeZoneFormatterConfig::LocalizedGMT => tzf.load_localized_gmt_format(),
             TimeZoneFormatterConfig::Iso8601(format, minutes, seconds) => {

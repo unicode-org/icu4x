@@ -4,6 +4,8 @@ import { ICU4XCalendar } from "./ICU4XCalendar";
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoDate } from "./ICU4XIsoDate";
 import { ICU4XIsoWeekday } from "./ICU4XIsoWeekday";
+import { ICU4XWeekCalculator } from "./ICU4XWeekCalculator";
+import { ICU4XWeekOf } from "./ICU4XWeekOf";
 
 /**
 
@@ -62,6 +64,25 @@ export class ICU4XDate {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week Rust documentation for `day_of_week`} for more information.
    */
   day_of_week(): ICU4XIsoWeekday;
+
+  /**
+
+   * Returns the week number in this month, 1-indexed, based on what is considered the first day of the week (often a locale preference).
+
+   * `first_weekday` can be obtained via `first_weekday()` on {@link ICU4XWeekCalculator `ICU4XWeekCalculator`}
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month Rust documentation for `week_of_month`} for more information.
+   */
+  week_of_month(first_weekday: ICU4XIsoWeekday): u32;
+
+  /**
+
+   * Returns the week number in this year, using week data
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_year Rust documentation for `week_of_year`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  week_of_year(calculator: ICU4XWeekCalculator): ICU4XWeekOf | never;
 
   /**
 

@@ -14,19 +14,18 @@ fn parser(c: &mut Criterion) {
 
     let fixture_data = helpers::get_plurals_data();
 
-    let provider = icu_testdata::get_provider();
-
     let mut rules = vec![];
 
     for langid in fixture_data.langs {
-        let data_payload: DataPayload<icu_plurals::provider::CardinalV1Marker> = provider
-            .load(DataRequest {
-                locale: &langid.into(),
-                metadata: Default::default(),
-            })
-            .unwrap()
-            .take_payload()
-            .unwrap();
+        let data_payload: DataPayload<icu_plurals::provider::CardinalV1Marker> =
+            icu_testdata::unstable()
+                .load(DataRequest {
+                    locale: &langid.into(),
+                    metadata: Default::default(),
+                })
+                .unwrap()
+                .take_payload()
+                .unwrap();
         let data = data_payload.get();
 
         let r = [

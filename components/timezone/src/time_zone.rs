@@ -20,7 +20,7 @@ use icu_calendar::{DateTime, Iso};
 /// # Examples
 ///
 /// ```
-/// use icu::timezone::{GmtOffset, CustomTimeZone};
+/// use icu::timezone::{CustomTimeZone, GmtOffset};
 ///
 /// let tz1 = CustomTimeZone {
 ///     gmt_offset: Some(GmtOffset::default()),
@@ -29,7 +29,8 @@ use icu_calendar::{DateTime, Iso};
 ///     zone_variant: None,
 /// };
 ///
-/// let tz2: CustomTimeZone = "+05:00".parse().expect("Failed to parse a time zone.");
+/// let tz2: CustomTimeZone =
+///     "+05:00".parse().expect("Failed to parse a time zone.");
 /// ```
 #[derive(Debug)]
 #[allow(clippy::exhaustive_structs)] // these four fields fully cover the needs of UTS 35
@@ -84,16 +85,15 @@ impl CustomTimeZone {
     /// # Examples
     ///
     /// ```
+    /// use icu::timezone::provider::{MetaZoneId, TimeZoneBcp47Id};
+    /// use icu::timezone::CustomTimeZone;
     /// use icu::timezone::GmtOffset;
     /// use icu::timezone::MetaZoneCalculator;
-    /// use icu::timezone::CustomTimeZone;
-    /// use icu::timezone::provider::{MetaZoneId, TimeZoneBcp47Id};
     /// use icu_calendar::DateTime;
     /// use icu_locid::locale;
     /// use tinystr::tinystr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let mzc = MetaZoneCalculator::try_new_with_buffer_provider(&provider).expect("data exists");
+    /// let mzc = MetaZoneCalculator::try_new_unstable(&icu_testdata::unstable()).expect("data exists");
     /// let mut tz = CustomTimeZone {
     ///     gmt_offset: Some("+11".parse().expect("Failed to parse a GMT offset.")),
     ///     time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "gugum"))),
@@ -101,15 +101,15 @@ impl CustomTimeZone {
     ///     zone_variant: None,
     /// };
     /// tz.maybe_calculate_meta_zone(
-    ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     ///     &mzc,
+    ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     /// );
     /// assert_eq!(tz.meta_zone_id, Some(MetaZoneId(tinystr!(4, "guam"))));
     /// ```
     pub fn maybe_calculate_meta_zone(
         &mut self,
-        local_datetime: &DateTime<Iso>,
         metazone_calculator: &MetaZoneCalculator,
+        local_datetime: &DateTime<Iso>,
     ) -> &mut Self {
         if let Some(time_zone_id) = self.time_zone_id {
             self.meta_zone_id =
@@ -138,10 +138,14 @@ impl FromStr for CustomTimeZone {
     /// ```
     /// use icu::timezone::CustomTimeZone;
     ///
-    /// let tz0: CustomTimeZone = "Z".parse().expect("Failed to parse a time zone.");
-    /// let tz1: CustomTimeZone = "+02".parse().expect("Failed to parse a time zone.");
-    /// let tz2: CustomTimeZone = "-0230".parse().expect("Failed to parse a time zone.");
-    /// let tz3: CustomTimeZone = "+02:30".parse().expect("Failed to parse a time zone.");
+    /// let tz0: CustomTimeZone =
+    ///     "Z".parse().expect("Failed to parse a time zone.");
+    /// let tz1: CustomTimeZone =
+    ///     "+02".parse().expect("Failed to parse a time zone.");
+    /// let tz2: CustomTimeZone =
+    ///     "-0230".parse().expect("Failed to parse a time zone.");
+    /// let tz3: CustomTimeZone =
+    ///     "+02:30".parse().expect("Failed to parse a time zone.");
     /// ```
     fn from_str(input: &str) -> Result<Self, Self::Err> {
         let gmt_offset = input.parse::<GmtOffset>().ok();

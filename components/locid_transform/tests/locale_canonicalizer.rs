@@ -10,8 +10,7 @@ use icu_locid_transform::{LocaleCanonicalizer, LocaleExpander, TransformResult};
 
 #[test]
 fn test_maximize() {
-    let provider = icu_testdata::get_provider();
-    let lc = LocaleExpander::try_new_unstable(&provider).unwrap();
+    let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
     let path = "./tests/fixtures/maximize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =
@@ -35,8 +34,7 @@ fn test_maximize() {
 
 #[test]
 fn test_minimize() {
-    let provider = icu_testdata::get_provider();
-    let lc = LocaleExpander::try_new_unstable(&provider).unwrap();
+    let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
     let path = "./tests/fixtures/minimize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =
@@ -60,8 +58,7 @@ fn test_minimize() {
 
 #[test]
 fn test_canonicalize() {
-    let provider = icu_testdata::get_provider();
-    let lc = LocaleCanonicalizer::try_new_unstable(&provider).unwrap();
+    let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable()).unwrap();
 
     let path = "./tests/fixtures/canonicalize.json";
     let testcases: Vec<fixtures::CanonicalizationTest> =

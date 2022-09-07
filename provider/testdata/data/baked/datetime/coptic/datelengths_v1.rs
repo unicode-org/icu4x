@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_datetime")]
 type DataStruct = < :: icu_datetime :: provider :: calendar :: CopticDateLengthsV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_store_unchecked(&[

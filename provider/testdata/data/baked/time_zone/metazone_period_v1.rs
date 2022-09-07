@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_timezone")]
 type DataStruct =
     <::icu_timezone::provider::MetaZonePeriodV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
