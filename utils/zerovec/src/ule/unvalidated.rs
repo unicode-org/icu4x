@@ -11,7 +11,7 @@ use core::fmt;
 /// A byte slice that is expected to be a UTF-8 string but does not enforce that invariant.
 ///
 /// Use this type instead of `str` if you don't need to enforce UTF-8 during deserialization. For
-/// example, strings that are keys of a map don't need to ever be reified as strings.
+/// example, strings that are keys of a map don't need to ever be reified as `str`s.
 ///
 /// The main advantage of this type over `[u8]` is that it serializes as a string in
 /// human-readable formats like JSON.
