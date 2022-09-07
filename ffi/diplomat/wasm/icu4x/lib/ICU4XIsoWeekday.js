@@ -12,13 +12,13 @@ export const ICU4XIsoWeekday_js_to_rust = {
 };
 
 export const ICU4XIsoWeekday_rust_to_js = {
-  1: "Monday",
-  2: "Tuesday",
-  3: "Wednesday",
-  4: "Thursday",
-  5: "Friday",
-  6: "Saturday",
-  7: "Sunday",
+  [1]: "Monday",
+  [2]: "Tuesday",
+  [3]: "Wednesday",
+  [4]: "Thursday",
+  [5]: "Friday",
+  [6]: "Saturday",
+  [7]: "Sunday",
 };
 
 export const ICU4XIsoWeekday = {

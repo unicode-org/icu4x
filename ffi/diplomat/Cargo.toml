@@ -51,6 +51,7 @@ simple_logger = ["dep:simple_logger"]
 [dependencies]
 fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar"}
+icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", features = ["serde"] }
 icu_collections = { version = "1.0.0-beta1", path = "../../components/collections"}
 icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime/", features = ["serde"] }
 icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal/", features = ["serde"] }
@@ -71,8 +72,8 @@ writeable = { version = "0.4", path = "../../utils/writeable/" }
 # The version here can either be a `version = ".."` spec or `git = "https://github.com/rust-diplomat/diplomat", rev = ".."`
 # Since this crate is published, Diplomat must be published preceding a new ICU4X release but may use git versions in between
 # ALSO MAKE SURE TO UPDATE ffi_coverage/Cargo.toml!
-diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "839ff1c35e473d92cd9f0bbeea65c8337981e9da" }
-diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "839ff1c35e473d92cd9f0bbeea65c8337981e9da" }
+diplomat = { git = "https://github.com/rust-diplomat/diplomat", rev = "82e2e74c1f3c04b0360529aa7c019b2c56f3216d" }
+diplomat-runtime = { git = "https://github.com/rust-diplomat/diplomat", rev = "82e2e74c1f3c04b0360529aa7c019b2c56f3216d" }
 icu_testdata = { version = "1.0.0-beta1", path = "../../provider/testdata", optional = true, features = ["buffer"] }
 
 

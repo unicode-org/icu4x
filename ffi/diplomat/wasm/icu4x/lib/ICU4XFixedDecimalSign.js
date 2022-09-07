@@ -8,9 +8,9 @@ export const ICU4XFixedDecimalSign_js_to_rust = {
 };
 
 export const ICU4XFixedDecimalSign_rust_to_js = {
-  0: "None",
-  1: "Negative",
-  2: "Positive",
+  [0]: "None",
+  [1]: "Negative",
+  [2]: "Positive",
 };
 
 export const ICU4XFixedDecimalSign = {
