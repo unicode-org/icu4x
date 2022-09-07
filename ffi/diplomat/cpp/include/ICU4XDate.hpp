@@ -16,6 +16,8 @@ class ICU4XDate;
 #include "ICU4XError.hpp"
 class ICU4XIsoDate;
 #include "ICU4XIsoWeekday.hpp"
+class ICU4XWeekCalculator;
+struct ICU4XWeekOf;
 
 /**
  * A destruction policy for using ICU4XDate with std::unique_ptr.
@@ -76,6 +78,23 @@ class ICU4XDate {
    * See the [Rust documentation for `day_of_week`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.day_of_week) for more information.
    */
   ICU4XIsoWeekday day_of_week() const;
+
+  /**
+   * Returns the week number in this month, 1-indexed, based on what
+   * is considered the first day of the week (often a locale preference).
+   * 
+   * `first_weekday` can be obtained via `first_weekday()` on [`ICU4XWeekCalculator`]
+   * 
+   * See the [Rust documentation for `week_of_month`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_month) for more information.
+   */
+  uint32_t week_of_month(ICU4XIsoWeekday first_weekday) const;
+
+  /**
+   * Returns the week number in this year, using week data
+   * 
+   * See the [Rust documentation for `week_of_year`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.week_of_year) for more information.
+   */
+  diplomat::result<ICU4XWeekOf, ICU4XError> week_of_year(const ICU4XWeekCalculator& calculator) const;
 
   /**
    * Returns 1-indexed number of the month of this date in its year
@@ -168,6 +187,8 @@ class ICU4XDate {
 
 #include "ICU4XCalendar.hpp"
 #include "ICU4XIsoDate.hpp"
+#include "ICU4XWeekCalculator.hpp"
+#include "ICU4XWeekOf.hpp"
 
 inline diplomat::result<ICU4XDate, ICU4XError> ICU4XDate::try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar) {
   auto diplomat_result_raw_out_value = capi::ICU4XDate_try_new_from_iso_in_calendar(year, month, day, calendar.AsFFI());
@@ -200,6 +221,20 @@ inline uint32_t ICU4XDate::day_of_month() const {
 }
 inline ICU4XIsoWeekday ICU4XDate::day_of_week() const {
   return static_cast<ICU4XIsoWeekday>(capi::ICU4XDate_day_of_week(this->inner.get()));
+}
+inline uint32_t ICU4XDate::week_of_month(ICU4XIsoWeekday first_weekday) const {
+  return capi::ICU4XDate_week_of_month(this->inner.get(), static_cast<capi::ICU4XIsoWeekday>(first_weekday));
+}
+inline diplomat::result<ICU4XWeekOf, ICU4XError> ICU4XDate::week_of_year(const ICU4XWeekCalculator& calculator) const {
+  auto diplomat_result_raw_out_value = capi::ICU4XDate_week_of_year(this->inner.get(), calculator.AsFFI());
+  diplomat::result<ICU4XWeekOf, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+  capi::ICU4XWeekOf diplomat_raw_struct_out_value = diplomat_result_raw_out_value.ok;
+    diplomat_result_out_value = diplomat::Ok<ICU4XWeekOf>(std::move(ICU4XWeekOf{ .week = std::move(diplomat_raw_struct_out_value.week), .unit = std::move(static_cast<ICU4XWeekRelativeUnit>(diplomat_raw_struct_out_value.unit)) }));
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
 }
 inline uint32_t ICU4XDate::ordinal_month() const {
   return capi::ICU4XDate_ordinal_month(this->inner.get());

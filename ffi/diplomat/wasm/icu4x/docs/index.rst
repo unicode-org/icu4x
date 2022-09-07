@@ -29,6 +29,7 @@ Documentation
    time_ffi
    timezone_ffi
    timezone_formatter_ffi
+   week_ffi
 
 Indices and tables
 ==================

@@ -64,7 +64,7 @@ fn main() {
     let mod_out = icu_datagen::Out::Module {
         mod_directory: paths::data_root().join("baked"),
         pretty: true,
-        insert_feature_gates: false,
+        insert_feature_gates: true,
         use_separate_crates: true,
     };
 

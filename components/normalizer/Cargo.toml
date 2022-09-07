@@ -46,7 +46,7 @@ databake = { version = "0.1.0", path = "../../utils/databake", optional = true, 
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 
 [dev-dependencies]
-icu_testdata = { path = "../../provider/testdata" }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer"] }
 atoi = "1.0.0"
 arraystring = "0.3.0"
 arrayvec = "0.7.2"
@@ -62,3 +62,7 @@ std = []
 serde = ["dep:serde", "icu_collections/serde", "zerovec/serde", "icu_properties/serde"]
 datagen = ["serde", "databake", "icu_collections/databake", "zerovec/databake", "icu_properties/databake"]
 experimental = []
+
+[[test]]
+name = "tests"
+path = "tests/tests.rs"

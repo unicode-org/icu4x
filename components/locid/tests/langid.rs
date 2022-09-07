@@ -145,8 +145,9 @@ fn test_langid_strict_cmp() {
         .collect::<Vec<&str>>();
     for a in bcp47_strings.iter() {
         for b in bcp47_strings.iter() {
-            use std::str::FromStr;
-            let a_langid = LanguageIdentifier::from_str(a).expect("Invalid BCP-47 in fixture");
+            let a_langid = a
+                .parse::<LanguageIdentifier>()
+                .expect("Invalid BCP-47 in fixture");
             let a_normalized = a_langid.to_string();
             let string_cmp = a_normalized.as_bytes().cmp(b.as_bytes());
             let test_cmp = a_langid.strict_cmp(b.as_bytes());

@@ -213,12 +213,31 @@ impl DataExporter for BakedDataExporter {
 
         let marker = syn::parse_str::<syn::Path>(&marker).unwrap();
 
-        let feature = if self.insert_feature_gates {
+        #[allow(unused_mut)]
+        let mut feature = if self.insert_feature_gates {
             let feature = marker.segments.iter().next().unwrap().ident.to_string();
-            quote! { #![cfg(feature = #feature)] }
+            if !feature.starts_with("icu_provider") {
+                quote! { #![cfg(feature = #feature)] }
+            } else {
+                quote!()
+            }
         } else {
             quote!()
         };
+
+        #[allow(unused_mut)]
+        let mut struct_type = quote! { <#marker as ::icu_provider::DataMarker>::Yokeable };
+
+        #[cfg(feature = "experimental")]
+        if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
+            struct_type = quote! {
+                [(
+                    &'static [::icu_datetime::fields::Field],
+                    ::icu_datetime::pattern::runtime::PatternPlurals<'static>
+                )]
+            };
+            feature = quote! { #![cfg(feature = "icu_datetime_experimental")] }
+        }
 
         let mut path = PathBuf::new();
         let mut supers = quote!();
@@ -231,20 +250,6 @@ impl DataExporter for BakedDataExporter {
             drop(map);
             path = path.join(level.ident.to_string());
             supers = quote! { super:: #supers };
-        }
-
-        #[allow(unused_mut)]
-        let mut struct_type = quote! {
-            <#marker as ::icu_provider::DataMarker>::Yokeable
-        };
-        #[cfg(feature = "experimental")]
-        if key == icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY {
-            struct_type = quote! {
-                [(
-                    &'static [::icu_datetime::fields::Field],
-                    ::icu_datetime::pattern::runtime::PatternPlurals<'static>
-                )]
-            };
         }
 
         self.write_to_file(
@@ -265,18 +270,15 @@ impl DataExporter for BakedDataExporter {
         self.marker_data_feature.lock().expect("poison").push((
             quote!(#marker).to_string(),
             quote!(#module_path).to_string(),
-            if self.insert_feature_gates {
-                let feature = marker.segments.iter().next().unwrap().ident.to_string();
-                quote! { #[cfg(feature = #feature)] }.to_string()
-            } else {
-                String::new()
-            },
+            feature.to_string().replacen("# ! [", "# [", 1),
         ));
         Ok(())
     }
 
     fn close(&mut self) -> Result<(), DataError> {
         self.dependencies.insert("icu_provider");
+        // TODO: make locale fallback cfg'ed
+        self.dependencies.insert("icu_provider_adapters");
         let mut deps = move_out!(self.dependencies)
             .into_iter()
             .collect::<BTreeSet<_>>();
@@ -389,6 +391,7 @@ impl DataExporter for BakedDataExporter {
                     #ident => {
                         #data::DATA
                             .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                            .copied()
                             .map(AnyPayload::from_static_ref)
                     }
                 }

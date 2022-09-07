@@ -4,7 +4,7 @@
 
 use diplomat_core::*;
 use rustdoc_types::{Crate, Item, ItemEnum};
-use std::collections::{BTreeSet, HashSet};
+use std::collections::{BTreeSet, HashMap, HashSet};
 use std::fmt;
 use std::fs::File;
 use std::path::PathBuf;
@@ -125,6 +125,11 @@ lazy_static::lazy_static! {
         "IntoAnyCalendar",
     ].into_iter().collect();
 
+    static ref IGNORED_ASSOCIATED_ITEMS: HashMap<&'static str, &'static [&'static str]> = [
+        ("Writeable", &["write_len", "write_to_parts", "write_to_string"][..]),
+        ("FromStr", &["Err"][..]),
+    ].into_iter().collect();
+
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
     static ref IGNORED_PATHS: HashSet<Vec<String>> = [
@@ -138,6 +143,24 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendar::try_new_for_locale_with_buffer_provider",
         "icu::calendar::AnyCalendar::try_new_with_any_provider",
         "icu::calendar::AnyCalendar::try_new_with_buffer_provider",
+        "icu::datetime::TimeZoneFormatter::try_new_with_any_provider",
+        "icu::datetime::TimeZoneFormatter::try_new_with_buffer_provider",
+        "icu::datetime::TypedDateFormatter::try_new_with_any_provider",
+        "icu::datetime::TypedDateFormatter::try_new_with_buffer_provider",
+        "icu::datetime::TypedDateTimeFormatter::try_new_with_any_provider",
+        "icu::datetime::TypedDateTimeFormatter::try_new_with_buffer_provider",
+        "icu::datetime::DateFormatter::try_new_with_any_provider",
+        "icu::datetime::DateFormatter::try_new_with_buffer_provider",
+        "icu::datetime::DateTimeFormatter::try_new_with_any_provider",
+        "icu::datetime::DateTimeFormatter::try_new_with_buffer_provider",
+        "icu::datetime::TimeFormatter::try_new_with_any_provider",
+        "icu::datetime::TimeFormatter::try_new_with_buffer_provider",
+        "icu::datetime::ZonedDateTimeFormatter::try_new_with_any_provider",
+        "icu::datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider",
+        "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_any_provider",
+        "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_buffer_provider",
+        "icu::calendar::week::WeekCalculator::try_new_with_any_provider",
+        "icu::calendar::week::WeekCalculator::try_new_with_buffer_provider",
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
@@ -150,6 +173,20 @@ lazy_static::lazy_static! {
         "icu::calendar::AnyCalendar::convert_any_date",
         "icu::calendar::AnyCalendar::convert_any_datetime",
 
+        // Punted post 1.0: not strongly needed yet and don't want to lock in a solution
+        // Potential solutions:
+        // - borrow and clone (cheap as long it's not json)
+        // - introduce a DTFBorrowed type in Rust and FFI (bunch of work, annoying)
+        // - introduce a DateDataBundle and TimeDataBundle struct to FFI that contains
+        //   basically just DateFormat or TimeFormat but it is explicitly an Option that
+        //   can be destructively passed to these constructors via &mut self. All future
+        //   specialized constructors show up on this type instead.
+        "icu::datetime::DateTimeFormatter::try_from_date_and_time",
+        "icu::datetime::TypedDateTimeFormatter::try_from_date_and_time",
+
+        // experimental
+        "icu::datetime::DateTimeFormatter::resolve_components",
+        "icu::datetime::TypedDateTimeFormatter::resolve_components",
 
         // Individual calendars: Currently the main entry point is AnyCalendar
         "icu::calendar::buddhist",
@@ -185,6 +222,9 @@ lazy_static::lazy_static! {
         // experimental
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
+
+        // Not necessary for now
+        "icu::calendar::Date::day_of_year_info",
 
 
         // Formatting wrappers, may be supported in the future
@@ -247,6 +287,7 @@ lazy_static::lazy_static! {
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
+        "icu::datetime::time_zone::TimeZoneFormatter",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -296,7 +337,10 @@ lazy_static::lazy_static! {
         // locid macros
         "icu::locid::langid",
         "icu::locid::locale",
+        "icu::locid::extensions_other_key",
+        "icu::locid::extensions_private_key",
         "icu::locid::extensions_transform_key",
+        "icu::locid::extensions_unicode_attribute",
         "icu::locid::extensions_unicode_key",
         "icu::locid::extensions_unicode_value",
         "icu::locid::subtags_language",
@@ -346,10 +390,12 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         CRATES.get(krate).unwrap()
     }
 
-    enum In {
+    #[derive(Debug)]
+    enum In<'a> {
         Trait,
-        Enum,
-        Struct,
+        // The Option<String> is for the trait name of an impl
+        Enum(Option<&'a str>),
+        Struct(Option<&'a str>),
     }
 
     fn recurse(
@@ -373,6 +419,18 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 types.insert((path, ty));
             }
         }
+
+        fn check_ignored_assoc_item(name: &str, trait_path: Option<&str>) -> bool {
+            if let Some(tr) = trait_path {
+                if let Some(ignored) = IGNORED_ASSOCIATED_ITEMS.get(tr) {
+                    if ignored.contains(&name) {
+                        return true;
+                    }
+                }
+            }
+            false
+        }
+
         if IGNORED_PATHS.contains(&path) {
             return;
         }
@@ -421,8 +479,9 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                 }
             }
             _ => {
+                let item_name = item.name.as_ref().unwrap();
                 if !path_already_extended {
-                    path.push(item.name.as_ref().unwrap().to_string());
+                    path.push(item_name.to_string());
                 }
                 match &item.inner {
                     ItemEnum::Module(module) => {
@@ -434,11 +493,13 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                     ItemEnum::Struct(structt) => {
                         for id in &structt.impls {
                             if let ItemEnum::Impl(inner) = &krate.index[id].inner {
+                                let mut trait_name = None;
                                 if let Some(path) = &inner.trait_ {
                                     let name = &path.name;
                                     if IGNORED_TRAITS.contains(name.as_str()) {
                                         continue;
                                     }
+                                    trait_name = Some(&*path.name);
                                 }
                                 for id in &inner.items {
                                     recurse(
@@ -447,13 +508,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                         types,
                                         path.clone(),
                                         false,
-                                        Some(In::Struct),
+                                        Some(In::Struct(trait_name)),
                                     );
-                                }
-                                for name in &inner.provided_trait_methods {
-                                    let mut path = path.clone();
-                                    path.push(name.to_string());
-                                    insert_ty(types, path, ast::DocType::FnInStruct);
                                 }
                             }
                         }
@@ -467,11 +523,13 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
 
                         for id in &enumm.impls {
                             if let ItemEnum::Impl(inner) = &krate.index[id].inner {
+                                let mut trait_name = None;
                                 if let Some(path) = &inner.trait_ {
                                     let name = &path.name;
                                     if IGNORED_TRAITS.contains(name.as_str()) {
                                         continue;
                                     }
+                                    trait_name = Some(&*path.name);
                                 }
                                 for id in &inner.items {
                                     recurse(
@@ -480,13 +538,8 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                                         types,
                                         path.clone(),
                                         false,
-                                        Some(In::Enum),
+                                        Some(In::Enum(trait_name)),
                                     );
-                                }
-                                for name in &inner.provided_trait_methods {
-                                    let mut path = path.clone();
-                                    path.push(name.to_string());
-                                    insert_ty(types, path, ast::DocType::FnInEnum);
                                 }
                             }
                         }
@@ -519,43 +572,49 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
                         insert_ty(types, path, ast::DocType::Typedef);
                     }
                     ItemEnum::Method(_) => {
-                        insert_ty(
-                            types,
-                            path,
-                            match inside {
-                                Some(In::Enum) => ast::DocType::FnInEnum,
-                                Some(In::Trait) => ast::DocType::FnInTrait,
-                                Some(In::Struct) => ast::DocType::FnInStruct,
-                                _ => panic!("Method needs In"),
-                            },
-                        );
+                        let doc_type = match inside {
+                            Some(In::Enum(tr)) | Some(In::Struct(tr))
+                                if check_ignored_assoc_item(item_name, tr) =>
+                            {
+                                return
+                            }
+                            Some(In::Enum(_)) => ast::DocType::FnInEnum,
+                            Some(In::Trait) => ast::DocType::FnInTrait,
+                            Some(In::Struct(_)) => ast::DocType::FnInStruct,
+                            _ => panic!("Method needs In"),
+                        };
+                        insert_ty(types, path, doc_type);
                     }
                     ItemEnum::Variant(_) => {
                         insert_ty(types, path, ast::DocType::EnumVariant);
                     }
                     ItemEnum::AssocConst { .. } => {
-                        insert_ty(
-                            types,
-                            path,
-                            match inside {
-                                Some(In::Enum) => ast::DocType::AssociatedConstantInEnum,
-                                Some(In::Trait) => ast::DocType::AssociatedConstantInTrait,
-                                Some(In::Struct) => ast::DocType::AssociatedConstantInStruct,
-                                _ => panic!("AssocConst needs In"),
-                            },
-                        );
+                        let doc_type = match inside {
+                            Some(In::Enum(tr)) | Some(In::Struct(tr))
+                                if check_ignored_assoc_item(item_name, tr) =>
+                            {
+                                return
+                            }
+                            Some(In::Enum(_)) => ast::DocType::AssociatedConstantInEnum,
+                            Some(In::Trait) => ast::DocType::AssociatedConstantInTrait,
+                            Some(In::Struct(_)) => ast::DocType::AssociatedConstantInStruct,
+                            _ => panic!("AssocConst needs In"),
+                        };
+                        insert_ty(types, path, doc_type);
                     }
                     ItemEnum::AssocType { .. } => {
-                        insert_ty(
-                            types,
-                            path,
-                            match inside {
-                                Some(In::Enum) => ast::DocType::AssociatedTypeInEnum,
-                                Some(In::Trait) => ast::DocType::AssociatedTypeInTrait,
-                                Some(In::Struct) => ast::DocType::AssociatedTypeInStruct,
-                                _ => panic!("AssocType needs In"),
-                            },
-                        );
+                        let doc_type = match inside {
+                            Some(In::Enum(tr)) | Some(In::Struct(tr))
+                                if check_ignored_assoc_item(item_name, tr) =>
+                            {
+                                return
+                            }
+                            Some(In::Enum(_)) => ast::DocType::AssociatedTypeInEnum,
+                            Some(In::Trait) => ast::DocType::AssociatedTypeInTrait,
+                            Some(In::Struct(_)) => ast::DocType::AssociatedTypeInStruct,
+                            _ => panic!("AssocType needs In"),
+                        };
+                        insert_ty(types, path, doc_type);
                     }
                     _ => todo!("{:?}", item),
                 }

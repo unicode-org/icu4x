@@ -223,6 +223,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
             if let Some(fallback_by_lit) = fallback_by {
                 match fallback_by_lit.value().as_str() {
                     "region" => write!(key_str, "[R]").unwrap(),
+                    "collation" => write!(key_str, "[C]").unwrap(),
                     "language" => (),
                     _ => panic!("Invalid value for fallback_by"),
                 };

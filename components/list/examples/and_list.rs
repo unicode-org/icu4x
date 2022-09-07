@@ -15,7 +15,7 @@ fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
 
     let list_formatter = ListFormatter::try_new_and_unstable(
-        &icu_testdata::get_baked_provider(),
+        &icu_testdata::unstable(),
         &locale!("es").into(),
         ListStyle::Wide,
     )

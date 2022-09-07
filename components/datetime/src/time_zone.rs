@@ -62,11 +62,9 @@ where
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::timezone::{CustomTimeZone, MetaZoneCalculator};
-/// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
+/// use icu_datetime::TimeZoneFormatter;
 /// use icu_locid::locale;
 /// use tinystr::tinystr;
-///
-/// let provider = icu_testdata::get_provider();
 ///
 /// // Set up the time zone. Note: the inputs here are
 /// //   1. The GMT offset
@@ -74,20 +72,20 @@ where
 /// //   3. A datetime (for metazone resolution)
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
 /// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
-/// let mzc = MetaZoneCalculator::try_new_with_buffer_provider(&provider)
-/// .unwrap();
+/// let mzc = MetaZoneCalculator::try_new_unstable(&icu_testdata::unstable())
+///     .unwrap();
 /// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
-/// .unwrap();
-/// time_zone.maybe_calculate_meta_zone(&datetime, &mzc);
+///     .unwrap();
+/// time_zone.maybe_calculate_meta_zone(&mzc, &datetime);
 ///
 /// // Set up the formatter:
-/// let mut tzf = TimeZoneFormatter::try_new_with_buffer_provider(
-///     &provider,
+/// let mut tzf = TimeZoneFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
-///     TimeZoneFormatterOptions::default(),
+///     Default::default(),
 /// )
 /// .unwrap();
-/// tzf.load_generic_non_location_long(&provider).unwrap();
+/// tzf.load_generic_non_location_long(&icu_testdata::unstable()).unwrap();
 ///
 /// // Check the result:
 /// assert_eq!(
@@ -370,10 +368,9 @@ impl TimeZoneFormatter {
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
     ///
-    /// let tzf = TimeZoneFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let tzf = TimeZoneFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("es").into(),
     ///     TimeZoneFormatterOptions::default(),
     /// ).unwrap();
@@ -615,10 +612,8 @@ impl TimeZoneFormatter {
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let tzf = TimeZoneFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let tzf = TimeZoneFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     TimeZoneFormatterOptions::default(),
     /// )
@@ -757,7 +752,7 @@ pub enum IsoSeconds {
 /// Whether a field should be zero-padded in ISO-8601 format.
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[allow(clippy::exhaustive_enums)] // this type is stable
-pub enum ZeroPadding {
+pub(crate) enum ZeroPadding {
     /// Add zero-padding.
     On,
 

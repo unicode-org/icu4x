@@ -8,38 +8,40 @@ use icu_provider::prelude::*;
 
 #[test]
 fn test_plural_rules() {
-    let provider = icu_testdata::get_provider();
-
-    let pr =
-        PluralRules::try_new_unstable(&provider, &locale!("en").into(), PluralRuleType::Cardinal)
-            .unwrap();
-
-    assert_eq!(pr.category_for(5_usize), PluralCategory::Other);
+    assert_eq!(
+        PluralRules::try_new_unstable(
+            &icu_testdata::unstable(),
+            &locale!("en").into(),
+            PluralRuleType::Cardinal
+        )
+        .unwrap()
+        .category_for(5_usize),
+        PluralCategory::Other
+    );
 }
 
 #[test]
 fn test_static_load_works() {
-    let provider = icu_testdata::get_provider();
-
-    let _rules: DataPayload<CardinalV1Marker> = provider
-        .load(DataRequest {
+    DataProvider::<CardinalV1Marker>::load(
+        &icu_testdata::unstable(),
+        DataRequest {
             locale: &locale!("en").into(),
             metadata: Default::default(),
-        })
-        .expect("Failed to load payload")
-        .take_payload()
-        .expect("Failed to retrieve payload");
+        },
+    )
+    .expect("Failed to load payload")
+    .take_payload()
+    .expect("Failed to retrieve payload");
 }
 
 #[test]
 fn test_plural_rules_missing() {
-    // Use get_postcard_provider to skip vertical fallback
-    let provider = icu_testdata::get_postcard_provider();
-
-    let pr =
-        PluralRules::try_new_unstable(&provider, &locale!("xx").into(), PluralRuleType::Cardinal);
-
-    assert!(pr.is_err());
+    assert!(PluralRules::try_new_unstable(
+        &icu_testdata::unstable_no_fallback(),
+        &locale!("xx").into(),
+        PluralRuleType::Cardinal
+    )
+    .is_err());
 }
 
 #[test]

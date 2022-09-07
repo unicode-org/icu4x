@@ -110,11 +110,12 @@ mod tests {
     use icu_provider::prelude::*;
 
     #[test]
+    #[cfg(feature = "serde")]
     fn thai_word_break() {
         const TEST_STR: &str = "ภาษาไทยภาษาไทย";
 
-        let provider = icu_testdata::get_provider();
-        let payload = provider
+        let payload = icu_testdata::buffer()
+            .as_deserializing()
             .load(DataRequest {
                 locale: &DataLocale::from(locale!("th")),
                 metadata: Default::default(),

@@ -17,7 +17,6 @@ use crate::provider::calendar::{DateLengthsV1, TimeLengthsV1};
 #[cfg(feature = "experimental")]
 use crate::{options::components, provider::calendar::DateSkeletonPatternsV1Marker};
 use icu_calendar::types::{Era, MonthCode};
-#[cfg(feature = "experimental")]
 use icu_locid::extensions::unicode::Value;
 use icu_provider::prelude::*;
 
@@ -134,15 +133,14 @@ pub struct PatternSelector<'a, D: ?Sized> {
     data_provider: &'a D,
     date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
     locale: &'a DataLocale,
-    #[cfg(feature = "experimental")]
-    cal_val: &'a Value,
+    #[allow(dead_code)] // non-experimental mode
+    cal_val: Option<&'a Value>,
 }
 
 impl<D> PatternSelector<'_, D>
 where
     D: DataProvider<TimeLengthsV1Marker> + ?Sized,
 {
-    #[cfg(not(feature = "experimental"))]
     pub(crate) fn for_options<'a>(
         data_provider: &'a D,
         date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
@@ -153,10 +151,14 @@ where
             data_provider,
             date_patterns_data,
             locale,
+            cal_val: None,
         };
         match options {
             DateTimeFormatterOptions::Length(bag) => selector
                 .pattern_for_length_bag(bag, Some(preferences::Bag::from_data_locale(locale))),
+            #[cfg(feature = "experimental")]
+            #[allow(clippy::panic)] // explicit panic in experimental mode
+            _ => panic!("Non-experimental constructor cannot handle experimental options"),
         }
     }
 
@@ -222,7 +224,7 @@ impl<D> PatternSelector<'_, D>
 where
     D: DataProvider<TimeLengthsV1Marker> + DataProvider<DateSkeletonPatternsV1Marker> + ?Sized,
 {
-    pub(crate) fn for_options<'a>(
+    pub(crate) fn for_options_experimental<'a>(
         data_provider: &'a D,
         date_patterns_data: DataPayload<ErasedDateLengthsV1Marker>,
         locale: &'a DataLocale,
@@ -233,7 +235,7 @@ where
             data_provider,
             date_patterns_data,
             locale,
-            cal_val,
+            cal_val: Some(cal_val),
         };
         match options {
             DateTimeFormatterOptions::Length(bag) => selector
@@ -272,11 +274,13 @@ where
     fn skeleton_data_payload(&self) -> Result<DataPayload<DateSkeletonPatternsV1Marker>> {
         use icu_locid::{extensions_unicode_key as key, extensions_unicode_value as value};
         let mut locale = self.locale.clone();
+        #[allow(clippy::expect_used)] // experimental
+        let cal_val = self.cal_val.expect("should be present for components bag");
         // Skeleton data for ethioaa is stored under ethiopic
-        if self.cal_val == &value!("ethioaa") {
+        if cal_val == &value!("ethioaa") {
             locale.set_unicode_ext(key!("ca"), value!("ethiopic"));
         } else {
-            locale.set_unicode_ext(key!("ca"), self.cal_val.clone());
+            locale.set_unicode_ext(key!("ca"), cal_val.clone());
         };
         let data = self
             .data_provider
