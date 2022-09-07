@@ -91,14 +91,18 @@ pub mod ffi {
             return convert_any_provider(icu_testdata::any());
 
             #[cfg(all(feature = "provider_test", feature = "buffer_provider", not(feature = "any_provider")))]
-            return convert_buffer_provider(icu_testdata::buffer());
+            return if cfg!(feature = "smaller_test") {
+                convert_buffer_provider(icu_testdata::small_buffer())
+            } else {
+                convert_buffer_provider(icu_testdata::buffer())
+            };
 
             #[cfg(all(feature = "provider_test", feature = "any_provider", feature = "buffer_provider"))]
-            if cfg!(feature = "smaller_test") {
+            return if cfg!(feature = "smaller_test") {
                 convert_buffer_provider(icu_testdata::small_buffer())
             } else {
                 convert_any_provider(icu_testdata::any())
-            }
+            };
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
@@ -126,7 +130,7 @@ pub mod ffi {
             return convert_buffer_provider(icu_provider_adapters::empty::EmptyDataProvider::new());
 
             #[cfg(feature = "any_provider")]
-            convert_any_provider(icu_provider_adapters::empty::EmptyDataProvider::new())
+            return convert_any_provider(icu_provider_adapters::empty::EmptyDataProvider::new());
         }
     }
 }
