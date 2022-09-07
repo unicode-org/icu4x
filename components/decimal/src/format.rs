@@ -63,3 +63,5 @@ impl<'l> Writeable for FormattedFixedDecimal<'l> {
         Ok(())
     }
 }
+
+writeable::impl_display_with_writeable!(FormattedFixedDecimal<'_>);

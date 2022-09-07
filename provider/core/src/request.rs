@@ -122,12 +122,6 @@ impl fmt::Debug for DataLocale {
     }
 }
 
-impl fmt::Display for DataLocale {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
-
 impl Writeable for DataLocale {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.langid.write_to(sink)?;
@@ -147,6 +141,8 @@ impl Writeable for DataLocale {
             }
     }
 }
+
+writeable::impl_display_with_writeable!(DataLocale);
 
 impl From<LanguageIdentifier> for DataLocale {
     fn from(langid: LanguageIdentifier) -> Self {

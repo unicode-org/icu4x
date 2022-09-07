@@ -1736,12 +1736,7 @@ impl writeable::Writeable for FixedDecimal {
     }
 }
 
-/// Renders the `FixedDecimal` according to the syntax documented in `FixedDecimal::write_to`.
-impl fmt::Display for FixedDecimal {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
+writeable::impl_display_with_writeable!(FixedDecimal);
 
 impl FromStr for FixedDecimal {
     type Err = Error;

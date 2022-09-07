@@ -11,10 +11,6 @@ addition of a function indicating the number of bytes to be written.
 1. More efficient, since the sink can pre-allocate bytes.
 2. Smaller code, since the format machinery can be short-circuited.
 
-Types implementing Writeable have a defaulted [`write_to_string`](Writeable::write_to_string)
-function. If desired, types implementing `Writeable` can manually implement `ToString`
-to wrap `write_to_string`.
-
 ## Examples
 
 ```rust
@@ -43,6 +39,10 @@ impl<'s> Writeable for WelcomeMessage<'s> {
 
 let message = WelcomeMessage { name: "Alice" };
 assert_writeable_eq!(&message, "Hello, Alice!");
+
+// Types implementing `Writeable` are recommended to also implement `fmt::Display`.
+// This can be simply done by redirecting to the `Writeable` implementation:
+writeable::impl_display_with_writeable!(WelcomeMessage<'_>);
 ```
 
 [`ICU4X`]: ../icu/index.html
