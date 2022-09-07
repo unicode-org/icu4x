@@ -8,6 +8,9 @@ use icu_provider::RcWrapBounds;
 use yoke::{trait_hack::YokeTraitHack, Yokeable};
 use zerofrom::ZeroFrom;
 
+#[cfg(feature = "buffer_provider")]
+use icu_provider::BufferProvider;
+
 pub enum ICU4XDataProviderInner {
     Any(Box<dyn AnyProvider + 'static>),
     #[cfg(feature = "buffer_provider")]
@@ -20,9 +23,6 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
     use icu_provider::AnyProvider;
-    use icu_provider::BufferProvider;
-    use icu_provider_blob::BlobDataProvider;
-    use icu_provider_blob::StaticDataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -44,7 +44,9 @@ pub mod ffi {
     }
 
     #[cfg(feature = "buffer_provider")]
-    fn convert_buffer_provider<D: BufferProvider + 'static>(x: D) -> Box<ICU4XDataProvider> {
+    fn convert_buffer_provider<D: icu_provider::BufferProvider + 'static>(
+        x: D,
+    ) -> Box<ICU4XDataProvider> {
         Box::new(ICU4XDataProvider(
             super::ICU4XDataProviderInner::from_buffer_provider(x),
         ))
@@ -91,13 +93,13 @@ pub mod ffi {
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         pub fn create_from_byte_slice(
-            blob: &[u8],
+            _blob: &[u8],
         ) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
             #[cfg(not(feature = "buffer_provider"))]
             unimplemented!();
 
             #[cfg(feature = "buffer_provider")]
-            BlobDataProvider::try_new_from_blob(blob)
+            icu_provider_blob::BlobDataProvider::try_new_from_blob(_blob)
                 .map_err(Into::into)
                 .map(convert_buffer_provider)
                 .into()
@@ -111,6 +113,7 @@ pub mod ffi {
     }
 }
 
+#[cfg(not(feature = "buffer_provider"))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
     M: KeyedDataMarker + 'static,
@@ -121,7 +124,25 @@ where
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
             ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load(req),
-            #[cfg(feature = "buffer_provider")]
+        }
+    }
+}
+
+#[cfg(feature = "buffer_provider")]
+impl<M> DataProvider<M> for ICU4XDataProviderInner
+where
+    M: KeyedDataMarker + 'static,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+    M::Yokeable: RcWrapBounds,
+    // Actual bound:
+    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
+    // Necessary workaround bound (see `yoke::trait_hack` docs):
+    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::Deserialize<'de>,
+{
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        match self {
+            ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load(req),
             ICU4XDataProviderInner::Buffer(buffer_provider) => {
                 buffer_provider.as_deserializing().load(req)
             }

@@ -1388,6 +1388,7 @@ dependencies = [
  "icu_testdata",
  "icu_timezone",
  "log",
+ "serde",
  "simple_logger",
  "tinystr 0.6.2",
  "unicode-bidi",

@@ -40,6 +40,7 @@ denylist = ["bench", "serde", "smaller_test", "logging"]
 [features]
 default = []
 serde = [
+    "dep:serde",
     "icu_datetime/serde",
     "icu_decimal/serde",
     "icu_locid_transform/serde",
@@ -72,6 +73,7 @@ icu_provider_adapters = { version = "1.0.0-beta1", path = "../../provider/adapte
 icu_provider_blob = { version = "1.0.0-beta1", path = "../../provider/blob" }
 icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter" }
 icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone" }
+serde = { version = "1.0", default-features = false, optional = true }
 tinystr = { path = "../../utils/tinystr", version = "0.6", features = ["alloc"], default-features = false }
 unicode-bidi = { version = "0.3.8", default-features = false }
 writeable = { version = "0.4", path = "../../utils/writeable/" }

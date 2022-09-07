@@ -7,14 +7,11 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use icu_collections::codepointtrie::TrieValue;
-    use icu_properties::{maps, PropertiesError};
-    use icu_provider::KeyedDataMarker;
+    use icu_properties::maps;
 
     use crate::errors::ffi::ICU4XError;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
     use diplomat_runtime::DiplomatResult;
-
-    use icu_provider::DataProvider;
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
