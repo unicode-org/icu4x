@@ -39,7 +39,9 @@ pub mod ffi {
     }
 
     #[cfg(feature = "any_provider")]
-    fn convert_any_provider<D: icu_provider::AnyProvider + 'static>(x: D) -> Box<ICU4XDataProvider> {
+    fn convert_any_provider<D: icu_provider::AnyProvider + 'static>(
+        x: D,
+    ) -> Box<ICU4XDataProvider> {
         Box::new(ICU4XDataProvider(
             super::ICU4XDataProviderInner::from_any_provider(x),
         ))
@@ -84,20 +86,35 @@ pub mod ffi {
             #[cfg(not(feature = "provider_test"))]
             panic!("Requires feature 'provider_test'");
 
-            #[cfg(all(feature = "provider_test", not(any(feature = "any_provider", feature = "buffer_provider"))))]
+            #[cfg(all(
+                feature = "provider_test",
+                not(any(feature = "any_provider", feature = "buffer_provider"))
+            ))]
             panic!("Requires feature 'any_provider' or 'buffer_provider'");
 
-            #[cfg(all(feature = "provider_test", feature = "any_provider", not(feature = "buffer_provider")))]
+            #[cfg(all(
+                feature = "provider_test",
+                feature = "any_provider",
+                not(feature = "buffer_provider")
+            ))]
             return convert_any_provider(icu_testdata::any());
 
-            #[cfg(all(feature = "provider_test", feature = "buffer_provider", not(feature = "any_provider")))]
+            #[cfg(all(
+                feature = "provider_test",
+                feature = "buffer_provider",
+                not(feature = "any_provider")
+            ))]
             return if cfg!(feature = "smaller_test") {
                 convert_buffer_provider(icu_testdata::small_buffer())
             } else {
                 convert_buffer_provider(icu_testdata::buffer())
             };
 
-            #[cfg(all(feature = "provider_test", feature = "any_provider", feature = "buffer_provider"))]
+            #[cfg(all(
+                feature = "provider_test",
+                feature = "any_provider",
+                feature = "buffer_provider"
+            ))]
             return if cfg!(feature = "smaller_test") {
                 convert_buffer_provider(icu_testdata::small_buffer())
             } else {
