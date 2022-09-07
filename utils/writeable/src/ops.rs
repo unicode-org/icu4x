@@ -90,7 +90,7 @@ impl core::ops::BitOr<LengthHint> for LengthHint {
     ///         LengthHint::exact(self.0.len()) | LengthHint::exact(self.1.len())
     ///     }
     /// }
-    /// 
+    ///
     /// writeable::impl_display_with_writeable!(NonDeterministicWriteable);
     /// ```
     fn bitor(self, other: LengthHint) -> Self {

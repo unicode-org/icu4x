@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(all(not(test), not(doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -57,7 +57,7 @@
 //! let message = WelcomeMessage { name: "Alice" };
 //! assert_writeable_eq!(&message, "Hello, Alice!");
 //!
-//! // Types implementing `Writeable` are required to also implement `fmt::Display`.
+//! // Types implementing `Writeable` are recommended to also implement `fmt::Display`.
 //! // This can be simply done by redirecting to the `Writeable` implementation:
 //! writeable::impl_display_with_writeable!(WelcomeMessage<'_>);
 //! ```
@@ -158,7 +158,7 @@ pub trait PartsWrite: fmt::Write {
 }
 
 /// `Writeable` is an alternative to `std::fmt::Display` with the addition of a length function.
-pub trait Writeable: fmt::Display {
+pub trait Writeable {
     /// Writes bytes to the given sink. Errors from the sink are bubbled up.
     /// The default implementation delegates to `write_to_parts`, and discards any
     /// `Part` annotations.
@@ -249,6 +249,11 @@ pub trait Writeable: fmt::Display {
     }
 }
 
+/// Implements [`Display`](core::fmt::Display) for types that implement [`Writeable`].
+///
+/// It's recommended to do this for every [`Writeable`] type, as it will add
+/// support for `core::fmt` features like [`fmt!`](std::fmt),
+/// [`print!`](std::print), [`write!`](std::write), etc.
 #[macro_export]
 macro_rules! impl_display_with_writeable {
     ($type:ty) => {
@@ -319,6 +324,7 @@ macro_rules! assert_writeable_eq {
     }};
 }
 
+/// See [`assert_writeable_eq`].
 #[macro_export]
 macro_rules! assert_writeable_parts_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
