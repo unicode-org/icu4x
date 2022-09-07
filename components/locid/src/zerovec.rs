@@ -19,24 +19,26 @@
 //! To perform lookup, store the stringified locale in a canonical BCP-47 form as a byte array,
 //! and then use [`Locale::strict_cmp()`] to perform an efficient, zero-allocation lookup.
 //!
+//! To produce more human-readable serialized output, you can use [`UnvalidatedStr`].
+//!
 //! ```
 //! use icu_locid::Locale;
-//! use std::str::FromStr;
 //! use zerovec::ZeroMap;
+//! use zerovec::ule::UnvalidatedStr;
 //!
 //! // ZeroMap from locales to integers
-//! let data: &[(&[u8], u32)] = &[
-//!     (b"de-DE-u-hc-h12", 5),
-//!     (b"en-US-u-ca-buddhist", 10),
-//!     (b"my-MM", 15),
-//!     (b"sr-Cyrl-ME", 20),
-//!     (b"zh-TW", 25),
+//! let data: &[(&UnvalidatedStr, u32)] = &[
+//!     ("de-DE-u-hc-h12".into(), 5),
+//!     ("en-US-u-ca-buddhist".into(), 10),
+//!     ("my-MM".into(), 15),
+//!     ("sr-Cyrl-ME".into(), 20),
+//!     ("zh-TW".into(), 25),
 //! ];
-//! let zm: ZeroMap<[u8], u32> = data.iter().copied().collect();
+//! let zm: ZeroMap<UnvalidatedStr, u32> = data.iter().copied().collect();
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
-//! let value = zm.get_copied_by(|bytes| loc.strict_cmp(bytes).reverse());
+//! let value = zm.get_copied_by(|uvstr| loc.strict_cmp(&uvstr).reverse());
 //! assert_eq!(value, Some(10));
 //! ```
 //!
@@ -90,276 +92,37 @@
 //! for a discussion on potential data models that could ensure that the locale is valid during
 //! deserialization.
 //!
+//! As above, to produce more human-readable serialized output, you can use [`UnvalidatedStr`].
+//!
 //! ```
 //! use icu_locid::langid;
 //! use icu_locid::Locale;
 //! use zerovec::ZeroMap;
+//! use zerovec::ule::UnvalidatedStr;
 //!
 //! // ZeroMap from integer to locale string
-//! let data: &[(u32, &[u8])] = &[
-//!     (5, b"de-DE-u-hc-h12"),
-//!     (10, b"en-US-u-ca-buddhist"),
-//!     (15, b"my-MM"),
-//!     (20, b"sr-Cyrl-ME"),
-//!     (25, b"zh-TW"),
-//!     (30, b"INVALID"),
+//! let data: &[(u32, &UnvalidatedStr)] = &[
+//!     (5, "de-DE-u-hc-h12".into()),
+//!     (10, "en-US-u-ca-buddhist".into()),
+//!     (15, "my-MM".into()),
+//!     (20, "sr-Cyrl-ME".into()),
+//!     (25, "zh-TW".into()),
+//!     (30, "INVALID".into()),
 //! ];
-//! let zm: ZeroMap<u32, [u8]> = data.iter().copied().collect();
+//! let zm: ZeroMap<u32, UnvalidatedStr> = data.iter().copied().collect();
 //!
 //! // Construct a Locale by parsing the string.
 //! let value = zm.get(&25).expect("element is present");
-//! let loc = Locale::from_bytes(value);
+//! let loc = Locale::from_bytes(&*value);
 //! assert_eq!(loc, Ok(langid!("zh-TW").into()));
 //!
 //! // Invalid entries are fallible
 //! let err_value = zm.get(&30).expect("element is present");
-//! let err_loc = Locale::from_bytes(err_value);
+//! let err_loc = Locale::from_bytes(&*err_value);
 //! assert!(matches!(err_loc, Err(_)));
 //! ```
 //!
 //! [`Locale`]: crate::Locale
 //! [`Locale::strict_cmp()`]: crate::Locale::strict_cmp()
 //! [`LanguageIdentifier`]: crate::LanguageIdentifier
-
-use crate::subtags::{Language, Region, Script, Variant};
-use zerovec::ule::{AsULE, ULE};
-use zerovec::ZeroVecError;
-use zerovec::{ZeroSlice, ZeroVec};
-
-// Safety checklist for ULE:
-//
-// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
-// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
-// 5. All other methods must be left with their default impl.
-// 6. Byte equality is semantic equality.
-unsafe impl ULE for Language {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
-        if !it.remainder().is_empty() {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
-        }
-        for v in it {
-            // The following can be removed once `array_chunks` is stabilized.
-            let mut a = [0; core::mem::size_of::<Self>()];
-            a.copy_from_slice(v);
-            if Self::try_from_raw(a).is_err() {
-                return Err(ZeroVecError::parse::<Self>());
-            }
-        }
-        Ok(())
-    }
-}
-
-/// Impl enabling `Language` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
-///
-/// # Example
-///
-/// ```
-/// use icu::locid::subtags_language as language;
-/// use icu::locid::subtags::Language;
-/// use zerovec::ZeroVec;
-///
-/// let zv =
-///     ZeroVec::<Language>::parse_byte_slice(b"de\0fr\0arsar\0").expect("Valid language subtags");
-/// assert_eq!(zv.get(1), Some(language!("fr")));
-///
-/// ZeroVec::<Language>::parse_byte_slice(b"invalid").expect_err("Invalid byte slice");
-/// ```
-///
-/// [`ZeroVec`]: zerovec::ZeroVec
-impl AsULE for Language {
-    type ULE = Self;
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-impl<'a> zerovec::maps::ZeroMapKV<'a> for Language {
-    type Container = zerovec::ZeroVec<'a, Language>;
-    type Slice = zerovec::ZeroSlice<Language>;
-    type GetType = Language;
-    type OwnedType = Language;
-}
-
-// Safety checklist for ULE:
-//
-// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
-// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
-// 5. All other methods must be left with their default impl.
-// 6. Byte equality is semantic equality.
-unsafe impl ULE for Script {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
-        if !it.remainder().is_empty() {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
-        }
-        for v in it {
-            // The following can be removed once `array_chunks` is stabilized.
-            let mut a = [0; core::mem::size_of::<Self>()];
-            a.copy_from_slice(v);
-            if Self::try_from_raw(a).is_err() {
-                return Err(ZeroVecError::parse::<Self>());
-            }
-        }
-        Ok(())
-    }
-}
-
-/// Impl enabling `Script` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
-///
-/// # Example
-///
-/// ```
-/// use icu::locid::{subtags_script as script, subtags::Script};
-/// use zerovec::ZeroVec;
-///
-/// let zv =
-///     ZeroVec::<Script>::parse_byte_slice(b"LatnAdlmMymrLatnLatn").expect("Valid script subtags");
-/// assert_eq!(zv.get(1), Some(script!("Adlm")));
-///
-/// ZeroVec::<Script>::parse_byte_slice(b"invalid").expect_err("Invalid byte slice");
-/// ```
-///
-/// [`ZeroVec`]: zerovec::ZeroVec
-impl AsULE for Script {
-    type ULE = Self;
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-impl<'a> zerovec::maps::ZeroMapKV<'a> for Script {
-    type Container = ZeroVec<'a, Script>;
-    type Slice = ZeroSlice<Script>;
-    type GetType = Script;
-    type OwnedType = Script;
-}
-
-// Safety checklist for ULE:
-//
-// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
-// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
-// 5. All other methods must be left with their default impl.
-// 6. Byte equality is semantic equality.
-unsafe impl ULE for Region {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
-        if !it.remainder().is_empty() {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
-        }
-        for v in it {
-            // The following can be removed once `array_chunks` is stabilized.
-            let mut a = [0; core::mem::size_of::<Self>()];
-            a.copy_from_slice(v);
-            if Self::try_from_raw(a).is_err() {
-                return Err(ZeroVecError::parse::<Self>());
-            }
-        }
-        Ok(())
-    }
-}
-
-/// Impl enabling `Region` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
-///
-/// # Example
-///
-/// ```
-/// use icu::locid::subtags_region as region;
-/// use icu::locid::subtags::Region;
-/// use zerovec::ZeroVec;
-///
-/// let zv = ZeroVec::<Region>::parse_byte_slice(b"GB\0419001DE\0").expect("Valid region subtags");
-/// assert_eq!(zv.get(1), Some(region!("419")));
-///
-/// ZeroVec::<Region>::parse_byte_slice(b"invalid").expect_err("Invalid byte slice");
-/// ```
-///
-/// [`ZeroVec`]: zerovec::ZeroVec
-impl AsULE for Region {
-    type ULE = Self;
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-impl<'a> zerovec::maps::ZeroMapKV<'a> for Region {
-    type Container = ZeroVec<'a, Region>;
-    type Slice = ZeroSlice<Region>;
-    type GetType = Region;
-    type OwnedType = Region;
-}
-
-// Safety checklist for ULE:
-//
-// 1. Must not include any uninitialized or padding bytes (true since transparent over a ULE).
-// 2. Must have an alignment of 1 byte (true since transparent over a ULE).
-// 3. ULE::validate_byte_slice() checks that the given byte slice represents a valid slice.
-// 4. ULE::validate_byte_slice() checks that the given byte slice has a valid length.
-// 5. All other methods must be left with their default impl.
-// 6. Byte equality is semantic equality.
-unsafe impl ULE for Variant {
-    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
-        let it = bytes.chunks_exact(core::mem::size_of::<Self>());
-        if !it.remainder().is_empty() {
-            return Err(ZeroVecError::length::<Self>(bytes.len()));
-        }
-        for v in it {
-            // The following can be removed once `array_chunks` is stabilized.
-            let mut a = [0; core::mem::size_of::<Self>()];
-            a.copy_from_slice(v);
-            if Self::try_from_raw(a).is_err() {
-                return Err(ZeroVecError::parse::<Self>());
-            }
-        }
-        Ok(())
-    }
-}
-
-/// Impl enabling `Variant` to be used in a [`ZeroVec`]. Enabled with the `"zerovec"` feature.
-///
-/// # Example
-///
-/// ```
-/// use icu::locid::subtags::Variant;
-/// use icu::locid::subtags_variant as variant;
-/// use zerovec::ZeroVec;
-///
-/// let zv = ZeroVec::<Variant>::parse_byte_slice(b"fonipa\0\01992\0\0\0\0posix\0\0\0")
-///     .expect("Valid variant subtags");
-/// assert_eq!(zv.get(1), Some(variant!("1992")));
-///
-/// ZeroVec::<Variant>::parse_byte_slice(b"invalid").expect_err("Invalid byte slice");
-/// ```
-///
-/// [`ZeroVec`]: zerovec::ZeroVec
-impl AsULE for Variant {
-    type ULE = Self;
-    fn to_unaligned(self) -> Self::ULE {
-        self
-    }
-    fn from_unaligned(unaligned: Self::ULE) -> Self {
-        unaligned
-    }
-}
-
-impl<'a> zerovec::maps::ZeroMapKV<'a> for Variant {
-    type Container = ZeroVec<'a, Variant>;
-    type Slice = ZeroSlice<Variant>;
-    type GetType = Variant;
-    type OwnedType = Variant;
-}
+//! [`UnvalidatedStr`]: zerovec::ule::UnvalidatedStr

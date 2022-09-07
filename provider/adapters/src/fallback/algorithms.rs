@@ -73,9 +73,19 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         match self.config.priority {
             FallbackPriority::Language => self.step_language(locale),
             FallbackPriority::Region => self.step_region(locale),
+            // TODO(#1964): Change the collation fallback rules to be different
+            // from the language fallback fules.
+            FallbackPriority::Collation => self.step_language(locale),
             // This case should not normally happen, but `FallbackPriority` is non_exhaustive.
             // Make it go directly to `und`.
-            _ => *locale = Default::default(),
+            _ => {
+                debug_assert!(
+                    false,
+                    "Unknown FallbackPriority: {:?}",
+                    self.config.priority
+                );
+                *locale = Default::default()
+            }
         }
     }
 
@@ -103,7 +113,7 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
         if let Some(parent) = self
             .parents
             .parents
-            .get_copied_by(|bytes| locale.strict_cmp(bytes).reverse())
+            .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
         {
             let lid = LanguageIdentifier::from(parent);
             locale.set_langid(lid);
@@ -322,10 +332,11 @@ mod tests {
     ];
 
     #[test]
+    #[cfg(feature = "serde")]
     fn test_fallback() {
         let fallbacker_no_data = LocaleFallbacker::new_without_data();
-        let provider = icu_testdata::get_postcard_provider();
-        let fallbacker_with_data = LocaleFallbacker::try_new_unstable(&provider).unwrap();
+        let fallbacker_with_data =
+            LocaleFallbacker::try_new_with_buffer_provider(&icu_testdata::buffer()).unwrap();
         for cas in TEST_CASES {
             for (priority, expected_chain) in [
                 (FallbackPriority::Language, cas.expected_language_chain),

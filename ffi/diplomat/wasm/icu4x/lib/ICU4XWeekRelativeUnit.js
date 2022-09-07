@@ -8,9 +8,9 @@ export const ICU4XWeekRelativeUnit_js_to_rust = {
 };
 
 export const ICU4XWeekRelativeUnit_rust_to_js = {
-  0: "Previous",
-  1: "Current",
-  2: "Next",
+  [0]: "Previous",
+  [1]: "Current",
+  [2]: "Next",
 };
 
 export const ICU4XWeekRelativeUnit = {

@@ -201,6 +201,8 @@ impl<'s, P> Pattern<'s, P> {
     ///     }
     /// }
     ///
+    /// writeable::impl_display_with_writeable!(Element);
+    ///
     /// let pattern = Pattern::try_from("${0}").expect("Failed to parse a pattern");
     ///
     /// let replacements = vec![Element(5)];

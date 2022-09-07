@@ -19,11 +19,10 @@ APIs that return a [`CodePointMapData`] exist for certain enumerated properties.
 ```rust
 use icu::properties::{maps, sets, GeneralCategory};
 
-let provider = icu_testdata::get_provider();
-
 // A binary property as a `CodePointSetData`
 
-let data = sets::load_emoji(&provider).expect("The data should be valid");
+let data = sets::load_emoji(&icu_testdata::unstable())
+    .expect("The data should be valid");
 let emoji = data.as_borrowed();
 
 assert!(emoji.contains('🎃')); // U+1F383 JACK-O-LANTERN
@@ -31,7 +30,8 @@ assert!(!emoji.contains('木')); // U+6728
 
 // An individual enumerated property value as a `CodePointSetData`
 
-let data = maps::load_general_category(&provider).expect("The data should be valid");
+let data = maps::load_general_category(&icu_testdata::unstable())
+    .expect("The data should be valid");
 let gc = data.as_borrowed();
 let line_sep_data = gc.get_set_for_value(GeneralCategory::LineSeparator);
 let line_sep = line_sep_data.as_borrowed();
@@ -45,9 +45,8 @@ assert!(!line_sep.contains32(0x2029));
 ```rust
 use icu::properties::{maps, Script};
 
-let provider = icu_testdata::get_provider();
-
-let map = maps::load_script(&provider).expect("The data should be valid");
+let map = maps::load_script(&icu_testdata::unstable())
+    .expect("The data should be valid");
 let script = map.as_borrowed();
 
 assert_eq!(script.get('🎃'), Script::Common); // U+1F383 JACK-O-LANTERN

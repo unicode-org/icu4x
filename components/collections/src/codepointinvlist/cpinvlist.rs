@@ -42,7 +42,7 @@ pub struct CodePointInversionList<'data> {
     size: usize,
 }
 
-#[cfg(any(feature = "serde", test))]
+#[cfg(feature = "serde")]
 impl<'de: 'a, 'a> serde::Deserialize<'de> for CodePointInversionList<'a> {
     fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
     where
@@ -78,7 +78,7 @@ impl databake::Bake for CodePointInversionList<'_> {
 // to replace the struct when serializing. The error message from the default
 // serialization is: "can only flatten structs and maps (got a sequence)".
 
-#[cfg(any(feature = "serde", test))]
+#[cfg(feature = "serde")]
 impl<'data> serde::Serialize for CodePointInversionList<'data> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
@@ -374,9 +374,7 @@ impl<'data> CodePointInversionList<'data> {
     /// Checks to see the query is in the [`CodePointInversionList`]
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using [`core`] implementation. Note that due to the nature of binary search,
-    /// the extremes of the Unicode range have worst-case performance, and ASCII is at the low
-    /// extreme end of the Unicode range.
+    /// in the set using [`core`] implementation
     ///
     /// # Examples
     ///
@@ -399,9 +397,7 @@ impl<'data> CodePointInversionList<'data> {
     /// the range from 0 to the maximum valid Unicode Scalar Value.
     ///
     /// Runs a binary search in `O(log(n))` where `n` is the number of start and end points
-    /// in the set using [`core`] implementation. Note that due to the nature of binary search,
-    /// the extremes of the Unicode range have worst-case performance, and ASCII is at the low
-    /// extreme end of the Unicode range.
+    /// in the set using [`core`] implementation
     ///
     /// # Examples
     ///

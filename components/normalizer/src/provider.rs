@@ -12,9 +12,6 @@ use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::{yoke, zerofrom};
 use zerovec::ZeroVec;
 
-#[cfg(feature = "serde")]
-use serde;
-
 /// Main data for NFD
 #[icu_provider::data_struct(CanonicalDecompositionDataV1Marker = "normalizer/nfd@1")]
 #[derive(Debug, PartialEq, Clone)]

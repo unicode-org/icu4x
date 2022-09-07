@@ -97,7 +97,6 @@ impl Other {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];
@@ -113,7 +112,6 @@ impl Other {
     ///
     /// ```
     /// use icu::locid::Locale;
-    /// use std::str::FromStr;
     ///
     /// let loc: Locale = "und-a-hello-world".parse().unwrap();
     /// let other_ext = &loc.extensions.other[0];
@@ -136,11 +134,7 @@ impl Other {
     }
 }
 
-impl core::fmt::Display for Other {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
+writeable::impl_display_with_writeable!(Other);
 
 impl writeable::Writeable for Other {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {

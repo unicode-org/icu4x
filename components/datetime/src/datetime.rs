@@ -44,10 +44,8 @@ use crate::options::components;
 /// use icu::locid::locale;
 /// use writeable::assert_writeable_eq;
 ///
-/// let provider = icu_testdata::get_provider();
-///
-/// let tf = TimeFormatter::try_new_with_buffer_provider(
-///     &provider,
+/// let tf = TimeFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     Time::Short,
 /// )
@@ -75,10 +73,8 @@ impl TimeFormatter {
     /// use icu::datetime::{options::length::Time, TimeFormatter};
     /// use icu::locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// TimeFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// TimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     Time::Short,
     /// )
@@ -122,12 +118,15 @@ impl TimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
+    /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// let tf =
-    ///     TimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Time::Short)
-    ///         .expect("Failed to create TimeFormatter instance.");
+    ///
+    /// let tf = TimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     Time::Short,
+    /// )
+    /// .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -154,11 +153,13 @@ impl TimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// let tf =
-    ///     TimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Time::Short)
-    ///         .expect("Failed to create TimeFormatter instance.");
+    /// use icu::locid::locale;
+    /// let tf = TimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     Time::Short,
+    /// )
+    /// .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -185,11 +186,13 @@ impl TimeFormatter {
     /// ```
     /// use icu::calendar::DateTime;
     /// use icu::datetime::{options::length::Time, TimeFormatter};
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// let tf =
-    ///     TimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), Time::Short)
-    ///         .expect("Failed to create TimeFormatter instance.");
+    /// use icu::locid::locale;
+    /// let tf = TimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     Time::Short,
+    /// )
+    /// .expect("Failed to create TimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
@@ -221,10 +224,12 @@ impl TimeFormatter {
 /// use icu::datetime::{options::length, TypedDateFormatter};
 /// use icu::locid::locale;
 ///
-/// let provider = icu_testdata::get_provider();
-///
-/// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale!("en").into(), length::Date::Full)
-///     .expect("Failed to create TypedDateFormatter instance.");
+/// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en").into(),
+///     length::Date::Full,
+/// )
+/// .expect("Failed to create TypedDateFormatter instance.");
 ///
 /// let date = Date::new_gregorian_date(2020, 9, 1)
 ///     .expect("Failed to construct Date.");
@@ -249,10 +254,8 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let formatter = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Full
     /// )
@@ -274,10 +277,8 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// use icu::datetime::{options::length, TypedDateFormatter};
     /// use icu::locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let formatter = TypedDateFormatter::<Indian>::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let formatter = TypedDateFormatter::<Indian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en-u-ca-japanese").into(),
     ///     length::Date::Full
     /// )
@@ -332,11 +333,14 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// ```
     /// use icu::calendar::{Date, Gregorian};
     /// use icu::datetime::{options::length, TypedDateFormatter};
+    /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), length::Date::Full)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     length::Date::Full,
+    /// )
+    /// .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let date = Date::new_gregorian_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
@@ -363,10 +367,13 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// ```
     /// use icu::calendar::{Date, Gregorian};
     /// use icu::datetime::{options::length, TypedDateFormatter};
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), length::Date::Short)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
+    /// use icu::locid::locale;
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     length::Date::Short,
+    /// )
+    /// .expect("Failed to create TypedDateFormatter instance.");
     ///
     /// let date = Date::new_gregorian_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
@@ -393,10 +400,13 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// ```
     /// use icu::calendar::{Date, Gregorian};
     /// use icu::datetime::{options::length, TypedDateFormatter};
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), length::Date::Short)
-    ///     .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// use icu::locid::locale;
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     length::Date::Short,
+    /// )
+    /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let date = Date::new_gregorian_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
@@ -429,15 +439,13 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// use icu::datetime::{options::length, TypedDateTimeFormatter};
 /// use icu::locid::locale;
 ///
-/// let provider = icu_testdata::get_provider();
-///
 /// let mut options = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
 ///     length::Time::Short,
 /// );
 ///
-/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-///     &provider,
+/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+///     &icu_testdata::unstable(),
 ///     &locale!("en").into(),
 ///     options.into(),
 /// )
@@ -462,26 +470,26 @@ impl<C: CldrCalendar> TypedDateTimeFormatter<C> {
     /// ```
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
-    ///     options::length, TypedDateFormatter, TypedDateTimeFormatter, TimeFormatter,
+    ///     options::length, TimeFormatter, TypedDateFormatter,
+    ///     TypedDateTimeFormatter,
     /// };
     /// use icu::locid::locale;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let tf = TimeFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let tf = TimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Time::Short,
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
-    /// let df = TypedDateFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let df = TypedDateFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Date::Short,
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// TypedDateTimeFormatter::<Gregorian>::try_from_date_and_time(df, tf).unwrap();
+    /// TypedDateTimeFormatter::<Gregorian>::try_from_date_and_time(df, tf)
+    ///     .unwrap();
     /// ```
     ///
     /// [data provider]: icu_provider
@@ -497,32 +505,38 @@ where {
         ))
     }
 
-    /// Constructor that takes a selected locale, reference to a [data provider] and
-    /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    /// Constructor that supports experimental options.
+    ///
+    /// Enabled by the "experimental" feature.
     ///
     /// # Examples
     ///
     /// ```
-    /// use icu::calendar::Gregorian;
-    /// use icu::datetime::{options::length, TypedDateTimeFormatter};
+    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::datetime::{options::components, TypedDateTimeFormatter};
     /// use icu::locid::locale;
+    /// use icu_provider::AsDeserializingBufferProvider;
     ///
-    /// let provider = icu_testdata::get_provider();
+    /// let mut options = components::Bag::default();
+    /// options.year = Some(components::Year::Numeric);
+    /// options.month = Some(components::Month::Long);
     ///
-    /// let options = length::Bag::from_time_style(length::Time::Medium);
-    ///
-    /// TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_experimental_unstable(
+    ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en").into(),
     ///     options.into(),
     /// )
     /// .unwrap();
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    ///
+    /// assert_eq!("August 2022", dtf.format_to_string(&datetime));
     /// ```
     ///
     /// [data provider]: icu_provider
     #[cfg(feature = "experimental")]
     #[inline]
-    pub fn try_new_unstable<D>(
+    pub fn try_new_experimental_unstable<D>(
         data_provider: &D,
         locale: &DataLocale,
         options: DateTimeFormatterOptions,
@@ -538,7 +552,7 @@ where {
             + DataProvider<WeekDataV1Marker>
             + ?Sized,
     {
-        let patterns = PatternSelector::for_options(
+        let patterns = PatternSelector::for_options_experimental(
             data_provider,
             calendar::load_lengths_for_cldr_calendar::<C, _>(data_provider, locale)?,
             locale,
@@ -556,8 +570,31 @@ where {
         ))
     }
 
-    #[allow(missing_docs)] // The docs use the "experimental" version
-    #[cfg(not(feature = "experimental"))]
+    /// Constructor that takes a selected locale, reference to a [data provider] and
+    /// a list of options, then collects all data necessary to format date and time values into the given locale.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::calendar::{Gregorian, DateTime};
+    /// use icu::datetime::{options::length, TypedDateTimeFormatter};
+    /// use icu::locid::locale;
+    ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Medium);
+    ///
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale!("en").into(),
+    ///     options.into(),
+    /// )
+    /// .unwrap();
+    ///
+    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    ///
+    /// assert_eq!("Aug 31, 2022, 1:02:03 AM", dtf.format_to_string(&datetime));
+    /// ```
+    ///
+    /// [data provider]: icu_provider
     #[inline]
     pub fn try_new_unstable<D>(
         data_provider: &D,
@@ -606,10 +643,9 @@ where {
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedDateTimeFormatter;
     /// use writeable::assert_writeable_eq;
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
+    /// use icu::locid::locale;
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -637,10 +673,9 @@ where {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedDateTimeFormatter;
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
+    /// use icu::locid::locale;
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -668,10 +703,9 @@ where {
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
     /// use icu::datetime::TypedDateTimeFormatter;
-    /// # let locale = icu::locid::locale!("en");
-    /// # let provider = icu_testdata::get_provider();
+    /// use icu::locid::locale;
     /// # let options = icu::datetime::options::length::Bag::from_time_style(icu::datetime::options::length::Time::Medium);
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
@@ -695,15 +729,13 @@ where {
     /// use icu::calendar::Gregorian;
     /// use icu::datetime::{
     ///     options::{components, length},
-    ///     TypedDateTimeFormatter, DateTimeFormatterOptions,
+    ///     DateTimeFormatterOptions, TypedDateTimeFormatter,
     /// };
     /// use icu::locid::locale;
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
-    ///
-    /// let provider = icu_testdata::get_provider();
-    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     options,
     /// )

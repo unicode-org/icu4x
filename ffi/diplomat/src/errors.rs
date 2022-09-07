@@ -6,6 +6,7 @@ use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
 use icu_calendar::DateTimeError;
+use icu_collator::error::CollatorError;
 use icu_datetime::DateTimeFormatterError;
 use icu_decimal::FixedDecimalFormatterError;
 use icu_locid::ParserError;
@@ -163,6 +164,19 @@ impl From<DataError> for ICU4XError {
                 ICU4XError::DataUnavailableBufferFormatError
             }
             _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<CollatorError> for ICU4XError {
+    fn from(e: CollatorError) -> Self {
+        let ret = match e {
+            CollatorError::NotFound => ICU4XError::DataMissingPayloadError,
+            CollatorError::MalformedData => ICU4XError::DataInvalidStateError,
+            CollatorError::DataProvider(_) => ICU4XError::DataIoError,
+            _ => ICU4XError::DataIoError,
         };
         log_conversion(&e, ret);
         ret

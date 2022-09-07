@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use icu_datetime::{time_zone::FallbackFormat, TimeZoneFormatterOptions};
+
 #[diplomat::bridge]
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
@@ -44,6 +46,12 @@ pub mod ffi {
         Never,
     }
 
+    pub struct ICU4XIsoTimeZoneOptions {
+        pub format: ICU4XIsoTimeZoneFormat,
+        pub minutes: ICU4XIsoTimeZoneMinuteDisplay,
+        pub seconds: ICU4XIsoTimeZoneSecondDisplay,
+    }
+
     impl ICU4XTimeZoneFormatter {
         /// Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
         ///
@@ -79,25 +87,20 @@ pub mod ffi {
         pub fn try_new_with_iso_8601_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-            format: ICU4XIsoTimeZoneFormat,
-            minutes: ICU4XIsoTimeZoneMinuteDisplay,
-            seconds: ICU4XIsoTimeZoneSecondDisplay,
+            options: ICU4XIsoTimeZoneOptions,
         ) -> DiplomatResult<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
             use icu_provider::serde::AsDeserializingBufferProvider;
             let provider = provider.0.as_deserializing();
 
             let locale = locale.to_datalocale();
 
-            TimeZoneFormatter::try_new_unstable(
-                &provider,
-                &locale,
-                FallbackFormat::Iso8601(format.into(), minutes.into(), seconds.into()).into(),
-            )
-            .map(|tf| Box::new(ICU4XTimeZoneFormatter(tf)))
-            .map_err(Into::into)
-            .into()
+            TimeZoneFormatter::try_new_unstable(&provider, &locale, options.into())
+                .map(|tf| Box::new(ICU4XTimeZoneFormatter(tf)))
+                .map_err(Into::into)
+                .into()
         }
 
+        /// Loads generic non-location long format. Example: "Pacific Time"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_generic_non_location_long,
             FnInStruct
@@ -115,6 +118,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads generic non-location short format. Example: "PT"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_generic_non_location_short,
             FnInStruct
@@ -132,6 +136,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads specific non-location long format. Example: "Pacific Standard Time"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_specific_non_location_long,
             FnInStruct
@@ -149,6 +154,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads specific non-location short format. Example: "PST"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_specific_non_location_short,
             FnInStruct
@@ -166,6 +172,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads generic location format. Example: "Los Angeles Time"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_generic_location_format,
             FnInStruct
@@ -183,6 +190,7 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads localized GMT format. Example: "GMT-07:00"
         #[diplomat::rust_link(
             icu::datetime::TimeZoneFormatter::load_localized_gmt_format,
             FnInStruct
@@ -195,15 +203,18 @@ pub mod ffi {
                 .into()
         }
 
+        /// Loads ISO-8601 format. Example: "-07:00"
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::load_iso_8601_format, FnInStruct)]
         pub fn load_iso_8601_format(
             &mut self,
-            format: ICU4XIsoTimeZoneFormat,
-            minutes: ICU4XIsoTimeZoneMinuteDisplay,
-            seconds: ICU4XIsoTimeZoneSecondDisplay,
+            options: ICU4XIsoTimeZoneOptions,
         ) -> DiplomatResult<(), ICU4XError> {
             self.0
-                .load_iso_8601_format(format.into(), minutes.into(), seconds.into())
+                .load_iso_8601_format(
+                    options.format.into(),
+                    options.minutes.into(),
+                    options.seconds.into(),
+                )
                 .map(|_| ())
                 .map_err(Into::into)
                 .into()
@@ -226,5 +237,16 @@ pub mod ffi {
             write.flush();
             result
         }
+    }
+}
+
+impl From<ffi::ICU4XIsoTimeZoneOptions> for TimeZoneFormatterOptions {
+    fn from(other: ffi::ICU4XIsoTimeZoneOptions) -> Self {
+        FallbackFormat::Iso8601(
+            other.format.into(),
+            other.minutes.into(),
+            other.seconds.into(),
+        )
+        .into()
     }
 }

@@ -1736,12 +1736,7 @@ impl writeable::Writeable for FixedDecimal {
     }
 }
 
-/// Renders the `FixedDecimal` according to the syntax documented in `FixedDecimal::write_to`.
-impl fmt::Display for FixedDecimal {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
+writeable::impl_display_with_writeable!(FixedDecimal);
 
 impl FromStr for FixedDecimal {
     type Err = Error;
@@ -1819,7 +1814,7 @@ impl FromStr for FixedDecimal {
         // The string without the exponent (or sign)
         // We do the bulk of the calculation on this string,
         // and extract the exponent at the end
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)] // exponent_index comes from enumerate
         let no_exponent_str = &no_sign_str[..exponent_index];
 
         // If there was no dot, truncate the dot index
@@ -1897,7 +1892,8 @@ impl FromStr for FixedDecimal {
         }
 
         // Constructing DecimalFixed.digits
-        #[allow(clippy::indexing_slicing)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::indexing_slicing)]
+        // leftmost_digit  and rightmost_digit_end come from Iterator::position and Iterator::rposition.
         let v: SmallVec<[u8; 8]> = no_exponent_str[leftmost_digit..rightmost_digit_end]
             .iter()
             .filter(|c| **c != b'.')
@@ -1913,7 +1909,7 @@ impl FromStr for FixedDecimal {
             let mut pow = 0;
             let mut pos_neg = 1;
             #[allow(clippy::indexing_slicing)]
-            // TODO(#1668) Clippy exceptions need docs or fixing.
+            // exponent_index is exist, then exponent_index + 1 will equal at most no_sign_str.len().
             for digit in &no_sign_str[exponent_index + 1..] {
                 if *digit == b'-' {
                     pos_neg = -1;

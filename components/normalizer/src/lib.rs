@@ -75,7 +75,7 @@ use crate::error::NormalizerError;
 use crate::provider::CanonicalDecompositionDataV1Marker;
 use crate::provider::CompatibilityDecompositionSupplementV1Marker;
 use crate::provider::DecompositionDataV1;
-#[cfg(any(test, feature = "experimental"))]
+#[cfg(feature = "experimental")]
 use crate::provider::Uts46DecompositionSupplementV1Marker;
 use alloc::string::String;
 use alloc::vec::Vec;
@@ -102,7 +102,7 @@ use zerovec::ZeroSlice;
 
 enum SupplementPayloadHolder {
     Compatibility(DataPayload<CompatibilityDecompositionSupplementV1Marker>),
-    #[cfg(any(test, feature = "experimental"))]
+    #[cfg(feature = "experimental")]
     Uts46(DataPayload<Uts46DecompositionSupplementV1Marker>),
 }
 
@@ -110,7 +110,7 @@ impl SupplementPayloadHolder {
     fn get(&self) -> &DecompositionSupplementV1 {
         match self {
             SupplementPayloadHolder::Compatibility(d) => d.get(),
-            #[cfg(any(test, feature = "experimental"))]
+            #[cfg(feature = "experimental")]
             SupplementPayloadHolder::Uts46(d) => d.get(),
         }
     }
@@ -1640,9 +1640,10 @@ impl DecomposingNormalizer {
     /// canonically equivant with each other if they differ by how U+0345 is ordered relative
     /// to other reorderable characters.
     ///
-    /// Deliberately private and not available outside the crate.
-    #[cfg(any(test, feature = "experimental"))]
-    fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
+    /// Public for testing only.
+    #[doc(hidden)]
+    #[cfg(feature = "experimental")]
+    pub fn try_new_uts46_decomposed_without_ignored_and_disallowed<D>(
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
     where
@@ -2061,7 +2062,7 @@ impl ComposingNormalizer {
     ///
     /// NOTE: This method remains experimental until suitability of this feature as part of
     /// IDNA processing has been demonstrated.
-    #[cfg(any(test, feature = "experimental"))]
+    #[cfg(feature = "experimental")]
     pub fn try_new_uts46_without_ignored_and_disallowed_unstable<D>(
         data_provider: &D,
     ) -> Result<Self, NormalizerError>
@@ -2088,7 +2089,7 @@ impl ComposingNormalizer {
         })
     }
 
-    #[cfg(any(test, feature = "experimental"))]
+    #[cfg(feature = "experimental")]
     icu_provider::gen_any_buffer_constructors!(
         locale: skip,
         options: skip,
@@ -2533,6 +2534,3 @@ impl<'a> core::fmt::Write for IsNormalizedSinkStr<'a> {
         }
     }
 }
-
-#[cfg(all(test, feature = "serde"))]
-mod tests;

@@ -26,12 +26,14 @@ fn print(_input: &str, _value: Option<usize>) {
 #[no_mangle]
 fn main(_argc: isize, _argv: *const *const u8) -> isize {
     icu_benchmark_macros::main_setup!();
-    let provider = icu_testdata::get_provider();
 
     {
         print("\n====== Unread Emails (en) example ============", None);
-        let pr = PluralRules::try_new_cardinal_unstable(&provider, &locale!("en").into())
-            .expect("Failed to create a PluralRules instance.");
+        let pr = PluralRules::try_new_cardinal_unstable(
+            &icu_testdata::unstable(),
+            &locale!("en").into(),
+        )
+        .expect("Failed to create a PluralRules instance.");
 
         for value in VALUES {
             match pr.category_for(*value) {

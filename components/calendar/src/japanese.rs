@@ -5,14 +5,15 @@
 //! This module contains types and implementations for the Japanese calendar.
 //!
 //! ```rust
-//! use icu::calendar::{types::Era, Date, DateTime};
 //! use icu::calendar::japanese::Japanese;
+//! use icu::calendar::{types::Era, Date, DateTime};
 //! use tinystr::tinystr;
 //!
-//! // `icu_testdata::get_provider` contains information specifying era dates.
+//! // `icu_testdata::unstable` contains information specifying era dates.
 //! // Production code should probably use its own data provider
-//! let provider = icu_testdata::get_provider();
-//! let japanese_calendar = Japanese::try_new_with_buffer_provider(&provider).expect("Cannot load japanese data");
+//! let japanese_calendar =
+//!     Japanese::try_new_unstable(&icu_testdata::unstable())
+//!         .expect("Cannot load japanese data");
 //!
 //! // `Date` type
 //! let date_iso = Date::new_iso_date(1970, 1, 2)
@@ -22,7 +23,8 @@
 //! // `DateTime` type
 //! let datetime_iso = DateTime::new_iso_datetime(1970, 1, 2, 13, 1, 0)
 //!     .expect("Failed to initialize ISO DateTime instance.");
-//! let datetime_japanese = DateTime::new_from_iso(datetime_iso, japanese_calendar.clone());
+//! let datetime_japanese =
+//!     DateTime::new_from_iso(datetime_iso, japanese_calendar.clone());
 //!
 //! // `Date` checks
 //! assert_eq!(date_japanese.year().number, 45);
@@ -370,13 +372,14 @@ impl Date<Japanese> {
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
     /// ```rust
-    /// use icu::calendar::{types, Date, Ref};
     /// use icu::calendar::japanese::Japanese;
+    /// use icu::calendar::{types, Date, Ref};
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let japanese_calendar = Japanese::try_new_with_buffer_provider(&provider).expect("Cannot load japanese data");
+    /// let japanese_calendar =
+    ///     Japanese::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("Cannot load japanese data");
     /// // for easy sharing
     /// let japanese_calendar = Ref(&japanese_calendar);
     ///
@@ -397,7 +400,8 @@ impl Date<Japanese> {
     ///
     /// // and for unknown eras
     /// let fake_era = types::Era(tinystr!(16, "neko")); // 🐱
-    /// let fake_date = Date::new_japanese_date(fake_era, 10, 1, 2, japanese_calendar);
+    /// let fake_date =
+    ///     Date::new_japanese_date(fake_era, 10, 1, 2, japanese_calendar);
     /// assert!(fake_date.is_err());
     /// ```
     pub fn new_japanese_date<A: AsCalendar<Calendar = Japanese>>(
@@ -424,20 +428,22 @@ impl Date<JapaneseExtended> {
     /// However, dates may always be specified in "bce" or "ce" and they will be adjusted as necessary.
     ///
     /// ```rust
+    /// use icu::calendar::japanese::JapaneseExtended;
     /// use icu::calendar::{types, Date, Ref};
-    /// use icu::calendar::japanese::{JapaneseExtended};
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let japanext_calendar = JapaneseExtended::try_new_with_buffer_provider(&provider).expect("Cannot load japanese data");
+    /// let japanext_calendar =
+    ///     JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("Cannot load japanese data");
     /// // for easy sharing
     /// let japanext_calendar = Ref(&japanext_calendar);
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
-    /// let date = Date::new_japanese_extended_date(era, 7, 1, 2, japanext_calendar)
-    ///     .expect("Constructing a date should succeed");
+    /// let date =
+    ///     Date::new_japanese_extended_date(era, 7, 1, 2, japanext_calendar)
+    ///         .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(date.year().era, era);
     /// assert_eq!(date.year().number, 7);
@@ -471,18 +477,28 @@ impl DateTime<Japanese> {
     /// Years are specified in the era provided.
     ///
     /// ```rust
-    /// use icu::calendar::{types, DateTime};
     /// use icu::calendar::japanese::Japanese;
+    /// use icu::calendar::{types, DateTime};
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let japanese_calendar = Japanese::try_new_with_buffer_provider(&provider).expect("Cannot load japanese data");
+    /// let japanese_calendar =
+    ///     Japanese::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("Cannot load japanese data");
     ///
     /// let era = types::Era(tinystr!(16, "heisei"));
     ///
-    /// let datetime = DateTime::new_japanese_datetime(era, 14, 1, 2, 13, 1, 0, japanese_calendar)
-    ///     .expect("Constructing a date should succeed");
+    /// let datetime = DateTime::new_japanese_datetime(
+    ///     era,
+    ///     14,
+    ///     1,
+    ///     2,
+    ///     13,
+    ///     1,
+    ///     0,
+    ///     japanese_calendar,
+    /// )
+    /// .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(datetime.date.year().era, era);
     /// assert_eq!(datetime.date.year().number, 14);
@@ -518,18 +534,28 @@ impl DateTime<JapaneseExtended> {
     /// Years are specified in the era provided.
     ///
     /// ```rust
-    /// use icu::calendar::{types, DateTime};
     /// use icu::calendar::japanese::JapaneseExtended;
+    /// use icu::calendar::{types, DateTime};
     /// use std::convert::TryFrom;
     /// use tinystr::tinystr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let japanext_calendar = JapaneseExtended::try_new_with_buffer_provider(&provider).expect("Cannot load japanese data");
+    /// let japanext_calendar =
+    ///     JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("Cannot load japanese data");
     ///
     /// let era = types::Era(tinystr!(16, "kansei-1789"));
     ///
-    /// let datetime = DateTime::new_japanese_extended_datetime(era, 7, 1, 2, 13, 1, 0, japanext_calendar)
-    ///     .expect("Constructing a date should succeed");
+    /// let datetime = DateTime::new_japanese_extended_datetime(
+    ///     era,
+    ///     7,
+    ///     1,
+    ///     2,
+    ///     13,
+    ///     1,
+    ///     0,
+    ///     japanext_calendar,
+    /// )
+    /// .expect("Constructing a date should succeed");
     ///
     /// assert_eq!(datetime.date.year().era, era);
     /// assert_eq!(datetime.date.year().number, 7);
@@ -861,11 +887,13 @@ mod tests {
     }
 
     #[test]
+    #[cfg(feature = "serde")]
     fn test_japanese() {
-        let provider = icu_testdata::get_provider();
-        let calendar = Japanese::try_new_unstable(&provider).expect("Cannot load japanese data");
+        let calendar = Japanese::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+            .expect("Cannot load japanese data");
         let calendar_ext =
-            JapaneseExtended::try_new_unstable(&provider).expect("Cannot load japanese data");
+            JapaneseExtended::try_new_unstable(&icu_testdata::buffer().as_deserializing())
+                .expect("Cannot load japanese data");
         let calendar = Ref(&calendar);
         let calendar_ext = Ref(&calendar_ext);
 

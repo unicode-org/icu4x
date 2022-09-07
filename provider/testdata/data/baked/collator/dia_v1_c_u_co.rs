@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_collator")]
 type DataStruct =
     <::icu_collator::provider::CollationDiacriticsV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =

@@ -52,8 +52,7 @@ impl CanonicalComposition {
     /// Composition exclusions are taken into account.
     ///
     /// ```
-    /// let data_provider = icu_testdata::get_provider();
-    /// let comp = icu_normalizer::properties::CanonicalComposition::try_new_with_buffer_provider(&data_provider).unwrap();
+    /// let comp = icu_normalizer::properties::CanonicalComposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
     ///
     /// assert_eq!(comp.compose('a', 'b'), None); // Just two non-composing starters
     /// assert_eq!(comp.compose('a', '\u{0308}'), Some('ä'));
@@ -119,8 +118,7 @@ impl CanonicalDecomposition {
     ///
     /// ```
     ///     use icu_normalizer::properties::Decomposed;
-    ///     let data_provider = icu_testdata::get_provider();
-    ///     let decomp = icu_normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider(&data_provider).unwrap();
+    ///     let decomp = icu_normalizer::properties::CanonicalDecomposition::try_new_unstable(&icu_testdata::unstable()).unwrap();
     ///
     ///     assert_eq!(decomp.decompose('e'), Decomposed::Default);
     ///     assert_eq!(
@@ -354,8 +352,7 @@ impl CanonicalDecomposition {
 /// use icu_properties::CanonicalCombiningClass;
 /// use icu_normalizer::properties::CanonicalCombiningClassMap;
 ///
-/// let provider = icu_testdata::get_provider();
-/// let map = CanonicalCombiningClassMap::try_new_unstable(&provider).unwrap();
+/// let map = CanonicalCombiningClassMap::try_new_unstable(&icu_testdata::unstable()).unwrap();
 /// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
 /// assert_eq!(map.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
 /// ```

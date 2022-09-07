@@ -190,14 +190,15 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let provider = icu_testdata::get_provider();
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload =
+    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
     /// assert!(swe
-    ///    .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
-    ///    .contains(&Script::Grantha));
+    ///     .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
+    ///     .contains(&Script::Grantha));
     /// ```
     pub fn contains(&self, x: &Script) -> bool {
         ZeroSlice::binary_search(&*self.values, x).is_ok()
@@ -209,8 +210,9 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let provider = icu_testdata::get_provider();
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload =
+    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -253,6 +255,7 @@ pub struct ScriptWithExtensions<'data> {
     /// When the lower 10 bits of the value are used as an index, that index is
     /// used for the outer-level vector of the nested `extensions` structure.
     #[cfg_attr(feature = "serde", serde(borrow))]
+    #[doc(hidden)] // #2417
     pub trie: CodePointTrie<'data, ScriptWithExt>,
 
     /// This companion structure stores Script_Extensions values, which are
@@ -261,6 +264,7 @@ pub struct ScriptWithExtensions<'data> {
     /// sub-vector represents the Script_Extensions array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
+    #[doc(hidden)] // #2417
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
@@ -282,9 +286,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -381,9 +383,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -435,9 +435,10 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let provider = icu_testdata::unstable();
+    /// let payload =
+    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -485,9 +486,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -549,9 +548,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let payload = script::load_script_with_extensions_with_buffer_provider(&provider).expect("The data should be valid");
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
     /// let data_struct = payload.get();
     /// let swe = &data_struct.data;
     ///
@@ -589,10 +586,8 @@ pub type ScriptWithExtensionsResult =
 /// ```
 /// use icu::properties::{script, Script};
 ///
-/// let provider = icu_testdata::get_provider();
-///
 /// let payload =
-///     script::load_script_with_extensions_with_buffer_provider(&provider)
+///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
 ///         .expect("The data should be valid");
 /// let data_struct = payload.get();
 /// let swe = &data_struct.data;

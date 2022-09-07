@@ -19,10 +19,7 @@
 //! // and text editors have trouble displaying bidi strings.
 //! let text = concat!["א", "ב", "ג", "a", "b", "c",];
 //!
-//! // Create an adapter to provide the data to `BidiInfo`.
-//! let provider = icu_testdata::get_provider();
-//!
-//! let data = maps::load_bidi_class(&provider).expect("The data should be valid");
+//! let data = maps::load_bidi_class(&icu_testdata::unstable()).expect("The data should be valid");
 //! let bc = data.as_borrowed();
 //!
 //! let adapter = BidiClassAdapter::new(bc);
@@ -62,9 +59,8 @@ use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// use unicode_bidi::BidiClass as DataSourceBidiClass;
 /// use unicode_bidi::BidiDataSource;
 ///
-/// let provider = icu_testdata::get_provider();
-///
-/// let data = maps::load_bidi_class(&provider).expect("The data should be valid");
+/// let data = maps::load_bidi_class(&icu_testdata::unstable())
+///     .expect("The data should be valid");
 ///
 /// let adapter = BidiClassAdapter::new(data.as_borrowed());
 /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);
@@ -93,9 +89,8 @@ impl<'a> BidiDataSource for BidiClassAdapter<'a> {
     /// use unicode_bidi::BidiClass as DataSourceBidiClass;
     /// use unicode_bidi::BidiDataSource;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let data = maps::load_bidi_class(&provider).expect("The data should be valid");
+    /// let data = maps::load_bidi_class(&icu_testdata::unstable())
+    ///     .expect("The data should be valid");
     ///
     /// let adapter = BidiClassAdapter::new(data.as_borrowed());
     /// assert_eq!(adapter.bidi_class('a'), DataSourceBidiClass::L);

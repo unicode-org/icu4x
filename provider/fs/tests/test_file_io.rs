@@ -30,8 +30,12 @@ fn test_provider() {
                 .take_payload()
                 .unwrap();
 
-            let actual: DataPayload<HelloWorldV1Marker> =
-                provider.load(req).unwrap().take_payload().unwrap();
+            let actual: DataPayload<HelloWorldV1Marker> = provider
+                .as_deserializing()
+                .load(req)
+                .unwrap()
+                .take_payload()
+                .unwrap();
             assert_eq!(actual.get(), expected.get());
 
             let actual: DataPayload<HelloWorldV1Marker> = (&provider as &dyn BufferProvider)
@@ -50,10 +54,11 @@ fn test_errors() {
     for path in PATHS {
         let provider = FsDataProvider::try_new(path).unwrap();
 
-        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> = provider.load(DataRequest {
-            locale: &langid!("zh-DE").into(),
-            metadata: Default::default(),
-        });
+        let err: Result<DataResponse<HelloWorldV1Marker>, DataError> =
+            provider.as_deserializing().load(DataRequest {
+                locale: &langid!("zh-DE").into(),
+                metadata: Default::default(),
+            });
 
         assert!(
             matches!(
@@ -75,7 +80,8 @@ fn test_errors() {
             const KEY: DataKey = data_key!("nope@1");
         }
 
-        let err: Result<DataResponse<WrongV1Marker>, DataError> = provider.load(Default::default());
+        let err: Result<DataResponse<WrongV1Marker>, DataError> =
+            provider.as_deserializing().load(Default::default());
 
         assert!(
             matches!(

@@ -8,6 +8,22 @@
 
 #include <iostream>
 
+inline std::int32_t read_int32_t() {
+    std::int32_t x(0);
+    char ch;
+	int sgn = 1;
+	while (!isdigit(ch = getchar_unlocked())) {
+		if (ch == '-') {
+			sgn *= -1;
+		}
+	}
+	x = ch - '0';
+	while (isdigit(ch = getchar_unlocked())) {
+		x = x * 10 + (ch - '0');
+	}
+	return x * sgn;
+}
+
 /**
  * list_to_ucptrie: converts a stream of integers to a UCPTrie
  *
@@ -60,9 +76,10 @@ int main(int argc, char const *argv[]) {
     }
 
     UChar32 cp = 0;
-    std::string line;
-    while (std::getline(std::cin, line)) {
-        int32_t value = atoi(line.data());
+    int32_t n = read_int32_t();
+    int32_t value = 0;
+    while(n--) {
+        value = read_int32_t();
         umutablecptrie_set(builder.getAlias(), cp, value, status);
         if (status.isFailure()) {
             std::cerr << status.errorName() << std::endl;

@@ -22,6 +22,8 @@ impl Writeable for WriteableMessage<'_> {
     }
 }
 
+writeable::impl_display_with_writeable!(WriteableMessage<'_>);
+
 #[test]
 fn test_basic() {
     let input_string = "hello world";

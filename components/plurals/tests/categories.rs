@@ -11,15 +11,13 @@ use std::str::FromStr;
 
 #[test]
 fn test_categories() {
-    let provider = icu_testdata::get_provider();
-
     let path = "./tests/fixtures/categories.json";
     let test_set: Vec<fixtures::CategoriesTest> =
         helpers::read_fixture(path).expect("Failed to read a fixture");
 
     for test in test_set {
         let pr = PluralRules::try_new_unstable(
-            &provider,
+            &icu_testdata::unstable(),
             &LanguageIdentifier::from_str(&test.langid).unwrap().into(),
             test.plural_type.into(),
         )

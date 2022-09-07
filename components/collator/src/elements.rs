@@ -151,7 +151,9 @@ pub(crate) const FFFD_CE32: CollationElement32 = CollationElement32(FFFD_CE32_VA
 pub(crate) const EMPTY_U16: &ZeroSlice<u16> =
     ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([]));
 const SINGLE_REPLACEMENT_CHARACTER_U16: &ZeroSlice<u16> =
-    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([0xFFFD]));
+    ZeroSlice::<u16>::from_ule_slice(&<u16 as AsULE>::ULE::from_array([
+        REPLACEMENT_CHARACTER as u16
+    ]));
 
 pub(crate) const EMPTY_CHAR: &ZeroSlice<char> = ZeroSlice::new_empty();
 
