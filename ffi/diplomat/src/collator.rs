@@ -110,7 +110,7 @@ pub mod ffi {
         }
 
         /// Compare guaranteed well-formed UTF-8 strings.
-        /// 
+        ///
         /// Note: passing ill-formed UTF-8 strings is undefined behavior
         /// (and may be memory-unsafe to do so, too).
         #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
