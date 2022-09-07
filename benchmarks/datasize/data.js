@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662577342500,
+  "lastUpdate": 1662584419706,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26513,6 +26513,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/feaa5c01d4e2cfb180343bd7697eedb350ac154f"
         },
         "date": 1662577285606,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f1ee6951068465fc81c8d5eb1ad9fadb794f2b4",
+          "message": "Add UnvalidatedStr and use it in LocaleFallbackParentsV1 (#2502)",
+          "timestamp": "2022-09-07T13:58:05-07:00",
+          "tree_id": "21e671c883579e419f048453438a4c7a8db6f565",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f1ee6951068465fc81c8d5eb1ad9fadb794f2b4"
+        },
+        "date": 1662584368468,
         "tool": "ndjson",
         "benches": [
           {
