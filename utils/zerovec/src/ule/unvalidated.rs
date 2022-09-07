@@ -13,6 +13,8 @@ use core::ops::Deref;
 /// Use this type instead of `str` if you don't need to enforce UTF-8 during deserialization. For
 /// example, strings that are keys of a map don't need to ever be reified as `str`s.
 ///
+/// [`UnvalidatedStr`] derefs to `[u8]`. To obtain a `str`, use [`Self::try_as_str()`].
+///
 /// The main advantage of this type over `[u8]` is that it serializes as a string in
 /// human-readable formats like JSON.
 ///
@@ -31,7 +33,7 @@ use core::ops::Deref;
 /// ].into_iter().collect();
 ///
 /// let key = "abc";
-/// let value = map.get_copied_by(|uvstr| (**uvstr).cmp(key.as_bytes()));
+/// let value = map.get_copied_by(|uvstr| uvstr.as_bytes().cmp(key.as_bytes()));
 /// assert_eq!(Some(11), value);
 /// ```
 ///
