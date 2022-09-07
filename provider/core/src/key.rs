@@ -204,14 +204,18 @@ impl DataKey {
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
-    pub fn get_path(&self) -> &'static str {
-        // This becomes const in 1.64
+    pub const fn get_path(&self) -> &'static str {
+        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
+        /// ```compile_fail
+        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
+        /// ```
+        const _: () = ();
         unsafe {
             // Safe due to invariant that self.path is tagged correctly
-            core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+            core::str::from_utf8_unchecked(core::mem::transmute((
                 self.path.as_ptr().add(leading_tag!().len()),
                 self.path.len() - trailing_tag!().len() - leading_tag!().len(),
-            ))
+            )))
         }
     }
 
@@ -414,12 +418,6 @@ impl fmt::Debug for DataKey {
     }
 }
 
-impl fmt::Display for DataKey {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Writeable::write_to(self, f)
-    }
-}
-
 impl Writeable for DataKey {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.get_path().write_to(sink)
@@ -433,6 +431,8 @@ impl Writeable for DataKey {
         Cow::Borrowed(self.get_path())
     }
 }
+
+writeable::impl_display_with_writeable!(DataKey);
 
 #[test]
 fn test_path_syntax() {

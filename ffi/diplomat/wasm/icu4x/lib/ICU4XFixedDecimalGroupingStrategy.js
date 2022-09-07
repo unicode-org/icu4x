@@ -9,10 +9,10 @@ export const ICU4XFixedDecimalGroupingStrategy_js_to_rust = {
 };
 
 export const ICU4XFixedDecimalGroupingStrategy_rust_to_js = {
-  0: "Auto",
-  1: "Never",
-  2: "Always",
-  3: "Min2",
+  [0]: "Auto",
+  [1]: "Never",
+  [2]: "Always",
+  [3]: "Min2",
 };
 
 export const ICU4XFixedDecimalGroupingStrategy = {

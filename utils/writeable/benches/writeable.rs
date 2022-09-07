@@ -22,6 +22,8 @@ impl Writeable for WriteableMessage<'_> {
     }
 }
 
+writeable::impl_display_with_writeable!(WriteableMessage<'_>);
+
 /// A sample type implementing Display
 struct DisplayMessage<'s> {
     message: &'s str,
@@ -39,7 +41,6 @@ const LONG_STR: &str = "this string is very very very very very very very very v
 
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("writeable/overview", |b| {
-        #[allow(clippy::suspicious_map)]
         b.iter(|| {
             // This benchmark runs to_string on short, medium, and long strings in one batch.
             WriteableMessage {

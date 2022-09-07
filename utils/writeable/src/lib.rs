@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(all(not(test), not(doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -27,10 +27,6 @@
 //!
 //! 1. More efficient, since the sink can pre-allocate bytes.
 //! 2. Smaller code, since the format machinery can be short-circuited.
-//!
-//! Types implementing Writeable have a defaulted [`write_to_string`](Writeable::write_to_string)
-//! function. If desired, types implementing `Writeable` can manually implement `ToString`
-//! to wrap `write_to_string`.
 //!
 //! # Examples
 //!
@@ -60,6 +56,10 @@
 //!
 //! let message = WelcomeMessage { name: "Alice" };
 //! assert_writeable_eq!(&message, "Hello, Alice!");
+//!
+//! // Types implementing `Writeable` are recommended to also implement `fmt::Display`.
+//! // This can be simply done by redirecting to the `Writeable` implementation:
+//! writeable::impl_display_with_writeable!(WelcomeMessage<'_>);
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -249,6 +249,25 @@ pub trait Writeable {
     }
 }
 
+/// Implements [`Display`](core::fmt::Display) for types that implement [`Writeable`].
+///
+/// It's recommended to do this for every [`Writeable`] type, as it will add
+/// support for `core::fmt` features like [`fmt!`](std::fmt),
+/// [`print!`](std::print), [`write!`](std::write), etc.
+#[macro_export]
+macro_rules! impl_display_with_writeable {
+    ($type:ty) => {
+        /// This trait is implemented for compatibility with [`fmt!`](alloc::fmt).
+        /// To create a string, [`Writeable::write_to_string`] is usually more efficient.
+        impl core::fmt::Display for $type {
+            #[inline]
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                $crate::Writeable::write_to(&self, f)
+            }
+        }
+    };
+}
+
 /// Testing macros for types implementing Writeable. The first argument should be a
 /// `Writeable`, the second argument a string, and the third argument (*_parts_eq only)
 /// a list of parts (`[(usize, usize, Part)]`).
@@ -281,6 +300,8 @@ pub trait Writeable {
 ///     }
 /// }
 ///
+/// writeable::impl_display_with_writeable!(Demo);
+///
 /// assert_writeable_eq!(&Demo, "foo");
 /// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
 ///
@@ -305,6 +326,7 @@ macro_rules! assert_writeable_eq {
     }};
 }
 
+/// See [`assert_writeable_eq`].
 #[macro_export]
 macro_rules! assert_writeable_parts_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {

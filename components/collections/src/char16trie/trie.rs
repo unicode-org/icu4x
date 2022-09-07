@@ -82,6 +82,7 @@ fn skip_node_value(pos: usize, lead: u16) -> usize {
 pub struct Char16Trie<'data> {
     /// An array of u16 containing the trie data.
     #[cfg_attr(feature = "serde", serde(borrow))]
+    #[doc(hidden)] // #2417
     pub data: ZeroVec<'data, u16>,
 }
 

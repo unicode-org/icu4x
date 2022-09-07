@@ -9,10 +9,10 @@ export const ICU4XDateLength_js_to_rust = {
 };
 
 export const ICU4XDateLength_rust_to_js = {
-  0: "Full",
-  1: "Long",
-  2: "Medium",
-  3: "Short",
+  [0]: "Full",
+  [1]: "Long",
+  [2]: "Medium",
+  [3]: "Short",
 };
 
 export const ICU4XDateLength = {
