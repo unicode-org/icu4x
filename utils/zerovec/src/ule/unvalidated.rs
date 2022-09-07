@@ -31,7 +31,7 @@ use core::ops::Deref;
 /// ].into_iter().collect();
 ///
 /// let key = "abc";
-/// let value = map.get_copied_by(|uvstr| uvstr.0.cmp(key.as_bytes()));
+/// let value = map.get_copied_by(|uvstr| (**uvstr).cmp(key.as_bytes()));
 /// assert_eq!(Some(11), value);
 /// ```
 ///
@@ -39,7 +39,7 @@ use core::ops::Deref;
 #[repr(transparent)]
 #[derive(PartialEq, Eq, PartialOrd, Ord)]
 #[allow(clippy::exhaustive_structs)] // transparent newtype
-pub struct UnvalidatedStr(pub [u8]);
+pub struct UnvalidatedStr([u8]);
 
 impl fmt::Debug for UnvalidatedStr {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
