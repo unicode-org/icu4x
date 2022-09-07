@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662577974349,
+  "lastUpdate": 1662585078391,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49649,6 +49649,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4f1ee6951068465fc81c8d5eb1ad9fadb794f2b4",
+          "message": "Add UnvalidatedStr and use it in LocaleFallbackParentsV1 (#2502)",
+          "timestamp": "2022-09-07T13:58:05-07:00",
+          "tree_id": "21e671c883579e419f048453438a4c7a8db6f565",
+          "url": "https://github.com/unicode-org/icu4x/commit/4f1ee6951068465fc81c8d5eb1ad9fadb794f2b4"
+        },
+        "date": 1662585016867,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 123172,
+            "range": "± 5155",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24348,
+            "range": "± 1192",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68065,
+            "range": "± 7421",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 209,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 83,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
