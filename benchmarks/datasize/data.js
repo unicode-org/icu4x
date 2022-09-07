@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662592329696,
+  "lastUpdate": 1662593553903,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26603,6 +26603,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/84c0ef10caeca73e5df07aa688abd7f320ba0563"
         },
         "date": 1662592281382,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "sipasseuth.daniel@gmail.com",
+            "name": "Sipasseuth Daniel",
+            "username": "dsipasseuth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5a668e0bb8fe34472585f58c1eb1eb63913e041c",
+          "message": "Renaming functions to match agreed conventions (#2460)",
+          "timestamp": "2022-09-08T01:30:19+02:00",
+          "tree_id": "0e5323b4db463b06becbc9f7fd0be2585efa5924",
+          "url": "https://github.com/unicode-org/icu4x/commit/5a668e0bb8fe34472585f58c1eb1eb63913e041c"
+        },
+        "date": 1662593501720,
         "tool": "ndjson",
         "benches": [
           {
