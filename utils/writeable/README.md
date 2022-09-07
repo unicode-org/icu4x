@@ -40,7 +40,7 @@ impl<'s> Writeable for WelcomeMessage<'s> {
 let message = WelcomeMessage { name: "Alice" };
 assert_writeable_eq!(&message, "Hello, Alice!");
 
-// Types implementing `Writeable` are required to also implement `fmt::Display`.
+// Types implementing `Writeable` should often also implement `fmt::Display`.
 // This can be simply done by redirecting to the `Writeable` implementation:
 writeable::impl_display_with_writeable!(WelcomeMessage<'_>);
 ```
