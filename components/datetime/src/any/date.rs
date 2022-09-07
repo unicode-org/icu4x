@@ -2,12 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{calendar, options::length, raw};
-
-use icu_provider::prelude::*;
-
 use crate::provider::calendar::*;
+use crate::{calendar, options::length, raw};
 use crate::{input::DateInput, DateTimeFormatterError, FormattedDateTime};
+use alloc::string::String;
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
     JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
@@ -15,6 +13,7 @@ use icu_calendar::provider::{
 use icu_calendar::Date;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
+use icu_provider::prelude::*;
 use icu_provider::DataLocale;
 use writeable::Writeable;
 
