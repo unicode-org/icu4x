@@ -1,4 +1,5 @@
 // @generated
+#![cfg(feature = "icu_casemapping")]
 type DataStruct =
     <::icu_casemapping::provider::CaseMappingV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =

@@ -16,9 +16,7 @@ use crate::helpers::result_is_err_missing_data_options;
 /// use icu_provider::hello_world::*;
 /// use icu_provider_adapters::fallback::LocaleFallbackProvider;
 ///
-/// // Note: icu_testdata::get_provider() is itself a LocaleFallbackProvider,
-/// // so we need to use icu_testdata::get_postcard_provider() instead.
-/// let provider = icu_testdata::get_postcard_provider();
+/// let provider = icu_testdata::unstable_no_fallback();
 ///
 /// let req = DataRequest {
 ///     locale: &locale!("ja-JP").into(),
@@ -26,17 +24,15 @@ use crate::helpers::result_is_err_missing_data_options;
 /// };
 ///
 /// // The provider does not have data for "ja-JP":
-/// let result: Result<DataResponse<HelloWorldV1Marker>, DataError> =
-///     provider.load(req);
-/// assert!(matches!(result, Err(_)));
+/// DataProvider::<HelloWorldV1Marker>::load(&provider, req).expect_err("No fallback");
 ///
 /// // But if we wrap the provider in a fallback provider...
-/// let provider = LocaleFallbackProvider::try_new_with_buffer_provider(provider)
+/// let provider = LocaleFallbackProvider::try_new_unstable(provider)
 ///     .expect("Fallback data present");
 ///
 /// // ...then we can load "ja-JP" based on "ja" data
-/// let response: DataResponse<HelloWorldV1Marker> =
-///     provider.load(req).expect("successful with vertical fallback");
+/// let response =
+///   DataProvider::<HelloWorldV1Marker>::load(&provider, req).expect("successful with vertical fallback");
 ///
 /// assert_eq!(
 ///     "ja",
@@ -138,8 +134,9 @@ impl<P> LocaleFallbackProvider<P> {
     /// // `HelloWorldProvider` does not contain fallback data,
     /// // but we can fetch it from `icu_testdata`, and then
     /// // use it to create the fallbacking data provider.
-    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&icu_testdata::get_provider())
-    ///     .expect("Fallback data present");
+    /// let fallbacker =
+    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("Fallback data present");
     /// let provider =
     ///     LocaleFallbackProvider::new_with_fallbacker(provider, fallbacker);
     ///

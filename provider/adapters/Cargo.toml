@@ -34,7 +34,7 @@ tinystr = { version = "0.6", path = "../../utils/tinystr", features = ["zerovec"
 litemap = { path = "../../utils/litemap" }
 
 [dev-dependencies]
-icu_testdata = { path = "../testdata" }
+icu_testdata = { path = "../testdata", default-features = false, features = ["buffer"] }
 icu_provider = { version = "1.0.0-beta1", path = "../core", features = ["macros", "deserialize_json"] }
 icu_provider_fs = { path = "../fs" }
 

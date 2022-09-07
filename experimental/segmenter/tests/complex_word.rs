@@ -8,8 +8,7 @@ use icu_segmenter::WordBreakSegmenter;
 
 #[test]
 fn word_break_th() {
-    let provider = icu_testdata::get_provider();
-    let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+    let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
 
     // http://wpt.live/css/css-text/word-break/word-break-normal-th-000.html
     let s = "ภาษาไทยภาษาไทย";
@@ -41,8 +40,7 @@ fn word_break_th() {
 #[ignore = "testdata doesn't have Burmese data"]
 #[test]
 fn word_break_my() {
-    let provider = icu_testdata::get_provider();
-    let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+    let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
 
     let s = "မြန်မာစာမြန်မာစာမြန်မာစာ";
     let utf16: Vec<u16> = s.encode_utf16().collect();
@@ -56,8 +54,7 @@ fn word_break_my() {
 
 #[test]
 fn word_break_hiragana() {
-    let provider = icu_testdata::get_provider();
-    let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+    let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
 
     let s = "うなぎうなじ";
     let iter = segmenter.segment_str(s);
@@ -70,8 +67,7 @@ fn word_break_hiragana() {
 
 #[test]
 fn word_break_mixed_han() {
-    let provider = icu_testdata::get_provider();
-    let segmenter = WordBreakSegmenter::try_new(&provider).expect("Data exists");
+    let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable()).expect("Data exists");
 
     let s = "Welcome龟山岛龟山岛Welcome";
     let iter = segmenter.segment_str(s);

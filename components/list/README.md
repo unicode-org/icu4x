@@ -11,8 +11,8 @@ and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latte
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_and_with_buffer_provider(
-    &icu_testdata::get_provider(),
+let list_formatter = ListFormatter::try_new_and_unstable(
+    &icu_testdata::unstable(),
     &locale!("es").into(),
     ListStyle::Wide,
 )
@@ -34,26 +34,23 @@ assert_writeable_eq!(
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_or_with_buffer_provider(
-    &icu_testdata::get_provider(),
+let list_formatter = ListFormatter::try_new_or_unstable(
+    &icu_testdata::unstable(),
     &locale!("th").into(),
     ListStyle::Short,
 )
 .expect("Data should load successfully");
 
 // We can use any Writeables as inputs
-assert_writeable_eq!(
-    list_formatter.format(1..=3),
-    "1, 2 หรือ 3",
-);
+assert_writeable_eq!(list_formatter.format(1..=3), "1, 2 หรือ 3",);
 ```
 
 ### Formatting unit lists in English
 
 ```rust
 #
-let list_formatter = ListFormatter::try_new_unit_with_buffer_provider(
-    &icu_testdata::get_provider(),
+let list_formatter = ListFormatter::try_new_unit_unstable(
+    &icu_testdata::unstable(),
     &locale!("en").into(),
     ListStyle::Wide,
 )

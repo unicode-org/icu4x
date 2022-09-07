@@ -19,8 +19,7 @@
 //! use icu_provider::prelude::*;
 //!
 //! // Set up a LocaleFallbacker with data.
-//! let provider = icu_testdata::get_provider();
-//! let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
+//! let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
 //!
 //! // Create a LocaleFallbackerWithConfig with a configuration for a specific key.
 //! // By default, uses language priority with no additional extension keywords.
@@ -74,8 +73,9 @@ pub struct LocaleFallbackConfig {
     /// use icu_provider_adapters::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
+    /// let fallbacker =
+    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Language;
     /// let key_fallbacker = fallbacker.for_config(config);
@@ -103,8 +103,9 @@ pub struct LocaleFallbackConfig {
     /// use icu_provider_adapters::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
+    /// let fallbacker =
+    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Region;
     /// let key_fallbacker = fallbacker.for_config(config);
@@ -135,8 +136,9 @@ pub struct LocaleFallbackConfig {
     /// use icu_provider_adapters::fallback::LocaleFallbacker;
     ///
     /// // Set up the fallback iterator.
-    /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
+    /// let fallbacker =
+    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.extension_key = Some(icu_locid::extensions_unicode_key!("nu"));
     /// let key_fallbacker = fallbacker.for_config(config);
@@ -313,9 +315,10 @@ impl LocaleFallbacker {
     /// };
     ///
     /// // Set up the fallback iterator.
-    /// let provider = icu_testdata::get_provider();
-    /// let fallbacker = LocaleFallbacker::try_new_with_buffer_provider(&provider).expect("data");
-    /// let key_fallbacker = fallbacker.for_key_and_fallback_supplement_key(FooV1Marker::KEY, FooV1Marker::FALLBACK_SUPPLEMENT_KEY);
+    /// let fallbacker =
+    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
+    ///         .expect("data");
+    /// let key_fallbacker = fallbacker.for_key(FooV1Marker::KEY);
     /// let mut fallback_iterator = key_fallbacker
     ///     .fallback_for(icu_locid::locale!("en-GB").into());
     ///

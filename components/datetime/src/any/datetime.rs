@@ -40,18 +40,25 @@ use icu_provider::DataLocale;
 /// use icu::locid::locale;
 /// use std::str::FromStr;
 ///
-/// let provider = icu_testdata::get_provider();
+/// let mut options = length::Bag::from_date_time_style(
+///     length::Date::Medium,
+///     length::Time::Short,
+/// );
 ///
-/// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
-///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale!("en-u-ca-gregory").into(), options.into())
-///     .expect("Failed to create DateTimeFormatter instance.");
+/// let dtf = DateTimeFormatter::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en-u-ca-gregory").into(),
+///     options.into(),
+/// )
+/// .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
-/// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+/// let value = dtf
+///     .format_to_string(&any_datetime)
+///     .expect("calendars should match");
 /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
@@ -66,11 +73,9 @@ use icu_provider::DataLocale;
 /// # use std::rc::Rc;
 /// # use std::convert::TryInto;
 ///
-/// let provider = icu_testdata::get_provider();
-///
 /// let locale = locale!("en-u-ca-japanese"); // English with the Japanese calendar
 ///
-/// let calendar = AnyCalendar::try_new_for_locale_with_buffer_provider(&provider, &(&locale).into())
+/// let calendar = AnyCalendar::try_new_for_locale_unstable(&icu_testdata::unstable(), &(&locale).into())
 ///                    .expect("constructing AnyCalendar failed");
 /// let calendar = Rc::new(calendar); // Avoid cloning it
 ///
@@ -92,7 +97,7 @@ use icu_provider::DataLocale;
 ///
 /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
 ///
-/// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &(&locale).into(), options.into())
+/// let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale.into(), options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
 /// let manual_value = dtf.format_to_string(&manual_datetime).expect("calendars should match");
@@ -155,19 +160,23 @@ impl DateTimeFormatter {
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(&provider, &locale.into(), options.into())
-    ///     .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
+    ///     &icu_testdata::buffer(),
+    ///     &locale.into(),
+    ///     options.into(),
+    /// )
+    /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = dtf
+    ///     .format_to_string(&any_datetime)
+    ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline]
@@ -196,15 +205,14 @@ impl DateTimeFormatter {
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
-    ///
-    /// let provider = icu_testdata::get_provider();
+    /// use icu_provider::AsDeserializingBufferProvider;
     ///
     /// let mut options = components::Bag::default();
     /// options.year = Some(components::Year::Numeric);
     /// options.month = Some(components::Month::Long);
     ///
     /// let dtf = DateTimeFormatter::try_new_experimental_unstable(
-    ///     &provider,
+    ///     &icu_testdata::buffer().as_deserializing(),
     ///     &locale!("en-u-ca-gregory").into(),
     ///     options.into()
     /// )
@@ -290,19 +298,23 @@ impl DateTimeFormatter {
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
-    /// let mut options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Short);
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let dtf = DateTimeFormatter::try_new_unstable(&provider, &locale.into(), options.into())
-    ///     .expect("Failed to create TypedDateTimeFormatter instance.");
+    /// let dtf = DateTimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale.into(),
+    ///     options.into(),
+    /// )
+    /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
     /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = dtf
+    ///     .format_to_string(&any_datetime)
+    ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline(never)]
@@ -363,21 +375,25 @@ impl DateTimeFormatter {
     ///
     /// ```
     /// use icu::calendar::DateTime;
-    /// use icu::datetime::{options::length, DateTimeFormatter, DateFormatter, TimeFormatter};
+    /// use icu::datetime::{
+    ///     options::length, DateFormatter, DateTimeFormatter, TimeFormatter,
+    /// };
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
     ///
-    /// let provider = icu_testdata::get_provider();
-    ///
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
     ///
-    /// let df = DateFormatter::try_new_with_buffer_provider(&provider, &locale.into(), length)
-    ///     .expect("Failed to create TypedDateFormatter instance.");
+    /// let df = DateFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
+    ///     &locale.into(),
+    ///     length,
+    /// )
+    /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let tf = TimeFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let tf = TimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
     ///     length::Time::Short,
     /// )
@@ -389,7 +405,9 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = dtf
+    ///     .format_to_string(&any_datetime)
+    ///     .expect("calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     ///
@@ -482,11 +500,10 @@ where {
     ///
     /// let options = length::Bag::from_date_style(length::Date::Medium).into();
     ///
-    /// let provider = icu_testdata::get_provider();
-    /// let dtf = DateTimeFormatter::try_new_with_buffer_provider(
-    ///     &provider,
+    /// let dtf = DateTimeFormatter::try_new_unstable(
+    ///     &icu_testdata::unstable(),
     ///     &locale!("en-u-ca-gregory").into(),
-    ///     options
+    ///     options,
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
@@ -537,24 +554,17 @@ where {
 }
 
 #[cfg(test)]
-#[cfg(feature = "serde")]
 mod tests {
     use core::str::FromStr;
     use icu::calendar::{AnyCalendar, DateTime};
     use icu::datetime::{options::length, DateTimeFormatter};
     use icu::locid::Locale;
-    use icu_provider::BufferProvider;
 
-    fn test_format(
-        provider: &impl BufferProvider,
-        datetime: &DateTime<AnyCalendar>,
-        locale: &str,
-        expected: &str,
-    ) {
+    fn test_format(datetime: &DateTime<AnyCalendar>, locale: &str, expected: &str) {
         let options = length::Bag::from_date_time_style(length::Date::Long, length::Time::Short);
 
-        let dtf = DateTimeFormatter::try_new_with_buffer_provider(
-            provider,
+        let dtf = DateTimeFormatter::try_new_unstable(
+            &icu_testdata::unstable(),
             &Locale::from_str(locale).unwrap().into(),
             options.into(),
         )
@@ -567,32 +577,16 @@ mod tests {
 
     #[test]
     fn test_fallback() {
-        let provider = icu_testdata::get_provider();
         // We can rely on the code's ability to convert ISO datetimes
         let datetime = DateTime::new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
-        test_format(&provider, &datetime, "fr", "5 avril 2022 à 12:33");
-        test_format(
-            &provider,
-            &datetime,
-            "fr-u-ca-blahblah",
-            "5 avril 2022 à 12:33",
-        );
+        test_format(&datetime, "fr", "5 avril 2022 à 12:33");
+        test_format(&datetime, "fr-u-ca-blahblah", "5 avril 2022 à 12:33");
         // thai falls back to buddhist
-        test_format(
-            &provider,
-            &datetime,
-            "th-u-ca-buddhist",
-            "5 เมษายน 2565 12:33",
-        );
-        test_format(&provider, &datetime, "th", "5 เมษายน 2565 12:33");
+        test_format(&datetime, "th-u-ca-buddhist", "5 เมษายน 2565 12:33");
+        test_format(&datetime, "th", "5 เมษายน 2565 12:33");
         // except when overridden
-        test_format(
-            &provider,
-            &datetime,
-            "th-u-ca-gregory",
-            "5 เมษายน ค.ศ. 2022 12:33",
-        );
+        test_format(&datetime, "th-u-ca-gregory", "5 เมษายน ค.ศ. 2022 12:33");
     }
 }

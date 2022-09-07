@@ -161,16 +161,21 @@ enum DataKeyPathImpl {
 }
 
 impl DataKeyPathImpl {
-    pub fn get(&self) -> &'static str {
+    pub const fn get(&self) -> &'static str {
+        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
+        /// ```compile_fail
+        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
+        /// ```
+        const _: () = ();
         match self {
             DataKeyPathImpl::Plain(s) => s,
             DataKeyPathImpl::Tagged(s) => unsafe {
                 // This becomes const in 1.64
                 // Safe due to invariant that self.path is tagged correctly
-                core::str::from_utf8_unchecked(core::slice::from_raw_parts(
+                core::str::from_utf8_unchecked(core::mem::transmute((
                     s.as_ptr().add(leading_tag!().len()),
                     s.len() - trailing_tag!().len() - leading_tag!().len(),
-                ))
+                )))
             },
         }
     }

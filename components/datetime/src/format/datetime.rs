@@ -36,10 +36,12 @@ use writeable::Writeable;
 /// use icu::calendar::{DateTime, Gregorian};
 /// use icu::datetime::TypedDateTimeFormatter;
 /// use icu::locid::locale;
-/// # let provider = icu_testdata::get_provider();
-/// # let options = icu::datetime::DateTimeFormatterOptions::default();
-/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(&provider, &locale!("en").into(), options)
-///     .expect("Failed to create TypedDateTimeFormatter instance.");
+/// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
+///     &icu_testdata::unstable(),
+///     &locale!("en").into(),
+///     Default::default(),
+/// )
+/// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
@@ -500,20 +502,22 @@ mod tests {
     use icu_locid::Locale;
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_mixed_calendar_eras() {
         use icu::calendar::japanese::JapaneseExtended;
         use icu::calendar::Date;
         use icu::datetime::options::length;
         use icu::datetime::DateFormatter;
 
-        let provider = icu_testdata::get_provider();
         let locale: Locale = "en-u-ca-japanese".parse().unwrap();
-        let dtf = DateFormatter::try_new_unstable(&provider, &locale.into(), length::Date::Medium)
-            .expect("DateTimeFormat construction succeeds");
+        let dtf = DateFormatter::try_new_unstable(
+            &icu_testdata::unstable(),
+            &locale.into(),
+            length::Date::Medium,
+        )
+        .expect("DateTimeFormat construction succeeds");
 
-        let japanext =
-            JapaneseExtended::try_new_unstable(&provider).expect("Cannot load japanext data");
+        let japanext = JapaneseExtended::try_new_unstable(&icu_testdata::unstable())
+            .expect("Cannot load japanext data");
         let date = Date::new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
         let date = date.to_calendar(japanext).into_japanese_date().to_any();
 
@@ -529,21 +533,31 @@ mod tests {
         use icu_calendar::DateTime;
         use icu_provider::prelude::*;
 
-        let provider = icu_testdata::get_provider();
         let locale = "en-u-ca-gregory".parse::<Locale>().unwrap().into();
         let req = DataRequest {
             locale: &locale,
             metadata: Default::default(),
         };
-        let date_data: DataPayload<GregorianDateSymbolsV1Marker> =
-            provider.load(req).unwrap().take_payload().unwrap();
-        let time_data: DataPayload<TimeSymbolsV1Marker> =
-            provider.load(req).unwrap().take_payload().unwrap();
+        let date_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(req)
+            .unwrap()
+            .take_payload()
+            .unwrap();
+        let time_data: DataPayload<TimeSymbolsV1Marker> = icu_testdata::buffer()
+            .as_deserializing()
+            .load(req)
+            .unwrap()
+            .take_payload()
+            .unwrap();
         let pattern = "MMM".parse().unwrap();
         let datetime = DateTime::new_gregorian_datetime(2020, 8, 1, 12, 34, 28).unwrap();
-        let fixed_decimal_format =
-            FixedDecimalFormatter::try_new_unstable(&provider, &locale, Default::default())
-                .unwrap();
+        let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
+            &icu_testdata::unstable(),
+            &locale,
+            Default::default(),
+        )
+        .unwrap();
 
         let mut sink = String::new();
         let loc_datetime = DateTimeInputWithWeekConfig::new(&datetime, None);
@@ -560,7 +574,6 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "serde")]
     fn test_format_number() {
         let values = &[2, 20, 201, 2017, 20173];
         let samples = &[
@@ -573,11 +586,10 @@ mod tests {
             (FieldLength::Wide, ["0002", "0020", "0201", "2017", "20173"]),
         ];
 
-        let provider = icu_testdata::get_provider();
         let mut fixed_decimal_format_options = FixedDecimalFormatterOptions::default();
         fixed_decimal_format_options.grouping_strategy = GroupingStrategy::Never;
         let fixed_decimal_format = FixedDecimalFormatter::try_new_unstable(
-            &provider,
+            &icu_testdata::unstable(),
             &icu_locid::locale!("en").into(),
             fixed_decimal_format_options,
         )

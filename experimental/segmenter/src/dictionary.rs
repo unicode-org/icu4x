@@ -164,6 +164,7 @@ impl<'l> DictionarySegmenter<'l> {
 }
 
 #[cfg(test)]
+#[cfg(feature = "serde")]
 mod tests {
     use super::*;
     use icu_locid::{locale, Locale};
@@ -172,8 +173,8 @@ mod tests {
     fn get_payload(
         locale: Locale,
     ) -> Result<DataPayload<UCharDictionaryBreakDataV1Marker>, DataError> {
-        let provider = icu_testdata::get_provider();
-        provider
+        icu_testdata::buffer()
+            .as_deserializing()
             .load(DataRequest {
                 locale: &DataLocale::from(locale),
                 metadata: Default::default(),
