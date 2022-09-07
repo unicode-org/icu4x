@@ -1687,8 +1687,8 @@ impl FixedDecimal {
 /// # Examples
 ///
 /// ```
-/// #use fixed_decimal::FixedDecimal;
-/// #use writeable::assert_writeable_eq;
+/// # use fixed_decimal::FixedDecimal;
+/// # use writeable::assert_writeable_eq;
 /// #
 /// assert_writeable_eq!(FixedDecimal::from(42), "42");
 /// ```
