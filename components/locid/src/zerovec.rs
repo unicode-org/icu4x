@@ -28,17 +28,17 @@
 //!
 //! // ZeroMap from locales to integers
 //! let data: &[(&UnvalidatedStr, u32)] = &[
-//!     (b"de-DE-u-hc-h12".into(), 5),
-//!     (b"en-US-u-ca-buddhist".into(), 10),
-//!     (b"my-MM".into(), 15),
-//!     (b"sr-Cyrl-ME".into(), 20),
-//!     (b"zh-TW".into(), 25),
+//!     ("de-DE-u-hc-h12".into(), 5),
+//!     ("en-US-u-ca-buddhist".into(), 10),
+//!     ("my-MM".into(), 15),
+//!     ("sr-Cyrl-ME".into(), 20),
+//!     ("zh-TW".into(), 25),
 //! ];
 //! let zm: ZeroMap<UnvalidatedStr, u32> = data.iter().copied().collect();
 //!
 //! // Get the value associated with a locale
 //! let loc: Locale = "en-US-u-ca-buddhist".parse().unwrap();
-//! let value = zm.get_copied_by(|uvstr| loc.strict_cmp(&uvstr.0).reverse());
+//! let value = zm.get_copied_by(|uvstr| loc.strict_cmp(&uvstr).reverse());
 //! assert_eq!(value, Some(10));
 //! ```
 //!
@@ -126,4 +126,3 @@
 //! [`Locale::strict_cmp()`]: crate::Locale::strict_cmp()
 //! [`LanguageIdentifier`]: crate::LanguageIdentifier
 //! [`UnvalidatedStr`]: zerovec::ule::UnvalidatedStr
-

@@ -5,8 +5,8 @@
 use super::VarULE;
 use crate::{map::ZeroMapKV, VarZeroSlice, VarZeroVec, ZeroVecError};
 use alloc::boxed::Box;
-use core::convert::TryFrom;
 use core::fmt;
+use core::ops::Deref;
 
 /// A byte slice that is expected to be a UTF-8 string but does not enforce that invariant.
 ///
@@ -54,7 +54,7 @@ impl fmt::Debug for UnvalidatedStr {
 impl UnvalidatedStr {
     /// Create a [`UnvalidatedStr`] from a byte slice.
     #[inline]
-    pub const fn from_byte_slice(other: &[u8]) -> &Self {
+    pub const fn from_bytes(other: &[u8]) -> &Self {
         // Safety: UnvalidatedStr is transparent over [u8]
         unsafe { core::mem::transmute(other) }
     }
@@ -62,7 +62,7 @@ impl UnvalidatedStr {
     /// Create a [`UnvalidatedStr`] from a string slice.
     #[inline]
     pub const fn from_str(s: &str) -> &Self {
-        Self::from_byte_slice(s.as_bytes())
+        Self::from_bytes(s.as_bytes())
     }
 
     /// Create a [`UnvalidatedStr`] from boxed bytes.
@@ -70,6 +70,12 @@ impl UnvalidatedStr {
     pub fn from_boxed_bytes(other: Box<[u8]>) -> Box<Self> {
         // Safety: UnvalidatedStr is transparent over [u8]
         unsafe { core::mem::transmute(other) }
+    }
+
+    /// Create a [`UnvalidatedStr`] from a boxed `str`.
+    #[inline]
+    pub fn from_boxed_str(other: Box<str>) -> Box<Self> {
+        Self::from_boxed_bytes(other.into_boxed_bytes())
     }
 
     /// Get the bytes from a [`UnvalidatedStr].
@@ -85,7 +91,7 @@ impl UnvalidatedStr {
     /// ```
     /// use zerovec::ule::UnvalidatedStr;
     ///
-    /// static a: &UnvalidatedStr = UnvalidatedStr::from_byte_slice(b"abc");
+    /// static a: &UnvalidatedStr = UnvalidatedStr::from_bytes(b"abc");
     ///
     /// let b = a.try_as_str().unwrap();
     /// assert_eq!(b, "abc");
@@ -97,53 +103,24 @@ impl UnvalidatedStr {
     }
 }
 
-impl<'a> From<&'a [u8]> for &'a UnvalidatedStr {
-    #[inline]
-    fn from(other: &'a [u8]) -> Self {
-        UnvalidatedStr::from_byte_slice(other)
-    }
-}
-
-impl From<Box<[u8]>> for Box<UnvalidatedStr> {
-    #[inline]
-    fn from(other: Box<[u8]>) -> Self {
-        UnvalidatedStr::from_boxed_bytes(other)
-    }
-}
-
-impl<'a, const N: usize> From<&'a [u8; N]> for &'a UnvalidatedStr {
-    #[inline]
-    fn from(other: &'a [u8; N]) -> Self {
-        UnvalidatedStr::from_byte_slice(other)
-    }
-}
-
 impl<'a> From<&'a str> for &'a UnvalidatedStr {
     #[inline]
     fn from(other: &'a str) -> Self {
-        other.as_bytes().into()
+        UnvalidatedStr::from_str(other)
     }
 }
 
 impl From<Box<str>> for Box<UnvalidatedStr> {
     #[inline]
     fn from(other: Box<str>) -> Self {
-        other.into_boxed_bytes().into()
+        UnvalidatedStr::from_boxed_str(other)
     }
 }
 
-impl<'a> From<&'a UnvalidatedStr> for &'a [u8] {
-    #[inline]
-    fn from(other: &'a UnvalidatedStr) -> Self {
-        &other.0
-    }
-}
-
-impl<'a> TryFrom<&'a UnvalidatedStr> for &'a str {
-    type Error = core::str::Utf8Error;
-    #[inline]
-    fn try_from(other: &'a UnvalidatedStr) -> Result<Self, Self::Error> {
-        other.try_as_str()
+impl Deref for UnvalidatedStr {
+    type Target = [u8];
+    fn deref(&self) -> &Self::Target {
+        &self.0
     }
 }
 
@@ -169,7 +146,7 @@ unsafe impl VarULE for UnvalidatedStr {
     }
     #[inline]
     unsafe fn from_byte_slice_unchecked(bytes: &[u8]) -> &Self {
-        UnvalidatedStr::from_byte_slice(bytes)
+        UnvalidatedStr::from_bytes(bytes)
     }
 }
 
@@ -201,10 +178,10 @@ impl<'de> serde::Deserialize<'de> for Box<UnvalidatedStr> {
     {
         if deserializer.is_human_readable() {
             let boxed_str = Box::<str>::deserialize(deserializer)?;
-            Ok(boxed_str.into_boxed_bytes().into())
+            Ok(UnvalidatedStr::from_boxed_str(boxed_str))
         } else {
             let boxed_bytes = Box::<[u8]>::deserialize(deserializer)?;
-            Ok(boxed_bytes.into())
+            Ok(UnvalidatedStr::from_boxed_bytes(boxed_bytes))
         }
     }
 }
@@ -221,10 +198,10 @@ where
     {
         if deserializer.is_human_readable() {
             let s = <&str>::deserialize(deserializer)?;
-            Ok(s.into())
+            Ok(UnvalidatedStr::from_str(s))
         } else {
             let bytes = <&[u8]>::deserialize(deserializer)?;
-            Ok(bytes.into())
+            Ok(UnvalidatedStr::from_bytes(bytes))
         }
     }
 }
