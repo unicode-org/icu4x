@@ -82,7 +82,10 @@ pub mod ffi {
             #[cfg(not(feature = "provider_test"))]
             unimplemented!();
 
-            #[cfg(feature = "provider_test")]
+            #[cfg(all(feature = "provider_test", not(feature = "buffer_provider")))]
+            return convert_any_provider(icu_testdata::any());
+
+            #[cfg(all(feature = "provider_test", feature = "buffer_provider"))]
             if cfg!(feature = "smaller_test") {
                 convert_buffer_provider(icu_testdata::small_buffer())
             } else {
