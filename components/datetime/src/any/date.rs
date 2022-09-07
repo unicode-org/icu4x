@@ -49,7 +49,7 @@ use icu_provider::DataLocale;
 ///
 /// let value = df
 ///     .format_to_string(&any_date)
-///     .expect("calendars should match");
+///     .expect("Calendars should match");
 /// assert_eq!(value, "Sep 1, 2020");
 /// ```
 ///
@@ -123,7 +123,7 @@ impl DateFormatter {
     ///
     /// let value = df
     ///     .format_to_string(&any_datetime)
-    ///     .expect("calendars should match");
+    ///     .expect("Calendars should match");
     /// assert_eq!(value, "Sep 1, 2020");
     /// ```
     #[inline]
@@ -175,7 +175,7 @@ impl DateFormatter {
     ///
     /// let value = df
     ///     .format_to_string(&any_datetime)
-    ///     .expect("calendars should match");
+    ///     .expect("Calendars should match");
     /// assert_eq!(value, "Sep 1, 2020");
     /// ```
     #[inline(never)]

@@ -65,7 +65,7 @@
 //! // prefer using ISO dates with DateTimeFormatter
 //! let date = typed_date.to_iso().to_any();
 //!
-//! let formatted_date = dtf.format(&date).expect("Formatting should succeed");
+//! let formatted_date = dtf.format(&date).expect("Calendars should match");
 //! let typed_formatted_date = typed_dtf.format(&typed_date);
 //!
 //! assert_eq!(formatted_date.to_string(), "Sep 12, 2020, 12:34 PM");

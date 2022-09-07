@@ -58,7 +58,7 @@ use icu_provider::DataLocale;
 ///
 /// let value = dtf
 ///     .format_to_string(&any_datetime)
-///     .expect("calendars should match");
+///     .expect("Calendars should match");
 /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
 /// ```
 ///
@@ -100,10 +100,10 @@ use icu_provider::DataLocale;
 /// let dtf = DateTimeFormatter::try_new_unstable(&icu_testdata::unstable(), &locale.into(), options.into())
 ///     .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let manual_value = dtf.format_to_string(&manual_datetime).expect("calendars should match");
+/// let manual_value = dtf.format_to_string(&manual_datetime).expect("Calendars should match");
 /// assert_eq!(manual_value, "Mar 28, 15 Heisei, 12:33 PM");
 ///
-/// let converted_value = dtf.format_to_string(&iso_converted).expect("calendars should match");
+/// let converted_value = dtf.format_to_string(&iso_converted).expect("Calendars should match");
 /// assert_eq!(converted_value, "Sep 1, 2 Reiwa, 12:34 PM");
 /// ```
 ///
@@ -176,7 +176,7 @@ impl DateTimeFormatter {
     ///
     /// let value = dtf
     ///     .format_to_string(&any_datetime)
-    ///     .expect("calendars should match");
+    ///     .expect("Calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline]
@@ -222,7 +222,7 @@ impl DateTimeFormatter {
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = dtf.format_to_string(&any_datetime).expect("calendars should match");
+    /// let value = dtf.format_to_string(&any_datetime).expect("Calendars should match");
     /// assert_eq!(value, "September 2020");
     /// ```
     #[cfg(feature = "experimental")]
@@ -314,7 +314,7 @@ impl DateTimeFormatter {
     ///
     /// let value = dtf
     ///     .format_to_string(&any_datetime)
-    ///     .expect("calendars should match");
+    ///     .expect("Calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     #[inline(never)]
@@ -407,7 +407,7 @@ impl DateTimeFormatter {
     ///
     /// let value = dtf
     ///     .format_to_string(&any_datetime)
-    ///     .expect("calendars should match");
+    ///     .expect("Calendars should match");
     /// assert_eq!(value, "Sep 1, 2020, 12:34 PM");
     /// ```
     ///
@@ -571,7 +571,7 @@ mod tests {
         .unwrap();
         let value = dtf
             .format_to_string(datetime)
-            .expect("calendars should match");
+            .expect("Calendars should match");
         assert_eq!(value, expected);
     }
 

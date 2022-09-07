@@ -66,7 +66,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 ///
 /// let value = zdtf
 ///     .format_to_string(&any_datetime, &time_zone)
-///     .expect("calendars should match");
+///     .expect("Calendars should match");
 ///
 /// assert_eq!(value, "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
