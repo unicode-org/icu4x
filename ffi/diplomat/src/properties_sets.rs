@@ -29,12 +29,12 @@ pub mod ffi {
         }
         /// Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
         #[diplomat::rust_link(
-            icu::properties::sets::CodePointSetDataBorrowed::contains_u32,
+            icu::properties::sets::CodePointSetDataBorrowed::contains32,
             FnInStruct,
             hidden
         )]
-        pub fn contains_u32(&self, cp: u32) -> bool {
-            self.0.as_borrowed().contains_u32(cp)
+        pub fn contains32(&self, cp: u32) -> bool {
+            self.0.as_borrowed().contains32(cp)
         }
         /// which is a mask with the same format as the `U_GC_XX_MASK` mask in ICU4C
         #[diplomat::rust_link(icu::properties::sets::load_for_general_category_group, Fn)]

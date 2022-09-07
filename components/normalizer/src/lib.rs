@@ -469,7 +469,7 @@ impl CharacterAndClass {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc_from_trie_value(trie.get_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
     }
 }
 
@@ -621,7 +621,7 @@ where
             let mut combining_start = 0;
             for u in tail.iter() {
                 let ch = char_from_u16(u);
-                let trie_value = self.trie.get(u32::from(ch));
+                let trie_value = self.trie.get(ch);
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
                     CharacterAndTrieValue::new(ch, trie_value),
                 ));
@@ -662,7 +662,7 @@ where
             let mut i = 0;
             let mut combining_start = 0;
             for ch in tail.iter() {
-                let trie_value = self.trie.get(u32::from(ch));
+                let trie_value = self.trie.get(ch);
                 self.buffer.push(CharacterAndClass::new_with_trie_value(
                     CharacterAndTrieValue::new(ch, trie_value),
                 ));
@@ -685,7 +685,7 @@ where
             }
         }
 
-        CharacterAndTrieValue::new(c, self.trie.get(u32::from(c)))
+        CharacterAndTrieValue::new(c, self.trie.get(c))
     }
 
     #[inline(never)]
@@ -705,7 +705,7 @@ where
                 0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
             ));
         }
-        let trie_value = supplementary.get(u32::from(c));
+        let trie_value = supplementary.get32(u32::from(c));
         if trie_value != 0 {
             return Some(CharacterAndTrieValue::new_from_supplement(c, trie_value));
         }

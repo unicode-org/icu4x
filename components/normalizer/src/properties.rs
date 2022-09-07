@@ -158,7 +158,7 @@ impl CanonicalDecomposition {
     /// are reported as `Decomposed::Default`.
     #[inline(always)]
     fn decompose_non_hangul(&self, c: char) -> Decomposed {
-        let decomposition = self.decompositions.get().trie.get(u32::from(c));
+        let decomposition = self.decompositions.get().trie.get(c);
         if decomposition <= BACKWARD_COMBINING_STARTER_MARKER {
             return Decomposed::Default;
         }
@@ -279,7 +279,7 @@ impl CanonicalDecomposition {
             return Decomposed::Default;
         }
         let non_recursive = self.non_recursive.get();
-        let non_recursive_decomposition = non_recursive.trie.get(u32::from(c));
+        let non_recursive_decomposition = non_recursive.trie.get(c);
         if non_recursive_decomposition == 0 {
             // GIGO case
             debug_assert!(false);
@@ -354,7 +354,7 @@ impl CanonicalDecomposition {
 ///
 /// let map = CanonicalCombiningClassMap::try_new_unstable(&icu_testdata::unstable()).unwrap();
 /// assert_eq!(map.get('a'), CanonicalCombiningClass::NotReordered); // U+0061: LATIN SMALL LETTER A
-/// assert_eq!(map.get_u32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
+/// assert_eq!(map.get32(0x0301), CanonicalCombiningClass::Above); // U+0301: COMBINING ACUTE ACCENT
 /// ```
 pub struct CanonicalCombiningClassMap {
     /// The data trie
@@ -365,14 +365,14 @@ impl CanonicalCombiningClassMap {
     /// Look up the canonical combining class for a scalar value
     #[inline(always)]
     pub fn get(&self, c: char) -> CanonicalCombiningClass {
-        self.get_u32(u32::from(c))
+        self.get32(u32::from(c))
     }
 
     /// Look up the canonical combining class for a scalar value
     /// represented as `u32`. If the argument is outside the scalar
     /// value range, `CanonicalCombiningClass::NotReordered` is returned.
-    pub fn get_u32(&self, c: u32) -> CanonicalCombiningClass {
-        let trie_value = self.decompositions.get().trie.get(c);
+    pub fn get32(&self, c: u32) -> CanonicalCombiningClass {
+        let trie_value = self.decompositions.get().trie.get32(c);
         if trie_value_has_ccc(trie_value) {
             CanonicalCombiningClass(trie_value as u8)
         } else if trie_value_indicates_special_non_starter_decomposition(trie_value) {

@@ -144,12 +144,12 @@ impl<'a> CodePointSetDataBorrowed<'a> {
     ///         .expect("The data should be valid");
     /// let alphabetic = data.as_borrowed();
     ///
-    /// assert!(!alphabetic.contains_u32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
-    /// assert!(alphabetic.contains_u32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
+    /// assert!(!alphabetic.contains32(0x0A69));  // U+0A69 GURMUKHI DIGIT THREE
+    /// assert!(alphabetic.contains32(0x00C4));  // U+00C4 LATIN CAPITAL LETTER A WITH DIAERESIS
     /// ```
     #[inline]
-    pub fn contains_u32(&self, ch: u32) -> bool {
-        self.set.contains_u32(ch)
+    pub fn contains32(&self, ch: u32) -> bool {
+        self.set.contains32(ch)
     }
 
     // Yields an [`Iterator`] returning the ranges of the code points that are
@@ -282,7 +282,7 @@ make_set_property! {
     ///         .expect("The data should be valid");
     /// let bidi_control = data.as_borrowed();;
     ///
-    /// assert!(bidi_control.contains_u32(0x200F));  // RIGHT-TO-LEFT MARK
+    /// assert!(bidi_control.contains32(0x200F));  // RIGHT-TO-LEFT MARK
     /// assert!(!bidi_control.contains('ش'));  // U+0634 ARABIC LETTER SHEEN
     /// ```
 
@@ -585,7 +585,7 @@ make_set_property! {
     ///         .expect("The data should be valid");
     /// let default_ignorable_code_point = data.as_borrowed();;
     ///
-    /// assert!(default_ignorable_code_point.contains_u32(0x180B));  // MONGOLIAN FREE VARIATION SELECTOR ONE
+    /// assert!(default_ignorable_code_point.contains32(0x180B));  // MONGOLIAN FREE VARIATION SELECTOR ONE
     /// assert!(!default_ignorable_code_point.contains('E'));
     /// ```
 
@@ -659,7 +659,7 @@ make_set_property! {
     /// let emoji_component = data.as_borrowed();;
     ///
     /// assert!(emoji_component.contains('🇹'));  // U+1F1F9 REGIONAL INDICATOR SYMBOL LETTER T
-    /// assert!(emoji_component.contains_u32(0x20E3));  // COMBINING ENCLOSING KEYCAP
+    /// assert!(emoji_component.contains32(0x20E3));  // COMBINING ENCLOSING KEYCAP
     /// assert!(emoji_component.contains('7'));
     /// assert!(!emoji_component.contains('T'));
     /// ```
@@ -684,8 +684,8 @@ make_set_property! {
     ///         .expect("The data should be valid");
     /// let emoji_modifier = data.as_borrowed();;
     ///
-    /// assert!(emoji_modifier.contains_u32(0x1F3FD));  // EMOJI MODIFIER FITZPATRICK TYPE-4
-    /// assert!(!emoji_modifier.contains_u32(0x200C));  // ZERO WIDTH NON-JOINER
+    /// assert!(emoji_modifier.contains32(0x1F3FD));  // EMOJI MODIFIER FITZPATRICK TYPE-4
+    /// assert!(!emoji_modifier.contains32(0x200C));  // ZERO WIDTH NON-JOINER
     /// ```
 
     pub fn load_emoji_modifier();
@@ -929,7 +929,7 @@ make_set_property! {
     /// assert!(id_continue.contains('_'));
     /// assert!(id_continue.contains('ߝ'));  // U+07DD NKO LETTER FA
     /// assert!(!id_continue.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(id_continue.contains_u32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(id_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
     pub fn load_id_continue();
@@ -984,7 +984,7 @@ make_set_property! {
     /// assert!(!id_start.contains('_'));
     /// assert!(id_start.contains('ߝ'));  // U+07DD NKO LETTER FA
     /// assert!(!id_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(id_start.contains_u32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(id_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
     pub fn load_id_start();
@@ -1007,8 +1007,8 @@ make_set_property! {
     ///         .expect("The data should be valid");
     /// let ids_binary_operator = data.as_borrowed();;
     ///
-    /// assert!(ids_binary_operator.contains_u32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
-    /// assert!(!ids_binary_operator.contains_u32(0x3006));  // IDEOGRAPHIC CLOSING MARK
+    /// assert!(ids_binary_operator.contains32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
+    /// assert!(!ids_binary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
     pub fn load_ids_binary_operator();
@@ -1031,11 +1031,11 @@ make_set_property! {
     ///         .expect("The data should be valid");
     /// let ids_trinary_operator = data.as_borrowed();;
     ///
-    /// assert!(ids_trinary_operator.contains_u32(0x2FF2));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
-    /// assert!(ids_trinary_operator.contains_u32(0x2FF3));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
-    /// assert!(!ids_trinary_operator.contains_u32(0x2FF4));
-    /// assert!(!ids_trinary_operator.contains_u32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
-    /// assert!(!ids_trinary_operator.contains_u32(0x3006));  // IDEOGRAPHIC CLOSING MARK
+    /// assert!(ids_trinary_operator.contains32(0x2FF2));  // IDEOGRAPHIC DESCRIPTION CHARACTER LEFT TO MIDDLE AND RIGHT
+    /// assert!(ids_trinary_operator.contains32(0x2FF3));  // IDEOGRAPHIC DESCRIPTION CHARACTER ABOVE TO MIDDLE AND BELOW
+    /// assert!(!ids_trinary_operator.contains32(0x2FF4));
+    /// assert!(!ids_trinary_operator.contains32(0x2FF5));  // IDEOGRAPHIC DESCRIPTION CHARACTER SURROUND FROM ABOVE
+    /// assert!(!ids_trinary_operator.contains32(0x3006));  // IDEOGRAPHIC CLOSING MARK
     /// ```
 
     pub fn load_ids_trinary_operator();
@@ -1059,9 +1059,9 @@ make_set_property! {
     ///         .expect("The data should be valid");
     /// let join_control = data.as_borrowed();;
     ///
-    /// assert!(join_control.contains_u32(0x200C));  // ZERO WIDTH NON-JOINER
-    /// assert!(join_control.contains_u32(0x200D));  // ZERO WIDTH JOINER
-    /// assert!(!join_control.contains_u32(0x200E));
+    /// assert!(join_control.contains32(0x200C));  // ZERO WIDTH NON-JOINER
+    /// assert!(join_control.contains32(0x200D));  // ZERO WIDTH JOINER
+    /// assert!(!join_control.contains32(0x200E));
     /// ```
 
     pub fn load_join_control();
@@ -1160,9 +1160,9 @@ make_set_property! {
     ///         .expect("The data should be valid");
     /// let noncharacter_code_point = data.as_borrowed();;
     ///
-    /// assert!(noncharacter_code_point.contains_u32(0xFDD0));
-    /// assert!(noncharacter_code_point.contains_u32(0xFFFF));
-    /// assert!(!noncharacter_code_point.contains_u32(0x10000));
+    /// assert!(noncharacter_code_point.contains32(0xFDD0));
+    /// assert!(noncharacter_code_point.contains32(0xFFFF));
+    /// assert!(!noncharacter_code_point.contains32(0x10000));
     /// ```
 
     pub fn load_noncharacter_code_point();
@@ -1255,9 +1255,9 @@ make_set_property! {
     /// let pattern_white_space = data.as_borrowed();;
     ///
     /// assert!(pattern_white_space.contains(' '));
-    /// assert!(pattern_white_space.contains_u32(0x2029));  // PARAGRAPH SEPARATOR
-    /// assert!(pattern_white_space.contains_u32(0x000A));  // NEW LINE
-    /// assert!(!pattern_white_space.contains_u32(0x00A0));  // NO-BREAK SPACE
+    /// assert!(pattern_white_space.contains32(0x2029));  // PARAGRAPH SEPARATOR
+    /// assert!(pattern_white_space.contains32(0x000A));  // NEW LINE
+    /// assert!(!pattern_white_space.contains32(0x00A0));  // NO-BREAK SPACE
     /// ```
 
     pub fn load_pattern_white_space();
@@ -1526,11 +1526,11 @@ make_set_property! {
     ///         .expect("The data should be valid");
     /// let variation_selector = data.as_borrowed();;
     ///
-    /// assert!(variation_selector.contains_u32(0x180D));  // MONGOLIAN FREE VARIATION SELECTOR THREE
-    /// assert!(!variation_selector.contains_u32(0x303E));  // IDEOGRAPHIC VARIATION INDICATOR
-    /// assert!(variation_selector.contains_u32(0xFE0F));  // VARIATION SELECTOR-16
-    /// assert!(!variation_selector.contains_u32(0xFE10));  // PRESENTATION FORM FOR VERTICAL COMMA
-    /// assert!(variation_selector.contains_u32(0xE01EF));  // VARIATION SELECTOR-256
+    /// assert!(variation_selector.contains32(0x180D));  // MONGOLIAN FREE VARIATION SELECTOR THREE
+    /// assert!(!variation_selector.contains32(0x303E));  // IDEOGRAPHIC VARIATION INDICATOR
+    /// assert!(variation_selector.contains32(0xFE0F));  // VARIATION SELECTOR-16
+    /// assert!(!variation_selector.contains32(0xFE10));  // PRESENTATION FORM FOR VERTICAL COMMA
+    /// assert!(variation_selector.contains32(0xE01EF));  // VARIATION SELECTOR-256
     /// ```
 
     pub fn load_variation_selector();
@@ -1555,9 +1555,9 @@ make_set_property! {
     /// let white_space = data.as_borrowed();;
     ///
     /// assert!(white_space.contains(' '));
-    /// assert!(white_space.contains_u32(0x000A));  // NEW LINE
-    /// assert!(white_space.contains_u32(0x00A0));  // NO-BREAK SPACE
-    /// assert!(!white_space.contains_u32(0x200B));  // ZERO WIDTH SPACE
+    /// assert!(white_space.contains32(0x000A));  // NEW LINE
+    /// assert!(white_space.contains32(0x00A0));  // NO-BREAK SPACE
+    /// assert!(!white_space.contains32(0x200B));  // ZERO WIDTH SPACE
     /// ```
 
     pub fn load_white_space();
@@ -1597,7 +1597,7 @@ make_set_property! {
     /// assert!(xid_continue.contains('_'));
     /// assert!(xid_continue.contains('ߝ'));  // U+07DD NKO LETTER FA
     /// assert!(!xid_continue.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(!xid_continue.contains_u32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(!xid_continue.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
     pub fn load_xid_continue();
@@ -1627,7 +1627,7 @@ make_set_property! {
     /// assert!(!xid_start.contains('_'));
     /// assert!(xid_start.contains('ߝ'));  // U+07DD NKO LETTER FA
     /// assert!(!xid_start.contains('ⓧ'));  // U+24E7 CIRCLED LATIN SMALL LETTER X
-    /// assert!(!xid_start.contains_u32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
+    /// assert!(!xid_start.contains32(0xFC5E));  // ARABIC LIGATURE SHADDA WITH DAMMATAN ISOLATED FORM
     /// ```
 
     pub fn load_xid_start();
@@ -1802,9 +1802,9 @@ mod tests {
         let surrogates_data = gc.get_set_for_value(GeneralCategory::Surrogate);
         let surrogates = surrogates_data.as_borrowed();
 
-        assert!(surrogates.contains_u32(0xd800));
-        assert!(surrogates.contains_u32(0xd900));
-        assert!(surrogates.contains_u32(0xdfff));
+        assert!(surrogates.contains32(0xd800));
+        assert!(surrogates.contains32(0xd900));
+        assert!(surrogates.contains32(0xdfff));
 
         assert!(!surrogates.contains('A'));
     }

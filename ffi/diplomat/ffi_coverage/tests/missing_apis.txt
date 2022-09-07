@@ -54,8 +54,8 @@ icu::collections::char16trie::Char16Trie::new#FnInStruct
 icu::collections::char16trie::Char16TrieIterator#Struct
 icu::collections::char16trie::Char16TrieIterator::new#FnInStruct
 icu::collections::char16trie::Char16TrieIterator::next#FnInStruct
-icu::collections::char16trie::Char16TrieIterator::next_u16#FnInStruct
-icu::collections::char16trie::Char16TrieIterator::next_u32#FnInStruct
+icu::collections::char16trie::Char16TrieIterator::next16#FnInStruct
+icu::collections::char16trie::Char16TrieIterator::next32#FnInStruct
 icu::collections::char16trie::TrieResult#Enum
 icu::datetime::DateTimeFormatter::try_new_experimental_unstable#FnInStruct
 icu::datetime::DateTimeFormatterOptions#Enum
@@ -169,7 +169,7 @@ icu::normalizer::Decomposition::into_iter#FnInStruct
 icu::normalizer::error::NormalizerError#Enum
 icu::normalizer::properties::CanonicalCombiningClassMap#Struct
 icu::normalizer::properties::CanonicalCombiningClassMap::get#FnInStruct
-icu::normalizer::properties::CanonicalCombiningClassMap::get_u32#FnInStruct
+icu::normalizer::properties::CanonicalCombiningClassMap::get32#FnInStruct
 icu::normalizer::properties::CanonicalCombiningClassMap::try_new_unstable#FnInStruct
 icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_any_provider#FnInStruct
 icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider#FnInStruct

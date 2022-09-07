@@ -57,7 +57,7 @@ fn overview_bench(c: &mut Criterion) {
         b.iter(|| {
             black_box(&s)
                 .chars()
-                .map(|c| black_box(&cpt_small).get(c as u32))
+                .map(|c| black_box(&cpt_small).get32(c as u32))
                 .reduce(|a, b| a.wrapping_add(b))
         });
     });
@@ -87,7 +87,7 @@ fn lang_bench(c: &mut Criterion, cpt: &CodePointTrie<u8>, lid: &str, sample_str:
         b.iter(|| {
             black_box(&s)
                 .chars()
-                .map(|c| black_box(&cpt).get(c as u32))
+                .map(|c| black_box(&cpt).get32(c as u32))
                 .reduce(|a, b| a.wrapping_add(b))
         });
     });

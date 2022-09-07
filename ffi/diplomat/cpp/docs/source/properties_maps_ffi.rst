@@ -21,7 +21,7 @@
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
 
-    .. cpp:function:: uint16_t get_u32(uint32_t cp) const
+    .. cpp:function:: uint16_t get32(uint32_t cp) const
 
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 
@@ -58,7 +58,7 @@
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
 
-    .. cpp:function:: uint8_t get_u32(uint32_t cp) const
+    .. cpp:function:: uint8_t get32(uint32_t cp) const
 
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 

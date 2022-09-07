@@ -19,7 +19,7 @@
         See the `Rust documentation for contains <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/sets/struct.CodePointSetDataBorrowed.html#method.contains>`__ for more information.
 
 
-    .. js:function:: contains_u32(cp)
+    .. js:function:: contains32(cp)
 
         Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
 

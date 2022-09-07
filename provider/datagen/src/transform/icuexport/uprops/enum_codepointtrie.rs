@@ -95,8 +95,8 @@ mod tests {
             _ => unreachable!("Should have serialized to a code point trie"),
         };
 
-        assert_eq!(trie.get('꣓' as u32), GeneralCategory::DecimalNumber);
-        assert_eq!(trie.get('≈' as u32), GeneralCategory::MathSymbol);
+        assert_eq!(trie.get32('꣓' as u32), GeneralCategory::DecimalNumber);
+        assert_eq!(trie.get32('≈' as u32), GeneralCategory::MathSymbol);
     }
 
     #[test]
@@ -112,7 +112,7 @@ mod tests {
             PropertyCodePointMapV1::CodePointTrie(ref t) => t,
             _ => unreachable!("Should have serialized to a code point trie"),
         };
-        assert_eq!(trie.get('꣓' as u32), Script::Saurashtra);
-        assert_eq!(trie.get('≈' as u32), Script::Common);
+        assert_eq!(trie.get32('꣓' as u32), Script::Saurashtra);
+        assert_eq!(trie.get32('≈' as u32), Script::Common);
     }
 }
