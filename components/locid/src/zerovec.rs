@@ -113,12 +113,12 @@
 //!
 //! // Construct a Locale by parsing the string.
 //! let value = zm.get(&25).expect("element is present");
-//! let loc = Locale::from_bytes(&value.0);
+//! let loc = Locale::from_bytes(&*value);
 //! assert_eq!(loc, Ok(langid!("zh-TW").into()));
 //!
 //! // Invalid entries are fallible
 //! let err_value = zm.get(&30).expect("element is present");
-//! let err_loc = Locale::from_bytes(&err_value.0);
+//! let err_loc = Locale::from_bytes(&*err_value);
 //! assert!(matches!(err_loc, Err(_)));
 //! ```
 //!
