@@ -306,6 +306,16 @@ icu_provider_adapters::either::EitherProvider::load_buffer#FnInEnum
 icu_provider_adapters::either::EitherProvider::load_data#FnInEnum
 icu_provider_adapters::either::EitherProvider::supported_locales#FnInEnum
 icu_provider_adapters::either::EitherProvider::supported_locales_for_key#FnInEnum
+icu_provider_adapters::empty::EmptyDataProvider#Struct
+icu_provider_adapters::empty::EmptyDataProvider::as_deserializing#FnInStruct
+icu_provider_adapters::empty::EmptyDataProvider::as_downcasting#FnInStruct
+icu_provider_adapters::empty::EmptyDataProvider::filterable#FnInStruct
+icu_provider_adapters::empty::EmptyDataProvider::load#FnInStruct
+icu_provider_adapters::empty::EmptyDataProvider::load_any#FnInStruct
+icu_provider_adapters::empty::EmptyDataProvider::load_buffer#FnInStruct
+icu_provider_adapters::empty::EmptyDataProvider::load_data#FnInStruct
+icu_provider_adapters::empty::EmptyDataProvider::new#FnInStruct
+icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbackConfig#Struct
 icu_provider_adapters::fallback::LocaleFallbackConfig::filterable#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbackIterator#Struct
