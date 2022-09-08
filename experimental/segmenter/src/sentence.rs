@@ -23,6 +23,13 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
 ///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
+///
 /// # Examples
 ///
 /// Segment a string:

@@ -26,6 +26,7 @@
 #[cfg(feature = "experimental_skeleton_matching")]
 pub mod components;
 pub mod length;
+#[cfg(feature = "experimental_skeleton_matching")]
 pub mod preferences;
 /// A bag of options which, together with [`Locale`](icu_locid::Locale), defines how
 /// dates will be formatted with a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) instance.
@@ -51,7 +52,12 @@ pub enum DateTimeFormatterOptions {
     Length(length::Bag),
     /// Bag of components describing which fields and how should be displayed.
     ///
-    /// Enabled with the `"experimental"` feature. This option is subject to breaking changes.
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
     #[cfg(feature = "experimental")]
     Components(components::Bag),
 }
