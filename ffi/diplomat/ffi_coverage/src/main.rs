@@ -288,6 +288,7 @@ lazy_static::lazy_static! {
         "icu::locid_transform::provider",
         "icu::plurals::provider",
         "icu::properties::provider",
+        "icu::segmenter::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
@@ -354,6 +355,22 @@ lazy_static::lazy_static! {
         "icu::locid::subtags_variant",
         // assoc type
         "icu::locale::Locale::Err",
+
+        // Segmenter types and type aliases that are constructed via methods. They don't need FFI.
+        "icu::segmenter::GraphemeClusterBreakIteratorLatin1",
+        "icu::segmenter::GraphemeClusterBreakIteratorUtf16",
+        "icu::segmenter::GraphemeClusterBreakIteratorUtf8",
+        "icu::segmenter::LineBreakIterator",
+        "icu::segmenter::LineBreakIteratorLatin1",
+        "icu::segmenter::LineBreakIteratorUtf16",
+        "icu::segmenter::LineBreakIteratorUtf8",
+        "icu::segmenter::RuleBreakIterator",
+        "icu::segmenter::SentenceBreakIteratorLatin1",
+        "icu::segmenter::SentenceBreakIteratorUtf16",
+        "icu::segmenter::SentenceBreakIteratorUtf8",
+        "icu::segmenter::WordBreakIteratorLatin1",
+        "icu::segmenter::WordBreakIteratorUtf16",
+        "icu::segmenter::WordBreakIteratorUtf8",
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 
