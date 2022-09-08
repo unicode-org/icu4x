@@ -14,7 +14,8 @@ pub mod ffi {
         LstmDataV1Marker, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
     };
     use icu_segmenter::{
-        WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordBreakSegmenter,
+        WordBreakIteratorLatin1, WordBreakIteratorPotentiallyInvalidUtf8, WordBreakIteratorUtf16,
+        WordBreakSegmenter,
     };
 
     #[diplomat::opaque]
@@ -23,7 +24,7 @@ pub mod ffi {
     pub struct ICU4XWordBreakSegmenter(WordBreakSegmenter);
 
     #[diplomat::opaque]
-    pub struct ICU4XWordBreakIteratorUtf8<'a>(WordBreakIteratorUtf8<'a, 'a>);
+    pub struct ICU4XWordBreakIteratorUtf8<'a>(WordBreakIteratorPotentiallyInvalidUtf8<'a, 'a>);
 
     #[diplomat::opaque]
     pub struct ICU4XWordBreakIteratorUtf16<'a>(WordBreakIteratorUtf16<'a, 'a>);
@@ -55,10 +56,14 @@ pub mod ffi {
                 .into()
         }
 
-        /// Segments a UTF-8 string.
-        #[diplomat::rust_link(icu::segmenter::WordBreakSegmenter::segment_str, FnInStruct)]
+        /// Segments a (potentially invalid) UTF-8 string.
+        #[diplomat::rust_link(icu::segmenter::WordBreakSegmenter::segment_invalid_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakSegmenter::segment_str, FnInStruct, hidden)]
         pub fn segment_utf8<'a>(&'a self, input: &'a str) -> Box<ICU4XWordBreakIteratorUtf8<'a>> {
-            Box::new(ICU4XWordBreakIteratorUtf8(self.0.segment_str(input)))
+            let input = input.as_bytes(); // #2520
+            Box::new(ICU4XWordBreakIteratorUtf8(
+                self.0.segment_invalid_utf8(input),
+            ))
         }
 
         /// Segments a UTF-16 string.

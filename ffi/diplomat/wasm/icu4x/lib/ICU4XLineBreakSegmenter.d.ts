@@ -34,9 +34,9 @@ export class ICU4XLineBreakSegmenter {
 
   /**
 
-   * Segments a UTF-8 string.
+   * Segments a (potentially invalid) UTF-8 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_str Rust documentation for `segment_str`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_invalid_utf8 Rust documentation for `segment_invalid_utf8`} for more information.
    */
   segment_utf8(input: string): ICU4XLineBreakIteratorUtf8;
 

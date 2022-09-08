@@ -43,9 +43,9 @@ class ICU4XWordBreakSegmenter {
   static diplomat::result<ICU4XWordBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
-   * Segments a UTF-8 string.
+   * Segments a (potentially invalid) UTF-8 string.
    * 
-   * See the [Rust documentation for `segment_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_str) for more information.
+   * See the [Rust documentation for `segment_invalid_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_invalid_utf8) for more information.
    */
   ICU4XWordBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 

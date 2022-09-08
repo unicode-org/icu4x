@@ -38,9 +38,9 @@
 
     .. js:function:: segment_utf8(input)
 
-        Segments a UTF-8 string.
+        Segments a (potentially invalid) UTF-8 string.
 
-        See the `Rust documentation for segment_str <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_str>`__ for more information.
+        See the `Rust documentation for segment_invalid_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_invalid_utf8>`__ for more information.
 
 
     .. js:function:: segment_utf16(input)

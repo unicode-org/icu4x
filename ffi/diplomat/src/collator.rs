@@ -109,7 +109,6 @@ pub mod ffi {
                 .into()
         }
 
-
         /// Compare potentially ill-formed UTF-8 strings.
         ///
         /// Ill-formed input is compared

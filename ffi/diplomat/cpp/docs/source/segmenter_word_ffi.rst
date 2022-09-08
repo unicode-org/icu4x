@@ -38,9 +38,9 @@
 
     .. cpp:function:: ICU4XWordBreakIteratorUtf8 segment_utf8(const std::string_view input) const
 
-        Segments a UTF-8 string.
+        Segments a (potentially invalid) UTF-8 string.
 
-        See the `Rust documentation for segment_str <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_str>`__ for more information.
+        See the `Rust documentation for segment_invalid_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_invalid_utf8>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.

@@ -12,8 +12,8 @@ pub mod ffi {
     use icu_provider::DataProvider;
     use icu_segmenter::provider::GraphemeClusterBreakDataV1Marker;
     use icu_segmenter::{
-        GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
-        GraphemeClusterBreakIteratorUtf8, GraphemeClusterBreakSegmenter,
+        GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyInvalidUtf8,
+        GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
     };
 
     #[diplomat::opaque]
@@ -23,7 +23,9 @@ pub mod ffi {
     pub struct ICU4XGraphemeClusterBreakSegmenter(GraphemeClusterBreakSegmenter);
 
     #[diplomat::opaque]
-    pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(GraphemeClusterBreakIteratorUtf8<'a, 'a>);
+    pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(
+        GraphemeClusterBreakIteratorPotentiallyInvalidUtf8<'a, 'a>,
+    );
 
     #[diplomat::opaque]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf16<'a>(
@@ -58,23 +60,29 @@ pub mod ffi {
                 .into()
         }
 
-        /// Segments a UTF-8 string.
+        /// Segments a (potentially invalid) UTF-8 string.
         #[diplomat::rust_link(
-            icu_segmenter::GraphemeClusterBreakSegmenter::segment_str,
+            icu::segmenter::GraphemeClusterBreakSegmenter::segment_str,
+            FnInStruct,
+            hidden
+        )]
+        #[diplomat::rust_link(
+            icu::segmenter::GraphemeClusterBreakSegmenter::segment_invalid_utf8,
             FnInStruct
         )]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a str,
         ) -> Box<ICU4XGraphemeClusterBreakIteratorUtf8<'a>> {
+            let input = input.as_bytes(); // #2520
             Box::new(ICU4XGraphemeClusterBreakIteratorUtf8(
-                self.0.segment_str(input),
+                self.0.segment_invalid_utf8(input),
             ))
         }
 
         /// Segments a UTF-16 string.
         #[diplomat::rust_link(
-            icu_segmenter::GraphemeClusterBreakSegmenter::segment_utf16,
+            icu::segmenter::GraphemeClusterBreakSegmenter::segment_utf16,
             FnInStruct
         )]
         pub fn segment_utf16<'a>(
@@ -88,7 +96,7 @@ pub mod ffi {
 
         /// Segments a Latin-1 string.
         #[diplomat::rust_link(
-            icu_segmenter::GraphemeClusterBreakSegmenter::segment_latin1,
+            icu::segmenter::GraphemeClusterBreakSegmenter::segment_latin1,
             FnInStruct
         )]
         pub fn segment_latin1<'a>(
