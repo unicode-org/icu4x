@@ -17,7 +17,7 @@ impl Writeable for WriteableMessage<'_> {
         sink.write_str(self.message)
     }
 
-    fn write_len(&self) -> LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         LengthHint::exact(self.message.len())
     }
 }
