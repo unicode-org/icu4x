@@ -212,7 +212,7 @@ The following PR has one non-blocking review, one blocking review, one approval,
 ## Licenses
 
 See the file called [LICENSE](LICENSE) for terms applying to your contribution.
-When creating the PR, you will be asked to sign the CLA.
+When creating the PR, you will be asked to [sign the CLA](https://cla-assistant.io/unicode-org/icu4x).
 
 ### New files
 
