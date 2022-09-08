@@ -40,14 +40,14 @@
 
         Segments a UTF-8 string.
 
-        See the `Rust documentation for segment_str <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_str>`__ for more information.
+        See the `Rust documentation for segment_str <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_str>`__ for more information.
 
 
     .. js:function:: segment_utf16(input)
 
         Segments a UTF-16 string.
 
-        See the `Rust documentation for segment_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf16>`__ for more information.
+        See the `Rust documentation for segment_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf16>`__ for more information.
 
 
         - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
@@ -56,7 +56,7 @@
 
         Segments a Latin-1 string.
 
-        See the `Rust documentation for segment_latin1 <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_latin1>`__ for more information.
+        See the `Rust documentation for segment_latin1 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_latin1>`__ for more information.
 
 
         - Note: ``input`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.

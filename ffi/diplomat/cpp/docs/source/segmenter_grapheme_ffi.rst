@@ -40,7 +40,7 @@
 
         Segments a UTF-8 string.
 
-        See the `Rust documentation for segment_str <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_str>`__ for more information.
+        See the `Rust documentation for segment_str <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_str>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
@@ -49,7 +49,7 @@
 
         Segments a UTF-16 string.
 
-        See the `Rust documentation for segment_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf16>`__ for more information.
+        See the `Rust documentation for segment_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf16>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
@@ -58,7 +58,7 @@
 
         Segments a Latin-1 string.
 
-        See the `Rust documentation for segment_latin1 <https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_latin1>`__ for more information.
+        See the `Rust documentation for segment_latin1 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_latin1>`__ for more information.
 
 
         Lifetimes: ``this``, ``input`` must live at least as long as the output.
