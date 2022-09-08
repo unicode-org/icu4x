@@ -10,13 +10,16 @@ use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
 use crate::complex::*;
-use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::indices::{Latin1Indices, PotentiallyInvalidUtf8Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
 
 /// Word break iterator for an `str` (a UTF-8 string).
 pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
 
+/// Word break iterator for a potentially invalid UTF-8 string
+pub type WordBreakIteratorPotentiallyInvalidUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyInvalidUtf8>;
 /// Word break iterator for a Latin-1 (8-bit) string.
 pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeLatin1>;
 
@@ -174,6 +177,24 @@ impl WordBreakSegmenter {
         }
     }
 
+    /// Create a word break iterator for a potentially invalid UTF8 string
+    ///
+    /// Invalid characters are treated as REPLACEMENT CHARACTER
+    pub fn segment_invalid_utf8<'l, 's>(
+        &'l self,
+        input: &'s [u8],
+    ) -> WordBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
+        WordBreakIteratorPotentiallyInvalidUtf8 {
+            iter: PotentiallyInvalidUtf8Indices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: self.payload.get(),
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
+        }
+    }
+
     /// Create a word break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
         WordBreakIteratorLatin1 {
@@ -218,7 +239,23 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
         handle_complex_language_utf8(iter, left_codepoint)
     }
 }
+pub struct WordBreakTypePotentiallyInvalidUtf8;
 
+impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyInvalidUtf8 {
+    type IterAttr = PotentiallyInvalidUtf8Indices<'s>;
+    type CharType = char;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.current_pos_data.unwrap().1.len_utf8()
+    }
+
+    fn handle_complex_language(
+        iter: &mut RuleBreakIterator<'l, 's, Self>,
+        left_codepoint: Self::CharType,
+    ) -> Option<usize> {
+        handle_complex_language_utf8(iter, left_codepoint)
+    }
+}
 /// handle_complex_language impl for UTF8 iterators
 fn handle_complex_language_utf8<'l, 's, T>(
     iter: &mut RuleBreakIterator<'l, 's, T>,

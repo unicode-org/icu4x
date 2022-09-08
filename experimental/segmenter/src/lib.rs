@@ -93,19 +93,22 @@ mod lstm_error;
 mod math_helper;
 
 pub use crate::grapheme::{
-    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
-    GraphemeClusterBreakIteratorUtf8, GraphemeClusterBreakSegmenter,
+    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyInvalidUtf8,
+    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8,
+    GraphemeClusterBreakSegmenter,
 };
 pub use crate::line::{
-    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8,
-    LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule,
+    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorPotentiallyInvalidUtf8,
+    LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule,
+    LineBreakSegmenter, WordBreakRule,
 };
 pub use crate::sentence::{
-    SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8,
-    SentenceBreakSegmenter,
+    SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyInvalidUtf8,
+    SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8, SentenceBreakSegmenter,
 };
 pub use crate::word::{
-    WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordBreakSegmenter,
+    WordBreakIteratorLatin1, WordBreakIteratorPotentiallyInvalidUtf8, WordBreakIteratorUtf16,
+    WordBreakIteratorUtf8, WordBreakSegmenter,
 };
 
 pub use crate::rule_segmenter::RuleBreakIterator;

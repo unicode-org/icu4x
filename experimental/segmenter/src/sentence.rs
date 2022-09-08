@@ -7,12 +7,16 @@ use core::str::CharIndices;
 use icu_provider::prelude::*;
 
 use crate::complex::{Dictionary, LstmPayloads};
-use crate::indices::{Latin1Indices, Utf16Indices};
+use crate::indices::{Latin1Indices, PotentiallyInvalidUtf8Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
 pub type SentenceBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf8>;
+
+/// Sentence break iterator for potentially invalid UTF-8 strings
+pub type SentenceBreakIteratorPotentiallyInvalidUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, SentenceBreakTypePotentiallyInvalidUtf8>;
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
 pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeLatin1>;
@@ -78,7 +82,23 @@ impl SentenceBreakSegmenter {
             lstm: &self.lstm,
         }
     }
-
+    /// Create a sentence break iterator for a potentially invalid UTF8 string
+    ///
+    /// Invalid characters are treated as REPLACEMENT CHARACTER
+    pub fn segment_invalid_utf8<'l, 's>(
+        &'l self,
+        input: &'s [u8],
+    ) -> SentenceBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
+        SentenceBreakIteratorPotentiallyInvalidUtf8 {
+            iter: PotentiallyInvalidUtf8Indices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: self.payload.get(),
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
+        }
+    }
     /// Create a sentence break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(
         &'l self,
@@ -113,6 +133,23 @@ pub struct SentenceBreakTypeUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
+    type CharType = char;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.current_pos_data.unwrap().1.len_utf8()
+    }
+
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
+        panic!("not reachable")
+    }
+}
+pub struct SentenceBreakTypePotentiallyInvalidUtf8;
+
+impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypePotentiallyInvalidUtf8 {
+    type IterAttr = PotentiallyInvalidUtf8Indices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
