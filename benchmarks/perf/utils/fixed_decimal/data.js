@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662626842230,
+  "lastUpdate": 1662634291738,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -49949,6 +49949,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 75,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kelebra20@gmail.com",
+            "name": "Oleksii Tkachuk",
+            "username": "kelebra"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90235ae3c77535bc82adc5896a4e56f0027235fa",
+          "message": "Refactor from for loop append to extend (#2531)",
+          "timestamp": "2022-09-08T13:37:08+03:00",
+          "tree_id": "0f6c685d47479572f3db710b4efc220c7eb98e33",
+          "url": "https://github.com/unicode-org/icu4x/commit/90235ae3c77535bc82adc5896a4e56f0027235fa"
+        },
+        "date": 1662634232309,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 127641,
+            "range": "± 8563",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 26674,
+            "range": "± 1910",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 72359,
+            "range": "± 4866",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 217,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 81,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 92,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
