@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use utf8_iter::Utf8Chars;
+
 /// Similar to CharIndices for Latin-1 character
 #[derive(Clone)]
 pub struct Latin1Indices<'a> {
@@ -70,6 +72,41 @@ impl<'a> Iterator for Utf16Indices<'a> {
             }
         }
         Some((index, ch))
+    }
+}
+
+#[derive(Clone)]
+pub struct PotentiallyInvalidUtf8Indices<'a> {
+    iter: Utf8Chars<'a>,
+    len_remaining: usize,
+    front_offset: usize,
+}
+
+impl<'a> PotentiallyInvalidUtf8Indices<'a> {
+    pub fn new(input: &'a [u8]) -> Self {
+        let iter = Utf8Chars::new(input);
+        Self {
+            len_remaining: iter.as_slice().len(),
+            iter,
+            front_offset: 0,
+        }
+    }
+}
+impl<'a> Iterator for PotentiallyInvalidUtf8Indices<'a> {
+    type Item = (usize, char);
+
+    #[inline]
+    fn next(&mut self) -> Option<(usize, char)> {
+        self.iter.next().map(|next| {
+            let ret = (self.front_offset, next);
+            let newlen = self.iter.as_slice().len();
+            // Number of bytes parsed by the step
+            // (We cannot simply count the UTF8 bytes for `next` since replacement may have occurred)
+            let delta = self.len_remaining - newlen;
+            self.len_remaining = newlen;
+            self.front_offset += delta;
+            ret
+        })
     }
 }
 
