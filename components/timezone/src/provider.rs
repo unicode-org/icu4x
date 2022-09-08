@@ -14,6 +14,10 @@ use icu_provider::{yoke, zerofrom};
 use tinystr::TinyAsciiStr;
 use zerovec::ule::{AsULE, ULE};
 use zerovec::{ZeroMap2d, ZeroSlice, ZeroVec};
+use icu_calendar::DateTime;
+use alloc::vec::Vec;
+use alloc::string::String;
+use alloc::fmt;
 
 /// TimeZone ID in BCP47 format
 #[repr(transparent)]
@@ -109,6 +113,82 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
     type OwnedType = MetaZoneId;
 }
 
+/// MinutesSinceEpoch is a wall-clock time represented as the number of minutes since the local unix epoch.
+#[repr(transparent)]
+#[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
+pub struct MinutesSinceEpoch(i32);
+
+impl AsULE for MinutesSinceEpoch {
+    type ULE = Self;
+
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+impl<'a> zerovec::maps::ZeroMapKV<'a> for MinutesSinceEpoch {
+    type Container = ZeroVec<'a, MinutesSinceEpoch>;
+    type Slice = ZeroSlice<MinutesSinceEpoch>;
+    type GetType = MinutesSinceEpoch;
+    type OwnedType = MinutesSinceEpoch;
+}
+
+#[cfg(feature = "datagen")]
+impl serde::Serialize for MinutesSinceEpoch {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+        where
+            S: serde::Serializer,
+    {
+        let string = DateTime::from_minutes_since_local_unix_epoch(26382240)?.to_string();
+        serializer.serialize_str(&string)
+
+    }
+}
+
+pub(crate) struct DeserializeMinutesSinceEpochString;
+
+impl<'de> serde::de::Visitor<'de> for DeserializeMinutesSinceEpochString {
+    type Value = MinutesSinceEpoch;
+
+    fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "a valid MinutesSinceEpoch.")
+    }
+
+    fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>
+        where
+            E: serde::de::Error,
+    {
+        let parts: Vec<String> = pattern_string.split(' ').map(|s| s.to_string()).collect();
+        let date = &parts[0];
+        let time = &parts[1];
+        let date_parts: Vec<String> = date.split('-').map(|s| s.to_string()).collect();
+        let year = date_parts[0].parse::<i32>().unwrap();
+        let month = date_parts[1].parse::<u8>().unwrap();
+        let day = date_parts[2].parse::<u8>().unwrap();
+        let time_parts: Vec<String> = time.split(':').map(|s| s.to_string()).collect();
+        let hour = time_parts[0].parse::<u8>().unwrap();
+        let minute = time_parts[1].parse::<u8>().unwrap();
+        let iso = DateTime::new_iso_datetime(year, month, day, hour, minute, 0).unwrap();
+        let minutes = iso.minutes_since_local_unix_epoch();
+        Ok(MinutesSinceEpoch(minutes))
+    }
+}
+
+impl<'de> serde::Deserialize<'de> for MinutesSinceEpoch {
+    fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+        where
+            D: serde::Deserializer<'de>,
+    {
+        deserializer.deserialize_str(DeserializeMinutesSinceEpochString)
+    }
+}
+
 /// An ICU4X mapping to the metazones at a given period.
 /// See CLDR-JSON metaZones.json for more context.
 #[icu_provider::data_struct(MetaZonePeriodV1Marker = "time_zone/metazone_period@1")]
@@ -123,5 +203,5 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
 pub struct MetaZonePeriodV1<'data>(
     /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as the number of minutes since the local unix epoch. It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZoneBcp47Id, i32, Option<MetaZoneId>>,
+    pub ZeroMap2d<'data, TimeZoneBcp47Id, MinutesSinceEpoch, Option<MetaZoneId>>,
 );
