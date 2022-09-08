@@ -125,13 +125,13 @@ pub mod ffi {
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_blob::BlobDataProvider, Struct)]
         pub fn create_from_byte_slice(
-            _blob: &[u8],
+            blob: &[u8],
         ) -> DiplomatResult<Box<ICU4XDataProvider>, ICU4XError> {
             #[cfg(not(feature = "buffer_provider"))]
             panic!("Requires feature 'buffer_provider'");
 
             #[cfg(feature = "buffer_provider")]
-            icu_provider_blob::BlobDataProvider::try_new_from_blob(_blob)
+            icu_provider_blob::BlobDataProvider::try_new_from_blob(blob)
                 .map_err(Into::into)
                 .map(convert_buffer_provider)
                 .into()
