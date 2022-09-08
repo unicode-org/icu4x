@@ -653,10 +653,8 @@ where
             });
         if low & 0x1000 != 0 {
             // All the rest are combining
-            for ch in tail.iter() {
-                self.buffer
-                    .push(CharacterAndClass::new_with_placeholder(ch));
-            }
+            self.buffer
+                .extend(tail.iter().map(CharacterAndClass::new_with_placeholder));
             (starter, 0)
         } else {
             let mut i = 0;
@@ -768,13 +766,13 @@ where
                             (starter, 0)
                         } else {
                             // Special case for the NFKD form of U+FDFA.
-                            for u in FDFA_NFKD {
+                            self.buffer.extend(FDFA_NFKD.map(|u| {
                                 // Safe, because `FDFA_NFKD` is known not to contain
                                 // surrogates.
-                                self.buffer.push(CharacterAndClass::new_starter(unsafe {
+                                CharacterAndClass::new_starter(unsafe {
                                     core::char::from_u32_unchecked(u32::from(u))
-                                }));
-                            }
+                                })
+                            }));
                             ('\u{0635}', 17)
                         }
                     } else {
