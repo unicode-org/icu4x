@@ -70,6 +70,7 @@ pub struct Bag {
 
 impl Bag {
     /// Construct a [`Bag`] with a given [`HourCycle`]
+    #[cfg(feature = "experimental")]
     pub fn from_hour_cycle(h: HourCycle) -> Self {
         Self {
             hour_cycle: Some(h),
@@ -77,7 +78,7 @@ impl Bag {
     }
 
     /// Construct a [`Bag`] from a given [`DataLocale`]
-    pub fn from_data_locale(data_locale: &DataLocale) -> Self {
+    pub(crate) fn from_data_locale(data_locale: &DataLocale) -> Self {
         const H11: TinyAsciiStr<8> = tinystr!(8, "h11");
         const H12: TinyAsciiStr<8> = tinystr!(8, "h12");
         const H23: TinyAsciiStr<8> = tinystr!(8, "h23");

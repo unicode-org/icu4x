@@ -26,8 +26,12 @@
 #[cfg(feature = "experimental_skeleton_matching")]
 pub mod components;
 pub mod length;
+
 #[cfg(feature = "experimental_skeleton_matching")]
 pub mod preferences;
+#[cfg(not(feature = "experimental_skeleton_matching"))]
+pub(crate) mod preferences;
+
 /// A bag of options which, together with [`Locale`](icu_locid::Locale), defines how
 /// dates will be formatted with a [`TypedDateTimeFormatter`](crate::TypedDateTimeFormatter) instance.
 ///
