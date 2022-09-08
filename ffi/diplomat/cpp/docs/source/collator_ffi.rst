@@ -15,23 +15,25 @@
 
     .. cpp:function:: ICU4XOrdering compare(const std::string_view left, const std::string_view right) const
 
-        Compare guaranteed well-formed UTF-8 strings.
-
-        Note: passing ill-formed UTF-8 strings is undefined behavior (and may be memory-unsafe to do so, too).
-
-        See the `Rust documentation for compare <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare>`__ for more information.
-
-
-    .. cpp:function:: ICU4XOrdering compare_utf8(const diplomat::span<uint8_t> left, const diplomat::span<uint8_t> right) const
-
         Compare potentially ill-formed UTF-8 strings.
+
+        Ill-formed input is compared as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
         See the `Rust documentation for compare_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8>`__ for more information.
 
 
+    .. cpp:function:: ICU4XOrdering compare_valid_utf8(const std::string_view left, const std::string_view right) const
+
+        Compare guaranteed well-formed UTF-8 strings.
+
+        Note: In C++, passing ill-formed UTF-8 strings is undefined behavior (and may be memory-unsafe to do so, too).
+
+        See the `Rust documentation for compare <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare>`__ for more information.
+
+
     .. cpp:function:: ICU4XOrdering compare_utf16(const diplomat::span<uint16_t> left, const diplomat::span<uint16_t> right) const
 
-        Compare potentially ill-formed UTF-16 strings.
+        Compare potentially ill-formed UTF-16 strings, with unpaired surrogates compared as REPLACEMENT CHARACTER.
 
         See the `Rust documentation for compare_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16>`__ for more information.
 

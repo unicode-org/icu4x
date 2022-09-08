@@ -43,24 +43,29 @@ class ICU4XCollator {
   static diplomat::result<ICU4XCollator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptions options);
 
   /**
-   * Compare guaranteed well-formed UTF-8 strings.
+   * Compare potentially ill-formed UTF-8 strings.
    * 
-   * Note: passing ill-formed UTF-8 strings is undefined behavior
-   * (and may be memory-unsafe to do so, too).
+   * Ill-formed input is compared
+   * as if errors had been replaced with REPLACEMENT CHARACTERs according
+   * to the WHATWG Encoding Standard.
    * 
-   * See the [Rust documentation for `compare`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare) for more information.
+   * See the [Rust documentation for `compare_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8) for more information.
    */
   ICU4XOrdering compare(const std::string_view left, const std::string_view right) const;
 
   /**
-   * Compare potentially ill-formed UTF-8 strings.
+   * Compare guaranteed well-formed UTF-8 strings.
    * 
-   * See the [Rust documentation for `compare_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8) for more information.
+   * Note: In C++, passing ill-formed UTF-8 strings is undefined behavior
+   * (and may be memory-unsafe to do so, too).
+   * 
+   * See the [Rust documentation for `compare`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare) for more information.
    */
-  ICU4XOrdering compare_utf8(const diplomat::span<uint8_t> left, const diplomat::span<uint8_t> right) const;
+  ICU4XOrdering compare_valid_utf8(const std::string_view left, const std::string_view right) const;
 
   /**
-   * Compare potentially ill-formed UTF-16 strings.
+   * Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
+   * compared as REPLACEMENT CHARACTER.
    * 
    * See the [Rust documentation for `compare_utf16`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16) for more information.
    */
@@ -93,8 +98,8 @@ inline diplomat::result<ICU4XCollator, ICU4XError> ICU4XCollator::try_new(const 
 inline ICU4XOrdering ICU4XCollator::compare(const std::string_view left, const std::string_view right) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
 }
-inline ICU4XOrdering ICU4XCollator::compare_utf8(const diplomat::span<uint8_t> left, const diplomat::span<uint8_t> right) const {
-  return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare_utf8(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
+inline ICU4XOrdering ICU4XCollator::compare_valid_utf8(const std::string_view left, const std::string_view right) const {
+  return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare_valid_utf8(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
 }
 inline ICU4XOrdering ICU4XCollator::compare_utf16(const diplomat::span<uint16_t> left, const diplomat::span<uint16_t> right) const {
   return static_cast<ICU4XOrdering>(capi::ICU4XCollator_compare_utf16(this->inner.get(), left.data(), left.size(), right.data(), right.size()));
