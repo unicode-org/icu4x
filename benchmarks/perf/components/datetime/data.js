@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662626930342,
+  "lastUpdate": 1662634294921,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -68501,6 +68501,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6339,
             "range": "± 360",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kelebra20@gmail.com",
+            "name": "Oleksii Tkachuk",
+            "username": "kelebra"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "90235ae3c77535bc82adc5896a4e56f0027235fa",
+          "message": "Refactor from for loop append to extend (#2531)",
+          "timestamp": "2022-09-08T13:37:08+03:00",
+          "tree_id": "0f6c685d47479572f3db710b4efc220c7eb98e33",
+          "url": "https://github.com/unicode-org/icu4x/commit/90235ae3c77535bc82adc5896a4e56f0027235fa"
+        },
+        "date": 1662634228757,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 88918,
+            "range": "± 22032",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 135010,
+            "range": "± 1339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 70532,
+            "range": "± 2891",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 80276,
+            "range": "± 199",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 81292,
+            "range": "± 186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 88793,
+            "range": "± 433",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 123671,
+            "range": "± 314",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 152486,
+            "range": "± 12776",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 135152,
+            "range": "± 227",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 146709,
+            "range": "± 393",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6481,
+            "range": "± 9",
             "unit": "ns/iter"
           }
         ]
