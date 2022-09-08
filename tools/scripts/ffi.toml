@@ -89,10 +89,13 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/diplomat/c/examples/pluralrules
+rm -f ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../fixeddecimal
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../locale
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 '''
 
@@ -104,6 +107,9 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/diplomat/c/examples/fixeddecimal_tiny
+rm -f ../../../../../target/debug/libicu_capi_staticlib_test.a
+rm -f ../../../../../target/x86_64-unknown-linux-gnu/debug/libicu_capi_staticlib_test.a
+rm -f ../../../../../target/x86_64-unknown-linux-gnu/release-opt-size/libicu_capi_staticlib_test_small.a
 exec --fail-on-error make
 exec ls -l
 '''
@@ -115,18 +121,25 @@ script_runner = "@duckscript"
 script = '''
 exit_on_error true
 cd ffi/diplomat/cpp/examples/pluralrules
+rm -f ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../properties
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../bidi
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../segmenter
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../datetime
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../fixeddecimal
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make
 cd ../fixeddecimal_wasm
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make test-host
 '''
 

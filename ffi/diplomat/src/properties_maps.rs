@@ -7,14 +7,11 @@ pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
     use icu_collections::codepointtrie::TrieValue;
-    use icu_properties::{maps, PropertiesError};
+    use icu_properties::maps;
 
     use crate::errors::ffi::ICU4XError;
     use crate::properties_sets::ffi::ICU4XCodePointSetData;
     use diplomat_runtime::DiplomatResult;
-
-    use icu_provider::prelude::BufferProvider;
-    use icu_provider::serde::{AsDeserializingBufferProvider, DeserializingBufferProvider};
 
     #[diplomat::opaque]
     /// An ICU4X Unicode Map Property object, capable of querying whether a code point (key) to obtain the Unicode property value, for a specific Unicode property.
@@ -24,6 +21,16 @@ pub mod ffi {
     #[diplomat::rust_link(icu::properties::maps::CodePointMapData, Struct)]
     #[diplomat::rust_link(icu::properties::maps::CodePointMapDataBorrowed, Struct)]
     pub struct ICU4XCodePointMapData8(maps::CodePointMapData<u8>);
+
+    fn convert_8<P: TrieValue + 'static>(
+        data: maps::CodePointMapData<P>,
+    ) -> Box<ICU4XCodePointMapData8> {
+        #[allow(clippy::expect_used)] // infallible for the chosen properties
+        Box::new(ICU4XCodePointMapData8(
+            data.try_into_converted()
+                .expect("try_into_converted to u8 must be infallible"),
+        ))
+    }
 
     impl ICU4XCodePointMapData8 {
         /// Gets the value for a code point.
@@ -57,70 +64,68 @@ pub mod ffi {
         pub fn load_general_category(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::load_prop_inner(provider, |p| maps::load_general_category(p))
+            maps::load_general_category(&provider.0)
+                .map(convert_8)
+                .map_err(Into::into)
+                .into()
         }
 
         #[diplomat::rust_link(icu::properties::maps::load_bidi_class, Fn)]
         pub fn load_bidi_class(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::load_prop_inner(provider, |p| maps::load_bidi_class(p))
+            maps::load_bidi_class(&provider.0)
+                .map(convert_8)
+                .map_err(Into::into)
+                .into()
         }
 
         #[diplomat::rust_link(icu::properties::maps::load_east_asian_width, Fn)]
         pub fn load_east_asian_width(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::load_prop_inner(provider, |p| maps::load_east_asian_width(p))
+            maps::load_east_asian_width(&provider.0)
+                .map(convert_8)
+                .map_err(Into::into)
+                .into()
         }
 
         #[diplomat::rust_link(icu::properties::maps::load_line_break, Fn)]
         pub fn load_line_break(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::load_prop_inner(provider, |p| maps::load_line_break(p))
+            maps::load_line_break(&provider.0)
+                .map(convert_8)
+                .map_err(Into::into)
+                .into()
         }
 
         #[diplomat::rust_link(icu::properties::maps::load_grapheme_cluster_break, Fn)]
         pub fn try_grapheme_cluster_break(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::load_prop_inner(provider, |p| maps::load_grapheme_cluster_break(p))
+            maps::load_grapheme_cluster_break(&provider.0)
+                .map(convert_8)
+                .map_err(Into::into)
+                .into()
         }
 
         #[diplomat::rust_link(icu::properties::maps::load_word_break, Fn)]
         pub fn load_word_break(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::load_prop_inner(provider, |p| maps::load_word_break(p))
+            maps::load_word_break(&provider.0)
+                .map(convert_8)
+                .map_err(Into::into)
+                .into()
         }
 
         #[diplomat::rust_link(icu::properties::maps::load_sentence_break, Fn)]
         pub fn load_sentence_break(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError> {
-            Self::load_prop_inner(provider, |p| maps::load_sentence_break(p))
-        }
-
-        fn load_prop_inner<P, F>(
-            provider: &ICU4XDataProvider,
-            f: F,
-        ) -> DiplomatResult<Box<ICU4XCodePointMapData8>, ICU4XError>
-        where
-            P: TrieValue + 'static,
-            F: FnOnce(
-                &DeserializingBufferProvider<'_, dyn BufferProvider>,
-            ) -> Result<maps::CodePointMapData<P>, PropertiesError>,
-        {
-            let provider = provider.0.as_deserializing();
-            #[allow(clippy::expect_used)] // infallible
-            f(&provider)
-                .map(|data| {
-                    Box::new(ICU4XCodePointMapData8(
-                        data.try_into_converted()
-                            .expect("try_into_converted to u8 must be infallible"),
-                    ))
-                })
+            maps::load_sentence_break(&provider.0)
+                .map(convert_8)
                 .map_err(Into::into)
                 .into()
         }
@@ -167,9 +172,8 @@ pub mod ffi {
         pub fn load_script(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointMapData16>, ICU4XError> {
-            let provider = provider.0.as_deserializing();
-            #[allow(clippy::expect_used)] // infallible
-            maps::load_script(&provider)
+            #[allow(clippy::expect_used)] // script is a 16-bit property
+            maps::load_script(&provider.0)
                 .map(|data| {
                     Box::new(ICU4XCodePointMapData16(
                         data.try_into_converted()

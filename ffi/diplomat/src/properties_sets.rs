@@ -42,9 +42,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             group: u32,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_for_general_category_group(&provider, group.into())
+            sets::load_for_general_category_group(&provider.0, group.into())
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -54,9 +52,7 @@ pub mod ffi {
         pub fn load_ascii_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_ascii_hex_digit(&provider)
+            sets::load_ascii_hex_digit(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -66,9 +62,7 @@ pub mod ffi {
         pub fn load_alnum(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_alnum(&provider)
+            sets::load_alnum(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -78,9 +72,7 @@ pub mod ffi {
         pub fn load_alphabetic(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_alphabetic(&provider)
+            sets::load_alphabetic(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -90,9 +82,7 @@ pub mod ffi {
         pub fn load_bidi_control(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_bidi_control(&provider)
+            sets::load_bidi_control(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -102,9 +92,7 @@ pub mod ffi {
         pub fn load_bidi_mirrored(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_bidi_mirrored(&provider)
+            sets::load_bidi_mirrored(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -114,9 +102,7 @@ pub mod ffi {
         pub fn load_blank(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_blank(&provider)
+            sets::load_blank(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -126,9 +112,7 @@ pub mod ffi {
         pub fn load_cased(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_cased(&provider)
+            sets::load_cased(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -138,9 +122,7 @@ pub mod ffi {
         pub fn load_case_ignorable(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_case_ignorable(&provider)
+            sets::load_case_ignorable(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -150,9 +132,7 @@ pub mod ffi {
         pub fn load_full_composition_exclusion(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_full_composition_exclusion(&provider)
+            sets::load_full_composition_exclusion(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -162,9 +142,7 @@ pub mod ffi {
         pub fn load_changes_when_casefolded(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_changes_when_casefolded(&provider)
+            sets::load_changes_when_casefolded(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -174,9 +152,7 @@ pub mod ffi {
         pub fn load_changes_when_casemapped(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_changes_when_casemapped(&provider)
+            sets::load_changes_when_casemapped(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -186,9 +162,7 @@ pub mod ffi {
         pub fn load_changes_when_nfkc_casefolded(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_changes_when_nfkc_casefolded(&provider)
+            sets::load_changes_when_nfkc_casefolded(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -198,9 +172,7 @@ pub mod ffi {
         pub fn load_changes_when_lowercased(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_changes_when_lowercased(&provider)
+            sets::load_changes_when_lowercased(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -210,9 +182,7 @@ pub mod ffi {
         pub fn load_changes_when_titlecased(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_changes_when_titlecased(&provider)
+            sets::load_changes_when_titlecased(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -222,9 +192,7 @@ pub mod ffi {
         pub fn load_changes_when_uppercased(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_changes_when_uppercased(&provider)
+            sets::load_changes_when_uppercased(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -234,9 +202,7 @@ pub mod ffi {
         pub fn load_dash(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_dash(&provider)
+            sets::load_dash(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -246,9 +212,7 @@ pub mod ffi {
         pub fn load_deprecated(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_deprecated(&provider)
+            sets::load_deprecated(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -258,9 +222,7 @@ pub mod ffi {
         pub fn load_default_ignorable_code_point(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_default_ignorable_code_point(&provider)
+            sets::load_default_ignorable_code_point(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -270,9 +232,7 @@ pub mod ffi {
         pub fn load_diacritic(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_diacritic(&provider)
+            sets::load_diacritic(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -282,9 +242,7 @@ pub mod ffi {
         pub fn load_emoji_modifier_base(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_emoji_modifier_base(&provider)
+            sets::load_emoji_modifier_base(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -294,9 +252,7 @@ pub mod ffi {
         pub fn load_emoji_component(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_emoji_component(&provider)
+            sets::load_emoji_component(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -306,9 +262,7 @@ pub mod ffi {
         pub fn load_emoji_modifier(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_emoji_modifier(&provider)
+            sets::load_emoji_modifier(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -318,9 +272,7 @@ pub mod ffi {
         pub fn load_emoji(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_emoji(&provider)
+            sets::load_emoji(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -330,9 +282,7 @@ pub mod ffi {
         pub fn load_emoji_presentation(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_emoji_presentation(&provider)
+            sets::load_emoji_presentation(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -342,9 +292,7 @@ pub mod ffi {
         pub fn load_extender(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_extender(&provider)
+            sets::load_extender(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -354,9 +302,7 @@ pub mod ffi {
         pub fn load_extended_pictographic(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_extended_pictographic(&provider)
+            sets::load_extended_pictographic(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -366,9 +312,7 @@ pub mod ffi {
         pub fn load_graph(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_graph(&provider)
+            sets::load_graph(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -378,9 +322,7 @@ pub mod ffi {
         pub fn load_grapheme_base(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_grapheme_base(&provider)
+            sets::load_grapheme_base(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -390,9 +332,7 @@ pub mod ffi {
         pub fn load_grapheme_extend(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_grapheme_extend(&provider)
+            sets::load_grapheme_extend(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -402,9 +342,7 @@ pub mod ffi {
         pub fn load_grapheme_link(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_grapheme_link(&provider)
+            sets::load_grapheme_link(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -414,9 +352,7 @@ pub mod ffi {
         pub fn load_hex_digit(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_hex_digit(&provider)
+            sets::load_hex_digit(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -426,9 +362,7 @@ pub mod ffi {
         pub fn load_hyphen(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_hyphen(&provider)
+            sets::load_hyphen(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -438,9 +372,7 @@ pub mod ffi {
         pub fn load_id_continue(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_id_continue(&provider)
+            sets::load_id_continue(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -450,9 +382,7 @@ pub mod ffi {
         pub fn load_ideographic(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_ideographic(&provider)
+            sets::load_ideographic(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -462,9 +392,7 @@ pub mod ffi {
         pub fn load_id_start(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_id_start(&provider)
+            sets::load_id_start(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -474,9 +402,7 @@ pub mod ffi {
         pub fn load_ids_binary_operator(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_ids_binary_operator(&provider)
+            sets::load_ids_binary_operator(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -486,9 +412,7 @@ pub mod ffi {
         pub fn load_ids_trinary_operator(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_ids_trinary_operator(&provider)
+            sets::load_ids_trinary_operator(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -498,9 +422,7 @@ pub mod ffi {
         pub fn load_join_control(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_join_control(&provider)
+            sets::load_join_control(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -510,9 +432,7 @@ pub mod ffi {
         pub fn load_logical_order_exception(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_logical_order_exception(&provider)
+            sets::load_logical_order_exception(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -522,9 +442,7 @@ pub mod ffi {
         pub fn load_lowercase(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_lowercase(&provider)
+            sets::load_lowercase(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -534,9 +452,7 @@ pub mod ffi {
         pub fn load_math(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_math(&provider)
+            sets::load_math(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -546,9 +462,7 @@ pub mod ffi {
         pub fn load_noncharacter_code_point(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_noncharacter_code_point(&provider)
+            sets::load_noncharacter_code_point(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -558,9 +472,7 @@ pub mod ffi {
         pub fn load_nfc_inert(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_nfc_inert(&provider)
+            sets::load_nfc_inert(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -570,9 +482,7 @@ pub mod ffi {
         pub fn load_nfd_inert(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_nfd_inert(&provider)
+            sets::load_nfd_inert(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -582,9 +492,7 @@ pub mod ffi {
         pub fn load_nfkc_inert(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_nfkc_inert(&provider)
+            sets::load_nfkc_inert(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -594,9 +502,7 @@ pub mod ffi {
         pub fn load_nfkd_inert(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_nfkd_inert(&provider)
+            sets::load_nfkd_inert(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -606,9 +512,7 @@ pub mod ffi {
         pub fn load_pattern_syntax(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_pattern_syntax(&provider)
+            sets::load_pattern_syntax(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -618,9 +522,7 @@ pub mod ffi {
         pub fn load_pattern_white_space(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_pattern_white_space(&provider)
+            sets::load_pattern_white_space(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -630,9 +532,7 @@ pub mod ffi {
         pub fn load_prepended_concatenation_mark(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_prepended_concatenation_mark(&provider)
+            sets::load_prepended_concatenation_mark(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -642,9 +542,7 @@ pub mod ffi {
         pub fn load_print(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_print(&provider)
+            sets::load_print(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -654,9 +552,7 @@ pub mod ffi {
         pub fn load_quotation_mark(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_quotation_mark(&provider)
+            sets::load_quotation_mark(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -666,9 +562,7 @@ pub mod ffi {
         pub fn load_radical(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_radical(&provider)
+            sets::load_radical(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -678,9 +572,7 @@ pub mod ffi {
         pub fn load_regional_indicator(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_regional_indicator(&provider)
+            sets::load_regional_indicator(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -690,9 +582,7 @@ pub mod ffi {
         pub fn load_soft_dotted(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_soft_dotted(&provider)
+            sets::load_soft_dotted(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -702,9 +592,7 @@ pub mod ffi {
         pub fn load_segment_starter(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_segment_starter(&provider)
+            sets::load_segment_starter(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -714,9 +602,7 @@ pub mod ffi {
         pub fn load_case_sensitive(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_case_sensitive(&provider)
+            sets::load_case_sensitive(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -726,9 +612,7 @@ pub mod ffi {
         pub fn load_sentence_terminal(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_sentence_terminal(&provider)
+            sets::load_sentence_terminal(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -738,9 +622,7 @@ pub mod ffi {
         pub fn load_terminal_punctuation(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_terminal_punctuation(&provider)
+            sets::load_terminal_punctuation(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -750,9 +632,7 @@ pub mod ffi {
         pub fn load_unified_ideograph(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_unified_ideograph(&provider)
+            sets::load_unified_ideograph(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -762,9 +642,7 @@ pub mod ffi {
         pub fn load_uppercase(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_uppercase(&provider)
+            sets::load_uppercase(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -774,9 +652,7 @@ pub mod ffi {
         pub fn load_variation_selector(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_variation_selector(&provider)
+            sets::load_variation_selector(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -786,9 +662,7 @@ pub mod ffi {
         pub fn load_white_space(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_white_space(&provider)
+            sets::load_white_space(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -798,9 +672,7 @@ pub mod ffi {
         pub fn load_xdigit(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_xdigit(&provider)
+            sets::load_xdigit(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -810,9 +682,7 @@ pub mod ffi {
         pub fn load_xid_continue(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_xid_continue(&provider)
+            sets::load_xid_continue(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()
@@ -822,9 +692,7 @@ pub mod ffi {
         pub fn load_xid_start(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCodePointSetData>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            sets::load_xid_start(&provider)
+            sets::load_xid_start(&provider.0)
                 .map(|data| Box::new(ICU4XCodePointSetData(data)))
                 .map_err(Into::into)
                 .into()

@@ -44,9 +44,7 @@ pub mod ffi {
             locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            Self::try_new_impl(&provider, locale, grouping_strategy)
+            Self::try_new_impl(&provider.0, locale, grouping_strategy)
         }
 
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from preconstructed locale data in the form of an [`ICU4XDataStruct`]

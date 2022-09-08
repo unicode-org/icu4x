@@ -33,23 +33,23 @@ path = "src/lib.rs"
 
 [dependencies]
 icu_capi = { version = "1.0.0-alpha1", path = "../diplomat", default-features = false }
-
+icu_provider = { version = "1.0.0-beta1", path = "../../provider/core", default-features = false }
 
 # Please keep features/cargo-all-features lists in sync with the icu_capi crate
 [features]
 default = ["icu_capi/default"]
+any_provider = ["icu_capi/any_provider"]
+serde = ["icu_capi/serde"]
+buffer_provider = ["icu_capi/buffer_provider"]
 provider_fs = ["icu_capi/provider_fs"]
 provider_test = ["icu_capi/provider_test"]
 smaller_test = ["icu_capi/smaller_test"]
-deserialize_json = ["icu_capi/deserialize_json"]
-deserialize_postcard_07 = ["icu_capi/deserialize_postcard_07"]
-deserialize_bincode_1 = ["icu_capi/deserialize_bincode_1"]
 logging = ["icu_capi/logging"]
 simple_logger = ["icu_capi/simple_logger"]
 
 # meta feature for things we enable by default in wasm
 # do not sync with other crates
-wasm_default = ["provider_test", "logging"]
+wasm_default = ["provider_test", "buffer_provider", "logging"]
 
 [package.metadata.cargo-all-features]
 # Omit most optional dependency features from permutation testing
@@ -57,6 +57,7 @@ skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
 # x86tiny is not relevant in normal environments,
 # smaller_test gets tested on the FFI job anyway
-# logging enables a feature of a dependency that has no externally visible API changes'
+# logging enables a feature of a dependency that has no externally visible API changes
+# serde enables dependency features but buffer_provider affects the actual code
 # wasm_default is a metafeature
-denylist = ["bench", "smaller_test", "logging", "wasm_default"]
+denylist = ["bench", "serde", "smaller_test", "logging", "wasm_default"]

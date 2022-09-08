@@ -324,10 +324,7 @@ pub mod ffi {
         pub fn try_new(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XMetaZoneCalculator>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
-            MetaZoneCalculator::try_new_unstable(&provider)
+            MetaZoneCalculator::try_new_unstable(&provider.0)
                 .map(|tf| Box::new(ICU4XMetaZoneCalculator(tf)))
                 .map_err(Into::into)
                 .into()

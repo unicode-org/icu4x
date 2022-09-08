@@ -63,9 +63,7 @@ pub mod ffi {
         pub fn try_new(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            Self::try_new_impl(&provider)
+            Self::try_new_impl(&provider.0)
         }
 
         fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError>
@@ -87,9 +85,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptions,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            Self::try_new_with_options_impl(&provider, options)
+            Self::try_new_with_options_impl(&provider.0, options)
         }
 
         fn try_new_with_options_impl<D>(

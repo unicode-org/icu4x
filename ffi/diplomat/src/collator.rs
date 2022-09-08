@@ -98,12 +98,10 @@ pub mod ffi {
             locale: &ICU4XLocale,
             options: ICU4XCollatorOptions,
         ) -> DiplomatResult<Box<ICU4XCollator>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
             let locale = locale.to_datalocale();
             let options = CollatorOptions::from(options);
 
-            Collator::try_new_unstable(&provider, &locale, options)
+            Collator::try_new_unstable(&provider.0, &locale, options)
                 .map(|o| Box::new(ICU4XCollator(o)))
                 .map_err(Into::into)
                 .into()
