@@ -653,7 +653,8 @@ where
             });
         if low & 0x1000 != 0 {
             // All the rest are combining
-            self.buffer.extend(tail.iter().map(CharacterAndClass::new_with_placeholder));
+            self.buffer
+                .extend(tail.iter().map(CharacterAndClass::new_with_placeholder));
             (starter, 0)
         } else {
             let mut i = 0;
