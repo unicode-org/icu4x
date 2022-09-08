@@ -747,44 +747,53 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
         iter: &mut LineBreakIterator<'l, 's, Self>,
         left_codepoint: char,
     ) -> Option<usize> {
-        // word segmenter doesn't define break rules for some languages such as Thai.
-        let start_iter = iter.iter.clone();
-        let start_point = iter.current_pos_data;
-        let mut s = String::new();
-        s.push(left_codepoint);
-        loop {
-            s.push(iter.current_pos_data.unwrap().1);
-            iter.current_pos_data = iter.iter.next();
-            if iter.current_pos_data.is_none() {
-                break;
-            }
-            if !Self::use_complex_breaking(iter, iter.current_pos_data.unwrap().1) {
-                break;
-            }
-        }
-
-        // Restore iterator to move to head of complex string
-        iter.iter = start_iter;
-        iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
-        iter.result_cache = breaks;
-        let mut i = iter.current_pos_data.unwrap().1.len_utf8();
-        loop {
-            if i == *iter.result_cache.first().unwrap() {
-                // Re-calculate breaking offset
-                iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-                return Some(iter.current_pos_data.unwrap().0);
-            }
-            iter.current_pos_data = iter.iter.next();
-            if iter.current_pos_data.is_none() {
-                iter.result_cache.clear();
-                return Some(iter.len);
-            }
-            i += Self::get_current_position_character_len(iter);
-        }
+        handle_complex_language_utf8(iter, left_codepoint)
     }
 }
+/// handle_complex_language impl for UTF8 iterators
+fn handle_complex_language_utf8<'l, 's, T>(
+    iter: &mut LineBreakIterator<'l, 's, T>,
+    left_codepoint: char,
+) -> Option<usize>
+where
+    T: LineBreakType<'l, 's, CharType = char>,
+{
+    // word segmenter doesn't define break rules for some languages such as Thai.
+    let start_iter = iter.iter.clone();
+    let start_point = iter.current_pos_data;
+    let mut s = String::new();
+    s.push(left_codepoint);
+    loop {
+        s.push(iter.current_pos_data.unwrap().1);
+        iter.current_pos_data = iter.iter.next();
+        if iter.current_pos_data.is_none() {
+            break;
+        }
+        if !T::use_complex_breaking(iter, iter.current_pos_data.unwrap().1) {
+            break;
+        }
+    }
 
+    // Restore iterator to move to head of complex string
+    iter.iter = start_iter;
+    iter.current_pos_data = start_point;
+    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
+    iter.result_cache = breaks;
+    let mut i = iter.current_pos_data.unwrap().1.len_utf8();
+    loop {
+        if i == *iter.result_cache.first().unwrap() {
+            // Re-calculate breaking offset
+            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            return Some(iter.current_pos_data.unwrap().0);
+        }
+        iter.current_pos_data = iter.iter.next();
+        if iter.current_pos_data.is_none() {
+            iter.result_cache.clear();
+            return Some(iter.len);
+        }
+        i += T::get_current_position_character_len(iter);
+    }
+}
 pub struct LineBreakTypeLatin1;
 
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {
