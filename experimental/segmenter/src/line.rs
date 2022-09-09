@@ -281,7 +281,7 @@ impl LineBreakSegmenter {
     /// Create a line break iterator for a potentially invalid UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
-    pub fn segment_invalid_utf8<'l, 's>(
+    pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
     ) -> LineBreakIteratorPotentiallyInvalidUtf8<'l, 's> {

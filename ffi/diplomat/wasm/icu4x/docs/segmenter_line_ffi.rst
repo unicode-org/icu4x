@@ -63,7 +63,7 @@
 
         Segments a (potentially invalid) UTF-8 string.
 
-        See the `Rust documentation for segment_invalid_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_invalid_utf8>`__ for more information.
+        See the `Rust documentation for segment_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_utf8>`__ for more information.
 
 
     .. js:function:: segment_utf16(input)

@@ -239,7 +239,7 @@ icu::segmenter::SentenceBreakIteratorLatin1#Typedef
 icu::segmenter::SentenceBreakIteratorPotentiallyInvalidUtf8#Typedef
 icu::segmenter::SentenceBreakIteratorUtf16#Typedef
 icu::segmenter::SentenceBreakIteratorUtf8#Typedef
-icu::segmenter::SentenceBreakSegmenter::segment_invalid_utf8#FnInStruct
+icu::segmenter::SentenceBreakSegmenter::segment_utf8#FnInStruct
 icu::segmenter::WordBreakIteratorLatin1#Typedef
 icu::segmenter::WordBreakIteratorPotentiallyInvalidUtf8#Typedef
 icu::segmenter::WordBreakIteratorUtf16#Typedef

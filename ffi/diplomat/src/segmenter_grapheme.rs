@@ -67,7 +67,7 @@ pub mod ffi {
             hidden
         )]
         #[diplomat::rust_link(
-            icu::segmenter::GraphemeClusterBreakSegmenter::segment_invalid_utf8,
+            icu::segmenter::GraphemeClusterBreakSegmenter::segment_utf8,
             FnInStruct
         )]
         pub fn segment_utf8<'a>(
@@ -76,7 +76,7 @@ pub mod ffi {
         ) -> Box<ICU4XGraphemeClusterBreakIteratorUtf8<'a>> {
             let input = input.as_bytes(); // #2520
             Box::new(ICU4XGraphemeClusterBreakIteratorUtf8(
-                self.0.segment_invalid_utf8(input),
+                self.0.segment_utf8(input),
             ))
         }
 

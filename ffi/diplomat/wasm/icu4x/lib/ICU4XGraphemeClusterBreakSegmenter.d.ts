@@ -26,7 +26,7 @@ export class ICU4XGraphemeClusterBreakSegmenter {
 
    * Segments a (potentially invalid) UTF-8 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_invalid_utf8 Rust documentation for `segment_invalid_utf8`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf8 Rust documentation for `segment_utf8`} for more information.
    */
   segment_utf8(input: string): ICU4XGraphemeClusterBreakIteratorUtf8;
 

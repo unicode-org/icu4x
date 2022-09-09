@@ -57,12 +57,12 @@ pub mod ffi {
         }
 
         /// Segments a (potentially invalid) UTF-8 string.
-        #[diplomat::rust_link(icu::segmenter::WordBreakSegmenter::segment_invalid_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::WordBreakSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::WordBreakSegmenter::segment_str, FnInStruct, hidden)]
         pub fn segment_utf8<'a>(&'a self, input: &'a str) -> Box<ICU4XWordBreakIteratorUtf8<'a>> {
             let input = input.as_bytes(); // #2520
             Box::new(ICU4XWordBreakIteratorUtf8(
-                self.0.segment_invalid_utf8(input),
+                self.0.segment_utf8(input),
             ))
         }
 

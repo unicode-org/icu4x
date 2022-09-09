@@ -110,12 +110,12 @@ pub mod ffi {
         }
 
         /// Segments a (potentially invalid) UTF-8 string.
-        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_invalid_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_utf8, FnInStruct)]
         #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_str, FnInStruct, hidden)]
         pub fn segment_utf8<'a>(&'a self, input: &'a str) -> Box<ICU4XLineBreakIteratorUtf8<'a>> {
             let input = input.as_bytes(); // #2520
             Box::new(ICU4XLineBreakIteratorUtf8(
-                self.0.segment_invalid_utf8(input),
+                self.0.segment_utf8(input),
             ))
         }
 
