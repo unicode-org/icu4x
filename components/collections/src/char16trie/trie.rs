@@ -45,10 +45,6 @@ const MAX_ONE_UNIT_DELTA: u16 = 0xfbff;
 const MIN_TWO_UNIT_DELTA_LEAD: u16 = MAX_ONE_UNIT_DELTA + 1; // 0xfc00
 const THREE_UNIT_DELTA_LEAD: u16 = 0xffff;
 
-// Replacement values for unsuccessful trie lookups.
-/// Replaces lookups of code units. Code unit 0 should not match well-formed strings.
-const EMPTY_CODE_UNIT: u16 = 0;
-
 fn skip_value(pos: usize, lead: u16) -> usize {
     if lead < MIN_TWO_UNIT_VALUE_LEAD {
         pos
@@ -149,24 +145,12 @@ fn u16_tail(supplementary: i32) -> u16 {
     (((supplementary) & 0x3ff) | 0xdc00) as u16
 }
 
-/// A macro that expands into a `get()` that returns `TrieResult::NoMatch` if the get failed.
+/// A macro that takes an `Option` argument and either unwraps it if it has a value or
+/// causes the function to return `TrieResult::NoMatch` if there is no value.
 /// This could perhaps be done with std::ops::Try once stabilized.
-macro_rules! get_or_return_no_match {
-    ($self:ident, $pos:expr) => {
-        match $self.trie.get($pos) {
-            Some(x) => x,
-            None => {
-                // Unexpected
-                debug_assert!(false);
-                return TrieResult::NoMatch;
-            }
-        }
-    };
-}
-
-macro_rules! unwrap_or_return_no_match {
-    ($e:expr) => {
-        match $e {
+macro_rules! trie_unwrap {
+    ($option:expr) => {
+        match $option {
             Some(x) => x,
             None => {
                 // Unexpected
@@ -280,12 +264,12 @@ impl<'a> Char16TrieIterator<'a> {
         };
         if let Some(length) = self.remaining_match_length {
             // Remaining part of a linear-match node
-            if c == get_or_return_no_match!(self, pos) {
+            if c == trie_unwrap!(self.trie.get(pos)) {
                 pos += 1;
                 self.pos = Some(pos);
                 if length == 0 {
                     self.remaining_match_length = None;
-                    let node = get_or_return_no_match!(self, pos);
+                    let node = trie_unwrap!(self.trie.get(pos));
                     if node >= MIN_VALUE_LEAD {
                         return self.value_result(pos);
                     }
@@ -305,7 +289,7 @@ impl<'a> Char16TrieIterator<'a> {
         let mut pos = pos;
         let mut length = length;
         if length == 0 {
-            length = get_or_return_no_match!(self, pos) as usize;
+            length = trie_unwrap!(self.trie.get(pos)) as usize;
             pos += 1;
         }
         length += 1;
@@ -313,21 +297,21 @@ impl<'a> Char16TrieIterator<'a> {
         // The length of the branch is the number of units to select from.
         // The data structure encodes a binary search.
         while length > MAX_BRANCH_LINEAR_SUB_NODE_LENGTH {
-            if in_unit < get_or_return_no_match!(self, pos) {
+            if in_unit < trie_unwrap!(self.trie.get(pos)) {
                 length >>= 1;
-                pos = unwrap_or_return_no_match!(self.jump_by_delta(pos + 1));
+                pos = trie_unwrap!(self.jump_by_delta(pos + 1));
             } else {
                 length = length - (length >> 1);
-                pos = unwrap_or_return_no_match!(self.skip_delta(pos + 1));
+                pos = trie_unwrap!(self.skip_delta(pos + 1));
             }
         }
         // Drop down to linear search for the last few bytes.
         // length>=2 because the loop body above sees length>kMaxBranchLinearSubNodeLength>=3
         // and divides length by 2.
         loop {
-            if in_unit == get_or_return_no_match!(self, pos) {
+            if in_unit == trie_unwrap!(self.trie.get(pos)) {
                 pos += 1;
-                let mut node = get_or_return_no_match!(self, pos);
+                let mut node = trie_unwrap!(self.trie.get(pos));
                 if node & VALUE_IS_FINAL != 0 {
                     self.pos = Some(pos);
                     return self.value_result(pos);
@@ -339,13 +323,14 @@ impl<'a> Char16TrieIterator<'a> {
                     pos += node as usize;
                 } else if node < THREE_UNIT_VALUE_LEAD {
                     pos += (((node - MIN_TWO_UNIT_VALUE_LEAD) as u32) << 16) as usize
-                        | get_or_return_no_match!(self, pos) as usize;
+                        | trie_unwrap!(self.trie.get(pos)) as usize;
                     pos += 1;
                 } else {
-                    pos += (get_or_return_no_match!(self, pos) as usize) << 16 | get_or_return_no_match!(self, pos + 1) as usize;
+                    pos += (trie_unwrap!(self.trie.get(pos)) as usize) << 16
+                        | trie_unwrap!(self.trie.get(pos + 1)) as usize;
                     pos += 2;
                 }
-                node = get_or_return_no_match!(self, pos);
+                node = trie_unwrap!(self.trie.get(pos));
                 self.pos = Some(pos);
 
                 if node >= MIN_VALUE_LEAD {
@@ -354,16 +339,16 @@ impl<'a> Char16TrieIterator<'a> {
                 return TrieResult::NoValue;
             }
             length -= 1;
-            pos = unwrap_or_return_no_match!(self.skip_value(pos + 1));
+            pos = trie_unwrap!(self.skip_value(pos + 1));
             if length <= 1 {
                 break;
             }
         }
 
-        if in_unit == get_or_return_no_match!(self, pos) {
+        if in_unit == trie_unwrap!(self.trie.get(pos)) {
             pos += 1;
             self.pos = Some(pos);
-            let node = get_or_return_no_match!(self, pos);
+            let node = trie_unwrap!(self.trie.get(pos));
             if node >= MIN_VALUE_LEAD {
                 return self.value_result(pos);
             }
@@ -375,7 +360,7 @@ impl<'a> Char16TrieIterator<'a> {
     }
 
     fn next_impl(&mut self, pos: usize, in_unit: u16) -> TrieResult {
-        let mut node = get_or_return_no_match!(self, pos);
+        let mut node = trie_unwrap!(self.trie.get(pos));
         let mut pos = pos + 1;
         loop {
             if node < MIN_LINEAR_MATCH {
@@ -383,12 +368,12 @@ impl<'a> Char16TrieIterator<'a> {
             } else if node < MIN_VALUE_LEAD {
                 // Match the first of length+1 units.
                 let length = node - MIN_LINEAR_MATCH;
-                if in_unit == get_or_return_no_match!(self, pos) {
+                if in_unit == trie_unwrap!(self.trie.get(pos)) {
                     pos += 1;
                     if length == 0 {
                         self.remaining_match_length = None;
                         self.pos = Some(pos);
-                        node = get_or_return_no_match!(self, pos);
+                        node = trie_unwrap!(self.trie.get(pos));
                         if node >= MIN_VALUE_LEAD {
                             return self.value_result(pos);
                         }
@@ -424,11 +409,12 @@ impl<'a> Char16TrieIterator<'a> {
             // nothing to do
             pos + 1 + delta as usize
         } else if delta == THREE_UNIT_DELTA_LEAD {
-            let delta = ((self.trie.get(pos + 1)? as usize) << 16) | (self.trie.get(pos + 2)? as usize);
+            let delta =
+                ((self.trie.get(pos + 1)? as usize) << 16) | (self.trie.get(pos + 2)? as usize);
             pos + delta + 3
         } else {
-            let delta =
-                ((delta - MIN_TWO_UNIT_DELTA_LEAD) as usize) << 16 | (self.trie.get(pos + 1)? as usize);
+            let delta = ((delta - MIN_TWO_UNIT_DELTA_LEAD) as usize) << 16
+                | (self.trie.get(pos + 1)? as usize);
             pos + delta + 2
         };
         Some(v)
