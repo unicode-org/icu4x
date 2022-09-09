@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662765654826,
+  "lastUpdate": 1662765725258,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26873,6 +26873,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/aeaa9d1ef2fdb423eeb690468da520868d2acc12"
         },
         "date": 1662765594137,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fcbd5aab858b52fb4a887dbb968afab06083f85a",
+          "message": "Use GIGO with debug assertion in Char16Trie (#2537)",
+          "timestamp": "2022-09-09T23:19:53Z",
+          "tree_id": "8890744face6945df216346020d46cc6cb1948a8",
+          "url": "https://github.com/unicode-org/icu4x/commit/fcbd5aab858b52fb4a887dbb968afab06083f85a"
+        },
+        "date": 1662765668136,
         "tool": "ndjson",
         "benches": [
           {
