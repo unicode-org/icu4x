@@ -41,6 +41,7 @@ pub mod ffi {
         }
 
         /// Construct a default undefined [`ICU4XLocale`] "und".
+        #[diplomat::rust_link(icu::locid::Locale::UND, AssociatedConstantInStruct)]
         pub fn und() -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(Locale::UND))
         }

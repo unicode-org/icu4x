@@ -50,6 +50,8 @@ class ICU4XLocale {
 
   /**
    * Construct a default undefined [`ICU4XLocale`] "und".
+   * 
+   * See the [Rust documentation for `UND`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
    */
   static ICU4XLocale und();
 
