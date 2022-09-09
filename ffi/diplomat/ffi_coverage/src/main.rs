@@ -290,7 +290,7 @@ lazy_static::lazy_static! {
         "icu::locid::Locale::UND",
 
         // Need to think about how to expose DataErrorKind for this to work
-        "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind#FnInStruct",
+        "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits

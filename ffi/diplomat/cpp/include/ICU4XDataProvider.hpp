@@ -58,7 +58,7 @@ class ICU4XDataProvider {
   /**
    * Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
    * 
-   * See the [Rust documentation for `StaticDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html) for more information.
+   * See the [Rust documentation for `EmptyDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
    */
   static ICU4XDataProvider create_empty();
   inline const capi::ICU4XDataProvider* AsFFI() const { return this->inner.get(); }
