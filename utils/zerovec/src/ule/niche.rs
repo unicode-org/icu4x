@@ -18,13 +18,9 @@ pub trait NicheBytes<const N: usize> {
 /// [`ULE`] type for [`NichedOption<U,N>`] where U implements [`NicheBytes`].
 /// The invalid bit pattern is used as the niche.
 ///
-/// This uses 1 byte less than [`zerovec::OptionULE<U>`] to represent [`NichedOption<U,N>`]
+/// This uses 1 byte less than [`crate::ule::OptionULE<U>`] to represent [`NichedOption<U,N>`]
 /// which Derefs to [`Option<U>`].
 /// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
-///
-/// Invariants:
-/// The union stores [`NichedBytes::INVALID_BIT_PATTERN`] when None.
-/// Any other bit pattern is a valid.
 ///
 /// # Example
 ///
@@ -42,6 +38,9 @@ pub trait NicheBytes<const N: usize> {
 /// assert_eq!(zv_no.get(2).as_deref(), Some(&NonZeroU8::new(2)));
 /// assert_eq!(zv_no.get(3).as_deref(), Some(&None));
 /// ```
+// Invariants:
+// The union stores [`NicheBytes::INVALID_BIT_PATTERN`] when None.
+// Any other bit pattern is a valid.
 #[repr(packed)]
 pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
     invalid: [u8; N],
