@@ -74,6 +74,7 @@ impl<'a> ZeroMapKV<'a> for usize {
 impl<'a, T> ZeroMapKV<'a> for Option<T>
 where
     T: AsULE + 'static,
+    Option<T>: AsULE,
 {
     type Container = ZeroVec<'a, Option<T>>;
     type Slice = ZeroSlice<Option<T>>;
