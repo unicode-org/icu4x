@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662746499857,
+  "lastUpdate": 1662746506478,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26813,6 +26813,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/79da612943fd8d18b06836c390b97b9e4c226599"
         },
         "date": 1662746440028,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "dbe360cc7a724d048f601c2339c8ba7eb4142184",
+          "message": "Add experimental notices on all exported modules, structs, and enums (#2536)",
+          "timestamp": "2022-09-09T10:59:50-07:00",
+          "tree_id": "b34e1be3d2310844b7255211d75e0e1b23bd9b1a",
+          "url": "https://github.com/unicode-org/icu4x/commit/dbe360cc7a724d048f601c2339c8ba7eb4142184"
+        },
+        "date": 1662746455631,
         "tool": "ndjson",
         "benches": [
           {
