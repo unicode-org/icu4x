@@ -195,8 +195,6 @@ impl DateTimeFormatter {
 
     /// Constructor that supports experimental options.
     ///
-    /// Enabled by the "experimental" feature.
-    ///
     /// <div class="stab unstable">
     /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
     /// including in SemVer minor releases. It can be enabled with the "experimental" feature
