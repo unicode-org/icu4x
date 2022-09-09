@@ -120,10 +120,13 @@ lazy_static::lazy_static! {
         "AsDowncastingAnyProvider",
         "AsDeserializingBufferProvider",
         "AsDynamicDataProviderAnyMarkerWrap",
+        "IterableDynamicDataProvider",
+        "IterableDataProvider",
         "DataConverter",
         "Filterable",
 
-        // The data provider traits should be covered if the struct implementing them is covered
+        // The four main data provider traits should be covered if the enum or struct
+        // implementing them is covered
         "DataProvider",
         "DynamicDataProvider",
         "BufferProvider",
