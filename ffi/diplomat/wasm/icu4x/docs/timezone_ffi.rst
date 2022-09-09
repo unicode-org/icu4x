@@ -10,6 +10,8 @@
 
         Creates a time zone from an offset string.
 
+        See the `Rust documentation for from_str <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str>`__ for more information.
+
 
     .. js:staticfunction:: create_empty()
 
@@ -231,7 +233,7 @@
 
         See the `Rust documentation for maybe_calculate_meta_zone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone>`__
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_meta_zone_from_time_zone>`__
 
 
 .. js:class:: ICU4XMetaZoneCalculator
