@@ -146,7 +146,7 @@ impl<'data> CollationDataV1<'data> {
         index: usize,
     ) -> (CollationElement32, Char16TrieIterator<'data>) {
         let (ce32, trie) = self.get_default_and_trie_impl(index);
-        (ce32, Char16TrieIterator::new(trie.as_ule_slice()))
+        (ce32, Char16TrieIterator::new(trie))
     }
     pub(crate) fn get_default(&'data self, index: usize) -> CollationElement32 {
         let (ce32, _) = self.get_default_and_trie_impl(index);
