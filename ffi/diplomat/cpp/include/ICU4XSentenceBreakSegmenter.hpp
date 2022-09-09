@@ -43,7 +43,7 @@ class ICU4XSentenceBreakSegmenter {
   static diplomat::result<ICU4XSentenceBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
-   * Segments a (potentially invalid) UTF-8 string.
+   * Segments a (potentially ill-formed) UTF-8 string.
    * 
    * See the [Rust documentation for `segment_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html#method.segment_utf8) for more information.
    */

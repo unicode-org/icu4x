@@ -24,7 +24,7 @@ export class ICU4XSentenceBreakSegmenter {
 
   /**
 
-   * Segments a (potentially invalid) UTF-8 string.
+   * Segments a (potentially ill-formed) UTF-8 string.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.SentenceBreakSegmenter.html#method.segment_utf8 Rust documentation for `segment_utf8`} for more information.
    */

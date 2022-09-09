@@ -178,7 +178,7 @@ impl WordBreakSegmenter {
         }
     }
 
-    /// Create a word break iterator for a potentially invalid UTF8 string
+    /// Create a word break iterator for a potentially ill-formed UTF8 string
     ///
     /// Invalid characters are treated as REPLACEMENT CHARACTER
     pub fn segment_utf8<'l, 's>(

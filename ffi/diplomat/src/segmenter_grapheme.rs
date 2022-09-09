@@ -60,7 +60,7 @@ pub mod ffi {
                 .into()
         }
 
-        /// Segments a (potentially invalid) UTF-8 string.
+        /// Segments a (potentially ill-formed) UTF-8 string.
         #[diplomat::rust_link(
             icu::segmenter::GraphemeClusterBreakSegmenter::segment_str,
             FnInStruct,
