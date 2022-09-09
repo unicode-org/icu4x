@@ -12,7 +12,7 @@ pub mod ffi {
     use icu_provider::DataProvider;
     use icu_segmenter::provider::SentenceBreakDataV1Marker;
     use icu_segmenter::{
-        SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyInvalidUtf8,
+        SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
         SentenceBreakIteratorUtf16, SentenceBreakSegmenter,
     };
 
@@ -23,7 +23,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
-        SentenceBreakIteratorPotentiallyInvalidUtf8<'a, 'a>,
+        SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]

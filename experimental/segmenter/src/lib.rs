@@ -93,21 +93,21 @@ mod lstm_error;
 mod math_helper;
 
 pub use crate::grapheme::{
-    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyInvalidUtf8,
+    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
     GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8,
     GraphemeClusterBreakSegmenter,
 };
 pub use crate::line::{
-    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorPotentiallyInvalidUtf8,
+    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8,
     LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule,
     LineBreakSegmenter, WordBreakRule,
 };
 pub use crate::sentence::{
-    SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyInvalidUtf8,
+    SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
     SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8, SentenceBreakSegmenter,
 };
 pub use crate::word::{
-    WordBreakIteratorLatin1, WordBreakIteratorPotentiallyInvalidUtf8, WordBreakIteratorUtf16,
+    WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
     WordBreakIteratorUtf8, WordBreakSegmenter,
 };
 

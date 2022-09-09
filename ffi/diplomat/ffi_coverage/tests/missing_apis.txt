@@ -219,10 +219,10 @@ icu::properties::script::ScriptWithExtensionsResult#Typedef
 icu::properties::script::load_script_with_extensions_unstable#Fn
 icu::properties::script::load_script_with_extensions_with_any_provider#Fn
 icu::properties::script::load_script_with_extensions_with_buffer_provider#Fn
-icu::segmenter::GraphemeClusterBreakIteratorPotentiallyInvalidUtf8#Typedef
-icu::segmenter::LineBreakIteratorPotentiallyInvalidUtf8#Typedef
-icu::segmenter::SentenceBreakIteratorPotentiallyInvalidUtf8#Typedef
-icu::segmenter::WordBreakIteratorPotentiallyInvalidUtf8#Typedef
+icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8#Typedef
+icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8#Typedef
+icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8#Typedef
+icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8#Typedef
 icu::timezone::CustomTimeZone::from_str#FnInStruct
 icu::timezone::GmtOffset::from_offset_seconds_unchecked#FnInStruct
 icu::timezone::GmtOffset::from_str#FnInStruct

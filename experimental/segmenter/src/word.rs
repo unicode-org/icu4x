@@ -19,8 +19,8 @@ use utf8_iter::Utf8CharIndices;
 pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
 
 /// Word break iterator for a potentially invalid UTF-8 string
-pub type WordBreakIteratorPotentiallyInvalidUtf8<'l, 's> =
-    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyInvalidUtf8>;
+pub type WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
 /// Word break iterator for a Latin-1 (8-bit) string.
 pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeLatin1>;
 
@@ -184,8 +184,8 @@ impl WordBreakSegmenter {
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
-    ) -> WordBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
-        WordBreakIteratorPotentiallyInvalidUtf8 {
+    ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        WordBreakIteratorPotentiallyIllFormedUtf8 {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -240,9 +240,9 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
         handle_complex_language_utf8(iter, left_codepoint)
     }
 }
-pub struct WordBreakTypePotentiallyInvalidUtf8;
+pub struct WordBreakTypePotentiallyIllFormedUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyInvalidUtf8 {
+impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 

@@ -18,7 +18,7 @@ pub mod ffi {
         LineBreakDataV1Marker, LstmDataV1Marker, UCharDictionaryBreakDataV1Marker,
     };
     use icu_segmenter::{
-        LineBreakIteratorLatin1, LineBreakIteratorPotentiallyInvalidUtf8, LineBreakIteratorUtf16,
+        LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8, LineBreakIteratorUtf16,
         LineBreakSegmenter,
     };
 
@@ -50,7 +50,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorPotentiallyInvalidUtf8<'a, 'a>);
+    pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
     pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIteratorUtf16<'a, 'a>);

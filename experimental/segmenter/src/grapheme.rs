@@ -17,8 +17,8 @@ pub type GraphemeClusterBreakIteratorUtf8<'l, 's> =
     RuleBreakIterator<'l, 's, GraphemeClusterBreakTypeUtf8>;
 
 /// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
-pub type GraphemeClusterBreakIteratorPotentiallyInvalidUtf8<'l, 's> =
-    RuleBreakIterator<'l, 's, GraphemeClusterBreakTypePotentiallyInvalidUtf8>;
+pub type GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, GraphemeClusterBreakTypePotentiallyIllFormedUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 pub type GraphemeClusterBreakIteratorLatin1<'l, 's> =
@@ -97,8 +97,8 @@ impl GraphemeClusterBreakSegmenter {
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
-    ) -> GraphemeClusterBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
-        GraphemeClusterBreakIteratorPotentiallyInvalidUtf8 {
+    ) -> GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8 {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -159,9 +159,9 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf8 {
     }
 }
 
-pub struct GraphemeClusterBreakTypePotentiallyInvalidUtf8;
+pub struct GraphemeClusterBreakTypePotentiallyIllFormedUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypePotentiallyInvalidUtf8 {
+impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 

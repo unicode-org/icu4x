@@ -16,8 +16,8 @@ use utf8_iter::Utf8CharIndices;
 pub type SentenceBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf8>;
 
 /// Sentence break iterator for potentially invalid UTF-8 strings
-pub type SentenceBreakIteratorPotentiallyInvalidUtf8<'l, 's> =
-    RuleBreakIterator<'l, 's, SentenceBreakTypePotentiallyInvalidUtf8>;
+pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, SentenceBreakTypePotentiallyIllFormedUtf8>;
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
 pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeLatin1>;
@@ -89,8 +89,8 @@ impl SentenceBreakSegmenter {
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
-    ) -> SentenceBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
-        SentenceBreakIteratorPotentiallyInvalidUtf8 {
+    ) -> SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        SentenceBreakIteratorPotentiallyIllFormedUtf8 {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
@@ -147,9 +147,9 @@ impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf8 {
         panic!("not reachable")
     }
 }
-pub struct SentenceBreakTypePotentiallyInvalidUtf8;
+pub struct SentenceBreakTypePotentiallyIllFormedUtf8;
 
-impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypePotentiallyInvalidUtf8 {
+impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 

@@ -99,8 +99,8 @@ impl Default for LineBreakOptions {
 pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
 
 /// Line break iterator for a potentially invalid UTF-8 string
-pub type LineBreakIteratorPotentiallyInvalidUtf8<'l, 's> =
-    LineBreakIterator<'l, 's, LineBreakTypePotentiallyInvalidUtf8>;
+pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>;
 
 /// Line break iterator for a Latin-1 (8-bit) string.
 pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
@@ -284,7 +284,7 @@ impl LineBreakSegmenter {
     pub fn segment_utf8<'l, 's>(
         &'l self,
         input: &'s [u8],
-    ) -> LineBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
+    ) -> LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
         LineBreakIterator {
             iter: Utf8CharIndices::new(input),
             len: input.len(),
@@ -772,9 +772,9 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
         handle_complex_language_utf8(iter, left_codepoint)
     }
 }
-pub struct LineBreakTypePotentiallyInvalidUtf8;
+pub struct LineBreakTypePotentiallyIllFormedUtf8;
 
-impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyInvalidUtf8 {
+impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
     type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 

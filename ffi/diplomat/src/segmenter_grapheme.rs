@@ -12,7 +12,7 @@ pub mod ffi {
     use icu_provider::DataProvider;
     use icu_segmenter::provider::GraphemeClusterBreakDataV1Marker;
     use icu_segmenter::{
-        GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyInvalidUtf8,
+        GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
         GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakSegmenter,
     };
 
@@ -24,7 +24,7 @@ pub mod ffi {
 
     #[diplomat::opaque]
     pub struct ICU4XGraphemeClusterBreakIteratorUtf8<'a>(
-        GraphemeClusterBreakIteratorPotentiallyInvalidUtf8<'a, 'a>,
+        GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
     );
 
     #[diplomat::opaque]

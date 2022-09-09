@@ -14,7 +14,7 @@ pub mod ffi {
         LstmDataV1Marker, UCharDictionaryBreakDataV1Marker, WordBreakDataV1Marker,
     };
     use icu_segmenter::{
-        WordBreakIteratorLatin1, WordBreakIteratorPotentiallyInvalidUtf8, WordBreakIteratorUtf16,
+        WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
         WordBreakSegmenter,
     };
 
@@ -24,7 +24,7 @@ pub mod ffi {
     pub struct ICU4XWordBreakSegmenter(WordBreakSegmenter);
 
     #[diplomat::opaque]
-    pub struct ICU4XWordBreakIteratorUtf8<'a>(WordBreakIteratorPotentiallyInvalidUtf8<'a, 'a>);
+    pub struct ICU4XWordBreakIteratorUtf8<'a>(WordBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
     pub struct ICU4XWordBreakIteratorUtf16<'a>(WordBreakIteratorUtf16<'a, 'a>);
