@@ -25,6 +25,23 @@ pub trait NicheBytes<const N: usize> {
 /// Invariants:
 /// The union stores [`NichedBytes::INVALID_BIT_PATTERN`] when None.
 /// Any other bit pattern is a valid.
+///
+/// # Example
+///
+/// ```rust
+/// use zerovec::ZeroVec;
+/// use zerovec::ule::NichedOption;
+/// use core::num::NonZeroU8;
+///
+/// let bytes = &[0x00, 0x01, 0x02, 0x00 ];
+/// let zv_no: ZeroVec<NichedOption<NonZeroU8, 1>> =
+///         ZeroVec::parse_byte_slice(bytes).expect("Unable to parse as NichedOption.");
+///
+/// assert_eq!(zv_no.get(0).as_deref(), Some(&None));
+/// assert_eq!(zv_no.get(1).as_deref(), Some(&NonZeroU8::new(1)));
+/// assert_eq!(zv_no.get(2).as_deref(), Some(&NonZeroU8::new(2)));
+/// assert_eq!(zv_no.get(3).as_deref(), Some(&None));
+/// ```
 #[repr(packed)]
 pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
     invalid: [u8; N],
@@ -116,7 +133,7 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 /// Derefs to [`Option<U>`]
 /// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
 /// [`repr(transparent)`] guarantees that the layout is same as [`Option<U>`]
-#[derive(Copy, Clone, PartialEq, Eq, Hash)]
+#[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[repr(transparent)]
 pub struct NichedOption<U: AsULE, const N: usize>(Option<U>);
 
