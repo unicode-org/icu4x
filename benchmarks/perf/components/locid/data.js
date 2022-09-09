@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662680088797,
+  "lastUpdate": 1662681875832,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -98723,6 +98723,150 @@ window.BENCHMARK_DATA = {
             "name": "subtags/variant/parse",
             "value": 184,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "d1b3e0fdb671f4de8f68ecf341a01eeb2c6d1b5a",
+          "message": "Fix Segmenter's missing FFI (#2533)\n\n* Fix Segmenter's missing FFI\r\n\r\nChange `icu_segmenter` to `icu::segmenter` in segmenter_grapheme.rs. This\r\nremoves `segment_latin`, `segment_str`, and `segment_utf16` from the\r\nmissing_apis.txt.\r\n\r\nAdd all the types and types aliases that need no FFI to the IGNORED_PATHS.",
+          "timestamp": "2022-09-08T16:48:52-07:00",
+          "tree_id": "54ea23e7764e55900817419433dac20b3e5dfd43",
+          "url": "https://github.com/unicode-org/icu4x/commit/d1b3e0fdb671f4de8f68ecf341a01eeb2c6d1b5a"
+        },
+        "date": 1662681814380,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "langid/overview",
+            "value": 3950,
+            "range": "± 105",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/construct/langid",
+            "value": 985,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid",
+            "value": 1096,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/to_string/langid/writeable",
+            "value": 641,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/struct/langid",
+            "value": 146,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/str/langid",
+            "value": 1098,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/compare/strict_cmp/langid",
+            "value": 466,
+            "range": "± 6",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "langid/canonicalize/langid",
+            "value": 2665,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/overview",
+            "value": 4777,
+            "range": "± 262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/construct/locale",
+            "value": 2161,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale",
+            "value": 1480,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/to_string/locale/writeable",
+            "value": 1086,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/struct/locale",
+            "value": 281,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/str/locale",
+            "value": 2161,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/compare/strict_cmp/locale",
+            "value": 648,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "locale/canonicalize/locale",
+            "value": 4022,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/language/parse",
+            "value": 195,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/script/parse",
+            "value": 135,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/region/parse",
+            "value": 171,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "subtags/variant/parse",
+            "value": 218,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
