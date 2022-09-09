@@ -17,7 +17,10 @@ macro_rules! overview {
                     .filter(|&v| v.normalizing_eq($compare))
                     .count();
 
-                values.iter().map(|v| v.to_string()).collect::<Vec<String>>()
+                values
+                    .iter()
+                    .map(|v| v.to_string())
+                    .collect::<Vec<String>>()
             })
         });
     };
