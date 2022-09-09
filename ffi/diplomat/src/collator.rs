@@ -114,7 +114,9 @@ pub mod ffi {
         /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
         pub fn compare(&self, left: &str, right: &str) -> ICU4XOrdering {
-            self.0.compare(left, right).into()
+            let left = left.as_bytes(); // #2520
+            let right = right.as_bytes(); // #2520
+            self.0.compare_utf8(left, right).into()
         }
 
         /// Compare guaranteed well-formed UTF-8 strings.

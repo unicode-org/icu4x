@@ -76,7 +76,8 @@ pub mod ffi {
             {
                 // #2520
                 // In the future we can start using OsString APIs to support non-utf8 paths
-                if core::str::from_utf8(path.as_bytes()).is_err() {
+                if let Err(e) = core::str::from_utf8(path.as_bytes()) {
+                    crate::errors::log_conversion(&e, ICU4XError::DataIoError);
                     return Err(ICU4XError::DataIoError).into();
                 }
                 icu_provider_fs::FsDataProvider::try_new(path)

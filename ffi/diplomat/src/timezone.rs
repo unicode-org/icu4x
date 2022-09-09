@@ -29,6 +29,7 @@ pub mod ffi {
     impl ICU4XCustomTimeZone {
         /// Creates a time zone from an offset string.
         pub fn create_from_str(s: &str) -> DiplomatResult<Box<ICU4XCustomTimeZone>, ICU4XError> {
+            // TODO(#2543): Use a byte parsing API once available in CustomTimeZone (also #2520)
             if str::from_utf8(s.as_bytes()).is_err() {
                 return Err(ICU4XError::TimeZoneInvalidOffsetError).into();
             }

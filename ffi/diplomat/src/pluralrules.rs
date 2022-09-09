@@ -4,10 +4,11 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use core::str::{self, FromStr};
+    use core::str::{self};
 
     use alloc::boxed::Box;
 
+    use fixed_decimal::FixedDecimal;
     use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
@@ -134,11 +135,10 @@ pub mod ffi {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
         pub fn create(s: &str) -> DiplomatResult<ICU4XPluralOperands, ICU4XError> {
-            // #2520
-            if str::from_utf8(s.as_bytes()).is_err() {
-                return Err(ICU4XError::PluralParserError).into();
-            }
-            PluralOperands::from_str(s)
+            let s = s.as_bytes(); // #2520
+            FixedDecimal::try_from(s)
+                .as_ref()
+                .map(PluralOperands::from)
                 .map(|ops| ICU4XPluralOperands {
                     i: ops.i,
                     v: ops.v,
