@@ -91,7 +91,6 @@ macro_rules! normalization_tables_provider {
             DecompositionTables,
             $file_name,
             {
-                let mut scalars24: Vec<char> = Vec::new();
                 let scalars24 = toml_data
                     .scalars32
                     .iter()
