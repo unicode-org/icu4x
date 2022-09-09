@@ -17,10 +17,7 @@ macro_rules! overview {
                     .filter(|&v| v.normalizing_eq($compare))
                     .count();
 
-                let mut strings = vec![];
-                for value in &values {
-                    strings.push(value.to_string());
-                }
+                &values.iter().map(|v| v.to_string()).collect<Vec<String>>()
             })
         });
     };

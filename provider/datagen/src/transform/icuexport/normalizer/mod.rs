@@ -92,12 +92,15 @@ macro_rules! normalization_tables_provider {
             $file_name,
             {
                 let mut scalars24: Vec<char> = Vec::new();
-                for &u in toml_data.scalars32.iter() {
-                    scalars24.push(
+                let scalars24 = toml_data
+                    .scalars32
+                    .iter()
+                    .map(|&u| {
                         u.try_into()
-                            .map_err(|_| DataError::custom("scalars24 conversion"))?,
-                    );
-                }
+                            .map_err(|_| DataError::custom("scalars24 conversion"))
+                            .unwrap()
+                    })
+                    .collect::<Vec<char>>();
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(DecompositionTablesV1 {
@@ -141,13 +144,15 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
             {
                 let trie = CodePointTrie::<u32>::try_from(&toml_data.trie)
                     .map_err(|e| DataError::custom("trie conversion").with_display_context(&e))?;
-                let mut scalars24: Vec<char> = Vec::new();
-                for &u in toml_data.scalars32.iter() {
-                    scalars24.push(
+                let scalars24 = toml_data
+                    .scalars32
+                    .iter()
+                    .map(|&u| {
                         u.try_into()
-                            .map_err(|_| DataError::custom("scalars24 conversion"))?,
-                    );
-                }
+                            .map_err(|_| DataError::custom("scalars24 conversion"))
+                            .unwrap()
+                    })
+                    .collect::<Vec<char>>();
 
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),

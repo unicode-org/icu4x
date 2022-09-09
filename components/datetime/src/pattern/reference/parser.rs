@@ -128,9 +128,11 @@ impl<'p> Parser<'p> {
                 return Err(PatternError::UnclosedLiteral);
             }
             Segment::Literal { literal, .. } => {
-                for ch in literal.chars() {
-                    result.push(ch.into());
-                }
+                let items = literal
+                    .chars()
+                    .map(|ch| ch.into())
+                    .collect::<Vec<PatternItem>>();
+                result.extend(items);
             }
         }
         Ok(())
@@ -146,9 +148,11 @@ impl<'p> Parser<'p> {
             }
             Segment::Literal { literal, .. } => {
                 if !literal.is_empty() {
-                    for ch in literal.chars() {
-                        result.push(ch.into());
-                    }
+                    let items = literal
+                        .chars()
+                        .map(|ch| ch.into())
+                        .collect::<Vec<GenericPatternItem>>();
+                    result.extend(items);
                 }
             }
             #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
