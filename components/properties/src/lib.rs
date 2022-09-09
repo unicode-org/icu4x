@@ -5,8 +5,7 @@
 //! Definitions of [Unicode Properties] and APIs for
 //! retrieving property data in an appropriate data structure.
 //!
-//! This module is published as its own crate ([`icu_properties`](https://docs.rs/icu_properties/latest/icu_properties/))
-//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+//! This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
 //!
 //! APIs that return a [`CodePointSetData`] exist for binary properties and certain enumerated
 //! properties. See the [`sets`] module for more details.
@@ -19,7 +18,7 @@
 //! ## Property data as `CodePointSetData`s
 //!
 //! ```
-//! use icu::properties::{maps, sets, GeneralCategory};
+//! use icu_properties::{maps, sets, GeneralCategory};
 //!
 //! // A binary property as a `CodePointSetData`
 //!
@@ -45,7 +44,7 @@
 //! ## Property data as `CodePointMapData`s
 //!
 //! ```
-//! use icu::properties::{maps, Script};
+//! use icu_properties::{maps, Script};
 //!
 //! let map = maps::load_script(&icu_testdata::unstable())
 //!     .expect("The data should be valid");

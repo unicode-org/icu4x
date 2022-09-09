@@ -4,8 +4,7 @@
 
 //! \[Experimental\] Segment strings by lines, graphemes, word, and sentences.
 //!
-//! This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
-//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+//! This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
 //!
 //! This module contains segmenter implementation for the following rules.
 //!
@@ -23,7 +22,7 @@
 //! Segment a string with default options:
 //!
 //!```rust
-//! use icu_segmenter::LineBreakSegmenter;
+//! use icu::segmenter::LineBreakSegmenter;
 //!
 //! let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable())
 //!     .expect("Data exists");
@@ -44,7 +43,7 @@
 //! Segment a string:
 //!
 //!```rust
-//! use icu_segmenter::WordBreakSegmenter;
+//! use icu::segmenter::WordBreakSegmenter;
 //!
 //! let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable())
 //!     .expect("Data exists");

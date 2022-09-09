@@ -4,16 +4,15 @@
 
 //! Formatting lists in a locale-sensitive way.
 //!
-//! This module is published as its own crate ([`icu_list`](https://docs.rs/icu_list/latest/icu_list/))
-//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+//! This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
 //!
 //! # Examples
 //!
 //! ## Formatting *and* lists in Spanish
 //!
 //! ```
-//! # use icu_list::{ListFormatter, ListStyle};
-//! # use icu_locid::locale;
+//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_and_unstable(
@@ -38,8 +37,8 @@
 //! ## Formatting *or* lists in Thai
 //!
 //! ```
-//! # use icu_list::{ListFormatter, ListStyle};
-//! # use icu_locid::locale;
+//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_or_unstable(
@@ -56,8 +55,8 @@
 //! ## Formatting unit lists in English
 //!
 //! ```
-//! # use icu_list::{ListFormatter, ListStyle};
-//! # use icu_locid::locale;
+//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_unit_unstable(

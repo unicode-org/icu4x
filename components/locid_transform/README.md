@@ -2,8 +2,7 @@
 
 Canonicalization of locale identifiers based on [`CLDR`] data.
 
-This module is published as its own crate ([`icu_locid_transform`](https://docs.rs/icu_locid_transform/latest/icu_locid_transform/))
-and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
 
 It currently supports locale canonicalization based upon the canonicalization
 algorithm from [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`],
@@ -20,8 +19,8 @@ This minimize method returns a new Locale that is the result of running the
 ## Examples
 
 ```rust
-use icu_locid::Locale;
-use icu_locid_transform::{LocaleCanonicalizer, TransformResult};
+use icu::locid::Locale;
+use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
 
 let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");
@@ -34,8 +33,8 @@ assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
 ```
 
 ```rust
-use icu_locid::Locale;
-use icu_locid_transform::{LocaleExpander, TransformResult};
+use icu::locid::Locale;
+use icu::locid_transform::{LocaleExpander, TransformResult};
 
 let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");
@@ -50,8 +49,8 @@ assert_eq!(locale.to_string(), "zh-Hant-TW");
 ```
 
 ```rust
-use icu_locid::Locale;
-use icu_locid_transform::{LocaleExpander, TransformResult};
+use icu::locid::Locale;
+use icu::locid_transform::{LocaleExpander, TransformResult};
 
 let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");

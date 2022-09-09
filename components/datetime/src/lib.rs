@@ -4,8 +4,7 @@
 
 //! Formatting date and time.
 //!
-//! This module is published as its own crate ([`icu_datetime`](https://docs.rs/icu_datetime/latest/icu_datetime/))
-//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
+//! This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
 //!
 //! [`TypedDateTimeFormatter`] and [`DateTimeFormatter`] are the main types of the component. They accepts a set of arguments which
 //! allow it to collect necessary data from the [data provider], and once instantiated, can be
@@ -13,16 +12,16 @@
 //! including [`TypedDateFormatter`] & [`DateFormatter`], [`TypedZonedDateTimeFormatter`] & [`ZonedDateTimeFormatter`], [`TimeFormatter`],
 //! and [`TimeZoneFormatter`]
 //!
-//! These formatters work with types from the [`icu_calendar`] crate, like [`Date`], [`DateTime`], and [`Time`],
-//! and [`icu_timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
+//! These formatters work with types from the [`icu::calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
+//! and [`icu::timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
 //!
 //! Each instance of a date-related formatter (i.e. not [`TimeFormatter`] or [`TimeZoneFormatter`]
-//! is associated with a particular [calendar](icu_calendar::Calendar).
+//! is associated with a particular [calendar](icu::calendar::Calendar).
 //! The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
 //! will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
 //! APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
 //! the calendar at runtime, you can use [`DateTimeFormatter`] with the calendar specified in the locale, and use it with
-//! [`DateTime`](icu_calendar::DateTime)[`<AnyCalendar>`](icu_calendar::any_calendar::AnyCalendar). These formatters still require dates associated
+//! [`DateTime`](icu::calendar::DateTime)[`<AnyCalendar>`](icu::calendar::any_calendar::AnyCalendar). These formatters still require dates associated
 //! with the appropriate calendar (though they will convert ISO dates to the calendar if provided), they just do not force the
 //! programmer to pick the calendar at compile time.
 //!
@@ -100,9 +99,9 @@
 //! [data provider]: icu_provider
 //! [`ICU4X`]: ../icu/index.html
 //! [`Length`]: options::length
-//! [`DateTime`]: icu_calendar::DateTime
-//! [`Date`]: icu_calendar::Date
-//! [`Time`]: icu_calendar::types::Time
+//! [`DateTime`]: icu::calendar::DateTime
+//! [`Date`]: icu::calendar::Date
+//! [`Time`]: icu::calendar::types::Time
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
