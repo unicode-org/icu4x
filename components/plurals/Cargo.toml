@@ -47,6 +47,7 @@ icu_provider = { version = "1.0.0-beta1", path = "../../provider/core" }
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_plurals"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_json = { version = "1.0" }
+icu = { path = "../icu" }
 
 [lib]
 path = "src/lib.rs"
