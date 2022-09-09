@@ -428,19 +428,7 @@ impl<'a> Char16TrieIterator<'a> {
 
     fn value_result(&self, pos: usize) -> TrieResult {
         match self.get_value(pos) {
-            Some(value) => match self.trie.get(pos) {
-                Some(x) if (x & VALUE_IS_FINAL) == VALUE_IS_FINAL => {
-                    TrieResult::FinalValue(value)
-                }
-                Some(_) => {
-                    TrieResult::Intermediate(value)
-                }
-                None => {
-                    // Unexpected
-                    debug_assert!(false);
-                    TrieResult::NoMatch
-                }
-            }
+            Some(result) => result,
             None => {
                 // Unexpected
                 debug_assert!(false);
@@ -450,12 +438,14 @@ impl<'a> Char16TrieIterator<'a> {
     }
 
     #[inline]
-    fn get_value(&self, pos: usize) -> Option<i32> {
+    fn get_value(&self, pos: usize) -> Option<TrieResult> {
         let lead_unit = self.trie.get(pos)?;
         if lead_unit & VALUE_IS_FINAL == VALUE_IS_FINAL {
             self.read_value(pos + 1, lead_unit & 0x7fff)
+                .map(TrieResult::FinalValue)
         } else {
             self.read_node_value(pos + 1, lead_unit)
+                .map(TrieResult::Intermediate)
         }
     }
 
