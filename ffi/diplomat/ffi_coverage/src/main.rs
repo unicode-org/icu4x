@@ -165,6 +165,16 @@ lazy_static::lazy_static! {
         "icu::locid_transform::LocaleCanonicalizer::try_new_with_buffer_provider",
         "icu::locid_transform::LocaleExpander::try_new_with_any_provider",
         "icu::locid_transform::LocaleExpander::try_new_with_buffer_provider",
+        "icu::normalizer::ComposingNormalizer::try_new_nfc_with_any_provider",
+        "icu::normalizer::ComposingNormalizer::try_new_nfkc_with_any_provider",
+        "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_with_any_provider",
+        "icu::normalizer::DecomposingNormalizer::try_new_nfd_with_any_provider",
+        "icu::normalizer::DecomposingNormalizer::try_new_nfkd_with_any_provider",
+        "icu::normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider",
+        "icu::normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider",
+        "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_with_buffer_provider",
+        "icu::normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider",
+        "icu::normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider",
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
@@ -271,9 +281,22 @@ lazy_static::lazy_static! {
         "icu::locid::subtags",
         "icu::locid::LanguageIdentifier",
 
-        // We currently do support this, but diplomat panics on the doc specifier
-        // https://github.com/rust-diplomat/diplomat/pull/244
-        "icu::locid::Locale::UND",
+        // experimental
+        "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_unstable",
+
+        // can't be exposed till Diplomat has Write16
+        "icu::normalizer::ComposingNormalizer::normalize_utf16",
+        "icu::normalizer::ComposingNormalizer::normalize_utf16_to",
+        "icu::normalizer::ComposingNormalizer::is_normalized_utf16",
+        "icu::normalizer::DecomposingNormalizer::normalize_utf16",
+        "icu::normalizer::DecomposingNormalizer::normalize_utf16_to",
+        "icu::normalizer::DecomposingNormalizer::is_normalized_utf16",
+
+        // Can't be exposed till diplomat has input *and* output iterators
+        "icu::normalizer::ComposingNormalizer::normalize_iter",
+        "icu::normalizer::DecomposingNormalizer::normalize_iter",
+        "icu::normalizer::Composition",
+        "icu::normalizer::Decomposition",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
@@ -289,6 +312,7 @@ lazy_static::lazy_static! {
         "icu::plurals::provider",
         "icu::properties::provider",
         "icu::segmenter::provider",
+        "icu::normalizer::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",

@@ -29,6 +29,8 @@
 
         Construct a default undefined :cpp:class:`ICU4XLocale` "und".
 
+        See the `Rust documentation for UND <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND>`__ for more information.
+
 
     .. cpp:function:: ICU4XLocale clone() const
 

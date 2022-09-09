@@ -18,7 +18,7 @@
  * 
  * The error names are stable and can be checked against as strings in the JS API
  * 
- *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html), [2](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.DateTimeError.html), [3](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeFormatterError.html), [4](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html), [5](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html), [6](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralRulesError.html), [7](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html), [8](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html)
+ *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.Error.html), [2](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.DateTimeError.html), [3](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/enum.DateTimeFormatterError.html), [4](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/enum.ParserError.html), [5](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/enum.PropertiesError.html), [6](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralRulesError.html), [7](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/struct.DataError.html), [8](https://unicode-org.github.io/icu4x-docs/doc/icu/provider/enum.DataErrorKind.html), [9](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/enum.NormalizerError.html)
  */
 enum struct ICU4XError {
 
@@ -93,6 +93,8 @@ enum struct ICU4XError {
   TimeZoneOffsetOutOfBoundsError = 2560,
   TimeZoneInvalidOffsetError = 2561,
   TimeZoneMissingInputError = 2562,
+  NormalizerFutureExtensionError = 2816,
+  NormalizerValidationError = 2817,
 };
 
 #endif

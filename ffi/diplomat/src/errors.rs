@@ -10,6 +10,7 @@ use icu_collator::error::CollatorError;
 use icu_datetime::DateTimeFormatterError;
 use icu_decimal::FixedDecimalFormatterError;
 use icu_locid::ParserError;
+use icu_normalizer::NormalizerError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
@@ -33,6 +34,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::plurals::PluralRulesError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
+    #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
     pub enum ICU4XError {
         // general errors
         /// The error is not currently categorized as ICU4XError.
@@ -115,6 +117,10 @@ pub mod ffi {
         TimeZoneOffsetOutOfBoundsError = 0xA_00,
         TimeZoneInvalidOffsetError = 0xA_01,
         TimeZoneMissingInputError = 0xA_02,
+
+        // normalizer errors
+        NormalizerFutureExtensionError = 0xB_00,
+        NormalizerValidationError = 0xB_01,
     }
 }
 
@@ -322,6 +328,19 @@ impl From<TimeZoneError> for ICU4XError {
             TimeZoneError::OffsetOutOfBounds => ICU4XError::TimeZoneOffsetOutOfBoundsError,
             TimeZoneError::InvalidOffset => ICU4XError::TimeZoneInvalidOffsetError,
             TimeZoneError::DataProvider(err) => err.into(),
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<NormalizerError> for ICU4XError {
+    fn from(e: NormalizerError) -> Self {
+        let ret = match e {
+            NormalizerError::FutureExtension => ICU4XError::NormalizerFutureExtensionError,
+            NormalizerError::ValidationError => ICU4XError::NormalizerValidationError,
+            NormalizerError::DataProvider(err) => err.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);
