@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662681691866,
+  "lastUpdate": 1662727770366,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -50128,6 +50128,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 72,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "1979ec419dccbd5089bf20763002886bed123937",
+          "message": "Remove heapless feature from serde-json-core. (#2530)",
+          "timestamp": "2022-09-09T14:36:09+02:00",
+          "tree_id": "5619f2757115cfa6e0554dd8931ffcd0cd673112",
+          "url": "https://github.com/unicode-org/icu4x/commit/1979ec419dccbd5089bf20763002886bed123937"
+        },
+        "date": 1662727709127,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 136254,
+            "range": "± 5089",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 29793,
+            "range": "± 258",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 84102,
+            "range": "± 708",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 222,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 113,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 87,
             "range": "± 0",
             "unit": "ns/iter"
           }
