@@ -74,10 +74,10 @@
 //! the meta zone based on a certain local datetime:
 //!
 //! ```
-//! use icu_timezone::CustomTimeZone;
-//! use icu_timezone::MetaZoneCalculator;
-//! use icu_timezone::GmtOffset;
-//! use icu_calendar::DateTime;
+//! use icu::timezone::CustomTimeZone;
+//! use icu::timezone::MetaZoneCalculator;
+//! use icu::timezone::GmtOffset;
+//! use icu::calendar::DateTime;
 //! use tinystr::TinyAsciiStr;
 //!
 //! // Create a time zone for America/Chicago at GMT-6:

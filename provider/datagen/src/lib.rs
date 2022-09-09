@@ -186,8 +186,8 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// assert_eq!(
 ///     icu_datagen::keys_from_bin("target/release/my-app")?,
 ///     vec![
-///         icu_list::provider::AndListV1Marker::KEY,
-///         icu_list::provider::OrListV1Marker::KEY,
+///         icu::list::provider::AndListV1Marker::KEY,
+///         icu::list::provider::OrListV1Marker::KEY,
 ///     ],
 /// );
 /// # Ok(())
