@@ -391,7 +391,7 @@ macro_rules! impl_tinystr_subtag {
                 sink.write_str(self.as_str())
             }
             #[inline]
-            fn write_len(&self) -> writeable::LengthHint {
+            fn writeable_length_hint(&self) -> writeable::LengthHint {
                 writeable::LengthHint::exact(self.0.len())
             }
         }
@@ -561,7 +561,7 @@ macro_rules! impl_writeable_for_each_subtag_str_no_test {
             }
 
             #[inline]
-            fn write_len(&self) -> writeable::LengthHint {
+            fn writeable_length_hint(&self) -> writeable::LengthHint {
                 let mut result = writeable::LengthHint::exact(0);
                 let mut initial = true;
                 self.for_each_subtag_str::<core::convert::Infallible, _>(&mut |subtag| {

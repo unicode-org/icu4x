@@ -21,7 +21,7 @@
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
 
-    .. js:function:: get_u32(cp)
+    .. js:function:: get32(cp)
 
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 
@@ -58,7 +58,7 @@
         See the `Rust documentation for get <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/maps/struct.CodePointMapDataBorrowed.html#method.get>`__ for more information.
 
 
-    .. js:function:: get_u32(cp)
+    .. js:function:: get32(cp)
 
         Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
 

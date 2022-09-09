@@ -32,12 +32,12 @@
 //! }
 //! .build();
 //!
-//! assert_eq!(cpt.get(0), 3);
-//! assert_eq!(cpt.get(1), 4);
-//! assert_eq!(cpt.get(2), 5);
-//! assert_eq!(cpt.get(3), 6);
-//! assert_eq!(cpt.get(4), 1); // default value
-//! assert_eq!(cpt.get(u32::MAX), 2); // error value
+//! assert_eq!(cpt.get32(0), 3);
+//! assert_eq!(cpt.get32(1), 4);
+//! assert_eq!(cpt.get32(2), 5);
+//! assert_eq!(cpt.get32(3), 6);
+//! assert_eq!(cpt.get32(4), 1); // default value
+//! assert_eq!(cpt.get32(u32::MAX), 2); // error value
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html

@@ -320,7 +320,7 @@ icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_
 icu_normalizer = { version = "1.0.0-beta1", path = "../../components/normalizer", default-features = false, optional = true }
 icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals", default-features = false, optional = true }
 icu_properties = { version = "1.0.0-beta1", path = "../../components/properties", default-features = false, optional = true }
-icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", features = ["lstm"], default-features = false, optional = true }
+icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", default-features = false, optional = true }
 icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone", default-features = false, optional = true }
 
 [features]

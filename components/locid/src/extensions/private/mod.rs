@@ -146,13 +146,13 @@ impl writeable::Writeable for Private {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         if self.is_empty() {
             return writeable::LengthHint::exact(0);
         }
         let mut result = writeable::LengthHint::exact(2);
         for key in self.iter() {
-            result += writeable::Writeable::write_len(key) + 1;
+            result += writeable::Writeable::writeable_length_hint(key) + 1;
         }
         result
     }

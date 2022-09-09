@@ -41,9 +41,7 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
         ) -> DiplomatResult<Box<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
+            
             let locale = locale.to_datalocale();
 
             TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
@@ -69,9 +67,7 @@ pub mod ffi {
             time_length: ICU4XTimeLength,
             zone_options: ICU4XIsoTimeZoneOptions,
         ) -> DiplomatResult<Box<ICU4XGregorianZonedDateTimeFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
+            
             let locale = locale.to_datalocale();
 
             TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
@@ -127,9 +123,7 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
         ) -> DiplomatResult<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
+            
             let locale = locale.to_datalocale();
 
             ZonedDateTimeFormatter::try_new_unstable(
@@ -155,9 +149,7 @@ pub mod ffi {
             time_length: ICU4XTimeLength,
             zone_options: ICU4XIsoTimeZoneOptions,
         ) -> DiplomatResult<Box<ICU4XZonedDateTimeFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
+            
             let locale = locale.to_datalocale();
 
             ZonedDateTimeFormatter::try_new_unstable(

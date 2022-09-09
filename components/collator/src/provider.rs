@@ -89,7 +89,7 @@ pub struct CollationDataV1<'data> {
 
 impl<'data> CollationDataV1<'data> {
     pub(crate) fn ce32_for_char(&self, c: char) -> CollationElement32 {
-        CollationElement32::new(self.trie.get(c as u32))
+        CollationElement32::new(self.trie.get32(c as u32))
     }
     pub(crate) fn get_ce32(&'data self, index: usize) -> CollationElement32 {
         CollationElement32::new(if let Some(u) = self.ce32s.get(index) {

@@ -30,7 +30,7 @@ export class ICU4XCodePointMapData16 {
 
    * Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
    */
-  get_u32(cp: u32): u16;
+  get32(cp: u32): u16;
 
   /**
 

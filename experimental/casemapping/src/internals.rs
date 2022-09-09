@@ -437,7 +437,7 @@ impl<'data> CaseMappingInternals<'data> {
     }
 
     fn lookup_data(&self, c: char) -> CaseMappingData {
-        self.trie.get(c as u32)
+        self.trie.get32(c as u32)
     }
 
     fn simple_helper(&self, c: char, kind: MappingKind) -> char {
