@@ -45,5 +45,5 @@
 
         Constructs an empty ``StaticDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`.
 
-        See the `Rust documentation for StaticDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more information.
+        See the `Rust documentation for EmptyDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html>`__ for more information.
 

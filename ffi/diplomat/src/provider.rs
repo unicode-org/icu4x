@@ -139,7 +139,12 @@ pub mod ffi {
         }
 
         /// Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
-        #[diplomat::rust_link(icu_provider_blob::StaticDataProvider, Struct)]
+        #[diplomat::rust_link(icu_provider_adapters::empty::EmptyDataProvider, Struct)]
+        #[diplomat::rust_link(
+            icu_provider_adapters::empty::EmptyDataProvider::new,
+            FnInStruct,
+            hidden
+        )]
         pub fn create_empty() -> Box<ICU4XDataProvider> {
             #[cfg(not(any(feature = "any_provider", feature = "buffer_provider")))]
             panic!("Requires feature 'any_provider' or 'buffer_provider'");

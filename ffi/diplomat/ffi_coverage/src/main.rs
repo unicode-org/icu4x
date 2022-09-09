@@ -114,9 +114,23 @@ lazy_static::lazy_static! {
         "EncodeAsVarULE",
         "IsCovariant",
 
-        // provider stuff
+        // provider stuff not relevant to FFI
         "DataMarker",
         "KeyedDataMarker",
+        "AsDowncastingAnyProvider",
+        "AsDeserializingBufferProvider",
+        "AsDynamicDataProviderAnyMarkerWrap",
+        "IterableDynamicDataProvider",
+        "IterableDataProvider",
+        "DataConverter",
+        "Filterable",
+
+        // The four main data provider traits should be covered if the enum or struct
+        // implementing them is covered
+        "DataProvider",
+        "DynamicDataProvider",
+        "BufferProvider",
+        "AnyProvider",
 
         // internal trait , all methods replicated on Date
         "Calendar",
@@ -274,6 +288,9 @@ lazy_static::lazy_static! {
         // We currently do support this, but diplomat panics on the doc specifier
         // https://github.com/rust-diplomat/diplomat/pull/244
         "icu::locid::Locale::UND",
+
+        // Need to think about how to expose DataErrorKind for this to work
+        "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind",
 
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
