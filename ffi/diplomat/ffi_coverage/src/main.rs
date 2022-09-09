@@ -322,6 +322,11 @@ lazy_static::lazy_static! {
         // Need to think about how to expose DataErrorKind for this to work
         "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind",
 
+        // Don't want parts for 1.0
+        "icu::list::parts",
+        // Formatting wrappers, may be supported in the future
+        "icu::list::FormattedList",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -337,6 +342,7 @@ lazy_static::lazy_static! {
         "icu::properties::provider",
         "icu::segmenter::provider",
         "icu::normalizer::provider",
+        "icu::list::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
