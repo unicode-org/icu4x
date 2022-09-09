@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662766380538,
+  "lastUpdate": 1662766529654,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -14975,6 +14975,126 @@ window.BENCHMARK_DATA = {
             "name": "uniset/overview",
             "value": 50018612,
             "range": "± 2124055",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fe331719cbdb2b050b4f67227103f6b0d013d560",
+          "message": "Sensibly handle invalid strings across FFI (#2534)\n\n* Move identifier/basic parsing FFI APIs over to using bytes\r\n\r\n* Fix collator APIs\r\n\r\n* Refactor handle_complex_language to be shareable\r\n\r\n* use in segmenter APIs\r\n\r\n* Update segmenter ffi\r\n\r\n* Use Utf8CharIndices",
+          "timestamp": "2022-09-09T23:21:26Z",
+          "tree_id": "c5f4f4e3f96467018779b5a543d19777d0575c48",
+          "url": "https://github.com/unicode-org/icu4x/commit/fe331719cbdb2b050b4f67227103f6b0d013d560"
+        },
+        "date": 1662766464284,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 842,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 563,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 594,
+            "range": "± 61",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 684,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 1238,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1327,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 578,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 586,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 688,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 670,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 1340,
+            "range": "± 89",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 46387629,
+            "range": "± 3678549",
             "unit": "ns/iter"
           },
           {
