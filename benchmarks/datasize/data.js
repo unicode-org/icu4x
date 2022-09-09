@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662727111682,
+  "lastUpdate": 1662746499857,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26783,6 +26783,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/1979ec419dccbd5089bf20763002886bed123937"
         },
         "date": 1662727059263,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "79da612943fd8d18b06836c390b97b9e4c226599",
+          "message": "Filter out more data provider traits and fix a rust link (#2538)",
+          "timestamp": "2022-09-09T10:59:27-07:00",
+          "tree_id": "ebed317d24c3ab25cbd04f755fe55d50a3961d65",
+          "url": "https://github.com/unicode-org/icu4x/commit/79da612943fd8d18b06836c390b97b9e4c226599"
+        },
+        "date": 1662746440028,
         "tool": "ndjson",
         "benches": [
           {
