@@ -10,10 +10,15 @@ use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
+use utf8_iter::Utf8CharIndices;
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
 pub type GraphemeClusterBreakIteratorUtf8<'l, 's> =
     RuleBreakIterator<'l, 's, GraphemeClusterBreakTypeUtf8>;
+
+/// Grapheme cluster break iterator for a potentially invalid UTF-8 string.
+pub type GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, GraphemeClusterBreakTypePotentiallyIllFormedUtf8>;
 
 /// Grapheme cluster break iterator for a Latin-1 (8-bit) string.
 pub type GraphemeClusterBreakIteratorLatin1<'l, 's> =
@@ -95,6 +100,23 @@ impl GraphemeClusterBreakSegmenter {
         }
     }
 
+    /// Create a grapheme cluster break iterator for a potentially ill-formed UTF8 string
+    ///
+    /// Invalid characters are treated as REPLACEMENT CHARACTER
+    pub fn segment_utf8<'l, 's>(
+        &'l self,
+        input: &'s [u8],
+    ) -> GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8 {
+            iter: Utf8CharIndices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: self.payload.get(),
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
+        }
+    }
     /// Create a grapheme cluster break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(
         &'l self,
@@ -132,6 +154,24 @@ pub struct GraphemeClusterBreakTypeUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
+    type CharType = char;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.current_pos_data.unwrap().1.len_utf8()
+    }
+
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
+        panic!("not reachable")
+    }
+}
+
+pub struct GraphemeClusterBreakTypePotentiallyIllFormedUtf8;
+
+impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypePotentiallyIllFormedUtf8 {
+    type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {

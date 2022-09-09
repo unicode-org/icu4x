@@ -55,7 +55,8 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_bcp47, FnInEnum)]
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_bcp47_string, FnInEnum, hidden)]
         pub fn from_bcp47(s: &str) -> DiplomatResult<ICU4XAnyCalendarKind, ICU4XError> {
-            AnyCalendarKind::from_bcp47_string(s)
+            let s = s.as_bytes(); // #2520
+            AnyCalendarKind::from_bcp47_bytes(s)
                 .map(Into::into)
                 .ok_or(ICU4XError::DateTimeUnknownAnyCalendarKindError)
                 .into()

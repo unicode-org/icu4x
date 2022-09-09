@@ -15,27 +15,25 @@
 
     .. js:function:: compare(left, right)
 
-        Compare guaranteed well-formed UTF-8 strings.
-
-        Note: passing ill-formed UTF-8 strings is undefined behavior (and may be memory-unsafe to do so, too).
-
-        See the `Rust documentation for compare <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare>`__ for more information.
-
-
-    .. js:function:: compare_utf8(left, right)
-
         Compare potentially ill-formed UTF-8 strings.
+
+        Ill-formed input is compared as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
         See the `Rust documentation for compare_utf8 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8>`__ for more information.
 
 
-        - Note: ``left`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+    .. js:function:: compare_valid_utf8(left, right)
 
-        - Note: ``right`` should be an ArrayBuffer or TypedArray corresponding to the slice type expected by Rust.
+        Compare guaranteed well-formed UTF-8 strings.
+
+        Note: In C++, passing ill-formed UTF-8 strings is undefined behavior (and may be memory-unsafe to do so, too).
+
+        See the `Rust documentation for compare <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare>`__ for more information.
+
 
     .. js:function:: compare_utf16(left, right)
 
-        Compare potentially ill-formed UTF-16 strings.
+        Compare potentially ill-formed UTF-16 strings, with unpaired surrogates compared as REPLACEMENT CHARACTER.
 
         See the `Rust documentation for compare_utf16 <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16>`__ for more information.
 

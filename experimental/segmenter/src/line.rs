@@ -15,6 +15,7 @@ use core::char;
 use core::str::CharIndices;
 use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
+use utf8_iter::Utf8CharIndices;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line breaker.
@@ -117,6 +118,10 @@ impl Default for LineBreakOptions {
 
 /// Line break iterator for an `str` (a UTF-8 string).
 pub type LineBreakIteratorUtf8<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeUtf8>;
+
+/// Line break iterator for a potentially invalid UTF-8 string
+pub type LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    LineBreakIterator<'l, 's, LineBreakTypePotentiallyIllFormedUtf8>;
 
 /// Line break iterator for a Latin-1 (8-bit) string.
 pub type LineBreakIteratorLatin1<'l, 's> = LineBreakIterator<'l, 's, LineBreakTypeLatin1>;
@@ -301,7 +306,24 @@ impl LineBreakSegmenter {
             lstm: &self.lstm,
         }
     }
-
+    /// Create a line break iterator for a potentially ill-formed UTF8 string
+    ///
+    /// Invalid characters are treated as REPLACEMENT CHARACTER
+    pub fn segment_utf8<'l, 's>(
+        &'l self,
+        input: &'s [u8],
+    ) -> LineBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        LineBreakIterator {
+            iter: Utf8CharIndices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: self.payload.get(),
+            options: &self.options,
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
+        }
+    }
     /// Create a line break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> LineBreakIteratorLatin1<'l, 's> {
         LineBreakIterator {
@@ -782,44 +804,84 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
         iter: &mut LineBreakIterator<'l, 's, Self>,
         left_codepoint: char,
     ) -> Option<usize> {
-        // word segmenter doesn't define break rules for some languages such as Thai.
-        let start_iter = iter.iter.clone();
-        let start_point = iter.current_pos_data;
-        let mut s = String::new();
-        s.push(left_codepoint);
-        loop {
-            s.push(iter.current_pos_data.unwrap().1);
-            iter.current_pos_data = iter.iter.next();
-            if iter.current_pos_data.is_none() {
-                break;
-            }
-            if !Self::use_complex_breaking(iter, iter.current_pos_data.unwrap().1) {
-                break;
-            }
-        }
-
-        // Restore iterator to move to head of complex string
-        iter.iter = start_iter;
-        iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
-        iter.result_cache = breaks;
-        let mut i = iter.current_pos_data.unwrap().1.len_utf8();
-        loop {
-            if i == *iter.result_cache.first().unwrap() {
-                // Re-calculate breaking offset
-                iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-                return Some(iter.current_pos_data.unwrap().0);
-            }
-            iter.current_pos_data = iter.iter.next();
-            if iter.current_pos_data.is_none() {
-                iter.result_cache.clear();
-                return Some(iter.len);
-            }
-            i += Self::get_current_position_character_len(iter);
-        }
+        handle_complex_language_utf8(iter, left_codepoint)
     }
 }
+pub struct LineBreakTypePotentiallyIllFormedUtf8;
 
+impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyIllFormedUtf8 {
+    type IterAttr = Utf8CharIndices<'s>;
+    type CharType = char;
+
+    fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {
+        get_linebreak_property_with_rule(
+            &iterator.data.property_table,
+            c,
+            iterator.options.line_break_rule,
+            iterator.options.word_break_rule,
+        )
+    }
+
+    #[inline]
+    fn use_complex_breaking(iterator: &LineBreakIterator<Self>, c: char) -> bool {
+        use_complex_breaking_utf32(&iterator.data.property_table, c as u32)
+    }
+
+    fn get_current_position_character_len(iterator: &LineBreakIterator<Self>) -> usize {
+        iterator.current_pos_data.unwrap().1.len_utf8()
+    }
+
+    fn handle_complex_language(
+        iter: &mut LineBreakIterator<'l, 's, Self>,
+        left_codepoint: char,
+    ) -> Option<usize> {
+        handle_complex_language_utf8(iter, left_codepoint)
+    }
+}
+/// handle_complex_language impl for UTF8 iterators
+fn handle_complex_language_utf8<'l, 's, T>(
+    iter: &mut LineBreakIterator<'l, 's, T>,
+    left_codepoint: char,
+) -> Option<usize>
+where
+    T: LineBreakType<'l, 's, CharType = char>,
+{
+    // word segmenter doesn't define break rules for some languages such as Thai.
+    let start_iter = iter.iter.clone();
+    let start_point = iter.current_pos_data;
+    let mut s = String::new();
+    s.push(left_codepoint);
+    loop {
+        s.push(iter.current_pos_data.unwrap().1);
+        iter.current_pos_data = iter.iter.next();
+        if iter.current_pos_data.is_none() {
+            break;
+        }
+        if !T::use_complex_breaking(iter, iter.current_pos_data.unwrap().1) {
+            break;
+        }
+    }
+
+    // Restore iterator to move to head of complex string
+    iter.iter = start_iter;
+    iter.current_pos_data = start_point;
+    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
+    iter.result_cache = breaks;
+    let mut i = iter.current_pos_data.unwrap().1.len_utf8();
+    loop {
+        if i == *iter.result_cache.first().unwrap() {
+            // Re-calculate breaking offset
+            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            return Some(iter.current_pos_data.unwrap().0);
+        }
+        iter.current_pos_data = iter.iter.next();
+        if iter.current_pos_data.is_none() {
+            iter.result_cache.clear();
+            return Some(iter.len);
+        }
+        i += T::get_current_position_character_len(iter);
+    }
+}
 pub struct LineBreakTypeLatin1;
 
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeLatin1 {

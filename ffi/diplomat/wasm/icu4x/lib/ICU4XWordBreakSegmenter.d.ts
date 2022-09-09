@@ -24,9 +24,9 @@ export class ICU4XWordBreakSegmenter {
 
   /**
 
-   * Segments a UTF-8 string.
+   * Segments a (potentially ill-formed) UTF-8 string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_str Rust documentation for `segment_str`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.WordBreakSegmenter.html#method.segment_utf8 Rust documentation for `segment_utf8`} for more information.
    */
   segment_utf8(input: string): ICU4XWordBreakIteratorUtf8;
 

@@ -57,10 +57,10 @@ export class ICU4XCollator {
     return diplomat_out;
   }
 
-  compare_utf8(arg_left, arg_right) {
-    const buf_arg_left = diplomatRuntime.DiplomatBuf.slice(wasm, arg_left, 1);
-    const buf_arg_right = diplomatRuntime.DiplomatBuf.slice(wasm, arg_right, 1);
-    const diplomat_out = ICU4XOrdering_rust_to_js[wasm.ICU4XCollator_compare_utf8(this.underlying, buf_arg_left.ptr, buf_arg_left.size, buf_arg_right.ptr, buf_arg_right.size)];
+  compare_valid_utf8(arg_left, arg_right) {
+    const buf_arg_left = diplomatRuntime.DiplomatBuf.str(wasm, arg_left);
+    const buf_arg_right = diplomatRuntime.DiplomatBuf.str(wasm, arg_right);
+    const diplomat_out = ICU4XOrdering_rust_to_js[wasm.ICU4XCollator_compare_valid_utf8(this.underlying, buf_arg_left.ptr, buf_arg_left.size, buf_arg_right.ptr, buf_arg_right.size)];
     buf_arg_left.free();
     buf_arg_right.free();
     return diplomat_out;

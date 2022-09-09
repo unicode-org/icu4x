@@ -13,10 +13,14 @@ use crate::complex::*;
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
+use utf8_iter::Utf8CharIndices;
 
 /// Word break iterator for an `str` (a UTF-8 string).
 pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
 
+/// Word break iterator for a potentially invalid UTF-8 string
+pub type WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, WordBreakTypePotentiallyIllFormedUtf8>;
 /// Word break iterator for a Latin-1 (8-bit) string.
 pub type WordBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeLatin1>;
 
@@ -181,6 +185,24 @@ impl WordBreakSegmenter {
         }
     }
 
+    /// Create a word break iterator for a potentially ill-formed UTF8 string
+    ///
+    /// Invalid characters are treated as REPLACEMENT CHARACTER
+    pub fn segment_utf8<'l, 's>(
+        &'l self,
+        input: &'s [u8],
+    ) -> WordBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        WordBreakIteratorPotentiallyIllFormedUtf8 {
+            iter: Utf8CharIndices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: self.payload.get(),
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
+        }
+    }
+
     /// Create a word break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(&'l self, input: &'s [u8]) -> WordBreakIteratorLatin1<'l, 's> {
         WordBreakIteratorLatin1 {
@@ -222,41 +244,68 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
         iter: &mut RuleBreakIterator<'l, 's, Self>,
         left_codepoint: Self::CharType,
     ) -> Option<usize> {
-        // word segmenter doesn't define break rules for some languages such as Thai.
-        let start_iter = iter.iter.clone();
-        let start_point = iter.current_pos_data;
-        let mut s = String::new();
-        s.push(left_codepoint);
-        loop {
-            s.push(iter.current_pos_data.unwrap().1);
-            iter.current_pos_data = iter.iter.next();
-            if iter.current_pos_data.is_none() {
-                break;
-            }
-            if iter.get_current_break_property() != iter.data.complex_property {
-                break;
-            }
-        }
+        handle_complex_language_utf8(iter, left_codepoint)
+    }
+}
+pub struct WordBreakTypePotentiallyIllFormedUtf8;
 
-        // Restore iterator to move to head of complex string
-        iter.iter = start_iter;
-        iter.current_pos_data = start_point;
-        let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
-        iter.result_cache = breaks;
-        let mut i = iter.current_pos_data.unwrap().1.len_utf8();
-        loop {
-            if i == *iter.result_cache.first().unwrap() {
-                // Re-calculate breaking offset
-                iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
-                return Some(iter.current_pos_data.unwrap().0);
-            }
-            iter.current_pos_data = iter.iter.next();
-            if iter.current_pos_data.is_none() {
-                iter.result_cache.clear();
-                return Some(iter.len);
-            }
-            i += Self::get_current_position_character_len(iter);
+impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyIllFormedUtf8 {
+    type IterAttr = Utf8CharIndices<'s>;
+    type CharType = char;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.current_pos_data.unwrap().1.len_utf8()
+    }
+
+    fn handle_complex_language(
+        iter: &mut RuleBreakIterator<'l, 's, Self>,
+        left_codepoint: Self::CharType,
+    ) -> Option<usize> {
+        handle_complex_language_utf8(iter, left_codepoint)
+    }
+}
+/// handle_complex_language impl for UTF8 iterators
+fn handle_complex_language_utf8<'l, 's, T>(
+    iter: &mut RuleBreakIterator<'l, 's, T>,
+    left_codepoint: T::CharType,
+) -> Option<usize>
+where
+    T: RuleBreakType<'l, 's, CharType = char>,
+{
+    // word segmenter doesn't define break rules for some languages such as Thai.
+    let start_iter = iter.iter.clone();
+    let start_point = iter.current_pos_data;
+    let mut s = String::new();
+    s.push(left_codepoint);
+    loop {
+        s.push(iter.current_pos_data.unwrap().1);
+        iter.current_pos_data = iter.iter.next();
+        if iter.current_pos_data.is_none() {
+            break;
         }
+        if iter.get_current_break_property() != iter.data.complex_property {
+            break;
+        }
+    }
+
+    // Restore iterator to move to head of complex string
+    iter.iter = start_iter;
+    iter.current_pos_data = start_point;
+    let breaks = complex_language_segment_str(iter.dictionary, iter.lstm, &s);
+    iter.result_cache = breaks;
+    let mut i = iter.current_pos_data.unwrap().1.len_utf8();
+    loop {
+        if i == *iter.result_cache.first().unwrap() {
+            // Re-calculate breaking offset
+            iter.result_cache = iter.result_cache.iter().skip(1).map(|r| r - i).collect();
+            return Some(iter.current_pos_data.unwrap().0);
+        }
+        iter.current_pos_data = iter.iter.next();
+        if iter.current_pos_data.is_none() {
+            iter.result_cache.clear();
+            return Some(iter.len);
+        }
+        i += T::get_current_position_character_len(iter);
     }
 }
 

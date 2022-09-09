@@ -73,10 +73,18 @@ pub mod ffi {
                 feature = "provider_fs",
                 not(any(target_arch = "wasm32", target_os = "none"))
             ))]
-            icu_provider_fs::FsDataProvider::try_new(path)
-                .map_err(Into::into)
-                .map(convert_buffer_provider)
-                .into()
+            {
+                // #2520
+                // In the future we can start using OsString APIs to support non-utf8 paths
+                if let Err(e) = core::str::from_utf8(path.as_bytes()) {
+                    crate::errors::log_conversion(&e, ICU4XError::DataIoError);
+                    return Err(ICU4XError::DataIoError).into();
+                }
+                icu_provider_fs::FsDataProvider::try_new(path)
+                    .map_err(Into::into)
+                    .map(convert_buffer_provider)
+                    .into()
+            }
         }
 
         /// Constructs a testdata provider and returns it as an [`ICU4XDataProvider`].

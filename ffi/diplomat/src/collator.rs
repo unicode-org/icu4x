@@ -107,22 +107,29 @@ pub mod ffi {
                 .into()
         }
 
-        /// Compare guaranteed well-formed UTF-8 strings.
-        ///
-        /// Note: passing ill-formed UTF-8 strings is undefined behavior
-        /// (and may be memory-unsafe to do so, too).
-        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
-        pub fn compare(&self, left: &str, right: &str) -> ICU4XOrdering {
-            self.0.compare(left, right).into()
-        }
-
         /// Compare potentially ill-formed UTF-8 strings.
+        ///
+        /// Ill-formed input is compared
+        /// as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
-        pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> ICU4XOrdering {
+        pub fn compare(&self, left: &str, right: &str) -> ICU4XOrdering {
+            let left = left.as_bytes(); // #2520
+            let right = right.as_bytes(); // #2520
             self.0.compare_utf8(left, right).into()
         }
 
-        /// Compare potentially ill-formed UTF-16 strings.
+        /// Compare guaranteed well-formed UTF-8 strings.
+        ///
+        /// Note: In C++, passing ill-formed UTF-8 strings is undefined behavior
+        /// (and may be memory-unsafe to do so, too).
+        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
+        pub fn compare_valid_utf8(&self, left: &str, right: &str) -> ICU4XOrdering {
+            self.0.compare(left, right).into()
+        }
+
+        /// Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
+        /// compared as REPLACEMENT CHARACTER.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
         pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> ICU4XOrdering {
             self.0.compare_utf16(left, right).into()
