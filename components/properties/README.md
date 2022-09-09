@@ -17,7 +17,7 @@ APIs that return a [`CodePointMapData`] exist for certain enumerated properties.
 ### Property data as `CodePointSetData`s
 
 ```rust
-use icu_properties::{maps, sets, GeneralCategory};
+use icu::properties::{maps, sets, GeneralCategory};
 
 // A binary property as a `CodePointSetData`
 
@@ -43,7 +43,7 @@ assert!(!line_sep.contains32(0x2029));
 ### Property data as `CodePointMapData`s
 
 ```rust
-use icu_properties::{maps, Script};
+use icu::properties::{maps, Script};
 
 let map = maps::load_script(&icu_testdata::unstable())
     .expect("The data should be valid");
