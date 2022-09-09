@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use zerofrom::ZeroFrom;
-use zerovec::ule::AsULE;
-use zerovec::ZeroVec;
+use zerovec::{ZeroVec, ZeroSlice};
 
 // Match-node lead unit values, after masking off intermediate-value bits:
 
@@ -94,7 +93,7 @@ impl<'data> Char16Trie<'data> {
 
     /// Returns a new [`Char16TrieIterator`] backed by borrowed data from the `trie` data
     pub fn iter(&self) -> Char16TrieIterator {
-        Char16TrieIterator::new(self.data.as_ule_slice())
+        Char16TrieIterator::new(&self.data)
     }
 }
 
@@ -102,7 +101,7 @@ impl<'data> Char16Trie<'data> {
 #[derive(Clone)]
 pub struct Char16TrieIterator<'a> {
     /// A reference to the Char16Trie data to iterate over.
-    trie: &'a [<u16 as zerovec::ule::AsULE>::ULE],
+    trie: &'a ZeroSlice<u16>,
     /// Index of next trie unit to read, or None if there are no more matches.
     pos: Option<usize>,
     /// Remaining length of a linear-match node, minus 1, or None if not in
@@ -148,7 +147,7 @@ fn u16_tail(supplementary: i32) -> u16 {
 
 impl<'a> Char16TrieIterator<'a> {
     /// Returns a new [`Char16TrieIterator`] backed by borrowed data for the `trie` array
-    pub fn new(trie: &'a [<u16 as zerovec::ule::AsULE>::ULE]) -> Self {
+    pub fn new(trie: &'a ZeroSlice<u16>) -> Self {
         Self {
             trie,
             pos: Some(0),
@@ -270,10 +269,10 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
-    #[allow(clippy::indexing_slicing)] // TODO(#1440) This potentially panics
+    #[allow(clippy::unwrap_used)] // TODO(#1440) This potentially panics
     fn get(&self, pos: usize) -> u16 {
         // TODO(#1440) This potentially panics
-        u16::from_unaligned(self.trie[pos])
+        self.trie.get(pos).unwrap()
     }
 
     fn branch_next(&mut self, pos: usize, length: usize, in_unit: u16) -> TrieResult {
