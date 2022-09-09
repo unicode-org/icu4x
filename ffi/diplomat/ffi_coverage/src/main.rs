@@ -114,9 +114,20 @@ lazy_static::lazy_static! {
         "EncodeAsVarULE",
         "IsCovariant",
 
-        // provider stuff
+        // provider stuff not relevant to FFI
         "DataMarker",
         "KeyedDataMarker",
+        "AsDowncastingAnyProvider",
+        "AsDeserializingBufferProvider",
+        "AsDynamicDataProviderAnyMarkerWrap",
+        "DataConverter",
+        "Filterable",
+
+        // The data provider traits should be covered if the struct implementing them is covered
+        "DataProvider",
+        "DynamicDataProvider",
+        "BufferProvider",
+        "AnyProvider",
 
         // internal trait , all methods replicated on Date
         "Calendar",
