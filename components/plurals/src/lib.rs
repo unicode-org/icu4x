@@ -248,15 +248,7 @@ impl PluralCategory {
 
     /// Returns the PluralCategory coresponding to given TR35 string.
     pub fn from_tr35_string(category: &str) -> Option<PluralCategory> {
-        match category {
-            "zero" => Some(PluralCategory::Zero),
-            "one" => Some(PluralCategory::One),
-            "two" => Some(PluralCategory::Two),
-            "few" => Some(PluralCategory::Few),
-            "many" => Some(PluralCategory::Many),
-            "other" => Some(PluralCategory::Other),
-            _ => None,
-        }
+        Self::from_tr35_bytes(category.as_bytes())
     }
     /// Returns the PluralCategory coresponding to given TR35 string as bytes
     pub fn from_tr35_bytes(category: &[u8]) -> Option<PluralCategory> {
