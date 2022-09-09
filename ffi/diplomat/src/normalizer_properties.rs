@@ -78,9 +78,9 @@ pub mod ffi {
                 .map_err(Into::into)
                 .into()
         }
+
         /// Performs canonical composition (including Hangul) on a pair of characters
         /// or returns NUL if these characters don’t compose. Composition exclusions are taken into account.
-
         #[diplomat::rust_link(
             icu::normalizer::properties::CanonicalComposition::compose,
             FnInStruct

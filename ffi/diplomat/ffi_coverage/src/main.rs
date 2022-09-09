@@ -298,7 +298,8 @@ lazy_static::lazy_static! {
         "icu::normalizer::DecomposingNormalizer::normalize_utf16_to",
         "icu::normalizer::DecomposingNormalizer::is_normalized_utf16",
 
-        // Can't be exposed till diplomat has input *and* output iterators
+        // Can't be exposed till diplomat has input iterators, as well as
+        // safety for borrowing input iterators into return types
         "icu::normalizer::ComposingNormalizer::normalize_iter",
         "icu::normalizer::DecomposingNormalizer::normalize_iter",
         "icu::normalizer::Composition",
