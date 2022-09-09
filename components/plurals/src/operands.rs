@@ -5,7 +5,7 @@
 use core::convert::TryFrom;
 use core::isize;
 use core::num::ParseIntError;
-use core::str::{self, FromStr};
+use core::str::FromStr;
 use displaydoc::Display;
 use fixed_decimal::FixedDecimal;
 
@@ -139,19 +139,8 @@ impl From<std::io::Error> for OperandsError {
     }
 }
 
-/// str::split_once but for bytes
-fn split_once(slice: &[u8], split: u8) -> Option<(&[u8], &[u8])> {
-    let mut splits = slice.splitn(2, |s| *s == split);
-    if let (Some(first), Some(second)) = (splits.next(), splits.next()) {
-        Some((first, second))
-    } else {
-        None
-    }
-}
-
-fn get_exponent(input: &[u8]) -> Result<(&[u8], usize), OperandsError> {
-    if let Some((base, exponent)) = split_once(input, b'e') {
-        let exponent = str::from_utf8(exponent).map_err(|_| OperandsError::Invalid)?;
+fn get_exponent(input: &str) -> Result<(&str, usize), OperandsError> {
+    if let Some((base, exponent)) = input.split_once('e') {
         Ok((base, exponent.parse()?))
     } else {
         Ok((input, 0))
@@ -162,19 +151,11 @@ impl FromStr for PluralOperands {
     type Err = OperandsError;
 
     fn from_str(input: &str) -> Result<Self, Self::Err> {
-        Self::try_from(input.as_bytes())
-    }
-}
-
-impl TryFrom<&[u8]> for PluralOperands {
-    type Error = OperandsError;
-
-    fn try_from(input: &[u8]) -> Result<Self, Self::Error> {
         if input.is_empty() {
             return Err(OperandsError::Empty);
         }
 
-        let abs_str = input.strip_prefix(&[b'-'; 1]).unwrap_or(input);
+        let abs_str = input.strip_prefix('-').unwrap_or(input);
 
         let (
             integer_digits,
@@ -183,11 +164,8 @@ impl TryFrom<&[u8]> for PluralOperands {
             fraction_digits0,
             fraction_digits,
             exponent,
-        ) = if let Some((int_str, rest)) = split_once(abs_str, b'.') {
+        ) = if let Some((int_str, rest)) = abs_str.split_once('.') {
             let (dec_str, exponent) = get_exponent(rest)?;
-
-            let int_str = str::from_utf8(int_str).map_err(|_| OperandsError::Invalid)?;
-            let dec_str = str::from_utf8(dec_str).map_err(|_| OperandsError::Invalid)?;
 
             let integer_digits = u64::from_str(int_str)?;
 
@@ -214,7 +192,6 @@ impl TryFrom<&[u8]> for PluralOperands {
             )
         } else {
             let (abs_str, exponent) = get_exponent(abs_str)?;
-            let abs_str = str::from_utf8(abs_str).map_err(|_| OperandsError::Invalid)?;
             let integer_digits = u64::from_str(abs_str)?;
             (integer_digits, 0, 0, 0, 0, exponent)
         };
