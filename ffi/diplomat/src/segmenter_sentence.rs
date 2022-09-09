@@ -65,9 +65,7 @@ pub mod ffi {
             input: &'a str,
         ) -> Box<ICU4XSentenceBreakIteratorUtf8<'a>> {
             let input = input.as_bytes(); // #2520
-            Box::new(ICU4XSentenceBreakIteratorUtf8(
-                self.0.segment_utf8(input),
-            ))
+            Box::new(ICU4XSentenceBreakIteratorUtf8(self.0.segment_utf8(input)))
         }
 
         /// Segments a UTF-16 string.
