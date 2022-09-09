@@ -195,6 +195,8 @@ lazy_static::lazy_static! {
         "icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider",
         "icu::normalizer::properties::CanonicalComposition::try_new_with_buffer_provider",
         "icu::normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider",
+        "icu::timezone::MetaZoneCalculator::try_new_with_any_provider",
+        "icu::timezone::MetaZoneCalculator::try_new_with_buffer_provider",
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
@@ -256,6 +258,10 @@ lazy_static::lazy_static! {
         // experimental
         "icu::datetime::options::components",
         "icu::datetime::options::preferences",
+        "icu::datetime::DateTimeFormatter::try_new_experimental_unstable",
+        "icu::datetime::TypedDateTimeFormatter::try_new_experimental_unstable",
+        "icu::datetime::TypedZonedDateTimeFormatter::try_new_experimental_unstable",
+        "icu::datetime::ZonedDateTimeFormatter::try_new_experimental_unstable",
 
         // Not necessary for now
         "icu::calendar::Date::day_of_year_info",
@@ -337,11 +343,13 @@ lazy_static::lazy_static! {
         "icu::properties::provider",
         "icu::segmenter::provider",
         "icu::normalizer::provider",
+        "icu::timezone::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::datetime::time_zone::TimeZoneFormatter",
+        "icu::datetime::options::DateTimeFormatterOptions",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -369,6 +377,11 @@ lazy_static::lazy_static! {
 
         // Rusty input trait
         "icu::datetime::input",
+
+        // Options bags which are expanded in FFI to regular functions
+        "icu::datetime::DateTimeFormatterOptions",
+        "icu::datetime::time_zone::TimeZoneFormatterOptions",
+        "icu::datetime::options::length::Bag",
 
         // FFI largely deals with primitives rather than Rust's nice wrapper types
         // (which are hard to do in a zero-cost way over FFI)
