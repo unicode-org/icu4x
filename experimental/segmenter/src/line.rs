@@ -22,6 +22,13 @@ use icu_provider::prelude::*;
 /// Each enum value has the same meaning with respect to the `line-break`
 /// property values in the CSS Text spec. See the details in
 /// <https://drafts.csswg.org/css-text-3/#line-break-property>.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum LineBreakRule {
     /// Breaks text using the least restrictive set of line-breaking rules.
@@ -50,6 +57,13 @@ pub enum LineBreakRule {
 /// Each enum value has the same meaning with respect to the `word-break`
 /// property values in the CSS Text spec. See the details in
 /// <https://drafts.csswg.org/css-text-3/#word-break-property>
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum WordBreakRule {
     /// Words break according to their customary rules. See the details in
@@ -66,6 +80,13 @@ pub enum WordBreakRule {
 }
 
 /// Options to tailor line breaking behavior, such as for CSS.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
 #[non_exhaustive]
 #[derive(Clone, PartialEq, Eq)]
 pub struct LineBreakOptions {
@@ -105,6 +126,13 @@ pub type LineBreakIteratorUtf16<'l, 's> = LineBreakIterator<'l, 's, LineBreakTyp
 
 /// Supports loading line break data, and creating line break iterators for different string
 /// encodings.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
 ///
 /// # Examples
 ///
@@ -529,6 +557,13 @@ pub trait LineBreakType<'l, 's> {
 ///
 /// - `'l` = lifetime of the [`LineBreakSegmenter`] object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
 pub struct LineBreakIterator<'l, 's, Y: LineBreakType<'l, 's> + ?Sized> {
     iter: Y::IterAttr,
     len: usize,
