@@ -289,6 +289,9 @@ lazy_static::lazy_static! {
         // https://github.com/rust-diplomat/diplomat/pull/244
         "icu::locid::Locale::UND",
 
+        // Need to think about how to expose DataErrorKind for this to work
+        "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind#FnInStruct",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes

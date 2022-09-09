@@ -239,7 +239,6 @@ icu_provider_adapters::any_payload::AnyPayloadProvider::new_default#FnInStruct
 icu_provider_adapters::any_payload::AnyPayloadProvider::new_owned#FnInStruct
 icu_provider_adapters::any_payload::AnyPayloadProvider::new_static#FnInStruct
 icu_provider_adapters::either::EitherProvider#Enum
-icu_provider_adapters::empty::EmptyDataProvider::new#FnInStruct
 icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbackConfig#Struct
 icu_provider_adapters::fallback::LocaleFallbackIterator#Struct
