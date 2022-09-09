@@ -8,16 +8,23 @@ use core::{marker::Copy, ops::Deref};
 
 use super::{AsULE, ULE};
 
-/// Types implementing this trait guarantee that [`NicheBytes::INVALID_BIT_PATTERN`]
+/// The types implementing this trait guarantee that [`NicheBytes::INVALID_BIT_PATTERN`]
 /// can never occur as a valid byte representation of the type.
-/// N == core::mem::sizeo_of::<Self>()
+/// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
 pub trait NicheBytes<const N: usize> {
     const INVALID_BIT_PATTERN: [u8; N];
 }
 
-/// [`ULE`] type for `Option<U>` where U implements [`NicheBytes`].
-/// The invalid bit pattern is used as the niche for `Option<U>`.
-/// N == core::mem::size_of::<U>()
+/// [`ULE`] type for [`NichedOption<U,N>`] where U implements [`NicheBytes`].
+/// The invalid bit pattern is used as the niche.
+///
+/// This uses 1 byte less than [`zerovec::OptionULE<U>`] to represent [`NichedOption<U,N>`]
+/// which Derefs to [`Option<U>`].
+/// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
+///
+/// Invariants:
+/// The union stores [`NichedBytes::INVALID_BIT_PATTERN`] when None.
+/// Any other bit pattern is a valid.
 #[repr(packed)]
 pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
     invalid: [u8; N],
@@ -25,7 +32,7 @@ pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
 }
 
 impl<U: NicheBytes<N> + ULE, const N: usize> NichedOptionULE<U, N> {
-    /// New NichedOptionULE<U,N> from Option<U>
+    /// New NichedOptionULE<U, N> from Option<U>
     pub fn new(opt: Option<U>) -> Self {
         assert!(N == core::mem::size_of::<U>());
         match opt {
@@ -105,53 +112,57 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
     }
 }
 
+/// Optional type which uses [`NichedOptionULE<U,N>`] as ULE type.
+/// Derefs to [`Option<U>`]
+/// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
+/// [`repr(transparent)`] guarantees that the layout is same as [`Option<U>`]
 #[derive(Copy, Clone, PartialEq, Eq, Hash)]
 #[repr(transparent)]
-pub struct NichedOption<T: AsULE, const N: usize>(Option<T>);
+pub struct NichedOption<U: AsULE, const N: usize>(Option<U>);
 
-impl<T: AsULE, const N: usize> NichedOption<T, N> {
-    pub const fn new(o: Option<T>) -> Self {
+impl<U: AsULE, const N: usize> NichedOption<U, N> {
+    pub const fn new(o: Option<U>) -> Self {
         Self(o)
     }
 }
 
-impl<T: AsULE, const N: usize> Default for NichedOption<T, N> {
+impl<U: AsULE, const N: usize> Default for NichedOption<U, N> {
     fn default() -> Self {
         Self(None)
     }
 }
 
-impl<T: AsULE, const N: usize> From<Option<T>> for NichedOption<T, N> {
-    fn from(o: Option<T>) -> Self {
+impl<U: AsULE, const N: usize> From<Option<U>> for NichedOption<U, N> {
+    fn from(o: Option<U>) -> Self {
         Self(o)
     }
 }
 
-impl<T: AsULE, const N: usize> Deref for NichedOption<T, N> {
-    type Target = Option<T>;
+impl<U: AsULE, const N: usize> Deref for NichedOption<U, N> {
+    type Target = Option<U>;
 
     fn deref(&self) -> &Self::Target {
         &self.0
     }
 }
 
-impl<T: AsULE, const N: usize> DerefMut for NichedOption<T, N> {
+impl<U: AsULE, const N: usize> DerefMut for NichedOption<U, N> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
 }
 
-impl<T: AsULE, const N: usize> AsULE for NichedOption<T, N>
+impl<U: AsULE, const N: usize> AsULE for NichedOption<U, N>
 where
-    T::ULE: NicheBytes<N>,
+    U::ULE: NicheBytes<N>,
 {
-    type ULE = NichedOptionULE<T::ULE, N>;
+    type ULE = NichedOptionULE<U::ULE, N>;
 
     fn to_unaligned(self) -> Self::ULE {
-        NichedOptionULE::new(self.map(T::to_unaligned))
+        NichedOptionULE::new(self.map(U::to_unaligned))
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
-        Self(unaligned.get().map(T::from_unaligned))
+        Self(unaligned.get().map(U::from_unaligned))
     }
 }
