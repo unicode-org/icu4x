@@ -2,7 +2,8 @@
 
 \[Experimental\] Case mapping for Unicode characters and strings.
 
-This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
+This module is published as its own crate ([`icu_casemapping`](https://docs.rs/icu_casemapping/latest/icu_casemapping/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 TODO: expand documentation
 

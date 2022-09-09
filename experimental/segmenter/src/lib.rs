@@ -4,7 +4,8 @@
 
 //! \[Experimental\] Segment strings by lines, graphemes, word, and sentences.
 //!
-//! This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
+//! This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
+//! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 //!
 //! This module contains segmenter implementation for the following rules.
 //!

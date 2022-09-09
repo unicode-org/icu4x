@@ -2,7 +2,8 @@
 
 Normalizing text into Unicode Normalization Forms.
 
-This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
+This module is published as its own crate ([`icu_normalizer`](https://docs.rs/icu_normalizer/latest/icu_normalizer/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 ## Implementation notes
 

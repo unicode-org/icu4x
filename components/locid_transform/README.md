@@ -2,7 +2,8 @@
 
 Canonicalization of locale identifiers based on [`CLDR`] data.
 
-This module is published as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate.
+This module is published as its own crate ([`icu_locid_transform`](https://docs.rs/icu_locid_transform/latest/icu_locid_transform/))
+and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
 
 It currently supports locale canonicalization based upon the canonicalization
 algorithm from [`UTS #35: Unicode LDML 3. LocaleId Canonicalization`],
