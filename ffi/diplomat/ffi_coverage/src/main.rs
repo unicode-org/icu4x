@@ -170,11 +170,17 @@ lazy_static::lazy_static! {
         "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_with_any_provider",
         "icu::normalizer::DecomposingNormalizer::try_new_nfd_with_any_provider",
         "icu::normalizer::DecomposingNormalizer::try_new_nfkd_with_any_provider",
+        "icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_any_provider",
+        "icu::normalizer::properties::CanonicalComposition::try_new_with_any_provider",
+        "icu::normalizer::properties::CanonicalDecomposition::try_new_with_any_provider",
         "icu::normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider",
         "icu::normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider",
         "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_with_buffer_provider",
         "icu::normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider",
         "icu::normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider",
+        "icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider",
+        "icu::normalizer::properties::CanonicalComposition::try_new_with_buffer_provider",
+        "icu::normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider",
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //

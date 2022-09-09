@@ -51,6 +51,7 @@ pub mod locale;
 pub mod locid_transform;
 pub mod logging;
 pub mod normalizer;
+pub mod normalizer_properties;
 pub mod pluralrules;
 pub mod properties_maps;
 pub mod properties_sets;

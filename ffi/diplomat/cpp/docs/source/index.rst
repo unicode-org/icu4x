@@ -19,6 +19,7 @@ Documentation
    locid_transform_ffi
    logging_ffi
    normalizer_ffi
+   normalizer_properties_ffi
    pluralrules_ffi
    properties_maps_ffi
    properties_sets_ffi

@@ -63,7 +63,11 @@ pub mod ffi {
             write: &mut DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             let s = s.as_bytes(); // #2520
-            let result = self.0.normalize_utf8_to(s, write).map_err(Into::into).into();
+            let result = self
+                .0
+                .normalize_utf8_to(s, write)
+                .map_err(Into::into)
+                .into();
             write.flush();
             result
         }
@@ -72,16 +76,16 @@ pub mod ffi {
         ///
         /// Errors are mapped to REPLACEMENT CHARACTER
         #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::is_normalized_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::normalizer::ComposingNormalizer::is_normalized, FnInStruct, hidden)]
-        pub fn is_normalized(
-            &self,
-            s: &str,
-        ) -> bool {
+        #[diplomat::rust_link(
+            icu::normalizer::ComposingNormalizer::is_normalized,
+            FnInStruct,
+            hidden
+        )]
+        pub fn is_normalized(&self, s: &str) -> bool {
             let s = s.as_bytes(); // #2520
             self.0.is_normalized_utf8(s)
         }
     }
-
 
     #[diplomat::opaque]
     #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer, Struct)]
@@ -120,7 +124,11 @@ pub mod ffi {
         ///
         /// Errors are mapped to REPLACEMENT CHARACTER
         #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::normalize_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::normalize, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizer::normalize,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::rust_link(
             icu::normalizer::DecomposingNormalizer::normalize_to,
             FnInStruct,
@@ -137,7 +145,11 @@ pub mod ffi {
             write: &mut DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
             let s = s.as_bytes(); // #2520
-            let result = self.0.normalize_utf8_to(s, write).map_err(Into::into).into();
+            let result = self
+                .0
+                .normalize_utf8_to(s, write)
+                .map_err(Into::into)
+                .into();
             write.flush();
             result
         }
@@ -145,12 +157,16 @@ pub mod ffi {
         /// Check if a (potentially ill-formed) UTF8 string is normalized
         ///
         /// Errors are mapped to REPLACEMENT CHARACTER
-        #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::is_normalized_utf8, FnInStruct)]
-        #[diplomat::rust_link(icu::normalizer::DecomposingNormalizer::is_normalized, FnInStruct, hidden)]
-        pub fn is_normalized(
-            &self,
-            s: &str,
-        ) -> bool {
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizer::is_normalized_utf8,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu::normalizer::DecomposingNormalizer::is_normalized,
+            FnInStruct,
+            hidden
+        )]
+        pub fn is_normalized(&self, s: &str) -> bool {
             let s = s.as_bytes(); // #2520
             self.0.is_normalized_utf8(s)
         }
