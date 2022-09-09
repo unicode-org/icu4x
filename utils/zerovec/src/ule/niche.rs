@@ -134,27 +134,27 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 /// [`repr(transparent)`] guarantees that the layout is same as [`Option<U>`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[repr(transparent)]
-pub struct NichedOption<U: AsULE, const N: usize>(Option<U>);
+pub struct NichedOption<U, const N: usize>(Option<U>);
 
-impl<U: AsULE, const N: usize> NichedOption<U, N> {
+impl<U, const N: usize> NichedOption<U, N> {
     pub const fn new(o: Option<U>) -> Self {
         Self(o)
     }
 }
 
-impl<U: AsULE, const N: usize> Default for NichedOption<U, N> {
+impl<U, const N: usize> Default for NichedOption<U, N> {
     fn default() -> Self {
         Self(None)
     }
 }
 
-impl<U: AsULE, const N: usize> From<Option<U>> for NichedOption<U, N> {
+impl<U, const N: usize> From<Option<U>> for NichedOption<U, N> {
     fn from(o: Option<U>) -> Self {
         Self(o)
     }
 }
 
-impl<U: AsULE, const N: usize> Deref for NichedOption<U, N> {
+impl<U, const N: usize> Deref for NichedOption<U, N> {
     type Target = Option<U>;
 
     fn deref(&self) -> &Self::Target {
@@ -162,7 +162,7 @@ impl<U: AsULE, const N: usize> Deref for NichedOption<U, N> {
     }
 }
 
-impl<U: AsULE, const N: usize> DerefMut for NichedOption<U, N> {
+impl<U, const N: usize> DerefMut for NichedOption<U, N> {
     fn deref_mut(&mut self) -> &mut Self::Target {
         &mut self.0
     }
