@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662766260316,
+  "lastUpdate": 1662766275996,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -69131,6 +69131,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5182,
             "range": "± 24",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fcbd5aab858b52fb4a887dbb968afab06083f85a",
+          "message": "Use GIGO with debug assertion in Char16Trie (#2537)",
+          "timestamp": "2022-09-09T23:19:53Z",
+          "tree_id": "8890744face6945df216346020d46cc6cb1948a8",
+          "url": "https://github.com/unicode-org/icu4x/commit/fcbd5aab858b52fb4a887dbb968afab06083f85a"
+        },
+        "date": 1662766226896,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 64171,
+            "range": "± 234",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 107492,
+            "range": "± 510",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 56262,
+            "range": "± 130",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 64400,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 64382,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 70570,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 98725,
+            "range": "± 98",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 111284,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 107530,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 118949,
+            "range": "± 89",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5214,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
