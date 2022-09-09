@@ -7,9 +7,10 @@ use core::str::CharIndices;
 use icu_provider::prelude::*;
 
 use crate::complex::{Dictionary, LstmPayloads};
-use crate::indices::{Latin1Indices, PotentiallyInvalidUtf8Indices, Utf16Indices};
+use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
+use utf8_iter::Utf8CharIndices;
 
 /// Grapheme cluster break iterator for an `str` (a UTF-8 string).
 pub type GraphemeClusterBreakIteratorUtf8<'l, 's> =
@@ -98,7 +99,7 @@ impl GraphemeClusterBreakSegmenter {
         input: &'s [u8],
     ) -> GraphemeClusterBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
         GraphemeClusterBreakIteratorPotentiallyInvalidUtf8 {
-            iter: PotentiallyInvalidUtf8Indices::new(input),
+            iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -161,7 +162,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypeUtf8 {
 pub struct GraphemeClusterBreakTypePotentiallyInvalidUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for GraphemeClusterBreakTypePotentiallyInvalidUtf8 {
-    type IterAttr = PotentiallyInvalidUtf8Indices<'s>;
+    type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {

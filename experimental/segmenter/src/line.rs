@@ -15,6 +15,7 @@ use core::char;
 use core::str::CharIndices;
 use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
+use utf8_iter::Utf8CharIndices;
 
 /// An enum specifies the strictness of line-breaking rules. It can be passed as
 /// an argument when creating a line breaker.
@@ -285,7 +286,7 @@ impl LineBreakSegmenter {
         input: &'s [u8],
     ) -> LineBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
         LineBreakIterator {
-            iter: PotentiallyInvalidUtf8Indices::new(input),
+            iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -774,7 +775,7 @@ impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypeUtf8 {
 pub struct LineBreakTypePotentiallyInvalidUtf8;
 
 impl<'l, 's> LineBreakType<'l, 's> for LineBreakTypePotentiallyInvalidUtf8 {
-    type IterAttr = PotentiallyInvalidUtf8Indices<'s>;
+    type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
     fn get_linebreak_property_with_rule(iterator: &LineBreakIterator<Self>, c: char) -> u8 {

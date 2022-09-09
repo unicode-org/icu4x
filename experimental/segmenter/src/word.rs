@@ -10,9 +10,10 @@ use icu_locid::{locale, Locale};
 use icu_provider::prelude::*;
 
 use crate::complex::*;
-use crate::indices::{Latin1Indices, PotentiallyInvalidUtf8Indices, Utf16Indices};
+use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
+use utf8_iter::Utf8CharIndices;
 
 /// Word break iterator for an `str` (a UTF-8 string).
 pub type WordBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, WordBreakTypeUtf8>;
@@ -185,7 +186,7 @@ impl WordBreakSegmenter {
         input: &'s [u8],
     ) -> WordBreakIteratorPotentiallyInvalidUtf8<'l, 's> {
         WordBreakIteratorPotentiallyInvalidUtf8 {
-            iter: PotentiallyInvalidUtf8Indices::new(input),
+            iter: Utf8CharIndices::new(input),
             len: input.len(),
             current_pos_data: None,
             result_cache: Vec::new(),
@@ -242,7 +243,7 @@ impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypeUtf8 {
 pub struct WordBreakTypePotentiallyInvalidUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for WordBreakTypePotentiallyInvalidUtf8 {
-    type IterAttr = PotentiallyInvalidUtf8Indices<'s>;
+    type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
