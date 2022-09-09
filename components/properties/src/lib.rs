@@ -19,7 +19,7 @@
 //! ## Property data as `CodePointSetData`s
 //!
 //! ```
-//! use icu_properties::{maps, sets, GeneralCategory};
+//! use icu::properties::{maps, sets, GeneralCategory};
 //!
 //! // A binary property as a `CodePointSetData`
 //!
@@ -45,7 +45,7 @@
 //! ## Property data as `CodePointMapData`s
 //!
 //! ```
-//! use icu_properties::{maps, Script};
+//! use icu::properties::{maps, Script};
 //!
 //! let map = maps::load_script(&icu_testdata::unstable())
 //!     .expect("The data should be valid");
