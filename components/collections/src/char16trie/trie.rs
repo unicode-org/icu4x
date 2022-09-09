@@ -45,6 +45,10 @@ const MAX_ONE_UNIT_DELTA: u16 = 0xfbff;
 const MIN_TWO_UNIT_DELTA_LEAD: u16 = MAX_ONE_UNIT_DELTA + 1; // 0xfc00
 const THREE_UNIT_DELTA_LEAD: u16 = 0xffff;
 
+// Replacement values for unsuccessful trie lookups.
+/// Replaces lookups of code units. Code unit 0 should not match well-formed strings.
+const EMPTY_CODE_UNIT: u16 = 0;
+
 fn skip_value(pos: usize, lead: u16) -> usize {
     if lead < MIN_TWO_UNIT_VALUE_LEAD {
         pos
@@ -248,7 +252,7 @@ impl<'a> Char16TrieIterator<'a> {
         };
         if let Some(length) = self.remaining_match_length {
             // Remaining part of a linear-match node
-            if c == self.get(pos) {
+            if c == self.trie.get(pos).unwrap_or(EMPTY_CODE_UNIT) {
                 pos += 1;
                 self.pos = Some(pos);
                 if length == 0 {
@@ -423,16 +427,31 @@ impl<'a> Char16TrieIterator<'a> {
     }
 
     fn value_result(&self, pos: usize) -> TrieResult {
-        let node = self.get(pos) & VALUE_IS_FINAL;
-        let value = self.get_value(pos);
-        match node {
-            VALUE_IS_FINAL => TrieResult::FinalValue(value),
-            _ => TrieResult::Intermediate(value),
+        match self.get_value(pos) {
+            Some(value) => match self.trie.get(pos) {
+                Some(x) if (x & VALUE_IS_FINAL) == VALUE_IS_FINAL => {
+                    TrieResult::FinalValue(value)
+                }
+                Some(_) => {
+                    TrieResult::Intermediate(value)
+                }
+                None => {
+                    // Unexpected
+                    debug_assert!(false);
+                    TrieResult::NoMatch
+                }
+            }
+            None => {
+                // Unexpected
+                debug_assert!(false);
+                TrieResult::NoMatch
+            }
         }
     }
 
-    fn get_value(&self, pos: usize) -> i32 {
-        let lead_unit = self.get(pos);
+    #[inline]
+    fn get_value(&self, pos: usize) -> Option<i32> {
+        let lead_unit = self.trie.get(pos)?;
         if lead_unit & VALUE_IS_FINAL == VALUE_IS_FINAL {
             self.read_value(pos + 1, lead_unit & 0x7fff)
         } else {
@@ -440,24 +459,28 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
-    fn read_value(&self, pos: usize, lead_unit: u16) -> i32 {
-        if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
+    #[inline]
+    fn read_value(&self, pos: usize, lead_unit: u16) -> Option<i32> {
+        let v = if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
             lead_unit.into()
         } else if lead_unit < THREE_UNIT_VALUE_LEAD {
-            ((lead_unit - MIN_TWO_UNIT_VALUE_LEAD) as i32) << 16 | self.get(pos) as i32
+            ((lead_unit - MIN_TWO_UNIT_VALUE_LEAD) as i32) << 16 | self.trie.get(pos)? as i32
         } else {
-            (self.get(pos) as i32) << 16 | self.get(pos + 1) as i32
-        }
+            (self.trie.get(pos)? as i32) << 16 | self.trie.get(pos + 1)? as i32
+        };
+        Some(v)
     }
 
-    fn read_node_value(&self, pos: usize, lead_unit: u16) -> i32 {
-        if lead_unit < (MIN_TWO_UNIT_NODE_VALUE_LEAD) {
+    #[inline]
+    fn read_node_value(&self, pos: usize, lead_unit: u16) -> Option<i32> {
+        let v = if lead_unit < (MIN_TWO_UNIT_NODE_VALUE_LEAD) {
             ((lead_unit >> 6) - 1).into()
         } else if lead_unit < THREE_UNIT_NODE_VALUE_LEAD {
             (((lead_unit & 0x7fc0) - MIN_TWO_UNIT_NODE_VALUE_LEAD) as i32) << 10
-                | self.get(pos) as i32
+                | self.trie.get(pos)? as i32
         } else {
-            (self.get(pos) as i32) << 16 | self.get(pos + 1) as i32
-        }
+            (self.trie.get(pos)? as i32) << 16 | self.trie.get(pos + 1)? as i32
+        };
+        Some(v)
     }
 }
