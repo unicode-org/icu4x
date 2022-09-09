@@ -510,7 +510,7 @@ impl PluralRules {
     }
 
     /// Returns all [`Plural Categories`] appropriate for a [`PluralRules`] object
-    /// based on the [`LanguageIdentifier`](icu::locid::LanguageIdentifier) and [`PluralRuleType`].
+    /// based on the [`LanguageIdentifier`](icu::locid::{LanguageIdentifier}) and [`PluralRuleType`].
     ///
     /// The [`Plural Categories`] are returned in UTS 35 sorted order.
     ///

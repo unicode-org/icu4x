@@ -30,6 +30,7 @@ denylist = ["bench"]
 
 [package.metadata.docs.rs]
 all-features = true
+rustc-args = [ "--cfg" , "doc"]
 
 [dependencies]
 icu_decimal = { version = "1.0.0-beta1", path = "../decimal" }
@@ -52,7 +53,7 @@ fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal" }
 
 [dev-dependencies]
 criterion = "0.3"
-icu = { path = "../icu" }
+icu = { path = "../icu", default-features = false }
 icu_benchmark_macros = { version = "0.7", path = "../../tools/benchmark/macros" }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core" }
 icu_provider_adapters = { path = "../../provider/adapters" }
