@@ -42,4 +42,15 @@ export class ICU4XDataProvider {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html Rust documentation for `EmptyDataProvider`} for more information.
    */
   static create_empty(): ICU4XDataProvider;
+
+  /**
+
+   * Creates a provider that tries the current provider and then, if the current provider doesn't support the data key, another provider `other`.
+
+   * This takes ownership of the `other` provider, leaving an empty provider in its place.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/type.ForkByKeyProvider.html Rust documentation for `ForkByKeyProvider`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  fork_by_key(other: ICU4XDataProvider): void | never;
 }

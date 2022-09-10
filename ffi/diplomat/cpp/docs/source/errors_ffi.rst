@@ -48,6 +48,8 @@
 
     .. cpp:enumerator:: DataUnavailableBufferFormatError
 
+    .. cpp:enumerator:: DataMismatchedAnyBufferError
+
     .. cpp:enumerator:: LocaleUndefinedSubtagError
 
         The subtag being requested was not set

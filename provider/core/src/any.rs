@@ -290,6 +290,12 @@ pub trait AnyProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
+impl AnyProvider for alloc::boxed::Box<dyn AnyProvider> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        self.load_any(key, req)
+    }
+}
+
 /// A wrapper over `DynamicDataProvider<AnyMarker>` that implements `AnyProvider`
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct DynamicDataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);

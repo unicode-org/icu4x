@@ -322,6 +322,9 @@ lazy_static::lazy_static! {
         // Need to think about how to expose DataErrorKind for this to work
         "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind",
 
+        // We should add this once we have a better story for FFI custom data structs
+        "icu_provider_adapters::any_payload::AnyPayloadProvider",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -419,6 +422,10 @@ lazy_static::lazy_static! {
         "icu::segmenter::WordBreakIteratorLatin1",
         "icu::segmenter::WordBreakIteratorUtf16",
         "icu::segmenter::WordBreakIteratorUtf8",
+
+        // Some of the provider adapter types are Rust-specific and not relevant to FFI
+        "icu_provider_adapters::either::EitherProvider",
+
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 

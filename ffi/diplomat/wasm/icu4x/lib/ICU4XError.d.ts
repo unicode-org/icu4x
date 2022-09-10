@@ -61,6 +61,9 @@ export enum ICU4XError {
    */
   DataUnavailableBufferFormatError = 'DataUnavailableBufferFormatError',
   /**
+   */
+  DataMismatchedAnyBufferError = 'DataMismatchedAnyBufferError',
+  /**
 
    * The subtag being requested was not set
    */
