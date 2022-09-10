@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1662766529654,
+  "lastUpdate": 1662781079337,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -15112,6 +15112,126 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/best",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "56504e048e7d78e83783aef0c789447fba59e84c",
+          "message": "Fix rust links and finish FFI coverage for datetime and timezone (#2544)\n\n* Fix rust links and finish FFI coverage for datetime and timezone\r\n\r\n* Add basic ICU4XZonedDateTimeFormatter test",
+          "timestamp": "2022-09-10T03:23:58Z",
+          "tree_id": "5050e97374e9b10b3146620e92731b3da33491a4",
+          "url": "https://github.com/unicode-org/icu4x/commit/56504e048e7d78e83783aef0c789447fba59e84c"
+        },
+        "date": 1662781019220,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 1024,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 576,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 647,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 743,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 1283,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1364,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 574,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 647,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 744,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 697,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 1396,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 47124813,
+            "range": "± 978076",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           },
