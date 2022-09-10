@@ -7,7 +7,7 @@ import { ICU4XOrdering } from "./ICU4XOrdering";
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_collator/struct.Collator.html Rust documentation for `Collator`} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html Rust documentation for `Collator`} for more information.
  */
 export class ICU4XCollator {
 

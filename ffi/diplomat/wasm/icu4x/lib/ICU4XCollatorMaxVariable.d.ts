@@ -1,7 +1,7 @@
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.MaxVariable.html Rust documentation for `MaxVariable`} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.MaxVariable.html Rust documentation for `MaxVariable`} for more information.
  */
 export enum ICU4XCollatorMaxVariable {
   /**

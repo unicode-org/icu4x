@@ -3,7 +3,7 @@
 
 .. cpp:class:: ICU4XCollator
 
-    See the `Rust documentation for Collator <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/struct.Collator.html>`__ for more information.
+    See the `Rust documentation for Collator <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html>`__ for more information.
 
 
     .. cpp:function:: static diplomat::result<ICU4XCollator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptions options)
@@ -40,7 +40,7 @@
 
 .. cpp:enum-struct:: ICU4XCollatorAlternateHandling
 
-    See the `Rust documentation for AlternateHandling <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.AlternateHandling.html>`__ for more information.
+    See the `Rust documentation for AlternateHandling <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.AlternateHandling.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto
@@ -51,7 +51,7 @@
 
 .. cpp:enum-struct:: ICU4XCollatorBackwardSecondLevel
 
-    See the `Rust documentation for BackwardSecondLevel <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.BackwardSecondLevel.html>`__ for more information.
+    See the `Rust documentation for BackwardSecondLevel <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.BackwardSecondLevel.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto
@@ -62,7 +62,7 @@
 
 .. cpp:enum-struct:: ICU4XCollatorCaseFirst
 
-    See the `Rust documentation for CaseFirst <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.CaseFirst.html>`__ for more information.
+    See the `Rust documentation for CaseFirst <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.CaseFirst.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto
@@ -75,7 +75,7 @@
 
 .. cpp:enum-struct:: ICU4XCollatorCaseLevel
 
-    See the `Rust documentation for CaseLevel <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.CaseLevel.html>`__ for more information.
+    See the `Rust documentation for CaseLevel <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.CaseLevel.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto
@@ -86,7 +86,7 @@
 
 .. cpp:enum-struct:: ICU4XCollatorMaxVariable
 
-    See the `Rust documentation for MaxVariable <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.MaxVariable.html>`__ for more information.
+    See the `Rust documentation for MaxVariable <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.MaxVariable.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto
@@ -101,7 +101,7 @@
 
 .. cpp:enum-struct:: ICU4XCollatorNumeric
 
-    See the `Rust documentation for Numeric <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.Numeric.html>`__ for more information.
+    See the `Rust documentation for Numeric <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.Numeric.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto
@@ -112,7 +112,7 @@
 
 .. cpp:struct:: ICU4XCollatorOptions
 
-    See the `Rust documentation for CollatorOptions <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/struct.CollatorOptions.html>`__ for more information.
+    See the `Rust documentation for CollatorOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.CollatorOptions.html>`__ for more information.
 
 
     .. cpp:member:: ICU4XCollatorStrength strength
@@ -131,7 +131,7 @@
 
 .. cpp:enum-struct:: ICU4XCollatorStrength
 
-    See the `Rust documentation for Strength <https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.Strength.html>`__ for more information.
+    See the `Rust documentation for Strength <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.Strength.html>`__ for more information.
 
 
     .. cpp:enumerator:: Auto
