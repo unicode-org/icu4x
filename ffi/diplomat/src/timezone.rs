@@ -28,6 +28,8 @@ pub mod ffi {
 
     impl ICU4XCustomTimeZone {
         /// Creates a time zone from an offset string.
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct)]
+        #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
         pub fn create_from_str(s: &str) -> DiplomatResult<Box<ICU4XCustomTimeZone>, ICU4XError> {
             // TODO(#2543): Use a byte parsing API once available in CustomTimeZone (also #2520)
             if str::from_utf8(s.as_bytes()).is_err() {
@@ -58,6 +60,11 @@ pub mod ffi {
         /// Errors if the offset seconds are out of range.
         #[diplomat::rust_link(icu::timezone::GmtOffset::try_from_offset_seconds, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset, Struct, compact)]
+        #[diplomat::rust_link(
+            icu::timezone::GmtOffset::from_offset_seconds_unchecked,
+            FnInStruct,
+            hidden
+        )]
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::new_with_offset, FnInStruct, hidden)]
         pub fn try_set_gmt_offset_seconds(
             &mut self,
@@ -146,6 +153,7 @@ pub mod ffi {
         /// Errors if the string is not a valid BCP-47 time zone ID.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::time_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::TimeZoneBcp47Id::from_str, FnInStruct, hidden)]
         pub fn try_set_time_zone_id(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
             match id.parse() {
                 Ok(v) => {
@@ -187,6 +195,7 @@ pub mod ffi {
         /// Errors if the string is not a valid BCP-47 meta zone ID.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
         #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::MetaZoneId::from_str, FnInStruct, hidden)]
         pub fn try_set_meta_zone_id(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
             match id.parse() {
                 Ok(v) => {
@@ -228,6 +237,7 @@ pub mod ffi {
         /// Errors if the string is not a valid zone variant.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::zone_variant, StructField)]
         #[diplomat::rust_link(icu::timezone::ZoneVariant, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::ZoneVariant::from_str, FnInStruct, hidden)]
         pub fn try_set_zone_variant(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
             match id.parse() {
                 Ok(v) => {
@@ -309,7 +319,7 @@ pub mod ffi {
         /// Sets the meta zone based on the time zone and the local timestamp.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_calculate_meta_zone, FnInStruct)]
         #[diplomat::rust_link(
-            icu::timezone::MetaZoneCalculator::compute_metazone_from_timezone,
+            icu::timezone::MetaZoneCalculator::compute_meta_zone_from_time_zone,
             FnInStruct,
             compact
         )]

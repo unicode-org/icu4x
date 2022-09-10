@@ -30,6 +30,7 @@ pub mod ffi {
     pub struct ICU4XTimeFormatter(pub TimeFormatter);
 
     #[diplomat::enum_convert(length::Time, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::options::length::Time, Enum)]
     pub enum ICU4XTimeLength {
         Full,
         Long,
@@ -113,6 +114,7 @@ pub mod ffi {
     pub struct ICU4XGregorianDateFormatter(pub TypedDateFormatter<Gregorian>);
 
     #[diplomat::enum_convert(length::Date, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::options::length::Date, Enum)]
     pub enum ICU4XDateLength {
         Full,
         Long,

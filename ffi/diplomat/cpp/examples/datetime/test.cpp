@@ -9,6 +9,8 @@
 #include "../../include/ICU4XDataStruct.hpp"
 #include "../../include/ICU4XLogger.hpp"
 #include "../../include/ICU4XCustomTimeZone.hpp"
+#include "../../include/ICU4XGregorianZonedDateTimeFormatter.hpp"
+#include "../../include/ICU4XZonedDateTimeFormatter.hpp"
 
 #include <atomic>
 #include <iostream>
@@ -57,7 +59,12 @@ int main() {
         return 1;
     }
 
-    ICU4XCustomTimeZone time_zone = ICU4XCustomTimeZone::create_from_str("-6:00").ok().value();
+    ICU4XCustomTimeZone time_zone = ICU4XCustomTimeZone::create_from_str("-06:00").ok().value();
+    int32_t offset = time_zone.gmt_offset_seconds().ok().value();
+    if (offset != -21600) {
+        std::cout << "GMT offset doesn't parse" << std::endl;
+        return 1;
+    }
     ICU4XMetaZoneCalculator mzcalc = ICU4XMetaZoneCalculator::try_new(dp).ok().value();
     time_zone.try_set_time_zone_id("uschi").ok().value();
     std::string time_zone_id_return = time_zone.time_zone_id().ok().value();
@@ -72,7 +79,29 @@ int main() {
         std::cout << "Meta zone ID not calculated correctly; got " << meta_zone_id_return << std::endl;
         return 1;
     }
-    // TODO: Pass the CustomTimeZone into a ZonedDateTimeFormatter once added to FFI
+    // Note: The daylight time switch should normally come from TZDB calculations.
+    time_zone.set_daylight_time();
+    std::string zone_variant_return = time_zone.zone_variant().ok().value();
+    if (zone_variant_return != "dt") {
+        std::cout << "Zone variant not calculated correctly; got " << zone_variant_return << std::endl;
+        return 1;
+    }
+
+    ICU4XGregorianZonedDateTimeFormatter gzdtf = ICU4XGregorianZonedDateTimeFormatter::try_new(dp, locale, ICU4XDateLength::Full, ICU4XTimeLength::Full).ok().value();
+    out = gzdtf.format_iso_datetime_with_custom_time_zone(date, time_zone).ok().value();
+    std::cout << "Formatted value is " << out << std::endl;
+    if (out != "Monday, July 11, 2022 at 1:06:42 PM Central Daylight Time") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
+
+    ICU4XZonedDateTimeFormatter zdtf = ICU4XZonedDateTimeFormatter::try_new(dp, locale, ICU4XDateLength::Full, ICU4XTimeLength::Full).ok().value();
+    out = zdtf.format_datetime_with_custom_time_zone(any_date, time_zone).ok().value();
+    std::cout << "Formatted value is " << out << std::endl;
+    if (out != "Monday, October 5, 2 Reiwa at 1:33:15 PM Central Daylight Time") {
+        std::cout << "Output does not match expected output" << std::endl;
+        return 1;
+    }
 
     return 0;
 }

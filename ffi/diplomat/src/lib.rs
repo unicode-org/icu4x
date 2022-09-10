@@ -65,6 +65,7 @@ pub mod time;
 pub mod timezone;
 pub mod timezone_formatter;
 pub mod week;
+pub mod zoned_formatter;
 
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;

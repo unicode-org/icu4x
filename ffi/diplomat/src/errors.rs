@@ -35,6 +35,7 @@ pub mod ffi {
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
+    #[diplomat::rust_link(icu::timezone::TimeZoneError, Enum, compact)]
     pub enum ICU4XError {
         // general errors
         /// The error is not currently categorized as ICU4XError.
