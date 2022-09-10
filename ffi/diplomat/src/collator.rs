@@ -25,6 +25,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
+    #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
     pub struct ICU4XCollatorOptions {
         pub strength: ICU4XCollatorStrength,
         pub alternate_handling: ICU4XCollatorAlternateHandling,

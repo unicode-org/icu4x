@@ -144,6 +144,13 @@ lazy_static::lazy_static! {
         ("FromStr", &["Err"][..]),
     ].into_iter().collect();
 
+    // Ignore if this is a substring of any path
+    // keep this small
+    static ref IGNORED_SUBSTRINGS: &'static [&'static str] = &[
+        // _unstable constructors cover these
+        "with_any_provider",
+        "with_buffer_provider",
+    ];
     // Paths which are not checked for FFI coverage. Naming a type or module here
     // will include all type methods and module contents.
     static ref IGNORED_PATHS: HashSet<Vec<String>> = [
@@ -152,51 +159,7 @@ lazy_static::lazy_static! {
         // This section should go away before 1.0
         // =========================
 
-        // constructor signatures: we need to make them uniform
-        "icu::calendar::AnyCalendar::try_new_for_locale_with_any_provider",
-        "icu::calendar::AnyCalendar::try_new_for_locale_with_buffer_provider",
-        "icu::calendar::AnyCalendar::try_new_with_any_provider",
-        "icu::calendar::AnyCalendar::try_new_with_buffer_provider",
-        "icu::datetime::TimeZoneFormatter::try_new_with_any_provider",
-        "icu::datetime::TimeZoneFormatter::try_new_with_buffer_provider",
-        "icu::datetime::TypedDateFormatter::try_new_with_any_provider",
-        "icu::datetime::TypedDateFormatter::try_new_with_buffer_provider",
-        "icu::datetime::TypedDateTimeFormatter::try_new_with_any_provider",
-        "icu::datetime::TypedDateTimeFormatter::try_new_with_buffer_provider",
-        "icu::datetime::DateFormatter::try_new_with_any_provider",
-        "icu::datetime::DateFormatter::try_new_with_buffer_provider",
-        "icu::datetime::DateTimeFormatter::try_new_with_any_provider",
-        "icu::datetime::DateTimeFormatter::try_new_with_buffer_provider",
-        "icu::datetime::TimeFormatter::try_new_with_any_provider",
-        "icu::datetime::TimeFormatter::try_new_with_buffer_provider",
-        "icu::datetime::ZonedDateTimeFormatter::try_new_with_any_provider",
-        "icu::datetime::ZonedDateTimeFormatter::try_new_with_buffer_provider",
-        "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_any_provider",
-        "icu::datetime::TypedZonedDateTimeFormatter::try_new_with_buffer_provider",
-        "icu::calendar::week::WeekCalculator::try_new_with_any_provider",
-        "icu::calendar::week::WeekCalculator::try_new_with_buffer_provider",
-        "icu::locid_transform::LocaleCanonicalizer::try_new_with_any_provider",
-        "icu::locid_transform::LocaleCanonicalizer::try_new_with_buffer_provider",
-        "icu::locid_transform::LocaleExpander::try_new_with_any_provider",
-        "icu::locid_transform::LocaleExpander::try_new_with_buffer_provider",
-        "icu::normalizer::ComposingNormalizer::try_new_nfc_with_any_provider",
-        "icu::normalizer::ComposingNormalizer::try_new_nfkc_with_any_provider",
-        "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_with_any_provider",
-        "icu::normalizer::DecomposingNormalizer::try_new_nfd_with_any_provider",
-        "icu::normalizer::DecomposingNormalizer::try_new_nfkd_with_any_provider",
-        "icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_any_provider",
-        "icu::normalizer::properties::CanonicalComposition::try_new_with_any_provider",
-        "icu::normalizer::properties::CanonicalDecomposition::try_new_with_any_provider",
-        "icu::normalizer::ComposingNormalizer::try_new_nfc_with_buffer_provider",
-        "icu::normalizer::ComposingNormalizer::try_new_nfkc_with_buffer_provider",
-        "icu::normalizer::ComposingNormalizer::try_new_uts46_without_ignored_and_disallowed_with_buffer_provider",
-        "icu::normalizer::DecomposingNormalizer::try_new_nfd_with_buffer_provider",
-        "icu::normalizer::DecomposingNormalizer::try_new_nfkd_with_buffer_provider",
-        "icu::normalizer::properties::CanonicalCombiningClassMap::try_new_with_buffer_provider",
-        "icu::normalizer::properties::CanonicalComposition::try_new_with_buffer_provider",
-        "icu::normalizer::properties::CanonicalDecomposition::try_new_with_buffer_provider",
-        "icu::timezone::MetaZoneCalculator::try_new_with_any_provider",
-        "icu::timezone::MetaZoneCalculator::try_new_with_buffer_provider",
+        // currently empty
 
         // Stuff that could be exposed over FFI but is not currently planned (for 1.0)
         //
@@ -489,7 +452,14 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
         path_already_extended: bool,
         inside: Option<In>,
     ) {
-        /// Helper function that ensures that IGNORED_PATHS
+        fn ignored(path: &Vec<String>) -> bool {
+            IGNORED_PATHS.contains(path)
+                || path
+                    .last()
+                    .map(|l| IGNORED_SUBSTRINGS.iter().any(|i| l.contains(i)))
+                    .unwrap_or(false)
+        }
+        /// Helper function that ensures that ignored()
         /// is respected for every type inserted
         ///
         /// (We have a check at the beginning of recurse() but that won't catch leaf nodes)
@@ -498,7 +468,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             path: Vec<String>,
             ty: ast::DocType,
         ) {
-            if !IGNORED_PATHS.contains(&path) {
+            if !ignored(&path) {
                 types.insert((path, ty));
             }
         }
@@ -514,7 +484,7 @@ fn collect_public_types(krate: &str) -> impl Iterator<Item = (Vec<String>, ast::
             false
         }
 
-        if IGNORED_PATHS.contains(&path) {
+        if ignored(&path) {
             return;
         }
         match &item.inner {

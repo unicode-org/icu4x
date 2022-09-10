@@ -24,9 +24,6 @@ icu::casemapping::provider::CaseMappingInternals::try_from_icu#FnInStruct
 icu::casemapping::provider::CaseMappingUnfoldData#Struct
 icu::casemapping::provider::CaseMappingV1#Struct
 icu::casemapping::provider::CaseMappingV1Marker#Struct
-icu::collator::Collator::try_new_with_any_provider#FnInStruct
-icu::collator::Collator::try_new_with_buffer_provider#FnInStruct
-icu::collator::CollatorOptions::new#FnInStruct
 icu::collator::error::CollatorError#Enum
 icu::collator::provider::CollationDataV1#Struct
 icu::collator::provider::CollationDataV1Marker#Struct
@@ -50,8 +47,6 @@ icu::collections::char16trie::Char16TrieIterator::next16#FnInStruct
 icu::collections::char16trie::Char16TrieIterator::next32#FnInStruct
 icu::collections::char16trie::TrieResult#Enum
 icu::decimal::FixedDecimalFormatter::try_new_unstable#FnInStruct
-icu::decimal::FixedDecimalFormatter::try_new_with_any_provider#FnInStruct
-icu::decimal::FixedDecimalFormatter::try_new_with_buffer_provider#FnInStruct
 icu::decimal::FixedDecimalFormatterError#Enum
 icu::decimal::FormattedFixedDecimal#Struct
 icu::decimal::FormattedFixedDecimal::write_to#FnInStruct
@@ -89,12 +84,6 @@ icu::locid::Locale::strict_cmp_iter#FnInStruct
 icu::locid::SubtagOrderingResult#Enum
 icu::locid::SubtagOrderingResult::end#FnInEnum
 icu::plurals::PluralOperands::n#FnInStruct
-icu::plurals::PluralRules::try_new_cardinal_with_any_provider#FnInStruct
-icu::plurals::PluralRules::try_new_cardinal_with_buffer_provider#FnInStruct
-icu::plurals::PluralRules::try_new_ordinal_with_any_provider#FnInStruct
-icu::plurals::PluralRules::try_new_ordinal_with_buffer_provider#FnInStruct
-icu::plurals::PluralRules::try_new_with_any_provider#FnInStruct
-icu::plurals::PluralRules::try_new_with_buffer_provider#FnInStruct
 icu::properties::bidi::BidiClassAdapter::bidi_class#FnInStruct
 icu::properties::script::ScriptExtensionsSet#Struct
 icu::properties::script::ScriptExtensionsSet::contains#FnInStruct
@@ -107,8 +96,6 @@ icu::properties::script::ScriptWithExtensions::get_script_val#FnInStruct
 icu::properties::script::ScriptWithExtensions::has_script#FnInStruct
 icu::properties::script::ScriptWithExtensionsResult#Typedef
 icu::properties::script::load_script_with_extensions_unstable#Fn
-icu::properties::script::load_script_with_extensions_with_any_provider#Fn
-icu::properties::script::load_script_with_extensions_with_buffer_provider#Fn
 icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8#Typedef
 icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8#Typedef
 icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8#Typedef
@@ -128,15 +115,11 @@ icu_provider_adapters::fallback::LocaleFallbackProvider::inner#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbackProvider::into_inner#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbackProvider::new_with_fallbacker#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable#FnInStruct
-icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_with_any_provider#FnInStruct
-icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_with_buffer_provider#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbacker#Struct
 icu_provider_adapters::fallback::LocaleFallbacker::for_config#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbacker::for_key#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbacker::new_without_data#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbacker::try_new_unstable#FnInStruct
-icu_provider_adapters::fallback::LocaleFallbacker::try_new_with_any_provider#FnInStruct
-icu_provider_adapters::fallback::LocaleFallbacker::try_new_with_buffer_provider#FnInStruct
 icu_provider_adapters::fallback::LocaleFallbackerWithConfig#Struct
 icu_provider_adapters::fallback::LocaleFallbackerWithConfig::fallback_for#FnInStruct
 icu_provider_adapters::fallback::provider::DEFAULT_REGION#Constant
