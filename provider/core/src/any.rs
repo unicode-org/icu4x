@@ -292,7 +292,7 @@ pub trait AnyProvider {
 
 impl AnyProvider for alloc::boxed::Box<dyn AnyProvider> {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
-        self.load_any(key, req)
+        (**self).load_any(key, req)
     }
 }
 

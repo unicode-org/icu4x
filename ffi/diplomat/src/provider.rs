@@ -48,6 +48,7 @@ pub mod ffi {
     }
 
     #[cfg(feature = "any_provider")]
+    #[allow(dead_code)] // feature-specific
     fn convert_any_provider<D: icu_provider::AnyProvider + 'static>(
         x: D,
     ) -> Box<ICU4XDataProvider> {
@@ -163,14 +164,7 @@ pub mod ffi {
             hidden
         )]
         pub fn create_empty() -> Box<ICU4XDataProvider> {
-            #[cfg(not(any(feature = "any_provider", feature = "buffer_provider")))]
-            panic!("Requires feature 'any_provider' or 'buffer_provider'");
-
-            #[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
-            return convert_buffer_provider(icu_provider_adapters::empty::EmptyDataProvider::new());
-
-            #[cfg(feature = "any_provider")]
-            return convert_any_provider(icu_provider_adapters::empty::EmptyDataProvider::new());
+            Box::new(ICU4XDataProvider(ICU4XDataProviderInner::Empty))
         }
 
         /// Creates a provider that tries the current provider and then, if the current provider

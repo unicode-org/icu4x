@@ -68,7 +68,7 @@ impl BufferProvider for alloc::boxed::Box<dyn BufferProvider> {
         key: DataKey,
         req: DataRequest,
     ) -> Result<DataResponse<BufferMarker>, DataError> {
-        self.load_buffer(key, req)
+        (**self).load_buffer(key, req)
     }
 }
 
