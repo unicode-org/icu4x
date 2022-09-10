@@ -97,9 +97,8 @@ macro_rules! normalization_tables_provider {
                     .map(|&u| {
                         u.try_into()
                             .map_err(|_| DataError::custom("scalars24 conversion"))
-                            .unwrap()
                     })
-                    .collect::<Vec<char>>();
+                    .collect::<Result<Vec<char>, DataError>>()?;
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
                     payload: Some(DataPayload::from_owned(DecompositionTablesV1 {
@@ -149,9 +148,8 @@ macro_rules! normalization_non_recursive_decomposition_supplement_provider {
                     .map(|&u| {
                         u.try_into()
                             .map_err(|_| DataError::custom("scalars24 conversion"))
-                            .unwrap()
                     })
-                    .collect::<Vec<char>>();
+                    .collect::<Result<Vec<char>, DataError>>()?;
 
                 Ok(DataResponse {
                     metadata: DataResponseMetadata::default(),
