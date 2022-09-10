@@ -280,12 +280,13 @@ mod comparison;
 #[cfg(doc)]
 pub mod docs;
 mod elements;
-pub mod error;
+mod error;
 mod options;
 pub mod provider;
 
 extern crate alloc;
 
+pub use error::CollatorError;
 pub use comparison::Collator;
 pub use options::AlternateHandling;
 pub use options::BackwardSecondLevel;

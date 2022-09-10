@@ -234,6 +234,8 @@ lazy_static::lazy_static! {
         "icu::datetime::FormattedTimeZone",
         "icu::datetime::FormattedDateTime",
         "icu::datetime::FormattedZonedDateTime",
+        "icu::decimal::FormattedFixedDecimal",
+        "icu::decimal::format::FormattedFixedDecimal",
 
         // Rust-specific power user API for rules ASTS and such
         // could be exposed in the future but it's complicated
@@ -291,6 +293,9 @@ lazy_static::lazy_static! {
         // Need to think about how to expose DataErrorKind for this to work
         "icu_provider_adapters::empty::EmptyDataProvider::new_with_error_kind",
 
+        // Experimental
+        "icu::casemapping",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
@@ -307,12 +312,16 @@ lazy_static::lazy_static! {
         "icu::segmenter::provider",
         "icu::normalizer::provider",
         "icu::timezone::provider",
+        "icu::collator::provider",
+        "icu::decimal::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
         "icu::calendar::any_calendar::AnyCalendarKind",
         "icu::datetime::time_zone::TimeZoneFormatter",
         "icu::datetime::options::DateTimeFormatterOptions",
+        "icu::decimal::options::GroupingStrategy",
+        "icu::decimal::options::FixedDecimalFormatterOptions",
 
         // "Internal" trait that should never be called directly
         "icu::calendar::Calendar",
@@ -384,17 +393,21 @@ lazy_static::lazy_static! {
         "icu::segmenter::GraphemeClusterBreakIteratorLatin1",
         "icu::segmenter::GraphemeClusterBreakIteratorUtf16",
         "icu::segmenter::GraphemeClusterBreakIteratorUtf8",
+        "icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8",
         "icu::segmenter::LineBreakIterator",
         "icu::segmenter::LineBreakIteratorLatin1",
         "icu::segmenter::LineBreakIteratorUtf16",
         "icu::segmenter::LineBreakIteratorUtf8",
+        "icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8",
         "icu::segmenter::RuleBreakIterator",
         "icu::segmenter::SentenceBreakIteratorLatin1",
         "icu::segmenter::SentenceBreakIteratorUtf16",
         "icu::segmenter::SentenceBreakIteratorUtf8",
+        "icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8",
         "icu::segmenter::WordBreakIteratorLatin1",
         "icu::segmenter::WordBreakIteratorUtf16",
         "icu::segmenter::WordBreakIteratorUtf8",
+        "icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8",
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
 
