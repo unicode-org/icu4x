@@ -39,6 +39,7 @@ serde = { version = "1.0", default-features = false, features = ["derive", "allo
 zerovec = { version = "0.9", path = "../../utils/zerovec", features = ["derive"] }
 unicode-bidi = { version = "0.3.8", optional = true, default-features = false }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
+open-enum = { version = "0.3" }
 
 [dev-dependencies]
 icu = { path = "../icu", default-features = false }
