@@ -684,6 +684,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "datetime_bag_v2"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "icu_datetime",
+ "icu_provider",
+ "serde",
+]
+
+[[package]]
 name = "deduplicating_array"
 version = "0.1.2"
 dependencies = [
