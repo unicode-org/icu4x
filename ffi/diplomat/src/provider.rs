@@ -213,7 +213,10 @@ pub mod ffi {
         /// Enables locale fallbacking for data requests made to this provider.
         ///
         /// Note that the test provider (from `create_test`) already has fallbacking enabled.
-        #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable, FnInStruct)]
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable,
+            FnInStruct
+        )]
         pub fn enable_locale_fallback(&mut self) -> DiplomatResult<(), ICU4XError> {
             match core::mem::take(&mut self.0) {
                 ICU4XDataProviderInner::Empty => Err(icu_provider::DataErrorKind::MissingDataKey
