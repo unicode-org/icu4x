@@ -130,6 +130,24 @@
         See the `Rust documentation for from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
 
 
+    .. cpp:function:: template<typename W> static diplomat::result<std::monostate, ICU4XError> canonicalize_to_writeable(const std::string_view bytes, W& write)
+
+        Best effort locale canonicalizer that doesn't need any data
+
+        Use ICU4XLocaleCanonicalizer for better control and functionality
+
+        See the `Rust documentation for canonicalize <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.canonicalize>`__ for more information.
+
+
+    .. cpp:function:: static diplomat::result<std::string, ICU4XError> canonicalize(const std::string_view bytes)
+
+        Best effort locale canonicalizer that doesn't need any data
+
+        Use ICU4XLocaleCanonicalizer for better control and functionality
+
+        See the `Rust documentation for canonicalize <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.canonicalize>`__ for more information.
+
+
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> to_string_to_writeable(W& write) const
 
         Write a string representation of :cpp:class:`ICU4XLocale` to ``write``
@@ -142,4 +160,14 @@
         Write a string representation of :cpp:class:`ICU4XLocale` to ``write``
 
         See the `Rust documentation for write_to <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to>`__ for more information.
+
+
+    .. cpp:function:: bool normalizing_eq(const std::string_view other) const
+
+        See the `Rust documentation for normalizing_eq <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.normalizing_eq>`__ for more information.
+
+
+    .. cpp:function:: ICU4XOrdering strict_cmp(const std::string_view other) const
+
+        See the `Rust documentation for strict_cmp <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp>`__ for more information.
 

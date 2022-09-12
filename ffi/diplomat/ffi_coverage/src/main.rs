@@ -402,6 +402,10 @@ lazy_static::lazy_static! {
         // assoc type
         "icu::locale::Locale::Err",
 
+        // locid comparison iteration
+        "icu::locid::Locale::strict_cmp_iter",
+        "icu::locid::SubtagOrderingResult",
+
         // Segmenter types and type aliases that are constructed via methods. They don't need FFI.
         "icu::segmenter::GraphemeClusterBreakIteratorLatin1",
         "icu::segmenter::GraphemeClusterBreakIteratorUtf16",

@@ -1,6 +1,7 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
+import { ICU4XOrdering_js_to_rust, ICU4XOrdering_rust_to_js } from "./ICU4XOrdering.js"
 
 const ICU4XLocale_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XLocale_destroy(underlying);
@@ -210,6 +211,28 @@ export class ICU4XLocale {
     return diplomat_out;
   }
 
+  static canonicalize(arg_bytes) {
+    const buf_arg_bytes = diplomatRuntime.DiplomatBuf.str(wasm, arg_bytes);
+    const diplomat_out = diplomatRuntime.withWriteable(wasm, (writeable) => {
+      return (() => {
+        const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
+        wasm.ICU4XLocale_canonicalize(diplomat_receive_buffer, buf_arg_bytes.ptr, buf_arg_bytes.size, writeable);
+        const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
+        if (is_ok) {
+          const ok_value = {};
+          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+          return ok_value;
+        } else {
+          const throw_value = ICU4XError_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, diplomat_receive_buffer)];
+          wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
+          throw new diplomatRuntime.FFIError(throw_value);
+        }
+      })();
+    });
+    buf_arg_bytes.free();
+    return diplomat_out;
+  }
+
   to_string() {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
@@ -227,5 +250,19 @@ export class ICU4XLocale {
         }
       })();
     });
+  }
+
+  normalizing_eq(arg_other) {
+    const buf_arg_other = diplomatRuntime.DiplomatBuf.str(wasm, arg_other);
+    const diplomat_out = wasm.ICU4XLocale_normalizing_eq(this.underlying, buf_arg_other.ptr, buf_arg_other.size);
+    buf_arg_other.free();
+    return diplomat_out;
+  }
+
+  strict_cmp(arg_other) {
+    const buf_arg_other = diplomatRuntime.DiplomatBuf.str(wasm, arg_other);
+    const diplomat_out = ICU4XOrdering_rust_to_js[wasm.ICU4XLocale_strict_cmp(this.underlying, buf_arg_other.ptr, buf_arg_other.size)];
+    buf_arg_other.free();
+    return diplomat_out;
   }
 }

@@ -6,12 +6,14 @@
 pub mod ffi {
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
-    use diplomat_runtime::DiplomatResult;
+    use core::str;
+    use diplomat_runtime::{DiplomatResult, DiplomatWriteable};
     use icu_locid::extensions::unicode::Key;
     use icu_locid::subtags::{Language, Region, Script};
     use icu_locid::Locale;
-
     use writeable::Writeable;
+
+    use crate::collator::ffi::ICU4XOrdering;
 
     #[diplomat::opaque]
     /// An ICU4X Locale, capable of representing strings like `"en-US"`.
@@ -196,6 +198,20 @@ pub mod ffi {
             .into()
         }
 
+        /// Best effort locale canonicalizer that doesn't need any data
+        ///
+        /// Use ICU4XLocaleCanonicalizer for better control and functionality
+        #[diplomat::rust_link(icu::locid::Locale::canonicalize, FnInStruct)]
+        pub fn canonicalize(
+            bytes: &str,
+            write: &mut DiplomatWriteable,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let bytes = bytes.as_bytes(); // #2520
+            let s = try_icu4x!(Locale::canonicalize(bytes));
+            let result = s.write_to(write).map_err(Into::into).into();
+            write.flush();
+            result
+        }
         /// Write a string representation of [`ICU4XLocale`] to `write`
         #[diplomat::rust_link(icu::locid::Locale::write_to, FnInStruct)]
         pub fn to_string(
@@ -206,6 +222,23 @@ pub mod ffi {
             let result = self.0.write_to(write).map_err(Into::into).into();
             write.flush();
             result
+        }
+
+        #[diplomat::rust_link(icu::locid::Locale::normalizing_eq, FnInStruct)]
+        pub fn normalizing_eq(&self, other: &str) -> bool {
+            let other = other.as_bytes(); // #2520
+            if let Ok(other) = str::from_utf8(other) {
+                self.0.normalizing_eq(other)
+            } else {
+                // invalid UTF8 won't be allowed in locales anyway
+                false
+            }
+        }
+
+        #[diplomat::rust_link(icu::locid::Locale::strict_cmp, FnInStruct)]
+        pub fn strict_cmp(&self, other: &str) -> ICU4XOrdering {
+            let other = other.as_bytes(); // #2520
+            self.0.strict_cmp(other).into()
         }
     }
 }
