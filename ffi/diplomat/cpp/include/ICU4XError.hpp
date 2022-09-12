@@ -48,6 +48,7 @@ enum struct ICU4XError {
   DataCustomError = 266,
   DataIoError = 267,
   DataUnavailableBufferFormatError = 268,
+  DataMismatchedAnyBufferError = 269,
 
   /**
    * The subtag being requested was not set

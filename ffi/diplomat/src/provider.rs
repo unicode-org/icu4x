@@ -7,20 +7,29 @@ use alloc::boxed::Box;
 use icu_provider::prelude::*;
 #[allow(unused_imports)] // feature-specific
 use icu_provider::RcWrapBounds;
+use icu_provider_adapters::empty::EmptyDataProvider;
 #[allow(unused_imports)] // feature-specific
 use yoke::{trait_hack::YokeTraitHack, Yokeable};
 #[allow(unused_imports)] // feature-specific
 use zerofrom::ZeroFrom;
 
 pub enum ICU4XDataProviderInner {
+    Empty,
     #[cfg(feature = "any_provider")]
     Any(Box<dyn AnyProvider + 'static>),
     #[cfg(feature = "buffer_provider")]
     Buffer(Box<dyn BufferProvider + 'static>),
 }
 
+impl Default for ICU4XDataProviderInner {
+    fn default() -> Self {
+        Self::Empty
+    }
+}
+
 #[diplomat::bridge]
 pub mod ffi {
+    use super::ICU4XDataProviderInner;
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
@@ -28,7 +37,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
     #[diplomat::rust_link(icu_provider, Mod)]
-    pub struct ICU4XDataProvider(pub super::ICU4XDataProviderInner);
+    pub struct ICU4XDataProvider(pub ICU4XDataProviderInner);
 
     /// A result type for `ICU4XDataProvider::create`.
     pub struct ICU4XCreateDataProviderResult {
@@ -39,6 +48,7 @@ pub mod ffi {
     }
 
     #[cfg(feature = "any_provider")]
+    #[allow(dead_code)] // feature-specific
     fn convert_any_provider<D: icu_provider::AnyProvider + 'static>(
         x: D,
     ) -> Box<ICU4XDataProvider> {
@@ -154,14 +164,49 @@ pub mod ffi {
             hidden
         )]
         pub fn create_empty() -> Box<ICU4XDataProvider> {
-            #[cfg(not(any(feature = "any_provider", feature = "buffer_provider")))]
-            panic!("Requires feature 'any_provider' or 'buffer_provider'");
+            Box::new(ICU4XDataProvider(ICU4XDataProviderInner::Empty))
+        }
 
-            #[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
-            return convert_buffer_provider(icu_provider_adapters::empty::EmptyDataProvider::new());
-
-            #[cfg(feature = "any_provider")]
-            return convert_any_provider(icu_provider_adapters::empty::EmptyDataProvider::new());
+        /// Creates a provider that tries the current provider and then, if the current provider
+        /// doesn't support the data key, another provider `other`.
+        ///
+        /// This takes ownership of the `other` provider, leaving an empty provider in its place.
+        ///
+        /// The providers must be the same type (Any or Buffer). This condition is satisfied if
+        /// both providers originate from the same constructor, such as `create_from_byte_slice`
+        /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
+        #[diplomat::rust_link(icu_provider_adapters::fork::ForkByKeyProvider, Typedef)]
+        pub fn fork_by_key(
+            &mut self,
+            other: &mut ICU4XDataProvider,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let a = core::mem::take(&mut self.0);
+            let b = core::mem::take(&mut other.0);
+            match (a, b) {
+                #[cfg(feature = "any_provider")]
+                (ICU4XDataProviderInner::Any(a), ICU4XDataProviderInner::Any(b)) => {
+                    self.0 = ICU4XDataProviderInner::Any(Box::from(
+                        icu_provider_adapters::fork::ForkByKeyProvider::new(a, b),
+                    ));
+                    Ok(())
+                }
+                #[cfg(feature = "buffer_provider")]
+                (ICU4XDataProviderInner::Buffer(a), ICU4XDataProviderInner::Buffer(b)) => {
+                    self.0 = ICU4XDataProviderInner::Buffer(Box::from(
+                        icu_provider_adapters::fork::ForkByKeyProvider::new(a, b),
+                    ));
+                    Ok(())
+                }
+                _ => {
+                    let e = ICU4XError::DataMismatchedAnyBufferError;
+                    crate::errors::log_conversion(
+                        &"fork_by_key must be passed the same type of provider (Any or Buffer)",
+                        e,
+                    );
+                    Err(e)
+                }
+            }
+            .into()
         }
     }
 }
@@ -171,8 +216,8 @@ impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
     M: KeyedDataMarker + 'static,
 {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        panic!("Requires feature 'any_provider' or 'buffer_provider'");
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        EmptyDataProvider::new().load(req)
     }
 }
 
@@ -187,6 +232,7 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
+            ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load(req),
             ICU4XDataProviderInner::Buffer(buffer_provider) => {
                 buffer_provider.as_deserializing().load(req)
             }
@@ -204,6 +250,7 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
+            ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load(req),
             ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load(req),
         }
     }
@@ -223,6 +270,7 @@ where
 {
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
+            ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load(req),
             ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load(req),
             ICU4XDataProviderInner::Buffer(buffer_provider) => {
                 buffer_provider.as_deserializing().load(req)
