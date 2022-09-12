@@ -38,7 +38,7 @@ pub mod ffi {
 
     impl ICU4XFixedDecimalFormatter {
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
-        #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new_with_grouping_strategy(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,

@@ -16,7 +16,7 @@
 /**
  * 
  * 
- * See the [Rust documentation for `AlternateHandling`](https://unicode-org.github.io/icu4x-docs/doc/icu_collator/enum.AlternateHandling.html) for more information.
+ * See the [Rust documentation for `AlternateHandling`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.AlternateHandling.html) for more information.
  */
 enum struct ICU4XCollatorAlternateHandling {
   Auto = 0,
