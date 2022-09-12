@@ -212,7 +212,7 @@ impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
     M: KeyedDataMarker + 'static,
 {
-    fn load(&self, _req: DataRequest) -> Result<DataResponse<M>, DataError> {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         EmptyDataProvider::new().load(req)
     }
 }
