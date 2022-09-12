@@ -18,6 +18,7 @@ pub mod ffi {
     use icu_provider::FallbackPriority;
     use icu_provider::KeyedDataMarker;
     use icu_provider_adapters::fallback::LocaleFallbackConfig;
+    use icu_provider_adapters::fallback::LocaleFallbackIterator;
     use icu_provider_adapters::fallback::LocaleFallbacker;
     use icu_provider_adapters::fallback::LocaleFallbackerWithConfig;
     use writeable::Writeable;
@@ -51,7 +52,15 @@ pub mod ffi {
     #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbacker, Struct)]
     pub struct ICU4XLocaleFallbackerWithConfig<'a>(pub LocaleFallbackerWithConfig<'a>);
 
+    #[diplomat::opaque]
+    #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbacker, Struct)]
+    pub struct ICU4XLocaleFallbackIterator<'a>(pub LocaleFallbackIterator<'a, 'a>);
+
     impl ICU4XLocaleFallbacker {
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbacker::try_new_unstable,
+            FnInStruct
+        )]
         pub fn create(provider: &ICU4XDataProvider) -> DiplomatResult<Self, ICU4XError> {
             LocaleFallbacker::try_new_unstable(&provider.0)
                 .map(ICU4XLocaleFallbacker)
@@ -59,15 +68,48 @@ pub mod ffi {
                 .into()
         }
 
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbacker::new_without_data,
+            FnInStruct
+        )]
+        pub fn create_without_data() -> Self {
+            ICU4XLocaleFallbacker(LocaleFallbacker::new_without_data())
+        }
+
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbacker::for_config,
+            FnInStruct
+        )]
         pub fn for_config<'a, 'temp>(
             &'a self,
             config: ICU4XLocaleFallbackConfig<'temp>,
         ) -> DiplomatResult<ICU4XLocaleFallbackerWithConfig<'a>, ICU4XError> {
             match LocaleFallbackConfig::try_from(config) {
-                Ok(config) => Ok(ICU4XLocaleFallbackerWithConfig(self.0.for_config(config))),
+                Ok(converted) => Ok(ICU4XLocaleFallbackerWithConfig(
+                    self.0.for_config(converted),
+                )),
                 Err(e) => Err(e),
             }
             .into()
+        }
+    }
+
+    impl<'a> ICU4XLocaleFallbackerWithConfig<'a> {
+        pub fn fallback_for_locale<'b: 'a, 'temp>(
+            &'b self,
+            locale: &'temp ICU4XLocale,
+        ) -> ICU4XLocaleFallbackIterator<'a> {
+            ICU4XLocaleFallbackIterator(self.0.fallback_for((&locale.0).into()))
+        }
+    }
+
+    impl<'a> ICU4XLocaleFallbackIterator<'a> {
+        pub fn get(&self) -> ICU4XLocale {
+            ICU4XLocale(self.0.get().clone().into_locale())
+        }
+
+        pub fn step(&mut self) {
+            self.0.step();
         }
     }
 }
