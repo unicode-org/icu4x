@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663014984941,
+  "lastUpdate": 1663017443528,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -26993,6 +26993,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/cf958a87745d6133e3c41e0dd863912ecea5eead"
         },
         "date": 1663014924379,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "5f984a8dc2de9791cb8db1d2a24934bc5cf7ab79",
+          "message": "Whack-a-mole part 6 (#2547)\n\n* Fix collator links\r\n\r\n* blanket-ignore any/buffer provider ctors\r\n\r\n* collator, decimal, casemapping, bidi, calendar",
+          "timestamp": "2022-09-12T21:15:22Z",
+          "tree_id": "049c9954f4e66939999b682e207e8b394778f92f",
+          "url": "https://github.com/unicode-org/icu4x/commit/5f984a8dc2de9791cb8db1d2a24934bc5cf7ab79"
+        },
+        "date": 1663017390172,
         "tool": "ndjson",
         "benches": [
           {
