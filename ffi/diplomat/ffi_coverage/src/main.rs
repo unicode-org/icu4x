@@ -296,6 +296,9 @@ lazy_static::lazy_static! {
         // We should add this once we have a better story for FFI custom data structs
         "icu_provider_adapters::any_payload::AnyPayloadProvider",
 
+        // We don't expose data keys directly over FFI, but when we do, we should add this
+        "icu_provider_adapters::fallback::LocaleFallbacker::for_key",
+
         // Don't want parts for 1.0
         "icu::list::parts",
         // Formatting wrappers, may be supported in the future
@@ -323,6 +326,7 @@ lazy_static::lazy_static! {
         "icu::timezone::provider",
         "icu::collator::provider",
         "icu::decimal::provider",
+        "icu_provider_adapters::fallback::provider",
 
         // Reexports (tool doesn't currently handle these)
         "icu::calendar::any_calendar::AnyCalendar",
@@ -417,8 +421,13 @@ lazy_static::lazy_static! {
         "icu::segmenter::WordBreakIteratorUtf16",
         "icu::segmenter::WordBreakIteratorUtf8",
         "icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8",
+
         // Some of the provider adapter types are Rust-specific and not relevant to FFI
         "icu_provider_adapters::either::EitherProvider",
+
+        // Decompositions of providers is tricky to do over FFI and the use cases are unclear.
+        "icu_provider_adapters::fallback::LocaleFallbackProvider::inner",
+        "icu_provider_adapters::fallback::LocaleFallbackProvider::into_inner",
 
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }
