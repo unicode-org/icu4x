@@ -27,6 +27,7 @@ typedef enum ICU4XError {
   ICU4XError_DataCustomError = 266,
   ICU4XError_DataIoError = 267,
   ICU4XError_DataUnavailableBufferFormatError = 268,
+  ICU4XError_DataMismatchedAnyBufferError = 269,
   ICU4XError_LocaleUndefinedSubtagError = 512,
   ICU4XError_LocaleParserLanguageError = 513,
   ICU4XError_LocaleParserSubtagError = 514,
