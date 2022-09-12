@@ -43,7 +43,9 @@ pub trait NicheBytes<const N: usize> {
 // Any other bit pattern is a valid.
 #[repr(packed)]
 pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
-    invalid: [u8; N],
+    /// Invariant: The value is `niche` only if the bytes equal NICHE_BIT_PATTERN.
+    niche: [u8; N],
+    /// Invariant: The value is `valid` if the `niche` field does not match NICHE_BIT_PATTERN.
     valid: U,
 }
 
