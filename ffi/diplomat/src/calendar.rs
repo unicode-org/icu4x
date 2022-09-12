@@ -54,6 +54,7 @@ pub mod ffi {
         /// Obtain the calendar type given a BCP-47 -u-ca- extension string
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_bcp47, FnInEnum)]
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_bcp47_string, FnInEnum, hidden)]
+        #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_bcp47_bytes, FnInEnum, hidden)]
         pub fn from_bcp47(s: &str) -> DiplomatResult<ICU4XAnyCalendarKind, ICU4XError> {
             let s = s.as_bytes(); // #2520
             AnyCalendarKind::from_bcp47_bytes(s)
