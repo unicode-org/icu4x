@@ -35,6 +35,8 @@ class ICU4XCustomTimeZone {
 
   /**
    * Creates a time zone from an offset string.
+   * 
+   * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
    */
   static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s);
 
@@ -290,7 +292,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `maybe_calculate_meta_zone`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone) for more information.
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone)
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_meta_zone_from_time_zone)
    */
   void maybe_calculate_meta_zone(const ICU4XMetaZoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime);
   inline const capi::ICU4XCustomTimeZone* AsFFI() const { return this->inner.get(); }

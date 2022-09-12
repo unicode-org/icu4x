@@ -12,6 +12,12 @@
 #include "ICU4XTimeLength.h"
 
 
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `Time`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/options/length/enum.Time.html) for more information.
+ */
 enum struct ICU4XTimeLength {
   Full = 0,
   Long = 1,
