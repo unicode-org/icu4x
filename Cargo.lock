@@ -1377,6 +1377,7 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_list",
  "icu_locid",
  "icu_locid_transform",
  "icu_normalizer",

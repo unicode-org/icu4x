@@ -6,7 +6,7 @@ use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
 use icu_calendar::DateTimeError;
-use icu_collator::error::CollatorError;
+use icu_collator::CollatorError;
 use icu_datetime::DateTimeFormatterError;
 use icu_decimal::FixedDecimalFormatterError;
 use icu_locid::ParserError;
@@ -36,6 +36,8 @@ pub mod ffi {
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
     #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
     #[diplomat::rust_link(icu::timezone::TimeZoneError, Enum, compact)]
+    #[diplomat::rust_link(icu::collator::CollatorError, Enum, compact)]
+    #[diplomat::rust_link(icu::decimal::FixedDecimalFormatterError, Enum, compact)]
     pub enum ICU4XError {
         // general errors
         /// The error is not currently categorized as ICU4XError.

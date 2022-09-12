@@ -42,10 +42,13 @@ default = ["any_provider"]
 any_provider = []
 serde = [
     "dep:serde",
+    "icu_collator/serde",
     "icu_datetime/serde",
     "icu_decimal/serde",
+    "icu_list/serde",
     "icu_locid_transform/serde",
     "icu_locid/serde",
+    "icu_normalizer/serde",
     "icu_plurals/serde",
     "icu_properties/serde",
     "icu_provider/serde",
@@ -62,13 +65,14 @@ simple_logger = ["dep:simple_logger"]
 [dependencies]
 fixed_decimal = { version = "0.4", path = "../../utils/fixed_decimal", features = ["ryu"] }
 icu_calendar = { version = "1.0.0-beta1", path = "../../components/calendar"}
-icu_collator = { version = "1.0.0-beta1", path = "../../components/collator", features = ["serde"] }
+icu_collator = { version = "1.0.0-beta1", path = "../../components/collator" }
 icu_collections = { version = "1.0.0-beta1", path = "../../components/collections"}
 icu_datetime = { version = "1.0.0-beta1", path = "../../components/datetime/" }
 icu_decimal = { version = "1.0.0-beta1", path = "../../components/decimal/" }
+icu_list = { version = "1.0.0-beta1", path = "../../components/list" }
 icu_locid_transform = { version = "1.0.0-beta1", path = "../../components/locid_transform" }
 icu_locid = { version = "1.0.0-beta1", path = "../../components/locid" }
-icu_normalizer = { version = "1.0.0-beta1", path = "../../components/normalizer/", features = ["serde"] }
+icu_normalizer = { version = "1.0.0-beta1", path = "../../components/normalizer/" }
 icu_plurals = { version = "1.0.0-beta1", path = "../../components/plurals/" }
 icu_properties = { version = "1.0.0-beta1", path = "../../components/properties/", features = ["bidi"] }
 icu_provider = { version = "1.0.0-beta1", path = "../../provider/core" }
