@@ -122,11 +122,6 @@ icu::segmenter::GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8#Typedef
 icu::segmenter::LineBreakIteratorPotentiallyIllFormedUtf8#Typedef
 icu::segmenter::SentenceBreakIteratorPotentiallyIllFormedUtf8#Typedef
 icu::segmenter::WordBreakIteratorPotentiallyIllFormedUtf8#Typedef
-icu_provider_adapters::any_payload::AnyPayloadProvider#Struct
-icu_provider_adapters::any_payload::AnyPayloadProvider::new_default#FnInStruct
-icu_provider_adapters::any_payload::AnyPayloadProvider::new_owned#FnInStruct
-icu_provider_adapters::any_payload::AnyPayloadProvider::new_static#FnInStruct
-icu_provider_adapters::either::EitherProvider#Enum
 icu_provider_adapters::fallback::LocaleFallbackConfig#Struct
 icu_provider_adapters::fallback::LocaleFallbackIterator#Struct
 icu_provider_adapters::fallback::LocaleFallbackIterator::get#FnInStruct
@@ -164,7 +159,6 @@ icu_provider_adapters::fork::ForkByErrorProvider::inner#FnInStruct
 icu_provider_adapters::fork::ForkByErrorProvider::into_inner#FnInStruct
 icu_provider_adapters::fork::ForkByErrorProvider::new#FnInStruct
 icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate#FnInStruct
-icu_provider_adapters::fork::ForkByKeyProvider#Typedef
 icu_provider_adapters::fork::MultiForkByErrorProvider#Struct
 icu_provider_adapters::fork::MultiForkByErrorProvider::inner#FnInStruct
 icu_provider_adapters::fork::MultiForkByErrorProvider::into_inner#FnInStruct
