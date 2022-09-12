@@ -296,6 +296,11 @@ lazy_static::lazy_static! {
         // We should add this once we have a better story for FFI custom data structs
         "icu_provider_adapters::any_payload::AnyPayloadProvider",
 
+        // Don't want parts for 1.0
+        "icu::list::parts",
+        // Formatting wrappers, may be supported in the future
+        "icu::list::FormattedList",
+
         // Experimental
         "icu::casemapping",
 
@@ -314,6 +319,7 @@ lazy_static::lazy_static! {
         "icu::properties::provider",
         "icu::segmenter::provider",
         "icu::normalizer::provider",
+        "icu::list::provider",
         "icu::timezone::provider",
         "icu::collator::provider",
         "icu::decimal::provider",
