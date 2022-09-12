@@ -239,7 +239,7 @@ impl AsULE for NonZeroU8 {
 unsafe impl EqULE for NonZeroU8 {}
 
 impl NicheBytes<1> for NonZeroU8 {
-    const INVALID_BIT_PATTERN: [u8; 1] = [0x00];
+    const NICHE_BIT_PATTERN: [u8; 1] = [0x00];
 }
 
 // Safety (based on the safety checklist on the ULE trait):
@@ -306,7 +306,7 @@ impl AsULE for NonZeroI8 {
 unsafe impl EqULE for NonZeroI8 {}
 
 impl NicheBytes<1> for NonZeroI8 {
-    const INVALID_BIT_PATTERN: [u8; 1] = [0x00];
+    const NICHE_BIT_PATTERN: [u8; 1] = [0x00];
 }
 
 // These impls are actually safe and portable due to Rust always using IEEE 754, see the documentation

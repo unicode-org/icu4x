@@ -8,11 +8,11 @@ use core::{marker::Copy, ops::Deref};
 
 use super::{AsULE, ULE};
 
-/// The types implementing this trait guarantee that [`NicheBytes::INVALID_BIT_PATTERN`]
+/// The [`ULE`] types implementing this trait guarantee that [`NicheBytes::NICHE_BIT_PATTERN`]
 /// can never occur as a valid byte representation of the type.
 /// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
 pub trait NicheBytes<const N: usize> {
-    const INVALID_BIT_PATTERN: [u8; N];
+    const NICHE_BIT_PATTERN: [u8; N];
 }
 
 /// [`ULE`] type for [`NichedOption<U,N>`] where U implements [`NicheBytes`].
@@ -39,9 +39,9 @@ pub trait NicheBytes<const N: usize> {
 /// assert_eq!(zv_no.get(3).as_deref(), Some(&None));
 /// ```
 // Invariants:
-// The union stores [`NicheBytes::INVALID_BIT_PATTERN`] when None.
+// The union stores [`NicheBytes::NICHE_BIT_PATTERN`] when None.
 // Any other bit pattern is a valid.
-#[repr(packed)]
+#[repr(C)]
 pub union NichedOptionULE<U: NicheBytes<N> + ULE, const N: usize> {
     /// Invariant: The value is `niche` only if the bytes equal NICHE_BIT_PATTERN.
     niche: [u8; N],
@@ -56,18 +56,20 @@ impl<U: NicheBytes<N> + ULE, const N: usize> NichedOptionULE<U, N> {
         match opt {
             Some(u) => Self { valid: u },
             None => Self {
-                invalid: <U as NicheBytes<N>>::INVALID_BIT_PATTERN,
+                niche: <U as NicheBytes<N>>::NICHE_BIT_PATTERN,
             },
         }
     }
 
     /// Convert to an Option<U>
     pub fn get(self) -> Option<U> {
-        if unsafe { self.invalid } == <U as NicheBytes<N>>::INVALID_BIT_PATTERN {
-            None
-        } else {
-            // Safety: the inner value is valid
-            unsafe { Some(self.valid) }
+        // Safety: The union stores NICHE_BIT_PATTERN when None otherwise a valid U
+        unsafe {
+            if self.niche == <U as NicheBytes<N>>::NICHE_BIT_PATTERN {
+                None
+            } else {
+                Some(self.valid)
+            }
         }
     }
 }
@@ -101,19 +103,24 @@ impl<U: NicheBytes<N> + ULE + PartialEq, const N: usize> PartialEq for NichedOpt
 impl<U: NicheBytes<N> + ULE + Eq, const N: usize> Eq for NichedOptionULE<U, N> {}
 
 /// Safety for ULE trait
-/// 1. NichedOptionULE does not have any padding bytes due to `#[repr(packed)]` on a struct
+/// 1. NichedOptionULE does not have any padding bytes due to `#[repr(C)]` on a struct
 ///    containing only ULE fields.
-///    NichedOptionULE either contains INVALID_BIT_PATTERN or valid U byte sequences.
+///    NichedOptionULE either contains NICHE_BIT_PATTERN or valid U byte sequences.
 ///    In both cases the data is initialized.
 /// 2. NichedOptionULE is aligned to 1 byte due to `#[repr(packed)]` on a struct containing only
 ///    ULE fields.
 /// 3. validate_byte_slice impl returns an error if invalid bytes are encountered.
 /// 4. validate_byte_slice impl returns an error there are extra bytes.
 /// 5. The other ULE methods are left to their default impl.
-/// 6. NichedOptionULE equality is based on ULE equality of the subfield.
+/// 6. NichedOptionULE equality is based on ULE equality of the subfield, assuming that NicheBytes
+///    has been implemented correctly (this is a correctness but not a safety guarantee).
 unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N> {
     fn validate_byte_slice(bytes: &[u8]) -> Result<(), crate::ZeroVecError> {
         let size = size_of::<Self>();
+        // The implemention is only correct if NICHE_BIT_PATTERN has same number of bytes as the
+        // type.
+        debug_assert!(N == core::mem::size_of::<U>());
+
         // The bytes should fully transmute to a collection of Self
         if bytes.len() % size != 0 {
             return Err(crate::ZeroVecError::length::<Self>(bytes.len()));
@@ -121,7 +128,7 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
         bytes.chunks(size).try_for_each(|chunk| {
             // Associated const cannot be referenced in a pattern
             // https://doc.rust-lang.org/error-index.html#E0158
-            if chunk == <U as NicheBytes<N>>::INVALID_BIT_PATTERN {
+            if chunk == <U as NicheBytes<N>>::NICHE_BIT_PATTERN {
                 Ok(())
             } else {
                 U::validate_byte_slice(chunk)
@@ -136,7 +143,8 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 /// [`repr(transparent)`] guarantees that the layout is same as [`Option<U>`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
 #[repr(transparent)]
-pub struct NichedOption<U, const N: usize>(Option<U>);
+#[non_exhaustive]
+pub struct NichedOption<U, const N: usize>(pub Option<U>);
 
 impl<U, const N: usize> NichedOption<U, N> {
     pub const fn new(o: Option<U>) -> Self {
