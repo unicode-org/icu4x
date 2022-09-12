@@ -286,8 +286,8 @@ pub mod provider;
 
 extern crate alloc;
 
-pub use error::CollatorError;
 pub use comparison::Collator;
+pub use error::CollatorError;
 pub use options::AlternateHandling;
 pub use options::BackwardSecondLevel;
 pub use options::CaseFirst;
