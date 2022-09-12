@@ -691,6 +691,8 @@ dependencies = [
  "icu_datetime",
  "icu_provider",
  "serde",
+ "yoke",
+ "zerovec 0.8.1",
 ]
 
 [[package]]

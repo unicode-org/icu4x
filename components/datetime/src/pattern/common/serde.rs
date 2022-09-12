@@ -459,4 +459,62 @@ mod runtime {
             }
         }
     }
+
+    #[cfg(feature = "experimental")]
+    mod mixed {
+        use super::*;
+        use crate::pattern::runtime::MixedPattern;
+
+        #[allow(clippy::upper_case_acronyms)]
+        struct DeserializeMixedPatternUTS35String;
+
+        impl<'de> de::Visitor<'de> for DeserializeMixedPatternUTS35String {
+            type Value = MixedPattern<'de>;
+
+            fn expecting(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+                write!(formatter, "a valid pattern.")
+            }
+
+            fn visit_str<E>(self, pattern_string: &str) -> Result<Self::Value, E>
+            where
+                E: de::Error,
+            {
+                // Parse a string into a list of fields.
+                let pattern = pattern_string
+                    .parse()
+                    .map_err(|_| E::custom("Failed to parse pattern"))?;
+                Ok(MixedPattern::from(&pattern))
+            }
+        }
+
+        impl<'de: 'data, 'data> Deserialize<'de> for MixedPattern<'data> {
+            fn deserialize<D>(deserializer: D) -> Result<Self, D::Error>
+            where
+                D: Deserializer<'de>,
+            {
+                if deserializer.is_human_readable() {
+                    deserializer.deserialize_str(DeserializeMixedPatternUTS35String)
+                } else {
+                    let items = ZeroVec::deserialize(deserializer)?;
+                    Ok(Self { items })
+                }
+            }
+        }
+
+        #[cfg(feature = "datagen")]
+        impl Serialize for MixedPattern<'_> {
+            fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+            where
+                S: ser::Serializer,
+            {
+                if serializer.is_human_readable() {
+                    // Serialize into the UTS 35 string representation.
+                    let string = self.to_string();
+                    serializer.serialize_str(&string)
+                } else {
+                    self.items.serialize(serializer)
+                }
+            }
+        }
+    }
 }

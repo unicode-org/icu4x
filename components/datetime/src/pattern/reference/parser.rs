@@ -7,6 +7,10 @@ use super::{
     super::{GenericPatternItem, PatternItem},
     GenericPattern, Pattern,
 };
+
+#[cfg(feature = "experimental")]
+use super::super::MixedPatternItem;
+
 use crate::fields::FieldSymbol;
 use alloc::string::String;
 use alloc::vec;
@@ -35,12 +39,15 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn handle_quoted_literal(
+    fn handle_quoted_literal<I>(
         &mut self,
         ch: char,
         chars: &mut core::iter::Peekable<core::str::Chars>,
-        result: &mut Vec<PatternItem>,
-    ) -> Result<bool, PatternError> {
+        result: &mut Vec<I>,
+    ) -> Result<bool, PatternError>
+    where
+        I: TryFrom<(FieldSymbol, u8), Error = PatternError>,
+    {
         if ch == '\'' {
             match (&mut self.state, chars.peek() == Some(&'\'')) {
                 (
@@ -119,7 +126,10 @@ impl<'p> Parser<'p> {
         }
     }
 
-    fn collect_segment(state: Segment, result: &mut Vec<PatternItem>) -> Result<(), PatternError> {
+    fn collect_segment<I>(state: Segment, result: &mut Vec<I>) -> Result<(), PatternError>
+    where
+        I: TryFrom<(FieldSymbol, u8), Error = PatternError> + From<char>,
+    {
         match state {
             Segment::Symbol { symbol, length } => {
                 result.push((symbol, length).try_into()?);
@@ -232,6 +242,67 @@ impl<'p> Parser<'p> {
         }
 
         Self::collect_generic_segment(self.state, &mut result)?;
+
+        Ok(result)
+    }
+
+    #[cfg(feature = "experimental")]
+    pub fn parse_mixed(mut self) -> Result<Vec<MixedPatternItem>, PatternError> {
+        let mut chars = self.source.chars().peekable();
+        let mut result = vec![];
+        while let Some(ch) = chars.next() {
+            if !self.handle_quoted_literal(ch, &mut chars, &mut result)? {
+                if ch == '{' {
+                    Self::collect_segment(self.state, &mut result)?;
+
+                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
+                    let idx = ch
+                        .to_digit(10)
+                        .ok_or(PatternError::UnknownSubstitution(ch))?
+                        as u8;
+                    result.push(MixedPatternItem::Placeholder(idx));
+                    let ch = chars.next().ok_or(PatternError::UnclosedPlaceholder)?;
+                    if ch != '}' {
+                        return Err(PatternError::UnclosedPlaceholder);
+                    }
+                    self.state = Segment::Literal {
+                        literal: String::new(),
+                        quoted: false,
+                    };
+                } else if let Ok(new_symbol) = FieldSymbol::try_from(ch) {
+                    match self.state {
+                        Segment::Symbol {
+                            ref symbol,
+                            ref mut length,
+                        } if new_symbol == *symbol => {
+                            *length += 1;
+                        }
+                        segment => {
+                            Self::collect_segment(segment, &mut result)?;
+                            self.state = Segment::Symbol {
+                                symbol: new_symbol,
+                                length: 1,
+                            };
+                        }
+                    }
+                } else {
+                    match self.state {
+                        Segment::Symbol { symbol, length } => {
+                            result.push((symbol, length).try_into()?);
+                            self.state = Segment::Literal {
+                                literal: String::from(ch),
+                                quoted: false,
+                            };
+                        }
+                        Segment::Literal {
+                            ref mut literal, ..
+                        } => literal.push(ch),
+                    }
+                }
+            }
+        }
+
+        Self::collect_segment(self.state, &mut result)?;
 
         Ok(result)
     }
@@ -623,6 +694,52 @@ mod tests {
             assert_eq!(
                 Parser::new(string).parse_placeholders(replacements),
                 Err(error),
+            );
+        }
+    }
+
+    #[cfg(feature = "experimental")]
+    #[test]
+    fn pattern_parse_mixed() {
+        let samples = vec![
+            (
+                "EEEE {0}",
+                vec![
+                    (fields::Weekday::Format.into(), FieldLength::Wide).into(),
+                    ' '.into(),
+                    0.into(),
+                ],
+            ),
+            (
+                "{1} G",
+                vec![
+                    1.into(),
+                    ' '.into(),
+                    // BUG: this apparently returns `One` instead of `Abbreviated`?
+                    (FieldSymbol::Era, FieldLength::One).into(),
+                ],
+            ),
+            (
+                "MMMMM {2} d, yy",
+                vec![
+                    (fields::Month::Format.into(), FieldLength::Narrow).into(),
+                    ' '.into(),
+                    2.into(),
+                    ' '.into(),
+                    (fields::Day::DayOfMonth.into(), FieldLength::One).into(),
+                    ','.into(),
+                    ' '.into(),
+                    (fields::Year::Calendar.into(), FieldLength::TwoDigit).into(),
+                ],
+            ),
+        ];
+
+        for (string, pattern) in samples {
+            assert_eq!(
+                Parser::new(string)
+                    .parse_mixed()
+                    .expect("Parsing pattern failed."),
+                pattern,
             );
         }
     }

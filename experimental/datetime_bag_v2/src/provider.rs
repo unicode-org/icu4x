@@ -1,5 +1,15 @@
-use icu_datetime::{pattern::runtime::Pattern, provider::calendar::patterns::GenericPatternV1};
+// This file is part of ICU4X. For terms of use, please see the file
+// called LICENSE at the top level of the ICU4X source tree
+// (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
+
+use icu_datetime::{
+    pattern::runtime::Pattern,
+    provider::calendar::patterns::{GenericPatternV1, MixedPatternV1},
+};
 use icu_provider::{yoke, zerofrom};
+
+// TODO: must definitely wrap all `Pattern`s into a `PatternV1` struct,
+// or should those allow plural alternatives?
 
 // won't implement this for now
 // #[derive(Debug, PartialEq, Clone, Default, yoke::Yokeable, zerofrom::ZeroFrom)]
@@ -29,20 +39,15 @@ pub struct DateTimeFormatV1<'data> {
 pub struct DateTimeFormatGlueV1<'data> {
     pub datetime: GenericPatternV1<'data>,
     pub time_zone: GenericPatternV1<'data>,
-    // TODO: Several fields use a single `FieldSymbol` and a `GenericPattern`
-    // or a single `FieldSymbol`, so they should be defined with a custom struct
-    pub weekday: GenericPatternV1<'data>,
+    pub weekday: MixedPatternV1<'data>,
 }
 
 pub struct DateFormatV1<'data> {
-    // TODO: Same as `DateTimeGlueV1::weekday`
-    pub glue_era: GenericPatternV1<'data>,
+    pub glue_era: MixedPatternV1<'data>,
     pub components: DateFormatComponentsV1<'data>,
 }
 
 pub struct DateFormatComponentsV1<'data> {
-    // TODO: must definitely wrap all `Pattern`s into a `PatternV1` struct,
-    // or should `components` also allow plural alternatives?
     pub year_month_day: Pattern<'data>,
     pub year_month: Pattern<'data>,
     pub year: Pattern<'data>,
@@ -56,18 +61,16 @@ pub struct DateFormatComponentsV1<'data> {
 }
 
 pub struct DateWeekdayFormatV1<'data> {
-    // TODO: This uses generic and regular patterns, so it should be
-    // its own custom struct
-    pub year_month_day: Option<GenericPatternV1<'data>>,
-    pub year_month: Option<GenericPatternV1<'data>>,
-    pub year: Option<GenericPatternV1<'data>>,
-    pub era: Option<GenericPatternV1<'data>>,
-    pub month_day: Option<GenericPatternV1<'data>>,
-    pub month: Option<GenericPatternV1<'data>>,
-    pub day: Option<GenericPatternV1<'data>>,
-    pub era_year_month_day: Option<GenericPatternV1<'data>>,
-    pub era_year_month: Option<GenericPatternV1<'data>>,
-    pub era_year: Option<GenericPatternV1<'data>>,
+    pub year_month_day: Option<MixedPatternV1<'data>>,
+    pub year_month: Option<MixedPatternV1<'data>>,
+    pub year: Option<MixedPatternV1<'data>>,
+    pub era: Option<MixedPatternV1<'data>>,
+    pub month_day: Option<MixedPatternV1<'data>>,
+    pub month: Option<MixedPatternV1<'data>>,
+    pub day: Option<MixedPatternV1<'data>>,
+    pub era_year_month_day: Option<MixedPatternV1<'data>>,
+    pub era_year_month: Option<MixedPatternV1<'data>>,
+    pub era_year: Option<MixedPatternV1<'data>>,
 }
 
 pub struct TimeFormatV1<'data> {

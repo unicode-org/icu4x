@@ -12,6 +12,12 @@ mod generic;
 mod parser;
 pub(crate) mod pattern;
 
+#[cfg(feature = "experimental")]
+mod mixed;
+
 pub use generic::GenericPattern;
 pub use parser::Parser;
 pub use pattern::Pattern;
+
+#[cfg(feature = "experimental")]
+pub use mixed::MixedPattern;
