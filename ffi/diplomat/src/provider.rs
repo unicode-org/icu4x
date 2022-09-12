@@ -171,6 +171,10 @@ pub mod ffi {
         /// doesn't support the data key, another provider `other`.
         ///
         /// This takes ownership of the `other` provider, leaving an empty provider in its place.
+        ///
+        /// The providers must be the same type (Any or Buffer). This condition is satisfied if
+        /// both providers originate from the same constructor, such as `create_from_byte_slice`
+        /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
         #[diplomat::rust_link(icu_provider_adapters::fork::ForkByKeyProvider, Typedef)]
         pub fn fork_by_key(
             &mut self,
