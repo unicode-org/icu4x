@@ -31,6 +31,7 @@ impl Default for ICU4XDataProviderInner {
 pub mod ffi {
     use super::ICU4XDataProviderInner;
     use crate::errors::ffi::ICU4XError;
+    use crate::fallbacker::ffi::ICU4XLocaleFallbacker;
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
@@ -217,6 +218,7 @@ pub mod ffi {
             icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable,
             FnInStruct
         )]
+        #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbackProvider, Struct, compact)]
         pub fn enable_locale_fallback(&mut self) -> DiplomatResult<(), ICU4XError> {
             match core::mem::take(&mut self.0) {
                 ICU4XDataProviderInner::Empty => Err(icu_provider::DataErrorKind::MissingDataKey
@@ -241,6 +243,37 @@ pub mod ffi {
                         }
                         Err(e) => Err(e.into()),
                     }
+                }
+            }
+            .into()
+        }
+
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbackProvider::new_with_fallbacker,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbackProvider, Struct, compact)]
+        pub fn enable_locale_fallback_with(
+            &mut self,
+            fallbacker: &ICU4XLocaleFallbacker,
+        ) -> DiplomatResult<(), ICU4XError> {
+            match core::mem::take(&mut self.0) {
+                ICU4XDataProviderInner::Empty => Err(icu_provider::DataErrorKind::MissingDataKey
+                    .into_error()
+                    .into()),
+                #[cfg(feature = "any_provider")]
+                ICU4XDataProviderInner::Any(inner) => {
+                    self.0 = ICU4XDataProviderInner::Any(Box::new(
+                        LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
+                    ));
+                    Ok(())
+                }
+                #[cfg(feature = "buffer_provider")]
+                ICU4XDataProviderInner::Buffer(inner) => {
+                    self.0 = ICU4XDataProviderInner::Buffer(Box::new(
+                        LocaleFallbackProvider::new_with_fallbacker(inner, fallbacker.0.clone()),
+                    ));
+                    Ok(())
                 }
             }
             .into()

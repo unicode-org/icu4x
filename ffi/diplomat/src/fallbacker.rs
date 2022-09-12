@@ -49,11 +49,11 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbacker, Struct)]
+    #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbackerWithConfig, Struct)]
     pub struct ICU4XLocaleFallbackerWithConfig<'a>(pub LocaleFallbackerWithConfig<'a>);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbacker, Struct)]
+    #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbackIterator, Struct)]
     pub struct ICU4XLocaleFallbackIterator<'a>(pub LocaleFallbackIterator<'a, 'a>);
 
     impl ICU4XLocaleFallbacker {
@@ -95,6 +95,10 @@ pub mod ffi {
     }
 
     impl<'a> ICU4XLocaleFallbackerWithConfig<'a> {
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbackerWithConfig::fallback_for,
+            FnInStruct
+        )]
         pub fn fallback_for_locale<'b: 'a, 'temp>(
             &'b self,
             locale: &'temp ICU4XLocale,
@@ -104,10 +108,23 @@ pub mod ffi {
     }
 
     impl<'a> ICU4XLocaleFallbackIterator<'a> {
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbackIterator::get,
+            FnInStruct
+        )]
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbackIterator::take,
+            FnInStruct,
+            hidden
+        )]
         pub fn get(&self) -> ICU4XLocale {
             ICU4XLocale(self.0.get().clone().into_locale())
         }
 
+        #[diplomat::rust_link(
+            icu_provider_adapters::fallback::LocaleFallbackIterator::step,
+            FnInStruct
+        )]
         pub fn step(&mut self) {
             self.0.step();
         }
