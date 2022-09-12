@@ -33,6 +33,7 @@ pub mod ffi {
     use crate::errors::ffi::ICU4XError;
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
+    use icu_provider_adapters::fallback::LocaleFallbackProvider;
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -204,6 +205,39 @@ pub mod ffi {
                         e,
                     );
                     Err(e)
+                }
+            }
+            .into()
+        }
+
+        /// Enables locale fallbacking for data requests made to this provider.
+        ///
+        /// Note that the test provider (from `create_test`) already has fallbacking enabled.
+        #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbackProvider::try_new_unstable, FnInStruct)]
+        pub fn enable_locale_fallback(&mut self) -> DiplomatResult<(), ICU4XError> {
+            match core::mem::take(&mut self.0) {
+                ICU4XDataProviderInner::Empty => Err(icu_provider::DataErrorKind::MissingDataKey
+                    .into_error()
+                    .into()),
+                #[cfg(feature = "any_provider")]
+                ICU4XDataProviderInner::Any(inner) => {
+                    match LocaleFallbackProvider::try_new_with_any_provider(inner) {
+                        Ok(x) => {
+                            self.0 = ICU4XDataProviderInner::Any(Box::new(x));
+                            Ok(())
+                        }
+                        Err(e) => Err(e.into()),
+                    }
+                }
+                #[cfg(feature = "buffer_provider")]
+                ICU4XDataProviderInner::Buffer(inner) => {
+                    match LocaleFallbackProvider::try_new_with_buffer_provider(inner) {
+                        Ok(x) => {
+                            self.0 = ICU4XDataProviderInner::Buffer(Box::new(x));
+                            Ok(())
+                        }
+                        Err(e) => Err(e.into()),
+                    }
                 }
             }
             .into()
