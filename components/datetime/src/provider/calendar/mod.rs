@@ -4,8 +4,6 @@
 
 //! Data struct definitions for calendar-specific symbols and patterns.
 
-#![allow(missing_docs)] // TODO(#686) - Add missing docs.
-
 #[cfg(feature = "experimental_skeleton_matching")]
 mod skeletons;
 mod symbols;
@@ -92,12 +90,16 @@ pub mod patterns {
     )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct LengthPatternsV1<'data> {
+        /// A full length date/time pattern.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub full: runtime::Pattern<'data>,
+        /// A long length date/time pattern.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub long: runtime::Pattern<'data>,
+        /// A medium length date/time pattern.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub medium: runtime::Pattern<'data>,
+        /// A short length date/time pattern.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub short: runtime::Pattern<'data>,
     }
@@ -111,12 +113,16 @@ pub mod patterns {
     )]
     #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
     pub struct GenericLengthPatternsV1<'data> {
+        /// A full length glue pattern of other formatted elements.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub full: GenericPattern<'data>,
+        /// A long length glue pattern of other formatted elements.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub long: GenericPattern<'data>,
+        /// A medium length glue pattern of other formatted elements.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub medium: GenericPattern<'data>,
+        /// A short length glue pattern of other formatted elements.
         #[cfg_attr(feature = "serde", serde(borrow))]
         pub short: GenericPattern<'data>,
     }
@@ -143,6 +149,10 @@ pub mod patterns {
         type Yokeable = PatternPluralsV1<'static>;
     }
 
+    /// A general purpose pattern representation. Used for date-time glue patterns.
+    /// 
+    /// Expresses the formatting positions of other formatted elements (ex: the order
+    /// and formatting of a date and a time within a date-time pattern).
     #[icu_provider::data_struct]
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
