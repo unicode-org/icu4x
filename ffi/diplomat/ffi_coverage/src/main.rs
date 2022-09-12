@@ -303,6 +303,7 @@ lazy_static::lazy_static! {
 
         // Experimental
         "icu::casemapping",
+
         // Stuff that does not need to be exposed over FFI
         // Especially for stuff that are Rust specific like conversion traits
         // and markers and newtypes
