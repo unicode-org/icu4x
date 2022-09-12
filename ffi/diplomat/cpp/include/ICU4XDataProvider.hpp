@@ -61,6 +61,20 @@ class ICU4XDataProvider {
    * See the [Rust documentation for `EmptyDataProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html) for more information.
    */
   static ICU4XDataProvider create_empty();
+
+  /**
+   * Creates a provider that tries the current provider and then, if the current provider
+   * doesn't support the data key, another provider `other`.
+   * 
+   * This takes ownership of the `other` provider, leaving an empty provider in its place.
+   * 
+   * The providers must be the same type (Any or Buffer). This condition is satisfied if
+   * both providers originate from the same constructor, such as `create_from_byte_slice`
+   * or `create_fs`. If the condition is not upheld, a runtime error occurs.
+   * 
+   * See the [Rust documentation for `ForkByKeyProvider`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/type.ForkByKeyProvider.html) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> fork_by_key(ICU4XDataProvider& other);
   inline const capi::ICU4XDataProvider* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XDataProvider* AsFFIMut() { return this->inner.get(); }
   inline ICU4XDataProvider(capi::ICU4XDataProvider* i) : inner(i) {}
@@ -97,5 +111,15 @@ inline diplomat::result<ICU4XDataProvider, ICU4XError> ICU4XDataProvider::create
 }
 inline ICU4XDataProvider ICU4XDataProvider::create_empty() {
   return ICU4XDataProvider(capi::ICU4XDataProvider_create_empty());
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::fork_by_key(ICU4XDataProvider& other) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_fork_by_key(this->inner.get(), other.AsFFIMut());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
 }
 #endif

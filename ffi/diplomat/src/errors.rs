@@ -66,6 +66,7 @@ pub mod ffi {
         DataCustomError = 0x1_0A,
         DataIoError = 0x1_0B,
         DataUnavailableBufferFormatError = 0x1_0C,
+        DataMismatchedAnyBufferError = 0x1_0D,
 
         // locale errors
         /// The subtag being requested was not set

@@ -45,11 +45,6 @@ icu::properties::script::ScriptWithExtensions::get_script_val#FnInStruct
 icu::properties::script::ScriptWithExtensions::has_script#FnInStruct
 icu::properties::script::ScriptWithExtensionsResult#Typedef
 icu::properties::script::load_script_with_extensions_unstable#Fn
-icu_provider_adapters::any_payload::AnyPayloadProvider#Struct
-icu_provider_adapters::any_payload::AnyPayloadProvider::new_default#FnInStruct
-icu_provider_adapters::any_payload::AnyPayloadProvider::new_owned#FnInStruct
-icu_provider_adapters::any_payload::AnyPayloadProvider::new_static#FnInStruct
-icu_provider_adapters::either::EitherProvider#Enum
 icu_provider_adapters::fallback::LocaleFallbackConfig#Struct
 icu_provider_adapters::fallback::LocaleFallbackIterator#Struct
 icu_provider_adapters::fallback::LocaleFallbackIterator::get#FnInStruct
@@ -83,7 +78,6 @@ icu_provider_adapters::fork::ForkByErrorProvider::inner#FnInStruct
 icu_provider_adapters::fork::ForkByErrorProvider::into_inner#FnInStruct
 icu_provider_adapters::fork::ForkByErrorProvider::new#FnInStruct
 icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate#FnInStruct
-icu_provider_adapters::fork::ForkByKeyProvider#Typedef
 icu_provider_adapters::fork::MultiForkByErrorProvider#Struct
 icu_provider_adapters::fork::MultiForkByErrorProvider::inner#FnInStruct
 icu_provider_adapters::fork::MultiForkByErrorProvider::into_inner#FnInStruct
