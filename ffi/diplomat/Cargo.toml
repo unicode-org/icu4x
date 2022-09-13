@@ -18,7 +18,7 @@ include = [
     "examples/**/*",
     "benches/**/*",
     "tests/**/*",
-    "include/**/*",
+    "**/include/**/*",
     "Cargo.toml",
     "LICENSE",
     "README.md"
