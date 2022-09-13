@@ -96,8 +96,7 @@ impl AnyProvider for BakedDataProvider {
             ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONESPECIFICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY
-                .hashed();
+            ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.hashed();
@@ -130,8 +129,7 @@ impl AnyProvider for BakedDataProvider {
             ::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY
-                .hashed();
+            ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const COMPATIBILITYDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.hashed();
