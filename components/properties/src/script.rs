@@ -222,10 +222,6 @@ impl ScriptExtensionsSet<'_> {
     }
 }
 
-/// The return type `Result` for any of the `load_script_with_extensions_`* functions.
-pub type ScriptWithExtensionsV1Result =
-    Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
-
 /// Returns a [`ScriptWithExtensionsV1`] struct that represents the data for the Script
 /// and Script_Extensions properties.
 ///
@@ -287,7 +283,7 @@ pub type ScriptWithExtensionsV1Result =
 /// ```
 pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
-) -> ScriptWithExtensionsV1Result {
+) -> Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError> {
     Ok(provider
         .load(Default::default())
         .and_then(DataResponse::take_payload)?)
@@ -296,7 +292,7 @@ pub fn load_script_with_extensions_unstable(
 icu_provider::gen_any_buffer_constructors!(
     locale: skip,
     options: skip,
-    result: ScriptWithExtensionsV1Result,
+    result: Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>,
     functions: [
         load_script_with_extensions_unstable,
         load_script_with_extensions_with_any_provider,
