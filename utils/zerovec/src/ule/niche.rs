@@ -131,7 +131,6 @@ unsafe impl<U: NicheBytes<N> + ULE, const N: usize> ULE for NichedOptionULE<U, N
 }
 
 /// Optional type which uses [`NichedOptionULE<U,N>`] as ULE type.
-/// Derefs to [`Option<U>`]
 /// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
 /// [`repr(transparent)`] guarantees that the layout is same as [`Option<U>`]
 #[derive(Debug, Copy, Clone, PartialEq, Eq, Hash)]
