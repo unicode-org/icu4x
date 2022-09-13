@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663037019952,
+  "lastUpdate": 1663097434306,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -69851,6 +69851,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5181,
             "range": "± 15",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "824f91bcf11b99465e916fedbedc5eb062d1e67d",
+          "message": "Whack-a-mole 7: The last whack-a-mole? (#2552)\n\n* Some locale FFI\r\n\r\n* Add scriptextensions\r\n\r\n* ignore PluralOperands::n()\r\n\r\n* char16trie\r\n\r\n* comments\r\n\r\n* Update ffi/diplomat/ffi_coverage/src/main.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-09-13T19:18:41Z",
+          "tree_id": "e5271527550ea81df34ca712a45fdfdb8a9b8dbd",
+          "url": "https://github.com/unicode-org/icu4x/commit/824f91bcf11b99465e916fedbedc5eb062d1e67d"
+        },
+        "date": 1663097377752,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 64378,
+            "range": "± 162",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 110166,
+            "range": "± 125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 55359,
+            "range": "± 141",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 63803,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 64355,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71444,
+            "range": "± 179",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 100457,
+            "range": "± 134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 111998,
+            "range": "± 135",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 110895,
+            "range": "± 189",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 122851,
+            "range": "± 116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5560,
+            "range": "± 109",
             "unit": "ns/iter"
           }
         ]
