@@ -34,15 +34,15 @@ pub trait NicheBytes<const N: usize> {
 /// ```
 /// use zerovec::ZeroVec;
 /// use zerovec::ule::NichedOption;
-/// use core::num::NonZeroU8;
+/// use core::num::NonZeroI8;
 ///
 /// let bytes = &[0x00, 0x01, 0x02, 0x00 ];
-/// let zv_no: ZeroVec<NichedOption<NonZeroU8, 1>> =
+/// let zv_no: ZeroVec<NichedOption<NonZeroI8, 1>> =
 ///         ZeroVec::parse_byte_slice(bytes).expect("Unable to parse as NichedOption.");
 ///
 /// assert_eq!(zv_no.get(0).map(|e| e.0), Some(None));
-/// assert_eq!(zv_no.get(1).map(|e| e.0), Some(NonZeroU8::new(1)));
-/// assert_eq!(zv_no.get(2).map(|e| e.0), Some(NonZeroU8::new(2)));
+/// assert_eq!(zv_no.get(1).map(|e| e.0), Some(NonZeroI8::new(1)));
+/// assert_eq!(zv_no.get(2).map(|e| e.0), Some(NonZeroI8::new(2)));
 /// assert_eq!(zv_no.get(3).map(|e| e.0), Some(None));
 /// ```
 // Invariants:
