@@ -374,7 +374,9 @@ where
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
             ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load_data(key, req),
-            ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load_data(key, req),
+            ICU4XDataProviderInner::Any(any_provider) => {
+                any_provider.as_downcasting().load_data(key, req)
+            }
         }
     }
 }
@@ -417,7 +419,9 @@ where
     fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         match self {
             ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load_data(key, req),
-            ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load_data(key, req),
+            ICU4XDataProviderInner::Any(any_provider) => {
+                any_provider.as_downcasting().load_data(key, req)
+            }
             ICU4XDataProviderInner::Buffer(buffer_provider) => {
                 buffer_provider.as_deserializing().load_data(key, req)
             }
