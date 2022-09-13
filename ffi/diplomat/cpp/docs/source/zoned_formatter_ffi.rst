@@ -30,14 +30,14 @@
 
         Formats a :cpp:class:`ICU4XIsoDateTime` and :cpp:class:`ICU4XCustomTimeZone` to a string.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.format>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> format_iso_datetime_with_custom_time_zone(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone) const
 
         Formats a :cpp:class:`ICU4XIsoDateTime` and :cpp:class:`ICU4XCustomTimeZone` to a string.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.format>`__ for more information.
 
 
 .. cpp:class:: ICU4XZonedDateTimeFormatter
@@ -69,26 +69,26 @@
 
         Formats a :cpp:class:`ICU4XDateTime` and :cpp:class:`ICU4XCustomTimeZone` to a string.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> format_datetime_with_custom_time_zone(const ICU4XDateTime& datetime, const ICU4XCustomTimeZone& time_zone) const
 
         Formats a :cpp:class:`ICU4XDateTime` and :cpp:class:`ICU4XCustomTimeZone` to a string.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format>`__ for more information.
 
 
     .. cpp:function:: template<typename W> diplomat::result<std::monostate, ICU4XError> format_iso_datetime_with_custom_time_zone_to_writeable(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone, W& write) const
 
         Formats a :cpp:class:`ICU4XIsoDateTime` and :cpp:class:`ICU4XCustomTimeZone` to a string.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format>`__ for more information.
 
 
     .. cpp:function:: diplomat::result<std::string, ICU4XError> format_iso_datetime_with_custom_time_zone(const ICU4XIsoDateTime& datetime, const ICU4XCustomTimeZone& time_zone) const
 
         Formats a :cpp:class:`ICU4XIsoDateTime` and :cpp:class:`ICU4XCustomTimeZone` to a string.
 
-        See the `Rust documentation for format_to_write <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format_to_write>`__ for more information.
+        See the `Rust documentation for format <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.format>`__ for more information.
 
