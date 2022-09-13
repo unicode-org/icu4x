@@ -10,10 +10,10 @@ use crate::props::Script;
 use crate::props::ScriptULE;
 use crate::provider::*;
 
-use icu_provider::prelude::*;
-use zerovec::{ule::AsULE, ZeroSlice};
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
+use icu_provider::prelude::*;
+use zerovec::{ule::AsULE, ZeroSlice};
 
 /// The number of bits at the low-end of a `ScriptWithExt` value used for
 /// storing the `Script` value (or `extensions` index).
@@ -254,9 +254,7 @@ impl ScriptWithExtensions {
     ///
     /// Typically it is preferable to use getters like [`load_script_with_extensions_unstable()`] instead
     pub fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1Marker>) -> Self {
-        Self {
-            data: data.map_project(|m, _| m),
-        }
+        Self { data }
     }
 }
 
@@ -391,7 +389,6 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
         self.data.data.has_script(code_point, script)
     }
 
-
     /// Returns all of the matching `CodePointMapRange`s for the given [`Script`]
     /// in which `has_script` will return true for all of the contained code points.
     ///
@@ -439,7 +436,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
         &self,
         script: Script,
     ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        self.data.data.get_script_extensions_ranges(script)    
+        self.data.data.get_script_extensions_ranges(script)
     }
 
     /// Returns a [`CodePointInversionList`] for the given [`Script`] which represents all
@@ -537,16 +534,18 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
 /// ```
 pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
-) -> Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError> {
-    Ok(provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)?)
+) -> Result<ScriptWithExtensions, PropertiesError> {
+    Ok(ScriptWithExtensions::from_data(
+        provider
+            .load(Default::default())
+            .and_then(DataResponse::take_payload)?,
+    ))
 }
 
 icu_provider::gen_any_buffer_constructors!(
     locale: skip,
     options: skip,
-    result: Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>,
+    result: Result<ScriptWithExtensions, PropertiesError>,
     functions: [
         load_script_with_extensions_unstable,
         load_script_with_extensions_with_any_provider,

@@ -6,8 +6,7 @@
 pub mod ffi {
     use crate::provider::ffi::ICU4XDataProvider;
     use alloc::boxed::Box;
-    use icu_properties::{provider, script, Script};
-    use icu_provider::DataPayload;
+    use icu_properties::{script, Script};
 
     use crate::errors::ffi::ICU4XError;
     use diplomat_runtime::DiplomatResult;
@@ -15,9 +14,7 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
     #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions, Struct)]
-    pub struct ICU4XScriptWithExtensions(
-        pub DataPayload<provider::ScriptWithExtensionsPropertyV1Marker>,
-    );
+    pub struct ICU4XScriptWithExtensions(pub script::ScriptWithExtensions);
 
     impl ICU4XScriptWithExtensions {
         #[diplomat::rust_link(icu::properties::script::load_script_with_extensions_unstable, Fn)]
@@ -36,7 +33,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn get_script_val(&self, code_point: u32) -> u16 {
-            self.0.get().data.get_script_val(code_point).0
+            self.0.as_borrowed().get_script_val(code_point).0
         }
 
         /// Check if the Script_Extensions property of the given code point covers the given script
@@ -45,7 +42,7 @@ pub mod ffi {
             FnInStruct
         )]
         pub fn has_script(&self, code_point: u32, script: u16) -> bool {
-            self.0.get().data.has_script(code_point, Script(script))
+            self.0.as_borrowed().has_script(code_point, Script(script))
         }
     }
 }
