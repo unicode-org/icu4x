@@ -68,6 +68,7 @@ impl IterableDataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::Datag
 #[cfg(test)]
 mod tests {
     use super::*;
+    use icu_properties::script::ScriptWithExtensions;
 
     #[test]
     fn test_script_val_from_script_extensions() {
@@ -78,8 +79,9 @@ mod tests {
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
-        let swe: &ScriptWithExtensionsPropertyV1 = &payload.get().data;
-
+        let swe = ScriptWithExtensions::from_data(payload);
+        let swe = swe.as_borrowed();
+ 
         assert_eq!(swe.get_script_val('𐓐' as u32), Script::Osage); // U+104D0 OSAGE CAPITAL LETTER KHA
         assert_eq!(swe.get_script_val('🥳' as u32), Script::Common); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
         assert_eq!(swe.get_script_val(0x200D), Script::Inherited); // ZERO WIDTH JOINER
@@ -98,8 +100,9 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let swe: &ScriptWithExtensionsPropertyV1 = &payload.get().data;
-
+        let swe = ScriptWithExtensions::from_data(payload);
+        let swe = swe.as_borrowed();
+ 
         assert_eq!(
             swe.get_script_extensions_val('𐓐' as u32) /* U+104D0 OSAGE CAPITAL LETTER KHA */
                 .iter()
@@ -171,8 +174,9 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let swe: &ScriptWithExtensionsPropertyV1 = &payload.get().data;
-
+        let swe = ScriptWithExtensions::from_data(payload);
+        let swe = swe.as_borrowed();
+ 
         assert!(swe.has_script('𐓐' as u32, Script::Osage));
         assert!(!swe.has_script('𐓐' as u32, Script::Common));
         assert!(!swe.has_script('𐓐' as u32, Script::Inherited));
@@ -250,8 +254,9 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let swe: &ScriptWithExtensionsPropertyV1 = &payload.get().data;
-
+        let swe = ScriptWithExtensions::from_data(payload);
+        let swe = swe.as_borrowed();
+ 
         let grantha = swe.get_script_extensions_set(Script::Grantha);
         assert!(!grantha.contains32(0x0BE5)); // unknown with unknown script in Tamil block
         assert!(grantha.contains32(0x0BE6)); // TAMIL DIGIT ZERO
