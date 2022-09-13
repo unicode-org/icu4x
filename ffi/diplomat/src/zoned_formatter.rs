@@ -8,6 +8,7 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_calendar::{DateTime, Gregorian};
     use icu_datetime::{options::length, TypedZonedDateTimeFormatter, ZonedDateTimeFormatter};
+    use writeable::Writeable;
 
     use crate::{
         datetime::ffi::ICU4XDateTime, datetime::ffi::ICU4XIsoDateTime,
@@ -181,8 +182,8 @@ pub mod ffi {
             let result = self
                 .0
                 .format(&datetime.0, &time_zone.0)
-                .write_to(write)
                 .map_err(Into::into)
+                .and_then(|f| f.write_to(write).map_err(Into::into))
                 .into();
             write.flush();
             result
@@ -204,8 +205,8 @@ pub mod ffi {
             let result = self
                 .0
                 .format(&datetime.0.to_any(), &time_zone.0)
-                .write_to(write)
                 .map_err(Into::into)
+                .and_then(|f| f.write_to(write).map_err(Into::into))
                 .into();
             write.flush();
             result
