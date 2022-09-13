@@ -117,7 +117,7 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 /// Borrowed version of `CodePointTrie`. It makes sense to hold this type
 /// by value instead of holding `CodePointTrie` by reference if the reference
 /// is held across multiple lookups.
-#[derive(Debug, Eq, PartialEq, Yokeable, Copy, Clone)]
+#[derive(Debug, Eq, PartialEq, Copy, Clone)]
 pub struct CodePointTrieBorrow<'trie, T: TrieValue> {
     pub(crate) header: &'trie CodePointTrieHeader,
     pub(crate) index: &'trie ZeroSlice<u16>,
@@ -131,7 +131,7 @@ impl<'zf, T: TrieValue> ZeroFrom<'zf, CodePointTrie<'_, T>> for CodePointTrieBor
             header: &other.header,
             index: &other.index,
             data: &other.data,
-            error_value: other.error_value.clone(),
+            error_value: other.error_value,
         }
     }
 }

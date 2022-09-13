@@ -689,6 +689,7 @@ where
     }
 
     #[inline(never)]
+    #[allow(clippy::unwrap_used)]
     fn attach_supplementary_trie_value(&self, c: char) -> Option<CharacterAndTrieValue> {
         let voicing_mark = u32::from(c).wrapping_sub(0xFF9E);
         if voicing_mark <= 1 && self.half_width_voicing_marks_become_non_starters {
@@ -701,6 +702,8 @@ where
                 0xD800 | u32::from(CanonicalCombiningClass::KanaVoicing.0),
             ));
         }
+        // unwrap OK, because this method is called only after checking that
+        // `self.supplementary_trie` is `Some`.
         let trie_value = self.supplementary_trie.unwrap().get(c);
         if trie_value != 0 {
             return Some(CharacterAndTrieValue::new_from_supplement(c, trie_value));
