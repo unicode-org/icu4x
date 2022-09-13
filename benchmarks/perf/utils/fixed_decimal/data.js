@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663031159123,
+  "lastUpdate": 1663037017920,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -50777,6 +50777,66 @@ window.BENCHMARK_DATA = {
             "name": "to_string/to_string/908070605040302010",
             "value": 203,
             "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ef8d16e20482dd6823b9ded4c79bb86bacb953cc",
+          "message": "Add C/C++ headers in the package (#2553)",
+          "timestamp": "2022-09-13T02:30:36Z",
+          "tree_id": "d4466b5ea8fdf80ccf5959af4dfb2994c23508f8",
+          "url": "https://github.com/unicode-org/icu4x/commit/ef8d16e20482dd6823b9ded4c79bb86bacb953cc"
+        },
+        "date": 1663036966414,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112238,
+            "range": "± 1249",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24160,
+            "range": "± 118",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62904,
+            "range": "± 656",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
+            "range": "± 2",
             "unit": "ns/iter"
           },
           {
