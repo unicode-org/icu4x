@@ -6,9 +6,11 @@ use self::ffi::ICU4XError;
 use core::fmt;
 use fixed_decimal::Error as DecimalError;
 use icu_calendar::DateTimeError;
+use icu_collator::CollatorError;
 use icu_datetime::DateTimeFormatterError;
 use icu_decimal::FixedDecimalFormatterError;
 use icu_locid::ParserError;
+use icu_normalizer::NormalizerError;
 use icu_plurals::PluralRulesError;
 use icu_properties::PropertiesError;
 use icu_provider::{DataError, DataErrorKind};
@@ -32,6 +34,10 @@ pub mod ffi {
     #[diplomat::rust_link(icu::plurals::PluralRulesError, Enum, compact)]
     #[diplomat::rust_link(icu::provider::DataError, Struct, compact)]
     #[diplomat::rust_link(icu::provider::DataErrorKind, Enum, compact)]
+    #[diplomat::rust_link(icu::normalizer::NormalizerError, Enum, compact)]
+    #[diplomat::rust_link(icu::timezone::TimeZoneError, Enum, compact)]
+    #[diplomat::rust_link(icu::collator::CollatorError, Enum, compact)]
+    #[diplomat::rust_link(icu::decimal::FixedDecimalFormatterError, Enum, compact)]
     pub enum ICU4XError {
         // general errors
         /// The error is not currently categorized as ICU4XError.
@@ -60,6 +66,7 @@ pub mod ffi {
         DataCustomError = 0x1_0A,
         DataIoError = 0x1_0B,
         DataUnavailableBufferFormatError = 0x1_0C,
+        DataMismatchedAnyBufferError = 0x1_0D,
 
         // locale errors
         /// The subtag being requested was not set
@@ -114,12 +121,16 @@ pub mod ffi {
         TimeZoneOffsetOutOfBoundsError = 0xA_00,
         TimeZoneInvalidOffsetError = 0xA_01,
         TimeZoneMissingInputError = 0xA_02,
+
+        // normalizer errors
+        NormalizerFutureExtensionError = 0xB_00,
+        NormalizerValidationError = 0xB_01,
     }
 }
 
 #[cfg(feature = "logging")]
 #[inline]
-fn log_conversion<T: core::fmt::Display>(e: &T, ffi_error: ICU4XError) {
+pub(crate) fn log_conversion<T: core::fmt::Display>(e: &T, ffi_error: ICU4XError) {
     use core::any;
     log::warn!(
         "Returning ICU4XError::{:?} based on original {}: {}",
@@ -131,7 +142,7 @@ fn log_conversion<T: core::fmt::Display>(e: &T, ffi_error: ICU4XError) {
 
 #[cfg(not(feature = "logging"))]
 #[inline]
-fn log_conversion<T: core::fmt::Display>(_e: &T, _ffi_error: ICU4XError) {}
+pub(crate) fn log_conversion<T: core::fmt::Display>(_e: &T, _ffi_error: ICU4XError) {}
 
 impl From<fmt::Error> for ICU4XError {
     fn from(e: fmt::Error) -> Self {
@@ -163,6 +174,19 @@ impl From<DataError> for ICU4XError {
                 ICU4XError::DataUnavailableBufferFormatError
             }
             _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<CollatorError> for ICU4XError {
+    fn from(e: CollatorError) -> Self {
+        let ret = match e {
+            CollatorError::NotFound => ICU4XError::DataMissingPayloadError,
+            CollatorError::MalformedData => ICU4XError::DataInvalidStateError,
+            CollatorError::DataProvider(_) => ICU4XError::DataIoError,
+            _ => ICU4XError::DataIoError,
         };
         log_conversion(&e, ret);
         ret
@@ -308,6 +332,19 @@ impl From<TimeZoneError> for ICU4XError {
             TimeZoneError::OffsetOutOfBounds => ICU4XError::TimeZoneOffsetOutOfBoundsError,
             TimeZoneError::InvalidOffset => ICU4XError::TimeZoneInvalidOffsetError,
             TimeZoneError::DataProvider(err) => err.into(),
+            _ => ICU4XError::UnknownError,
+        };
+        log_conversion(&e, ret);
+        ret
+    }
+}
+
+impl From<NormalizerError> for ICU4XError {
+    fn from(e: NormalizerError) -> Self {
+        let ret = match e {
+            NormalizerError::FutureExtension => ICU4XError::NormalizerFutureExtensionError,
+            NormalizerError::ValidationError => ICU4XError::NormalizerValidationError,
+            NormalizerError::DataProvider(err) => err.into(),
             _ => ICU4XError::UnknownError,
         };
         log_conversion(&e, ret);

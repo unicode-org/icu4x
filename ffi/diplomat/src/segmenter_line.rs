@@ -18,7 +18,8 @@ pub mod ffi {
         LineBreakDataV1Marker, LstmDataV1Marker, UCharDictionaryBreakDataV1Marker,
     };
     use icu_segmenter::{
-        LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakSegmenter,
+        LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8, LineBreakIteratorUtf16,
+        LineBreakSegmenter,
     };
 
     #[diplomat::opaque]
@@ -49,7 +50,7 @@ pub mod ffi {
     }
 
     #[diplomat::opaque]
-    pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorUtf8<'a, 'a>);
+    pub struct ICU4XLineBreakIteratorUtf8<'a>(LineBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>);
 
     #[diplomat::opaque]
     pub struct ICU4XLineBreakIteratorUtf16<'a>(LineBreakIteratorUtf16<'a, 'a>);
@@ -63,9 +64,7 @@ pub mod ffi {
         pub fn try_new(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            Self::try_new_impl(&provider)
+            Self::try_new_impl(&provider.0)
         }
 
         fn try_new_impl<D>(provider: &D) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError>
@@ -87,9 +86,7 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             options: ICU4XLineBreakOptions,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            Self::try_new_with_options_impl(&provider, options)
+            Self::try_new_with_options_impl(&provider.0, options)
         }
 
         fn try_new_with_options_impl<D>(
@@ -108,10 +105,12 @@ pub mod ffi {
                 .into()
         }
 
-        /// Segments a UTF-8 string.
-        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_str, FnInStruct)]
+        /// Segments a (potentially ill-formed) UTF-8 string.
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_utf8, FnInStruct)]
+        #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::segment_str, FnInStruct, hidden)]
         pub fn segment_utf8<'a>(&'a self, input: &'a str) -> Box<ICU4XLineBreakIteratorUtf8<'a>> {
-            Box::new(ICU4XLineBreakIteratorUtf8(self.0.segment_str(input)))
+            let input = input.as_bytes(); // #2520
+            Box::new(ICU4XLineBreakIteratorUtf8(self.0.segment_utf8(input)))
         }
 
         /// Segments a UTF-16 string.

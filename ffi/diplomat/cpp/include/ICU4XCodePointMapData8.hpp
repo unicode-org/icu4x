@@ -49,7 +49,7 @@ class ICU4XCodePointMapData8 {
   /**
    * Gets the value for a code point (specified as a 32 bit integer, in UTF-32)
    */
-  uint8_t get_u32(uint32_t cp) const;
+  uint8_t get32(uint32_t cp) const;
 
   /**
    * Gets a [`ICU4XCodePointSetData`] representing all entries in this map that map to the given value
@@ -122,8 +122,8 @@ class ICU4XCodePointMapData8 {
 inline uint8_t ICU4XCodePointMapData8::get(char32_t cp) const {
   return capi::ICU4XCodePointMapData8_get(this->inner.get(), cp);
 }
-inline uint8_t ICU4XCodePointMapData8::get_u32(uint32_t cp) const {
-  return capi::ICU4XCodePointMapData8_get_u32(this->inner.get(), cp);
+inline uint8_t ICU4XCodePointMapData8::get32(uint32_t cp) const {
+  return capi::ICU4XCodePointMapData8_get32(this->inner.get(), cp);
 }
 inline ICU4XCodePointSetData ICU4XCodePointMapData8::get_set_for_value(uint8_t value) const {
   return ICU4XCodePointSetData(capi::ICU4XCodePointMapData8_get_set_for_value(this->inner.get(), value));

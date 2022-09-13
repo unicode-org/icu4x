@@ -14,6 +14,8 @@ export class ICU4XDataStruct {
 
    * Construct a new DecimalSymbolsV1 data struct.
 
+   * C++ users: All string arguments must be valid UTF8
+
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/provider/struct.DecimalSymbolsV1.html Rust documentation for `DecimalSymbolsV1`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */

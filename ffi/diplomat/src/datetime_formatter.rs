@@ -31,6 +31,7 @@ pub mod ffi {
     pub struct ICU4XTimeFormatter(pub TimeFormatter);
 
     #[diplomat::enum_convert(length::Time, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::options::length::Time, Enum)]
     pub enum ICU4XTimeLength {
         Full,
         Long,
@@ -46,12 +47,9 @@ pub mod ffi {
             locale: &ICU4XLocale,
             length: ICU4XTimeLength,
         ) -> DiplomatResult<Box<ICU4XTimeFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
             let locale = locale.to_datalocale();
 
-            TimeFormatter::try_new_unstable(&provider, &locale, length.into())
+            TimeFormatter::try_new_unstable(&provider.0, &locale, length.into())
                 .map(|tf| Box::new(ICU4XTimeFormatter(tf)))
                 .map_err(Into::into)
                 .into()
@@ -119,6 +117,7 @@ pub mod ffi {
     pub struct ICU4XGregorianDateFormatter(pub TypedDateFormatter<Gregorian>);
 
     #[diplomat::enum_convert(length::Date, needs_wildcard)]
+    #[diplomat::rust_link(icu::datetime::options::length::Date, Enum)]
     pub enum ICU4XDateLength {
         Full,
         Long,
@@ -134,12 +133,9 @@ pub mod ffi {
             locale: &ICU4XLocale,
             length: ICU4XDateLength,
         ) -> DiplomatResult<Box<ICU4XGregorianDateFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
             let locale = locale.to_datalocale();
 
-            TypedDateFormatter::try_new_unstable(&provider, &locale, length.into())
+            TypedDateFormatter::try_new_unstable(&provider.0, &locale, length.into())
                 .map(|df| Box::new(ICU4XGregorianDateFormatter(df)))
                 .map_err(Into::into)
                 .into()
@@ -205,14 +201,11 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
         ) -> DiplomatResult<Box<ICU4XGregorianDateTimeFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
             let locale = locale.to_datalocale();
 
             let options = length::Bag::from_date_time_style(date_length.into(), time_length.into());
 
-            TypedDateTimeFormatter::try_new_unstable(&provider, &locale, options.into())
+            TypedDateTimeFormatter::try_new_unstable(&provider.0, &locale, options.into())
                 .map(|dtf| Box::new(ICU4XGregorianDateTimeFormatter(dtf)))
                 .map_err(Into::into)
                 .into()
@@ -256,12 +249,9 @@ pub mod ffi {
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
         ) -> DiplomatResult<Box<ICU4XDateFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
             let locale = locale.to_datalocale();
 
-            DateFormatter::try_new_unstable(&provider, &locale, date_length.into())
+            DateFormatter::try_new_unstable(&provider.0, &locale, date_length.into())
                 .map(|dtf| Box::new(ICU4XDateFormatter(dtf)))
                 .map_err(Into::into)
                 .into()
@@ -358,13 +348,10 @@ pub mod ffi {
             date_length: ICU4XDateLength,
             time_length: ICU4XTimeLength,
         ) -> DiplomatResult<Box<ICU4XDateTimeFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
             let locale = locale.to_datalocale();
             let options = length::Bag::from_date_time_style(date_length.into(), time_length.into());
 
-            DateTimeFormatter::try_new_unstable(&provider, &locale, options.into())
+            DateTimeFormatter::try_new_unstable(&provider.0, &locale, options.into())
                 .map(|dtf| Box::new(ICU4XDateTimeFormatter(dtf)))
                 .map_err(Into::into)
                 .into()

@@ -39,16 +39,21 @@ mod utils;
 
 pub mod bidi;
 pub mod calendar;
+pub mod collator;
 pub mod data_struct;
 pub mod date;
 pub mod datetime;
 pub mod datetime_formatter;
 pub mod decimal;
 pub mod errors;
+pub mod fallbacker;
 pub mod fixed_decimal;
+pub mod list;
 pub mod locale;
 pub mod locid_transform;
 pub mod logging;
+pub mod normalizer;
+pub mod normalizer_properties;
 pub mod pluralrules;
 pub mod properties_maps;
 pub mod properties_sets;
@@ -61,6 +66,7 @@ pub mod time;
 pub mod timezone;
 pub mod timezone_formatter;
 pub mod week;
+pub mod zoned_formatter;
 
 #[cfg(target_arch = "wasm32")]
 mod wasm_glue;

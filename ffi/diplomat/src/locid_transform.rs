@@ -13,78 +13,67 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
 
     /// FFI version of `TransformResult`.
-    #[diplomat::rust_link(icu::locale_canonicalizer::TransformResult, Enum)]
+    #[diplomat::rust_link(icu::locid_transform::TransformResult, Enum)]
+    #[diplomat::enum_convert(TransformResult)]
     pub enum ICU4XTransformResult {
         Modified,
         Unmodified,
     }
 
-    // TODO(shadaj): replace with diplomat-ignored from impl
-    fn canonicalization_result_to_ffi(result: TransformResult) -> ICU4XTransformResult {
-        match result {
-            TransformResult::Modified => ICU4XTransformResult::Modified,
-            TransformResult::Unmodified => ICU4XTransformResult::Unmodified,
-        }
-    }
-
     /// A locale canonicalizer.
-    #[diplomat::rust_link(icu::locale_canonicalizer::LocaleCanonicalizer, Struct)]
+    #[diplomat::rust_link(icu::locid_transform::LocaleCanonicalizer, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XLocaleCanonicalizer(LocaleCanonicalizer);
 
     impl ICU4XLocaleCanonicalizer {
         /// Create a new [`ICU4XLocaleCanonicalizer`].
-        #[diplomat::rust_link(icu::locale_canonicalizer::LocaleCanonicalizer::new, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::locid_transform::LocaleCanonicalizer::try_new_unstable,
+            FnInStruct
+        )]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            LocaleCanonicalizer::try_new_unstable(&provider)
+            LocaleCanonicalizer::try_new_unstable(&provider.0)
                 .map(|lc| Box::new(ICU4XLocaleCanonicalizer(lc)))
                 .map_err(Into::into)
                 .into()
         }
 
         /// FFI version of `LocaleCanonicalizer::canonicalize()`.
-        #[diplomat::rust_link(
-            icu::locale_canonicalizer::LocaleCanonicalizer::canonicalize,
-            FnInStruct
-        )]
+        #[diplomat::rust_link(icu::locid_transform::LocaleCanonicalizer::canonicalize, FnInStruct)]
         pub fn canonicalize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
-            canonicalization_result_to_ffi(self.0.canonicalize(&mut locale.0))
+            self.0.canonicalize(&mut locale.0).into()
         }
     }
 
     /// A locale expander.
-    #[diplomat::rust_link(icu::locale_canonicalizer::LocaleExpander, Struct)]
+    #[diplomat::rust_link(icu::locid_transform::LocaleExpander, Struct)]
     #[diplomat::opaque]
     pub struct ICU4XLocaleExpander(LocaleExpander);
 
     impl ICU4XLocaleExpander {
         /// Create a new [`ICU4XLocaleExpander`].
-        #[diplomat::rust_link(icu::locale_canonicalizer::LocaleExpander::new, FnInStruct)]
+        #[diplomat::rust_link(icu::locid_transform::LocaleExpander::try_new_unstable, FnInStruct)]
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLocaleExpander>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            LocaleExpander::try_new_unstable(&provider)
+            LocaleExpander::try_new_unstable(&provider.0)
                 .map(|lc| Box::new(ICU4XLocaleExpander(lc)))
                 .map_err(Into::into)
                 .into()
         }
 
         /// FFI version of `LocaleExpander::maximize()`.
-        #[diplomat::rust_link(icu::locale_canonicalizer::LocaleExpander::maximize, FnInStruct)]
+        #[diplomat::rust_link(icu::locid_transform::LocaleExpander::maximize, FnInStruct)]
         pub fn maximize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
-            canonicalization_result_to_ffi(self.0.maximize(&mut locale.0))
+            self.0.maximize(&mut locale.0).into()
         }
 
         /// FFI version of `LocaleExpander::minimize()`.
-        #[diplomat::rust_link(icu::locale_canonicalizer::LocaleExpander::minimize, FnInStruct)]
+        #[diplomat::rust_link(icu::locid_transform::LocaleExpander::minimize, FnInStruct)]
         pub fn minimize(&self, locale: &mut ICU4XLocale) -> ICU4XTransformResult {
-            canonicalization_result_to_ffi(self.0.minimize(&mut locale.0))
+            self.0.minimize(&mut locale.0).into()
         }
     }
 }

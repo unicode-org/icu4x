@@ -13,6 +13,8 @@ export class ICU4XCustomTimeZone {
   /**
 
    * Creates a time zone from an offset string.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str Rust documentation for `from_str`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   static create_from_str(s: string): ICU4XCustomTimeZone | never;
@@ -273,7 +275,7 @@ export class ICU4XCustomTimeZone {
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone Rust documentation for `maybe_calculate_meta_zone`} for more information.
 
-   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone 1}
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_meta_zone_from_time_zone 1}
    */
   maybe_calculate_meta_zone(metazone_calculator: ICU4XMetaZoneCalculator, local_datetime: ICU4XIsoDateTime): void;
 }

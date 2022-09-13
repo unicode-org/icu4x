@@ -27,7 +27,7 @@ export class ICU4XCodePointSetData {
 
    * Checks whether the code point (specified as a 32 bit integer, in UTF-32) is in the set.
    */
-  contains_u32(cp: u32): boolean;
+  contains32(cp: u32): boolean;
 
   /**
 

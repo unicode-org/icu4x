@@ -4,10 +4,11 @@
 
 #[diplomat::bridge]
 pub mod ffi {
-    use core::str::FromStr;
+    use core::str::{self};
 
     use alloc::boxed::Box;
 
+    use fixed_decimal::FixedDecimal;
     use icu_plurals::{PluralCategory, PluralOperands, PluralRules};
 
     use crate::{locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider};
@@ -31,8 +32,10 @@ pub mod ffi {
         /// Construct from a string in the format
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_string, FnInEnum)]
+        #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_bytes, FnInEnum)]
         pub fn from_tr35_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
-            PluralCategory::from_tr35_string(s)
+            let s = s.as_bytes(); // #2520
+            PluralCategory::from_tr35_bytes(s)
                 .map(Into::into)
                 .ok_or(())
                 .into()
@@ -53,10 +56,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
             let locale = locale.to_datalocale();
-            let provider = provider.0.as_deserializing();
-            PluralRules::try_new_cardinal_unstable(&provider, &locale)
+            PluralRules::try_new_cardinal_unstable(&provider.0, &locale)
                 .map(|r| Box::new(ICU4XPluralRules(r)))
                 .map_err(Into::into)
                 .into()
@@ -70,10 +71,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
             let locale = locale.to_datalocale();
-            let provider = provider.0.as_deserializing();
-            PluralRules::try_new_ordinal_unstable(&provider, &locale)
+            PluralRules::try_new_ordinal_unstable(&provider.0, &locale)
                 .map(|r| Box::new(ICU4XPluralRules(r)))
                 .map_err(Into::into)
                 .into()
@@ -136,7 +135,10 @@ pub mod ffi {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
         pub fn create(s: &str) -> DiplomatResult<ICU4XPluralOperands, ICU4XError> {
-            PluralOperands::from_str(s)
+            let s = s.as_bytes(); // #2520
+            FixedDecimal::try_from(s)
+                .as_ref()
+                .map(PluralOperands::from)
                 .map(|ops| ICU4XPluralOperands {
                     i: ops.i,
                     v: ops.v,

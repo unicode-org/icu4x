@@ -82,9 +82,9 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn contains_u32(&self, ch: u32) -> bool {
+    pub(crate) fn contains32(&self, ch: u32) -> bool {
         match *self {
-            Self::InversionList(ref l) => l.contains_u32(ch),
+            Self::InversionList(ref l) => l.contains32(ch),
         }
     }
 
@@ -121,9 +121,9 @@ impl<'data> PropertyCodePointSetV1<'data> {
 // See CodePointMapData for documentation of these functions
 impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     #[inline]
-    pub(crate) fn get_u32(&self, ch: u32) -> T {
+    pub(crate) fn get32(&self, ch: u32) -> T {
         match *self {
-            Self::CodePointTrie(ref t) => t.get(ch),
+            Self::CodePointTrie(ref t) => t.get32(ch),
         }
     }
 

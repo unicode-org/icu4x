@@ -132,10 +132,10 @@ impl Writeable for DataLocale {
         Ok(())
     }
 
-    fn write_len(&self) -> LengthHint {
-        self.langid.write_len()
+    fn writeable_length_hint(&self) -> LengthHint {
+        self.langid.writeable_length_hint()
             + if !self.keywords.is_empty() {
-                self.keywords.write_len() + 3
+                self.keywords.writeable_length_hint() + 3
             } else {
                 LengthHint::exact(0)
             }

@@ -81,6 +81,9 @@
 
 .. cpp:enum-struct:: ICU4XDateLength
 
+    See the `Rust documentation for Date <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/options/length/enum.Date.html>`__ for more information.
+
+
     .. cpp:enumerator:: Full
 
     .. cpp:enumerator:: Long
@@ -262,6 +265,9 @@
 
 
 .. cpp:enum-struct:: ICU4XTimeLength
+
+    See the `Rust documentation for Time <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/options/length/enum.Time.html>`__ for more information.
+
 
     .. cpp:enumerator:: Full
 

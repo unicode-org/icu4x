@@ -155,7 +155,7 @@ impl From<&cldr_serde::parent_locales::Resource> for LocaleFallbackParentsV1<'st
                 // We always fall back from language-script to und
                 continue;
             }
-            parents.insert(source.write_to_string().as_bytes(), &target.into());
+            parents.insert((&*source.write_to_string()).into(), &target.into());
         }
 
         LocaleFallbackParentsV1 { parents }
@@ -208,7 +208,7 @@ fn test_basic() {
         parents
             .get()
             .parents
-            .get_copied(b"zh-Hant-MO")
+            .get_copied("zh-Hant-MO".into())
             .map(LanguageIdentifier::from),
         Some(langid!("zh-Hant-HK"))
     );

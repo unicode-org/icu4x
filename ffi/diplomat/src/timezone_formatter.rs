@@ -64,13 +64,10 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
             let locale = locale.to_datalocale();
 
             TimeZoneFormatter::try_new_unstable(
-                &provider,
+                &provider.0,
                 &locale,
                 FallbackFormat::LocalizedGmt.into(),
             )
@@ -90,12 +87,9 @@ pub mod ffi {
             locale: &ICU4XLocale,
             options: ICU4XIsoTimeZoneOptions,
         ) -> DiplomatResult<Box<ICU4XTimeZoneFormatter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
             let locale = locale.to_datalocale();
 
-            TimeZoneFormatter::try_new_unstable(&provider, &locale, options.into())
+            TimeZoneFormatter::try_new_unstable(&provider.0, &locale, options.into())
                 .map(|tf| Box::new(ICU4XTimeZoneFormatter(tf)))
                 .map_err(Into::into)
                 .into()
@@ -110,10 +104,8 @@ pub mod ffi {
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<(), ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
             self.0
-                .load_generic_non_location_long(&provider)
+                .load_generic_non_location_long(&provider.0)
                 .map(|_| ())
                 .map_err(Into::into)
                 .into()
@@ -128,10 +120,8 @@ pub mod ffi {
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<(), ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
             self.0
-                .load_generic_non_location_short(&provider)
+                .load_generic_non_location_short(&provider.0)
                 .map(|_| ())
                 .map_err(Into::into)
                 .into()
@@ -146,10 +136,8 @@ pub mod ffi {
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<(), ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
             self.0
-                .load_specific_non_location_long(&provider)
+                .load_specific_non_location_long(&provider.0)
                 .map(|_| ())
                 .map_err(Into::into)
                 .into()
@@ -164,10 +152,8 @@ pub mod ffi {
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<(), ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
             self.0
-                .load_specific_non_location_short(&provider)
+                .load_specific_non_location_short(&provider.0)
                 .map(|_| ())
                 .map_err(Into::into)
                 .into()
@@ -182,10 +168,8 @@ pub mod ffi {
             &mut self,
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<(), ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
             self.0
-                .load_generic_location_format(&provider)
+                .load_generic_location_format(&provider.0)
                 .map(|_| ())
                 .map_err(Into::into)
                 .into()

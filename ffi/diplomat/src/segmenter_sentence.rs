@@ -12,8 +12,8 @@ pub mod ffi {
     use icu_provider::DataProvider;
     use icu_segmenter::provider::SentenceBreakDataV1Marker;
     use icu_segmenter::{
-        SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8,
-        SentenceBreakSegmenter,
+        SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
+        SentenceBreakIteratorUtf16, SentenceBreakSegmenter,
     };
 
     #[diplomat::opaque]
@@ -22,7 +22,9 @@ pub mod ffi {
     pub struct ICU4XSentenceBreakSegmenter(SentenceBreakSegmenter);
 
     #[diplomat::opaque]
-    pub struct ICU4XSentenceBreakIteratorUtf8<'a>(SentenceBreakIteratorUtf8<'a, 'a>);
+    pub struct ICU4XSentenceBreakIteratorUtf8<'a>(
+        SentenceBreakIteratorPotentiallyIllFormedUtf8<'a, 'a>,
+    );
 
     #[diplomat::opaque]
     pub struct ICU4XSentenceBreakIteratorUtf16<'a>(SentenceBreakIteratorUtf16<'a, 'a>);
@@ -36,9 +38,7 @@ pub mod ffi {
         pub fn try_new(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XSentenceBreakSegmenter>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            Self::try_new_impl(&provider)
+            Self::try_new_impl(&provider.0)
         }
 
         fn try_new_impl<D>(
@@ -53,13 +53,19 @@ pub mod ffi {
                 .into()
         }
 
-        /// Segments a UTF-8 string.
-        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::segment_str, FnInStruct)]
+        /// Segments a (potentially ill-formed) UTF-8 string.
+        #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::segment_utf8, FnInStruct)]
+        #[diplomat::rust_link(
+            icu::segmenter::SentenceBreakSegmenter::segment_str,
+            FnInStruct,
+            hidden
+        )]
         pub fn segment_utf8<'a>(
             &'a self,
             input: &'a str,
         ) -> Box<ICU4XSentenceBreakIteratorUtf8<'a>> {
-            Box::new(ICU4XSentenceBreakIteratorUtf8(self.0.segment_str(input)))
+            let input = input.as_bytes(); // #2520
+            Box::new(ICU4XSentenceBreakIteratorUtf8(self.0.segment_utf8(input)))
         }
 
         /// Segments a UTF-16 string.

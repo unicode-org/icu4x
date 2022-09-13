@@ -423,8 +423,8 @@ impl Writeable for DataKey {
         self.get_path().write_to(sink)
     }
 
-    fn write_len(&self) -> LengthHint {
-        self.get_path().write_len()
+    fn writeable_length_hint(&self) -> LengthHint {
+        self.get_path().writeable_length_hint()
     }
 
     fn write_to_string(&self) -> Cow<str> {

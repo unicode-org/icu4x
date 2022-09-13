@@ -10,9 +10,14 @@ use crate::complex::{Dictionary, LstmPayloads};
 use crate::indices::{Latin1Indices, Utf16Indices};
 use crate::provider::*;
 use crate::rule_segmenter::*;
+use utf8_iter::Utf8CharIndices;
 
 /// Sentence break iterator for an `str` (a UTF-8 string).
 pub type SentenceBreakIteratorUtf8<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeUtf8>;
+
+/// Sentence break iterator for potentially invalid UTF-8 strings
+pub type SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> =
+    RuleBreakIterator<'l, 's, SentenceBreakTypePotentiallyIllFormedUtf8>;
 
 /// Sentence break iterator for a Latin-1 (8-bit) string.
 pub type SentenceBreakIteratorLatin1<'l, 's> = RuleBreakIterator<'l, 's, SentenceBreakTypeLatin1>;
@@ -22,6 +27,13 @@ pub type SentenceBreakIteratorUtf16<'l, 's> = RuleBreakIterator<'l, 's, Sentence
 
 /// Supports loading sentence break data, and creating sentence break iterators for different string
 /// encodings.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
 ///
 /// # Examples
 ///
@@ -78,7 +90,23 @@ impl SentenceBreakSegmenter {
             lstm: &self.lstm,
         }
     }
-
+    /// Create a sentence break iterator for a potentially ill-formed UTF8 string
+    ///
+    /// Invalid characters are treated as REPLACEMENT CHARACTER
+    pub fn segment_utf8<'l, 's>(
+        &'l self,
+        input: &'s [u8],
+    ) -> SentenceBreakIteratorPotentiallyIllFormedUtf8<'l, 's> {
+        SentenceBreakIteratorPotentiallyIllFormedUtf8 {
+            iter: Utf8CharIndices::new(input),
+            len: input.len(),
+            current_pos_data: None,
+            result_cache: Vec::new(),
+            data: self.payload.get(),
+            dictionary: &self.dictionary,
+            lstm: &self.lstm,
+        }
+    }
     /// Create a sentence break iterator for a Latin-1 (8-bit) string.
     pub fn segment_latin1<'l, 's>(
         &'l self,
@@ -113,6 +141,23 @@ pub struct SentenceBreakTypeUtf8;
 
 impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypeUtf8 {
     type IterAttr = CharIndices<'s>;
+    type CharType = char;
+
+    fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
+        iter.current_pos_data.unwrap().1.len_utf8()
+    }
+
+    fn handle_complex_language(
+        _: &mut RuleBreakIterator<Self>,
+        _: Self::CharType,
+    ) -> Option<usize> {
+        panic!("not reachable")
+    }
+}
+pub struct SentenceBreakTypePotentiallyIllFormedUtf8;
+
+impl<'l, 's> RuleBreakType<'l, 's> for SentenceBreakTypePotentiallyIllFormedUtf8 {
+    type IterAttr = Utf8CharIndices<'s>;
     type CharType = char;
 
     fn get_current_position_character_len(iter: &RuleBreakIterator<Self>) -> usize {
