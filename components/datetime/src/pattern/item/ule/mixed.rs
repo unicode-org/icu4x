@@ -37,25 +37,27 @@ enum Tag {
 
 impl MixedPatternItemULE {
     #[inline]
-    fn tag_from_byte(byte: u8) -> Tag {
+    fn tag_from_byte(byte: u8) -> Option<Tag> {
         match (byte & 0b1100_0000) >> 6 {
-            0 => Tag::Literal,
-            1 => Tag::Field,
-            2 => Tag::Placeholder,
-            _ => unreachable!(),
+            0 => Some(Tag::Literal),
+            1 => Some(Tag::Field),
+            2 => Some(Tag::Placeholder),
+            _ => None,
         }
     }
 
+    #[inline]
     fn bytes_in_range(value: (u8, u8, u8)) -> bool {
         match Self::tag_from_byte(value.0) {
-            Tag::Literal => {
+            Some(Tag::Literal) => {
                 char::try_from(u32::from_be_bytes([0x00, value.0, value.1, value.2])).is_ok()
             }
-            Tag::Field => {
+            Some(Tag::Field) => {
                 fields::FieldULE::validate_bytes((value.1, value.2)).is_ok()
                     && value.0 == 0b0100_0000
             }
-            Tag::Placeholder => value.0 == 0b1000_0000 && value.1 == 0 && value.2 < 10,
+            Some(Tag::Placeholder) => value.0 == 0b1000_0000 && value.1 == 0 && value.2 < 10,
+            None => false
         }
     }
 }
@@ -97,7 +99,7 @@ impl AsULE for MixedPatternItem {
     fn from_unaligned(unaligned: Self::ULE) -> Self {
         let value = unaligned.0;
         #[allow(clippy::unwrap_used)] // validated
-        match MixedPatternItemULE::tag_from_byte(value[0]) {
+        match MixedPatternItemULE::tag_from_byte(value[0]).unwrap() {
             Tag::Literal => Self::Literal(
                 char::try_from(u32::from_be_bytes([0x00, value[0], value[1], value[2]])).unwrap(),
             ),
