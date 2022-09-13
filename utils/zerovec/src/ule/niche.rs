@@ -9,7 +9,15 @@ use super::{AsULE, ULE};
 
 /// The [`ULE`] types implementing this trait guarantee that [`NicheBytes::NICHE_BIT_PATTERN`]
 /// can never occur as a valid byte representation of the type.
-/// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
+///
+/// Guarantees for a valid implementation.
+/// 1. N must be equal to core::mem::sizeo_of::<Self>() or else it will
+///    cause panics.
+/// 2. The bit pattern [`NicheBytes::NICHE_BIT_PATTERN`] must not be incorrect as it would lead to
+///    weird behaviour.
+/// 3. The abstractions built on top of this trait must panic on an invalid N.
+/// 4. The abstractions built on this trait that use type punning must ensure that type being
+///    punned is [`ULE`].
 pub trait NicheBytes<const N: usize> {
     const NICHE_BIT_PATTERN: [u8; N];
 }
