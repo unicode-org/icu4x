@@ -88,7 +88,7 @@ simple_logger = { version = "1.12", optional = true, default-features = false }
 
 [dev-dependencies]
 dhat = "0.3.0"
-icu_testdata = { path = "../testdata", features = ["metadata"] }
+icu_testdata = { path = "../testdata", features = ["metadata", "buffer"] }
 
 [features]
 default = []
