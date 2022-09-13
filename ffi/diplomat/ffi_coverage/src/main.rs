@@ -241,6 +241,9 @@ lazy_static::lazy_static! {
         // could be exposed in the future but it's complicated
         "icu::plurals::rules",
 
+        // Pulls in libstd, which we'd rather not do
+        "icu::plurals::PluralOperands::n",
+
         // May be exposed when we have associated constants over FFI
         "icu::properties::BidiClass",
         "icu::properties::CanonicalCombiningClass",
@@ -259,6 +262,7 @@ lazy_static::lazy_static! {
         // Not planned for 1.0
         "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
         "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
+        "icu::properties::script::ScriptWithExtensions::get_script_extensions_ranges",
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
@@ -266,6 +270,7 @@ lazy_static::lazy_static! {
         "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
         "icu::collections::codepointinvlist",
         "icu::collections::codepointtrie",
+        "icu::collections::char16trie",
 
         // Not planned until someone needs them
         "icu::locid::extensions",
@@ -386,6 +391,9 @@ lazy_static::lazy_static! {
         "icu::properties::sets::CodePointSetData::from_data",
         "icu::properties::sets::CodePointSetDataBorrowed::contains_u32",
 
+        // typedef
+        "icu::properties::script::ScriptWithExtensionsResult",
+
         // locid macros
         "icu::locid::langid",
         "icu::locid::locale",
@@ -401,6 +409,10 @@ lazy_static::lazy_static! {
         "icu::locid::subtags_variant",
         // assoc type
         "icu::locale::Locale::Err",
+
+        // locid comparison iteration
+        "icu::locid::Locale::strict_cmp_iter",
+        "icu::locid::SubtagOrderingResult",
 
         // Segmenter types and type aliases that are constructed via methods. They don't need FFI.
         "icu::segmenter::GraphemeClusterBreakIteratorLatin1",

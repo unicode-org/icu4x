@@ -95,9 +95,28 @@
         See the `Rust documentation for from_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes>`__ for more information.
 
 
+    .. js:staticfunction:: canonicalize(bytes)
+
+        Best effort locale canonicalizer that doesn't need any data
+
+        Use ICU4XLocaleCanonicalizer for better control and functionality
+
+        See the `Rust documentation for canonicalize <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.canonicalize>`__ for more information.
+
+
     .. js:function:: to_string()
 
         Write a string representation of :js:class:`ICU4XLocale` to ``write``
 
         See the `Rust documentation for write_to <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to>`__ for more information.
+
+
+    .. js:function:: normalizing_eq(other)
+
+        See the `Rust documentation for normalizing_eq <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.normalizing_eq>`__ for more information.
+
+
+    .. js:function:: strict_cmp(other)
+
+        See the `Rust documentation for strict_cmp <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp>`__ for more information.
 
