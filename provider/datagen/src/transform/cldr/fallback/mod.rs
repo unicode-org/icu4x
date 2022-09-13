@@ -75,6 +75,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
         // TODO(#1964): Load this data from its proper sources. For now, it is copied from:
         // https://github.com/unicode-org/icu/blob/main/tools/cldr/cldr-to-icu/build-icu-data.xml
         // as well as from CLDR XML.
+        #[allow(clippy::type_complexity)]
         let parents_list: [(&[u8], (Language, Option<Script>, Option<Region>)); 1] = [
             (b"yue", (&langid!("zh-Hant")).into()), //
         ];
@@ -88,7 +89,7 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
         };
         Ok(DataResponse {
             metadata: Default::default(),
-            payload: Some(DataPayload::from_owned(data.into())),
+            payload: Some(DataPayload::from_owned(data)),
         })
     }
 }

@@ -308,7 +308,7 @@ impl DataKey {
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
-    pub fn path(&self) -> DataKeyPath {
+    pub const fn path(&self) -> DataKeyPath {
         self.path
     }
 
