@@ -110,10 +110,10 @@ pub(crate) static SUPPLEMENT_KEY_PATHS: &[&str] = &[
 pub struct LocaleFallbackSupplementV1<'data> {
     /// Additional parent locales to supplement the common ones.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub parents: ZeroMap<'data, [u8], (Language, Option<Script>, Option<Region>)>,
+    pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
     /// Default values for Unicode extension keywords.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub unicode_extension_defaults: ZeroMap2d<'data, Key, str, [u8]>,
+    pub unicode_extension_defaults: ZeroMap2d<'data, Key, UnvalidatedStr, UnvalidatedStr>,
 }
 
 icu_provider::impl_casting_upcast!(

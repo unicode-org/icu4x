@@ -15,7 +15,7 @@ use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::provider::*;
 
 use writeable::Writeable;
-use zerovec::{maps::ZeroMap2d, ZeroMap};
+use zerovec::{maps::ZeroMap2d, ZeroMap, ule::UnvalidatedStr};
 
 impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
     fn load(
@@ -76,12 +76,12 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
         // https://github.com/unicode-org/icu/blob/main/tools/cldr/cldr-to-icu/build-icu-data.xml
         // as well as from CLDR XML.
         #[allow(clippy::type_complexity)]
-        let parents_list: [(&[u8], (Language, Option<Script>, Option<Region>)); 1] = [
-            (b"yue", (&langid!("zh-Hant")).into()), //
+        let parents_list: [(&UnvalidatedStr, (Language, Option<Script>, Option<Region>)); 1] = [
+            ("yue".into(), (&langid!("zh-Hant")).into()), //
         ];
-        let unicode_extension_defaults_list: [(Key, &str, &[u8]); 2] = [
-            (extensions_unicode_key!("co"), "zh", b"pinyin"),
-            (extensions_unicode_key!("co"), "zh-Hant", b"stroke"),
+        let unicode_extension_defaults_list: [(Key, &UnvalidatedStr, &UnvalidatedStr); 2] = [
+            (extensions_unicode_key!("co"), "zh".into(), "pinyin".into()),
+            (extensions_unicode_key!("co"), "zh-Hant".into(), "stroke".into()),
         ];
         let data = LocaleFallbackSupplementV1 {
             parents: parents_list.into_iter().collect(),

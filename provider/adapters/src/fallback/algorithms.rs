@@ -207,6 +207,7 @@ mod tests {
     use super::*;
     use icu_locid::Locale;
     use std::str::FromStr;
+    use super::provider::CollationFallbackSupplementV1Marker;
 
     struct TestCase {
         input: &'static str,
@@ -353,6 +354,23 @@ mod tests {
             fallback_supplement_key: None,
             expected_language_chain: &["hi-Latn-IN", "hi-Latn", "en-IN", "en-001", "en"],
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
+        },
+        TestCase {
+            input: "yue-HK",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement_key: None,
+            expected_language_chain: &["yue-HK", "yue"],
+            expected_region_chain: &["yue-HK", "und-HK"],
+        },
+        TestCase {
+            input: "yue-HK",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement_key: Some(CollationFallbackSupplementV1Marker::KEY),
+            // TODO(#1964): add "zh" as a target.
+            expected_language_chain: &["yue-HK", "yue", "zh-Hant"],
+            expected_region_chain: &["yue-HK", "und-HK"],
         },
     ];
 
