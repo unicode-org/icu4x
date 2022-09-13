@@ -1,12 +1,3 @@
-icu::collections::char16trie::Char16Trie#Struct
-icu::collections::char16trie::Char16Trie::iter#FnInStruct
-icu::collections::char16trie::Char16Trie::new#FnInStruct
-icu::collections::char16trie::Char16TrieIterator#Struct
-icu::collections::char16trie::Char16TrieIterator::new#FnInStruct
-icu::collections::char16trie::Char16TrieIterator::next#FnInStruct
-icu::collections::char16trie::Char16TrieIterator::next16#FnInStruct
-icu::collections::char16trie::Char16TrieIterator::next32#FnInStruct
-icu::collections::char16trie::TrieResult#Enum
 icu_provider_adapters::filter::Filterable::filterable#FnInTrait
 icu_provider_adapters::filter::RequestFilterDataProvider#Struct
 icu_provider_adapters::filter::RequestFilterDataProvider::filter_by_langid#FnInStruct
