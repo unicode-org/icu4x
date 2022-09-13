@@ -61,8 +61,8 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLocaleFallbacker>, ICU4XError> {
             LocaleFallbacker::try_new_unstable(&provider.0)
-                .map(Box::new)
                 .map(ICU4XLocaleFallbacker)
+                .map(Box::new)
                 .map_err(Into::into)
                 .into()
         }
