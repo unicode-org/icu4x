@@ -204,10 +204,10 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
 
 #[cfg(test)]
 mod tests {
+    use super::provider::CollationFallbackSupplementV1Marker;
     use super::*;
     use icu_locid::Locale;
     use std::str::FromStr;
-    use super::provider::CollationFallbackSupplementV1Marker;
 
     struct TestCase {
         input: &'static str,
