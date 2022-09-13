@@ -62,7 +62,7 @@ pub trait BufferProvider {
     ) -> Result<DataResponse<BufferMarker>, DataError>;
 }
 
-impl BufferProvider for alloc::boxed::Box<dyn BufferProvider> {
+impl<T: BufferProvider + ?Sized> BufferProvider for alloc::boxed::Box<T> {
     fn load_buffer(
         &self,
         key: DataKey,

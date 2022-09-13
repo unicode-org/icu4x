@@ -58,3 +58,21 @@
 
         See the `Rust documentation for ForkByKeyProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/type.ForkByKeyProvider.html>`__ for more information.
 
+
+    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> enable_locale_fallback()
+
+        Enables locale fallbacking for data requests made to this provider.
+
+        Note that the test provider (from ``create_test``) already has fallbacking enabled.
+
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new_unstable>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html>`__
+
+
+    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> enable_locale_fallback_with(const ICU4XLocaleFallbacker& fallbacker)
+
+        See the `Rust documentation for new_with_fallbacker <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html>`__
+
