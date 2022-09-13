@@ -3,10 +3,11 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_collections::codepointtrie::CodePointTrie;
+use icu_properties::provider::ScriptWithExtensions;
 use icu_properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
-use icu_properties::script::{ScriptWithExt, ScriptWithExtensions};
+use icu_properties::script::ScriptWithExt;
 use icu_properties::Script;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;

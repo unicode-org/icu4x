@@ -9,13 +9,16 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::script::ScriptWithExtensions;
+use crate::script::{ScriptExtensionsSet, ScriptWithExt, SCRIPT_X_SCRIPT_VAL};
+use crate::Script;
+use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
-use zerovec::ZeroVecError;
+use zerovec::ule::AsULE;
+use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 
 /// A set of characters with a particular property.
 ///
@@ -173,6 +176,352 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
         match *self {
             Self::CodePointTrie(ref t) => ZeroFrom::zero_from(t),
         }
+    }
+}
+
+/// A data structure that represents the data for both Script and
+/// Script_Extensions properties in an efficient way. This structure matches
+/// the data and data structures that are stored in the corresponding ICU data
+/// file for these properties.
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_properties::provider),
+)]
+#[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
+pub struct ScriptWithExtensions<'data> {
+    /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
+    /// higher order bits 11..10 will indicate how to deduce the Script value and
+    /// Script_Extensions value, nearly matching the representation
+    /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
+    ///
+    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
+    /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
+    /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
+    /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
+    /// | 1                       | Script=Common                                          | Entire sub-array, index given by lower 10 bits                 |
+    /// | 0                       | Value in lower 10 bits                                 | `[ Script value ]` single-element array                        |
+    ///
+    /// When the lower 10 bits of the value are used as an index, that index is
+    /// used for the outer-level vector of the nested `extensions` structure.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[doc(hidden)] // #2417
+    pub trie: CodePointTrie<'data, ScriptWithExt>,
+
+    /// This companion structure stores Script_Extensions values, which are
+    /// themselves arrays / vectors. This structure only stores the values for
+    /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
+    /// sub-vector represents the Script_Extensions array value for a code point,
+    /// and may also indicate Script value, as described for the `trie` field.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[doc(hidden)] // #2417
+    pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
+}
+
+impl<'data> ScriptWithExtensions<'data> {
+    // This method is intended to be used by constructors of deserialized data
+    // in a data provider.
+    #[doc(hidden)]
+    pub fn new(
+        trie: CodePointTrie<'data, ScriptWithExt>,
+        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
+    ) -> ScriptWithExtensions<'data> {
+        ScriptWithExtensions { trie, extensions }
+    }
+
+    /// Returns the `Script` property value for this code point.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// // U+0640 ARABIC TATWEEL
+    /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Arabic);
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0640), Script::Thaana);
+    ///
+    /// // U+0650 ARABIC KASRA
+    /// assert_eq!(swe.get_script_val(0x0650), Script::Inherited); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Arabic);
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0650), Script::Thaana);
+    ///
+    /// // U+0660 ARABIC-INDIC DIGIT ZERO
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Common);
+    /// assert_eq!(swe.get_script_val(0x0660), Script::Arabic); // main Script value
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0x0660), Script::Thaana);
+    ///
+    /// // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Common);
+    /// assert_eq!(swe.get_script_val(0xFDF2), Script::Arabic); // main Script value
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Syriac);
+    /// assert_ne!(swe.get_script_val(0xFDF2), Script::Thaana);
+    /// ```
+    pub fn get_script_val(&self, code_point: u32) -> Script {
+        let sc_with_ext = self.trie.get32(code_point);
+
+        if sc_with_ext.is_other() {
+            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let scx_val = self.extensions.get(ext_idx as usize);
+            let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
+
+            let default_sc_val = Script::Unknown;
+
+            scx_first_sc.unwrap_or(default_sc_val)
+        } else if sc_with_ext.is_common() {
+            Script::Common
+        } else if sc_with_ext.is_inherited() {
+            Script::Inherited
+        } else {
+            let script_val = sc_with_ext.0;
+            Script(script_val)
+        }
+    }
+
+    // Returns the Script_Extensions value for a code_point when the trie value
+    // is already known.
+    // This private helper method exists to prevent code duplication in callers like
+    // `get_script_extensions_val`, `get_script_extensions_set`, and `has_script`.
+    fn get_scx_val_using_trie_val<'a>(
+        &'a self,
+        sc_with_ext_ule: &'a <ScriptWithExt as AsULE>::ULE,
+    ) -> &'a ZeroSlice<Script> {
+        let sc_with_ext = ScriptWithExt::from_unaligned(*sc_with_ext_ule);
+        if sc_with_ext.is_other() {
+            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let ext_subarray = self.extensions.get(ext_idx as usize);
+            // In the OTHER case, where the 2 higher-order bits of the
+            // `ScriptWithExt` value in the trie doesn't indicate the Script value,
+            // the Script value is copied/inserted into the first position of the
+            // `extensions` array. So we must remove it to return the actual scx array val.
+            let scx_slice = ext_subarray
+                .and_then(|zslice| zslice.as_ule_slice().get(1..))
+                .unwrap_or_default();
+            ZeroSlice::from_ule_slice(scx_slice)
+        } else if sc_with_ext.is_common() || sc_with_ext.is_inherited() {
+            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
+            let scx_val = self.extensions.get(ext_idx as usize);
+            scx_val.unwrap_or_default()
+        } else {
+            // Note: `Script` and `ScriptWithExt` are both represented as the same
+            // u16 value when the `ScriptWithExt` has no higher-order bits set.
+            let script_ule_slice = core::slice::from_ref(sc_with_ext_ule);
+            ZeroSlice::from_ule_slice(script_ule_slice)
+        }
+    }
+
+    /// Return the `Script_Extensions` property value for this code point.
+    ///
+    /// If `code_point` has Script_Extensions, then return the Script codes in
+    /// the Script_Extensions. In this case, the Script property value
+    /// (normally Common or Inherited) is not included in the [`ScriptExtensionsSet`].
+    ///
+    /// If c does not have Script_Extensions, then the one Script code is put
+    /// into the [`ScriptExtensionsSet`] and also returned.
+    ///
+    /// If c is not a valid code point, then return an empty [`ScriptExtensionsSet`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Osage]
+    /// );
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val('🥳' as u32) // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Common]
+    /// );
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val(0x200D) // ZERO WIDTH JOINER
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Inherited]
+    /// );
+    /// assert_eq!(
+    ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
+    ///         .iter()
+    ///         .collect::<Vec<Script>>(),
+    ///     vec![Script::Tamil, Script::Grantha]
+    /// );
+    /// ```
+    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
+        let sc_with_ext_ule = self.trie.get32_ule(code_point);
+
+        ScriptExtensionsSet {
+            values: match sc_with_ext_ule {
+                Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
+                None => ZeroSlice::from_ule_slice(&[]),
+            },
+        }
+    }
+    /// Returns whether `script` is contained in the Script_Extensions
+    /// property value if the code_point has Script_Extensions, otherwise
+    /// if the code point does not have Script_Extensions then returns
+    /// whether the Script property value matches.
+    ///
+    /// Some characters are commonly used in multiple scripts. For more information,
+    /// see UAX #24: <http://www.unicode.org/reports/tr24/>.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let provider = icu_testdata::unstable();
+    /// let payload =
+    ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
+    ///         .expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// // U+0650 ARABIC KASRA
+    /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
+    /// assert!(swe.has_script(0x0650, Script::Arabic));
+    /// assert!(swe.has_script(0x0650, Script::Syriac));
+    /// assert!(!swe.has_script(0x0650, Script::Thaana));
+    ///
+    /// // U+0660 ARABIC-INDIC DIGIT ZERO
+    /// assert!(!swe.has_script(0x0660, Script::Common)); // main Script value
+    /// assert!(swe.has_script(0x0660, Script::Arabic));
+    /// assert!(!swe.has_script(0x0660, Script::Syriac));
+    /// assert!(swe.has_script(0x0660, Script::Thaana));
+    ///
+    /// // U+FDF2 ARABIC LIGATURE ALLAH ISOLATED FORM
+    /// assert!(!swe.has_script(0xFDF2, Script::Common));
+    /// assert!(swe.has_script(0xFDF2, Script::Arabic)); // main Script value
+    /// assert!(!swe.has_script(0xFDF2, Script::Syriac));
+    /// assert!(swe.has_script(0xFDF2, Script::Thaana));
+    /// ```
+    pub fn has_script(&self, code_point: u32, script: Script) -> bool {
+        let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get32_ule(code_point) {
+            scwe_ule
+        } else {
+            return false;
+        };
+        let sc_with_ext = <ScriptWithExt as AsULE>::from_unaligned(*sc_with_ext_ule);
+
+        if !sc_with_ext.has_extensions() {
+            let script_val = sc_with_ext.0;
+            script == Script(script_val)
+        } else {
+            let scx_val = self.get_scx_val_using_trie_val(sc_with_ext_ule);
+            let script_find = scx_val.iter().find(|&sc| sc == script);
+            script_find.is_some()
+        }
+    }
+
+    /// Returns all of the matching `CodePointMapRange`s for the given [`Script`]
+    /// in which `has_script` will return true for all of the contained code points.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
+    ///
+    /// let exp_ranges = vec![
+    ///     0x060C..=0x060C, // ARABIC COMMA
+    ///     0x061B..=0x061B, // ARABIC SEMICOLON
+    ///     0x061C..=0x061C, // ARABIC LETTER MARK
+    ///     0x061F..=0x061F, // ARABIC QUESTION MARK
+    ///     0x0640..=0x0640, // ARABIC TATWEEL
+    ///     0x064B..=0x0655, // ARABIC FATHATAN..ARABIC HAMZA BELOW
+    ///     0x0670..=0x0670, // ARABIC LETTER SUPERSCRIPT ALEF
+    ///     0x0700..=0x070D, // Syriac block begins at U+0700
+    ///     0x070F..=0x074A, // Syriac block
+    ///     0x074D..=0x074F, // Syriac block ends at U+074F
+    ///     0x0860..=0x086A, // Syriac Supplement block is U+0860..=U+086F
+    ///     0x1DF8..=0x1DF8, // U+1DF8 COMBINING DOT ABOVE LEFT
+    ///     0x1DFA..=0x1DFA, // U+1DFA COMBINING DOT BELOW LEFT
+    /// ];
+    /// let mut exp_ranges_iter = exp_ranges.iter();
+    ///
+    /// for act_range in syriac_script_extensions_ranges {
+    ///     let exp_range = exp_ranges_iter
+    ///         .next()
+    ///         .expect("There are too many ranges returned by get_script_extensions_ranges()");
+    ///     assert_eq!(act_range.start(), exp_range.start());
+    ///     assert_eq!(act_range.end(), exp_range.end());
+    /// }
+    /// assert!(
+    ///     exp_ranges_iter.next().is_none(),
+    ///     "There are too few ranges returned by get_script_extensions_ranges()"
+    /// );
+    /// ```
+    pub fn get_script_extensions_ranges(
+        &self,
+        script: Script,
+    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
+        self.trie
+            .iter_ranges()
+            .filter(move |cpm_range| {
+                let sc_with_ext = ScriptWithExt(cpm_range.value.0);
+                if sc_with_ext.has_extensions() {
+                    self.get_scx_val_using_trie_val(&sc_with_ext.to_unaligned())
+                        .iter()
+                        .any(|sc| sc == script)
+                } else {
+                    script == sc_with_ext.into()
+                }
+            })
+            .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()))
+    }
+
+    /// Returns a [`CodePointInversionList`] for the given [`Script`] which represents all
+    /// code points for which `has_script` will return true.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::properties::{script, Script};
+    ///
+    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let data_struct = payload.get();
+    /// let swe = &data_struct.data;
+    ///
+    /// let syriac = swe.get_script_extensions_set(Script::Syriac);
+    ///
+    /// assert!(!syriac.contains32(0x061E)); // ARABIC TRIPLE DOT PUNCTUATION MARK
+    /// assert!(syriac.contains32(0x061F)); // ARABIC QUESTION MARK
+    /// assert!(!syriac.contains32(0x0620)); // ARABIC LETTER KASHMIRI YEH
+    ///
+    /// assert!(syriac.contains32(0x0700)); // SYRIAC END OF PARAGRAPH
+    /// assert!(syriac.contains32(0x074A)); // SYRIAC BARREKH
+    /// assert!(!syriac.contains32(0x074B)); // unassigned
+    /// assert!(syriac.contains32(0x074F)); // SYRIAC LETTER SOGDIAN FE
+    /// assert!(!syriac.contains32(0x0750)); // ARABIC LETTER BEH WITH THREE DOTS HORIZONTALLY BELOW
+    ///
+    /// assert!(syriac.contains32(0x1DF8)); // COMBINING DOT ABOVE LEFT
+    /// assert!(!syriac.contains32(0x1DF9)); // COMBINING WIDE INVERTED BRIDGE BELOW
+    /// assert!(syriac.contains32(0x1DFA)); // COMBINING DOT BELOW LEFT
+    /// assert!(!syriac.contains32(0x1DFB)); // COMBINING DELETION MARK
+    /// ```
+    pub fn get_script_extensions_set(&self, script: Script) -> CodePointInversionList {
+        CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
