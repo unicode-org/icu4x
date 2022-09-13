@@ -31,7 +31,7 @@ zerovec = { version = "0.8", path = "../../utils/zerovec", features = ["yoke"] }
 serde = { version = "1.0", default-features = false, features = ["derive", "alloc"], optional = true }
 databake = { version = "0.1.0", path = "../../utils/databake", optional = true, features = ["derive"]}
 tinystr = { version = "0.6", path = "../../utils/tinystr", features = ["zerovec"] }
-litemap = { path = "../../utils/litemap" }
+litemap = { version = "0.5", path = "../../utils/litemap" }
 
 [dev-dependencies]
 icu_testdata = { path = "../testdata", default-features = false, features = ["buffer"] }
