@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663036356096,
+  "lastUpdate": 1663096868419,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27113,6 +27113,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ef8d16e20482dd6823b9ded4c79bb86bacb953cc"
         },
         "date": 1663036305222,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "824f91bcf11b99465e916fedbedc5eb062d1e67d",
+          "message": "Whack-a-mole 7: The last whack-a-mole? (#2552)\n\n* Some locale FFI\r\n\r\n* Add scriptextensions\r\n\r\n* ignore PluralOperands::n()\r\n\r\n* char16trie\r\n\r\n* comments\r\n\r\n* Update ffi/diplomat/ffi_coverage/src/main.rs\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>\r\n\r\nCo-authored-by: Shane F. Carr <shane@unicode.org>",
+          "timestamp": "2022-09-13T19:18:41Z",
+          "tree_id": "e5271527550ea81df34ca712a45fdfdb8a9b8dbd",
+          "url": "https://github.com/unicode-org/icu4x/commit/824f91bcf11b99465e916fedbedc5eb062d1e67d"
+        },
+        "date": 1663096805423,
         "tool": "ndjson",
         "benches": [
           {
