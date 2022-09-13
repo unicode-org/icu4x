@@ -72,7 +72,7 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// A special data structure for `Script` and `Script_Extensions`.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub data: ScriptWithExtensions<'data>,
+    pub data: ScriptWithExtensionsV1<'data>,
 }
 
 // See CodePointSetData for documentation of these functions
@@ -190,7 +190,7 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     databake(path = icu_properties::provider),
 )]
 #[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub struct ScriptWithExtensions<'data> {
+pub struct ScriptWithExtensionsV1<'data> {
     /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
     /// higher order bits 11..10 will indicate how to deduce the Script value and
     /// Script_Extensions value, nearly matching the representation
@@ -219,15 +219,15 @@ pub struct ScriptWithExtensions<'data> {
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
-impl<'data> ScriptWithExtensions<'data> {
+impl<'data> ScriptWithExtensionsV1<'data> {
     // This method is intended to be used by constructors of deserialized data
     // in a data provider.
     #[doc(hidden)]
     pub fn new(
         trie: CodePointTrie<'data, ScriptWithExt>,
         extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> ScriptWithExtensions<'data> {
-        ScriptWithExtensions { trie, extensions }
+    ) -> ScriptWithExtensionsV1<'data> {
+        ScriptWithExtensionsV1 { trie, extensions }
     }
 
     /// Returns the `Script` property value for this code point.

@@ -22,7 +22,7 @@ const SCRIPT_VAL_LENGTH: u16 = 10;
 pub(crate) const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 
 /// An internal-use only pseudo-property that represents the values stored in
-/// the trie of the special data structure [`ScriptWithExtensions`].
+/// the trie of the special data structure [`ScriptWithExtensionsV1`].
 ///
 /// Note: The will assume a 12-bit layout. The 2 higher order bits in positions
 /// 11..10 will indicate how to deduce the Script value and Script_Extensions,
@@ -33,13 +33,13 @@ pub(crate) const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::script))]
 #[repr(transparent)]
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsV1` constructor
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ScriptWithExt(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsV1` constructor
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
 }
@@ -58,7 +58,7 @@ impl AsULE for ScriptWithExt {
     }
 }
 
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsV1` constructor
 impl ScriptWithExt {
     /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
     /// also indicates a Script value of [`Script::Common`].
@@ -171,7 +171,7 @@ impl From<ScriptWithExt> for Script {
 }
 
 /// A struct that wraps a [`Script`] array, such as in the return value for
-/// [`get_script_extensions_val`](ScriptWithExtensions::get_script_extensions_val).
+/// [`get_script_extensions_val`](ScriptWithExtensionsV1::get_script_extensions_val).
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct ScriptExtensionsSet<'a> {
     pub(crate) values: &'a ZeroSlice<Script>,
@@ -223,10 +223,10 @@ impl ScriptExtensionsSet<'_> {
 }
 
 /// The return type `Result` for any of the `load_script_with_extensions_`* functions.
-pub type ScriptWithExtensionsResult =
+pub type ScriptWithExtensionsV1Result =
     Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
 
-/// Returns a [`ScriptWithExtensions`] struct that represents the data for the Script
+/// Returns a [`ScriptWithExtensionsV1`] struct that represents the data for the Script
 /// and Script_Extensions properties.
 ///
 /// # Examples
@@ -287,7 +287,7 @@ pub type ScriptWithExtensionsResult =
 /// ```
 pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
-) -> ScriptWithExtensionsResult {
+) -> ScriptWithExtensionsV1Result {
     Ok(provider
         .load(Default::default())
         .and_then(DataResponse::take_payload)?)
@@ -296,7 +296,7 @@ pub fn load_script_with_extensions_unstable(
 icu_provider::gen_any_buffer_constructors!(
     locale: skip,
     options: skip,
-    result: ScriptWithExtensionsResult,
+    result: ScriptWithExtensionsV1Result,
     functions: [
         load_script_with_extensions_unstable,
         load_script_with_extensions_with_any_provider,
