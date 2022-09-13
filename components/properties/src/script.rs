@@ -340,7 +340,7 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
-    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
+    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet<'a> {
         self.data.get_script_extensions_val(code_point)
     }
 
