@@ -9,7 +9,7 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::script::{ScriptWithExt};
+use crate::script::ScriptWithExt;
 use crate::Script;
 
 use core::ops::RangeInclusive;

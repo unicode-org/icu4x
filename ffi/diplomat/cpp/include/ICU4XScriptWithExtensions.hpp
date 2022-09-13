@@ -14,6 +14,7 @@
 class ICU4XDataProvider;
 class ICU4XScriptWithExtensions;
 #include "ICU4XError.hpp"
+class ICU4XScriptWithExtensionsBorrowed;
 
 /**
  * A destruction policy for using ICU4XScriptWithExtensions with std::unique_ptr.
@@ -42,16 +43,23 @@ class ICU4XScriptWithExtensions {
   /**
    * Get the Script property value for a code point
    * 
-   * See the [Rust documentation for `get_script_val`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html#method.get_script_val) for more information.
+   * See the [Rust documentation for `get_script_val`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.get_script_val) for more information.
    */
   uint16_t get_script_val(uint32_t code_point) const;
 
   /**
    * Check if the Script_Extensions property of the given code point covers the given script
    * 
-   * See the [Rust documentation for `has_script`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html#method.has_script) for more information.
+   * See the [Rust documentation for `has_script`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensionsBorrowed.html#method.has_script) for more information.
    */
   bool has_script(uint32_t code_point, uint16_t script) const;
+
+  /**
+   * Borrow this object for a slightly faster variant with more operations
+   * 
+   * See the [Rust documentation for `as_borrowed`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html#method.as_borrowed) for more information.
+   */
+  ICU4XScriptWithExtensionsBorrowed as_borrowed() const;
   inline const capi::ICU4XScriptWithExtensions* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptWithExtensions* AsFFIMut() { return this->inner.get(); }
   inline ICU4XScriptWithExtensions(capi::ICU4XScriptWithExtensions* i) : inner(i) {}
@@ -63,6 +71,7 @@ class ICU4XScriptWithExtensions {
 };
 
 #include "ICU4XDataProvider.hpp"
+#include "ICU4XScriptWithExtensionsBorrowed.hpp"
 
 inline diplomat::result<ICU4XScriptWithExtensions, ICU4XError> ICU4XScriptWithExtensions::load(const ICU4XDataProvider& provider) {
   auto diplomat_result_raw_out_value = capi::ICU4XScriptWithExtensions_load(provider.AsFFI());
@@ -79,5 +88,8 @@ inline uint16_t ICU4XScriptWithExtensions::get_script_val(uint32_t code_point) c
 }
 inline bool ICU4XScriptWithExtensions::has_script(uint32_t code_point, uint16_t script) const {
   return capi::ICU4XScriptWithExtensions_has_script(this->inner.get(), code_point, script);
+}
+inline ICU4XScriptWithExtensionsBorrowed ICU4XScriptWithExtensions::as_borrowed() const {
+  return ICU4XScriptWithExtensionsBorrowed(capi::ICU4XScriptWithExtensions_as_borrowed(this->inner.get()));
 }
 #endif
