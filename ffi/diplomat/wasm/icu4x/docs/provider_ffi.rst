@@ -47,5 +47,16 @@
 
         Constructs an empty ``StaticDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`.
 
-        See the `Rust documentation for StaticDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_blob/struct.StaticDataProvider.html>`__ for more information.
+        See the `Rust documentation for EmptyDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html>`__ for more information.
+
+
+    .. js:function:: fork_by_key(other)
+
+        Creates a provider that tries the current provider and then, if the current provider doesn't support the data key, another provider ``other``.
+
+        This takes ownership of the ``other`` provider, leaving an empty provider in its place.
+
+        The providers must be the same type (Any or Buffer). This condition is satisfied if both providers originate from the same constructor, such as ``create_from_byte_slice`` or ``create_fs``. If the condition is not upheld, a runtime error occurs.
+
+        See the `Rust documentation for ForkByKeyProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/type.ForkByKeyProvider.html>`__ for more information.
 

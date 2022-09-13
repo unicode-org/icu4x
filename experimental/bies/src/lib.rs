@@ -280,7 +280,7 @@ impl Writeable for BiesString<'_> {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         LengthHint::exact(self.0.length)
     }
 }
@@ -291,8 +291,4 @@ impl fmt::Debug for BiesString<'_> {
     }
 }
 
-impl fmt::Display for BiesString<'_> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> fmt::Result {
-        self.write_to(f)
-    }
-}
+writeable::impl_display_with_writeable!(BiesString<'_>);

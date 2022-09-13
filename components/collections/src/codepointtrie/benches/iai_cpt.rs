@@ -45,7 +45,7 @@ fn bench_iai_cpt_overview(fast: bool, mixed: bool) {
 
     let mut i: u8 = 0;
     for c in sample.chars() {
-        i = i.wrapping_add(cpt.get(c as u32))
+        i = i.wrapping_add(cpt.get32(c as u32))
         //i = i.wrapping_add(1);
     }
 

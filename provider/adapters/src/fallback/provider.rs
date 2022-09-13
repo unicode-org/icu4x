@@ -16,6 +16,7 @@ use tinystr::TinyAsciiStr;
 
 use icu_provider::prelude::*;
 
+use zerovec::ule::UnvalidatedStr;
 use zerovec::ZeroMap;
 use zerovec::ZeroMap2d;
 
@@ -84,7 +85,7 @@ pub struct LocaleFallbackParentsV1<'data> {
     /// Map from language identifier to language identifier, indicating that the language on the
     /// left should inherit from the language on the right.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub parents: ZeroMap<'data, [u8], (Language, Option<Script>, Option<Region>)>,
+    pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
 }
 
 pub(crate) static SUPPLEMENT_KEY_PATHS: &[&str] = &[

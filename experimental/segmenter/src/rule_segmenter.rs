@@ -29,6 +29,13 @@ pub trait RuleBreakType<'l, 's> {
 ///
 /// - `'l` = lifetime of the segmenter object from which this iterator was created
 /// - `'s` = lifetime of the string being segmented
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+/// </div>
 pub struct RuleBreakIterator<'l, 's, Y: RuleBreakType<'l, 's> + ?Sized> {
     pub(crate) iter: Y::IterAttr,
     pub(crate) len: usize,
@@ -168,7 +175,7 @@ impl<'l, 's, Y: RuleBreakType<'l, 's>> RuleBreakIterator<'l, 's, Y> {
 
     fn get_break_property(&self, codepoint: Y::CharType) -> u8 {
         // Note: Default value is 0 == UNKNOWN
-        self.data.property_table.0.get(codepoint.into())
+        self.data.property_table.0.get32(codepoint.into())
     }
 
     fn get_break_state_from_table(&self, left: u8, right: u8) -> i8 {

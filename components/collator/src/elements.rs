@@ -745,7 +745,7 @@ impl CharacterAndClass {
             return;
         }
         let scalar = self.0 & 0xFFFFFF;
-        self.0 = ((ccc_from_trie_value(trie.get_u32(scalar)).0 as u32) << 24) | scalar;
+        self.0 = ((ccc_from_trie_value(trie.get32_u32(scalar)).0 as u32) << 24) | scalar;
     }
 }
 
@@ -855,7 +855,7 @@ where
 
     fn iter_next(&mut self) -> Option<CharacterAndClassAndTrieValue> {
         let c = self.iter.next()?;
-        let trie_val = self.trie.get(u32::from(c));
+        let trie_val = self.trie.get(c);
         Some(CharacterAndClassAndTrieValue::new_with_trie_val(
             c, trie_val,
         ))
@@ -1047,7 +1047,7 @@ where
                     )),
                 );
                 let low_c = char_from_u16(trail_or_complex);
-                let trie_value = self.trie.get(u32::from(low_c));
+                let trie_value = self.trie.get(low_c);
                 self.upcoming.push(
                     CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(
                         low_c, trie_value,
@@ -1103,7 +1103,7 @@ where
                     .iter()
                     {
                         let ch = char_from_u16(u);
-                        let trie_value = self.trie.get(u32::from(ch));
+                        let trie_value = self.trie.get(ch);
                         self.upcoming
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
                     }
@@ -1116,7 +1116,7 @@ where
                     )
                     .iter()
                     {
-                        let trie_value = self.trie.get(u32::from(ch));
+                        let trie_value = self.trie.get(ch);
                         self.upcoming
                             .push(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(ch, trie_value));
                     }
@@ -1455,7 +1455,7 @@ where
                             if trail_or_complex & 0x1000 != 0 {
                                 for u in tail.iter() {
                                     let char_from_u = char_from_u16(u);
-                                    let trie_value = self.trie.get(u32::from(char_from_u));
+                                    let trie_value = self.trie.get(char_from_u);
                                     let ccc = ccc_from_trie_value(trie_value);
                                     combining_characters
                                         .push(CharacterAndClass::new(char_from_u, ccc));
@@ -1464,7 +1464,7 @@ where
                                 let mut it = tail.iter();
                                 while let Some(u) = it.next() {
                                     let ch = char_from_u16(u);
-                                    let ccc = ccc_from_trie_value(self.trie.get(u32::from(ch)));
+                                    let ccc = ccc_from_trie_value(self.trie.get(ch));
                                     if ccc != CanonicalCombiningClass::NotReordered {
                                         // As of Unicode 14, this branch is never taken.
                                         // It exist for forward compatibility.
@@ -1481,7 +1481,7 @@ where
 
                                     while let Some(u) = it.next_back() {
                                         let tail_char = char_from_u16(u);
-                                        let trie_value = self.trie.get(u32::from(tail_char));
+                                        let trie_value = self.trie.get(tail_char);
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
                                     }
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(ch));
@@ -1504,14 +1504,14 @@ where
                             c = starter;
                             if trail_or_complex & 0x1000 != 0 {
                                 for ch in tail.iter() {
-                                    let trie_value = self.trie.get(u32::from(ch));
+                                    let trie_value = self.trie.get(ch);
                                     let ccc = ccc_from_trie_value(trie_value);
                                     combining_characters.push(CharacterAndClass::new(ch, ccc));
                                 }
                             } else {
                                 let mut it = tail.iter();
                                 while let Some(ch) = it.next() {
-                                    let ccc = ccc_from_trie_value(self.trie.get(u32::from(ch)));
+                                    let ccc = ccc_from_trie_value(self.trie.get(ch));
                                     if ccc != CanonicalCombiningClass::NotReordered {
                                         // As of Unicode 14, this branch is never taken.
                                         // It exist for forward compatibility.
@@ -1526,7 +1526,7 @@ where
                                     self.maybe_gather_combining();
 
                                     while let Some(tail_char) = it.next_back() {
-                                        let trie_value = self.trie.get(u32::from(tail_char));
+                                        let trie_value = self.trie.get(tail_char);
                                         self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_special_decomposition_trie_val(tail_char, trie_value));
                                     }
                                     self.prepend_and_sort_non_starter_prefix_of_suffix(CharacterAndClassAndTrieValue::new_with_non_decomposing_starter(ch));

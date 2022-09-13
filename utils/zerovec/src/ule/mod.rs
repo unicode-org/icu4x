@@ -18,6 +18,7 @@ mod multi;
 mod option;
 mod plain;
 mod slices;
+mod unvalidated;
 
 pub mod tuple;
 pub use super::ZeroVecError;
@@ -26,6 +27,7 @@ pub use encode::{encode_varule_to_box, EncodeAsVarULE};
 pub use multi::MultiFieldsULE;
 pub use option::{OptionULE, OptionVarULE};
 pub use plain::RawBytesULE;
+pub use unvalidated::UnvalidatedStr;
 
 use alloc::alloc::Layout;
 use alloc::borrow::ToOwned;

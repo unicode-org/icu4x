@@ -57,7 +57,7 @@ where
         }
     }
 
-    // TODO(#489): Implement write_len
+    // TODO(#489): Implement writeable_length_hint
 }
 
 impl<'l, T> fmt::Display for FormattedTimeZone<'l, T>

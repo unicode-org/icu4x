@@ -75,7 +75,7 @@ impl<'l> Writeable for FormattedDateTime<'l> {
         .map_err(|_| core::fmt::Error)
     }
 
-    // TODO(#489): Implement write_len
+    // TODO(#489): Implement writeable_length_hint
 }
 
 impl<'l> fmt::Display for FormattedDateTime<'l> {

@@ -32,8 +32,15 @@ impl<V: Writeable> Writeable for WriteableMessage<V> {
         sink.with_part(EMOJI, |e| e.write_char('😅'))
     }
 
-    fn write_len(&self) -> LengthHint {
-        LengthHint::exact(11) + self.0.write_len()
+    fn writeable_length_hint(&self) -> LengthHint {
+        LengthHint::exact(11) + self.0.writeable_length_hint()
+    }
+}
+
+impl<V: Writeable> fmt::Display for WriteableMessage<V> {
+    #[inline]
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        self.write_to(f)
     }
 }
 

@@ -188,14 +188,14 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
         }
     }
 
-    fn write_len(&self) -> LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         let mut count = 0;
         let item_length = self
             .values
             .clone()
             .map(|w| {
                 count += 1;
-                w.write_len()
+                w.writeable_length_hint()
             })
             .sum::<LengthHint>();
         item_length
@@ -204,6 +204,14 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
                 .data
                 .get()
                 .size_hint(self.formatter.style, count)
+    }
+}
+
+impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> core::fmt::Display
+    for FormattedList<'a, W, I>
+{
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        self.write_to(f)
     }
 }
 

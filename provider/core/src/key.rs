@@ -534,25 +534,21 @@ impl fmt::Debug for DataKey {
     }
 }
 
-impl fmt::Display for DataKey {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        Writeable::write_to(self, f)
-    }
-}
-
 impl Writeable for DataKey {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
         self.path().write_to(sink)
     }
 
-    fn write_len(&self) -> LengthHint {
-        self.path().write_len()
+    fn writeable_length_hint(&self) -> LengthHint {
+        self.path().writeable_length_hint()
     }
 
     fn write_to_string(&self) -> Cow<str> {
         Cow::Borrowed(self.path().get())
     }
 }
+
+writeable::impl_display_with_writeable!(DataKey);
 
 #[test]
 fn test_path_syntax() {

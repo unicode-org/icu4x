@@ -134,11 +134,7 @@ impl Other {
     }
 }
 
-impl core::fmt::Display for Other {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
+writeable::impl_display_with_writeable!(Other);
 
 impl writeable::Writeable for Other {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
@@ -153,10 +149,10 @@ impl writeable::Writeable for Other {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         let mut result = writeable::LengthHint::exact(2);
         for key in self.0 .1.iter() {
-            result += writeable::Writeable::write_len(key) + 1;
+            result += writeable::Writeable::writeable_length_hint(key) + 1;
         }
         result
     }

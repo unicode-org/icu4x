@@ -49,6 +49,9 @@
 
 .. js:class:: ICU4XDateLength
 
+    See the `Rust documentation for Date <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/options/length/enum.Date.html>`__ for more information.
+
+
 .. js:class:: ICU4XDateTimeFormatter
 
     An ICU4X DateFormatter object capable of formatting a :js:class:`ICU4XDateTime` as a string, using some calendar specified at runtime in the locale.
@@ -164,3 +167,6 @@
 
 
 .. js:class:: ICU4XTimeLength
+
+    See the `Rust documentation for Time <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/options/length/enum.Time.html>`__ for more information.
+

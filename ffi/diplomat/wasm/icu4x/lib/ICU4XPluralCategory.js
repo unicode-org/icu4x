@@ -11,12 +11,12 @@ export const ICU4XPluralCategory_js_to_rust = {
 };
 
 export const ICU4XPluralCategory_rust_to_js = {
-  0: "Zero",
-  1: "One",
-  2: "Two",
-  3: "Few",
-  4: "Many",
-  5: "Other",
+  [0]: "Zero",
+  [1]: "One",
+  [2]: "Two",
+  [3]: "Few",
+  [4]: "Many",
+  [5]: "Other",
 };
 
 export const ICU4XPluralCategory = {

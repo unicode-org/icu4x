@@ -17,10 +17,12 @@ impl Writeable for WriteableMessage<'_> {
         sink.write_str(self.message)
     }
 
-    fn write_len(&self) -> LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         LengthHint::exact(self.message.len())
     }
 }
+
+writeable::impl_display_with_writeable!(WriteableMessage<'_>);
 
 /// A sample type implementing Display
 struct DisplayMessage<'s> {
@@ -39,7 +41,6 @@ const LONG_STR: &str = "this string is very very very very very very very very v
 
 fn overview_bench(c: &mut Criterion) {
     c.bench_function("writeable/overview", |b| {
-        #[allow(clippy::suspicious_map)]
         b.iter(|| {
             // This benchmark runs to_string on short, medium, and long strings in one batch.
             WriteableMessage {
@@ -100,7 +101,7 @@ fn writeable_benches(c: &mut Criterion) {
 fn writeable_dyn_benches(c: &mut Criterion) {
     // Same as `write_to_string`, but casts to a `dyn fmt::Write`
     fn writeable_dyn_to_string(w: &impl Writeable) -> String {
-        let mut output = String::with_capacity(w.write_len().capacity());
+        let mut output = String::with_capacity(w.writeable_length_hint().capacity());
         w.write_to(&mut output as &mut dyn fmt::Write)
             .expect("impl Write for String is infallible");
         output

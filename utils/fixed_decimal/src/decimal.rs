@@ -6,6 +6,7 @@ use smallvec::SmallVec;
 
 use core::cmp;
 use core::cmp::Ordering;
+use core::convert::TryFrom;
 use core::fmt;
 use core::ops::RangeInclusive;
 
@@ -1692,7 +1693,7 @@ impl writeable::Writeable for FixedDecimal {
     /// use writeable::Writeable;
     ///
     /// let dec = FixedDecimal::from(42);
-    /// let mut result = String::with_capacity(dec.write_len().capacity());
+    /// let mut result = String::with_capacity(dec.writeable_length_hint().capacity());
     /// dec.write_to(&mut result)
     ///     .expect("write_to(String) should not fail");
     /// assert_eq!("42", result);
@@ -1726,9 +1727,9 @@ impl writeable::Writeable for FixedDecimal {
     /// let dec = FixedDecimal::from(-5000)
     ///     .multiplied_pow10(-2);
     /// let result = dec.write_to_string();
-    /// assert_eq!(LengthHint::exact(6), dec.write_len());
+    /// assert_eq!(LengthHint::exact(6), dec.writeable_length_hint());
     /// ```
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         writeable::LengthHint::exact(1)
             + ((self.upper_magnitude as i32 - self.lower_magnitude as i32) as usize)
             + (if self.sign == Sign::None { 0 } else { 1 })
@@ -1736,22 +1737,23 @@ impl writeable::Writeable for FixedDecimal {
     }
 }
 
-/// Renders the `FixedDecimal` according to the syntax documented in `FixedDecimal::write_to`.
-impl fmt::Display for FixedDecimal {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
+writeable::impl_display_with_writeable!(FixedDecimal);
 
 impl FromStr for FixedDecimal {
     type Err = Error;
     fn from_str(input_str: &str) -> Result<Self, Self::Err> {
+        Self::try_from(input_str.as_bytes())
+    }
+}
+
+impl TryFrom<&[u8]> for FixedDecimal {
+    type Error = Error;
+    fn try_from(input_str: &[u8]) -> Result<Self, Self::Error> {
         // input_str: the input string
         // no_sign_str: the input string when the sign is removed from it
         if input_str.is_empty() {
             return Err(Error::Syntax);
         }
-        let input_str = input_str.as_bytes();
         #[allow(clippy::indexing_slicing)] // The string is not empty.
         let sign = match input_str[0] {
             b'-' => Sign::Negative,

@@ -7,6 +7,7 @@ Documentation
 
    bidi_ffi
    calendar_ffi
+   collator_ffi
    data_struct_ffi
    date_ffi
    datetime_ffi
@@ -14,9 +15,12 @@ Documentation
    decimal_ffi
    errors_ffi
    fixed_decimal_ffi
+   list_ffi
    locale_ffi
    locid_transform_ffi
    logging_ffi
+   normalizer_ffi
+   normalizer_properties_ffi
    pluralrules_ffi
    properties_maps_ffi
    properties_sets_ffi
@@ -29,6 +33,7 @@ Documentation
    timezone_ffi
    timezone_formatter_ffi
    week_ffi
+   zoned_formatter_ffi
 
 Indices and tables
 ==================

@@ -28,7 +28,7 @@ macro_rules! impl_write_num {
                 sink.write_str(s)
             }
 
-            fn write_len(&self) -> $crate::LengthHint {
+            fn writeable_length_hint(&self) -> $crate::LengthHint {
                 $crate::LengthHint::exact(if *self == 0 {
                     1
                 } else {
@@ -74,9 +74,9 @@ macro_rules! impl_write_num {
                 self.unsigned_abs().write_to(sink)
             }
 
-            fn write_len(&self) -> $crate::LengthHint {
+            fn writeable_length_hint(&self) -> $crate::LengthHint {
                 $crate::LengthHint::exact(if self.is_negative() { 1 } else { 0 })
-                    + self.unsigned_abs().write_len()
+                    + self.unsigned_abs().writeable_length_hint()
             }
         }
 
@@ -132,7 +132,7 @@ impl Writeable for str {
     }
 
     #[inline]
-    fn write_len(&self) -> LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         LengthHint::exact(self.len())
     }
 
@@ -160,7 +160,7 @@ impl Writeable for String {
     }
 
     #[inline]
-    fn write_len(&self) -> LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         LengthHint::exact(self.len())
     }
 
@@ -182,8 +182,8 @@ impl<'a, T: Writeable + ?Sized> Writeable for &T {
     }
 
     #[inline]
-    fn write_len(&self) -> LengthHint {
-        (*self).write_len()
+    fn writeable_length_hint(&self) -> LengthHint {
+        (*self).writeable_length_hint()
     }
 
     #[inline]

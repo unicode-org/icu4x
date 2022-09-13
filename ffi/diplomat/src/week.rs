@@ -39,12 +39,9 @@ pub mod ffi {
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XWeekCalculator>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-
             let locale = locale.to_datalocale();
 
-            WeekCalculator::try_new_unstable(&provider, &locale)
+            WeekCalculator::try_new_unstable(&provider.0, &locale)
                 .map(|wc| Box::new(ICU4XWeekCalculator(wc)))
                 .map_err(Into::into)
                 .into()

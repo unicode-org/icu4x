@@ -194,11 +194,7 @@ impl Unicode {
     }
 }
 
-impl core::fmt::Display for Unicode {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
+writeable::impl_display_with_writeable!(Unicode);
 
 impl writeable::Writeable for Unicode {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
@@ -217,16 +213,16 @@ impl writeable::Writeable for Unicode {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         if self.is_empty() {
             return writeable::LengthHint::exact(0);
         }
         let mut result = writeable::LengthHint::exact(2);
         if !self.attributes.is_empty() {
-            result += writeable::Writeable::write_len(&self.attributes) + 1;
+            result += writeable::Writeable::writeable_length_hint(&self.attributes) + 1;
         }
         if !self.keywords.is_empty() {
-            result += writeable::Writeable::write_len(&self.keywords) + 1;
+            result += writeable::Writeable::writeable_length_hint(&self.keywords) + 1;
         }
         result
     }

@@ -3,7 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
-#![cfg_attr(not(test), no_std)]
+#![cfg_attr(all(not(test), not(doc)), no_std)]
 #![cfg_attr(
     not(test),
     deny(
@@ -28,10 +28,6 @@
 //! 1. More efficient, since the sink can pre-allocate bytes.
 //! 2. Smaller code, since the format machinery can be short-circuited.
 //!
-//! Types implementing Writeable have a defaulted [`write_to_string`](Writeable::write_to_string)
-//! function. If desired, types implementing `Writeable` can manually implement `ToString`
-//! to wrap `write_to_string`.
-//!
 //! # Examples
 //!
 //! ```
@@ -52,7 +48,7 @@
 //!         Ok(())
 //!     }
 //!
-//!     fn write_len(&self) -> LengthHint {
+//!     fn writeable_length_hint(&self) -> LengthHint {
 //!         // "Hello, " + '!' + length of name
 //!         LengthHint::exact(8 + self.name.len())
 //!     }
@@ -60,6 +56,10 @@
 //!
 //! let message = WelcomeMessage { name: "Alice" };
 //! assert_writeable_eq!(&message, "Hello, Alice!");
+//!
+//! // Types implementing `Writeable` are recommended to also implement `fmt::Display`.
+//! // This can be simply done by redirecting to the `Writeable` implementation:
+//! writeable::impl_display_with_writeable!(WelcomeMessage<'_>);
 //! ```
 //!
 //! [`ICU4X`]: ../icu/index.html
@@ -93,22 +93,22 @@ impl LengthHint {
         Self(0, None)
     }
 
-    /// This is the exact length from `write_to`.
+    /// `write_to` will use exactly n bytes.
     pub fn exact(n: usize) -> Self {
         Self(n, Some(n))
     }
 
-    /// This is at least the length from `write_to`.
+    /// `write_to` will use at least n bytes.
     pub fn at_least(n: usize) -> Self {
         Self(n, None)
     }
 
-    /// This is at most the length from `write_to`.
+    /// `write_to` will use at most n bytes.
     pub fn at_most(n: usize) -> Self {
         Self(0, Some(n))
     }
 
-    /// The length from `write_to` is in between `n` and `m`.
+    /// `write_to` will use between `n` and `m` bytes.
     pub fn between(n: usize, m: usize) -> Self {
         Self(Ord::min(n, m), Some(Ord::max(n, m)))
     }
@@ -123,14 +123,11 @@ impl LengthHint {
     /// use writeable::Writeable;
     ///
     /// fn pre_allocate_string(w: &impl Writeable) -> String {
-    ///     String::with_capacity(w.write_len().capacity())
+    ///     String::with_capacity(w.writeable_length_hint().capacity())
     /// }
     /// ```
     pub fn capacity(&self) -> usize {
-        match self {
-            Self(lower_bound, None) => *lower_bound,
-            Self(_lower_bound, Some(upper_bound)) => *upper_bound,
-        }
+        self.1.unwrap_or(self.0)
     }
 
     /// Returns whether the `LengthHint` indicates that the string is exactly 0 bytes long.
@@ -159,7 +156,7 @@ pub trait PartsWrite: fmt::Write {
 
 /// `Writeable` is an alternative to `std::fmt::Display` with the addition of a length function.
 pub trait Writeable {
-    /// Writes bytes to the given sink. Errors from the sink are bubbled up.
+    /// Writes a string to the given sink. Errors from the sink are bubbled up.
     /// The default implementation delegates to `write_to_parts`, and discards any
     /// `Part` annotations.
     fn write_to<W: fmt::Write + ?Sized>(&self, sink: &mut W) -> fmt::Result {
@@ -196,10 +193,10 @@ pub trait Writeable {
         self.write_to(sink)
     }
 
-    /// Returns a hint for the number of bytes that will be written to the sink.
+    /// Returns a hint for the number of UTF-8 bytes that will be written to the sink.
     ///
     /// Override this method if it can be computed quickly.
-    fn write_len(&self) -> LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         LengthHint::undefined()
     }
 
@@ -209,7 +206,7 @@ pub trait Writeable {
     /// The default impl allocates an owned `String`. However, if it is possible to return a
     /// borrowed string, overwrite this method to return a `Cow::Borrowed`.
     ///
-    /// To remove the `Cow` wrapper, call `.into_owned()`.
+    /// To remove the `Cow` wrapper, call `.into_owned()` or `.as_str()` as appropriate.
     ///
     /// # Examples
     ///
@@ -243,10 +240,29 @@ pub trait Writeable {
     /// }
     /// ```
     fn write_to_string(&self) -> Cow<str> {
-        let mut output = String::with_capacity(self.write_len().capacity());
+        let mut output = String::with_capacity(self.writeable_length_hint().capacity());
         let _ = self.write_to(&mut output);
         Cow::Owned(output)
     }
+}
+
+/// Implements [`Display`](core::fmt::Display) for types that implement [`Writeable`].
+///
+/// It's recommended to do this for every [`Writeable`] type, as it will add
+/// support for `core::fmt` features like [`fmt!`](std::fmt),
+/// [`print!`](std::print), [`write!`](std::write), etc.
+#[macro_export]
+macro_rules! impl_display_with_writeable {
+    ($type:ty) => {
+        /// This trait is implemented for compatibility with [`fmt!`](alloc::fmt).
+        /// To create a string, [`Writeable::write_to_string`] is usually more efficient.
+        impl core::fmt::Display for $type {
+            #[inline]
+            fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
+                $crate::Writeable::write_to(&self, f)
+            }
+        }
+    };
 }
 
 /// Testing macros for types implementing Writeable. The first argument should be a
@@ -276,10 +292,12 @@ pub trait Writeable {
 ///     fn write_to_parts<S: writeable::PartsWrite + ?Sized>(&self, sink: &mut S) -> fmt::Result {
 ///         sink.with_part(WORD, |w| w.write_str("foo"))
 ///     }
-///     fn write_len(&self) -> LengthHint {
+///     fn writeable_length_hint(&self) -> LengthHint {
 ///         LengthHint::exact(3)
 ///     }
 /// }
+///
+/// writeable::impl_display_with_writeable!(Demo);
 ///
 /// assert_writeable_eq!(&Demo, "foo");
 /// assert_writeable_eq!(&Demo, "foo", "Message: {}", "Hello World");
@@ -297,7 +315,7 @@ macro_rules! assert_writeable_eq {
         let (actual_str, _) = $crate::writeable_to_parts_for_test(actual_writeable).unwrap();
         assert_eq!(actual_str, $expected_str, $($arg)*);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
-        let length_hint = $crate::Writeable::write_len(actual_writeable);
+        let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
         assert!(length_hint.0 <= actual_str.len(), $($arg)*);
         if let Some(upper) = length_hint.1 {
             assert!(actual_str.len() <= upper, $($arg)*);
@@ -305,6 +323,7 @@ macro_rules! assert_writeable_eq {
     }};
 }
 
+/// See [`assert_writeable_eq`].
 #[macro_export]
 macro_rules! assert_writeable_parts_eq {
     ($actual_writeable:expr, $expected_str:expr, $expected_parts:expr $(,)?) => {
@@ -316,7 +335,7 @@ macro_rules! assert_writeable_parts_eq {
         assert_eq!(actual_str, $expected_str, $($arg)+);
         assert_eq!(actual_str, $crate::Writeable::write_to_string(actual_writeable), $($arg)+);
         assert_eq!(actual_parts, $expected_parts, $($arg)+);
-        let length_hint = $crate::Writeable::write_len(actual_writeable);
+        let length_hint = $crate::Writeable::writeable_length_hint(actual_writeable);
         assert!(length_hint.0 <= actual_str.len(), $($arg)+);
         if let Some(upper) = length_hint.1 {
             assert!(actual_str.len() <= upper, $($arg)+);

@@ -191,12 +191,12 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
             .and_then(|supplement| {
                 supplement
                     .parents
-                    .get_copied_by(|bytes| locale.strict_cmp(bytes).reverse())
+                    .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
             })
             .or_else(|| {
                 self.parents
                     .parents
-                    .get_copied_by(|bytes| locale.strict_cmp(bytes).reverse())
+                    .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
             })
             .map(LanguageIdentifier::from)
     }

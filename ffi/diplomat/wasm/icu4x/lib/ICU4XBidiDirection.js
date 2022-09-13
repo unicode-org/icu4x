@@ -8,9 +8,9 @@ export const ICU4XBidiDirection_js_to_rust = {
 };
 
 export const ICU4XBidiDirection_rust_to_js = {
-  0: "Ltr",
-  1: "Rtl",
-  2: "Mixed",
+  [0]: "Ltr",
+  [1]: "Rtl",
+  [2]: "Mixed",
 };
 
 export const ICU4XBidiDirection = {

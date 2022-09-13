@@ -735,7 +735,7 @@ dependencies = [
 [[package]]
 name = "diplomat"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=839ff1c35e473d92cd9f0bbeea65c8337981e9da#839ff1c35e473d92cd9f0bbeea65c8337981e9da"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=82e2e74c1f3c04b0360529aa7c019b2c56f3216d#82e2e74c1f3c04b0360529aa7c019b2c56f3216d"
 dependencies = [
  "diplomat_core",
  "proc-macro2",
@@ -746,12 +746,12 @@ dependencies = [
 [[package]]
 name = "diplomat-runtime"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=839ff1c35e473d92cd9f0bbeea65c8337981e9da#839ff1c35e473d92cd9f0bbeea65c8337981e9da"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=82e2e74c1f3c04b0360529aa7c019b2c56f3216d#82e2e74c1f3c04b0360529aa7c019b2c56f3216d"
 
 [[package]]
 name = "diplomat_core"
 version = "0.3.0"
-source = "git+https://github.com/rust-diplomat/diplomat?rev=839ff1c35e473d92cd9f0bbeea65c8337981e9da#839ff1c35e473d92cd9f0bbeea65c8337981e9da"
+source = "git+https://github.com/rust-diplomat/diplomat?rev=82e2e74c1f3c04b0360529aa7c019b2c56f3216d#82e2e74c1f3c04b0360529aa7c019b2c56f3216d"
 dependencies = [
  "impls",
  "lazy_static",
@@ -1373,11 +1373,14 @@ dependencies = [
  "diplomat-runtime",
  "fixed_decimal",
  "icu_calendar",
+ "icu_collator",
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_list",
  "icu_locid",
  "icu_locid_transform",
+ "icu_normalizer",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1388,6 +1391,7 @@ dependencies = [
  "icu_testdata",
  "icu_timezone",
  "log",
+ "serde",
  "simple_logger",
  "tinystr 0.6.2",
  "unicode-bidi",
@@ -1399,6 +1403,7 @@ name = "icu_capi_cdylib"
 version = "1.0.0-alpha1"
 dependencies = [
  "icu_capi",
+ "icu_provider",
 ]
 
 [[package]]
@@ -1407,6 +1412,7 @@ version = "1.0.0-alpha1"
 dependencies = [
  "dlmalloc",
  "icu_capi",
+ "icu_provider",
 ]
 
 [[package]]
@@ -1818,6 +1824,7 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "unicode-segmentation",
+ "utf8_iter",
  "zerovec 0.8.1",
 ]
 
@@ -3669,9 +3676,9 @@ checksum = "6a246759e66403993abca5a7165eebc0735d7781e178f03fe9ab255fae1747b5"
 
 [[package]]
 name = "utf8_iter"
-version = "1.0.1"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59e6dbc4923e5a3d7b88c78500d0e389fd202601a671b4914580071bdb931188"
+checksum = "64a8922555b9500e3d865caed19330172cd67cbf82203f1a3311d8c305cc9f33"
 
 [[package]]
 name = "vcell"

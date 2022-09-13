@@ -33,6 +33,8 @@ export class ICU4XLocale {
   /**
 
    * Construct a default undefined {@link ICU4XLocale `ICU4XLocale`} "und".
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND Rust documentation for `UND`} for more information.
    */
   static und(): ICU4XLocale;
 

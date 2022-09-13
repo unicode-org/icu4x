@@ -10,11 +10,11 @@ export const ICU4XFixedDecimalSignDisplay_js_to_rust = {
 };
 
 export const ICU4XFixedDecimalSignDisplay_rust_to_js = {
-  0: "Auto",
-  1: "Never",
-  2: "Always",
-  3: "ExceptZero",
-  4: "Negative",
+  [0]: "Auto",
+  [1]: "Never",
+  [2]: "Always",
+  [3]: "ExceptZero",
+  [4]: "Negative",
 };
 
 export const ICU4XFixedDecimalSignDisplay = {

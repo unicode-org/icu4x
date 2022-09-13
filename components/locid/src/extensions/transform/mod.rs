@@ -198,11 +198,7 @@ impl Transform {
     }
 }
 
-impl core::fmt::Display for Transform {
-    fn fmt(&self, f: &mut core::fmt::Formatter) -> core::fmt::Result {
-        writeable::Writeable::write_to(self, f)
-    }
-}
+writeable::impl_display_with_writeable!(Transform);
 
 impl writeable::Writeable for Transform {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
@@ -221,16 +217,16 @@ impl writeable::Writeable for Transform {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         if self.is_empty() {
             return writeable::LengthHint::exact(0);
         }
         let mut result = writeable::LengthHint::exact(2);
         if let Some(lang) = &self.lang {
-            result += writeable::Writeable::write_len(lang) + 1;
+            result += writeable::Writeable::writeable_length_hint(lang) + 1;
         }
         if !self.fields.is_empty() {
-            result += writeable::Writeable::write_len(&self.fields) + 1;
+            result += writeable::Writeable::writeable_length_hint(&self.fields) + 1;
         }
         result
     }
