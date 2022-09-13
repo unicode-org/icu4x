@@ -46,6 +46,7 @@ pub mod datetime;
 pub mod datetime_formatter;
 pub mod decimal;
 pub mod errors;
+pub mod fallbacker;
 pub mod fixed_decimal;
 pub mod list;
 pub mod locale;
