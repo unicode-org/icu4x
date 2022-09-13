@@ -257,20 +257,13 @@ lazy_static::lazy_static! {
         "icu::properties::SentenceBreak",
         "icu::properties::WordBreak",
 
-        // ScriptWithExtensions is tricky due to the borrow and DataPayload
-        "icu::properties::script::ScriptExtensionsSet",
-        "icu::properties::script::ScriptWithExtensions::get_script_extensions_set",
-        "icu::properties::script::ScriptWithExtensions::get_script_extensions_val",
-
-        // ranges api
-        "icu::properties::script::ScriptWithExtensions::get_script_extensions_ranges",
-
         // Experimental
         "icu::properties::maps::load_canonical_combining_class",
 
         // Not planned for 1.0
         "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
         "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
+        "icu::properties::script::ScriptWithExtensions::get_script_extensions_ranges",
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
         "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",

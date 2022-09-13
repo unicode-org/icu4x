@@ -1,3 +1,8 @@
+icu::properties::script::ScriptExtensionsSet#Struct
+icu::properties::script::ScriptExtensionsSet::contains#FnInStruct
+icu::properties::script::ScriptExtensionsSet::iter#FnInStruct
+icu::properties::script::ScriptWithExtensions::get_script_extensions_set#FnInStruct
+icu::properties::script::ScriptWithExtensions::get_script_extensions_val#FnInStruct
 icu_provider_adapters::filter::Filterable::filterable#FnInTrait
 icu_provider_adapters::filter::RequestFilterDataProvider#Struct
 icu_provider_adapters::filter::RequestFilterDataProvider::filter_by_langid#FnInStruct

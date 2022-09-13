@@ -76,7 +76,7 @@ export { ICU4XPluralCategories } from './ICU4XPluralCategories.js';
 export { ICU4XPluralCategory } from './ICU4XPluralCategory.js';
 export { ICU4XPluralOperands } from './ICU4XPluralOperands.js';
 export { ICU4XPluralRules } from './ICU4XPluralRules.js';
-export { ICU4XScriptWithExtensionsSet } from './ICU4XScriptWithExtensionsSet.js';
+export { ICU4XScriptWithExtensions } from './ICU4XScriptWithExtensions.js';
 export { ICU4XSentenceBreakIteratorLatin1 } from './ICU4XSentenceBreakIteratorLatin1.js';
 export { ICU4XSentenceBreakIteratorUtf16 } from './ICU4XSentenceBreakIteratorUtf16.js';
 export { ICU4XSentenceBreakIteratorUtf8 } from './ICU4XSentenceBreakIteratorUtf8.js';

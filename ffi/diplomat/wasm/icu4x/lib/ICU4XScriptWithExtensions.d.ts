@@ -9,14 +9,14 @@ import { ICU4XError } from "./ICU4XError";
 
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html Rust documentation for `ScriptWithExtensions`} for more information.
  */
-export class ICU4XScriptWithExtensionsSet {
+export class ICU4XScriptWithExtensions {
 
   /**
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/fn.load_script_with_extensions_unstable.html Rust documentation for `load_script_with_extensions_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static load(provider: ICU4XDataProvider): ICU4XScriptWithExtensionsSet | never;
+  static load(provider: ICU4XDataProvider): ICU4XScriptWithExtensions | never;
 
   /**
 

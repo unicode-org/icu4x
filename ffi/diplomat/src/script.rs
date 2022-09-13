@@ -15,17 +15,17 @@ pub mod ffi {
     #[diplomat::opaque]
     /// An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
     #[diplomat::rust_link(icu::properties::script::ScriptWithExtensions, Struct)]
-    pub struct ICU4XScriptWithExtensionsSet(
+    pub struct ICU4XScriptWithExtensions(
         pub DataPayload<provider::ScriptWithExtensionsPropertyV1Marker>,
     );
 
-    impl ICU4XScriptWithExtensionsSet {
+    impl ICU4XScriptWithExtensions {
         #[diplomat::rust_link(icu::properties::script::load_script_with_extensions_unstable, Fn)]
         pub fn load(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XScriptWithExtensionsSet>, ICU4XError> {
+        ) -> DiplomatResult<Box<ICU4XScriptWithExtensions>, ICU4XError> {
             script::load_script_with_extensions_unstable(&provider.0)
-                .map(|data| Box::new(ICU4XScriptWithExtensionsSet(data)))
+                .map(|data| Box::new(ICU4XScriptWithExtensions(data)))
                 .map_err(Into::into)
                 .into()
         }

@@ -2,27 +2,27 @@ import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 
-const ICU4XScriptWithExtensionsSet_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XScriptWithExtensionsSet_destroy(underlying);
+const ICU4XScriptWithExtensions_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XScriptWithExtensions_destroy(underlying);
 });
 
-export class ICU4XScriptWithExtensionsSet {
+export class ICU4XScriptWithExtensions {
   #lifetimeEdges = [];
   constructor(underlying, owned, edges) {
     this.underlying = underlying;
     this.#lifetimeEdges.push(...edges);
     if (owned) {
-      ICU4XScriptWithExtensionsSet_box_destroy_registry.register(this, underlying);
+      ICU4XScriptWithExtensions_box_destroy_registry.register(this, underlying);
     }
   }
 
   static load(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XScriptWithExtensionsSet_load(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XScriptWithExtensions_load(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
-        const ok_value = new ICU4XScriptWithExtensionsSet(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        const ok_value = new ICU4XScriptWithExtensions(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {
@@ -34,10 +34,10 @@ export class ICU4XScriptWithExtensionsSet {
   }
 
   get_script_val(arg_code_point) {
-    return wasm.ICU4XScriptWithExtensionsSet_get_script_val(this.underlying, arg_code_point);
+    return wasm.ICU4XScriptWithExtensions_get_script_val(this.underlying, arg_code_point);
   }
 
   has_script(arg_code_point, arg_script) {
-    return wasm.ICU4XScriptWithExtensionsSet_has_script(this.underlying, arg_code_point, arg_script);
+    return wasm.ICU4XScriptWithExtensions_has_script(this.underlying, arg_code_point, arg_script);
   }
 }

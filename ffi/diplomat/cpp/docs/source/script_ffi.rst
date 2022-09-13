@@ -1,14 +1,14 @@
 ``script::ffi``
 ===============
 
-.. cpp:class:: ICU4XScriptWithExtensionsSet
+.. cpp:class:: ICU4XScriptWithExtensions
 
     An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values
 
     See the `Rust documentation for ScriptWithExtensions <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptWithExtensions.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XScriptWithExtensionsSet, ICU4XError> load(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XScriptWithExtensions, ICU4XError> load(const ICU4XDataProvider& provider)
 
         See the `Rust documentation for load_script_with_extensions_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/fn.load_script_with_extensions_unstable.html>`__ for more information.
 
