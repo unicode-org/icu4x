@@ -155,9 +155,9 @@ macro_rules! impl_dynamic_data_provider {
                 $crate::DataError,
             > {
                 $(
-                    const $ident: $crate::DataKeyHash = $key.get_hash();
+                    const $ident: $crate::DataKeyHash = $key.hashed();
                 )+
-                match key.get_hash() {
+                match key.hashed() {
                     $(
                         $ident => {
                             let result: $crate::DataResponse<$struct_m> =
@@ -202,9 +202,9 @@ macro_rules! impl_dynamic_data_provider {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
-                    const $struct_m: $crate::DataKeyHash = $struct_m::KEY.get_hash();
+                    const $struct_m: $crate::DataKeyHash = $struct_m::KEY.hashed();
                 )+
-                match key.get_hash() {
+                match key.hashed() {
                     $(
                         $struct_m => {
                             let result: $crate::DataResponse<$struct_m> =

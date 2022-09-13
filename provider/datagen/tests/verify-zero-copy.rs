@@ -23,7 +23,7 @@ static ALLOC: dhat::Alloc = dhat::Alloc;
 // Every entry in this list is a bug that needs to be addressed before ICU4X 1.0.
 static EXPECTED_NET_VIOLATIONS: &[&str] = &[
     // https://github.com/unicode-org/icu4x/issues/1678
-    "datetime/skeletons@1[u-ca]",
+    "datetime/skeletons@1",
 ];
 
 // Types in this list can be zero-copy deserialized (and do not contain allocated data),
@@ -76,7 +76,7 @@ fn main() {
             match IterableDynamicDataProvider::<icu_provider::datagen::ExportMarker>::supported_locales_for_key(
                 &converter, key,
             ) {
-                Err(_) if key.get_path().starts_with("props/") => {
+                Err(_) if key.path().starts_with("props/") => {
                     // uprops keys currently don't all get loaded into the testdata
                     continue;
                 }
@@ -100,9 +100,9 @@ fn main() {
         }
         if max_total_violation != 0 {
             if max_net_violation != 0 {
-                net_violations.insert(key.get_path());
+                net_violations.insert(key.path().get());
             } else {
-                total_violations.insert(key.get_path());
+                total_violations.insert(key.path().get());
             }
         }
     }

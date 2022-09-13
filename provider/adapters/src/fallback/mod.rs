@@ -275,8 +275,15 @@ impl LocaleFallbacker {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
+    ///
+    /// [`DataRequestMetadata`]: icu_provider::DataRequestMetadata
     pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
-        self.for_config(data_key.get_metadata().into())
+        let priority = data_key.metadata().fallback_priority;
+        let extension_key = data_key.metadata().extension_key;
+        self.for_config(LocaleFallbackConfig {
+            priority,
+            extension_key,
+        })
     }
 }
 

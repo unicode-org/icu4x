@@ -63,7 +63,7 @@ impl DataExporter for BlobExporter<'_> {
         };
         #[allow(clippy::expect_used)]
         self.resources.lock().expect("poison").push((
-            key.get_hash(),
+            key.hashed(),
             locale.write_to_string().into_owned().into_bytes(),
             idx,
         ));
