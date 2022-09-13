@@ -2,9 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::marker::Copy;
 use core::mem::size_of;
-use core::ops::DerefMut;
-use core::{marker::Copy, ops::Deref};
 
 use super::{AsULE, ULE};
 
@@ -24,7 +23,7 @@ pub trait NicheBytes<const N: usize> {
 ///
 /// # Example
 ///
-/// ```rust
+/// ```
 /// use zerovec::ZeroVec;
 /// use zerovec::ule::NichedOption;
 /// use core::num::NonZeroU8;
@@ -33,10 +32,10 @@ pub trait NicheBytes<const N: usize> {
 /// let zv_no: ZeroVec<NichedOption<NonZeroU8, 1>> =
 ///         ZeroVec::parse_byte_slice(bytes).expect("Unable to parse as NichedOption.");
 ///
-/// assert_eq!(zv_no.get(0).as_deref(), Some(&None));
-/// assert_eq!(zv_no.get(1).as_deref(), Some(&NonZeroU8::new(1)));
-/// assert_eq!(zv_no.get(2).as_deref(), Some(&NonZeroU8::new(2)));
-/// assert_eq!(zv_no.get(3).as_deref(), Some(&None));
+/// assert_eq!(zv_no.get(0).map(|e| e.0), Some(None));
+/// assert_eq!(zv_no.get(1).map(|e| e.0), Some(NonZeroU8::new(1)));
+/// assert_eq!(zv_no.get(2).map(|e| e.0), Some(NonZeroU8::new(2)));
+/// assert_eq!(zv_no.get(3).map(|e| e.0), Some(None));
 /// ```
 // Invariants:
 // The union stores [`NicheBytes::NICHE_BIT_PATTERN`] when None.
@@ -164,20 +163,6 @@ impl<U, const N: usize> From<Option<U>> for NichedOption<U, N> {
     }
 }
 
-impl<U, const N: usize> Deref for NichedOption<U, N> {
-    type Target = Option<U>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<U, const N: usize> DerefMut for NichedOption<U, N> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
-    }
-}
-
 impl<U: AsULE, const N: usize> AsULE for NichedOption<U, N>
 where
     U::ULE: NicheBytes<N>,
@@ -185,7 +170,7 @@ where
     type ULE = NichedOptionULE<U::ULE, N>;
 
     fn to_unaligned(self) -> Self::ULE {
-        NichedOptionULE::new(self.map(U::to_unaligned))
+        NichedOptionULE::new(self.0.map(U::to_unaligned))
     }
 
     fn from_unaligned(unaligned: Self::ULE) -> Self {
