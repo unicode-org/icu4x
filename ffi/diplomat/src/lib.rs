@@ -58,6 +58,7 @@ pub mod pluralrules;
 pub mod properties_maps;
 pub mod properties_sets;
 pub mod provider;
+pub mod script;
 pub mod segmenter_grapheme;
 pub mod segmenter_line;
 pub mod segmenter_sentence;

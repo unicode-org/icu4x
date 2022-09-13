@@ -253,6 +253,14 @@ lazy_static::lazy_static! {
         "icu::properties::SentenceBreak",
         "icu::properties::WordBreak",
 
+        // ScriptWithExtensions is tricky due to the borrow and DataPayload
+        "icu::properties::script::ScriptExtensionsSet",
+        "icu::properties::script::ScriptWithExtensions::get_script_extensions_set",
+        "icu::properties::script::ScriptWithExtensions::get_script_extensions_val",
+
+        // ranges api
+        "icu::properties::script::ScriptWithExtensions::get_script_extensions_ranges",
+
         // Experimental
         "icu::properties::maps::load_canonical_combining_class",
 
@@ -385,6 +393,9 @@ lazy_static::lazy_static! {
         "icu::properties::sets::CodePointSetData::as_borrowed",
         "icu::properties::sets::CodePointSetData::from_data",
         "icu::properties::sets::CodePointSetDataBorrowed::contains_u32",
+
+        // typedef
+        "icu::properties::script::ScriptWithExtensionsResult",
 
         // locid macros
         "icu::locid::langid",
