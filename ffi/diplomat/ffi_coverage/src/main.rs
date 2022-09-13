@@ -241,6 +241,10 @@ lazy_static::lazy_static! {
         // could be exposed in the future but it's complicated
         "icu::plurals::rules",
 
+        // Pulls in libstd, which we'd rather not do, and it's not a super prominent
+        // API
+        "icu::plurals::PluralOperands::n",
+
         // May be exposed when we have associated constants over FFI
         "icu::properties::BidiClass",
         "icu::properties::CanonicalCombiningClass",
