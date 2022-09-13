@@ -8,25 +8,14 @@ use icu_provider_adapters::fallback::LocaleFallbackConfig;
 pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
-    use icu_decimal::{
-        options::{FixedDecimalFormatterOptions, GroupingStrategy},
-        provider::DecimalSymbolsV1Marker,
-        FixedDecimalFormatter,
-    };
-    use icu_locid::Locale;
-    use icu_provider::DataProvider;
     use icu_provider::FallbackPriority;
-    use icu_provider::KeyedDataMarker;
     use icu_provider_adapters::fallback::LocaleFallbackConfig;
     use icu_provider_adapters::fallback::LocaleFallbackIterator;
     use icu_provider_adapters::fallback::LocaleFallbacker;
     use icu_provider_adapters::fallback::LocaleFallbackerWithConfig;
-    use writeable::Writeable;
 
     use crate::{
-        data_struct::ffi::ICU4XDataStruct, errors::ffi::ICU4XError,
-        fixed_decimal::ffi::ICU4XFixedDecimal, locale::ffi::ICU4XLocale,
-        provider::ffi::ICU4XDataProvider,
+        errors::ffi::ICU4XError, locale::ffi::ICU4XLocale, provider::ffi::ICU4XDataProvider,
     };
 
     #[diplomat::opaque]
@@ -36,9 +25,9 @@ pub mod ffi {
     #[diplomat::enum_convert(FallbackPriority, needs_wildcard)]
     #[diplomat::rust_link(icu_provider::FallbackPriority, Enum)]
     pub enum ICU4XLocaleFallbackPriority {
-        Language,
-        Region,
-        Collation,
+        Language = 0,
+        Region = 1,
+        Collation = 2,
     }
 
     #[diplomat::rust_link(icu_provider_adapters::fallback::LocaleFallbackConfig, Struct)]
@@ -61,8 +50,11 @@ pub mod ffi {
             icu_provider_adapters::fallback::LocaleFallbacker::try_new_unstable,
             FnInStruct
         )]
-        pub fn create(provider: &ICU4XDataProvider) -> DiplomatResult<Self, ICU4XError> {
+        pub fn create(
+            provider: &ICU4XDataProvider,
+        ) -> DiplomatResult<Box<ICU4XLocaleFallbacker>, ICU4XError> {
             LocaleFallbacker::try_new_unstable(&provider.0)
+                .map(Box::new)
                 .map(ICU4XLocaleFallbacker)
                 .map_err(Into::into)
                 .into()
@@ -72,8 +64,8 @@ pub mod ffi {
             icu_provider_adapters::fallback::LocaleFallbacker::new_without_data,
             FnInStruct
         )]
-        pub fn create_without_data() -> Self {
-            ICU4XLocaleFallbacker(LocaleFallbacker::new_without_data())
+        pub fn create_without_data() -> Box<ICU4XLocaleFallbacker> {
+            Box::new(ICU4XLocaleFallbacker(LocaleFallbacker::new_without_data()))
         }
 
         #[diplomat::rust_link(
@@ -83,11 +75,11 @@ pub mod ffi {
         pub fn for_config<'a, 'temp>(
             &'a self,
             config: ICU4XLocaleFallbackConfig<'temp>,
-        ) -> DiplomatResult<ICU4XLocaleFallbackerWithConfig<'a>, ICU4XError> {
+        ) -> DiplomatResult<Box<ICU4XLocaleFallbackerWithConfig<'a>>, ICU4XError> {
             match LocaleFallbackConfig::try_from(config) {
-                Ok(converted) => Ok(ICU4XLocaleFallbackerWithConfig(
+                Ok(converted) => Ok(Box::new(ICU4XLocaleFallbackerWithConfig(
                     self.0.for_config(converted),
-                )),
+                ))),
                 Err(e) => Err(e),
             }
             .into()
@@ -102,8 +94,10 @@ pub mod ffi {
         pub fn fallback_for_locale<'b: 'a, 'temp>(
             &'b self,
             locale: &'temp ICU4XLocale,
-        ) -> ICU4XLocaleFallbackIterator<'a> {
-            ICU4XLocaleFallbackIterator(self.0.fallback_for((&locale.0).into()))
+        ) -> Box<ICU4XLocaleFallbackIterator<'a>> {
+            Box::new(ICU4XLocaleFallbackIterator(
+                self.0.fallback_for((&locale.0).into()),
+            ))
         }
     }
 
@@ -117,8 +111,8 @@ pub mod ffi {
             FnInStruct,
             hidden
         )]
-        pub fn get(&self) -> ICU4XLocale {
-            ICU4XLocale(self.0.get().clone().into_locale())
+        pub fn get(&self) -> Box<ICU4XLocale> {
+            Box::new(ICU4XLocale(self.0.get().clone().into_locale()))
         }
 
         #[diplomat::rust_link(

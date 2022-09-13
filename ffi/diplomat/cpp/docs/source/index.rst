@@ -14,6 +14,7 @@ Documentation
    datetime_formatter_ffi
    decimal_ffi
    errors_ffi
+   fallbacker_ffi
    fixed_decimal_ffi
    list_ffi
    locale_ffi

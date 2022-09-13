@@ -1,5 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
+import { ICU4XLocaleFallbacker } from "./ICU4XLocaleFallbacker";
 
 /**
 
@@ -55,4 +56,26 @@ export class ICU4XDataProvider {
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   fork_by_key(other: ICU4XDataProvider): void | never;
+
+  /**
+
+   * Enables locale fallbacking for data requests made to this provider.
+
+   * Note that the test provider (from `create_test`) already has fallbacking enabled.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
+
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html 1}
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  enable_locale_fallback(): void | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html#method.new_with_fallbacker Rust documentation for `new_with_fallbacker`} for more information.
+
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackProvider.html 1}
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  enable_locale_fallback_with(fallbacker: ICU4XLocaleFallbacker): void | never;
 }
