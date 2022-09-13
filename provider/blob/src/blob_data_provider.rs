@@ -92,7 +92,7 @@ impl BufferProvider for BlobDataProvider {
                 self.data.try_map_project_cloned(|blob, _| {
                     let idx = blob
                         .keys
-                        .get0(&key.get_hash())
+                        .get0(&key.hashed())
                         .ok_or(DataErrorKind::MissingDataKey)
                         .and_then(|cursor| {
                             cursor

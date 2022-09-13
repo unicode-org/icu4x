@@ -41,6 +41,8 @@ macro_rules! tagged {
 }
 
 /// A compact hash of a [`DataKey`]. Useful for keys in maps.
+///
+/// The hash will be stable over time within major releases.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash, ULE)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
@@ -55,6 +57,11 @@ impl DataKeyHash {
             DataKeyPathInner::Plain(s) => helpers::fxhash_32(s.as_bytes(), 0, 0),
         };
         Self(hash.to_le_bytes())
+    }
+
+    /// Gets the hash value as a byte array.
+    pub const fn to_bytes(&self) -> [u8; 4] {
+        self.0
     }
 }
 
@@ -308,8 +315,20 @@ impl DataKey {
     /// Gets a platform-independent hash of a [`DataKey`].
     ///
     /// The hash is 4 bytes and allows for fast key comparison.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::DataKey;
+    /// use icu_provider::DataKeyHash;
+    ///
+    /// const KEY: DataKey = icu_provider::data_key!("foo@1");
+    /// const KEY_HASH: DataKeyHash = KEY.hashed();
+    ///
+    /// assert_eq!(KEY_HASH.to_bytes(), [0xe2, 0xb6, 0x17, 0x71]);
+    /// ```
     #[inline]
-    pub const fn get_hash(&self) -> DataKeyHash {
+    pub const fn hashed(&self) -> DataKeyHash {
         self.hash
     }
 
@@ -357,7 +376,7 @@ impl DataKey {
     ///
     /// assert_eq!(const_key, runtime_key);
     /// assert_eq!(const_key.path(), runtime_key.path());
-    /// assert_eq!(const_key.get_hash(), runtime_key.get_hash());
+    /// assert_eq!(const_key.hashed(), runtime_key.hashed());
     /// ```
     #[doc(hidden)]
     pub fn try_new(
@@ -702,8 +721,8 @@ fn test_try_new_and_key_hash() {
             cas.hash,
             DataKeyHash::compute_from_path(&DataKeyPathInner::Plain(cas.path))
         );
-        assert_eq!(cas.hash, runtime_key.get_hash(), "{}", cas.path);
-        assert_eq!(cas.hash, cas.key.get_hash(), "{}", cas.path);
+        assert_eq!(cas.hash, runtime_key.hashed(), "{}", cas.path);
+        assert_eq!(cas.hash, cas.key.hashed(), "{}", cas.path);
         assert_eq!(cas.path, &*runtime_key.path(), "{}", cas.path);
         assert_eq!(cas.path, &*cas.key.path(), "{}", cas.path);
     }
