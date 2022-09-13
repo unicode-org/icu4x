@@ -9,15 +9,15 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::script::{ScriptExtensionsSet, ScriptWithExt, SCRIPT_X_SCRIPT_VAL};
+use crate::script::{ScriptWithExt};
 use crate::Script;
-use core::iter::FromIterator;
+
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
-use zerovec::ule::AsULE;
+
 use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 
 /// A set of characters with a particular property.
@@ -85,7 +85,6 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// When the lower 10 bits of the value are used as an index, that index is
     /// used for the outer-level vector of the nested `extensions` structure.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    #[doc(hidden)] // #2417
     pub trie: CodePointTrie<'data, ScriptWithExt>,
 
     /// This companion structure stores Script_Extensions values, which are
@@ -94,7 +93,6 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     /// sub-vector represents the Script_Extensions array value for a code point,
     /// and may also indicate Script value, as described for the `trie` field.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    #[doc(hidden)] // #2417
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
@@ -199,125 +197,6 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
         match *self {
             Self::CodePointTrie(ref t) => ZeroFrom::zero_from(t),
         }
-    }
-}
-
-// See ScriptWithExtensions for documentation of these functions
-#[allow(missing_docs)]
-impl<'data> ScriptWithExtensionsPropertyV1<'data> {
-    // This method is intended to be used by constructors of deserialized data
-    // in a data provider.
-    #[doc(hidden)]
-    pub fn new(
-        trie: CodePointTrie<'data, ScriptWithExt>,
-        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> ScriptWithExtensionsPropertyV1<'data> {
-        ScriptWithExtensionsPropertyV1 { trie, extensions }
-    }
-
-    pub fn get_script_val(&self, code_point: u32) -> Script {
-        let sc_with_ext = self.trie.get32(code_point);
-
-        if sc_with_ext.is_other() {
-            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
-            let scx_val = self.extensions.get(ext_idx as usize);
-            let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
-
-            let default_sc_val = Script::Unknown;
-
-            scx_first_sc.unwrap_or(default_sc_val)
-        } else if sc_with_ext.is_common() {
-            Script::Common
-        } else if sc_with_ext.is_inherited() {
-            Script::Inherited
-        } else {
-            let script_val = sc_with_ext.0;
-            Script(script_val)
-        }
-    }
-
-    // Returns the Script_Extensions value for a code_point when the trie value
-    // is already known.
-    // This private helper method exists to prevent code duplication in callers like
-    // `get_script_extensions_val`, `get_script_extensions_set`, and `has_script`.
-    fn get_scx_val_using_trie_val<'a>(
-        &'a self,
-        sc_with_ext_ule: &'a <ScriptWithExt as AsULE>::ULE,
-    ) -> &'a ZeroSlice<Script> {
-        let sc_with_ext = ScriptWithExt::from_unaligned(*sc_with_ext_ule);
-        if sc_with_ext.is_other() {
-            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
-            let ext_subarray = self.extensions.get(ext_idx as usize);
-            // In the OTHER case, where the 2 higher-order bits of the
-            // `ScriptWithExt` value in the trie doesn't indicate the Script value,
-            // the Script value is copied/inserted into the first position of the
-            // `extensions` array. So we must remove it to return the actual scx array val.
-            let scx_slice = ext_subarray
-                .and_then(|zslice| zslice.as_ule_slice().get(1..))
-                .unwrap_or_default();
-            ZeroSlice::from_ule_slice(scx_slice)
-        } else if sc_with_ext.is_common() || sc_with_ext.is_inherited() {
-            let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
-            let scx_val = self.extensions.get(ext_idx as usize);
-            scx_val.unwrap_or_default()
-        } else {
-            // Note: `Script` and `ScriptWithExt` are both represented as the same
-            // u16 value when the `ScriptWithExt` has no higher-order bits set.
-            let script_ule_slice = core::slice::from_ref(sc_with_ext_ule);
-            ZeroSlice::from_ule_slice(script_ule_slice)
-        }
-    }
-
-    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
-        let sc_with_ext_ule = self.trie.get32_ule(code_point);
-
-        ScriptExtensionsSet {
-            values: match sc_with_ext_ule {
-                Some(ule_ref) => self.get_scx_val_using_trie_val(ule_ref),
-                None => ZeroSlice::from_ule_slice(&[]),
-            },
-        }
-    }
-
-    pub fn has_script(&self, code_point: u32, script: Script) -> bool {
-        let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get32_ule(code_point) {
-            scwe_ule
-        } else {
-            return false;
-        };
-        let sc_with_ext = <ScriptWithExt as AsULE>::from_unaligned(*sc_with_ext_ule);
-
-        if !sc_with_ext.has_extensions() {
-            let script_val = sc_with_ext.0;
-            script == Script(script_val)
-        } else {
-            let scx_val = self.get_scx_val_using_trie_val(sc_with_ext_ule);
-            let script_find = scx_val.iter().find(|&sc| sc == script);
-            script_find.is_some()
-        }
-    }
-
-    pub fn get_script_extensions_ranges(
-        &self,
-        script: Script,
-    ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        self.trie
-            .iter_ranges()
-            .filter(move |cpm_range| {
-                let sc_with_ext = ScriptWithExt(cpm_range.value.0);
-                if sc_with_ext.has_extensions() {
-                    self.get_scx_val_using_trie_val(&sc_with_ext.to_unaligned())
-                        .iter()
-                        .any(|sc| sc == script)
-                } else {
-                    script == sc_with_ext.into()
-                }
-            })
-            .map(|cpm_range| RangeInclusive::new(*cpm_range.range.start(), *cpm_range.range.end()))
-    }
-
-    pub fn get_script_extensions_set(&self, script: Script) -> CodePointInversionList {
-        CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
