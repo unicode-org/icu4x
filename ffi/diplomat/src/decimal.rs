@@ -57,7 +57,7 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
             use icu_provider::prelude::AsDowncastingAnyProvider;
             let provider = AnyPayloadProvider::from_any_payload::<DecimalSymbolsV1Marker>(
-                // None: This clone is free, since cloning AnyPayload is free.
+                // Note: This clone is free, since cloning AnyPayload is free.
                 data_struct.0.clone(),
             );
             Self::try_new_impl(
