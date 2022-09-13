@@ -70,9 +70,32 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ScriptWithExtensionsPropertyV1<'data> {
-    /// A special data structure for `Script` and `Script_Extensions`.
+    /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
+    /// higher order bits 11..10 will indicate how to deduce the Script value and
+    /// Script_Extensions value, nearly matching the representation
+    /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
+    ///
+    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
+    /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
+    /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
+    /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
+    /// | 1                       | Script=Common                                          | Entire sub-array, index given by lower 10 bits                 |
+    /// | 0                       | Value in lower 10 bits                                 | `[ Script value ]` single-element array                        |
+    ///
+    /// When the lower 10 bits of the value are used as an index, that index is
+    /// used for the outer-level vector of the nested `extensions` structure.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub data: ScriptWithExtensionsV1<'data>,
+    #[doc(hidden)] // #2417
+    pub trie: CodePointTrie<'data, ScriptWithExt>,
+
+    /// This companion structure stores Script_Extensions values, which are
+    /// themselves arrays / vectors. This structure only stores the values for
+    /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
+    /// sub-vector represents the Script_Extensions array value for a code point,
+    /// and may also indicate Script value, as described for the `trie` field.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    #[doc(hidden)] // #2417
+    pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
 // See CodePointSetData for documentation of these functions
@@ -179,57 +202,17 @@ impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     }
 }
 
-/// A data structure that represents the data for both Script and
-/// Script_Extensions properties in an efficient way. This structure matches
-/// the data and data structures that are stored in the corresponding ICU data
-/// file for these properties.
-#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-#[cfg_attr(
-    feature = "datagen",
-    derive(serde::Serialize, databake::Bake),
-    databake(path = icu_properties::provider),
-)]
-#[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub struct ScriptWithExtensionsV1<'data> {
-    /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
-    /// higher order bits 11..10 will indicate how to deduce the Script value and
-    /// Script_Extensions value, nearly matching the representation
-    /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
-    ///
-    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
-    /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
-    /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
-    /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
-    /// | 1                       | Script=Common                                          | Entire sub-array, index given by lower 10 bits                 |
-    /// | 0                       | Value in lower 10 bits                                 | `[ Script value ]` single-element array                        |
-    ///
-    /// When the lower 10 bits of the value are used as an index, that index is
-    /// used for the outer-level vector of the nested `extensions` structure.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    #[doc(hidden)] // #2417
-    pub trie: CodePointTrie<'data, ScriptWithExt>,
-
-    /// This companion structure stores Script_Extensions values, which are
-    /// themselves arrays / vectors. This structure only stores the values for
-    /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
-    /// sub-vector represents the Script_Extensions array value for a code point,
-    /// and may also indicate Script value, as described for the `trie` field.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    #[doc(hidden)] // #2417
-    pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-}
-
 // See ScriptWithExtensions for documentation of these functions
 #[allow(missing_docs)]
-impl<'data> ScriptWithExtensionsV1<'data> {
+impl<'data> ScriptWithExtensionsPropertyV1<'data> {
     // This method is intended to be used by constructors of deserialized data
     // in a data provider.
     #[doc(hidden)]
     pub fn new(
         trie: CodePointTrie<'data, ScriptWithExt>,
         extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> ScriptWithExtensionsV1<'data> {
-        ScriptWithExtensionsV1 { trie, extensions }
+    ) -> ScriptWithExtensionsPropertyV1<'data> {
+        ScriptWithExtensionsPropertyV1 { trie, extensions }
     }
 
     pub fn get_script_val(&self, code_point: u32) -> Script {

@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_collections::codepointtrie::CodePointTrie;
-use icu_properties::provider::ScriptWithExtensionsV1;
 use icu_properties::provider::{
     ScriptWithExtensionsPropertyV1, ScriptWithExtensionsPropertyV1Marker,
 };
@@ -51,9 +50,7 @@ impl DataProvider<ScriptWithExtensionsPropertyV1Marker> for crate::DatagenProvid
         let scx_vzv: VarZeroVec<ZeroSlice<Script>> =
             VarZeroVec::from(ule_scx_array_data.as_slice());
 
-        let data_struct = ScriptWithExtensionsPropertyV1 {
-            data: ScriptWithExtensionsV1::new(trie, scx_vzv),
-        };
+        let data_struct = ScriptWithExtensionsPropertyV1::new(trie, scx_vzv);
 
         Ok(DataResponse {
             metadata: DataResponseMetadata::default(),
@@ -81,7 +78,7 @@ mod tests {
             .and_then(DataResponse::take_payload)
             .expect("Loading was successful");
 
-        let swe: &ScriptWithExtensionsV1 = &payload.get().data;
+        let swe: &ScriptWithExtensionsPropertyV1 = &payload.get().data;
 
         assert_eq!(swe.get_script_val('𐓐' as u32), Script::Osage); // U+104D0 OSAGE CAPITAL LETTER KHA
         assert_eq!(swe.get_script_val('🥳' as u32), Script::Common); // U+1F973 FACE WITH PARTY HORN AND PARTY HAT
@@ -101,7 +98,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let swe: &ScriptWithExtensionsV1 = &payload.get().data;
+        let swe: &ScriptWithExtensionsPropertyV1 = &payload.get().data;
 
         assert_eq!(
             swe.get_script_extensions_val('𐓐' as u32) /* U+104D0 OSAGE CAPITAL LETTER KHA */
@@ -174,7 +171,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let swe: &ScriptWithExtensionsV1 = &payload.get().data;
+        let swe: &ScriptWithExtensionsPropertyV1 = &payload.get().data;
 
         assert!(swe.has_script('𐓐' as u32, Script::Osage));
         assert!(!swe.has_script('𐓐' as u32, Script::Common));
@@ -253,7 +250,7 @@ mod tests {
             .take_payload()
             .expect("Loading was successful");
 
-        let swe: &ScriptWithExtensionsV1 = &payload.get().data;
+        let swe: &ScriptWithExtensionsPropertyV1 = &payload.get().data;
 
         let grantha = swe.get_script_extensions_set(Script::Grantha);
         assert!(!grantha.contains32(0x0BE5)); // unknown with unknown script in Tamil block

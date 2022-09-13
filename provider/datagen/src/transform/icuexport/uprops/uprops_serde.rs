@@ -56,7 +56,7 @@ pub mod script_extensions {
     use super::CodePointTrieToml;
 
     #[derive(serde::Deserialize)]
-    pub struct ScriptWithExtensionsV1Property {
+    pub struct ScriptWithExtensionsPropertyV1Property {
         pub long_name: String,
         pub short_name: String,
         pub script_code_array: Vec<Vec<u16>>,
@@ -70,6 +70,6 @@ pub mod script_extensions {
         #[serde(skip)]
         pub enum_property: (),
         #[serde(default)]
-        pub script_extensions: Vec<ScriptWithExtensionsV1Property>,
+        pub script_extensions: Vec<ScriptWithExtensionsPropertyV1Property>,
     }
 }
