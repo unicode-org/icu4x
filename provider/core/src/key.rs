@@ -423,6 +423,8 @@ impl DataKey {
         start: usize,
         end: usize,
     ) -> Result<(), (&'static str, usize)> {
+        debug_assert!(start <= end);
+        debug_assert!(end <= path.len());
         // Regex: [a-zA-Z0-9_][a-zA-Z0-9_/]*@[0-9]+
         enum State {
             Empty,
@@ -435,6 +437,7 @@ impl DataKey {
         let mut state = Empty;
         loop {
             let byte = if i < end {
+                #[allow(clippy::indexing_slicing)] // protected by debug assertion
                 Some(path.as_bytes()[i])
             } else {
                 None
