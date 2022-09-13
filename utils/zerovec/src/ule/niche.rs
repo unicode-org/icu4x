@@ -27,8 +27,6 @@ pub trait NicheBytes<const N: usize> {
 ///
 /// This uses 1 byte less than [`crate::ule::OptionULE<U>`] to represent [`NichedOption<U,N>`]
 /// which Derefs to [`Option<U>`].
-/// The implementors guarantee that N == core::mem::sizeo_of::<Self>()
-///
 /// # Example
 ///
 /// ```
@@ -78,18 +76,6 @@ impl<U: NicheBytes<N> + ULE, const N: usize> NichedOptionULE<U, N> {
                 Some(self.valid)
             }
         }
-    }
-}
-
-impl<U: NicheBytes<N> + ULE, const N: usize> From<Option<U>> for NichedOptionULE<U, N> {
-    fn from(opt: Option<U>) -> Self {
-        Self::new(opt)
-    }
-}
-
-impl<U: NicheBytes<N> + ULE, const N: usize> From<NichedOptionULE<U, N>> for Option<U> {
-    fn from(noule: NichedOptionULE<U, N>) -> Self {
-        NichedOptionULE::get(noule)
     }
 }
 
