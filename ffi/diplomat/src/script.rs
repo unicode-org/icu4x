@@ -29,7 +29,7 @@ pub mod ffi {
 
         /// Get the Script property value for a code point
         #[diplomat::rust_link(
-            icu::properties::script::ScriptWithExtensions::get_script_val,
+            icu::properties::script::ScriptWithExtensionsBorrowed::get_script_val,
             FnInStruct
         )]
         pub fn get_script_val(&self, code_point: u32) -> u16 {
@@ -38,7 +38,7 @@ pub mod ffi {
 
         /// Check if the Script_Extensions property of the given code point covers the given script
         #[diplomat::rust_link(
-            icu::properties::script::ScriptWithExtensions::has_script,
+            icu::properties::script::ScriptWithExtensionsBorrowed::has_script,
             FnInStruct
         )]
         pub fn has_script(&self, code_point: u32, script: u16) -> bool {
