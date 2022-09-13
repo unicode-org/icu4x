@@ -23,7 +23,7 @@ struct ICU4XLocaleFallbackIteratorDeleter {
 };
 
 /**
- * 
+ * An iterator over the locale under fallback.
  * 
  * See the [Rust documentation for `LocaleFallbackIterator`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackIterator.html) for more information.
  */
@@ -31,14 +31,14 @@ class ICU4XLocaleFallbackIterator {
  public:
 
   /**
-   * 
+   * Gets a snapshot of the current state of the locale.
    * 
    * See the [Rust documentation for `get`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackIterator.html#method.get) for more information.
    */
   ICU4XLocale get() const;
 
   /**
-   * 
+   * Performs one step of the fallback algorithm, mutating the locale.
    * 
    * See the [Rust documentation for `step`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackIterator.html#method.step) for more information.
    */

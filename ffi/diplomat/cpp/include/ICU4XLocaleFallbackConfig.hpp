@@ -23,12 +23,16 @@ struct ICU4XLocaleFallbackConfigDeleter {
 };
 
 /**
- * 
+ * Collection of configurations for the ICU4X fallback algorithm.
  * 
  * See the [Rust documentation for `LocaleFallbackConfig`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbackConfig.html) for more information.
  */
 struct ICU4XLocaleFallbackConfig {
  public:
+
+  /**
+   * Choice of priority mode.
+   */
   ICU4XLocaleFallbackPriority priority;
 
   /**

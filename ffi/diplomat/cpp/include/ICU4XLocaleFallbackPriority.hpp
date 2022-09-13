@@ -14,7 +14,7 @@
 
 
 /**
- * 
+ * Priority mode for the ICU4X fallback algorithm.
  * 
  * See the [Rust documentation for `FallbackPriority`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider/enum.FallbackPriority.html) for more information.
  */

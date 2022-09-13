@@ -27,7 +27,7 @@ struct ICU4XLocaleFallbackerDeleter {
 };
 
 /**
- * 
+ * An object that runs the ICU4X locale fallback algorithm.
  * 
  * See the [Rust documentation for `LocaleFallbacker`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html) for more information.
  */
@@ -35,21 +35,21 @@ class ICU4XLocaleFallbacker {
  public:
 
   /**
-   * 
+   * Creates a new `ICU4XLocaleFallbacker` from a data provider.
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.try_new_unstable) for more information.
    */
   static diplomat::result<ICU4XLocaleFallbacker, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
-   * 
+   * Creates a new `ICU4XLocaleFallbacker` without data for limited functionality.
    * 
    * See the [Rust documentation for `new_without_data`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.new_without_data) for more information.
    */
   static ICU4XLocaleFallbacker create_without_data();
 
   /**
-   * 
+   * Associates this `ICU4XLocaleFallbacker` with configuration options.
    * 
    * See the [Rust documentation for `for_config`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fallback/struct.LocaleFallbacker.html#method.for_config) for more information.
    */
