@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663031145305,
+  "lastUpdate": 1663037019952,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -69761,6 +69761,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4611,
             "range": "± 290",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "m_kato@ga2.so-net.ne.jp",
+            "name": "Makoto Kato",
+            "username": "makotokato"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ef8d16e20482dd6823b9ded4c79bb86bacb953cc",
+          "message": "Add C/C++ headers in the package (#2553)",
+          "timestamp": "2022-09-13T02:30:36Z",
+          "tree_id": "d4466b5ea8fdf80ccf5959af4dfb2994c23508f8",
+          "url": "https://github.com/unicode-org/icu4x/commit/ef8d16e20482dd6823b9ded4c79bb86bacb953cc"
+        },
+        "date": 1663036968951,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 64828,
+            "range": "± 165",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 107281,
+            "range": "± 164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 55390,
+            "range": "± 345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 63643,
+            "range": "± 147",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 64918,
+            "range": "± 235",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 71848,
+            "range": "± 196",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 97781,
+            "range": "± 351",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 109192,
+            "range": "± 537",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 107493,
+            "range": "± 236",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 120066,
+            "range": "± 240",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5181,
+            "range": "± 15",
             "unit": "ns/iter"
           }
         ]
