@@ -187,11 +187,10 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let payload =
+    /// let data =
     ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let swe = data.as_borrowed();
     ///
     /// assert!(swe
     ///     .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
@@ -207,11 +206,10 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let payload =
+    /// let data =
     ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let swe = data.as_borrowed();
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
@@ -267,9 +265,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let swe = data.as_borrowed();
     ///
     /// // U+0640 ARABIC TATWEEL
     /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
@@ -315,9 +312,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let swe = data.as_borrowed();
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -362,11 +358,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// use icu::properties::{script, Script};
     ///
     /// let provider = icu_testdata::unstable();
-    /// let payload =
+    /// let data =
     ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let swe = data.as_borrowed();
     ///
     /// // U+0650 ARABIC KASRA
     /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
@@ -398,9 +393,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let swe = data.as_borrowed();
     ///
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
@@ -448,9 +442,8 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let swe = data.as_borrowed();
     ///
     /// let syriac = swe.get_script_extensions_set(Script::Syriac);
     ///
@@ -482,11 +475,10 @@ impl<'a> ScriptWithExtensionsBorrowed<'a> {
 /// ```
 /// use icu::properties::{script, Script};
 ///
-/// let payload =
+/// let data =
 ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
 ///         .expect("The data should be valid");
-/// let data_struct = payload.get();
-/// let swe = &data_struct.data;
+/// let swe = data.as_borrowed();
 ///
 /// // get the `Script` property value
 /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // U+0640 ARABIC TATWEEL
