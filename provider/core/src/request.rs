@@ -507,7 +507,10 @@ impl DataLocale {
 
     /// Sets the value for the single private use subtag, returning the
     /// current subtag if it was present.
-    pub fn set_private_use(&mut self, value: extensions::private::Key) -> Option<extensions::private::Key> {
+    pub fn set_private_use(
+        &mut self,
+        value: extensions::private::Key,
+    ) -> Option<extensions::private::Key> {
         self.private_use.replace(value)
     }
 
