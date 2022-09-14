@@ -150,7 +150,7 @@ pub mod patterns {
     }
 
     /// A general purpose pattern representation. Used for date-time glue patterns.
-    /// 
+    ///
     /// Expresses the formatting positions of other formatted elements (ex: the order
     /// and formatting of a date and a time within a date-time pattern).
     #[icu_provider::data_struct]
