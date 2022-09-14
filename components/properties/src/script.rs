@@ -22,7 +22,7 @@ const SCRIPT_VAL_LENGTH: u16 = 10;
 
 /// The bit mask necessary to retrieve the `Script` value (or `extensions` index)
 /// from a `ScriptWithExt` value.
-pub(crate) const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
+const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 
 /// An internal-use only pseudo-property that represents the values stored in
 /// the trie of the special data structure [`ScriptWithExtensionsPropertyV1`].
