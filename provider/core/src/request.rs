@@ -504,6 +504,17 @@ impl DataLocale {
     {
         self.keywords.retain_by_key(predicate)
     }
+
+    /// Sets the value for the single private use subtag, returning the
+    /// current subtag if it was present.
+    pub fn set_private_use(&mut self, value: extensions::private::Key) -> Option<extensions::private::Key> {
+        self.private_use.replace(value)
+    }
+
+    /// Removes the single private use subtag, returning it if present.
+    pub fn remove_private_use(&mut self) -> Option<extensions::private::Key> {
+        self.private_use.take()
+    }
 }
 
 #[test]

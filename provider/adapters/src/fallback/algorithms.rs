@@ -7,6 +7,7 @@ use icu_locid::extensions_unicode_key as key;
 use icu_locid::subtags::Language;
 use icu_locid::LanguageIdentifier;
 use icu_provider::FallbackPriority;
+use icu_provider::PrivateUseConfig;
 
 use super::*;
 
@@ -63,6 +64,9 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
                 _ => false,
             }
         });
+        if self.config.private_use == PrivateUseConfig::Exclude {
+            locale.remove_private_use();
+        }
         // 4. If there is an invalid "sd" subtag, drop it
         // For now, ignore it, and let fallback do it for us
     }
@@ -91,6 +95,12 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
 
     fn step_language(&mut self, locale: &mut DataLocale) {
         // 1. Remove the extension fallback keyword
+        if self.config.private_use == PrivateUseConfig::SingleSubtag {
+            if let Some(value) = locale.remove_private_use() {
+                self.backup_private = Some(value);
+                return;
+            }
+        }
         if let Some(extension_key) = self.config.extension_key {
             if let Some(value) = locale.remove_unicode_ext(&extension_key) {
                 self.backup_extension = Some(value);
@@ -148,6 +158,12 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
 
     fn step_region(&mut self, locale: &mut DataLocale) {
         // 1. Remove the extension fallback keyword
+        if self.config.private_use == PrivateUseConfig::SingleSubtag {
+            if let Some(value) = locale.remove_private_use() {
+                self.backup_private = Some(value);
+                return;
+            }
+        }
         if let Some(extension_key) = self.config.extension_key {
             if let Some(value) = locale.remove_unicode_ext(&extension_key) {
                 self.backup_extension = Some(value);
@@ -179,6 +195,9 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
     }
 
     fn restore_extensions_variants(&mut self, locale: &mut DataLocale) {
+        if let Some(subtag) = self.backup_private.take() {
+            locale.set_private_use(subtag);
+        }
         if let Some(value) = self.backup_extension.take() {
             #[allow(clippy::unwrap_used)] // not reachable unless extension_key is present
             locale.set_unicode_ext(self.config.extension_key.unwrap(), value);
@@ -202,6 +221,7 @@ mod tests {
         input: &'static str,
         requires_data: bool,
         extension_key: Option<Key>,
+        private_use: PrivateUseConfig,
         // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
@@ -210,23 +230,26 @@ mod tests {
     // TODO: Consider loading these from a JSON file
     const TEST_CASES: &[TestCase] = &[
         TestCase {
-            input: "en-u-hc-h12-sd-usca",
+            input: "en-u-hc-h12-sd-usca-x-priv",
             requires_data: false,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
         },
         TestCase {
-            input: "en-US-u-hc-h12-sd-usca",
+            input: "en-US-u-hc-h12-sd-usca-x-priv",
             requires_data: false,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
         TestCase {
-            input: "en-US-fonipa-u-hc-h12-sd-usca",
+            input: "en-US-fonipa-u-hc-h12-sd-usca-x-priv",
             requires_data: false,
             extension_key: Some(key!("hc")),
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &[
                 "en-US-fonipa-u-hc-h12-sd-usca",
                 "en-US-fonipa-u-sd-usca",
@@ -246,9 +269,36 @@ mod tests {
             ],
         },
         TestCase {
+            input: "en-US-fonipa-u-hc-h12-sd-usca-x-priv",
+            requires_data: false,
+            extension_key: Some(key!("hc")),
+            private_use: PrivateUseConfig::SingleSubtag,
+            expected_language_chain: &[
+                "en-US-fonipa-u-hc-h12-sd-usca-x-priv",
+                "en-US-fonipa-u-hc-h12-sd-usca",
+                "en-US-fonipa-u-sd-usca",
+                "en-US-fonipa",
+                "en-US",
+                "en",
+            ],
+            expected_region_chain: &[
+                "en-US-fonipa-u-hc-h12-sd-usca-x-priv",
+                "en-US-fonipa-u-hc-h12-sd-usca",
+                "en-US-fonipa-u-sd-usca",
+                "en-US-fonipa",
+                "en-US",
+                "und-US-fonipa-u-hc-h12-sd-usca-x-priv",
+                "und-US-fonipa-u-hc-h12-sd-usca",
+                "und-US-fonipa-u-sd-usca",
+                "und-US-fonipa",
+                "und-US",
+            ],
+        },
+        TestCase {
             input: "en-u-hc-h12-sd-usca",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -256,6 +306,7 @@ mod tests {
             input: "en-Latn-u-sd-usca",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -263,6 +314,7 @@ mod tests {
             input: "en-Latn-US-u-sd-usca",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -271,6 +323,7 @@ mod tests {
             input: "en-u-rg-gbxxxx",
             requires_data: false,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["en"],
             expected_region_chain: &["en"],
         },
@@ -278,6 +331,7 @@ mod tests {
             input: "sr-ME",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
@@ -285,6 +339,7 @@ mod tests {
             input: "sr-ME-fonipa",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &[
                 "sr-ME-fonipa",
                 "sr-ME",
@@ -298,6 +353,7 @@ mod tests {
             input: "de-Latn-LI",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["de-LI", "de"],
             expected_region_chain: &["de-LI", "und-LI"],
         },
@@ -305,6 +361,7 @@ mod tests {
             input: "ca-ES-valencia",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
         },
@@ -312,6 +369,7 @@ mod tests {
             input: "es-AR",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["es-AR", "es-419", "es"],
             expected_region_chain: &["es-AR", "und-AR"],
         },
@@ -319,6 +377,7 @@ mod tests {
             input: "hi-IN",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["hi-IN", "hi"],
             expected_region_chain: &["hi-IN", "und-IN"],
         },
@@ -326,6 +385,7 @@ mod tests {
             input: "hi-Latn-IN",
             requires_data: true,
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
             expected_language_chain: &["hi-Latn-IN", "hi-Latn", "en-IN", "en-001", "en"],
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
         },
@@ -345,6 +405,7 @@ mod tests {
                 let config = LocaleFallbackConfig {
                     priority,
                     extension_key: cas.extension_key,
+                    private_use: cas.private_use,
                 };
                 let key_fallbacker = if cas.requires_data {
                     fallbacker_with_data.for_config(config)

@@ -110,6 +110,27 @@ impl Default for FallbackPriority {
     }
 }
 
+/// Whether to retain a private use subtag during fallback.
+#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+#[non_exhaustive]
+pub enum PrivateUseConfig {
+    Exclude,
+    SingleSubtag
+}
+
+impl PrivateUseConfig {
+    /// Const-friendly version of [`Default::default`].
+    pub const fn const_default() -> Self {
+        Self::Exclude
+    }
+}
+
+impl Default for PrivateUseConfig {
+    fn default() -> Self {
+        Self::const_default()
+    }
+}
+
 /// Metadata statically associated with a particular [`DataKey`].
 #[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
 #[non_exhaustive]
@@ -118,6 +139,7 @@ pub struct DataKeyMetadata {
     pub fallback_priority: FallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
     pub extension_key: Option<icu_locid::extensions::unicode::Key>,
+    pub private_use: PrivateUseConfig,
 }
 
 impl DataKeyMetadata {
@@ -126,6 +148,7 @@ impl DataKeyMetadata {
         Self {
             fallback_priority: FallbackPriority::const_default(),
             extension_key: None,
+            private_use: PrivateUseConfig::const_default(),
         }
     }
 
@@ -138,6 +161,7 @@ impl DataKeyMetadata {
         Self {
             fallback_priority,
             extension_key,
+            private_use: PrivateUseConfig::const_default(),
         }
     }
 }
@@ -299,6 +323,8 @@ impl DataKey {
                         metadata: DataKeyMetadata {
                             fallback_priority,
                             extension_key,
+                            // TODO(sffc): Add support for private_use
+                            private_use: PrivateUseConfig::const_default(),
                         },
                     })
                 }
