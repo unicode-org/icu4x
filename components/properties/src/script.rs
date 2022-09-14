@@ -178,7 +178,7 @@ impl From<ScriptWithExt> for Script {
 /// [`get_script_extensions_val`](ScriptWithExtensionsPropertyV1::get_script_extensions_val).
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct ScriptExtensionsSet<'a> {
-    pub(crate) values: &'a ZeroSlice<Script>,
+    values: &'a ZeroSlice<Script>,
 }
 
 impl ScriptExtensionsSet<'_> {
