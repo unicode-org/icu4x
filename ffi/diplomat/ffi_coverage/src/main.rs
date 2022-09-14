@@ -124,6 +124,7 @@ lazy_static::lazy_static! {
         "IterableDataProvider",
         "DataConverter",
         "Filterable",
+        "ForkByErrorPredicate",
 
         // The four main data provider traits should be covered if the enum or struct
         // implementing them is covered
@@ -304,6 +305,17 @@ lazy_static::lazy_static! {
         // We don't expose data keys directly over FFI, but when we do, we should add this
         "icu_provider_adapters::fallback::LocaleFallbacker::for_key",
 
+        // On RequestFilterDataProvider, filter_by_langid needs callbacks, and
+        // filter_by_langid_allowlist_strict needs input iterators.
+        // require_langid is not very useful by itself.
+        "icu_provider_adapters::filter::Filterable",
+        "icu_provider_adapters::filter::RequestFilterDataProvider",
+
+        // ForkByErrorProvider has only one useful constructor, new_with_predicate,
+        // which needs callback support.
+        "icu_provider_adapters::fork::ForkByErrorProvider",
+        "icu_provider_adapters::fork::predicates::ForkByErrorPredicate",
+
         // Don't want parts for 1.0
         "icu::list::parts",
         // Formatting wrappers, may be supported in the future
@@ -440,6 +452,13 @@ lazy_static::lazy_static! {
         // Decompositions of providers is tricky to do over FFI and the use cases are unclear.
         "icu_provider_adapters::fallback::LocaleFallbackProvider::inner",
         "icu_provider_adapters::fallback::LocaleFallbackProvider::into_inner",
+
+        // The polymorphic ICU4XDataProvider type makes the MultiFork providers less relevant.
+        "icu_provider_adapters::fork::MultiForkByErrorProvider",
+        "icu_provider_adapters::fork::MultiForkByKeyProvider",
+
+        // No macros in FFI
+        "icu_provider_adapters::make_forking_provider",
 
     ].iter().map(|s| s.split("::").map(|x| x.to_string()).collect()).collect();
 }

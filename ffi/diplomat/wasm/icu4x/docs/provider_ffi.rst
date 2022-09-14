@@ -61,6 +61,13 @@
         See the `Rust documentation for ForkByKeyProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/type.ForkByKeyProvider.html>`__ for more information.
 
 
+    .. js:function:: fork_by_locale(other)
+
+        Same as ``fork_by_key`` but forks by locale instead of key.
+
+        See the `Rust documentation for MissingLocalePredicate <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html>`__ for more information.
+
+
     .. js:function:: enable_locale_fallback()
 
         Enables locale fallbacking for data requests made to this provider.
