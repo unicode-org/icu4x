@@ -175,7 +175,7 @@ impl From<ScriptWithExt> for Script {
 }
 
 /// A struct that wraps a [`Script`] array, such as in the return value for
-/// [`get_script_extensions_val`](ScriptWithExtensionsPropertyV1::get_script_extensions_val).
+/// [`get_script_extensions_val()`](ScriptWithExtensionsBorrowed::get_script_extensions_val).
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct ScriptExtensionsSet<'a> {
     values: &'a ZeroSlice<Script>,
