@@ -6,7 +6,7 @@ use core::cmp::Ordering;
 use core::default::Default;
 use core::fmt;
 use core::fmt::Debug;
-use icu_locid::extensions::unicode as unicode_ext;
+use icu_locid::extensions;
 use icu_locid::subtags::{Language, Region, Script, Variants};
 use icu_locid::{LanguageIdentifier, Locale, SubtagOrderingResult};
 use writeable::{LengthHint, Writeable};
@@ -89,28 +89,31 @@ pub struct DataRequestMetadata;
 /// ```
 ///
 /// [`DataLocale`] only supports `-u` keywords, to reflect the current state of CLDR data
-/// lookup and fallback. This may change in the future.
+/// lookup and fallback. It also supports a single `-x` subtag. This may change in the future.
 ///
 /// ```
 /// use icu_locid::Locale;
 /// use icu_provider::DataLocale;
+/// use writeable::assert_writeable_eq;
 ///
-/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist".parse::<Locale>().unwrap();
+/// let locale = "hi-t-en-h0-hybrid-u-attr-ca-buddhist-x-foo-bar".parse::<Locale>().unwrap();
 /// let data_locale = DataLocale::from(locale);
 ///
-/// assert_eq!(data_locale.to_string(), "hi-u-ca-buddhist");
+/// assert_writeable_eq!(data_locale, "hi-u-ca-buddhist-x-foo");
 /// ```
 #[derive(PartialEq, Clone, Default, Eq, Hash)]
 pub struct DataLocale {
     langid: LanguageIdentifier,
-    keywords: unicode_ext::Keywords,
+    keywords: extensions::unicode::Keywords,
+    private_use: Option<extensions::private::Key>,
 }
 
 impl<'a> Default for &'a DataLocale {
     fn default() -> Self {
         static DEFAULT: DataLocale = DataLocale {
             langid: LanguageIdentifier::UND,
-            keywords: unicode_ext::Keywords::new(),
+            keywords: extensions::unicode::Keywords::new(),
+            private_use: None,
         };
         &DEFAULT
     }
@@ -129,6 +132,10 @@ impl Writeable for DataLocale {
             sink.write_str("-u-")?;
             self.keywords.write_to(sink)?;
         }
+        if let Some(subtag) = self.private_use {
+            sink.write_str("-x-")?;
+            subtag.write_to(sink)?;
+        }
         Ok(())
     }
 
@@ -136,6 +143,11 @@ impl Writeable for DataLocale {
         self.langid.writeable_length_hint()
             + if !self.keywords.is_empty() {
                 self.keywords.writeable_length_hint() + 3
+            } else {
+                LengthHint::exact(0)
+            }
+            + if let Some(subtag) = self.private_use {
+                subtag.writeable_length_hint() + 3
             } else {
                 LengthHint::exact(0)
             }
@@ -148,7 +160,8 @@ impl From<LanguageIdentifier> for DataLocale {
     fn from(langid: LanguageIdentifier) -> Self {
         Self {
             langid,
-            keywords: unicode_ext::Keywords::new(),
+            keywords: extensions::unicode::Keywords::new(),
+            private_use: None,
         }
     }
 }
@@ -158,6 +171,7 @@ impl From<Locale> for DataLocale {
         Self {
             langid: locale.id,
             keywords: locale.extensions.unicode.keywords,
+            private_use: locale.extensions.private.first().copied(),
         }
     }
 }
@@ -166,7 +180,8 @@ impl From<&LanguageIdentifier> for DataLocale {
     fn from(langid: &LanguageIdentifier) -> Self {
         Self {
             langid: langid.clone(),
-            keywords: unicode_ext::Keywords::new(),
+            keywords: extensions::unicode::Keywords::new(),
+            private_use: None,
         }
     }
 }
@@ -176,6 +191,7 @@ impl From<&Locale> for DataLocale {
         Self {
             langid: locale.id.clone(),
             keywords: locale.extensions.unicode.keywords.clone(),
+            private_use: locale.extensions.private.first().copied(),
         }
     }
 }
@@ -200,11 +216,17 @@ impl DataLocale {
     ///     "ca-ES",
     ///     "ca-ES-u-ca-buddhist",
     ///     "ca-ES-valencia",
+    ///     "ca-ES-x-priv",
+    ///     "en-x-priv",
     ///     "pl-Latn-PL",
     ///     "und",
     ///     "und-fonipa",
     ///     "und-u-ca-hebrew",
     ///     "und-u-ca-japanese",
+    ///     "und-u-ca-japanese-x-priv",
+    ///     "und-x-foo",
+    ///     "und-x-priv",
+    ///     "und-zzzzz",
     ///     "zh",
     /// ];
     ///
@@ -236,6 +258,25 @@ impl DataLocale {
                 None => return Ordering::Greater,
             }
             subtag_result = self.keywords.strict_cmp_iter(subtags);
+        }
+        if let Some(private_use) = self.private_use {
+            let mut subtags = match subtag_result {
+                SubtagOrderingResult::Subtags(s) => s,
+                SubtagOrderingResult::Ordering(o) => return o,
+            };
+            match subtags.next() {
+                Some(b"x") => (),
+                Some(s) => return s.cmp(b"x").reverse(),
+                None => return Ordering::Greater,
+            }
+            match subtags.next() {
+                Some(s) => match private_use.strict_cmp(s) {
+                    Ordering::Equal => (),
+                    other => return other,
+                },
+                None => return Ordering::Greater,
+            }
+            subtag_result = SubtagOrderingResult::Subtags(subtags)
         }
         subtag_result.end()
     }
@@ -326,6 +367,9 @@ impl DataLocale {
             ..Default::default()
         };
         loc.extensions.unicode.keywords = self.keywords;
+        if let Some(subtag) = self.private_use {
+            loc.extensions.private = extensions::private::Private::from_single(subtag);
+        }
         loc
     }
 
@@ -385,7 +429,10 @@ impl DataLocale {
 
     /// Gets the value of the specified Unicode extension keyword for this [`DataLocale`].
     #[inline]
-    pub fn get_unicode_ext(&self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
+    pub fn get_unicode_ext(
+        &self,
+        key: &extensions::unicode::Key,
+    ) -> Option<extensions::unicode::Value> {
         self.keywords.get(key).cloned()
     }
 
@@ -397,7 +444,7 @@ impl DataLocale {
 
     /// Returns whether a specific Unicode extension keyword is present in this [`DataLocale`].
     #[inline]
-    pub fn contains_unicode_ext(&self, key: &unicode_ext::Key) -> bool {
+    pub fn contains_unicode_ext(&self, key: &extensions::unicode::Key) -> bool {
         self.keywords.contains_key(key)
     }
 
@@ -421,7 +468,11 @@ impl DataLocale {
     /// assert!(locale.matches_unicode_ext(&key!("ca"), &value!("coptic"),));
     /// ```
     #[inline]
-    pub fn matches_unicode_ext(&self, key: &unicode_ext::Key, value: &unicode_ext::Value) -> bool {
+    pub fn matches_unicode_ext(
+        &self,
+        key: &extensions::unicode::Key,
+        value: &extensions::unicode::Value,
+    ) -> bool {
         self.keywords.get(key) == Some(value)
     }
 
@@ -429,16 +480,19 @@ impl DataLocale {
     #[inline]
     pub fn set_unicode_ext(
         &mut self,
-        key: unicode_ext::Key,
-        value: unicode_ext::Value,
-    ) -> Option<unicode_ext::Value> {
+        key: extensions::unicode::Key,
+        value: extensions::unicode::Value,
+    ) -> Option<extensions::unicode::Value> {
         self.keywords.set(key, value)
     }
 
     /// Removes a specific Unicode extension keyword from this [`DataLocale`], returning
     /// the value if it was present.
     #[inline]
-    pub fn remove_unicode_ext(&mut self, key: &unicode_ext::Key) -> Option<unicode_ext::Value> {
+    pub fn remove_unicode_ext(
+        &mut self,
+        key: &extensions::unicode::Key,
+    ) -> Option<extensions::unicode::Value> {
         self.keywords.remove(key)
     }
 
@@ -446,7 +500,7 @@ impl DataLocale {
     #[inline]
     pub fn retain_unicode_ext<F>(&mut self, predicate: F)
     where
-        F: FnMut(&unicode_ext::Key) -> bool,
+        F: FnMut(&extensions::unicode::Key) -> bool,
     {
         self.keywords.retain_by_key(predicate)
     }
@@ -471,6 +525,10 @@ fn test_data_locale_to_string() {
         TestCase {
             locale: "en-ZA-u-cu-gbp".parse::<Locale>().unwrap().into(),
             expected: "en-ZA-u-cu-gbp",
+        },
+        TestCase {
+            locale: "en-ZA-x-priv".parse::<Locale>().unwrap().into(),
+            expected: "en-ZA-x-priv",
         },
     ] {
         assert_eq!(cas.expected, cas.locale.to_string());

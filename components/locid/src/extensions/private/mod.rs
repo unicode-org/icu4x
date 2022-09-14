@@ -92,6 +92,23 @@ impl Private {
         Self(input)
     }
 
+    /// A constructor which takes a single subtag.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu::locid::extensions::private::{Key, Private};
+    /// use writeable::Writeable;
+    ///
+    /// const KEY: Key = icu::locid::extensions_private_key!("example");
+    ///
+    /// let private = Private::from_single(KEY);
+    /// assert_eq!(&private.write_to_string(), "-x-example");
+    /// ```
+    pub fn from_single(subtag: Key) -> Self {
+        Self(alloc::vec![subtag])
+    }
+
     /// Empties the [`Private`] list.
     ///
     /// # Examples
