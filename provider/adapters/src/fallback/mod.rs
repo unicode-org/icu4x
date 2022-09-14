@@ -45,7 +45,7 @@
 use icu_locid::extensions;
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
-use icu_provider::{DataKeyMetadata, FallbackPriority, PrivateUseConfig};
+use icu_provider::{DataKeyMetadata, FallbackPriority};
 
 mod adapter;
 mod algorithms;
@@ -156,40 +156,6 @@ pub struct LocaleFallbackConfig {
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
     pub extension_key: Option<extensions::unicode::Key>,
-    /// Whether to retain the private use section during locale fallback.
-    /// 
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::prelude::*;
-    /// use icu_provider::PrivateUseConfig;
-    /// use icu_provider_adapters::fallback::LocaleFallbackConfig;
-    /// use icu_provider_adapters::fallback::LocaleFallbacker;
-    ///
-    /// // Set up the fallback iterator.
-    /// let fallbacker =
-    ///     LocaleFallbacker::try_new_unstable(&icu_testdata::unstable())
-    ///         .expect("data");
-    /// let mut config = LocaleFallbackConfig::default();
-    /// config.extension_key = Some(icu_locid::extensions_unicode_key!("nu"));
-    /// config.private_use = PrivateUseConfig::SingleSubtag;
-    /// let key_fallbacker = fallbacker.for_config(config);
-    /// let mut fallback_iterator = key_fallbacker.fallback_for(
-    ///     "en-US-u-nu-arab-x-priv".parse::<icu_locid::Locale>().unwrap().into()
-    /// );
-    ///
-    /// // Run the algorithm and check the results.
-    /// assert_eq!(fallback_iterator.get().to_string(), "en-US-u-nu-arab-x-priv");
-    /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get().to_string(), "en-US-u-nu-arab");
-    /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get().to_string(), "en-US");
-    /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get().to_string(), "en");
-    /// fallback_iterator.step();
-    /// assert_eq!(fallback_iterator.get().to_string(), "und");
-    /// ```
-    pub private_use: PrivateUseConfig,
 }
 
 impl From<DataKeyMetadata> for LocaleFallbackConfig {
@@ -197,7 +163,6 @@ impl From<DataKeyMetadata> for LocaleFallbackConfig {
         LocaleFallbackConfig {
             priority: key_metadata.fallback_priority,
             extension_key: key_metadata.extension_key,
-            private_use: key_metadata.private_use
         }
     }
 }
