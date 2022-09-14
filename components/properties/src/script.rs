@@ -222,6 +222,19 @@ impl ScriptExtensionsSet<'_> {
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
         ZeroSlice::iter(&*self.values)
     }
+
+    /// For accessing this set as an array instead of an iterator
+    /// only needed for the FFI bindings; shouldn't be used directly from Rust
+    #[doc(hidden)]
+    pub fn array_len(&self) -> usize {
+        self.values.len()
+    }
+    /// For accessing this set as an array instead of an iterator
+    /// only needed for the FFI bindings; shouldn't be used directly from Rust
+    #[doc(hidden)]
+    pub fn array_get(&self, index: usize) -> Option<Script> {
+        self.values.get(index)
+    }
 }
 /// A wrapper around script extensions data. Can be obtained via [`load_script_with_extensions_unstable()`] and
 /// related getters.

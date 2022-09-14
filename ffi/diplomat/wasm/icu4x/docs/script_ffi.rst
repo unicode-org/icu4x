@@ -15,6 +15,20 @@
         See the `Rust documentation for contains <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains>`__ for more information.
 
 
+    .. js:function:: count()
+
+        Get the number of scripts contained in here
+
+        See the `Rust documentation for iter <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter>`__ for more information.
+
+
+    .. js:function:: script_at(index)
+
+        Get script at index, returning an error if out of bounds
+
+        See the `Rust documentation for iter <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter>`__ for more information.
+
+
 .. js:class:: ICU4XScriptWithExtensions
 
     An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values

@@ -101,5 +101,17 @@ pub mod ffi {
         pub fn contains(&self, script: u16) -> bool {
             self.0.contains(&Script(script))
         }
+
+        /// Get the number of scripts contained in here
+        #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::iter, FnInStruct)]
+        pub fn count(&self) -> usize {
+            self.0.array_len()
+        }
+
+        /// Get script at index, returning an error if out of bounds
+        #[diplomat::rust_link(icu::properties::script::ScriptExtensionsSet::iter, FnInStruct)]
+        pub fn script_at(&self, index: usize) -> DiplomatResult<u16, ()> {
+            self.0.array_get(index).map(|x| x.0).ok_or(()).into()
+        }
     }
 }

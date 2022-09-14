@@ -1,4 +1,5 @@
-import { u16 } from "./diplomat-runtime"
+import { u16, usize } from "./diplomat-runtime"
+import { FFIError } from "./diplomat-runtime"
 
 /**
 
@@ -15,4 +16,21 @@ export class ICU4XScriptExtensionsSet {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains Rust documentation for `contains`} for more information.
    */
   contains(script: u16): boolean;
+
+  /**
+
+   * Get the number of scripts contained in here
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter Rust documentation for `iter`} for more information.
+   */
+  count(): usize;
+
+  /**
+
+   * Get script at index, returning an error if out of bounds
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter Rust documentation for `iter`} for more information.
+   * @throws {@link FFIError}<void>
+   */
+  script_at(index: usize): u16 | never;
 }

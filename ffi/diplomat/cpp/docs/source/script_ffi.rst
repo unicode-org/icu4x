@@ -15,6 +15,20 @@
         See the `Rust documentation for contains <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains>`__ for more information.
 
 
+    .. cpp:function:: size_t count() const
+
+        Get the number of scripts contained in here
+
+        See the `Rust documentation for iter <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter>`__ for more information.
+
+
+    .. cpp:function:: diplomat::result<uint16_t, std::monostate> script_at(size_t index) const
+
+        Get script at index, returning an error if out of bounds
+
+        See the `Rust documentation for iter <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter>`__ for more information.
+
+
 .. cpp:class:: ICU4XScriptWithExtensions
 
     An ICU4X ScriptWithExtensions map object, capable of holding a map of codepoints to scriptextensions values

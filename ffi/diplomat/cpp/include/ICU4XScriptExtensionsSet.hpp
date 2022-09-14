@@ -35,6 +35,20 @@ class ICU4XScriptExtensionsSet {
    * See the [Rust documentation for `contains`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.contains) for more information.
    */
   bool contains(uint16_t script) const;
+
+  /**
+   * Get the number of scripts contained in here
+   * 
+   * See the [Rust documentation for `iter`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+   */
+  size_t count() const;
+
+  /**
+   * Get script at index, returning an error if out of bounds
+   * 
+   * See the [Rust documentation for `iter`](https://unicode-org.github.io/icu4x-docs/doc/icu/properties/script/struct.ScriptExtensionsSet.html#method.iter) for more information.
+   */
+  diplomat::result<uint16_t, std::monostate> script_at(size_t index) const;
   inline const capi::ICU4XScriptExtensionsSet* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XScriptExtensionsSet* AsFFIMut() { return this->inner.get(); }
   inline ICU4XScriptExtensionsSet(capi::ICU4XScriptExtensionsSet* i) : inner(i) {}
@@ -48,5 +62,18 @@ class ICU4XScriptExtensionsSet {
 
 inline bool ICU4XScriptExtensionsSet::contains(uint16_t script) const {
   return capi::ICU4XScriptExtensionsSet_contains(this->inner.get(), script);
+}
+inline size_t ICU4XScriptExtensionsSet::count() const {
+  return capi::ICU4XScriptExtensionsSet_count(this->inner.get());
+}
+inline diplomat::result<uint16_t, std::monostate> ICU4XScriptExtensionsSet::script_at(size_t index) const {
+  auto diplomat_result_raw_out_value = capi::ICU4XScriptExtensionsSet_script_at(this->inner.get(), index);
+  diplomat::result<uint16_t, std::monostate> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok<uint16_t>(std::move(diplomat_result_raw_out_value.ok));
+  } else {
+    diplomat_result_out_value = diplomat::Err(std::monostate());
+  }
+  return diplomat_result_out_value;
 }
 #endif
