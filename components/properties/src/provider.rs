@@ -96,6 +96,18 @@ pub struct ScriptWithExtensionsPropertyV1<'data> {
     pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
 }
 
+impl<'data> ScriptWithExtensionsPropertyV1<'data> {
+    // This method is intended to be used by constructors of deserialized data
+    // in a data provider.
+    #[doc(hidden)]
+    pub fn new(
+        trie: CodePointTrie<'data, ScriptWithExt>,
+        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
+    ) -> ScriptWithExtensionsPropertyV1<'data> {
+        ScriptWithExtensionsPropertyV1 { trie, extensions }
+    }
+}
+
 // See CodePointSetData for documentation of these functions
 impl<'data> PropertyCodePointSetV1<'data> {
     #[inline]
