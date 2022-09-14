@@ -85,7 +85,7 @@ use core::str::from_utf8_unchecked;
 use icu_collections::char16trie::Char16Trie;
 use icu_collections::char16trie::Char16TrieIterator;
 use icu_collections::char16trie::TrieResult;
-use icu_collections::codepointtrie::CodePointTrieBorrow;
+use icu_collections::codepointtrie::CodePointTrieBorrowed;
 use icu_properties::CanonicalCombiningClass;
 use icu_provider::prelude::*;
 use provider::CanonicalCompositionsV1Marker;
@@ -466,7 +466,7 @@ impl CharacterAndClass {
         (self.character(), self.ccc())
     }
     #[inline(always)]
-    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrieBorrow<u32>) {
+    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrieBorrowed<u32>) {
         if self.0 >> 24 != 0xFF {
             return;
         }
@@ -477,7 +477,7 @@ impl CharacterAndClass {
 
 // This function exists as a borrow check helper.
 #[inline(always)]
-fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrieBorrow<u32>) {
+fn sort_slice_by_ccc(slice: &mut [CharacterAndClass], trie: &CodePointTrieBorrowed<u32>) {
     // We don't look up the canonical combining class for starters
     // of for single combining characters between starters. When
     // there's more than one combining character between starters,
@@ -509,8 +509,8 @@ where
     // However, when `Decomposition` appears inside a `Composition`, this
     // may become a non-starter before `decomposing_next()` is called.
     pending: Option<CharacterAndTrieValue>, // None at end of stream
-    trie: CodePointTrieBorrow<'data, u32>,
-    supplementary_trie: Option<CodePointTrieBorrow<'data, u32>>,
+    trie: CodePointTrieBorrowed<'data, u32>,
+    supplementary_trie: Option<CodePointTrieBorrowed<'data, u32>>,
     scalars16: &'data ZeroSlice<u16>,
     scalars24: &'data ZeroSlice<char>,
     supplementary_scalars16: &'data ZeroSlice<u16>,

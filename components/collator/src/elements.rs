@@ -20,7 +20,7 @@
 
 use core::char::REPLACEMENT_CHARACTER;
 use icu_collections::char16trie::TrieResult;
-use icu_collections::codepointtrie::CodePointTrieBorrow;
+use icu_collections::codepointtrie::CodePointTrieBorrowed;
 use icu_normalizer::provider::DecompositionDataV1;
 use icu_normalizer::provider::DecompositionTablesV1;
 use icu_properties::CanonicalCombiningClass;
@@ -742,7 +742,7 @@ impl CharacterAndClass {
         (self.character(), self.ccc())
     }
     #[inline(always)]
-    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrieBorrow<u32>) {
+    pub fn set_ccc_from_trie_if_not_already_set(&mut self, trie: &CodePointTrieBorrowed<u32>) {
         if self.0 >> 24 != 0xFF {
             return;
         }
@@ -800,7 +800,7 @@ where
     /// The `CollationElement32` mapping for the Combining Diacritical Marks block.
     diacritics: &'data ZeroSlice<u16>,
     /// NFD main trie.
-    trie: CodePointTrieBorrow<'data, u32>,
+    trie: CodePointTrieBorrowed<'data, u32>,
     /// NFD complex decompositions on the BMP
     scalars16: &'data ZeroSlice<u16>,
     /// NFD complex decompositions on supplementary planes

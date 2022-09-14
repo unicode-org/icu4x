@@ -118,16 +118,16 @@ pub struct CodePointTrie<'trie, T: TrieValue> {
 /// by value instead of holding `CodePointTrie` by reference if the reference
 /// is held across multiple lookups.
 #[derive(Debug, Eq, PartialEq, Copy, Clone)]
-pub struct CodePointTrieBorrow<'trie, T: TrieValue> {
+pub struct CodePointTrieBorrowed<'trie, T: TrieValue> {
     pub(crate) header: &'trie CodePointTrieHeader,
     pub(crate) index: &'trie ZeroSlice<u16>,
     pub(crate) data: &'trie ZeroSlice<T>,
     pub(crate) error_value: T,
 }
 
-impl<'zf, T: TrieValue> ZeroFrom<'zf, CodePointTrie<'_, T>> for CodePointTrieBorrow<'zf, T> {
+impl<'zf, T: TrieValue> ZeroFrom<'zf, CodePointTrie<'_, T>> for CodePointTrieBorrowed<'zf, T> {
     fn zero_from(other: &'zf CodePointTrie<'_, T>) -> Self {
-        CodePointTrieBorrow {
+        CodePointTrieBorrowed {
             header: &other.header,
             index: &other.index,
             data: &other.data,
@@ -187,7 +187,7 @@ impl TryFrom<u8> for TrieType {
     }
 }
 
-impl<'trie, T: TrieValue> CodePointTrieBorrow<'trie, T> {
+impl<'trie, T: TrieValue> CodePointTrieBorrowed<'trie, T> {
     /// Returns the position in the data array containing the trie's stored
     /// error value.
     #[inline(always)] // `always` based on normalizer benchmarking
@@ -886,7 +886,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(1, trie.get32(0x10044)); // '𐁄' as u32
     /// ```
     pub fn get32(&self, code_point: u32) -> T {
-        let borrow: CodePointTrieBorrow<T> = ZeroFrom::zero_from(self);
+        let borrow: CodePointTrieBorrowed<T> = ZeroFrom::zero_from(self);
         borrow.get32(code_point)
     }
 
@@ -903,7 +903,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(1, trie.get('𐁄')); // '𐁄' as u32
     /// ```
     pub fn get(&self, c: char) -> T {
-        let borrow: CodePointTrieBorrow<T> = ZeroFrom::zero_from(self);
+        let borrow: CodePointTrieBorrowed<T> = ZeroFrom::zero_from(self);
         borrow.get(c)
     }
 
@@ -920,7 +920,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(Some(&1), trie.get32_ule(0x10044)); // '𐁄' as u32
     /// ```
     pub fn get32_ule(&self, code_point: u32) -> Option<&T::ULE> {
-        let borrow: CodePointTrieBorrow<T> = ZeroFrom::zero_from(self);
+        let borrow: CodePointTrieBorrowed<T> = ZeroFrom::zero_from(self);
         // Returns the trie value (or trie's error value).
         self.data.as_ule_slice().get(borrow.data_pos(code_point))
     }
@@ -1019,7 +1019,7 @@ impl<'trie, T: TrieValue> CodePointTrie<'trie, T> {
     /// assert_eq!(submaximal_2.value, start_val);
     /// ```
     pub fn get_range(&self, start: u32) -> Option<CodePointMapRange<T>> {
-        let borrow: CodePointTrieBorrow<T> = ZeroFrom::zero_from(self);
+        let borrow: CodePointTrieBorrowed<T> = ZeroFrom::zero_from(self);
         borrow.get_range(start)
     }
 
@@ -1188,7 +1188,7 @@ pub struct CodePointMapRange<T: TrieValue> {
 /// A custom [`Iterator`] type specifically for a code point trie that returns
 /// [`CodePointMapRange`]s.
 pub struct CodePointMapRangeIterator<'a, T: TrieValue> {
-    cpt: CodePointTrieBorrow<'a, T>,
+    cpt: CodePointTrieBorrowed<'a, T>,
     // Initialize `range` to Some(CodePointMapRange{ start: u32::MAX, end: u32::MAX, value: 0}).
     // When `range` is Some(...) and has a start value different from u32::MAX, then we have
     // returned at least one code point range due to a call to `next()`.

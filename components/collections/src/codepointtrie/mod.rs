@@ -45,7 +45,7 @@ mod serde;
 pub use cptrie::CodePointMapRange;
 pub use cptrie::CodePointMapRangeIterator;
 pub use cptrie::CodePointTrie;
-pub use cptrie::CodePointTrieBorrow;
+pub use cptrie::CodePointTrieBorrowed;
 pub use cptrie::CodePointTrieHeader;
 pub use cptrie::TrieType;
 pub use cptrie::TrieValue;
