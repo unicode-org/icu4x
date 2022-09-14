@@ -17,6 +17,9 @@ use writeable::Writeable;
 
 use super::datetime;
 
+#[cfg(doc)]
+use crate::ZonedDateTimeFormatter;
+
 /// [`FormattedTimeZone`] is a intermediate structure which can be retrieved
 /// as an output from [`ZonedDateTimeFormatter`].
 pub struct FormattedZonedDateTime<'l> {
