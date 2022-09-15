@@ -468,35 +468,28 @@ fn test_dayperiod_patterns() {
                             data.time_h23_h24.long = new_pattern2;
                         });
                         let local_provider = MultiForkByKeyProvider::new(vec![
-                            AnyPayloadProvider {
-                                key: GregorianDateSymbolsV1Marker::KEY,
-                                data: date_symbols_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: TimeSymbolsV1Marker::KEY,
-                                data: time_symbols_data.clone().wrap_into_any_payload(),
-                            },
+                            AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
+                                date_symbols_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<TimeSymbolsV1Marker>(
+                                time_symbols_data.clone(), //
+                            ),
                             #[cfg(feature = "experimental")]
-                            AnyPayloadProvider {
-                                key: DateSkeletonPatternsV1Marker::KEY,
-                                data: skeleton_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: GregorianDateLengthsV1Marker::KEY,
-                                data: date_patterns_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: TimeLengthsV1Marker::KEY,
-                                data: time_patterns_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: WeekDataV1Marker::KEY,
-                                data: week_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: DecimalSymbolsV1Marker::KEY,
-                                data: decimal_data.clone().wrap_into_any_payload(),
-                            },
+                            AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
+                                skeleton_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
+                                date_patterns_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
+                                time_patterns_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
+                                week_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(
+                                decimal_data.clone(), //
+                            ),
                         ]);
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
                             &local_provider.as_downcasting(),
@@ -717,57 +710,43 @@ fn test_time_zone_patterns() {
                     data.time_h23_h24.long = new_pattern2;
                 });
                 let local_provider = MultiForkByKeyProvider::new(vec![
-                    AnyPayloadProvider {
-                        key: GregorianDateSymbolsV1Marker::KEY,
-                        data: symbols_data.clone().wrap_into_any_payload(),
-                    },
+                    AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
+                        symbols_data.clone(), //
+                    ),
                     #[cfg(feature = "experimental")]
-                    AnyPayloadProvider {
-                        key: DateSkeletonPatternsV1Marker::KEY,
-                        data: skeleton_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: GregorianDateLengthsV1Marker::KEY,
-                        data: date_patterns_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: TimeLengthsV1Marker::KEY,
-                        data: time_patterns_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: WeekDataV1Marker::KEY,
-                        data: week_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: DecimalSymbolsV1Marker::KEY,
-                        data: decimal_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: TimeZoneFormatsV1Marker::KEY,
-                        data: time_zone_formats_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: MetaZoneSpecificNamesShortV1Marker::KEY,
-                        data: meta_zone_specific_short_data
-                            .clone()
-                            .wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: MetaZoneSpecificNamesLongV1Marker::KEY,
-                        data: meta_zone_specific_long_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: MetaZoneGenericNamesShortV1Marker::KEY,
-                        data: meta_zone_generic_short_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: MetaZoneGenericNamesLongV1Marker::KEY,
-                        data: meta_zone_generic_long_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: ExemplarCitiesV1Marker::KEY,
-                        data: exemplar_cities_data.clone().wrap_into_any_payload(),
-                    },
+                    AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
+                        skeleton_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
+                        date_patterns_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
+                        time_patterns_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
+                        week_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(
+                        decimal_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<TimeZoneFormatsV1Marker>(
+                        time_zone_formats_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<MetaZoneSpecificNamesShortV1Marker>(
+                        meta_zone_specific_short_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<MetaZoneSpecificNamesLongV1Marker>(
+                        meta_zone_specific_long_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<MetaZoneGenericNamesShortV1Marker>(
+                        meta_zone_generic_short_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<MetaZoneGenericNamesLongV1Marker>(
+                        meta_zone_generic_long_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<ExemplarCitiesV1Marker>(
+                        exemplar_cities_data.clone(), //
+                    ),
                 ]);
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
