@@ -1,6 +1,7 @@
 import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
+import { ICU4XScriptWithExtensionsBorrowed } from "./ICU4XScriptWithExtensionsBorrowed.js"
 
 const ICU4XScriptWithExtensions_box_destroy_registry = new FinalizationRegistry(underlying => {
   wasm.ICU4XScriptWithExtensions_destroy(underlying);
@@ -39,5 +40,9 @@ export class ICU4XScriptWithExtensions {
 
   has_script(arg_code_point, arg_script) {
     return wasm.ICU4XScriptWithExtensions_has_script(this.underlying, arg_code_point, arg_script);
+  }
+
+  as_borrowed() {
+    return new ICU4XScriptWithExtensionsBorrowed(wasm.ICU4XScriptWithExtensions_as_borrowed(this.underlying), true, [this]);
   }
 }
