@@ -263,12 +263,14 @@ lazy_static::lazy_static! {
         // Not planned for 1.0
         "icu::properties::maps::CodePointMapDataBorrowed::iter_ranges",
         "icu::properties::sets::CodePointSetDataBorrowed::iter_ranges",
-        "icu::properties::script::ScriptWithExtensions::get_script_extensions_ranges",
+        "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_ranges",
         "icu::properties::maps::CodePointMapData::as_code_point_trie",
         "icu::properties::maps::CodePointMapData::from_code_point_trie",
+        "icu::properties::maps::CodePointMapData::to_code_point_trie",
         "icu::properties::sets::CodePointSetData::as_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::from_code_point_inversion_list",
         "icu::properties::sets::CodePointSetData::to_code_point_inversion_list",
+        "icu::properties::script::ScriptWithExtensionsBorrowed::get_script_extensions_set", // returns an inversion list
         "icu::collections::codepointinvlist",
         "icu::collections::codepointtrie",
         "icu::collections::char16trie",
@@ -397,11 +399,11 @@ lazy_static::lazy_static! {
         // Properties Rust internals
         "icu::properties::maps::CodePointMapData::as_borrowed",
         "icu::properties::maps::CodePointMapData::from_data",
-        "icu::properties::maps::CodePointMapData::to_code_point_trie",
         "icu::properties::maps::CodePointMapData::try_into_converted",
         "icu::properties::sets::CodePointSetData::as_borrowed",
         "icu::properties::sets::CodePointSetData::from_data",
         "icu::properties::sets::CodePointSetDataBorrowed::contains_u32",
+        "icu::properties::script::ScriptWithExtensions::from_data",
 
         // typedef
         "icu::properties::script::ScriptWithExtensionsResult",
