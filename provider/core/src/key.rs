@@ -167,7 +167,7 @@ pub struct DataKeyMetadata {
     /// Identifier for additional fallbacking data required for loading this marker.
     ///
     /// For more information, see `LocaleFallbackConfig::fallback_supplement_id`.
-    pub fallback_supplement_id: Option<TinyAsciiStr<8>>,
+    pub fallback_supplement_id: Option<TinyAsciiStr<4>>,
 }
 
 impl DataKeyMetadata {
@@ -184,7 +184,7 @@ impl DataKeyMetadata {
     pub const fn construct_internal(
         fallback_priority: FallbackPriority,
         extension_key: Option<icu_locid::extensions::unicode::Key>,
-        fallback_supplement_id: Option<TinyAsciiStr<8>>,
+        fallback_supplement_id: Option<TinyAsciiStr<4>>,
     ) -> Self {
         Self {
             fallback_priority,

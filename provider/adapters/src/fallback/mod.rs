@@ -162,7 +162,7 @@ pub struct LocaleFallbackConfig {
     /// For example, most data keys for collation add additional parent locales, such as
     /// "yue" to "zh-Hant", and data used for the `"-u-co"` extension keyword fallback.
     ///
-    /// Currently the only supported fallback supplement ID is `"collator"`, but more may be
+    /// Currently the only supported fallback supplement ID is `"coll"`, but more may be
     /// added in the future.
     ///
     /// # Examples
@@ -178,7 +178,7 @@ pub struct LocaleFallbackConfig {
     /// let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
-    /// config.fallback_supplement_id = Some(tinystr!(8, "collator"));
+    /// config.fallback_supplement_id = Some(tinystr!(4, "coll"));
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(
     ///     icu_locid::locale!("yue-HK")
@@ -195,7 +195,7 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
-    pub fallback_supplement_id: Option<TinyAsciiStr<8>>,
+    pub fallback_supplement_id: Option<TinyAsciiStr<4>>,
 }
 
 /// Entry type for locale fallbacking.
@@ -279,7 +279,7 @@ impl LocaleFallbacker {
 
     /// Creates the intermediate [`LocaleFallbackerWithConfig`] with configuration options.
     pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
-        const COLLATOR_SUPPLEMENT: TinyAsciiStr<8> = tinystr!(8, "collator");
+        const COLLATOR_SUPPLEMENT: TinyAsciiStr<4> = tinystr!(4, "coll");
         let supplement = match config.fallback_supplement_id {
             Some(COLLATOR_SUPPLEMENT) => self.collation_supplement.as_ref().map(|p| p.get()),
             _ => None,

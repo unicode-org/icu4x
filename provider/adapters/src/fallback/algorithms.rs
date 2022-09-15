@@ -213,7 +213,7 @@ mod tests {
         input: &'static str,
         requires_data: bool,
         extension_key: Option<Key>,
-        fallback_supplement_id: Option<TinyAsciiStr<8>>,
+        fallback_supplement_id: Option<TinyAsciiStr<4>>,
         // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
@@ -367,7 +367,7 @@ mod tests {
             input: "yue-HK",
             requires_data: true,
             extension_key: None,
-            fallback_supplement_id: Some(tinystr!(8, "collator")),
+            fallback_supplement_id: Some(tinystr!(4, "coll")),
             // TODO(#1964): add "zh" as a target.
             expected_language_chain: &["yue-HK", "yue", "zh-Hant"],
             expected_region_chain: &["yue-HK", "und-HK"],

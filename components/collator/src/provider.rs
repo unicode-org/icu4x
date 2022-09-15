@@ -65,7 +65,7 @@ fn data_ce_to_primary(data_ce: u64, c: char) -> u32 {
     "collator/data@1",
     extension_key = "co",
     fallback_by = "collation",
-    fallback_supplement = "collator"
+    fallback_supplement_id = "coll"
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -175,7 +175,7 @@ impl<'data> CollationDataV1<'data> {
     "collator/dia@1",
     extension_key = "co",
     fallback_by = "collation",
-    fallback_supplement = "collator"
+    fallback_supplement_id = "coll"
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -207,7 +207,7 @@ pub struct CollationJamoV1<'data> {
     "collator/reord@1",
     extension_key = "co",
     fallback_by = "collation",
-    fallback_supplement = "collator"
+    fallback_supplement_id = "coll"
 ))]
 #[derive(Debug, PartialEq, Clone)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
@@ -291,7 +291,7 @@ impl<'data> CollationReorderingV1<'data> {
     "collator/meta@1",
     extension_key = "co",
     fallback_by = "collation",
-    fallback_supplement = "collator"
+    fallback_supplement_id = "coll"
 ))]
 #[derive(Debug, PartialEq, Clone, Copy)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize, databake::Bake), databake(path = icu_collator::provider))]
