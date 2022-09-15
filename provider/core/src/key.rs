@@ -123,6 +123,8 @@ impl Default for FallbackPriority {
 /// The string path of a data key. For example, "foo@1"
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DataKeyPath {
+    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
+    // in a compiled binary.
     tagged: &'static str,
 }
 
@@ -135,13 +137,11 @@ impl DataKeyPath {
         /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
         /// ```
         const _: () = ();
-        // This becomes const in 1.64
-        // Safe due to invariant that self.path is tagged correctly
-        let s = self.tagged;
         unsafe {
+            // Safe due to invariant that self.path is tagged correctly
             core::str::from_utf8_unchecked(core::mem::transmute((
-                s.as_ptr().add(leading_tag!().len()),
-                s.len() - trailing_tag!().len() - leading_tag!().len(),
+                self.tagged.as_ptr().add(leading_tag!().len()),
+                self.tagged.len() - trailing_tag!().len() - leading_tag!().len(),
             )))
         }
     }
