@@ -78,6 +78,13 @@ class ICU4XDataProvider {
   diplomat::result<std::monostate, ICU4XError> fork_by_key(ICU4XDataProvider& other);
 
   /**
+   * Same as `fork_by_key` but forks by locale instead of key.
+   * 
+   * See the [Rust documentation for `MissingLocalePredicate`](https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html) for more information.
+   */
+  diplomat::result<std::monostate, ICU4XError> fork_by_locale(ICU4XDataProvider& other);
+
+  /**
    * Enables locale fallbacking for data requests made to this provider.
    * 
    * Note that the test provider (from `create_test`) already has fallbacking enabled.
@@ -136,6 +143,16 @@ inline ICU4XDataProvider ICU4XDataProvider::create_empty() {
 }
 inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::fork_by_key(ICU4XDataProvider& other) {
   auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_fork_by_key(this->inner.get(), other.AsFFIMut());
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::monostate, ICU4XError> ICU4XDataProvider::fork_by_locale(ICU4XDataProvider& other) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDataProvider_fork_by_locale(this->inner.get(), other.AsFFIMut());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());

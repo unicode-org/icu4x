@@ -35,6 +35,7 @@ pub mod ffi {
     use alloc::boxed::Box;
     use diplomat_runtime::DiplomatResult;
     use icu_provider_adapters::fallback::LocaleFallbackProvider;
+    use icu_provider_adapters::fork::predicates::MissingLocalePredicate;
 
     #[diplomat::opaque]
     /// An ICU4X data provider, capable of loading ICU4X data keys from some source.
@@ -178,6 +179,11 @@ pub mod ffi {
         /// both providers originate from the same constructor, such as `create_from_byte_slice`
         /// or `create_fs`. If the condition is not upheld, a runtime error occurs.
         #[diplomat::rust_link(icu_provider_adapters::fork::ForkByKeyProvider, Typedef)]
+        #[diplomat::rust_link(
+            icu_provider_adapters::fork::predicates::MissingDataKeyPredicate,
+            Struct,
+            hidden
+        )]
         pub fn fork_by_key(
             &mut self,
             other: &mut ICU4XDataProvider,
@@ -203,6 +209,52 @@ pub mod ffi {
                     let e = ICU4XError::DataMismatchedAnyBufferError;
                     crate::errors::log_conversion(
                         &"fork_by_key must be passed the same type of provider (Any or Buffer)",
+                        e,
+                    );
+                    Err(e)
+                }
+            }
+            .into()
+        }
+
+        /// Same as `fork_by_key` but forks by locale instead of key.
+        #[diplomat::rust_link(
+            icu_provider_adapters::fork::predicates::MissingLocalePredicate,
+            Struct
+        )]
+        pub fn fork_by_locale(
+            &mut self,
+            other: &mut ICU4XDataProvider,
+        ) -> DiplomatResult<(), ICU4XError> {
+            let a = core::mem::take(&mut self.0);
+            let b = core::mem::take(&mut other.0);
+            match (a, b) {
+                #[cfg(feature = "any_provider")]
+                (ICU4XDataProviderInner::Any(a), ICU4XDataProviderInner::Any(b)) => {
+                    self.0 = ICU4XDataProviderInner::Any(Box::from(
+                        icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate(
+                            a,
+                            b,
+                            MissingLocalePredicate,
+                        ),
+                    ));
+                    Ok(())
+                }
+                #[cfg(feature = "buffer_provider")]
+                (ICU4XDataProviderInner::Buffer(a), ICU4XDataProviderInner::Buffer(b)) => {
+                    self.0 = ICU4XDataProviderInner::Buffer(Box::from(
+                        icu_provider_adapters::fork::ForkByErrorProvider::new_with_predicate(
+                            a,
+                            b,
+                            MissingLocalePredicate,
+                        ),
+                    ));
+                    Ok(())
+                }
+                _ => {
+                    let e = ICU4XError::DataMismatchedAnyBufferError;
+                    crate::errors::log_conversion(
+                        &"fork_by_locale must be passed the same type of provider (Any or Buffer)",
                         e,
                     );
                     Err(e)

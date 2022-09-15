@@ -59,6 +59,13 @@
         See the `Rust documentation for ForkByKeyProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/type.ForkByKeyProvider.html>`__ for more information.
 
 
+    .. cpp:function:: diplomat::result<std::monostate, ICU4XError> fork_by_locale(ICU4XDataProvider& other)
+
+        Same as ``fork_by_key`` but forks by locale instead of key.
+
+        See the `Rust documentation for MissingLocalePredicate <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html>`__ for more information.
+
+
     .. cpp:function:: diplomat::result<std::monostate, ICU4XError> enable_locale_fallback()
 
         Enables locale fallbacking for data requests made to this provider.

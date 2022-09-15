@@ -32,6 +32,8 @@ ICU4XDataProvider* ICU4XDataProvider_create_empty();
 
 diplomat_result_void_ICU4XError ICU4XDataProvider_fork_by_key(ICU4XDataProvider* self, ICU4XDataProvider* other);
 
+diplomat_result_void_ICU4XError ICU4XDataProvider_fork_by_locale(ICU4XDataProvider* self, ICU4XDataProvider* other);
+
 diplomat_result_void_ICU4XError ICU4XDataProvider_enable_locale_fallback(ICU4XDataProvider* self);
 
 diplomat_result_void_ICU4XError ICU4XDataProvider_enable_locale_fallback_with(ICU4XDataProvider* self, const ICU4XLocaleFallbacker* fallbacker);

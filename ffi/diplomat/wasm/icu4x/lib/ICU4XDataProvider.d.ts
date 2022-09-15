@@ -59,6 +59,15 @@ export class ICU4XDataProvider {
 
   /**
 
+   * Same as `fork_by_key` but forks by locale instead of key.
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/fork/predicates/struct.MissingLocalePredicate.html Rust documentation for `MissingLocalePredicate`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  fork_by_locale(other: ICU4XDataProvider): void | never;
+
+  /**
+
    * Enables locale fallbacking for data requests made to this provider.
 
    * Note that the test provider (from `create_test`) already has fallbacking enabled.
