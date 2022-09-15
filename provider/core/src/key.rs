@@ -325,34 +325,6 @@ impl DataKey {
         }
     }
 
-    /// Constructs a new [`DataKey`] at runtime from a path string.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_provider::DataKey;
-    ///
-    /// const const_key: DataKey = icu_provider::data_key!("foo/bar@1");
-    /// let runtime_key = DataKey::try_new("foo/bar@1", Default::default()).unwrap();
-    ///
-    /// assert_eq!(const_key, runtime_key);
-    /// assert_eq!(const_key.path(), runtime_key.path());
-    /// assert_eq!(const_key.hashed(), runtime_key.hashed());
-    /// ```
-    #[doc(hidden)]
-    pub fn try_new(
-        path: &'static str,
-        metadata: DataKeyMetadata,
-    ) -> Result<Self, (&'static str, usize)> {
-        Self::validate_path_manual_slice(path, 0, path.len())?;
-        let path = DataKeyPath(DataKeyPathInner::Plain(path));
-        Ok(Self {
-            path,
-            hash: DataKeyHash::compute_from_path(&path.0),
-            metadata,
-        })
-    }
-
     #[doc(hidden)]
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
@@ -389,11 +361,11 @@ impl DataKey {
             Err(e) => return Err(e),
         };
 
-        let path = DataKeyPath(DataKeyPathInner::Tagged(path));
+        let path = DataKeyPath { tagged: path };
 
         Ok(Self {
             path,
-            hash: DataKeyHash::compute_from_path(&path.0),
+            hash: DataKeyHash::compute_from_path(&path),
             metadata,
         })
     }
