@@ -76,7 +76,7 @@ mod tests;
 ///     None
 /// );
 ///
-/// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1");
+/// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1[R][u-ca]");
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().fallback_priority,
 ///     icu_provider::FallbackPriority::Region
