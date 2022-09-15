@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663201289538,
+  "lastUpdate": 1663275914034,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -70031,6 +70031,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5160,
             "range": "± 54",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "srl295@gmail.com",
+            "name": "Steven R. Loomis",
+            "username": "srl295"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e88803860b3c07db8bc60c8f8118ca1ad652256b",
+          "message": "chore(license): fix license in collections/Cargo.toml, others (#2562)\n\n- also the two fuzz components didn’t have a license\r\n\r\nFixes #2559",
+          "timestamp": "2022-09-15T20:51:19Z",
+          "tree_id": "ecc6e31febe8380c6d0856080fe45de966135f1f",
+          "url": "https://github.com/unicode-org/icu4x/commit/e88803860b3c07db8bc60c8f8118ca1ad652256b"
+        },
+        "date": 1663275856313,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 90506,
+            "range": "± 4875",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 150552,
+            "range": "± 10034",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 80530,
+            "range": "± 7383",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 93535,
+            "range": "± 5559",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 84138,
+            "range": "± 9908",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 87370,
+            "range": "± 8065",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 126421,
+            "range": "± 10497",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 139747,
+            "range": "± 12095",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 145665,
+            "range": "± 9687",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 158315,
+            "range": "± 11588",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5802,
+            "range": "± 579",
             "unit": "ns/iter"
           }
         ]
