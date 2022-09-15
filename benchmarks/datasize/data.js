@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663280917579,
+  "lastUpdate": 1663281124482,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27233,6 +27233,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ce24346f1a1a64e615b17ce508c7e2f10a3706f2"
         },
         "date": 1663280865742,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "add4a2b9256ab5905bde14902708b5191fcc2f7c",
+          "message": "Add some useful data provider impls; refactor AnyPayloadProvider (#2564)",
+          "timestamp": "2022-09-15T15:29:36-07:00",
+          "tree_id": "4e3c5e73b02c0418c2622cb286c56522044b4ac8",
+          "url": "https://github.com/unicode-org/icu4x/commit/add4a2b9256ab5905bde14902708b5191fcc2f7c"
+        },
+        "date": 1663281062028,
         "tool": "ndjson",
         "benches": [
           {
