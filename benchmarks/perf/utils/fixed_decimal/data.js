@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663281832469,
+  "lastUpdate": 1663286355658,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -51149,6 +51149,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 89,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "db24f67aea54b9360a7004295fa2ec9201a39686",
+          "message": "Rename DataKey methods and return DataKeyPath (#2565)",
+          "timestamp": "2022-09-15T16:45:31-07:00",
+          "tree_id": "5d5e977e99d6455444ab79101a680cccd53555d2",
+          "url": "https://github.com/unicode-org/icu4x/commit/db24f67aea54b9360a7004295fa2ec9201a39686"
+        },
+        "date": 1663286294752,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 114612,
+            "range": "± 5795",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24787,
+            "range": "± 838",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 68657,
+            "range": "± 6141",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 205,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 78,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
