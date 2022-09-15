@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663097508930,
+  "lastUpdate": 1663201287979,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -50909,6 +50909,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 92,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "efcc000be1f2ce08111b72760d6e6711cea29d4b",
+          "message": "Better API for ScriptWithExtensions (#2555)",
+          "timestamp": "2022-09-14T17:09:18-07:00",
+          "tree_id": "7923a536fc3304ada17fcd2b70a884823277d1ba",
+          "url": "https://github.com/unicode-org/icu4x/commit/efcc000be1f2ce08111b72760d6e6711cea29d4b"
+        },
+        "date": 1663201236746,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112366,
+            "range": "± 427",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24110,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63052,
+            "range": "± 533",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 184,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
