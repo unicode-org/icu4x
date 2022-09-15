@@ -49,13 +49,12 @@ macro_rules! tagged {
 pub struct DataKeyHash([u8; 4]);
 
 impl DataKeyHash {
-    const fn compute_from_path(path: &DataKeyPathInner) -> Self {
-        let hash = match path {
-            DataKeyPathInner::Tagged(s) => {
-                helpers::fxhash_32(s.as_bytes(), leading_tag!().len(), trailing_tag!().len())
-            }
-            DataKeyPathInner::Plain(s) => helpers::fxhash_32(s.as_bytes(), 0, 0),
-        };
+    const fn compute_from_path(path: &DataKeyPath) -> Self {
+        let hash = helpers::fxhash_32(
+            path.tagged.as_bytes(),
+            leading_tag!().len(),
+            trailing_tag!().len(),
+        );
         Self(hash.to_le_bytes())
     }
 
@@ -123,13 +122,28 @@ impl Default for FallbackPriority {
 
 /// The string path of a data key. For example, "foo@1"
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
-pub struct DataKeyPath(DataKeyPathInner);
+pub struct DataKeyPath {
+    tagged: &'static str,
+}
 
 impl DataKeyPath {
     /// Gets the path as a static string slice.
     #[inline]
     pub const fn get(&self) -> &'static str {
-        self.0.get()
+        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
+        /// ```compile_fail
+        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
+        /// ```
+        const _: () = ();
+        // This becomes const in 1.64
+        // Safe due to invariant that self.path is tagged correctly
+        let s = self.tagged;
+        unsafe {
+            core::str::from_utf8_unchecked(core::mem::transmute((
+                s.as_ptr().add(leading_tag!().len()),
+                s.len() - trailing_tag!().len() - leading_tag!().len(),
+            )))
+        }
     }
 }
 
@@ -137,7 +151,7 @@ impl Deref for DataKeyPath {
     type Target = str;
     #[inline]
     fn deref(&self) -> &Self::Target {
-        self.0.get()
+        self.get()
     }
 }
 
@@ -177,59 +191,6 @@ impl Default for DataKeyMetadata {
     #[inline]
     fn default() -> Self {
         Self::const_default()
-    }
-}
-
-#[derive(Debug, Copy, Clone)]
-enum DataKeyPathInner {
-    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
-    // in a compiled binary.
-    Tagged(&'static str),
-    // For runtime-created data keys, we don't include the tags.
-    Plain(&'static str),
-}
-
-impl PartialEq for DataKeyPathInner {
-    #[inline]
-    fn eq(&self, other: &Self) -> bool {
-        self.get().eq(other.get())
-    }
-}
-
-impl Eq for DataKeyPathInner {}
-
-impl PartialOrd for DataKeyPathInner {
-    #[inline]
-    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
-        Some(self.cmp(other))
-    }
-}
-
-impl Ord for DataKeyPathInner {
-    #[inline]
-    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
-        self.get().cmp(other.get())
-    }
-}
-
-impl DataKeyPathInner {
-    pub const fn get(&self) -> &'static str {
-        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-        /// ```compile_fail
-        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
-        /// ```
-        const _: () = ();
-        match self {
-            DataKeyPathInner::Plain(s) => s,
-            DataKeyPathInner::Tagged(s) => unsafe {
-                // This becomes const in 1.64
-                // Safe due to invariant that self.path is tagged correctly
-                core::str::from_utf8_unchecked(core::mem::transmute((
-                    s.as_ptr().add(leading_tag!().len()),
-                    s.len() - trailing_tag!().len() - leading_tag!().len(),
-                )))
-            },
-        }
     }
 }
 
@@ -353,7 +314,7 @@ impl DataKey {
     pub const fn from_path_and_metadata(path: DataKeyPath, metadata: DataKeyMetadata) -> Self {
         Self {
             path,
-            hash: DataKeyHash::compute_from_path(&path.0),
+            hash: DataKeyHash::compute_from_path(&path),
             metadata,
         }
     }
@@ -418,15 +379,15 @@ impl DataKey {
                 (At | Version, Some(b'0'..=b'9')) => Version,
                 // One of these cases will be hit at the latest when i == end, so the loop converges.
                 (Version | MetaAfter, None) => {
-                    let path = DataKeyPath(DataKeyPathInner::Tagged(path));
+                    let path = DataKeyPath { tagged: path };
                     return Ok(Self {
                         path,
-                        hash: DataKeyHash::compute_from_path(&path.0),
+                        hash: DataKeyHash::compute_from_path(&path),
                         metadata: DataKeyMetadata {
                             fallback_priority,
                             extension_key,
                         },
-                    })
+                    });
                 }
 
                 (Version | MetaAfter, Some(b'[')) => MetaOpen,
