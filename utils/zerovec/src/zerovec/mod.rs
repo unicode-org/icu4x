@@ -13,6 +13,7 @@ mod slice;
 pub use slice::ZeroSlice;
 
 use crate::ule::*;
+use alloc::borrow::Cow;
 use alloc::vec::Vec;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
@@ -216,6 +217,23 @@ where
     /// ```
     pub const fn new() -> Self {
         Self::Borrowed(&[])
+    }
+
+    /// Creates a new owned `ZeroVec` using an existing
+    /// allocated backing buffer
+    ///
+    /// If you have a slice of `&[T]`s, prefer using
+    /// [`Self::alloc_from_slice()`].
+    #[inline]
+    pub const fn new_owned(vec: Vec<T::ULE>) -> Self {
+        Self::Owned(vec)
+    }
+
+    /// Creates a new borrowed `ZeroVec` using an existing
+    /// backing buffer
+    #[inline]
+    pub const fn new_borrowed(slice: &'a [T::ULE]) -> Self {
+        Self::Borrowed(slice)
     }
 
     /// Creates a new, owned, empty `ZeroVec<T>`, with a certain capacity pre-allocated.
@@ -437,6 +455,26 @@ where
             }
         }
     }
+
+    /// Check if this type is fully owned
+    #[inline]
+    pub fn is_owned(&self) -> bool {
+        match self {
+            Self::Owned(_) => true,
+            _ => false,
+        }
+    }
+
+    /// If this is a borrowed ZeroVec, return it as a slice that covers
+    /// its lifetime parameter
+    #[inline]
+    pub fn as_maybe_borrowed(&self) -> Option<&'a ZeroSlice<T>> {
+        if let ZeroVec::Borrowed(b) = *self {
+            Some(ZeroSlice::from_ule_slice(b))
+        } else {
+            None
+        }
+    }
 }
 
 impl<'a> ZeroVec<'a, u8> {
@@ -485,7 +523,7 @@ impl<'a> ZeroVec<'a, u8> {
     }
 }
 
-impl<T> ZeroVec<'_, T>
+impl<'a, T> ZeroVec<'a, T>
 where
     T: AsULE,
 {
@@ -583,7 +621,7 @@ where
     }
 }
 
-impl<T> ZeroVec<'_, T>
+impl<'a, T> ZeroVec<'a, T>
 where
     T: AsULE,
 {
@@ -605,7 +643,7 @@ where
     /// zerovec.for_each_mut(|item| *item += 1);
     ///
     /// assert_eq!(zerovec.to_vec(), &[212, 282, 422, 462]);
-    /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
+    /// assert!(zerovec.is_owned());
     /// ```
     #[inline]
     pub fn for_each_mut(&mut self, mut f: impl FnMut(&mut T)) {
@@ -689,7 +727,7 @@ where
     /// zerovec.to_mut().push(12_u16.to_unaligned());
     /// assert!(matches!(zerovec, ZeroVec::Owned(_)));
     /// ```
-    pub fn to_mut(&mut self) -> &mut Vec<T::ULE> {
+    fn to_mut(&mut self) -> &mut Vec<T::ULE> {
         match self {
             ZeroVec::Owned(ref mut vec) => vec,
             ZeroVec::Borrowed(_) => {
@@ -702,9 +740,40 @@ where
         }
     }
 
+    /// Allows the ZeroVec to be mutated by converting it to an owned variant, and producing
+    /// a mutable vector of ULEs.
+    ///
+    /// # Example
+    ///
+    /// ```rust,ignore
+    /// # use crate::zerovec::ule::AsULE;
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// assert!(!zerovec.is_owned());
+    ///
+    /// zerovec.with_mut(|v| v.push(12_u16.to_unaligned()));
+    /// assert!(zerovec.is_owned());
+    /// ```
+    pub fn with_mut<R>(&mut self, f: impl FnOnce(&mut Vec<T::ULE>) -> R) -> R {
+        let m = self.to_mut();
+        f(m)
+    }
+
     /// Remove all elements from this ZeroVec and reset it to an empty borrowed state.
     pub fn clear(&mut self) {
         *self = Self::Borrowed(&[])
+    }
+
+    /// Converts the type into a `Cow<'a, [T::ULE]>`, which is
+    /// the logical equivalent of this type's internal representation
+    #[inline]
+    pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
+        match self {
+            Self::Owned(v) => Cow::Owned(v),
+            Self::Borrowed(v) => Cow::Borrowed(v),
+        }
     }
 }
 
