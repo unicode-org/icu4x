@@ -163,6 +163,10 @@ pub struct DataKeyMetadata {
     pub fallback_priority: FallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
     pub extension_key: Option<icu_locid::extensions::unicode::Key>,
+    /// [`DataKey`] path for additional fallbacking data required for loading this marker.
+    ///
+    /// For more information, see `LocaleFallbackConfig::fallback_supplement_key`.
+    pub fallback_supplement_key_path: Option<DataKeyPath>,
 }
 
 impl DataKeyMetadata {
@@ -171,18 +175,20 @@ impl DataKeyMetadata {
         Self {
             fallback_priority: FallbackPriority::const_default(),
             extension_key: None,
+            fallback_supplement_key_path: None,
         }
     }
 
-    /// Create a new [`DataKeyMetadata`] with the specified options.
-    pub const fn from_fallback_priority_and_extension_key(
+    #[doc(hidden)]
+    pub const fn construct_internal(
         fallback_priority: FallbackPriority,
         extension_key: Option<icu_locid::extensions::unicode::Key>,
+        fallback_supplement_key_path: Option<DataKeyPath>,
     ) -> Self {
-        // Note: We need this function because the struct is non-exhaustive.
         Self {
             fallback_priority,
             extension_key,
+            fallback_supplement_key_path,
         }
     }
 }
@@ -319,11 +325,42 @@ impl DataKey {
         }
     }
 
+    /// Constructs a new [`DataKey`] at runtime from a path string.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::DataKey;
+    ///
+    /// const const_key: DataKey = icu_provider::data_key!("foo/bar@1");
+    /// let runtime_key = DataKey::try_new("foo/bar@1", Default::default()).unwrap();
+    ///
+    /// assert_eq!(const_key, runtime_key);
+    /// assert_eq!(const_key.path(), runtime_key.path());
+    /// assert_eq!(const_key.hashed(), runtime_key.hashed());
+    /// ```
+    #[doc(hidden)]
+    pub fn try_new(
+        path: &'static str,
+        metadata: DataKeyMetadata,
+    ) -> Result<Self, (&'static str, usize)> {
+        Self::validate_path_manual_slice(path, 0, path.len())?;
+        let path = DataKeyPath(DataKeyPathInner::Plain(path));
+        Ok(Self {
+            path,
+            hash: DataKeyHash::compute_from_path(&path.0),
+            metadata,
+        })
+    }
+
     #[doc(hidden)]
     // Error is a str of the expected character class and the index where it wasn't encountered
     // The indexing operations in this function have been reviewed in detail and won't panic.
     #[allow(clippy::indexing_slicing)]
-    pub const fn construct_internal(path: &'static str) -> Result<Self, (&'static str, usize)> {
+    pub const fn construct_internal(
+        path: &'static str,
+        metadata: DataKeyMetadata,
+    ) -> Result<Self, (&'static str, usize)> {
         if path.len() < leading_tag!().len() + trailing_tag!().len() {
             return Err(("tag", 0));
         }
@@ -347,27 +384,40 @@ impl DataKey {
             i += 1;
         }
 
+        match Self::validate_path_manual_slice(path, start, end) {
+            Ok(()) => (),
+            Err(e) => return Err(e),
+        };
+
+        let path = DataKeyPath(DataKeyPathInner::Tagged(path));
+
+        Ok(Self {
+            path,
+            hash: DataKeyHash::compute_from_path(&path.0),
+            metadata,
+        })
+    }
+
+    const fn validate_path_manual_slice(
+        path: &'static str,
+        start: usize,
+        end: usize,
+    ) -> Result<(), (&'static str, usize)> {
+        debug_assert!(start <= end);
+        debug_assert!(end <= path.len());
         // Regex: [a-zA-Z0-9_][a-zA-Z0-9_/]*@[0-9]+
         enum State {
             Empty,
             Body,
             At,
             Version,
-            MetaOpen,
-            MetaU,
-            MetaUDash,
-            MetaUDashB,
-            MetaClose,
-            MetaAfter,
         }
         use State::*;
-        i = start;
+        let mut i = start;
         let mut state = Empty;
-        let mut fallback_priority = FallbackPriority::const_default();
-        let mut extension_key_first_byte = b'\0';
-        let mut extension_key = None;
         loop {
             let byte = if i < end {
+                #[allow(clippy::indexing_slicing)] // protected by debug assertion
                 Some(path.as_bytes()[i])
             } else {
                 None
@@ -378,55 +428,14 @@ impl DataKey {
                 (Body, Some(b'@')) => At,
                 (At | Version, Some(b'0'..=b'9')) => Version,
                 // One of these cases will be hit at the latest when i == end, so the loop converges.
-                (Version | MetaAfter, None) => {
-                    let path = DataKeyPath { tagged: path };
-                    return Ok(Self {
-                        path,
-                        hash: DataKeyHash::compute_from_path(&path),
-                        metadata: DataKeyMetadata {
-                            fallback_priority,
-                            extension_key,
-                        },
-                    });
+                (Version, None) => {
+                    return Ok(());
                 }
-
-                (Version | MetaAfter, Some(b'[')) => MetaOpen,
-                (MetaOpen, Some(b'R')) => {
-                    fallback_priority = FallbackPriority::Region;
-                    MetaClose
-                }
-                (MetaOpen, Some(b'C')) => {
-                    fallback_priority = FallbackPriority::Collation;
-                    MetaClose
-                }
-                (MetaOpen, Some(b'u')) => MetaU,
-                (MetaU, Some(b'-')) => MetaUDash,
-                (MetaUDash, Some(b @ b'a'..=b'z')) => {
-                    extension_key_first_byte = b;
-                    MetaUDashB
-                }
-                (MetaUDashB, Some(b @ b'a'..=b'z')) => {
-                    extension_key = match icu_locid::extensions::unicode::Key::from_bytes(&[
-                        extension_key_first_byte,
-                        b,
-                    ]) {
-                        Ok(v) => Some(v),
-                        Err(_) => unreachable!(),
-                    };
-                    MetaClose
-                }
-                (MetaClose, Some(b']')) => MetaAfter,
 
                 (Empty, _) => return Err(("[a-zA-Z0-9_]", i)),
                 (Body, _) => return Err(("[a-zA-z0-9_/@]", i)),
                 (At, _) => return Err(("[0-9]", i)),
-                (Version, _) => return Err(("[0-9\\[]", i)),
-                (MetaOpen, _) => return Err(("[uR]", i)),
-                (MetaU, _) => return Err(("[-]", i)),
-                (MetaUDash, _) => return Err(("[a-z]", i)),
-                (MetaUDashB, _) => return Err(("[a-z]", i)),
-                (MetaClose, _) => return Err(("[\\]]", i)),
-                (MetaAfter, _) => return Err(("[\\[]", i)),
+                (Version, _) => return Err(("[0-9]", i)),
             };
             i += 1;
         }
@@ -477,9 +486,12 @@ impl DataKey {
 #[macro_export]
 macro_rules! data_key {
     ($path:expr) => {{
+        $crate::data_key!($path, $crate::DataKeyMetadata::const_default())
+    }};
+    ($path:expr, $metadata:expr) => {{
         // Force the DataKey into a const context
         const RESOURCE_KEY_MACRO_CONST: $crate::DataKey = {
-            match $crate::DataKey::construct_internal($crate::tagged!($path)) {
+            match $crate::DataKey::construct_internal($crate::tagged!($path), $metadata) {
                 Ok(v) => v,
                 #[allow(clippy::panic)] // Const context
                 Err(_) => panic!(concat!("Invalid resource key: ", $path)),
@@ -524,19 +536,16 @@ writeable::impl_display_with_writeable!(DataKey);
 #[test]
 fn test_path_syntax() {
     // Valid keys:
-    DataKey::construct_internal(tagged!("hello/world@1")).unwrap();
-    DataKey::construct_internal(tagged!("hello/world/foo@1")).unwrap();
-    DataKey::construct_internal(tagged!("hello/world@999")).unwrap();
-    DataKey::construct_internal(tagged!("hello_world/foo@1")).unwrap();
-    DataKey::construct_internal(tagged!("hello_458/world@1")).unwrap();
-    DataKey::construct_internal(tagged!("hello_world@1")).unwrap();
-    DataKey::construct_internal(tagged!("foo@1[R]")).unwrap();
-    DataKey::construct_internal(tagged!("foo@1[u-ca]")).unwrap();
-    DataKey::construct_internal(tagged!("foo@1[R][u-ca]")).unwrap();
+    DataKey::construct_internal(tagged!("hello/world@1"), Default::default()).unwrap();
+    DataKey::construct_internal(tagged!("hello/world/foo@1"), Default::default()).unwrap();
+    DataKey::construct_internal(tagged!("hello/world@999"), Default::default()).unwrap();
+    DataKey::construct_internal(tagged!("hello_world/foo@1"), Default::default()).unwrap();
+    DataKey::construct_internal(tagged!("hello_458/world@1"), Default::default()).unwrap();
+    DataKey::construct_internal(tagged!("hello_world@1"), Default::default()).unwrap();
 
     // No version:
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world")),
+        DataKey::construct_internal(tagged!("hello/world"), Default::default()),
         Err((
             "[a-zA-z0-9_/@]",
             concat!(leading_tag!(), "hello/world").len()
@@ -544,91 +553,75 @@ fn test_path_syntax() {
     );
 
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@")),
+        DataKey::construct_internal(tagged!("hello/world@"), Default::default()),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@foo")),
+        DataKey::construct_internal(tagged!("hello/world@foo"), Default::default()),
         Err(("[0-9]", concat!(leading_tag!(), "hello/world@").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1foo")),
-        Err(("[0-9\\[]", concat!(leading_tag!(), "hello/world@1").len()))
+        DataKey::construct_internal(tagged!("hello/world@1foo"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "hello/world@1").len()))
+    );
+
+    // Meta no longer accepted:
+    assert_eq!(
+        DataKey::construct_internal(tagged!("foo@1[R]"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+    );
+    assert_eq!(
+        DataKey::construct_internal(tagged!("foo@1[u-ca]"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
+    );
+    assert_eq!(
+        DataKey::construct_internal(tagged!("foo@1[R][u-ca]"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
     );
 
     // Invalid meta:
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[U]")),
-        Err(("[uR]", concat!(leading_tag!(), "foo@1[").len()))
+        DataKey::construct_internal(tagged!("foo@1[U]"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[uca]")),
-        Err(("[-]", concat!(leading_tag!(), "foo@1[u").len()))
+        DataKey::construct_internal(tagged!("foo@1[uca]"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[u-")),
-        Err(("[a-z]", concat!(leading_tag!(), "foo@1[u-").len()))
+        DataKey::construct_internal(tagged!("foo@1[u-"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[u-caa]")),
-        Err(("[\\]]", concat!(leading_tag!(), "foo@1[u-ca").len()))
+        DataKey::construct_internal(tagged!("foo@1[u-caa]"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("foo@1[R")),
-        Err(("[\\]]", concat!(leading_tag!(), "foo@1[u").len()))
+        DataKey::construct_internal(tagged!("foo@1[R"), Default::default()),
+        Err(("[0-9]", concat!(leading_tag!(), "foo@1").len()))
     );
 
     // Invalid characters:
     assert_eq!(
-        DataKey::construct_internal(tagged!("你好/世界@1")),
+        DataKey::construct_internal(tagged!("你好/世界@1"), Default::default()),
         Err(("[a-zA-Z0-9_]", leading_tag!().len()))
     );
 
     // Invalid tag:
     assert_eq!(
-        DataKey::construct_internal(concat!("hello/world@1", trailing_tag!()),),
+        DataKey::construct_internal(
+            concat!("hello/world@1", trailing_tag!()),
+            Default::default()
+        ),
         Err(("tag", 0))
     );
     assert_eq!(
-        DataKey::construct_internal(concat!(leading_tag!(), "hello/world@1"),),
+        DataKey::construct_internal(concat!(leading_tag!(), "hello/world@1"), Default::default()),
         Err(("tag", concat!(leading_tag!(), "hello/world@1").len()))
     );
     assert_eq!(
-        DataKey::construct_internal("hello/world@1"),
+        DataKey::construct_internal("hello/world@1", Default::default()),
         Err(("tag", 0))
-    );
-}
-
-#[test]
-fn test_metadata_parsing() {
-    use icu_locid::extensions_unicode_key as key;
-    assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1")).map(|k| k.metadata()),
-        Ok(DataKeyMetadata {
-            fallback_priority: FallbackPriority::Language,
-            extension_key: None
-        })
-    );
-    assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.metadata()),
-        Ok(DataKeyMetadata {
-            fallback_priority: FallbackPriority::Region,
-            extension_key: None
-        })
-    );
-    assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.metadata()),
-        Ok(DataKeyMetadata {
-            fallback_priority: FallbackPriority::Language,
-            extension_key: Some(key!("ca"))
-        })
-    );
-    assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[R][u-ca]")).map(|k| k.metadata()),
-        Ok(DataKeyMetadata {
-            fallback_priority: FallbackPriority::Region,
-            extension_key: Some(key!("ca"))
-        })
     );
 }
 
@@ -655,5 +648,43 @@ fn test_key_to_string() {
     ] {
         assert_eq!(cas.expected, cas.key.to_string());
         writeable::assert_writeable_eq!(&cas.key, cas.expected);
+    }
+}
+
+#[test]
+fn test_try_new_and_key_hash() {
+    struct KeyTestCase {
+        pub key: DataKey,
+        pub hash: DataKeyHash,
+        pub path: &'static str,
+    }
+
+    for cas in [
+        KeyTestCase {
+            key: data_key!("core/cardinal@1"),
+            hash: DataKeyHash([172, 207, 42, 236]),
+            path: "core/cardinal@1",
+        },
+        KeyTestCase {
+            key: data_key!("core/maxlengthsubcatg@1"),
+            hash: DataKeyHash([193, 6, 79, 61]),
+            path: "core/maxlengthsubcatg@1",
+        },
+        KeyTestCase {
+            key: data_key!("core/cardinal@65535"),
+            hash: DataKeyHash([176, 131, 182, 223]),
+            path: "core/cardinal@65535",
+        },
+    ] {
+        let runtime_key = DataKey::try_new(cas.path, Default::default()).expect(cas.path);
+        assert_eq!(cas.key, runtime_key, "{}", cas.path);
+        assert_eq!(
+            cas.hash,
+            DataKeyHash::compute_from_path(&DataKeyPathInner::Plain(cas.path))
+        );
+        assert_eq!(cas.hash, runtime_key.hashed(), "{}", cas.path);
+        assert_eq!(cas.hash, cas.key.hashed(), "{}", cas.path);
+        assert_eq!(cas.path, &*runtime_key.path(), "{}", cas.path);
+        assert_eq!(cas.path, &*cas.key.path(), "{}", cas.path);
     }
 }

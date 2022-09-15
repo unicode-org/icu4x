@@ -7,7 +7,7 @@ use crate::{
     skeleton::{reference::Skeleton, SkeletonError},
 };
 use core::convert::TryFrom;
-use icu_provider::{yoke, zerofrom};
+use icu_provider::{yoke, zerofrom, DataKeyMetadata};
 use litemap::LiteMap;
 
 // Manually implement DataMarker so that we can keep it in the proper experimental feature
@@ -36,7 +36,14 @@ impl icu_provider::DataMarker for DateSkeletonPatternsV1Marker {
 }
 #[cfg(feature = "experimental")]
 impl icu_provider::KeyedDataMarker for DateSkeletonPatternsV1Marker {
-    const KEY: icu_provider::DataKey = icu_provider::data_key!("datetime/skeletons@1[u-ca]");
+    const KEY: icu_provider::DataKey = icu_provider::data_key!(
+        "datetime/skeletons@1",
+        DataKeyMetadata::construct_internal(
+            icu_provider::FallbackPriority::Language,
+            Some(icu_locid::extensions_unicode_key!("ca")),
+            None
+        )
+    );
 }
 
 /// This struct is a public wrapper around the internal `Skeleton` struct. This allows

@@ -324,6 +324,9 @@ impl AnyProvider for BakedDataProvider {
             ::icu_properties::provider::XidStartV1Marker::KEY.hashed();
         const HELLOWORLDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider::hello_world::HelloWorldV1Marker::KEY.hashed();
+        const COLLATIONFALLBACKSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY
+                .hashed();
         const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY
                 .hashed();
@@ -894,6 +897,10 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 HELLOWORLDV1MARKER => core::helloworld_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .copied()
+                    .map(AnyPayload::from_static_ref),
+                COLLATIONFALLBACKSUPPLEMENTV1MARKER => fallback::supplement::co_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),

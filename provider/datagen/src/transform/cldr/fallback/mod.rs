@@ -4,13 +4,18 @@
 
 use crate::transform::cldr::cldr_serde;
 
-use icu_locid::LanguageIdentifier;
+use icu_locid::{
+    extensions::unicode::Key,
+    extensions_unicode_key, langid,
+    subtags::{Language, Region, Script},
+    LanguageIdentifier,
+};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_provider_adapters::fallback::provider::*;
 
 use writeable::Writeable;
-use zerovec::{maps::ZeroMap2d, ZeroMap};
+use zerovec::{maps::ZeroMap2d, ule::UnvalidatedStr, ZeroMap};
 
 impl DataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
     fn load(
@@ -62,6 +67,44 @@ impl DataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
     }
 }
 
+impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
+    fn load(
+        &self,
+        _req: DataRequest,
+    ) -> Result<DataResponse<CollationFallbackSupplementV1Marker>, DataError> {
+        // TODO(#1964): Load this data from its proper sources. For now, it is copied from:
+        // https://github.com/unicode-org/icu/blob/main/tools/cldr/cldr-to-icu/build-icu-data.xml
+        // as well as from CLDR XML.
+        #[allow(clippy::type_complexity)]
+        let parents_list: [(&UnvalidatedStr, (Language, Option<Script>, Option<Region>));
+            1] = [
+            ("yue".into(), (&langid!("zh-Hant")).into()), //
+        ];
+        let unicode_extension_defaults_list: [(Key, &UnvalidatedStr, &UnvalidatedStr); 2] = [
+            (extensions_unicode_key!("co"), "zh".into(), "pinyin".into()),
+            (
+                extensions_unicode_key!("co"),
+                "zh-Hant".into(),
+                "stroke".into(),
+            ),
+        ];
+        let data = LocaleFallbackSupplementV1 {
+            parents: parents_list.into_iter().collect(),
+            unicode_extension_defaults: unicode_extension_defaults_list.into_iter().collect(),
+        };
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(data)),
+        })
+    }
+}
+
+icu_provider::impl_dynamic_data_provider!(
+    crate::DatagenProvider,
+    [CollationFallbackSupplementV1Marker,],
+    LocaleFallbackSupplementV1Marker
+);
+
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
@@ -69,6 +112,12 @@ impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::Datage
 }
 
 impl IterableDataProvider<LocaleFallbackParentsV1Marker> for crate::DatagenProvider {
+    fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
+        Ok(vec![Default::default()])
+    }
+}
+
+impl IterableDataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])
     }

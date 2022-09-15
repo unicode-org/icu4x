@@ -110,13 +110,8 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
             return;
         }
         // 5. Check for parent override
-        if let Some(parent) = self
-            .parents
-            .parents
-            .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
-        {
-            let lid = LanguageIdentifier::from(parent);
-            locale.set_langid(lid);
+        if let Some(parent) = self.get_explicit_parent(locale) {
+            locale.set_langid(parent);
             self.restore_extensions_variants(locale);
             return;
         }
@@ -190,10 +185,26 @@ impl<'a, 'b> LocaleFallbackIteratorInner<'a, 'b> {
             locale.set_variants(variants);
         }
     }
+
+    fn get_explicit_parent(&self, locale: &DataLocale) -> Option<LanguageIdentifier> {
+        self.supplement
+            .and_then(|supplement| {
+                supplement
+                    .parents
+                    .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
+            })
+            .or_else(|| {
+                self.parents
+                    .parents
+                    .get_copied_by(|uvstr| locale.strict_cmp(uvstr).reverse())
+            })
+            .map(LanguageIdentifier::from)
+    }
 }
 
 #[cfg(test)]
 mod tests {
+    use super::provider::CollationFallbackSupplementV1Marker;
     use super::*;
     use icu_locid::Locale;
     use std::str::FromStr;
@@ -202,6 +213,7 @@ mod tests {
         input: &'static str,
         requires_data: bool,
         extension_key: Option<Key>,
+        fallback_supplement_key: Option<DataKey>,
         // Note: The first entry in the chain is the normalized locale
         expected_language_chain: &'static [&'static str],
         expected_region_chain: &'static [&'static str],
@@ -213,6 +225,7 @@ mod tests {
             input: "en-u-hc-h12-sd-usca",
             requires_data: false,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-u-sd-usca", "en", "und-u-sd-usca"],
         },
@@ -220,6 +233,7 @@ mod tests {
             input: "en-US-u-hc-h12-sd-usca",
             requires_data: false,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -227,6 +241,7 @@ mod tests {
             input: "en-US-fonipa-u-hc-h12-sd-usca",
             requires_data: false,
             extension_key: Some(key!("hc")),
+            fallback_supplement_key: None,
             expected_language_chain: &[
                 "en-US-fonipa-u-hc-h12-sd-usca",
                 "en-US-fonipa-u-sd-usca",
@@ -249,6 +264,7 @@ mod tests {
             input: "en-u-hc-h12-sd-usca",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -256,6 +272,7 @@ mod tests {
             input: "en-Latn-u-sd-usca",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["en-u-sd-usca", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -263,6 +280,7 @@ mod tests {
             input: "en-Latn-US-u-sd-usca",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["en-US-u-sd-usca", "en-US", "en"],
             expected_region_chain: &["en-US-u-sd-usca", "en-US", "und-US-u-sd-usca", "und-US"],
         },
@@ -271,6 +289,7 @@ mod tests {
             input: "en-u-rg-gbxxxx",
             requires_data: false,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["en"],
             expected_region_chain: &["en"],
         },
@@ -278,6 +297,7 @@ mod tests {
             input: "sr-ME",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["sr-ME", "sr-Latn-ME", "sr-Latn"],
             expected_region_chain: &["sr-ME", "und-ME"],
         },
@@ -285,6 +305,7 @@ mod tests {
             input: "sr-ME-fonipa",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &[
                 "sr-ME-fonipa",
                 "sr-ME",
@@ -298,6 +319,7 @@ mod tests {
             input: "de-Latn-LI",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["de-LI", "de"],
             expected_region_chain: &["de-LI", "und-LI"],
         },
@@ -305,6 +327,7 @@ mod tests {
             input: "ca-ES-valencia",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["ca-ES-valencia", "ca-ES", "ca"],
             expected_region_chain: &["ca-ES-valencia", "ca-ES", "und-ES-valencia", "und-ES"],
         },
@@ -312,6 +335,7 @@ mod tests {
             input: "es-AR",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["es-AR", "es-419", "es"],
             expected_region_chain: &["es-AR", "und-AR"],
         },
@@ -319,6 +343,7 @@ mod tests {
             input: "hi-IN",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["hi-IN", "hi"],
             expected_region_chain: &["hi-IN", "und-IN"],
         },
@@ -326,8 +351,26 @@ mod tests {
             input: "hi-Latn-IN",
             requires_data: true,
             extension_key: None,
+            fallback_supplement_key: None,
             expected_language_chain: &["hi-Latn-IN", "hi-Latn", "en-IN", "en-001", "en"],
             expected_region_chain: &["hi-Latn-IN", "und-IN"],
+        },
+        TestCase {
+            input: "yue-HK",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement_key: None,
+            expected_language_chain: &["yue-HK", "yue"],
+            expected_region_chain: &["yue-HK", "und-HK"],
+        },
+        TestCase {
+            input: "yue-HK",
+            requires_data: true,
+            extension_key: None,
+            fallback_supplement_key: Some(CollationFallbackSupplementV1Marker::KEY),
+            // TODO(#1964): add "zh" as a target.
+            expected_language_chain: &["yue-HK", "yue", "zh-Hant"],
+            expected_region_chain: &["yue-HK", "und-HK"],
         },
     ];
 
@@ -345,6 +388,7 @@ mod tests {
                 let config = LocaleFallbackConfig {
                     priority,
                     extension_key: cas.extension_key,
+                    fallback_supplement_key: cas.fallback_supplement_key,
                 };
                 let key_fallbacker = if cas.requires_data {
                     fallbacker_with_data.for_config(config)

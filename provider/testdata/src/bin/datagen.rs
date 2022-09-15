@@ -84,7 +84,7 @@ fn main() {
 
     icu_datagen::datagen(
         Some(&[langid!("en"), langid!("bn")]),
-        &icu_datagen::keys(&["decimal/symbols@1[u-nu]"]),
+        &icu_datagen::keys(&["decimal/symbols@1"]),
         &source_data,
         vec![Out::Blob(Box::new(
             File::create(paths::data_root().join("decimal-bn-en.postcard")).unwrap(),

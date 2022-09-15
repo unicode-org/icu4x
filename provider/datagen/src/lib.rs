@@ -359,7 +359,7 @@ fn test_keys() {
         keys(&[
             "list/and@1",
             "datetime/gregory/datelengths@1",
-            "decimal/symbols@1[u-nu]",
+            "decimal/symbols@1",
             "trash",
         ]),
         vec![

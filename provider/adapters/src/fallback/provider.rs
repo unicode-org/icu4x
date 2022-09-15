@@ -9,6 +9,7 @@
 // Provider structs must be stable
 #![allow(clippy::exhaustive_structs)]
 
+use icu_locid::extensions::unicode::Key;
 use icu_locid::subtags::{Language, Region, Script};
 use icu_locid::{subtags_region as region, subtags_script as script};
 use tinystr::TinyAsciiStr;
@@ -86,3 +87,36 @@ pub struct LocaleFallbackParentsV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
 }
+
+pub(crate) static SUPPLEMENT_KEY_PATHS: &[&str] = &[
+    // Make sure this list is consistent with the macro list below
+    "fallback/supplement/co@1",
+];
+
+/// Key-specific supplemental fallback data.
+#[icu_provider::data_struct(
+    marker(LocaleFallbackSupplementV1Marker),
+    // Make sure this list is consistent with the string list above
+    marker(CollationFallbackSupplementV1Marker, "fallback/supplement/co@1")
+)]
+#[derive(Default, Clone, PartialEq, Debug)]
+#[cfg_attr(
+    feature = "datagen",
+    derive(serde::Serialize, databake::Bake),
+    databake(path = icu_provider_adapters::fallback::provider),
+)]
+#[cfg_attr(feature = "serde", derive(serde::Deserialize))]
+#[yoke(prove_covariance_manually)]
+pub struct LocaleFallbackSupplementV1<'data> {
+    /// Additional parent locales to supplement the common ones.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
+    /// Default values for Unicode extension keywords.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub unicode_extension_defaults: ZeroMap2d<'data, Key, UnvalidatedStr, UnvalidatedStr>,
+}
+
+icu_provider::impl_casting_upcast!(
+    LocaleFallbackSupplementV1Marker,
+    [CollationFallbackSupplementV1Marker,]
+);
