@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663281545219,
+  "lastUpdate": 1663281832469,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -51088,6 +51088,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 75,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "add4a2b9256ab5905bde14902708b5191fcc2f7c",
+          "message": "Add some useful data provider impls; refactor AnyPayloadProvider (#2564)",
+          "timestamp": "2022-09-15T15:29:36-07:00",
+          "tree_id": "4e3c5e73b02c0418c2622cb286c56522044b4ac8",
+          "url": "https://github.com/unicode-org/icu4x/commit/add4a2b9256ab5905bde14902708b5191fcc2f7c"
+        },
+        "date": 1663281770442,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 137233,
+            "range": "± 6803",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 29013,
+            "range": "± 117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 75502,
+            "range": "± 148",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 222,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 114,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 89,
             "range": "± 0",
             "unit": "ns/iter"
           }
