@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663201287979,
+  "lastUpdate": 1663275850681,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -50956,6 +50956,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/to_string/908070605040302010",
             "value": 184,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 95,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 74,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "srl295@gmail.com",
+            "name": "Steven R. Loomis",
+            "username": "srl295"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e88803860b3c07db8bc60c8f8118ca1ad652256b",
+          "message": "chore(license): fix license in collections/Cargo.toml, others (#2562)\n\n- also the two fuzz components didn’t have a license\r\n\r\nFixes #2559",
+          "timestamp": "2022-09-15T20:51:19Z",
+          "tree_id": "ecc6e31febe8380c6d0856080fe45de966135f1f",
+          "url": "https://github.com/unicode-org/icu4x/commit/e88803860b3c07db8bc60c8f8118ca1ad652256b"
+        },
+        "date": 1663275799171,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 112207,
+            "range": "± 2892",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 24094,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63040,
+            "range": "± 501",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 185,
             "range": "± 0",
             "unit": "ns/iter"
           },
