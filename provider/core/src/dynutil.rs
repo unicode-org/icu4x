@@ -37,6 +37,47 @@ where
     fn upcast(other: crate::DataPayload<M>) -> crate::DataPayload<Self>;
 }
 
+/// Implements [`UpcastDataPayload`] from several data markers to a single data marker
+/// that all share the same [`DataMarker::Yokeable`].
+///
+/// # Examples
+///
+/// ```
+/// use icu_provider::prelude::*;
+/// use std::borrow::Cow;
+///
+/// #[icu_provider::data_struct(
+///     FooV1Marker,
+///     BarV1Marker = "demo/bar@1",
+///     BazV1Marker = "demo/baz@1",
+/// )]
+/// pub struct FooV1<'data> {
+///     message: Cow<'data, str>,
+/// };
+///
+/// icu_provider::impl_casting_upcast!(
+///     FooV1Marker,
+///     [
+///         BarV1Marker,
+///         BazV1Marker,
+///     ]
+/// );
+/// ```
+///
+/// [`DataMarker::Yokeable`]: crate::DataMarker::Yokeable
+#[macro_export]
+macro_rules! impl_casting_upcast {
+    ($dyn_m:path, [ $($struct_m:ident),+, ]) => {
+        $(
+            impl $crate::dynutil::UpcastDataPayload<$struct_m> for $dyn_m {
+                fn upcast(other: $crate::DataPayload<$struct_m>) -> $crate::DataPayload<$dyn_m> {
+                    other.cast()
+                }
+            }
+        )+
+    }
+}
+
 /// Implements [`DynamicDataProvider`] for a marker type `S` on a type that already implements
 /// [`DynamicDataProvider`] or [`DataProvider`] for one or more `M`, where `M` is a concrete type
 /// that is convertible to `S` via [`UpcastDataPayload`].
