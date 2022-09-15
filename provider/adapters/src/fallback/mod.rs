@@ -46,7 +46,7 @@ use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
 use icu_provider::FallbackPriority;
-use litemap::LiteMap;
+use tinystr::{tinystr, TinyAsciiStr};
 
 mod adapter;
 mod algorithms;
@@ -162,6 +162,9 @@ pub struct LocaleFallbackConfig {
     /// For example, most data keys for collation add additional parent locales, such as
     /// "yue" to "zh-Hant", and data used for the `"-u-co"` extension keyword fallback.
     ///
+    /// Currently the only supported fallback supplement ID is `"collator"`, but more may be
+    /// added in the future.
+    ///
     /// # Examples
     ///
     /// ```
@@ -169,13 +172,13 @@ pub struct LocaleFallbackConfig {
     /// use icu_provider::FallbackPriority;
     /// use icu_provider_adapters::fallback::LocaleFallbackConfig;
     /// use icu_provider_adapters::fallback::LocaleFallbacker;
-    /// use icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker;
+    /// use tinystr::tinystr;
     ///
     /// // Set up the fallback iterator.
     /// let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
-    /// config.fallback_supplement_key = Some(CollationFallbackSupplementV1Marker::KEY);
+    /// config.fallback_supplement_id = Some(tinystr!(8, "collator"));
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(
     ///     icu_locid::locale!("yue-HK")
@@ -192,7 +195,7 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
-    pub fallback_supplement_key: Option<DataKey>,
+    pub fallback_supplement_id: Option<TinyAsciiStr<8>>,
 }
 
 /// Entry type for locale fallbacking.
@@ -202,7 +205,7 @@ pub struct LocaleFallbackConfig {
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
     parents: DataPayload<LocaleFallbackParentsV1Marker>,
-    supplements: LiteMap<DataKey, DataPayload<LocaleFallbackSupplementV1Marker>>,
+    collation_supplement: Option<DataPayload<CollationFallbackSupplementV1Marker>>,
 }
 
 /// Intermediate type for spawning locale fallback iterators based on a specific configuration.
@@ -247,20 +250,18 @@ impl LocaleFallbacker {
     {
         let likely_subtags = provider.load(Default::default())?.take_payload()?;
         let parents = provider.load(Default::default())?.take_payload()?;
-        let mut supplements = LiteMap::new();
-        match DataProvider::<CollationFallbackSupplementV1Marker>::load(provider, Default::default()) {
-            #[allow(clippy::unwrap_used)] // Only one item is being added
-            Ok(response) => supplements
-                .try_append(CollationFallbackSupplementV1Marker::KEY, response.take_payload()?.cast())
-                .ok_or(())
-                .unwrap_err(),
+        let collation_supplement = match DataProvider::<CollationFallbackSupplementV1Marker>::load(
+            provider,
+            Default::default(),
+        ) {
+            Ok(response) => Some(response.take_payload()?),
             // It is expected that not all keys are present
-            Err(_) => (),
+            Err(_) => None,
         };
         Ok(LocaleFallbacker {
             likely_subtags,
             parents,
-            supplements,
+            collation_supplement,
         })
     }
 
@@ -272,17 +273,17 @@ impl LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_owned(Default::default()),
             parents: DataPayload::from_owned(Default::default()),
-            supplements: LiteMap::new(),
+            collation_supplement: None,
         }
     }
 
     /// Creates the intermediate [`LocaleFallbackerWithConfig`] with configuration options.
     pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
-        let supplement = config
-            .fallback_supplement_key
-            .as_ref()
-            .and_then(|key| self.supplements.get(key))
-            .map(|payload| payload.get());
+        const COLLATOR_SUPPLEMENT: TinyAsciiStr<8> = tinystr!(8, "collator");
+        let supplement = match config.fallback_supplement_id {
+            Some(COLLATOR_SUPPLEMENT) => self.collation_supplement.as_ref().map(|p| p.get()),
+            _ => None,
+        };
         LocaleFallbackerWithConfig {
             likely_subtags: self.likely_subtags.get(),
             parents: self.parents.get(),
@@ -331,14 +332,11 @@ impl LocaleFallbacker {
     pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
         let priority = data_key.metadata().fallback_priority;
         let extension_key = data_key.metadata().extension_key;
-        let fallback_supplement_key = data_key
-            .metadata()
-            .fallback_supplement_key_path
-            .map(|path| DataKey::from_path_and_metadata(path, Default::default()));
+        let fallback_supplement_id = data_key.metadata().fallback_supplement_id;
         self.for_config(LocaleFallbackConfig {
             priority,
             extension_key,
-            fallback_supplement_key,
+            fallback_supplement_id,
         })
     }
 }

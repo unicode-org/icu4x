@@ -99,12 +99,6 @@ impl DataProvider<CollationFallbackSupplementV1Marker> for crate::DatagenProvide
     }
 }
 
-icu_provider::impl_dynamic_data_provider!(
-    crate::DatagenProvider,
-    [CollationFallbackSupplementV1Marker,],
-    LocaleFallbackSupplementV1Marker
-);
-
 impl IterableDataProvider<LocaleFallbackLikelySubtagsV1Marker> for crate::DatagenProvider {
     fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
         Ok(vec![Default::default()])

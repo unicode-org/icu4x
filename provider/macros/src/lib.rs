@@ -75,7 +75,7 @@ mod tests;
 ///     None
 /// );
 ///
-/// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1[R][u-ca]");
+/// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1");
 /// assert_eq!(
 ///     BazV1Marker::KEY.metadata().fallback_priority,
 ///     icu_provider::FallbackPriority::Region
@@ -232,13 +232,13 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                 quote! {icu_provider::FallbackPriority::const_default()}
             };
             let extension_key_expr = if let Some(extension_key_lit) = extension_key {
-                quote! {Some(icu_locid::extensions_unicode_key!(#extension_key_lit))}
+                quote! {Some(icu_provider::_internal::extensions_unicode_key!(#extension_key_lit))}
             } else {
                 quote! {None}
             };
             let fallback_supplement_key_path_expr =
                 if let Some(fallback_supplement_lit) = fallback_supplement {
-                    quote! {Some(icu_provider::data_key!(#fallback_supplement_lit).path())}
+                    quote! {Some(icu_provider::_internal::tinystr!(8, #fallback_supplement_lit))}
                 } else {
                     quote! {None}
                 };

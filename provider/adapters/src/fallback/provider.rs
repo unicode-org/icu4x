@@ -89,10 +89,10 @@ pub struct LocaleFallbackParentsV1<'data> {
 }
 
 /// Key-specific supplemental fallback data.
-#[icu_provider::data_struct(
-    marker(LocaleFallbackSupplementV1Marker),
-    marker(CollationFallbackSupplementV1Marker, "fallback/supplement/co@1")
-)]
+#[icu_provider::data_struct(marker(
+    CollationFallbackSupplementV1Marker,
+    "fallback/supplement/co@1"
+))]
 #[derive(Default, Clone, PartialEq, Debug)]
 #[cfg_attr(
     feature = "datagen",
@@ -109,8 +109,3 @@ pub struct LocaleFallbackSupplementV1<'data> {
     #[cfg_attr(feature = "serde", serde(borrow))]
     pub unicode_extension_defaults: ZeroMap2d<'data, Key, UnvalidatedStr, UnvalidatedStr>,
 }
-
-icu_provider::impl_casting_upcast!(
-    LocaleFallbackSupplementV1Marker,
-    [CollationFallbackSupplementV1Marker,]
-);

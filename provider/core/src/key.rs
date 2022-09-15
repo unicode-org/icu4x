@@ -9,6 +9,7 @@ use alloc::borrow::Cow;
 use core::fmt;
 use core::fmt::Write;
 use core::ops::Deref;
+use tinystr::TinyAsciiStr;
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
@@ -163,10 +164,10 @@ pub struct DataKeyMetadata {
     pub fallback_priority: FallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
     pub extension_key: Option<icu_locid::extensions::unicode::Key>,
-    /// [`DataKey`] path for additional fallbacking data required for loading this marker.
+    /// Identifier for additional fallbacking data required for loading this marker.
     ///
-    /// For more information, see `LocaleFallbackConfig::fallback_supplement_key`.
-    pub fallback_supplement_key_path: Option<DataKeyPath>,
+    /// For more information, see `LocaleFallbackConfig::fallback_supplement_id`.
+    pub fallback_supplement_id: Option<TinyAsciiStr<8>>,
 }
 
 impl DataKeyMetadata {
@@ -175,7 +176,7 @@ impl DataKeyMetadata {
         Self {
             fallback_priority: FallbackPriority::const_default(),
             extension_key: None,
-            fallback_supplement_key_path: None,
+            fallback_supplement_id: None,
         }
     }
 
@@ -183,12 +184,12 @@ impl DataKeyMetadata {
     pub const fn construct_internal(
         fallback_priority: FallbackPriority,
         extension_key: Option<icu_locid::extensions::unicode::Key>,
-        fallback_supplement_key_path: Option<DataKeyPath>,
+        fallback_supplement_id: Option<TinyAsciiStr<8>>,
     ) -> Self {
         Self {
             fallback_priority,
             extension_key,
-            fallback_supplement_key_path,
+            fallback_supplement_id,
         }
     }
 }

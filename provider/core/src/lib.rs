@@ -220,4 +220,5 @@ pub use crate::response::RcWrapBounds;
 #[doc(hidden)]
 pub mod _internal {
     pub use icu_locid::extensions_unicode_key;
+    pub use tinystr::tinystr;
 }

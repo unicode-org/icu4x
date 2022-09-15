@@ -177,7 +177,7 @@ fn test_attributes() {
                 "demo/bar@1",
                 fallback_by = "region",
                 extension_key = "ca",
-                fallback_supplement = "fallback/supplement/co@1"
+                fallback_supplement = "collator"
             )),
         ],
         quote!(
@@ -199,8 +199,8 @@ fn test_attributes() {
                     "demo/bar@1",
                     icu_provider::DataKeyMetadata::construct_internal(
                         icu_provider::FallbackPriority::Region,
-                        Some(icu_locid::extensions_unicode_key!("ca")),
-                        Some(icu_provider::data_key!("fallback/supplement/co@1").path())
+                        Some(icu_provider::_internal::extensions_unicode_key!("ca")),
+                        Some(icu_provider::_internal::tinystr!(8, "collator"))
                     ));
             }
             #[derive(yoke::Yokeable, zerofrom::ZeroFrom)]
