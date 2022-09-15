@@ -24,7 +24,7 @@ pub fn maybe_replace_first(pattern: &mut Pattern, f: impl Fn(&PatternItem) -> Op
         .find_map(|(i, item)| f(&item).map(|result| (i, result)));
     #[allow(clippy::indexing_slicing)] // i was produced by enumerate
     if let Some((i, result)) = result {
-        pattern.items.to_mut()[i] = result.to_unaligned();
+        pattern.items.with_mut(|v| v[i] = result.to_unaligned());
     }
 }
 

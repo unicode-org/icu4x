@@ -286,32 +286,34 @@ where
 {
     type OwnedType = T;
     fn zvl_insert(&mut self, index: usize, value: &T) {
-        self.to_mut().insert(index, value.to_unaligned())
+        self.with_mut(|v| v.insert(index, value.to_unaligned()))
     }
     fn zvl_remove(&mut self, index: usize) -> T {
-        T::from_unaligned(self.to_mut().remove(index))
+        T::from_unaligned(self.with_mut(|v| v.remove(index)))
     }
     fn zvl_replace(&mut self, index: usize, value: &T) -> T {
-        let vec = self.to_mut();
-        debug_assert!(index < vec.len());
         #[allow(clippy::indexing_slicing)]
-        T::from_unaligned(mem::replace(&mut vec[index], value.to_unaligned()))
+        let unaligned = self.with_mut(|vec| {
+            debug_assert!(index < vec.len());
+            mem::replace(&mut vec[index], value.to_unaligned())
+        });
+        T::from_unaligned(unaligned)
     }
     fn zvl_push(&mut self, value: &T) {
-        self.to_mut().push(value.to_unaligned())
+        self.with_mut(|v| v.push(value.to_unaligned()))
     }
     fn zvl_with_capacity(cap: usize) -> Self {
         if cap == 0 {
             ZeroVec::new()
         } else {
-            ZeroVec::Owned(Vec::with_capacity(cap))
+            ZeroVec::new_owned(Vec::with_capacity(cap))
         }
     }
     fn zvl_clear(&mut self) {
-        self.to_mut().clear()
+        self.with_mut(|v| v.clear())
     }
     fn zvl_reserve(&mut self, addl: usize) {
-        self.to_mut().reserve(addl)
+        self.with_mut(|v| v.reserve(addl))
     }
 
     fn owned_as_t(o: &Self::OwnedType) -> &T {
@@ -322,11 +324,7 @@ where
         b.as_zerovec()
     }
     fn zvl_as_borrowed_inner(&self) -> Option<&'a ZeroSlice<T>> {
-        if let ZeroVec::Borrowed(b) = *self {
-            Some(ZeroSlice::from_ule_slice(b))
-        } else {
-            None
-        }
+        self.as_maybe_borrowed()
     }
 }
 
