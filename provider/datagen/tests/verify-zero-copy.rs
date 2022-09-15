@@ -76,7 +76,7 @@ fn main() {
             match IterableDynamicDataProvider::<icu_provider::datagen::ExportMarker>::supported_locales_for_key(
                 &converter, key,
             ) {
-                Err(_) if key.get_path().starts_with("props/") => {
+                Err(_) if key.path().starts_with("props/") => {
                     // uprops keys currently don't all get loaded into the testdata
                     continue;
                 }
@@ -100,9 +100,9 @@ fn main() {
         }
         if max_total_violation != 0 {
             if max_net_violation != 0 {
-                net_violations.insert(key.get_path());
+                net_violations.insert(key.path().get());
             } else {
-                total_violations.insert(key.get_path());
+                total_violations.insert(key.path().get());
             }
         }
     }

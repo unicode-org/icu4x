@@ -276,7 +276,7 @@ impl LocaleFallbacker {
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
     pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
-        self.for_config(data_key.get_metadata().into())
+        self.for_config(data_key.metadata().into())
     }
 }
 
