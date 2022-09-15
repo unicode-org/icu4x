@@ -418,9 +418,10 @@ impl DataKey {
                 (At | Version, Some(b'0'..=b'9')) => Version,
                 // One of these cases will be hit at the latest when i == end, so the loop converges.
                 (Version | MetaAfter, None) => {
+                    let path = DataKeyPath(DataKeyPathInner::Tagged(path));
                     return Ok(Self {
                         path,
-                        hash: DataKeyHash::compute_from_str(path),
+                        hash: DataKeyHash::compute_from_path(&path.0),
                         metadata: DataKeyMetadata {
                             fallback_priority,
                             extension_key,
@@ -641,28 +642,28 @@ fn test_path_syntax() {
 fn test_metadata_parsing() {
     use icu_locid::extensions_unicode_key as key;
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1")).map(|k| k.get_metadata()),
+        DataKey::construct_internal(tagged!("hello/world@1")).map(|k| k.metadata()),
         Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Language,
             extension_key: None
         })
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.get_metadata()),
+        DataKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.metadata()),
         Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Region,
             extension_key: None
         })
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.get_metadata()),
+        DataKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.metadata()),
         Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Language,
             extension_key: Some(key!("ca"))
         })
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[R][u-ca]")).map(|k| k.get_metadata()),
+        DataKey::construct_internal(tagged!("hello/world@1[R][u-ca]")).map(|k| k.metadata()),
         Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Region,
             extension_key: Some(key!("ca"))
