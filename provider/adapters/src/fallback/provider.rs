@@ -88,15 +88,9 @@ pub struct LocaleFallbackParentsV1<'data> {
     pub parents: ZeroMap<'data, UnvalidatedStr, (Language, Option<Script>, Option<Region>)>,
 }
 
-pub(crate) static SUPPLEMENT_KEY_PATHS: &[&str] = &[
-    // Make sure this list is consistent with the macro list below
-    "fallback/supplement/co@1",
-];
-
 /// Key-specific supplemental fallback data.
 #[icu_provider::data_struct(
     marker(LocaleFallbackSupplementV1Marker),
-    // Make sure this list is consistent with the string list above
     marker(CollationFallbackSupplementV1Marker, "fallback/supplement/co@1")
 )]
 #[derive(Default, Clone, PartialEq, Debug)]

@@ -624,7 +624,7 @@ fn test_key_to_string() {
 }
 
 #[test]
-fn test_try_new_and_key_hash() {
+fn test_key_hash() {
     struct KeyTestCase {
         pub key: DataKey,
         pub hash: DataKeyHash,
@@ -648,15 +648,7 @@ fn test_try_new_and_key_hash() {
             path: "core/cardinal@65535",
         },
     ] {
-        let runtime_key = DataKey::try_new(cas.path, Default::default()).expect(cas.path);
-        assert_eq!(cas.key, runtime_key, "{}", cas.path);
-        assert_eq!(
-            cas.hash,
-            DataKeyHash::compute_from_path(&DataKeyPathInner::Plain(cas.path))
-        );
-        assert_eq!(cas.hash, runtime_key.hashed(), "{}", cas.path);
         assert_eq!(cas.hash, cas.key.hashed(), "{}", cas.path);
-        assert_eq!(cas.path, &*runtime_key.path(), "{}", cas.path);
         assert_eq!(cas.path, &*cas.key.path(), "{}", cas.path);
     }
 }

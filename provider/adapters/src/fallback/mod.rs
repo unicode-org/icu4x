@@ -242,25 +242,21 @@ impl LocaleFallbacker {
     where
         P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
             + DataProvider<LocaleFallbackParentsV1Marker>
-            + DynamicDataProvider<LocaleFallbackSupplementV1Marker>
+            + DataProvider<CollationFallbackSupplementV1Marker>
             + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.take_payload()?;
         let parents = provider.load(Default::default())?.take_payload()?;
         let mut supplements = LiteMap::new();
-        for key_path in provider::SUPPLEMENT_KEY_PATHS {
-            #[allow(clippy::unwrap_used)] // The strings are hard-coded and are valid
-            let key = DataKey::try_new(key_path, Default::default()).unwrap();
-            match provider.load_data(key, Default::default()) {
-                #[allow(clippy::unwrap_used)] // The strings are in the correct order
-                Ok(response) => supplements
-                    .try_append(key, response.take_payload()?)
-                    .ok_or(())
-                    .unwrap_err(),
-                // It is expected that not all keys are present
-                Err(_) => continue,
-            };
-        }
+        match DataProvider::<CollationFallbackSupplementV1Marker>::load(provider, Default::default()) {
+            #[allow(clippy::unwrap_used)] // Only one item is being added
+            Ok(response) => supplements
+                .try_append(CollationFallbackSupplementV1Marker::KEY, response.take_payload()?.cast())
+                .ok_or(())
+                .unwrap_err(),
+            // It is expected that not all keys are present
+            Err(_) => (),
+        };
         Ok(LocaleFallbacker {
             likely_subtags,
             parents,
