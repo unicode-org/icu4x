@@ -257,7 +257,11 @@ impl LocaleFallbacker {
         ) {
             Ok(response) => Some(response.take_payload()?),
             // It is expected that not all keys are present
-            Err(_) => None,
+            Err(DataError {
+                kind: DataErrorKind::MissingDataKey,
+                ..
+            }) => None,
+            Err(e) => return Err(e),
         };
         Ok(LocaleFallbacker {
             likely_subtags,
