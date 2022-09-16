@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663344985878,
+  "lastUpdate": 1663368124672,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27353,6 +27353,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/9b1bc61c69752892c33594011751c0df522ab198"
         },
         "date": 1663344920436,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c25e0e47b4ae3a9379734ab60b492df31ec90228",
+          "message": "Add boilerplate to segmenter (#2566)\n\n* Update boilerplate for segmenter\r\n\r\n* Enable clippy::exhaustive_enums\r\n\r\nMark both enum non_exhaustive in case that CSSWG adds new values to the\r\ncorresponding CSS properties in the future.\r\n\r\n* Enable clippy::exhaustive_structs\r\n\r\nIgnore clippy::exhaustive_structs, clippy::exhaustive_enums in segmenter's\r\nprovider mod like other icu4x components.",
+          "timestamp": "2022-09-16T15:39:34-07:00",
+          "tree_id": "df9f312a6f15f4cd4804bc97a1f405cdebf5b0b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/c25e0e47b4ae3a9379734ab60b492df31ec90228"
+        },
+        "date": 1663368072254,
         "tool": "ndjson",
         "benches": [
           {
