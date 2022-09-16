@@ -1741,7 +1741,6 @@ dependencies = [
  "serde_json",
  "stable_deref_trait",
  "static_assertions",
- "tinystr 0.6.2",
  "writeable",
  "yoke",
  "zerofrom 0.1.1",

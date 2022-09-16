@@ -168,7 +168,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                             match name_ident_str.as_str() {
                                 "fallback_by" => fallback_by = Some(lit_str),
                                 "extension_key" => extension_key = Some(lit_str),
-                                "fallback_supplement_id" => fallback_supplement = Some(lit_str),
+                                "fallback_supplement" => fallback_supplement = Some(lit_str),
                                 _ => panic!("Invalid argument name in marker()"),
                             }
                         }
@@ -236,9 +236,12 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
             } else {
                 quote! {None}
             };
-            let fallback_supplement_id_expr =
+            let fallback_supplement_expr =
                 if let Some(fallback_supplement_lit) = fallback_supplement {
-                    quote! {Some(icu_provider::_internal::tinystr!(4, #fallback_supplement_lit))}
+                    match fallback_supplement_lit.value().as_str() {
+                        "collation" => quote! {Some(icu_provider::FallbackSupplement::Collation)},
+                        _ => panic!("Invalid value for fallback_supplement"),
+                    }
                 } else {
                     quote! {None}
                 };
@@ -247,7 +250,7 @@ fn data_struct_impl(attr: AttributeArgs, input: DeriveInput) -> TokenStream2 {
                     const KEY: icu_provider::DataKey = icu_provider::data_key!(#key_str, icu_provider::DataKeyMetadata::construct_internal(
                         #fallback_by_expr,
                         #extension_key_expr,
-                        #fallback_supplement_id_expr
+                        #fallback_supplement_expr
                     ));
                 }
             ));

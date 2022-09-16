@@ -46,7 +46,7 @@ use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
 use icu_provider::FallbackPriority;
-use tinystr::{tinystr, TinyAsciiStr};
+use icu_provider::FallbackSupplement;
 
 mod adapter;
 mod algorithms;
@@ -178,7 +178,7 @@ pub struct LocaleFallbackConfig {
     /// let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
-    /// config.fallback_supplement_id = Some(tinystr!(4, "coll"));
+    /// config.fallback_supplement = Some(tinystr!(4, "coll"));
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(
     ///     icu_locid::locale!("yue-HK")
@@ -195,7 +195,7 @@ pub struct LocaleFallbackConfig {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
-    pub fallback_supplement_id: Option<TinyAsciiStr<4>>,
+    pub fallback_supplement: Option<FallbackSupplement>,
 }
 
 /// Entry type for locale fallbacking.
@@ -279,9 +279,10 @@ impl LocaleFallbacker {
 
     /// Creates the intermediate [`LocaleFallbackerWithConfig`] with configuration options.
     pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
-        const COLLATOR_SUPPLEMENT: TinyAsciiStr<4> = tinystr!(4, "coll");
-        let supplement = match config.fallback_supplement_id {
-            Some(COLLATOR_SUPPLEMENT) => self.collation_supplement.as_ref().map(|p| p.get()),
+        let supplement = match config.fallback_supplement {
+            Some(FallbackSupplement::Collation) => {
+                self.collation_supplement.as_ref().map(|p| p.get())
+            }
             _ => None,
         };
         LocaleFallbackerWithConfig {
@@ -332,11 +333,11 @@ impl LocaleFallbacker {
     pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
         let priority = data_key.metadata().fallback_priority;
         let extension_key = data_key.metadata().extension_key;
-        let fallback_supplement_id = data_key.metadata().fallback_supplement_id;
+        let fallback_supplement = data_key.metadata().fallback_supplement;
         self.for_config(LocaleFallbackConfig {
             priority,
             extension_key,
-            fallback_supplement_id,
+            fallback_supplement,
         })
     }
 }

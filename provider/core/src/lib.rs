@@ -212,6 +212,7 @@ pub use prelude::*;
 pub use crate::key::DataKeyMetadata;
 pub use crate::key::DataKeyPath;
 pub use crate::key::FallbackPriority;
+pub use crate::key::FallbackSupplement;
 pub use crate::request::DataRequestMetadata;
 pub use crate::response::RcWrap;
 pub use crate::response::RcWrapBounds;
@@ -220,5 +221,4 @@ pub use crate::response::RcWrapBounds;
 #[doc(hidden)]
 pub mod _internal {
     pub use icu_locid::extensions_unicode_key;
-    pub use tinystr::tinystr;
 }

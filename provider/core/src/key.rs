@@ -9,7 +9,6 @@ use alloc::borrow::Cow;
 use core::fmt;
 use core::fmt::Write;
 use core::ops::Deref;
-use tinystr::TinyAsciiStr;
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
@@ -121,6 +120,14 @@ impl Default for FallbackPriority {
     }
 }
 
+/// What additional data to load when performing fallback.
+#[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
+#[non_exhaustive]
+pub enum FallbackSupplement {
+    /// Collation supplement; see `CollationFallbackSupplementV1Marker`
+    Collation,
+}
+
 /// The string path of a data key. For example, "foo@1"
 #[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
 pub struct DataKeyPath {
@@ -164,10 +171,10 @@ pub struct DataKeyMetadata {
     pub fallback_priority: FallbackPriority,
     /// A Unicode extension keyword to consider when loading data for this [`DataKey`].
     pub extension_key: Option<icu_locid::extensions::unicode::Key>,
-    /// Identifier for additional fallbacking data required for loading this marker.
+    /// Optional choice for additional fallbacking data required for loading this marker.
     ///
-    /// For more information, see `LocaleFallbackConfig::fallback_supplement_id`.
-    pub fallback_supplement_id: Option<TinyAsciiStr<4>>,
+    /// For more information, see `LocaleFallbackConfig::fallback_supplement`.
+    pub fallback_supplement: Option<FallbackSupplement>,
 }
 
 impl DataKeyMetadata {
@@ -176,7 +183,7 @@ impl DataKeyMetadata {
         Self {
             fallback_priority: FallbackPriority::const_default(),
             extension_key: None,
-            fallback_supplement_id: None,
+            fallback_supplement: None,
         }
     }
 
@@ -184,12 +191,12 @@ impl DataKeyMetadata {
     pub const fn construct_internal(
         fallback_priority: FallbackPriority,
         extension_key: Option<icu_locid::extensions::unicode::Key>,
-        fallback_supplement_id: Option<TinyAsciiStr<4>>,
+        fallback_supplement: Option<FallbackSupplement>,
     ) -> Self {
         Self {
             fallback_priority,
             extension_key,
-            fallback_supplement_id,
+            fallback_supplement,
         }
     }
 }
