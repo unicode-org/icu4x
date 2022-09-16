@@ -87,16 +87,16 @@ impl AnyProvider for BakedDataProvider {
             ::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONEGENERICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY.hashed();
+            ::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONEGENERICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY.hashed();
+            ::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONESPECIFICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY.hashed();
+            ::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONESPECIFICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY.hashed();
+            ::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.hashed();
@@ -350,7 +350,7 @@ impl AnyProvider for BakedDataProvider {
             ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_timezone")]
         const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_timezone::provider::MetaZonePeriodV1Marker::KEY.hashed();
+            ::icu_timezone::provider::MetazonePeriodV1Marker::KEY.hashed();
         Ok(AnyResponse {
             payload: Some(match key.hashed() {
                 #[cfg(feature = "icu_calendar")]

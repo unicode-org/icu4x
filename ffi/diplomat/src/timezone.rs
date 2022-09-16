@@ -15,7 +15,7 @@ pub mod ffi {
     use diplomat_runtime::DiplomatResult;
     use icu_timezone::CustomTimeZone;
     use icu_timezone::GmtOffset;
-    use icu_timezone::MetaZoneCalculator;
+    use icu_timezone::MetazoneCalculator;
     use icu_timezone::ZoneVariant;
 
     #[diplomat::opaque]
@@ -23,8 +23,8 @@ pub mod ffi {
     pub struct ICU4XCustomTimeZone(pub CustomTimeZone);
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu::timezone::MetaZoneCalculator, Struct)]
-    pub struct ICU4XMetaZoneCalculator(pub MetaZoneCalculator);
+    #[diplomat::rust_link(icu::timezone::MetazoneCalculator, Struct)]
+    pub struct ICU4XMetazoneCalculator(pub MetazoneCalculator);
 
     impl ICU4XCustomTimeZone {
         /// Creates a time zone from an offset string.
@@ -190,16 +190,16 @@ pub mod ffi {
             result
         }
 
-        /// Sets the `meta_zone_id` field from a string.
+        /// Sets the `metazone_id` field from a string.
         ///
-        /// Errors if the string is not a valid BCP-47 meta zone ID.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
-        #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
-        #[diplomat::rust_link(icu::timezone::MetaZoneId::from_str, FnInStruct, hidden)]
-        pub fn try_set_meta_zone_id(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
+        /// Errors if the string is not a valid BCP-47 metazone ID.
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
+        #[diplomat::rust_link(icu::timezone::MetazoneId::from_str, FnInStruct, hidden)]
+        pub fn try_set_metazone_id(&mut self, id: &str) -> DiplomatResult<(), ICU4XError> {
             match id.parse() {
                 Ok(v) => {
-                    self.0.meta_zone_id = Some(v);
+                    self.0.metazone_id = Some(v);
                     Ok(())
                 }
                 Err(e) => Err(ICU4XError::from(e)),
@@ -207,23 +207,23 @@ pub mod ffi {
             .into()
         }
 
-        /// Clears the `meta_zone_id` field.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
-        #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
-        pub fn clear_meta_zone_id(&mut self) {
-            self.0.meta_zone_id.take();
+        /// Clears the `metazone_id` field.
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
+        pub fn clear_metazone_id(&mut self) {
+            self.0.metazone_id.take();
         }
 
-        /// Writes the value of the `meta_zone_id` field as a string.
+        /// Writes the value of the `metazone_id` field as a string.
         ///
-        /// Errors if the `meta_zone_id` field is empty.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::meta_zone_id, StructField)]
-        #[diplomat::rust_link(icu::timezone::MetaZoneId, Struct, compact)]
-        pub fn meta_zone_id(
+        /// Errors if the `metazone_id` field is empty.
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::metazone_id, StructField)]
+        #[diplomat::rust_link(icu::timezone::MetazoneId, Struct, compact)]
+        pub fn metazone_id(
             &self,
             write: &mut diplomat_runtime::DiplomatWriteable,
         ) -> DiplomatResult<(), ICU4XError> {
-            let result = match self.0.meta_zone_id {
+            let result = match self.0.metazone_id {
                 Some(v) => write.write_str(v.0.as_str()).map_err(Into::into),
                 None => Err(ICU4XError::TimeZoneMissingInputError),
             }
@@ -316,30 +316,30 @@ pub mod ffi {
                 .into()
         }
 
-        /// Sets the meta zone based on the time zone and the local timestamp.
-        #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_calculate_meta_zone, FnInStruct)]
+        /// Sets the metazone based on the time zone and the local timestamp.
+        #[diplomat::rust_link(icu::timezone::CustomTimeZone::maybe_calculate_metazone, FnInStruct)]
         #[diplomat::rust_link(
-            icu::timezone::MetaZoneCalculator::compute_meta_zone_from_time_zone,
+            icu::timezone::MetazoneCalculator::compute_metazone_from_time_zone,
             FnInStruct,
             compact
         )]
-        pub fn maybe_calculate_meta_zone(
+        pub fn maybe_calculate_metazone(
             &mut self,
-            metazone_calculator: &ICU4XMetaZoneCalculator,
+            metazone_calculator: &ICU4XMetazoneCalculator,
             local_datetime: &ICU4XIsoDateTime,
         ) {
             self.0
-                .maybe_calculate_meta_zone(&metazone_calculator.0, &local_datetime.0);
+                .maybe_calculate_metazone(&metazone_calculator.0, &local_datetime.0);
         }
     }
 
-    impl ICU4XMetaZoneCalculator {
-        #[diplomat::rust_link(icu::timezone::MetaZoneCalculator::try_new_unstable, FnInStruct)]
+    impl ICU4XMetazoneCalculator {
+        #[diplomat::rust_link(icu::timezone::MetazoneCalculator::try_new_unstable, FnInStruct)]
         pub fn try_new(
             provider: &ICU4XDataProvider,
-        ) -> DiplomatResult<Box<ICU4XMetaZoneCalculator>, ICU4XError> {
-            MetaZoneCalculator::try_new_unstable(&provider.0)
-                .map(|tf| Box::new(ICU4XMetaZoneCalculator(tf)))
+        ) -> DiplomatResult<Box<ICU4XMetazoneCalculator>, ICU4XError> {
+            MetazoneCalculator::try_new_unstable(&provider.0)
+                .map(|tf| Box::new(ICU4XMetazoneCalculator(tf)))
                 .map_err(Into::into)
                 .into()
         }

@@ -2,27 +2,27 @@ import wasm from "./diplomat-wasm.mjs"
 import * as diplomatRuntime from "./diplomat-runtime.js"
 import { ICU4XError_js_to_rust, ICU4XError_rust_to_js } from "./ICU4XError.js"
 
-const ICU4XMetaZoneCalculator_box_destroy_registry = new FinalizationRegistry(underlying => {
-  wasm.ICU4XMetaZoneCalculator_destroy(underlying);
+const ICU4XMetazoneCalculator_box_destroy_registry = new FinalizationRegistry(underlying => {
+  wasm.ICU4XMetazoneCalculator_destroy(underlying);
 });
 
-export class ICU4XMetaZoneCalculator {
+export class ICU4XMetazoneCalculator {
   #lifetimeEdges = [];
   constructor(underlying, owned, edges) {
     this.underlying = underlying;
     this.#lifetimeEdges.push(...edges);
     if (owned) {
-      ICU4XMetaZoneCalculator_box_destroy_registry.register(this, underlying);
+      ICU4XMetazoneCalculator_box_destroy_registry.register(this, underlying);
     }
   }
 
   static try_new(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XMetaZoneCalculator_try_new(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XMetazoneCalculator_try_new(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
-        const ok_value = new ICU4XMetaZoneCalculator(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
+        const ok_value = new ICU4XMetazoneCalculator(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
         wasm.diplomat_free(diplomat_receive_buffer, 5, 4);
         return ok_value;
       } else {

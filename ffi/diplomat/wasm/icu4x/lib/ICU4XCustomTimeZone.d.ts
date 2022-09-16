@@ -2,7 +2,7 @@ import { i32 } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
 import { ICU4XIsoDateTime } from "./ICU4XIsoDateTime";
-import { ICU4XMetaZoneCalculator } from "./ICU4XMetaZoneCalculator";
+import { ICU4XMetazoneCalculator } from "./ICU4XMetazoneCalculator";
 
 /**
 
@@ -153,39 +153,39 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Sets the `meta_zone_id` field from a string.
+   * Sets the `metazone_id` field from a string.
 
-   * Errors if the string is not a valid BCP-47 meta zone ID.
+   * Errors if the string is not a valid BCP-47 metazone ID.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id Rust documentation for `meta_zone_id`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id Rust documentation for `metazone_id`} for more information.
 
-   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html 1}
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html 1}
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  try_set_meta_zone_id(id: string): void | never;
+  try_set_metazone_id(id: string): void | never;
 
   /**
 
-   * Clears the `meta_zone_id` field.
+   * Clears the `metazone_id` field.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id Rust documentation for `meta_zone_id`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id Rust documentation for `metazone_id`} for more information.
 
-   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html 1}
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html 1}
    */
-  clear_meta_zone_id(): void;
+  clear_metazone_id(): void;
 
   /**
 
-   * Writes the value of the `meta_zone_id` field as a string.
+   * Writes the value of the `metazone_id` field as a string.
 
-   * Errors if the `meta_zone_id` field is empty.
+   * Errors if the `metazone_id` field is empty.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id Rust documentation for `meta_zone_id`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id Rust documentation for `metazone_id`} for more information.
 
-   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html 1}
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html 1}
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  meta_zone_id(): string | never;
+  metazone_id(): string | never;
 
   /**
 
@@ -271,11 +271,11 @@ export class ICU4XCustomTimeZone {
 
   /**
 
-   * Sets the meta zone based on the time zone and the local timestamp.
+   * Sets the metazone based on the time zone and the local timestamp.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone Rust documentation for `maybe_calculate_meta_zone`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone Rust documentation for `maybe_calculate_metazone`} for more information.
 
-   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_meta_zone_from_time_zone 1}
+   * Additional information: {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone 1}
    */
-  maybe_calculate_meta_zone(metazone_calculator: ICU4XMetaZoneCalculator, local_datetime: ICU4XIsoDateTime): void;
+  maybe_calculate_metazone(metazone_calculator: ICU4XMetazoneCalculator, local_datetime: ICU4XIsoDateTime): void;
 }

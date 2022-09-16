@@ -5,7 +5,7 @@
 //! A collection of utilities for representing and working with dates as an input to
 //! formatting operations.
 
-use crate::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use crate::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_calendar::any_calendar::AnyCalendarKind;
 use icu_calendar::week::{RelativeUnit, WeekCalculator};
 use icu_calendar::Calendar;
@@ -86,7 +86,7 @@ pub trait TimeZoneInput {
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id>;
 
     /// The metazone identifier.
-    fn meta_zone_id(&self) -> Option<MetaZoneId>;
+    fn metazone_id(&self) -> Option<MetazoneId>;
 
     /// The time variant (e.g. "daylight", "standard")
     fn zone_variant(&self) -> Option<ZoneVariant>;
@@ -149,7 +149,7 @@ pub(crate) struct ExtractedDateTimeInput {
 pub(crate) struct ExtractedTimeZoneInput {
     gmt_offset: Option<GmtOffset>,
     time_zone_id: Option<TimeZoneBcp47Id>,
-    meta_zone_id: Option<MetaZoneId>,
+    metazone_id: Option<MetazoneId>,
     zone_variant: Option<ZoneVariant>,
 }
 
@@ -199,7 +199,7 @@ impl ExtractedTimeZoneInput {
         Self {
             gmt_offset: input.gmt_offset(),
             time_zone_id: input.time_zone_id(),
-            meta_zone_id: input.meta_zone_id(),
+            metazone_id: input.metazone_id(),
             zone_variant: input.zone_variant(),
         }
     }
@@ -254,8 +254,8 @@ impl TimeZoneInput for ExtractedTimeZoneInput {
     fn time_zone_id(&self) -> Option<TimeZoneBcp47Id> {
         self.time_zone_id
     }
-    fn meta_zone_id(&self) -> Option<MetaZoneId> {
-        self.meta_zone_id
+    fn metazone_id(&self) -> Option<MetazoneId> {
+        self.metazone_id
     }
     fn zone_variant(&self) -> Option<ZoneVariant> {
         self.zone_variant
@@ -425,8 +425,8 @@ impl TimeZoneInput for CustomTimeZone {
         self.time_zone_id
     }
 
-    fn meta_zone_id(&self) -> Option<MetaZoneId> {
-        self.meta_zone_id
+    fn metazone_id(&self) -> Option<MetazoneId> {
+        self.metazone_id
     }
 
     fn zone_variant(&self) -> Option<ZoneVariant> {

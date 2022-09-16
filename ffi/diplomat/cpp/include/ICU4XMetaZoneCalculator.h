@@ -1,5 +1,5 @@
-#ifndef ICU4XMetaZoneCalculator_H
-#define ICU4XMetaZoneCalculator_H
+#ifndef ICU4XMetazoneCalculator_H
+#define ICU4XMetazoneCalculator_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -10,19 +10,19 @@
 namespace capi {
 #endif
 
-typedef struct ICU4XMetaZoneCalculator ICU4XMetaZoneCalculator;
+typedef struct ICU4XMetazoneCalculator ICU4XMetazoneCalculator;
 #ifdef __cplusplus
 } // namespace capi
 #endif
 #include "ICU4XDataProvider.h"
-#include "diplomat_result_box_ICU4XMetaZoneCalculator_ICU4XError.h"
+#include "diplomat_result_box_ICU4XMetazoneCalculator_ICU4XError.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XMetaZoneCalculator_ICU4XError ICU4XMetaZoneCalculator_try_new(const ICU4XDataProvider* provider);
-void ICU4XMetaZoneCalculator_destroy(ICU4XMetaZoneCalculator* self);
+diplomat_result_box_ICU4XMetazoneCalculator_ICU4XError ICU4XMetazoneCalculator_try_new(const ICU4XDataProvider* provider);
+void ICU4XMetazoneCalculator_destroy(ICU4XMetazoneCalculator* self);
 
 #ifdef __cplusplus
 } // extern "C"
