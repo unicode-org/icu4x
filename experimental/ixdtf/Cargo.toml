@@ -4,7 +4,7 @@
 
 [package]
 name = "ixdtf"
-description = "Internet eXtended DateTime Format"
+description = "Parser for Internet eXtended DateTime Format"
 version = "1.0.0-alpha1"
 authors = ["The ICU4X Project Developers"]
 edition = "2018"
