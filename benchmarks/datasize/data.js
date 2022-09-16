@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663301968049,
+  "lastUpdate": 1663344985878,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27323,6 +27323,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/ccad8fa063b734bfc75cbfbea0add57ec561c908"
         },
         "date": 1663301913769,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "kelebra20@gmail.com",
+            "name": "Oleksii Tkachuk",
+            "username": "kelebra"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9b1bc61c69752892c33594011751c0df522ab198",
+          "message": "Remove more for push usages in favor of extend (#2539)",
+          "timestamp": "2022-09-16T18:10:10+02:00",
+          "tree_id": "3b5d4b1c3bc6dc9f2cf67beca796f5165a4d555d",
+          "url": "https://github.com/unicode-org/icu4x/commit/9b1bc61c69752892c33594011751c0df522ab198"
+        },
+        "date": 1663344920436,
         "tool": "ndjson",
         "benches": [
           {
