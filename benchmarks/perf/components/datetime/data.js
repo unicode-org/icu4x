@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663345462330,
+  "lastUpdate": 1663368806894,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -70571,6 +70571,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 5180,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "aethanyc@gmail.com",
+            "name": "Ting-Yu Lin",
+            "username": "aethanyc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "c25e0e47b4ae3a9379734ab60b492df31ec90228",
+          "message": "Add boilerplate to segmenter (#2566)\n\n* Update boilerplate for segmenter\r\n\r\n* Enable clippy::exhaustive_enums\r\n\r\nMark both enum non_exhaustive in case that CSSWG adds new values to the\r\ncorresponding CSS properties in the future.\r\n\r\n* Enable clippy::exhaustive_structs\r\n\r\nIgnore clippy::exhaustive_structs, clippy::exhaustive_enums in segmenter's\r\nprovider mod like other icu4x components.",
+          "timestamp": "2022-09-16T15:39:34-07:00",
+          "tree_id": "df9f312a6f15f4cd4804bc97a1f405cdebf5b0b1",
+          "url": "https://github.com/unicode-org/icu4x/commit/c25e0e47b4ae3a9379734ab60b492df31ec90228"
+        },
+        "date": 1663368745335,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 69557,
+            "range": "± 2542",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 119193,
+            "range": "± 3760",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 59739,
+            "range": "± 3051",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 74625,
+            "range": "± 1853",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 75814,
+            "range": "± 1035",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 83457,
+            "range": "± 1035",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 114132,
+            "range": "± 1268",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 126961,
+            "range": "± 1541",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 126112,
+            "range": "± 1463",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 140630,
+            "range": "± 1660",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 6049,
+            "range": "± 106",
             "unit": "ns/iter"
           }
         ]
