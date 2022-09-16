@@ -351,16 +351,6 @@ where
     }
 }
 
-#[cfg(not(any(feature = "any_provider", feature = "buffer_provider")))]
-impl<M> DynamicDataProvider<M> for ICU4XDataProviderInner
-where
-    M: DataMarker + 'static,
-{
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        EmptyDataProvider::new().load_data(key, req)
-    }
-}
-
 #[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
@@ -380,25 +370,6 @@ where
     }
 }
 
-#[cfg(all(feature = "buffer_provider", not(feature = "any_provider")))]
-impl<M> DynamicDataProvider<M> for ICU4XDataProviderInner
-where
-    M: DataMarker + 'static,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::Deserialize<'de>,
-{
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        match self {
-            ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load_data(key, req),
-            ICU4XDataProviderInner::Buffer(buffer_provider) => {
-                buffer_provider.as_deserializing().load_data(key, req)
-            }
-        }
-    }
-}
-
 #[cfg(all(feature = "any_provider", not(feature = "buffer_provider")))]
 impl<M> DataProvider<M> for ICU4XDataProviderInner
 where
@@ -411,24 +382,6 @@ where
         match self {
             ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load(req),
             ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load(req),
-        }
-    }
-}
-
-#[cfg(all(feature = "any_provider", not(feature = "buffer_provider")))]
-impl<M> DynamicDataProvider<M> for ICU4XDataProviderInner
-where
-    M: DataMarker + 'static,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: RcWrapBounds,
-{
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        match self {
-            ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load_data(key, req),
-            ICU4XDataProviderInner::Any(any_provider) => {
-                any_provider.as_downcasting().load_data(key, req)
-            }
         }
     }
 }
@@ -451,31 +404,6 @@ where
             ICU4XDataProviderInner::Any(any_provider) => any_provider.as_downcasting().load(req),
             ICU4XDataProviderInner::Buffer(buffer_provider) => {
                 buffer_provider.as_deserializing().load(req)
-            }
-        }
-    }
-}
-
-#[cfg(all(feature = "buffer_provider", feature = "any_provider"))]
-impl<M> DynamicDataProvider<M> for ICU4XDataProviderInner
-where
-    M: DataMarker + 'static,
-    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
-    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
-    M::Yokeable: RcWrapBounds,
-    // Actual bound:
-    //     for<'de> <M::Yokeable as Yokeable<'de>>::Output: Deserialize<'de>,
-    // Necessary workaround bound (see `yoke::trait_hack` docs):
-    for<'de> YokeTraitHack<<M::Yokeable as Yokeable<'de>>::Output>: serde::Deserialize<'de>,
-{
-    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
-        match self {
-            ICU4XDataProviderInner::Empty => EmptyDataProvider::new().load_data(key, req),
-            ICU4XDataProviderInner::Any(any_provider) => {
-                any_provider.as_downcasting().load_data(key, req)
-            }
-            ICU4XDataProviderInner::Buffer(buffer_provider) => {
-                buffer_provider.as_deserializing().load_data(key, req)
             }
         }
     }
