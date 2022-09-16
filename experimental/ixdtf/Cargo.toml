@@ -3,7 +3,7 @@
 # (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 [package]
-name = "icu_ixdtf"
+name = "ixdtf"
 description = "Internet eXtended DateTime Format"
 version = "1.0.0-alpha1"
 authors = ["The ICU4X Project Developers"]
