@@ -232,8 +232,7 @@ pub fn create_best_pattern_for_fields<'data>(
             date_patterns.for_each_mut(|pattern| {
                 let date = pattern.clone();
                 let time = time_pattern.clone();
-                #[allow(clippy::expect_used)]
-                // TODO(#1668) Clippy exceptions need docs or fixing.
+                #[allow(clippy::expect_used)] // Generic pattern combination should never fail.
                 let dt = dt_pattern
                     .clone()
                     .combined(date, time)
@@ -485,7 +484,7 @@ pub fn get_best_available_format_pattern<'data>(
         }
     }
 
-    #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    #[allow(clippy::expect_used)] // We always have at least one format pattern.
     let mut closest_format_pattern = closest_format_pattern
         .expect("At least one closest format pattern will always be found.")
         .clone();
@@ -499,7 +498,7 @@ pub fn get_best_available_format_pattern<'data>(
     }
 
     // Modify the resulting pattern to have fields of the same length.
-    #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
+    #[allow(clippy::panic)] // guards against running this branch in non-datagen mode.
     if prefer_matched_pattern {
         #[cfg(not(feature = "datagen"))]
         panic!("This code branch should only be run when transforming provider code.");

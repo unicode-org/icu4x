@@ -16,7 +16,7 @@ use zerovec::{
     derive(databake::Bake),
     databake(path = icu_plurals::rules::runtime::ast),
 )]
-#[allow(clippy::exhaustive_structs)] // TODO(#1668): This is both a runtime as well as a data struct...
+#[allow(clippy::exhaustive_structs)] // Reference AST is non-public and this type is stable
 pub struct Rule<'data>(pub VarZeroVec<'data, RelationULE>);
 
 #[derive(Copy, Clone, Eq, PartialEq, Ord, PartialOrd, Debug)]
@@ -219,7 +219,7 @@ fn get_modulus(input: u32) -> Option<reference::ast::Value> {
 
 impl From<&reference::ast::Value> for u32 {
     fn from(v: &reference::ast::Value) -> Self {
-        #[allow(clippy::expect_used)] // TODO(#1668) Clippy exceptions need docs or fixing.
+        #[allow(clippy::expect_used)] // documented
         v.0.try_into().expect("Failed to convert u64 into u32")
     }
 }

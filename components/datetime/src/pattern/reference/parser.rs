@@ -103,8 +103,7 @@ impl<'p> Parser<'p> {
                 (Segment::Literal { ref mut quoted, .. }, false) => {
                     *quoted = !*quoted;
                 }
-                #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-                _ => panic!(),
+                _ => unreachable!("Generic pattern has no symbols."),
             }
             Ok(true)
         } else if let Segment::Literal {
@@ -147,8 +146,7 @@ impl<'p> Parser<'p> {
                     result.extend(literal.chars().map(GenericPatternItem::from))
                 }
             }
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
-            _ => panic!(),
+            _ => unreachable!("Generic pattern has no symbols."),
         }
         Ok(())
     }

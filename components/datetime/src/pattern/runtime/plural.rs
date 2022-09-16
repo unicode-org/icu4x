@@ -204,7 +204,7 @@ impl<'data> PatternPlurals<'data> {
     pub fn expect_pattern(self, msg: &str) -> Pattern<'data> {
         match self {
             Self::SinglePattern(pattern) => pattern,
-            #[allow(clippy::panic)] // TODO(#1668) Clippy exceptions need docs or fixing.
+            #[allow(clippy::panic)] // explicit panic since single pattern is expected.
             _ => panic!("expect_pattern failed: {}", msg),
         }
     }
