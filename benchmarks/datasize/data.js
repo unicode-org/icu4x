@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663285656562,
+  "lastUpdate": 1663301968049,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27293,6 +27293,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/db24f67aea54b9360a7004295fa2ec9201a39686"
         },
         "date": 1663285603009,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "ccad8fa063b734bfc75cbfbea0add57ec561c908",
+          "message": "Metazone and Time Zone renaming (#2569)",
+          "timestamp": "2022-09-15T21:17:17-07:00",
+          "tree_id": "c5ca432a51e6f052206061e000241a7dd0335947",
+          "url": "https://github.com/unicode-org/icu4x/commit/ccad8fa063b734bfc75cbfbea0add57ec561c908"
+        },
+        "date": 1663301913769,
         "tool": "ndjson",
         "benches": [
           {
