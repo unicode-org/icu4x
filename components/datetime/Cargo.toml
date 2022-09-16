@@ -30,7 +30,6 @@ denylist = ["bench"]
 
 [package.metadata.docs.rs]
 all-features = true
-rustc-args = [ "--cfg" , "doc"]
 
 [dependencies]
 icu_decimal = { version = "1.0.0-beta1", path = "../decimal" }
