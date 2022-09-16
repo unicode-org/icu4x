@@ -170,6 +170,7 @@ pub struct LocaleFallbackConfig {
     /// ```
     /// use icu_provider::prelude::*;
     /// use icu_provider::FallbackPriority;
+    /// use icu_provider::FallbackSupplement;
     /// use icu_provider_adapters::fallback::LocaleFallbackConfig;
     /// use icu_provider_adapters::fallback::LocaleFallbacker;
     /// use tinystr::tinystr;
@@ -178,7 +179,7 @@ pub struct LocaleFallbackConfig {
     /// let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
     /// let mut config = LocaleFallbackConfig::default();
     /// config.priority = FallbackPriority::Collation;
-    /// config.fallback_supplement = Some(tinystr!(4, "coll"));
+    /// config.fallback_supplement = Some(FallbackSupplement::Collation);
     /// let key_fallbacker = fallbacker.for_config(config);
     /// let mut fallback_iterator = key_fallbacker.fallback_for(
     ///     icu_locid::locale!("yue-HK")
