@@ -30,6 +30,7 @@ use utf8_iter::Utf8CharIndices;
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
+#[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum LineBreakRule {
     /// Breaks text using the least restrictive set of line-breaking rules.
@@ -65,6 +66,7 @@ pub enum LineBreakRule {
 /// of the icu meta-crate. Use with caution.
 /// <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
 /// </div>
+#[non_exhaustive]
 #[derive(Copy, Clone, PartialEq, Eq)]
 pub enum WordBreakRule {
     /// Words break according to their customary rules. See the details in
