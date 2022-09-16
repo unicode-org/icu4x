@@ -65,7 +65,7 @@ int main() {
         std::cout << "GMT offset doesn't parse" << std::endl;
         return 1;
     }
-    ICU4XMetaZoneCalculator mzcalc = ICU4XMetaZoneCalculator::try_new(dp).ok().value();
+    ICU4XMetazoneCalculator mzcalc = ICU4XMetazoneCalculator::try_new(dp).ok().value();
     time_zone.try_set_time_zone_id("uschi").ok().value();
     std::string time_zone_id_return = time_zone.time_zone_id().ok().value();
     if (time_zone_id_return != "uschi") {
@@ -73,10 +73,10 @@ int main() {
         return 1;
     }
     ICU4XIsoDateTime local_datetime = ICU4XIsoDateTime::try_new(2022, 8, 25, 0, 0, 0, 0).ok().value();
-    time_zone.maybe_calculate_meta_zone(mzcalc, local_datetime);
-    std::string meta_zone_id_return = time_zone.meta_zone_id().ok().value();
-    if (meta_zone_id_return != "amce") {
-        std::cout << "Meta zone ID not calculated correctly; got " << meta_zone_id_return << std::endl;
+    time_zone.maybe_calculate_metazone(mzcalc, local_datetime);
+    std::string metazone_id_return = time_zone.metazone_id().ok().value();
+    if (metazone_id_return != "amce") {
+        std::cout << "Metazone ID not calculated correctly; got " << metazone_id_return << std::endl;
         return 1;
     }
     // Note: The daylight time switch should normally come from TZDB calculations.

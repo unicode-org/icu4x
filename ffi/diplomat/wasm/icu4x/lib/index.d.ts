@@ -70,7 +70,7 @@ export { ICU4XLocaleFallbackPriority } from './ICU4XLocaleFallbackPriority.js';
 export { ICU4XLocaleFallbacker } from './ICU4XLocaleFallbacker.js';
 export { ICU4XLocaleFallbackerWithConfig } from './ICU4XLocaleFallbackerWithConfig.js';
 export { ICU4XLogger } from './ICU4XLogger.js';
-export { ICU4XMetaZoneCalculator } from './ICU4XMetaZoneCalculator.js';
+export { ICU4XMetazoneCalculator } from './ICU4XMetazoneCalculator.js';
 export { ICU4XOrdering } from './ICU4XOrdering.js';
 export { ICU4XPluralCategories } from './ICU4XPluralCategories.js';
 export { ICU4XPluralCategory } from './ICU4XPluralCategory.js';

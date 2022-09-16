@@ -1,6 +1,6 @@
 // @generated
 #![cfg(feature = "icu_datetime")]
-type DataStruct = < :: icu_datetime :: provider :: time_zones :: MetaZoneSpecificNamesLongV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu_datetime :: provider :: time_zones :: MetazoneSpecificNamesLongV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_store_unchecked(&[
         ("ar", AR_AR_EG),
@@ -23,7 +23,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("tr", TR),
         ("und", UND),
     ]);
-static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -1082,7 +1082,7 @@ static AR_AR_EG: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSp
         )
     },
 };
-static BN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static BN: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -2633,7 +2633,7 @@ static BN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         )
     },
 };
-static CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -4819,7 +4819,7 @@ static CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecifi
         )
     },
 };
-static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -5498,7 +5498,7 @@ static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
     },
 };
 static EN_001_EN_ZA: &DataStruct =
-    &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+    &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -6220,7 +6220,7 @@ static EN_001_EN_ZA: &DataStruct =
             )
         },
     };
-static ES: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static ES: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -7005,7 +7005,7 @@ static ES: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         )
     },
 };
-static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -7787,7 +7787,7 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
         )
     },
 };
-static FIL: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static FIL: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -8528,7 +8528,7 @@ static FIL: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecifi
         )
     },
 };
-static FR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static FR: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -9362,7 +9362,7 @@ static FR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         )
     },
 };
-static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -10167,7 +10167,7 @@ static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         )
     },
 };
-static RU: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static RU: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -11369,7 +11369,7 @@ static RU: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         )
     },
 };
-static SR_LATN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static SR_LATN: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -12150,7 +12150,7 @@ static SR_LATN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpe
     },
 };
 static SR_SR_CYRL: &DataStruct =
-    &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+    &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -13465,7 +13465,7 @@ static SR_SR_CYRL: &DataStruct =
             )
         },
     };
-static TH: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static TH: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -15037,7 +15037,7 @@ static TH: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         )
     },
 };
-static TR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static TR: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -15715,7 +15715,7 @@ static TR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         )
     },
 };
-static UND: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1 {
+static UND: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
