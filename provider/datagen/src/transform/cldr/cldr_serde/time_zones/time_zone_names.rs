@@ -18,13 +18,13 @@ use std::collections::{BTreeMap, HashMap};
 pub struct ZoneFormat(pub HashMap<String, String>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetaZone {
+pub struct Metazone {
     pub long: Option<ZoneFormat>,
     pub short: Option<ZoneFormat>,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetaZones(pub HashMap<String, MetaZone>);
+pub struct Metazones(pub HashMap<String, Metazone>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 pub struct LocationWithExemplarCity {
@@ -80,7 +80,7 @@ pub struct TimeZoneNames {
     pub region_format_variants: HashMap<String, String>,
     pub fallback_format: String,
     pub zone: Zones,
-    pub metazone: Option<MetaZones>,
+    pub metazone: Option<Metazones>,
 }
 
 pub struct TimeZoneNamesVisitor;
@@ -123,7 +123,7 @@ impl<'de> Visitor<'de> for TimeZoneNamesVisitor {
                     time_zone_names.region_format = value
                 }
             } else if key.eq("metazone") {
-                let value = map.next_value::<MetaZones>()?;
+                let value = map.next_value::<Metazones>()?;
                 time_zone_names.metazone = Some(value);
             } else if key.eq("zone") {
                 let value = map.next_value::<Zones>()?;

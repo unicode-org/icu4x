@@ -609,20 +609,25 @@ impl AnyCalendarKind {
     ///
     /// Returns None if the calendar is unknown
     pub fn from_bcp47_string(x: &str) -> Option<Self> {
+        Self::from_bcp47_bytes(x.as_bytes())
+    }
+    /// Construct from a BCP-47 byte string
+    ///
+    /// Returns None if the calendar is unknown
+    pub fn from_bcp47_bytes(x: &[u8]) -> Option<Self> {
         Some(match x {
-            "gregory" => AnyCalendarKind::Gregorian,
-            "buddhist" => AnyCalendarKind::Buddhist,
-            "japanese" => AnyCalendarKind::Japanese,
-            "japanext" => AnyCalendarKind::JapaneseExtended,
-            "indian" => AnyCalendarKind::Indian,
-            "coptic" => AnyCalendarKind::Coptic,
-            "iso" => AnyCalendarKind::Iso,
-            "ethiopic" => AnyCalendarKind::Ethiopian,
-            "ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
+            b"gregory" => AnyCalendarKind::Gregorian,
+            b"buddhist" => AnyCalendarKind::Buddhist,
+            b"japanese" => AnyCalendarKind::Japanese,
+            b"japanext" => AnyCalendarKind::JapaneseExtended,
+            b"indian" => AnyCalendarKind::Indian,
+            b"coptic" => AnyCalendarKind::Coptic,
+            b"iso" => AnyCalendarKind::Iso,
+            b"ethiopic" => AnyCalendarKind::Ethiopian,
+            b"ethioaa" => AnyCalendarKind::EthiopianAmeteAlem,
             _ => return None,
         })
     }
-
     /// Construct from a BCP-47 [`Value`]
     ///
     /// Returns an error if the calendar is unknown

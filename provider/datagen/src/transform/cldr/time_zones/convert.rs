@@ -6,16 +6,16 @@ use super::CldrTimeZonesData;
 use crate::transform::cldr::cldr_serde;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
 use cldr_serde::time_zones::meta_zones::MetaLocationOrSubRegion;
-use cldr_serde::time_zones::meta_zones::MetaZoneAliasData;
-use cldr_serde::time_zones::meta_zones::MetaZoneForPeriod;
+use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
+use cldr_serde::time_zones::meta_zones::MetazoneForPeriod;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::*;
 use icu_calendar::DateTime;
 use icu_datetime::provider::time_zones::{
-    ExemplarCitiesV1, MetaZoneGenericNamesLongV1, MetaZoneGenericNamesShortV1, MetaZoneId,
-    MetaZoneSpecificNamesLongV1, MetaZoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
+    ExemplarCitiesV1, MetazoneGenericNamesLongV1, MetazoneGenericNamesShortV1, MetazoneId,
+    MetazoneSpecificNamesLongV1, MetazoneSpecificNamesShortV1, TimeZoneBcp47Id, TimeZoneFormatsV1,
 };
-use icu_timezone::provider::MetaZonePeriodV1;
+use icu_timezone::provider::MetazonePeriodV1;
 use icu_timezone::ZoneVariant;
 use std::borrow::Cow;
 use std::collections::HashMap;
@@ -57,8 +57,8 @@ fn compute_bcp47_tzids_hashmap(
 }
 
 fn compute_meta_zone_ids_hashmap(
-    meta_zone_ids_resource: &HashMap<MetaZoneId, MetaZoneAliasData>,
-) -> HashMap<String, MetaZoneId> {
+    meta_zone_ids_resource: &HashMap<MetazoneId, MetazoneAliasData>,
+) -> HashMap<String, MetazoneId> {
     let mut meta_zone_ids = HashMap::new();
     for (meta_zone_id, meta_zone_id_data) in meta_zone_ids_resource.iter() {
         meta_zone_ids.insert(meta_zone_id_data.long_id.to_string(), *meta_zone_id);
@@ -167,7 +167,7 @@ impl From<CldrTimeZonesData<'_>> for ExemplarCitiesV1<'static> {
     }
 }
 
-impl From<CldrTimeZonesData<'_>> for MetaZonePeriodV1<'static> {
+impl From<CldrTimeZonesData<'_>> for MetazonePeriodV1<'static> {
     fn from(other: CldrTimeZonesData<'_>) -> Self {
         let data = other.meta_zone_periods_resource;
         let bcp47_tzid_data = &compute_bcp47_tzids_hashmap(other.bcp47_tzids_resource);
@@ -259,7 +259,7 @@ macro_rules! long_short_impls {
                                                 |format| {
                                                     const TINYSTR_YUKO: tinystr::TinyAsciiStr<4> =
                                                         tinystr::tinystr!(4, "yuko");
-                                                    (MetaZoneId(TINYSTR_YUKO), format.clone())
+                                                    (MetazoneId(TINYSTR_YUKO), format.clone())
                                                 },
                                             )
                                         } else {
@@ -345,7 +345,7 @@ macro_rules! long_short_impls {
                                             metazone.$field.as_ref().map(|value| {
                                                 const TINYSTR_YUKO: tinystr::TinyAsciiStr<4> =
                                                     tinystr::tinystr!(4, "yuko");
-                                                (MetaZoneId(TINYSTR_YUKO), value.clone())
+                                                (MetazoneId(TINYSTR_YUKO), value.clone())
                                             })
                                         } else {
                                             panic!(
@@ -413,15 +413,15 @@ macro_rules! long_short_impls {
 }
 
 long_short_impls!(
-    MetaZoneGenericNamesLongV1<'static>,
-    MetaZoneSpecificNamesLongV1<'static>,
+    MetazoneGenericNamesLongV1<'static>,
+    MetazoneSpecificNamesLongV1<'static>,
     long,
     long_metazone_names
 );
 
 long_short_impls!(
-    MetaZoneGenericNamesShortV1<'static>,
-    MetaZoneSpecificNamesShortV1<'static>,
+    MetazoneGenericNamesShortV1<'static>,
+    MetazoneSpecificNamesShortV1<'static>,
     short,
     short_metazone_names
 );
@@ -438,8 +438,8 @@ fn convert_cldr_zone_variant(cldr_zone_variant: &str) -> ZoneVariant {
 }
 
 fn iterate_zone_format_for_meta_zone_id(
-    pair: (MetaZoneId, ZoneFormat),
-) -> impl Iterator<Item = (MetaZoneId, ZoneVariant, String)> {
+    pair: (MetazoneId, ZoneFormat),
+) -> impl Iterator<Item = (MetazoneId, ZoneVariant, String)> {
     let (key1, zf) = pair;
     zf.0.into_iter()
         .filter(|(key, _)| !key.eq("generic"))
@@ -458,10 +458,10 @@ fn iterate_zone_format_for_time_zone_id(
 fn metazone_periods_iter(
     pair: (
         TimeZoneBcp47Id,
-        Vec<MetaZoneForPeriod>,
-        HashMap<String, MetaZoneId>,
+        Vec<MetazoneForPeriod>,
+        HashMap<String, MetazoneId>,
     ),
-) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetaZoneId>)> {
+) -> impl Iterator<Item = (TimeZoneBcp47Id, i32, Option<MetazoneId>)> {
     let (time_zone_key, periods, meta_zone_id_data) = pair;
     periods
         .into_iter()
@@ -489,7 +489,7 @@ fn metazone_periods_iter(
                             (
                                 time_zone_key,
                                 minutes,
-                                Some(MetaZoneId(tinystr::tinystr!(4, "yuko"))),
+                                Some(MetazoneId(tinystr::tinystr!(4, "yuko"))),
                             )
                         } else {
                             (time_zone_key, minutes, None)
@@ -508,7 +508,7 @@ fn metazone_periods_iter(
                             (
                                 time_zone_key,
                                 minutes,
-                                Some(MetaZoneId(tinystr::tinystr!(4, "yuko"))),
+                                Some(MetazoneId(tinystr::tinystr!(4, "yuko"))),
                             )
                         } else {
                             (time_zone_key, minutes, None)

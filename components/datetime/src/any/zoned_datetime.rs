@@ -62,7 +62,7 @@ use icu_plurals::provider::OrdinalV1Marker;
 /// let any_datetime = datetime.to_any();
 ///
 /// let time_zone: CustomTimeZone =
-///     "+05:00".parse().expect("Timezone should parse");
+///     "+05:00".parse().expect("Time zone should parse");
 ///
 /// let value = zdtf
 ///     .format_to_string(&any_datetime, &time_zone)
@@ -84,6 +84,13 @@ impl ZonedDateTimeFormatter {
     ///
     /// This method will pick the calendar off of the locale; and if unspecified or unknown will fall back to the default
     /// calendar for the locale. See [`AnyCalendarKind`] for a list of supported calendars.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
     ///
     /// # Examples
     ///
@@ -137,10 +144,10 @@ impl ZonedDateTimeFormatter {
             + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<GregorianDateLengthsV1Marker>
@@ -242,10 +249,10 @@ impl ZonedDateTimeFormatter {
             + DataProvider<WeekDataV1Marker>
             + DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + DataProvider<OrdinalV1Marker>
             + DataProvider<DecimalSymbolsV1Marker>
             + DataProvider<GregorianDateLengthsV1Marker>

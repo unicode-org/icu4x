@@ -12,6 +12,12 @@
 #include "ICU4XDateLength.h"
 
 
+
+/**
+ * 
+ * 
+ * See the [Rust documentation for `Date`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/options/length/enum.Date.html) for more information.
+ */
 enum struct ICU4XDateLength {
   Full = 0,
   Long = 1,

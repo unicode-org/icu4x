@@ -13,7 +13,6 @@ pub mod ffi {
     };
     use icu_locid::Locale;
     use icu_provider::DataProvider;
-    use icu_provider::KeyedDataMarker;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
     use writeable::Writeable;
 
@@ -38,7 +37,7 @@ pub mod ffi {
 
     impl ICU4XFixedDecimalFormatter {
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
-        #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new, FnInStruct)]
+        #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new_unstable, FnInStruct)]
         pub fn try_new_with_grouping_strategy(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
@@ -57,11 +56,10 @@ pub mod ffi {
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {
             use icu_provider::prelude::AsDowncastingAnyProvider;
-            let provider = AnyPayloadProvider {
-                key: DecimalSymbolsV1Marker::KEY,
-                // None: This clone is free, since cloning AnyPayload is free.
-                data: data_struct.0.clone(),
-            };
+            let provider = AnyPayloadProvider::from_any_payload::<DecimalSymbolsV1Marker>(
+                // Note: This clone is free, since cloning AnyPayload is free.
+                data_struct.0.clone(),
+            );
             Self::try_new_impl(
                 &provider.as_downcasting(),
                 &ICU4XLocale(Locale::UND),

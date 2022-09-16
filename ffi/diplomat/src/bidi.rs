@@ -44,7 +44,11 @@ pub mod ffi {
         ///
         /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::BidiClassAdapter::bidi_class, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::bidi::BidiClassAdapter::bidi_class,
+            FnInStruct,
+            hidden
+        )]
         pub fn for_text<'text>(
             &self,
             text: &'text str,

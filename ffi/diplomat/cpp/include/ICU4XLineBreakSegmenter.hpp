@@ -51,9 +51,9 @@ class ICU4XLineBreakSegmenter {
   static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options);
 
   /**
-   * Segments a UTF-8 string.
+   * Segments a (potentially ill-formed) UTF-8 string.
    * 
-   * See the [Rust documentation for `segment_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_str) for more information.
+   * See the [Rust documentation for `segment_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.segment_utf8) for more information.
    */
   ICU4XLineBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 

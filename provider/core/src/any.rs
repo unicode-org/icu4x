@@ -290,6 +290,12 @@ pub trait AnyProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError>;
 }
 
+impl<T: AnyProvider + ?Sized> AnyProvider for alloc::boxed::Box<T> {
+    fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
+        (**self).load_any(key, req)
+    }
+}
+
 /// A wrapper over `DynamicDataProvider<AnyMarker>` that implements `AnyProvider`
 #[allow(clippy::exhaustive_structs)] // newtype
 pub struct DynamicDataProviderAnyMarkerWrap<'a, P: ?Sized>(pub &'a P);
@@ -351,6 +357,20 @@ where
     #[inline]
     fn load(&self, req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.0.load_any(M::KEY, req)?.downcast()
+    }
+}
+
+impl<M, P> DynamicDataProvider<M> for DowncastingAnyProvider<'_, P>
+where
+    P: AnyProvider + ?Sized,
+    M: DataMarker + 'static,
+    for<'a> YokeTraitHack<<M::Yokeable as Yokeable<'a>>::Output>: Clone,
+    M::Yokeable: ZeroFrom<'static, M::Yokeable>,
+    M::Yokeable: RcWrapBounds,
+{
+    #[inline]
+    fn load_data(&self, key: DataKey, req: DataRequest) -> Result<DataResponse<M>, DataError> {
+        self.0.load_any(key, req)?.downcast()
     }
 }
 

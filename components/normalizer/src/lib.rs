@@ -67,11 +67,12 @@
 
 extern crate alloc;
 
-pub mod error;
+mod error;
 pub mod properties;
 pub mod provider;
 
-use crate::error::NormalizerError;
+pub use crate::error::NormalizerError;
+
 use crate::provider::CanonicalDecompositionDataV1Marker;
 use crate::provider::CompatibilityDecompositionSupplementV1Marker;
 use crate::provider::DecompositionDataV1;

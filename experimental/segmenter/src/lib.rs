@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! \[Experimental\] Segment strings by lines, graphemes, word, and sentences.
+//! 🚧 \[Experimental\] Segment strings by lines, graphemes, word, and sentences.
 //!
 //! This module is published as its own crate ([`icu_segmenter`](https://docs.rs/icu_segmenter/latest/icu_segmenter/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
@@ -12,6 +12,13 @@
 //! - Line breaker that is compatible with [Unicode Standard Annex #14][UAX14] and CSS properties.
 //! - Grapheme cluster breaker, word breaker, and sentence breaker that are compatible with
 //!   [Unicode Standard Annex #29][UAX29].
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. It can be enabled with the "experimental" feature
+//! of the icu meta-crate. Use with caution.
+//! <a href="https://github.com/unicode-org/icu4x/issues/2259">#2259</a>
+//! </div>
 //!
 //! [UAX14]: https://www.unicode.org/reports/tr14/
 //! [UAX29]: https://www.unicode.org/reports/tr29/
@@ -93,19 +100,22 @@ mod lstm_error;
 mod math_helper;
 
 pub use crate::grapheme::{
-    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorUtf16,
-    GraphemeClusterBreakIteratorUtf8, GraphemeClusterBreakSegmenter,
+    GraphemeClusterBreakIteratorLatin1, GraphemeClusterBreakIteratorPotentiallyIllFormedUtf8,
+    GraphemeClusterBreakIteratorUtf16, GraphemeClusterBreakIteratorUtf8,
+    GraphemeClusterBreakSegmenter,
 };
 pub use crate::line::{
-    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorUtf16, LineBreakIteratorUtf8,
-    LineBreakOptions, LineBreakRule, LineBreakSegmenter, WordBreakRule,
+    LineBreakIterator, LineBreakIteratorLatin1, LineBreakIteratorPotentiallyIllFormedUtf8,
+    LineBreakIteratorUtf16, LineBreakIteratorUtf8, LineBreakOptions, LineBreakRule,
+    LineBreakSegmenter, WordBreakRule,
 };
 pub use crate::sentence::{
-    SentenceBreakIteratorLatin1, SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8,
-    SentenceBreakSegmenter,
+    SentenceBreakIteratorLatin1, SentenceBreakIteratorPotentiallyIllFormedUtf8,
+    SentenceBreakIteratorUtf16, SentenceBreakIteratorUtf8, SentenceBreakSegmenter,
 };
 pub use crate::word::{
-    WordBreakIteratorLatin1, WordBreakIteratorUtf16, WordBreakIteratorUtf8, WordBreakSegmenter,
+    WordBreakIteratorLatin1, WordBreakIteratorPotentiallyIllFormedUtf8, WordBreakIteratorUtf16,
+    WordBreakIteratorUtf8, WordBreakSegmenter,
 };
 
 pub use crate::rule_segmenter::RuleBreakIterator;

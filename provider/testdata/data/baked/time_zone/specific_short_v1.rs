@@ -1,6 +1,6 @@
 // @generated
 #![cfg(feature = "icu_datetime")]
-type DataStruct = < :: icu_datetime :: provider :: time_zones :: MetaZoneSpecificNamesShortV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
+type DataStruct = < :: icu_datetime :: provider :: time_zones :: MetazoneSpecificNamesShortV1Marker as :: icu_provider :: DataMarker > :: Yokeable ;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_store_unchecked(&[
         ("ar", AR_AR_EG),
@@ -24,7 +24,7 @@ pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
         ("und", FIL_FR_RU_TH_TR_UND),
     ]);
 static AR_AR_EG: &DataStruct =
-    &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+    &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -56,7 +56,7 @@ static AR_AR_EG: &DataStruct =
             )
         },
     };
-static BN_CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static BN_CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -88,7 +88,7 @@ static BN_CCP: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpec
         )
     },
 };
-static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -152,7 +152,7 @@ static EN: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecific
         )
     },
 };
-static EN_001: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static EN_001: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -184,7 +184,7 @@ static EN_001: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpec
         )
     },
 };
-static EN_ZA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static EN_ZA: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -233,7 +233,7 @@ static EN_ZA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
         )
     },
 };
-static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -277,7 +277,7 @@ static ES_AR: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpeci
     },
 };
 static ES_SR_SR_CYRL_SR_LATN: &DataStruct =
-    &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+    &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -328,7 +328,7 @@ static ES_SR_SR_CYRL_SR_LATN: &DataStruct =
         },
     };
 static FIL_FR_RU_TH_TR_UND: &DataStruct =
-    &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+    &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
         defaults: unsafe {
             #[allow(unused_unsafe)]
             ::zerovec::ZeroMap2d::from_parts_unchecked(
@@ -356,7 +356,7 @@ static FIL_FR_RU_TH_TR_UND: &DataStruct =
             )
         },
     };
-static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1 {
+static JA: &DataStruct = &::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1 {
     defaults: unsafe {
         #[allow(unused_unsafe)]
         ::zerovec::ZeroMap2d::from_parts_unchecked(

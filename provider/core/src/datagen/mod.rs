@@ -85,9 +85,9 @@ macro_rules! make_exportable_provider {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
-                    const $struct_m: $crate::DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.get_hash();
+                    const $struct_m: $crate::DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.hashed();
                 )+
-                match key.get_hash() {
+                match key.hashed() {
                     $(
                         $struct_m => {
                             $crate::datagen::IterableDataProvider::<$struct_m>::supported_locales(self)
@@ -103,9 +103,9 @@ macro_rules! make_exportable_provider {
                 #![allow(non_upper_case_globals)]
                 // Reusing the struct names as identifiers
                 $(
-                    const $struct_m: $crate::DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.get_hash();
+                    const $struct_m: $crate::DataKeyHash = <$struct_m as $crate::KeyedDataMarker>::KEY.hashed();
                 )+
-                match key.get_hash() {
+                match key.hashed() {
                     $(
                         $struct_m => {
                             let heap_stats = from.attempt_zero_copy_heap_size::<$struct_m>();

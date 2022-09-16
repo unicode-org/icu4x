@@ -14,14 +14,19 @@ Documentation
    datetime_formatter_ffi
    decimal_ffi
    errors_ffi
+   fallbacker_ffi
    fixed_decimal_ffi
+   list_ffi
    locale_ffi
    locid_transform_ffi
    logging_ffi
+   normalizer_ffi
+   normalizer_properties_ffi
    pluralrules_ffi
    properties_maps_ffi
    properties_sets_ffi
    provider_ffi
+   script_ffi
    segmenter_grapheme_ffi
    segmenter_line_ffi
    segmenter_sentence_ffi
@@ -30,6 +35,7 @@ Documentation
    timezone_ffi
    timezone_formatter_ffi
    week_ffi
+   zoned_formatter_ffi
 
 Indices and tables
 ==================

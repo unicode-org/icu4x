@@ -2,6 +2,15 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+//! 🚧 \[Experimental\] Options for constructing DateTimeFormatter objects by each component style.
+//!
+//! <div class="stab unstable">
+//! 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+//! including in SemVer minor releases. It can be enabled with the "experimental" feature
+//! of the icu meta-crate. Use with caution.
+//! <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+//! </div>
+//!
 //! # Implementation status
 //!
 //! This module is available by enabling the `"experimental"` feature. It may change in breaking
@@ -84,6 +93,13 @@ use super::preferences;
 use serde::{Deserialize, Serialize};
 
 /// See the [module-level](./index.html) docs for more information.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+/// </div>
 #[derive(Debug, Clone, PartialEq, Default, Copy)]
 #[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
 #[non_exhaustive]
@@ -350,6 +366,13 @@ impl Bag {
 
 /// A numeric component for the `components::`[`Bag`]. It is used for the year, day, hour, minute,
 /// and second.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+/// </div>
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
     feature = "serde",
@@ -365,6 +388,13 @@ pub enum Numeric {
 }
 
 /// A text component for the `components::`[`Bag`]. It is used for the era and weekday.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+/// </div>
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
     feature = "serde",
@@ -382,6 +412,13 @@ pub enum Text {
 }
 
 /// Options for displaying a Year for the `components::`[`Bag`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+/// </div>
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
     feature = "serde",
@@ -403,6 +440,13 @@ pub enum Year {
 }
 
 /// Options for displaying a Month for the `components::`[`Bag`].
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+/// </div>
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
     feature = "serde",
@@ -429,6 +473,13 @@ pub enum Month {
 /// Options for displaying the current week number for the `components::`[`Bag`].
 ///
 /// Week numbers are relative to either a month or year, e.g. 'week 3 of January' or 'week 40 of 2000'.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+/// </div>
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
     feature = "serde",
@@ -446,6 +497,13 @@ pub enum Week {
 }
 
 /// Options for displaying the current day of the month or year.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+/// </div>
 #[derive(Debug, Clone, PartialEq, Copy)]
 #[cfg_attr(
     feature = "serde",
@@ -466,6 +524,13 @@ pub enum Day {
 ///
 /// Note that the initial implementation is focusing on only supporting ECMA-402 compatible
 /// options.
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+/// </div>
 #[derive(Debug, Clone, Copy, PartialEq)]
 #[cfg_attr(
     feature = "serde",

@@ -3,8 +3,7 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use zerofrom::ZeroFrom;
-use zerovec::ule::AsULE;
-use zerovec::ZeroVec;
+use zerovec::{ZeroSlice, ZeroVec};
 
 // Match-node lead unit values, after masking off intermediate-value bits:
 
@@ -94,7 +93,7 @@ impl<'data> Char16Trie<'data> {
 
     /// Returns a new [`Char16TrieIterator`] backed by borrowed data from the `trie` data
     pub fn iter(&self) -> Char16TrieIterator {
-        Char16TrieIterator::new(self.data.as_ule_slice())
+        Char16TrieIterator::new(&self.data)
     }
 }
 
@@ -102,7 +101,7 @@ impl<'data> Char16Trie<'data> {
 #[derive(Clone)]
 pub struct Char16TrieIterator<'a> {
     /// A reference to the Char16Trie data to iterate over.
-    trie: &'a [<u16 as zerovec::ule::AsULE>::ULE],
+    trie: &'a ZeroSlice<u16>,
     /// Index of next trie unit to read, or None if there are no more matches.
     pos: Option<usize>,
     /// Remaining length of a linear-match node, minus 1, or None if not in
@@ -146,9 +145,25 @@ fn u16_tail(supplementary: i32) -> u16 {
     (((supplementary) & 0x3ff) | 0xdc00) as u16
 }
 
+/// A macro that takes an `Option` argument and either unwraps it if it has a value or
+/// causes the function to return `TrieResult::NoMatch` if there is no value.
+/// This could perhaps be done with std::ops::Try once stabilized.
+macro_rules! trie_unwrap {
+    ($option:expr) => {
+        match $option {
+            Some(x) => x,
+            None => {
+                // Unexpected
+                debug_assert!(false);
+                return TrieResult::NoMatch;
+            }
+        }
+    };
+}
+
 impl<'a> Char16TrieIterator<'a> {
     /// Returns a new [`Char16TrieIterator`] backed by borrowed data for the `trie` array
-    pub fn new(trie: &'a [<u16 as zerovec::ule::AsULE>::ULE]) -> Self {
+    pub fn new(trie: &'a ZeroSlice<u16>) -> Self {
         Self {
             trie,
             pos: Some(0),
@@ -249,12 +264,12 @@ impl<'a> Char16TrieIterator<'a> {
         };
         if let Some(length) = self.remaining_match_length {
             // Remaining part of a linear-match node
-            if c == self.get(pos) {
+            if c == trie_unwrap!(self.trie.get(pos)) {
                 pos += 1;
                 self.pos = Some(pos);
                 if length == 0 {
                     self.remaining_match_length = None;
-                    let node = self.get(pos);
+                    let node = trie_unwrap!(self.trie.get(pos));
                     if node >= MIN_VALUE_LEAD {
                         return self.value_result(pos);
                     }
@@ -270,17 +285,11 @@ impl<'a> Char16TrieIterator<'a> {
         }
     }
 
-    #[allow(clippy::indexing_slicing)] // TODO(#1440) This potentially panics
-    fn get(&self, pos: usize) -> u16 {
-        // TODO(#1440) This potentially panics
-        u16::from_unaligned(self.trie[pos])
-    }
-
     fn branch_next(&mut self, pos: usize, length: usize, in_unit: u16) -> TrieResult {
         let mut pos = pos;
         let mut length = length;
         if length == 0 {
-            length = self.get(pos) as usize;
+            length = trie_unwrap!(self.trie.get(pos)) as usize;
             pos += 1;
         }
         length += 1;
@@ -288,21 +297,21 @@ impl<'a> Char16TrieIterator<'a> {
         // The length of the branch is the number of units to select from.
         // The data structure encodes a binary search.
         while length > MAX_BRANCH_LINEAR_SUB_NODE_LENGTH {
-            if in_unit < self.get(pos) {
+            if in_unit < trie_unwrap!(self.trie.get(pos)) {
                 length >>= 1;
-                pos = self.jump_by_delta(pos + 1);
+                pos = trie_unwrap!(self.jump_by_delta(pos + 1));
             } else {
                 length = length - (length >> 1);
-                pos = self.skip_delta(pos + 1);
+                pos = trie_unwrap!(self.skip_delta(pos + 1));
             }
         }
         // Drop down to linear search for the last few bytes.
         // length>=2 because the loop body above sees length>kMaxBranchLinearSubNodeLength>=3
         // and divides length by 2.
         loop {
-            if in_unit == self.get(pos) {
+            if in_unit == trie_unwrap!(self.trie.get(pos)) {
                 pos += 1;
-                let mut node = self.get(pos);
+                let mut node = trie_unwrap!(self.trie.get(pos));
                 if node & VALUE_IS_FINAL != 0 {
                     self.pos = Some(pos);
                     return self.value_result(pos);
@@ -314,13 +323,14 @@ impl<'a> Char16TrieIterator<'a> {
                     pos += node as usize;
                 } else if node < THREE_UNIT_VALUE_LEAD {
                     pos += (((node - MIN_TWO_UNIT_VALUE_LEAD) as u32) << 16) as usize
-                        | self.get(pos) as usize;
+                        | trie_unwrap!(self.trie.get(pos)) as usize;
                     pos += 1;
                 } else {
-                    pos += (self.get(pos) as usize) << 16 | self.get(pos + 1) as usize;
+                    pos += (trie_unwrap!(self.trie.get(pos)) as usize) << 16
+                        | trie_unwrap!(self.trie.get(pos + 1)) as usize;
                     pos += 2;
                 }
-                node = self.get(pos);
+                node = trie_unwrap!(self.trie.get(pos));
                 self.pos = Some(pos);
 
                 if node >= MIN_VALUE_LEAD {
@@ -329,16 +339,16 @@ impl<'a> Char16TrieIterator<'a> {
                 return TrieResult::NoValue;
             }
             length -= 1;
-            pos = self.skip_value(pos + 1);
+            pos = trie_unwrap!(self.skip_value(pos + 1));
             if length <= 1 {
                 break;
             }
         }
 
-        if in_unit == self.get(pos) {
+        if in_unit == trie_unwrap!(self.trie.get(pos)) {
             pos += 1;
             self.pos = Some(pos);
-            let node = self.get(pos);
+            let node = trie_unwrap!(self.trie.get(pos));
             if node >= MIN_VALUE_LEAD {
                 return self.value_result(pos);
             }
@@ -350,7 +360,7 @@ impl<'a> Char16TrieIterator<'a> {
     }
 
     fn next_impl(&mut self, pos: usize, in_unit: u16) -> TrieResult {
-        let mut node = self.get(pos);
+        let mut node = trie_unwrap!(self.trie.get(pos));
         let mut pos = pos + 1;
         loop {
             if node < MIN_LINEAR_MATCH {
@@ -358,12 +368,12 @@ impl<'a> Char16TrieIterator<'a> {
             } else if node < MIN_VALUE_LEAD {
                 // Match the first of length+1 units.
                 let length = node - MIN_LINEAR_MATCH;
-                if in_unit == self.get(pos) {
+                if in_unit == trie_unwrap!(self.trie.get(pos)) {
                     pos += 1;
                     if length == 0 {
                         self.remaining_match_length = None;
                         self.pos = Some(pos);
-                        node = self.get(pos);
+                        node = trie_unwrap!(self.trie.get(pos));
                         if node >= MIN_VALUE_LEAD {
                             return self.value_result(pos);
                         }
@@ -392,73 +402,88 @@ impl<'a> Char16TrieIterator<'a> {
         self.pos = None;
     }
 
-    fn jump_by_delta(&self, pos: usize) -> usize {
-        let delta = self.get(pos);
-        if delta < MIN_TWO_UNIT_DELTA_LEAD {
+    #[inline(always)] // 1 call site and we want the Option to go away
+    fn jump_by_delta(&self, pos: usize) -> Option<usize> {
+        let delta = self.trie.get(pos)?;
+        let v = if delta < MIN_TWO_UNIT_DELTA_LEAD {
             // nothing to do
             pos + 1 + delta as usize
         } else if delta == THREE_UNIT_DELTA_LEAD {
-            let delta = ((self.get(pos + 1) as usize) << 16) | (self.get(pos + 2) as usize);
+            let delta =
+                ((self.trie.get(pos + 1)? as usize) << 16) | (self.trie.get(pos + 2)? as usize);
             pos + delta + 3
         } else {
-            let delta =
-                ((delta - MIN_TWO_UNIT_DELTA_LEAD) as usize) << 16 | (self.get(pos + 1) as usize);
+            let delta = ((delta - MIN_TWO_UNIT_DELTA_LEAD) as usize) << 16
+                | (self.trie.get(pos + 1)? as usize);
             pos + delta + 2
-        }
+        };
+        Some(v)
     }
 
-    fn skip_value(&self, pos: usize) -> usize {
-        let lead_unit = self.get(pos);
-        skip_value(pos + 1, lead_unit & 0x7fff)
+    #[inline(always)] // 1 call site and we want the Option to go away
+    fn skip_value(&self, pos: usize) -> Option<usize> {
+        let lead_unit = self.trie.get(pos)?;
+        Some(skip_value(pos + 1, lead_unit & 0x7fff))
     }
 
-    fn skip_delta(&self, pos: usize) -> usize {
-        let delta = self.get(pos);
-        if delta < MIN_TWO_UNIT_DELTA_LEAD {
+    #[inline(always)] // 1 call site and we want the Option to go away
+    fn skip_delta(&self, pos: usize) -> Option<usize> {
+        let delta = self.trie.get(pos)?;
+        let v = if delta < MIN_TWO_UNIT_DELTA_LEAD {
             pos + 1
         } else if delta == THREE_UNIT_DELTA_LEAD {
             pos + 3
         } else {
             pos + 2
-        }
+        };
+        Some(v)
     }
 
     fn value_result(&self, pos: usize) -> TrieResult {
-        let node = self.get(pos) & VALUE_IS_FINAL;
-        let value = self.get_value(pos);
-        match node {
-            VALUE_IS_FINAL => TrieResult::FinalValue(value),
-            _ => TrieResult::Intermediate(value),
+        match self.get_value(pos) {
+            Some(result) => result,
+            None => {
+                // Unexpected
+                debug_assert!(false);
+                TrieResult::NoMatch
+            }
         }
     }
 
-    fn get_value(&self, pos: usize) -> i32 {
-        let lead_unit = self.get(pos);
+    #[inline(always)] // 1 call site and we want the Option to go away
+    fn get_value(&self, pos: usize) -> Option<TrieResult> {
+        let lead_unit = self.trie.get(pos)?;
         if lead_unit & VALUE_IS_FINAL == VALUE_IS_FINAL {
             self.read_value(pos + 1, lead_unit & 0x7fff)
+                .map(TrieResult::FinalValue)
         } else {
             self.read_node_value(pos + 1, lead_unit)
+                .map(TrieResult::Intermediate)
         }
     }
 
-    fn read_value(&self, pos: usize, lead_unit: u16) -> i32 {
-        if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
+    #[inline(always)] // 1 call site and we want the Option to go away
+    fn read_value(&self, pos: usize, lead_unit: u16) -> Option<i32> {
+        let v = if lead_unit < MIN_TWO_UNIT_VALUE_LEAD {
             lead_unit.into()
         } else if lead_unit < THREE_UNIT_VALUE_LEAD {
-            ((lead_unit - MIN_TWO_UNIT_VALUE_LEAD) as i32) << 16 | self.get(pos) as i32
+            ((lead_unit - MIN_TWO_UNIT_VALUE_LEAD) as i32) << 16 | self.trie.get(pos)? as i32
         } else {
-            (self.get(pos) as i32) << 16 | self.get(pos + 1) as i32
-        }
+            (self.trie.get(pos)? as i32) << 16 | self.trie.get(pos + 1)? as i32
+        };
+        Some(v)
     }
 
-    fn read_node_value(&self, pos: usize, lead_unit: u16) -> i32 {
-        if lead_unit < (MIN_TWO_UNIT_NODE_VALUE_LEAD) {
+    #[inline(always)] // 1 call site and we want the Option to go away
+    fn read_node_value(&self, pos: usize, lead_unit: u16) -> Option<i32> {
+        let v = if lead_unit < (MIN_TWO_UNIT_NODE_VALUE_LEAD) {
             ((lead_unit >> 6) - 1).into()
         } else if lead_unit < THREE_UNIT_NODE_VALUE_LEAD {
             (((lead_unit & 0x7fc0) - MIN_TWO_UNIT_NODE_VALUE_LEAD) as i32) << 10
-                | self.get(pos) as i32
+                | self.trie.get(pos)? as i32
         } else {
-            (self.get(pos) as i32) << 16 | self.get(pos + 1) as i32
-        }
+            (self.trie.get(pos)? as i32) << 16 | self.trie.get(pos + 1)? as i32
+        };
+        Some(v)
     }
 }

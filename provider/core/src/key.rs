@@ -8,6 +8,7 @@ use crate::helpers;
 use alloc::borrow::Cow;
 use core::fmt;
 use core::fmt::Write;
+use core::ops::Deref;
 use writeable::{LengthHint, Writeable};
 use zerovec::ule::*;
 
@@ -40,17 +41,26 @@ macro_rules! tagged {
 }
 
 /// A compact hash of a [`DataKey`]. Useful for keys in maps.
+///
+/// The hash will be stable over time within major releases.
 #[derive(Debug, PartialEq, Eq, PartialOrd, Ord, Copy, Clone, Hash, ULE)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[repr(transparent)]
 pub struct DataKeyHash([u8; 4]);
 
 impl DataKeyHash {
-    const fn compute_from_str(path: &str) -> Self {
-        Self(
-            helpers::fxhash_32(path.as_bytes(), leading_tag!().len(), trailing_tag!().len())
-                .to_le_bytes(),
-        )
+    const fn compute_from_path(path: &DataKeyPath) -> Self {
+        let hash = helpers::fxhash_32(
+            path.tagged.as_bytes(),
+            leading_tag!().len(),
+            trailing_tag!().len(),
+        );
+        Self(hash.to_le_bytes())
+    }
+
+    /// Gets the hash value as a byte array.
+    pub const fn to_bytes(&self) -> [u8; 4] {
+        self.0
     }
 }
 
@@ -110,6 +120,41 @@ impl Default for FallbackPriority {
     }
 }
 
+/// The string path of a data key. For example, "foo@1"
+#[derive(Debug, Copy, Clone, PartialEq, Eq, PartialOrd, Ord)]
+pub struct DataKeyPath {
+    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
+    // in a compiled binary.
+    tagged: &'static str,
+}
+
+impl DataKeyPath {
+    /// Gets the path as a static string slice.
+    #[inline]
+    pub const fn get(&self) -> &'static str {
+        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
+        /// ```compile_fail
+        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
+        /// ```
+        const _: () = ();
+        unsafe {
+            // Safe due to invariant that self.path is tagged correctly
+            core::str::from_utf8_unchecked(core::mem::transmute((
+                self.tagged.as_ptr().add(leading_tag!().len()),
+                self.tagged.len() - trailing_tag!().len() - leading_tag!().len(),
+            )))
+        }
+    }
+}
+
+impl Deref for DataKeyPath {
+    type Target = str;
+    #[inline]
+    fn deref(&self) -> &Self::Target {
+        self.get()
+    }
+}
+
 /// Metadata statically associated with a particular [`DataKey`].
 #[derive(Debug, PartialEq, Eq, Copy, Clone, PartialOrd, Ord)]
 #[non_exhaustive]
@@ -143,6 +188,7 @@ impl DataKeyMetadata {
 }
 
 impl Default for DataKeyMetadata {
+    #[inline]
     fn default() -> Self {
         Self::const_default()
     }
@@ -173,9 +219,7 @@ impl Default for DataKeyMetadata {
 /// ```
 #[derive(Copy, Clone)]
 pub struct DataKey {
-    // This string literal is wrapped in leading_tag!() and trailing_tag!() to make it detectable
-    // in a compiled binary.
-    path: &'static str,
+    path: DataKeyPath,
     hash: DataKeyHash,
     metadata: DataKeyMetadata,
 }
@@ -183,11 +227,26 @@ pub struct DataKey {
 impl PartialEq for DataKey {
     #[inline]
     fn eq(&self, other: &Self) -> bool {
-        self.hash == other.hash && self.get_path() == other.get_path()
+        self.hash == other.hash && self.path == other.path && self.metadata == other.metadata
     }
 }
 
 impl Eq for DataKey {}
+
+impl Ord for DataKey {
+    fn cmp(&self, other: &Self) -> core::cmp::Ordering {
+        self.path
+            .cmp(&other.path)
+            .then_with(|| self.metadata.cmp(&other.metadata))
+    }
+}
+
+impl PartialOrd for DataKey {
+    #[inline]
+    fn partial_cmp(&self, other: &Self) -> Option<core::cmp::Ordering> {
+        Some(self.cmp(other))
+    }
+}
 
 impl core::hash::Hash for DataKey {
     #[inline]
@@ -204,33 +263,60 @@ impl DataKey {
     ///
     /// Useful for reading and writing data to a file system.
     #[inline]
-    pub const fn get_path(&self) -> &'static str {
-        /// core::slice::from_raw_parts(a, b) = core::mem::transmute((a, b)) hack
-        /// ```compile_fail
-        /// const unsafe fn canary() { core::slice::from_raw_parts(0 as *const u8, 0); }
-        /// ```
-        const _: () = ();
-        unsafe {
-            // Safe due to invariant that self.path is tagged correctly
-            core::str::from_utf8_unchecked(core::mem::transmute((
-                self.path.as_ptr().add(leading_tag!().len()),
-                self.path.len() - trailing_tag!().len() - leading_tag!().len(),
-            )))
-        }
+    pub const fn path(&self) -> DataKeyPath {
+        self.path
     }
 
     /// Gets a platform-independent hash of a [`DataKey`].
     ///
     /// The hash is 4 bytes and allows for fast key comparison.
+    ///
+    /// # Example
+    ///
+    /// ```
+    /// use icu_provider::DataKey;
+    /// use icu_provider::DataKeyHash;
+    ///
+    /// const KEY: DataKey = icu_provider::data_key!("foo@1");
+    /// const KEY_HASH: DataKeyHash = KEY.hashed();
+    ///
+    /// assert_eq!(KEY_HASH.to_bytes(), [0xe2, 0xb6, 0x17, 0x71]);
+    /// ```
     #[inline]
-    pub const fn get_hash(&self) -> DataKeyHash {
+    pub const fn hashed(&self) -> DataKeyHash {
         self.hash
     }
 
     /// Gets the metadata associated with this [`DataKey`].
     #[inline]
-    pub const fn get_metadata(&self) -> DataKeyMetadata {
+    pub const fn metadata(&self) -> DataKeyMetadata {
         self.metadata
+    }
+
+    /// Constructs a [`DataKey`] from a path and metadata.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::data_key;
+    /// use icu_provider::DataKey;
+    ///
+    /// const CONST_KEY: DataKey = data_key!("foo@1");
+    ///
+    /// let runtime_key = DataKey::from_path_and_metadata(
+    ///     CONST_KEY.path(),
+    ///     CONST_KEY.metadata(),
+    /// );
+    ///
+    /// assert_eq!(CONST_KEY, runtime_key);
+    /// ```
+    #[inline]
+    pub const fn from_path_and_metadata(path: DataKeyPath, metadata: DataKeyMetadata) -> Self {
+        Self {
+            path,
+            hash: DataKeyHash::compute_from_path(&path),
+            metadata,
+        }
     }
 
     #[doc(hidden)]
@@ -293,14 +379,15 @@ impl DataKey {
                 (At | Version, Some(b'0'..=b'9')) => Version,
                 // One of these cases will be hit at the latest when i == end, so the loop converges.
                 (Version | MetaAfter, None) => {
+                    let path = DataKeyPath { tagged: path };
                     return Ok(Self {
                         path,
-                        hash: DataKeyHash::compute_from_str(path),
+                        hash: DataKeyHash::compute_from_path(&path),
                         metadata: DataKeyMetadata {
                             fallback_priority,
                             extension_key,
                         },
-                    })
+                    });
                 }
 
                 (Version | MetaAfter, Some(b'[')) => MetaOpen,
@@ -420,15 +507,15 @@ impl fmt::Debug for DataKey {
 
 impl Writeable for DataKey {
     fn write_to<W: core::fmt::Write + ?Sized>(&self, sink: &mut W) -> core::fmt::Result {
-        self.get_path().write_to(sink)
+        self.path().write_to(sink)
     }
 
     fn writeable_length_hint(&self) -> LengthHint {
-        self.get_path().writeable_length_hint()
+        self.path().writeable_length_hint()
     }
 
     fn write_to_string(&self) -> Cow<str> {
-        Cow::Borrowed(self.get_path())
+        Cow::Borrowed(self.path().get())
     }
 }
 
@@ -516,28 +603,28 @@ fn test_path_syntax() {
 fn test_metadata_parsing() {
     use icu_locid::extensions_unicode_key as key;
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1")).map(|k| k.get_metadata()),
+        DataKey::construct_internal(tagged!("hello/world@1")).map(|k| k.metadata()),
         Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Language,
             extension_key: None
         })
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.get_metadata()),
+        DataKey::construct_internal(tagged!("hello/world@1[R]")).map(|k| k.metadata()),
         Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Region,
             extension_key: None
         })
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.get_metadata()),
+        DataKey::construct_internal(tagged!("hello/world@1[u-ca]")).map(|k| k.metadata()),
         Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Language,
             extension_key: Some(key!("ca"))
         })
     );
     assert_eq!(
-        DataKey::construct_internal(tagged!("hello/world@1[R][u-ca]")).map(|k| k.get_metadata()),
+        DataKey::construct_internal(tagged!("hello/world@1[R][u-ca]")).map(|k| k.metadata()),
         Ok(DataKeyMetadata {
             fallback_priority: FallbackPriority::Region,
             extension_key: Some(key!("ca"))
