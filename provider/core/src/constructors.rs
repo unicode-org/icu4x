@@ -4,9 +4,19 @@
 
 //! 📚 *This module documents ICU4X constructor signatures.*
 //!
-//! A design goal of ICU4X is to enable data sharing across ICU4X library versions and also
-//! minimize impact on code size. In order to achieve these goals and still allow data structs
-//! to evolve, there are 3 versions of all ICU4X functions that take a data provider:
+//! One of the key differences between ICU4X and its parent projects, ICU4C and ICU4J, is in how
+//! it deals with locale data.
+//!
+//! In ICU4X, the data provider is an *explicit argument* whenever it is required by the library.
+//! This enables ICU4X to achieve the following value propositions:
+//!
+//! 1. Configurable data sources (machine-readable data file, baked into code, JSON, etc).
+//! 2. Dynamic data loading at runtime (load data on demand).
+//! 3. Reduced overhead and code size (data is resolved locally at each call site).
+//! 4. Explicit support for multiple ICU4X instances sharing data.
+//!
+//! In order to achieve these goals, there are 3 versions of all Rust ICU4X functions that
+//! take a data provider argument:
 //!
 //! 1. `*_unstable`
 //! 2. `*_with_any_provider`
