@@ -162,7 +162,7 @@ pub struct LocaleFallbackConfig {
     /// For example, most data keys for collation add additional parent locales, such as
     /// "yue" to "zh-Hant", and data used for the `"-u-co"` extension keyword fallback.
     ///
-    /// Currently the only supported fallback supplement ID is `"coll"`, but more may be
+    /// Currently the only supported fallback supplement is `FallbackSupplement::Collation`, but more may be
     /// added in the future.
     ///
     /// # Examples
