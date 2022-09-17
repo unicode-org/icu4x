@@ -19,7 +19,7 @@
 //! ```
 //! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locid::locale;
-//! use writeable::Writeable;
+//! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new_unstable(
 //!     &icu_testdata::unstable(),
@@ -29,10 +29,8 @@
 //! .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
-//! let formatted_value = fdf.format(&fixed_decimal);
-//! let formatted_str = formatted_value.write_to_string();
 //!
-//! assert_eq!("১০,০০,০০৭", formatted_str);
+//! assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 //! ```
 //!
 //! ## Format a number with digits after the decimal separator
@@ -41,7 +39,7 @@
 //! use fixed_decimal::FixedDecimal;
 //! use icu::decimal::FixedDecimalFormatter;
 //! use icu::locid::Locale;
-//! use writeable::Writeable;
+//! use writeable::assert_writeable_eq;
 //!
 //! let fdf = FixedDecimalFormatter::try_new_unstable(
 //!     &icu_testdata::unstable(),
@@ -52,7 +50,7 @@
 //!
 //! let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
 //!
-//! assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
+//! assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
 //! ```
 //!
 //! ### Format a number using an alternative numbering system
@@ -62,22 +60,19 @@
 //!
 //! ```
 //! use icu::decimal::FixedDecimalFormatter;
-//! use icu::locid::Locale;
-//! use writeable::Writeable;
+//! use icu::locid::locale;
+//! use writeable::assert_writeable_eq;
 //!
-//! let locale = "th-u-nu-thai".parse::<Locale>().unwrap();
 //! let fdf = FixedDecimalFormatter::try_new_unstable(
 //!     &icu_testdata::unstable(),
-//!     &locale.into(),
+//!     &locale!("th-u-nu-thai").into(),
 //!     Default::default(),
 //! )
 //! .expect("Data should load successfully");
 //!
 //! let fixed_decimal = 1000007.into();
-//! let formatted_value = fdf.format(&fixed_decimal);
-//! let formatted_str = formatted_value.write_to_string();
 //!
-//! assert_eq!("๑,๐๐๐,๐๐๗", formatted_str);
+//! assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 //! ```
 //!
 //! [`FixedDecimalFormatter`]: FixedDecimalFormatter
@@ -109,8 +104,10 @@ pub mod provider;
 pub use error::Error as FixedDecimalFormatterError;
 pub use format::FormattedFixedDecimal;
 
+use alloc::string::String;
 use fixed_decimal::FixedDecimal;
 use icu_provider::prelude::*;
+use writeable::Writeable;
 
 /// A formatter for [`FixedDecimal`], rendering decimal digits in an i18n-friendly way.
 ///
@@ -157,5 +154,10 @@ impl FixedDecimalFormatter {
             options: &self.options,
             symbols: self.symbols.get(),
         }
+    }
+
+    /// Formats a [`FixedDecimal`], returning a [`String`].
+    pub fn format_to_string(&self, value: &FixedDecimal) -> String {
+        self.format(value).write_to_string().into_owned()
     }
 }

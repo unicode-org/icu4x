@@ -22,7 +22,7 @@ pub struct FixedDecimalFormatterOptions {
 /// use icu_decimal::FixedDecimalFormatter;
 /// use icu_decimal::FormattedFixedDecimal;
 /// use icu_locid::Locale;
-/// use writeable::Writeable;
+/// use writeable::assert_writeable_eq;
 ///
 /// let locale = Locale::UND;
 /// let mut options: options::FixedDecimalFormatterOptions = Default::default();
@@ -35,10 +35,10 @@ pub struct FixedDecimalFormatterOptions {
 /// .expect("Data should load successfully");
 ///
 /// let one_thousand = 1000.into();
-/// assert_eq!("1000", fdf.format(&one_thousand).write_to_string());
+/// assert_writeable_eq!(fdf.format(&one_thousand), "1000");
 ///
 /// let ten_thousand = 10000.into();
-/// assert_eq!("10,000", fdf.format(&ten_thousand).write_to_string());
+/// assert_writeable_eq!(fdf.format(&ten_thousand), "10,000");
 /// ```
 #[non_exhaustive]
 #[derive(Debug, Eq, PartialEq, Clone, Copy)]

@@ -17,6 +17,7 @@ pub mod ffi {
     use icu_datetime::time_zone::IsoMinutes;
     use icu_datetime::time_zone::IsoSeconds;
     use icu_datetime::TimeZoneFormatter;
+    use writeable::Writeable;
 
     #[diplomat::opaque]
     /// An ICU4X TimeZoneFormatter object capable of formatting an [`ICU4XCustomTimeZone`] type (and others) as a string
@@ -207,7 +208,6 @@ pub mod ffi {
         /// Formats a [`ICU4XCustomTimeZone`] to a string.
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::format, FnInStruct)]
         #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::format_to_string, FnInStruct)]
-        #[diplomat::rust_link(icu::datetime::TimeZoneFormatter::format_to_write, FnInStruct)]
         pub fn format_custom_time_zone(
             &self,
             value: &ICU4XCustomTimeZone,
@@ -215,7 +215,8 @@ pub mod ffi {
         ) -> DiplomatResult<(), ICU4XError> {
             let result = self
                 .0
-                .format_to_write(write, &value.0)
+                .format(&value.0)
+                .write_to(write)
                 .map_err(Into::into)
                 .into();
             write.flush();
