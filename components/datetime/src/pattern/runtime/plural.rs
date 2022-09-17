@@ -201,10 +201,13 @@ impl<'data> PatternPlurals<'data> {
         }
     }
 
+    /// # Panics
+    ///
+    /// Panics if there is not a single pattern.
     pub fn expect_pattern(self, msg: &str) -> Pattern<'data> {
         match self {
             Self::SinglePattern(pattern) => pattern,
-            #[allow(clippy::panic)] // explicit panic since single pattern is expected.
+            #[allow(clippy::panic)]
             _ => panic!("expect_pattern failed: {}", msg),
         }
     }
