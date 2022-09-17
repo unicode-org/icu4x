@@ -1355,7 +1355,6 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
- "icu_calendar",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1433,6 +1432,7 @@ dependencies = [
 name = "icu_codepointtrie_builder"
 version = "0.3.3"
 dependencies = [
+ "icu",
  "icu_collections",
  "lazy_static",
  "toml",
@@ -1448,6 +1448,7 @@ dependencies = [
  "atoi",
  "databake",
  "displaydoc",
+ "icu",
  "icu_collections",
  "icu_locid",
  "icu_normalizer",
@@ -1493,6 +1494,7 @@ dependencies = [
  "displaydoc",
  "elsa",
  "eyre",
+ "icu",
  "icu_calendar",
  "icu_casemapping",
  "icu_codepointtrie_builder",
@@ -1613,6 +1615,7 @@ dependencies = [
  "databake",
  "deduplicating_array",
  "displaydoc",
+ "icu",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_provider",
@@ -1650,6 +1653,7 @@ version = "1.0.0-beta1"
 dependencies = [
  "criterion",
  "databake",
+ "icu",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1800,7 +1804,7 @@ dependencies = [
 name = "icu_provider_macros"
 version = "1.0.0-beta1"
 dependencies = [
- "icu_locid",
+ "icu",
  "icu_provider",
  "proc-macro2",
  "quote",
@@ -1813,6 +1817,7 @@ version = "1.0.0-alpha1"
 dependencies = [
  "criterion",
  "databake",
+ "icu",
  "icu_collections",
  "icu_locid",
  "icu_provider",
@@ -1837,6 +1842,7 @@ dependencies = [
  "displaydoc",
  "eyre",
  "futures",
+ "icu",
  "icu_calendar",
  "icu_casemapping",
  "icu_collator",

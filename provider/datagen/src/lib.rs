@@ -14,7 +14,7 @@
 //!
 //! ```no_run
 //! use icu_datagen::*;
-//! use icu_locid::langid;
+//! use icu::locid::langid;
 //! use std::fs::File;
 //! use std::path::PathBuf;
 //!
@@ -122,8 +122,8 @@ impl AnyProvider for DatagenProvider {
 /// assert_eq!(
 ///     icu_datagen::keys(&["list/and@1", "list/or@1"]),
 ///     vec![
-///         icu_list::provider::AndListV1Marker::KEY,
-///         icu_list::provider::OrListV1Marker::KEY,
+///         icu::list::provider::AndListV1Marker::KEY,
+///         icu::list::provider::OrListV1Marker::KEY,
 ///     ],
 /// );
 /// ```
@@ -155,8 +155,8 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_file("keys.txt")?,
 ///     vec![
-///         icu_list::provider::AndListV1Marker::KEY,
-///         icu_list::provider::OrListV1Marker::KEY,
+///         icu::list::provider::AndListV1Marker::KEY,
+///         icu::list::provider::OrListV1Marker::KEY,
 ///     ],
 /// );
 /// # Ok(())
@@ -186,8 +186,8 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// assert_eq!(
 ///     icu_datagen::keys_from_bin("target/release/my-app")?,
 ///     vec![
-///         icu_list::provider::AndListV1Marker::KEY,
-///         icu_list::provider::OrListV1Marker::KEY,
+///         icu::list::provider::AndListV1Marker::KEY,
+///         icu::list::provider::OrListV1Marker::KEY,
 ///     ],
 /// );
 /// # Ok(())

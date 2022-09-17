@@ -44,6 +44,7 @@ utf8_iter = "1.0.3"
 criterion = "0.3"
 icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["buffer", "icu_segmenter"] }
 serde-json-core = { version = "0.4", features = ["std"] }
+icu = { path = "../../components/icu" }
 
 [lib]
 path = "src/lib.rs"

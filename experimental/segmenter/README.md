@@ -28,7 +28,7 @@ of the icu meta-crate. Use with caution.
 Segment a string with default options:
 
 ```rust
-use icu_segmenter::LineBreakSegmenter;
+use icu::segmenter::LineBreakSegmenter;
 
 let segmenter = LineBreakSegmenter::try_new(&icu_testdata::unstable())
     .expect("Data exists");
@@ -49,7 +49,7 @@ See [`GraphemeClusterBreakSegmenter`] for examples.
 Segment a string:
 
 ```rust
-use icu_segmenter::WordBreakSegmenter;
+use icu::segmenter::WordBreakSegmenter;
 
 let segmenter = WordBreakSegmenter::try_new(&icu_testdata::unstable())
     .expect("Data exists");

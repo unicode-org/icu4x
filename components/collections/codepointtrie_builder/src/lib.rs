@@ -15,8 +15,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_collections::codepointtrie::CodePointTrie;
-//! use icu_collections::codepointtrie::TrieType;
+//! use icu::collections::codepointtrie::CodePointTrie;
+//! use icu::collections::codepointtrie::TrieType;
 //! use icu_codepointtrie_builder::CodePointTrieBuilder;
 //! use icu_codepointtrie_builder::CodePointTrieBuilderData;
 //!

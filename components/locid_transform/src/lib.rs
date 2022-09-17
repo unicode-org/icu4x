@@ -22,8 +22,8 @@
 //! # Examples
 //!
 //! ```
-//! use icu_locid::Locale;
-//! use icu_locid_transform::{LocaleCanonicalizer, TransformResult};
+//! use icu::locid::Locale;
+//! use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
 //!
 //! let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
 //!     .expect("create failed");
@@ -36,8 +36,8 @@
 //! ```
 //!
 //! ```
-//! use icu_locid::Locale;
-//! use icu_locid_transform::{LocaleExpander, TransformResult};
+//! use icu::locid::Locale;
+//! use icu::locid_transform::{LocaleExpander, TransformResult};
 //!
 //! let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
 //!     .expect("create failed");
@@ -52,8 +52,8 @@
 //! ```
 //!
 //! ```
-//! use icu_locid::Locale;
-//! use icu_locid_transform::{LocaleExpander, TransformResult};
+//! use icu::locid::Locale;
+//! use icu::locid_transform::{LocaleExpander, TransformResult};
 //!
 //! let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
 //!     .expect("create failed");
