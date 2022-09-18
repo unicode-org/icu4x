@@ -54,9 +54,9 @@ serde = [
     "icu_provider/serde",
     "icu_segmenter/serde",
 ]
-buffer_provider = ["serde", "icu_provider_adapters/serde"]
+buffer_provider = ["serde", "icu_provider_adapters/serde", "icu_testdata?/buffer"]
 provider_fs = ["icu_provider_fs", "buffer_provider"]
-provider_test = ["icu_testdata/buffer"]
+provider_test = ["icu_testdata"]
 smaller_test = ["provider_test", "buffer_provider"]
 logging = ["icu_provider/log_error_context", "log"]
 # Use the env_logger functionality to log based on environment variables
