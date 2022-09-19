@@ -7,7 +7,7 @@ use crate::flexzerovec::{FlexZeroVec, FlexZeroVecOwned};
 use crate::ule::AsULE;
 use ahash::AHasher;
 use alloc::borrow::Borrow;
-use alloc::vec::{from_elem, Vec};
+use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
 
 #[inline]
@@ -19,7 +19,7 @@ fn create_hasher_with_seed(seed: u128) -> AHasher {
 fn compute_hash<K: Hash>(seed: u32, k: K, m: usize) -> usize {
     let mut hasher = create_hasher_with_seed(seed.into());
     k.hash(&mut hasher);
-    (hasher.finish() as usize % m) as usize
+    hasher.finish() as usize % m
 }
 
 #[derive(Debug)]
@@ -49,19 +49,19 @@ impl<'a> HashIndex<'a> {
         I: ExactSizeIterator<Item = A>,
         H: Fn(u32, &K, usize) -> usize,
     {
-        let iter_len = keys.len();
+        let len = keys.len();
 
         // A vector to track the size of buckets for sorting.
-        let mut bucket_sizes = from_elem(0, iter_len);
+        let mut bucket_sizes = vec![0; len];
 
         // A flattened representation of items in the buckets after applying first level hash function
-        let mut bucket_flatten = Vec::with_capacity(iter_len);
+        let mut bucket_flatten = Vec::with_capacity(len);
 
         // Compute initial displacement and bucket sizes
         for (i, k) in keys.enumerate() {
             // Compute first level hash of the key bytes.
             // First level uses a seed value of 0.
-            let l1 = h(0x00, k.borrow(), iter_len);
+            let l1 = h(0x00, k.borrow(), len);
             if let Some(v) = bucket_sizes.get_mut(l1 as usize) {
                 *v += 1;
             }
@@ -81,27 +81,27 @@ impl<'a> HashIndex<'a> {
 
         // Whether a slot has been occupied by previous buckets with a different first level hash (different
         // bucket chain).
-        let mut occupied = from_elem(false, iter_len);
+        let mut occupied = vec![false; len];
 
         // Track generation count for the slots.
         // A slot is empty if either it is unoccupied by the previous bucket chains and the
         // assignment is not equal to generation.
-        let mut assignments = from_elem(0, iter_len);
+        let mut assignments = vec![0; len];
 
         // Vec to store the displacements (saves us a recomputation of hash while assigning slots).
         let mut current_displacements = Vec::with_capacity(16);
 
         // As seed generation starts from 1, 0 can never be a valid seed hence using 0 as sentinal
         // for non-existing first level hashes.
-        let mut displacements = from_elem(0, iter_len);
+        let mut displacements = vec![0; len];
 
         // Vec to store mapping to the original order of keys.
         // Normally this container should store (K, V) but we instead store the index of (K, V) in
         // the original container.
-        let mut reverse_mapping = from_elem(0, iter_len);
+        let mut reverse_mapping = vec![0; len];
 
         let mut start = 0;
-        while start < iter_len {
+        while start < len {
             // Bucket span with the same first level hash
             #[allow(clippy::indexing_slicing)] // start is always within bounds of `bucket_flatten`
             let l1 = bucket_flatten[start].0 as usize;
@@ -116,7 +116,7 @@ impl<'a> HashIndex<'a> {
                 generation += 1;
 
                 for (_, (k, _)) in buckets {
-                    let displacement_idx = h(seed, k.borrow(), iter_len) as usize;
+                    let displacement_idx = h(seed, k.borrow(), len) as usize;
                     #[allow(clippy::indexing_slicing)] // displacement_idx is always within bounds
                     if occupied[displacement_idx] || assignments[displacement_idx] == generation {
                         continue 'seed;
