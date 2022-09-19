@@ -7,6 +7,7 @@ use crate::flexzerovec::{FlexZeroVec, FlexZeroVecOwned};
 use crate::ule::AsULE;
 use ahash::AHasher;
 use alloc::borrow::Borrow;
+use alloc::vec;
 use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
 

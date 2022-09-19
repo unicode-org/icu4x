@@ -210,7 +210,6 @@
 // is better here.
 #![allow(clippy::needless_lifetimes)]
 
-#[macro_use]
 extern crate alloc;
 
 mod error;
