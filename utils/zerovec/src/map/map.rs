@@ -292,6 +292,11 @@ where
             &'b <K as ZeroMapKV<'a>>::GetType,
             &'b <V as ZeroMapKV<'a>>::GetType,
         ),
+    > + ExactSizeIterator<
+        Item = (
+            &'b <K as ZeroMapKV<'a>>::GetType,
+            &'b <V as ZeroMapKV<'a>>::GetType,
+        ),
     > {
         (0..self.keys.zvl_len()).map(move |idx| {
             (
@@ -304,13 +309,19 @@ where
     }
 
     /// Produce an ordered iterator over keys
-    pub fn iter_keys<'b>(&'b self) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
+    pub fn iter_keys<'b>(
+        &'b self,
+    ) -> impl Iterator<Item = &'b <K as ZeroMapKV<'a>>::GetType>
+           + ExactSizeIterator<Item = &'b <K as ZeroMapKV<'a>>::GetType> {
         #[allow(clippy::unwrap_used)] // idx is in-range
         (0..self.keys.zvl_len()).map(move |idx| self.keys.zvl_get(idx).unwrap())
     }
 
     /// Produce an iterator over values, ordered by keys
-    pub fn iter_values<'b>(&'b self) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
+    pub fn iter_values<'b>(
+        &'b self,
+    ) -> impl Iterator<Item = &'b <V as ZeroMapKV<'a>>::GetType>
+           + ExactSizeIterator<Item = &'b <V as ZeroMapKV<'a>>::GetType> {
         #[allow(clippy::unwrap_used)] // idx is in-range
         (0..self.values.zvl_len()).map(move |idx| self.values.zvl_get(idx).unwrap())
     }
