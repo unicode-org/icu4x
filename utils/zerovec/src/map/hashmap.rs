@@ -3,8 +3,8 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use super::*;
+use crate::flexzerovec::{FlexZeroVec, FlexZeroVecOwned};
 use crate::ule::AsULE;
-use crate::ZeroVec;
 use ahash::AHasher;
 use alloc::borrow::Borrow;
 use alloc::vec::{from_elem, Vec};
@@ -16,40 +16,40 @@ fn create_hasher_with_seed(seed: u128) -> AHasher {
 }
 
 #[inline]
-fn compute_hash<K: Hash>(seed: u32, k: K, m: usize) -> u32 {
+fn compute_hash<K: Hash>(seed: u32, k: K, m: usize) -> usize {
     let mut hasher = create_hasher_with_seed(seed.into());
     k.hash(&mut hasher);
-    (hasher.finish() % m as u64) as u32
+    (hasher.finish() as usize % m) as usize
 }
 
-#[derive(Debug, Clone)]
+#[derive(Debug)]
 pub struct HashIndex<'a> {
-    displacements: ZeroVec<'a, u32>,
-    reverse_mapping: ZeroVec<'a, u32>,
+    displacements: FlexZeroVec<'a>,
+    reverse_mapping: FlexZeroVec<'a>,
 }
 
 impl<'a> HashIndex<'a> {
     #[inline]
-    pub fn build_from_exact_iter<K, I, A>(iter: I) -> Self
+    pub fn build_from_exact_iter<K, I, A>(keys: I) -> Self
     where
         A: Borrow<K>,
         K: 'a + ?Sized + Hash,
         I: ExactSizeIterator<Item = A>,
     {
-        HashIndex::build_from_exact_iter_with_hash_fn(iter, |seed, k, len| {
+        HashIndex::build_from_exact_iter_with_hash_fn(keys, |seed, k, len| {
             compute_hash(seed, k, len)
         })
     }
 
     #[inline]
-    pub fn build_from_exact_iter_with_hash_fn<K, I, A, H>(iter: I, h: H) -> Self
+    pub fn build_from_exact_iter_with_hash_fn<K, I, A, H>(keys: I, h: H) -> Self
     where
         A: Borrow<K>,
         K: 'a + ?Sized,
         I: ExactSizeIterator<Item = A>,
-        H: Fn(u32, &K, usize) -> u32,
+        H: Fn(u32, &K, usize) -> usize,
     {
-        let iter_len = iter.len();
+        let iter_len = keys.len();
 
         // A vector to track the size of buckets for sorting.
         let mut bucket_sizes = from_elem(0, iter_len);
@@ -58,7 +58,7 @@ impl<'a> HashIndex<'a> {
         let mut bucket_flatten = Vec::with_capacity(iter_len);
 
         // Compute initial displacement and bucket sizes
-        for (i, k) in iter.enumerate() {
+        for (i, k) in keys.enumerate() {
             // Compute first level hash of the key bytes.
             // First level uses a seed value of 0.
             let l1 = h(0x00, k.borrow(), iter_len);
@@ -129,7 +129,7 @@ impl<'a> HashIndex<'a> {
 
                 // Successfully found a seed, store it as index l1.
                 if let Some(v) = displacements.get_mut(l1) {
-                    *v = seed;
+                    *v = seed as usize;
                 }
 
                 for (i, displacement_idx) in current_displacements.iter().enumerate() {
@@ -142,7 +142,7 @@ impl<'a> HashIndex<'a> {
                         *v = true;
                     }
                     if let Some(v) = reverse_mapping.get_mut(*displacement_idx) {
-                        *v = *original_idx as u32;
+                        *v = *original_idx;
                     }
                 }
                 break;
@@ -151,8 +151,12 @@ impl<'a> HashIndex<'a> {
         }
 
         Self {
-            displacements: ZeroVec::alloc_from_slice(&displacements),
-            reverse_mapping: ZeroVec::alloc_from_slice(&reverse_mapping),
+            displacements: FlexZeroVec::Owned(FlexZeroVecOwned::from_iter(
+                displacements.into_iter(),
+            )),
+            reverse_mapping: FlexZeroVec::Owned(FlexZeroVecOwned::from_iter(
+                reverse_mapping.into_iter(),
+            )),
         }
     }
 
@@ -164,33 +168,30 @@ impl<'a> HashIndex<'a> {
         let l1 = compute_hash(0, k, self.displacements.len());
 
         #[allow(clippy::unwrap_used)] // l1 is in 0..self.displacements.len()
-        let seed = self.displacements.get(l1 as usize).unwrap();
+        let seed = self.displacements.get(l1).unwrap();
         if seed == 0 {
             None
         } else {
-            let hash = compute_hash(seed, k, self.displacements.len());
-            self.reverse_mapping.get(hash as usize).map(|i| i as usize)
+            let hash = compute_hash(seed as u32, k, self.displacements.len());
+            self.reverse_mapping.get(hash).map(|i| i as usize)
         }
     }
 }
 
-pub struct ZeroHashMapStatic<'a, K, V>
+pub struct ZeroHashMapStatic<'a, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
 {
     index: HashIndex<'a>,
-    keys: K::Container,
     values: V::Container,
 }
 
-impl<'a, K, V> ZeroHashMapStatic<'a, K, V>
+impl<'a, V> ZeroHashMapStatic<'a, V>
 where
-    K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
 {
     pub fn len(&self) -> usize {
-        self.keys.zvl_len()
+        self.values.zvl_len()
     }
 
     pub fn is_empty(&self) -> bool {
@@ -198,13 +199,15 @@ where
     }
 }
 
-impl<'a, K, V> ZeroHashMapStatic<'a, K, V>
+impl<'a, V> ZeroHashMapStatic<'a, V>
 where
-    K: ZeroMapKV<'a, Container = ZeroVec<'a, K>> + Hash + AsULE + ?Sized + 'static,
     V: ZeroMapKV<'a> + ?Sized,
 {
     #[inline]
-    pub fn get<'b>(&'b self, key: &'b K) -> Option<&'b V::GetType> {
+    pub fn get<'b, K>(&'b self, key: &'b K) -> Option<&'b V::GetType>
+    where
+        K: Hash + AsULE + ?Sized,
+    {
         self.index.index(key).map(|i| {
             #[allow(clippy::unwrap_used)] // i is in 0..values.len() and there is a value at i
             self.values.zvl_get(i as usize).unwrap()
@@ -218,30 +221,27 @@ where
     /// use zerovec::ZeroHashMapStatic;
     ///
     /// let kv: Vec<(i32, &str)> = vec![(1,"a"), (2, "b"),(3, "c"),(4 , "d")];
-    /// let hashmap: ZeroHashMapStatic<i32, str> = ZeroHashMapStatic::from_exact_iter(kv.into_iter());
+    /// let hashmap: ZeroHashMapStatic<str> = ZeroHashMapStatic::from_exact_iter(kv.into_iter());
     /// assert_eq!(hashmap.get(&1), Some("a"));
     /// assert_eq!(hashmap.get(&2), Some("b"));
     /// assert_eq!(hashmap.get(&3), Some("c"));
     /// assert_eq!(hashmap.get(&4), Some("d"));
     /// ```
-    pub fn from_exact_iter<A, B, I>(iter: I) -> Self
+    pub fn from_exact_iter<A, B, I, K>(iter: I) -> Self
     where
         A: Borrow<K>,
         B: Borrow<V>,
+        K: Hash + AsULE + ?Sized + 'a,
         I: ExactSizeIterator<Item = (A, B)>,
     {
-        let mut keys = K::Container::zvl_with_capacity(iter.len());
+        let mut keys = Vec::with_capacity(iter.len());
         let mut values = V::Container::zvl_with_capacity(iter.len());
         for (k, v) in iter {
-            keys.zvl_push(k.borrow());
+            keys.push(k);
             values.zvl_push(v.borrow());
         }
-        let index = HashIndex::build_from_exact_iter::<K, _, _>(keys.iter());
-        Self {
-            index,
-            keys,
-            values,
-        }
+        let index = HashIndex::build_from_exact_iter::<K, _, _>(keys.into_iter());
+        Self { index, values }
     }
 }
 
@@ -258,7 +258,7 @@ mod tests {
         let rng = Lcg64Xsh32::seed_from_u64(seed);
         let kv: Vec<(u64, u64)> = rng.sample_iter(&Standard).take(N).collect();
         let kv_copy = kv.clone();
-        let hashmap: ZeroHashMapStatic<u64, u64> =
+        let hashmap: ZeroHashMapStatic<u64> =
             ZeroHashMapStatic::from_exact_iter(kv_copy.into_iter());
         for (k, v) in kv {
             assert_eq!(
