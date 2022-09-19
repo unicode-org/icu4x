@@ -56,44 +56,8 @@ impl StaticDataProvider {
     /// Create a [`StaticDataProvider`] from a `'static` blob of ICU4X data.
     pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(StaticDataProvider {
-            data: BlobSchema::deserialize(&mut postcard::Deserializer::from_bytes(blob)).map(
-                |blob| {
-                    let BlobSchema::V001(blob) = blob;
-                    #[cfg(debug_assertions)]
-                    blob.check_invariants();
-                    blob
-                },
-            )?,
+            data: BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(blob))?,
         })
-    }
-
-    /// Creates an empty [`StaticDataProvider`] that contains no data.
-    ///
-    /// Can be used as a stub for when a real data provider is not available.
-    ///
-    /// # Examples
-    ///
-    /// ```
-    /// use icu_locid::locale;
-    /// use icu_provider::hello_world::*;
-    /// use icu_provider::prelude::*;
-    /// use icu_provider_blob::StaticDataProvider;
-    ///
-    /// let stub_provider = StaticDataProvider::new_empty();
-    ///
-    /// DataProvider::<HelloWorldV1Marker>::load(
-    ///     &stub_provider.as_deserializing(),
-    ///     DataRequest {
-    ///         locale: &locale!("la").into(),
-    ///         metadata: Default::default(),
-    ///     },
-    /// )
-    /// .expect_err("Stub provider returns no data");
-    /// ```
-    pub fn new_empty() -> Self {
-        StaticDataProvider {
-            data: Default::default(),
-        }
     }
 }
 
@@ -105,25 +69,9 @@ impl BufferProvider for StaticDataProvider {
     ) -> Result<DataResponse<BufferMarker>, DataError> {
         let mut metadata = DataResponseMetadata::default();
         metadata.buffer_format = Some(BufferFormat::Postcard1);
-        let idx = self
-            .data
-            .keys
-            .get0(&key.hashed())
-            .ok_or(DataErrorKind::MissingDataKey)
-            .and_then(|cursor| {
-                cursor
-                    .get1_copied_by(|bytes| req.locale.strict_cmp(&bytes.0).reverse())
-                    .ok_or(DataErrorKind::MissingLocale)
-            })
-            .map_err(|kind| kind.with_req(key, req))?;
-        let bytes = self
-            .data
-            .buffers
-            .get(idx)
-            .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))?;
         Ok(DataResponse {
             metadata,
-            payload: { Some(DataPayload::from_static_buffer(bytes)) },
+            payload: { Some(DataPayload::from_static_buffer(self.data.load(key, req)?)) },
         })
     }
 }
