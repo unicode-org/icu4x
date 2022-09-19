@@ -4203,6 +4203,7 @@ dependencies = [
 name = "zerovec"
 version = "0.8.1"
 dependencies = [
+ "ahash",
  "bincode",
  "criterion",
  "databake",

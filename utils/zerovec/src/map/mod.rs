@@ -5,6 +5,7 @@
 //! See [`ZeroMap`](crate::ZeroMap) for details.
 
 mod borrowed;
+pub(crate) mod hashmap;
 mod kv;
 #[allow(clippy::module_inception)] // module is purely internal
 pub(crate) mod map;
@@ -19,5 +20,6 @@ mod serde_helpers;
 
 pub use crate::ZeroMap;
 pub use borrowed::ZeroMapBorrowed;
+pub use hashmap::ZeroHashMapStatic;
 pub use kv::ZeroMapKV;
 pub use vecs::{MutableZeroVecLike, ZeroVecLike};
