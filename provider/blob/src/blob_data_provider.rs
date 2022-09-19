@@ -13,8 +13,6 @@ use yoke::*;
 /// This enables data blobs to be read from the filesystem or from an HTTP request dynamically
 /// at runtime, so that the code and data can be shipped separately.
 ///
-/// If you prefer to bake the data into your binary, see [`StaticDataProvider`].
-///
 /// # `Sync + Send`
 ///
 /// This provider uses a [`icu_provider::RcWrap`] internally, which can be made `Sync + Send` with the
@@ -52,20 +50,28 @@ use yoke::*;
 ///
 /// assert_eq!(response.get().message, "Ave, munde");
 /// ```
-///
-/// [`StaticDataProvider`]: crate::StaticDataProvider
 #[derive(Clone)]
 pub struct BlobDataProvider {
-    data: Yoke<BlobSchemaV1<'static>, RcWrap<[u8]>>,
+    data: Yoke<BlobSchemaV1<'static>, Option<RcWrap<[u8]>>>,
 }
 
 impl BlobDataProvider {
     /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
     pub fn try_new_from_blob<B: Into<RcWrap<[u8]>>>(blob: B) -> Result<Self, DataError> {
-        Ok(BlobDataProvider {
+        Ok(Self {
             data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
                 BlobSchema::deserialize_v1(&mut postcard::Deserializer::from_bytes(bytes))
-            })?,
+            })?
+            .wrap_cart_in_option(),
+        })
+    }
+
+    #[doc(hidden)]
+    pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
+        Ok(Self {
+            data: Yoke::new_owned(BlobSchema::deserialize_v1(
+                &mut postcard::Deserializer::from_bytes(blob),
+            )?),
         })
     }
 }

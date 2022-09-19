@@ -45,7 +45,7 @@
 
     .. js:staticfunction:: create_empty()
 
-        Constructs an empty ``StaticDataProvider`` and returns it as an :js:class:`ICU4XDataProvider`.
+        Constructs an empty :js:class:`ICU4XDataProvider`.
 
         See the `Rust documentation for EmptyDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html>`__ for more information.
 
