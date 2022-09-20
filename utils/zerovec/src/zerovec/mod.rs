@@ -18,6 +18,8 @@ use alloc::vec::Vec;
 use core::cmp::{Ord, Ordering, PartialOrd};
 use core::fmt;
 use core::iter::FromIterator;
+use core::marker::PhantomData;
+use core::mem;
 use core::ops::Deref;
 
 /// A zero-copy vector for fixed-width types.
@@ -81,52 +83,77 @@ use core::ops::Deref;
 /// Benchmarks can be found in the project repository, with some results found in the [crate-level documentation](crate).
 ///
 /// See [the design doc](https://github.com/unicode-org/icu4x/blob/main/utils/zerovec/design_doc.md) for more details.
-#[derive(Clone)]
-#[non_exhaustive]
-pub enum ZeroVec<'a, T>
+pub struct ZeroVec<'a, T>
 where
-    T: AsULE + ?Sized,
+    T: AsULE,
 {
-    /// An owned `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::alloc_from_slice()`]
-    /// or by calling [`ZeroVec::to_mut()`]/[`ZeroVec::for_each_mut()`]/etc on [`ZeroVec::Borrowed`].
-    Owned(Vec<T::ULE>),
-
-    /// A borrowed `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::parse_byte_slice()`],
-    /// [`ZeroVec::from_slice_or_alloc()`], or deserializers capable of doing zero-copy deserialization.
-    ///
-    /// If you already have a slice of `[T::ULE]`s, you can directly construct one of these.
-    ///
-    /// # Example
-    ///
-    /// ```
-    /// use zerovec::ule::*;
-    /// use zerovec::ZeroVec;
-    ///
-    /// // The little-endian bytes correspond to the numbers on the following line.
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let nums: &[RawBytesULE<2>] = &[
-    ///     211_u16.to_unaligned(),
-    ///     281_u16.to_unaligned(),
-    ///     421_u16.to_unaligned(),
-    ///     461_u16.to_unaligned(),
-    /// ];
-    ///
-    /// let zerovec = ZeroVec::<u16>::Borrowed(nums);
-    ///
-    /// assert!(!zerovec.is_owned());
-    /// assert_eq!(bytes, zerovec.as_bytes());
-    /// ```
-    Borrowed(&'a [T::ULE]),
+    /// Pointer to data
+    buf: *mut [T::ULE],
+    /// Borrowed if zero. Capacity of buffer above if not
+    capacity: usize,
+    /// Marker type
+    marker: PhantomData<(Vec<T::ULE>, &'a [T::ULE])>,
 }
+
+unsafe impl<'a, T: AsULE> Send for ZeroVec<'a, T> where T::ULE: Send + Sync {}
+unsafe impl<'a, T: AsULE> Sync for ZeroVec<'a, T> where T::ULE: Sync {}
+
+// pub enum ZeroVec<'a, T>
+// where
+//     T: AsULE + ?Sized,
+// {
+//     /// An owned `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::alloc_from_slice()`]
+//     /// or by calling [`ZeroVec::to_mut()`]/[`ZeroVec::for_each_mut()`]/etc on [`ZeroVec::Borrowed`].
+//     Owned(Vec<T::ULE>),
+
+//     /// A borrowed `ZeroVec<T>`. This will typically be constructed by [`ZeroVec::parse_byte_slice()`],
+//     /// [`ZeroVec::from_slice_or_alloc()`], or deserializers capable of doing zero-copy deserialization.
+//     ///
+//     /// If you already have a slice of `[T::ULE]`s, you can directly construct one of these.
+//     ///
+//     /// # Example
+//     ///
+//     /// ```
+//     /// use zerovec::ule::*;
+//     /// use zerovec::ZeroVec;
+//     ///
+//     /// // The little-endian bytes correspond to the numbers on the following line.
+//     /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+//     /// let nums: &[RawBytesULE<2>] = &[
+//     ///     211_u16.to_unaligned(),
+//     ///     281_u16.to_unaligned(),
+//     ///     421_u16.to_unaligned(),
+//     ///     461_u16.to_unaligned(),
+//     /// ];
+//     ///
+//     /// let zerovec = ZeroVec::<u16>::Borrowed(nums);
+//     ///
+//     /// assert!(!zerovec.is_owned());
+//     /// assert_eq!(bytes, zerovec.as_bytes());
+//     /// ```
+//     Borrowed(&'a [T::ULE]),
+// }
 
 impl<'a, T: AsULE> Deref for ZeroVec<'a, T> {
     type Target = ZeroSlice<T>;
+    #[inline]
     fn deref(&self) -> &Self::Target {
-        let slice = match self {
-            ZeroVec::Owned(vec) => &**vec,
-            ZeroVec::Borrowed(slice) => *slice,
-        };
+        let slice = unsafe { &*self.buf };
         ZeroSlice::from_ule_slice(slice)
+    }
+}
+
+impl<'a, T: AsULE> Clone for ZeroVec<'a, T> {
+    fn clone(&self) -> Self {
+        if self.is_owned() {
+            ZeroVec::new_owned(self.as_ule_slice().into())
+        } else {
+            Self {
+                buf: self.buf,
+                capacity: 0,
+                marker: PhantomData,
+            }
+        }
     }
 }
 
@@ -222,15 +249,28 @@ where
     /// If you have a slice of `&[T]`s, prefer using
     /// [`Self::alloc_from_slice()`].
     #[inline]
-    pub const fn new_owned(vec: Vec<T::ULE>) -> Self {
-        Self::Owned(vec)
+    pub fn new_owned(vec: Vec<T::ULE>) -> Self {
+        let slice: &[T::ULE] = &*vec;
+        let slice = slice as *const [_] as *mut [_];
+        let capacity = vec.capacity();
+        mem::forget(vec);
+        Self {
+            buf: slice,
+            capacity,
+            marker: PhantomData,
+        }
     }
 
     /// Creates a new borrowed `ZeroVec` using an existing
     /// backing buffer
     #[inline]
     pub const fn new_borrowed(slice: &'a [T::ULE]) -> Self {
-        Self::Borrowed(slice)
+        let slice = slice as *const [_] as *mut [_];
+        Self {
+            buf: slice,
+            capacity: 0,
+            marker: PhantomData,
+        }
     }
 
     /// Creates a new, owned, empty `ZeroVec<T>`, with a certain capacity pre-allocated.
@@ -353,8 +393,8 @@ where
         P: AsULE<ULE = T::ULE>,
     {
         match self.into_cow() {
-            Cow::Owned(v) => ZeroVec::Owned(v),
-            Cow::Borrowed(v) => ZeroVec::Borrowed(v),
+            Cow::Owned(v) => ZeroVec::new_owned(v),
+            Cow::Borrowed(v) => ZeroVec::new_borrowed(v),
         }
     }
 
@@ -435,7 +475,7 @@ where
                 // Feature "vec_into_raw_parts" is not yet stable (#65816). Polyfill:
                 let (ptr, len, cap) = {
                     // Take ownership of the pointer
-                    let mut v = core::mem::ManuallyDrop::new(old_vec);
+                    let mut v = mem::ManuallyDrop::new(old_vec);
                     // Fetch the pointer, length, and capacity
                     (v.as_mut_ptr(), v.len(), v.capacity())
                 };
@@ -456,20 +496,18 @@ where
     /// Check if this type is fully owned
     #[inline]
     pub fn is_owned(&self) -> bool {
-        match self {
-            Self::Owned(_) => true,
-            _ => false,
-        }
+        self.capacity != 0
     }
 
     /// If this is a borrowed ZeroVec, return it as a slice that covers
     /// its lifetime parameter
     #[inline]
     pub fn as_maybe_borrowed(&self) -> Option<&'a ZeroSlice<T>> {
-        if let ZeroVec::Borrowed(b) = *self {
-            Some(ZeroSlice::from_ule_slice(b))
-        } else {
+        if self.is_owned() {
             None
+        } else {
+            let ule_slice = unsafe { &*self.buf };
+            Some(ZeroSlice::from_ule_slice(ule_slice))
         }
     }
 }
@@ -725,41 +763,20 @@ where
     /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
     /// assert!(!zerovec.is_owned());
     ///
-    /// zerovec.to_mut().push(12_u16.to_unaligned());
-    /// assert!(zerovec.is_owned());
-    /// ```
-    fn to_mut(&mut self) -> &mut Vec<T::ULE> {
-        match self {
-            Self::Owned(ref mut vec) => vec,
-            Self::Borrowed(_) => {
-                let vec: Vec<T::ULE> = self.iter().map(T::to_unaligned).collect();
-                let new_self = ZeroVec::new_owned(vec);
-                *self = new_self;
-                // recursion is limited since we are guaranteed to hit the Owned branch
-                self.to_mut()
-            }
-        }
-    }
-
-    /// Allows the ZeroVec to be mutated by converting it to an owned variant, and producing
-    /// a mutable vector of ULEs.
-    ///
-    /// # Example
-    ///
-    /// ```rust,ignore
-    /// # use crate::zerovec::ule::AsULE;
-    /// use zerovec::ZeroVec;
-    ///
-    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
-    /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
-    /// assert!(!zerovec.is_owned());
-    ///
     /// zerovec.with_mut(|v| v.push(12_u16.to_unaligned()));
     /// assert!(zerovec.is_owned());
     /// ```
     pub fn with_mut<R>(&mut self, f: impl FnOnce(&mut Vec<T::ULE>) -> R) -> R {
-        let m = self.to_mut();
-        f(m)
+        // We're in danger if f() panics whilst we've moved a vector out of self;
+        // replace it with an empty dummy vector for now
+        let this = mem::take(self);
+        let mut vec = match this.into_cow() {
+            Cow::Owned(v) => v,
+            Cow::Borrowed(s) => s.into(),
+        };
+        let ret = f(&mut vec);
+        *self = Self::new_owned(vec);
+        ret
     }
 
     /// Remove all elements from this ZeroVec and reset it to an empty borrowed state.
@@ -771,9 +788,18 @@ where
     /// the logical equivalent of this type's internal representation
     #[inline]
     pub fn into_cow(self) -> Cow<'a, [T::ULE]> {
-        match self {
-            Self::Owned(v) => Cow::Owned(v),
-            Self::Borrowed(v) => Cow::Borrowed(v),
+        if self.is_owned() {
+            let vec = unsafe {
+                let len = (&*self.buf).len();
+                let ptr = self.buf as *mut T::ULE;
+                let capacity = self.capacity;
+                mem::forget(self);
+                Vec::from_raw_parts(ptr, len, capacity)
+            };
+            Cow::Owned(vec)
+        } else {
+            let slice = unsafe { &*self.buf };
+            Cow::Borrowed(slice)
         }
     }
 }
