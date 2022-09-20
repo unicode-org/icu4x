@@ -199,7 +199,7 @@ impl DataExporter for BakedDataExporter {
         // Replace non-ident-allowed tokens. This can still fail if a segment starts with
         // a token that is not allowed in an initial position.
         let module_path = syn::parse_str::<syn::Path>(
-            &key.get_path()
+            &key.path()
                 .to_ascii_lowercase()
                 .replace('@', "_v")
                 .replace('/', "::")
@@ -369,7 +369,7 @@ impl DataExporter for BakedDataExporter {
             .map(|(marker, _, feature, ident)| {
                 quote! {
                     #feature
-                    const #ident: ::icu_provider::DataKeyHash = #marker::KEY.get_hash();
+                    const #ident: ::icu_provider::DataKeyHash = #marker::KEY.hashed();
                 }
             });
 
@@ -405,7 +405,7 @@ impl DataExporter for BakedDataExporter {
                     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
                         #(#any_consts)*
                         Ok(AnyResponse {
-                            payload: Some(match key.get_hash() {
+                            payload: Some(match key.hashed() {
                                 #(#any_cases)*
                                 _ => return Err(DataErrorKind::MissingDataKey.with_req(key, req)),
                             }).ok_or_else(|| DataErrorKind::MissingLocale.with_req(key, req))?,

@@ -13,6 +13,7 @@ pub mod ffi {
     use icu_calendar::types::Time;
     use icu_calendar::AnyCalendar;
     use icu_calendar::{DateTime, Iso};
+    use tinystr::TinyAsciiStr;
 
     use crate::calendar::ffi::ICU4XCalendar;
     use crate::date::ffi::{ICU4XDate, ICU4XIsoDate, ICU4XIsoWeekday};
@@ -244,8 +245,10 @@ pub mod ffi {
             nanosecond: u32,
             calendar: &ICU4XCalendar,
         ) -> DiplomatResult<Box<ICU4XDateTime>, ICU4XError> {
-            let era = try_icu4x!(era_code.parse());
-            let month = try_icu4x!(month_code.parse());
+            let era_code = era_code.as_bytes(); // #2520
+            let month_code = month_code.as_bytes(); // #2520
+            let era = try_icu4x!(TinyAsciiStr::from_bytes(era_code)).into();
+            let month = try_icu4x!(TinyAsciiStr::from_bytes(month_code)).into();
             let cal = calendar.0.clone();
             let hour = try_icu4x!(hour.try_into());
             let minute = try_icu4x!(minute.try_into());

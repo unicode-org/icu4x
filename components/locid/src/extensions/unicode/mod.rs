@@ -213,16 +213,16 @@ impl writeable::Writeable for Unicode {
         Ok(())
     }
 
-    fn write_len(&self) -> writeable::LengthHint {
+    fn writeable_length_hint(&self) -> writeable::LengthHint {
         if self.is_empty() {
             return writeable::LengthHint::exact(0);
         }
         let mut result = writeable::LengthHint::exact(2);
         if !self.attributes.is_empty() {
-            result += writeable::Writeable::write_len(&self.attributes) + 1;
+            result += writeable::Writeable::writeable_length_hint(&self.attributes) + 1;
         }
         if !self.keywords.is_empty() {
-            result += writeable::Writeable::write_len(&self.keywords) + 1;
+            result += writeable::Writeable::writeable_length_hint(&self.keywords) + 1;
         }
         result
     }

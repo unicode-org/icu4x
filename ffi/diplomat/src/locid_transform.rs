@@ -34,9 +34,7 @@ pub mod ffi {
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLocaleCanonicalizer>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            LocaleCanonicalizer::try_new_unstable(&provider)
+            LocaleCanonicalizer::try_new_unstable(&provider.0)
                 .map(|lc| Box::new(ICU4XLocaleCanonicalizer(lc)))
                 .map_err(Into::into)
                 .into()
@@ -60,9 +58,7 @@ pub mod ffi {
         pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLocaleExpander>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            LocaleExpander::try_new_unstable(&provider)
+            LocaleExpander::try_new_unstable(&provider.0)
                 .map(|lc| Box::new(ICU4XLocaleExpander(lc)))
                 .map_err(Into::into)
                 .into()

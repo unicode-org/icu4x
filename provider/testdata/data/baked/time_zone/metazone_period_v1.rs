@@ -1,10 +1,10 @@
 // @generated
 #![cfg(feature = "icu_timezone")]
 type DataStruct =
-    <::icu_timezone::provider::MetaZonePeriodV1Marker as ::icu_provider::DataMarker>::Yokeable;
+    <::icu_timezone::provider::MetazonePeriodV1Marker as ::icu_provider::DataMarker>::Yokeable;
 pub static DATA: litemap::LiteMap<&str, &DataStruct, &[(&str, &DataStruct)]> =
     litemap::LiteMap::from_sorted_store_unchecked(&[("und", UND)]);
-static UND: &DataStruct = &::icu_timezone::provider::MetaZonePeriodV1(unsafe {
+static UND: &DataStruct = &::icu_timezone::provider::MetazonePeriodV1(unsafe {
     #[allow(unused_unsafe)]
     ::zerovec::ZeroMap2d::from_parts_unchecked(
         unsafe {

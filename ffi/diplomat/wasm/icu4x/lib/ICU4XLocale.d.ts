@@ -1,5 +1,6 @@
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
+import { ICU4XOrdering } from "./ICU4XOrdering";
 
 /**
 
@@ -33,6 +34,8 @@ export class ICU4XLocale {
   /**
 
    * Construct a default undefined {@link ICU4XLocale `ICU4XLocale`} "und".
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND Rust documentation for `UND`} for more information.
    */
   static und(): ICU4XLocale;
 
@@ -118,10 +121,33 @@ export class ICU4XLocale {
 
   /**
 
+   * Best effort locale canonicalizer that doesn't need any data
+
+   * Use ICU4XLocaleCanonicalizer for better control and functionality
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.canonicalize Rust documentation for `canonicalize`} for more information.
+   * @throws {@link FFIError}<{@link ICU4XError}>
+   */
+  static canonicalize(bytes: string): string | never;
+
+  /**
+
    * Write a string representation of {@link ICU4XLocale `ICU4XLocale`} to `write`
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to Rust documentation for `write_to`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   to_string(): string | never;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.normalizing_eq Rust documentation for `normalizing_eq`} for more information.
+   */
+  normalizing_eq(other: string): boolean;
+
+  /**
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp Rust documentation for `strict_cmp`} for more information.
+   */
+  strict_cmp(other: string): ICU4XOrdering;
 }

@@ -13,7 +13,7 @@ pub mod ffi {
     };
 
     #[diplomat::opaque]
-    #[diplomat::rust_link(icu_collator::Collator, Struct)]
+    #[diplomat::rust_link(icu::collator::Collator, Struct)]
     pub struct ICU4XCollator(pub Collator);
 
     #[diplomat::enum_convert(core::cmp::Ordering)]
@@ -24,7 +24,8 @@ pub mod ffi {
         Greater = 1,
     }
 
-    #[diplomat::rust_link(icu_collator::CollatorOptions, Struct)]
+    #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
+    #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
     pub struct ICU4XCollatorOptions {
         pub strength: ICU4XCollatorStrength,
         pub alternate_handling: ICU4XCollatorAlternateHandling,
@@ -35,7 +36,7 @@ pub mod ffi {
         pub backward_second_level: ICU4XCollatorBackwardSecondLevel,
     }
 
-    #[diplomat::rust_link(icu_collator::Strength, Enum)]
+    #[diplomat::rust_link(icu::collator::Strength, Enum)]
     pub enum ICU4XCollatorStrength {
         Auto = 0,
         Primary = 1,
@@ -45,14 +46,14 @@ pub mod ffi {
         Identical = 5,
     }
 
-    #[diplomat::rust_link(icu_collator::AlternateHandling, Enum)]
+    #[diplomat::rust_link(icu::collator::AlternateHandling, Enum)]
     pub enum ICU4XCollatorAlternateHandling {
         Auto = 0,
         NonIgnorable = 1,
         Shifted = 2,
     }
 
-    #[diplomat::rust_link(icu_collator::CaseFirst, Enum)]
+    #[diplomat::rust_link(icu::collator::CaseFirst, Enum)]
     pub enum ICU4XCollatorCaseFirst {
         Auto = 0,
         Off = 1,
@@ -60,7 +61,7 @@ pub mod ffi {
         UpperFirst = 3,
     }
 
-    #[diplomat::rust_link(icu_collator::MaxVariable, Enum)]
+    #[diplomat::rust_link(icu::collator::MaxVariable, Enum)]
     pub enum ICU4XCollatorMaxVariable {
         Auto = 0,
         Space = 1,
@@ -69,21 +70,21 @@ pub mod ffi {
         Currency = 4,
     }
 
-    #[diplomat::rust_link(icu_collator::CaseLevel, Enum)]
+    #[diplomat::rust_link(icu::collator::CaseLevel, Enum)]
     pub enum ICU4XCollatorCaseLevel {
         Auto = 0,
         Off = 1,
         On = 2,
     }
 
-    #[diplomat::rust_link(icu_collator::Numeric, Enum)]
+    #[diplomat::rust_link(icu::collator::Numeric, Enum)]
     pub enum ICU4XCollatorNumeric {
         Auto = 0,
         Off = 1,
         On = 2,
     }
 
-    #[diplomat::rust_link(icu_collator::BackwardSecondLevel, Enum)]
+    #[diplomat::rust_link(icu::collator::BackwardSecondLevel, Enum)]
     pub enum ICU4XCollatorBackwardSecondLevel {
         Auto = 0,
         Off = 1,
@@ -98,33 +99,38 @@ pub mod ffi {
             locale: &ICU4XLocale,
             options: ICU4XCollatorOptions,
         ) -> DiplomatResult<Box<ICU4XCollator>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
             let locale = locale.to_datalocale();
             let options = CollatorOptions::from(options);
 
-            Collator::try_new_unstable(&provider, &locale, options)
+            Collator::try_new_unstable(&provider.0, &locale, options)
                 .map(|o| Box::new(ICU4XCollator(o)))
                 .map_err(Into::into)
                 .into()
         }
 
-        /// Compare guaranteed well-formed UTF-8 strings.
-        ///
-        /// Note: passing ill-formed UTF-8 strings is undefined behavior
-        /// (and may be memory-unsafe to do so, too).
-        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
-        pub fn compare(&self, left: &str, right: &str) -> ICU4XOrdering {
-            self.0.compare(left, right).into()
-        }
-
         /// Compare potentially ill-formed UTF-8 strings.
+        ///
+        /// Ill-formed input is compared
+        /// as if errors had been replaced with REPLACEMENT CHARACTERs according
+        /// to the WHATWG Encoding Standard.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf8, FnInStruct)]
-        pub fn compare_utf8(&self, left: &[u8], right: &[u8]) -> ICU4XOrdering {
+        pub fn compare(&self, left: &str, right: &str) -> ICU4XOrdering {
+            let left = left.as_bytes(); // #2520
+            let right = right.as_bytes(); // #2520
             self.0.compare_utf8(left, right).into()
         }
 
-        /// Compare potentially ill-formed UTF-16 strings.
+        /// Compare guaranteed well-formed UTF-8 strings.
+        ///
+        /// Note: In C++, passing ill-formed UTF-8 strings is undefined behavior
+        /// (and may be memory-unsafe to do so, too).
+        #[diplomat::rust_link(icu::collator::Collator::compare, FnInStruct)]
+        pub fn compare_valid_utf8(&self, left: &str, right: &str) -> ICU4XOrdering {
+            self.0.compare(left, right).into()
+        }
+
+        /// Compare potentially ill-formed UTF-16 strings, with unpaired surrogates
+        /// compared as REPLACEMENT CHARACTER.
         #[diplomat::rust_link(icu::collator::Collator::compare_utf16, FnInStruct)]
         pub fn compare_utf16(&self, left: &[u16], right: &[u16]) -> ICU4XOrdering {
             self.0.compare_utf16(left, right).into()

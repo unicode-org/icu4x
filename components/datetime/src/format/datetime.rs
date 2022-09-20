@@ -75,7 +75,7 @@ impl<'l> Writeable for FormattedDateTime<'l> {
         .map_err(|_| core::fmt::Error)
     }
 
-    // TODO(#489): Implement write_len
+    // TODO(#489): Implement writeable_length_hint
 }
 
 impl<'l> fmt::Display for FormattedDateTime<'l> {
@@ -521,9 +521,7 @@ mod tests {
         let date = Date::new_gregorian_date(1800, 9, 1).expect("Failed to construct Date.");
         let date = date.to_calendar(japanext).into_japanese_date().to_any();
 
-        let result = dtf.format_to_string(&date).unwrap();
-
-        assert_eq!(result, "Sep 1, 12 kansei-1789")
+        writeable::assert_writeable_eq!(dtf.format(&date).unwrap(), "Sep 1, 12 kansei-1789")
     }
 
     #[test]

@@ -45,7 +45,8 @@
 use icu_locid::extensions::unicode::{Key, Value};
 use icu_locid::subtags::Variants;
 use icu_provider::prelude::*;
-use icu_provider::{DataKeyMetadata, FallbackPriority};
+use icu_provider::FallbackPriority;
+use icu_provider::FallbackSupplement;
 
 mod adapter;
 mod algorithms;
@@ -156,31 +157,66 @@ pub struct LocaleFallbackConfig {
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
     pub extension_key: Option<Key>,
-}
-
-impl From<DataKeyMetadata> for LocaleFallbackConfig {
-    fn from(key_metadata: DataKeyMetadata) -> Self {
-        LocaleFallbackConfig {
-            priority: key_metadata.fallback_priority,
-            extension_key: key_metadata.extension_key,
-        }
-    }
+    /// Fallback supplement data key to customize fallback rules.
+    ///
+    /// For example, most data keys for collation add additional parent locales, such as
+    /// "yue" to "zh-Hant", and data used for the `"-u-co"` extension keyword fallback.
+    ///
+    /// Currently the only supported fallback supplement is `FallbackSupplement::Collation`, but more may be
+    /// added in the future.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use icu_provider::prelude::*;
+    /// use icu_provider::FallbackPriority;
+    /// use icu_provider::FallbackSupplement;
+    /// use icu_provider_adapters::fallback::LocaleFallbackConfig;
+    /// use icu_provider_adapters::fallback::LocaleFallbacker;
+    /// use tinystr::tinystr;
+    ///
+    /// // Set up the fallback iterator.
+    /// let fallbacker = LocaleFallbacker::try_new_unstable(&icu_testdata::unstable()).expect("data");
+    /// let mut config = LocaleFallbackConfig::default();
+    /// config.priority = FallbackPriority::Collation;
+    /// config.fallback_supplement = Some(FallbackSupplement::Collation);
+    /// let key_fallbacker = fallbacker.for_config(config);
+    /// let mut fallback_iterator = key_fallbacker.fallback_for(
+    ///     icu_locid::locale!("yue-HK")
+    ///         .into(),
+    /// );
+    ///
+    /// // Run the algorithm and check the results.
+    /// // TODO(#1964): add "zh" as a target.
+    /// assert_eq!(fallback_iterator.get().to_string(), "yue-HK");
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get().to_string(), "yue");
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get().to_string(), "zh-Hant");
+    /// fallback_iterator.step();
+    /// assert_eq!(fallback_iterator.get().to_string(), "und");
+    /// ```
+    pub fallback_supplement: Option<FallbackSupplement>,
 }
 
 /// Entry type for locale fallbacking.
 ///
 /// See the module-level documentation for an example.
+#[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbacker {
     likely_subtags: DataPayload<LocaleFallbackLikelySubtagsV1Marker>,
     parents: DataPayload<LocaleFallbackParentsV1Marker>,
+    collation_supplement: Option<DataPayload<CollationFallbackSupplementV1Marker>>,
 }
 
 /// Intermediate type for spawning locale fallback iterators based on a specific configuration.
 ///
 /// See the module-level documentation for an example.
+#[derive(Debug, Clone, PartialEq)]
 pub struct LocaleFallbackerWithConfig<'a> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
+    supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
     config: LocaleFallbackConfig,
 }
 
@@ -188,6 +224,7 @@ pub struct LocaleFallbackerWithConfig<'a> {
 struct LocaleFallbackIteratorInner<'a, 'b> {
     likely_subtags: &'a LocaleFallbackLikelySubtagsV1<'a>,
     parents: &'a LocaleFallbackParentsV1<'a>,
+    supplement: Option<&'a LocaleFallbackSupplementV1<'a>>,
     config: &'b LocaleFallbackConfig,
     backup_extension: Option<Value>,
     backup_subdivision: Option<Value>,
@@ -209,13 +246,27 @@ impl LocaleFallbacker {
     where
         P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
             + DataProvider<LocaleFallbackParentsV1Marker>
+            + DataProvider<CollationFallbackSupplementV1Marker>
             + ?Sized,
     {
         let likely_subtags = provider.load(Default::default())?.take_payload()?;
         let parents = provider.load(Default::default())?.take_payload()?;
+        let collation_supplement = match DataProvider::<CollationFallbackSupplementV1Marker>::load(
+            provider,
+            Default::default(),
+        ) {
+            Ok(response) => Some(response.take_payload()?),
+            // It is expected that not all keys are present
+            Err(DataError {
+                kind: DataErrorKind::MissingDataKey,
+                ..
+            }) => None,
+            Err(e) => return Err(e),
+        };
         Ok(LocaleFallbacker {
             likely_subtags,
             parents,
+            collation_supplement,
         })
     }
 
@@ -227,19 +278,28 @@ impl LocaleFallbacker {
         LocaleFallbacker {
             likely_subtags: DataPayload::from_owned(Default::default()),
             parents: DataPayload::from_owned(Default::default()),
+            collation_supplement: None,
         }
     }
 
     /// Creates the intermediate [`LocaleFallbackerWithConfig`] with configuration options.
     pub fn for_config(&self, config: LocaleFallbackConfig) -> LocaleFallbackerWithConfig {
+        let supplement = match config.fallback_supplement {
+            Some(FallbackSupplement::Collation) => {
+                self.collation_supplement.as_ref().map(|p| p.get())
+            }
+            _ => None,
+        };
         LocaleFallbackerWithConfig {
             likely_subtags: self.likely_subtags.get(),
             parents: self.parents.get(),
+            supplement,
             config,
         }
     }
 
-    /// Creates the intermediate [`LocaleFallbackerWithConfig`] based on a [`DataKey`].
+    /// Creates the intermediate [`LocaleFallbackerWithConfig`] based on a
+    /// [`DataKey`] and a [`DataRequestMetadata`].
     ///
     /// # Examples
     ///
@@ -273,8 +333,17 @@ impl LocaleFallbacker {
     /// fallback_iterator.step();
     /// assert_eq!(fallback_iterator.get().to_string(), "und");
     /// ```
+    ///
+    /// [`DataRequestMetadata`]: icu_provider::DataRequestMetadata
     pub fn for_key(&self, data_key: DataKey) -> LocaleFallbackerWithConfig {
-        self.for_config(data_key.get_metadata().into())
+        let priority = data_key.metadata().fallback_priority;
+        let extension_key = data_key.metadata().extension_key;
+        let fallback_supplement = data_key.metadata().fallback_supplement;
+        self.for_config(LocaleFallbackConfig {
+            priority,
+            extension_key,
+            fallback_supplement,
+        })
     }
 }
 
@@ -291,6 +360,7 @@ impl<'a> LocaleFallbackerWithConfig<'a> {
             inner: LocaleFallbackIteratorInner {
                 likely_subtags: self.likely_subtags,
                 parents: self.parents,
+                supplement: self.supplement,
                 config: &self.config,
                 backup_extension: None,
                 backup_subdivision: None,

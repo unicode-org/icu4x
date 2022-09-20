@@ -7,17 +7,14 @@
 
 use crate::error::PropertiesError;
 use crate::props::Script;
+use crate::props::ScriptULE;
 use crate::provider::*;
 
-use crate::props::ScriptULE;
 use core::iter::FromIterator;
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
-use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;
-#[cfg(feature = "serde")]
-use serde::{Deserialize, Serialize};
-use zerovec::{ule::AsULE, VarZeroVec, ZeroSlice};
+use zerovec::{ule::AsULE, ZeroSlice};
 
 /// The number of bits at the low-end of a `ScriptWithExt` value used for
 /// storing the `Script` value (or `extensions` index).
@@ -28,24 +25,25 @@ const SCRIPT_VAL_LENGTH: u16 = 10;
 const SCRIPT_X_SCRIPT_VAL: u16 = (1 << SCRIPT_VAL_LENGTH) - 1;
 
 /// An internal-use only pseudo-property that represents the values stored in
-/// the trie of the special data structure [`ScriptWithExtensions`].
+/// the trie of the special data structure [`ScriptWithExtensionsPropertyV1`].
 ///
 /// Note: The will assume a 12-bit layout. The 2 higher order bits in positions
 /// 11..10 will indicate how to deduce the Script value and Script_Extensions,
 /// and the lower 10 bits 9..0 indicate either the Script value or the index
 /// into the `extensions` structure.
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
-#[cfg_attr(feature = "serde", derive(Serialize, Deserialize))]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 #[cfg_attr(feature = "datagen", derive(databake::Bake))]
 #[cfg_attr(feature = "datagen", databake(path = icu_properties::script))]
 #[repr(transparent)]
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
+#[doc(hidden)]
+// `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsPropertyV1` constructor
 #[allow(clippy::exhaustive_structs)] // this type is stable
 pub struct ScriptWithExt(pub u16);
 
 #[allow(missing_docs)] // These constants don't need individual documentation.
 #[allow(non_upper_case_globals)]
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsPropertyV1` constructor
 impl ScriptWithExt {
     pub const Unknown: ScriptWithExt = ScriptWithExt(0);
 }
@@ -64,7 +62,7 @@ impl AsULE for ScriptWithExt {
     }
 }
 
-#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensions` constructor
+#[doc(hidden)] // `ScriptWithExt` not intended as public-facing but for `ScriptWithExtensionsPropertyV1` constructor
 impl ScriptWithExt {
     /// Returns whether the [`ScriptWithExt`] value has Script_Extensions and
     /// also indicates a Script value of [`Script::Common`].
@@ -177,7 +175,7 @@ impl From<ScriptWithExt> for Script {
 }
 
 /// A struct that wraps a [`Script`] array, such as in the return value for
-/// [`get_script_extensions_val`](ScriptWithExtensions::get_script_extensions_val).
+/// [`get_script_extensions_val()`](ScriptWithExtensionsBorrowed::get_script_extensions_val).
 #[derive(Copy, Clone, Debug, Eq, PartialEq)]
 pub struct ScriptExtensionsSet<'a> {
     values: &'a ZeroSlice<Script>,
@@ -190,11 +188,10 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let payload =
+    /// let data =
     ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let swe = data.as_borrowed();
     ///
     /// assert!(swe
     ///     .get_script_extensions_val(0x11303) // GRANTHA SIGN VISARGA
@@ -210,11 +207,10 @@ impl ScriptExtensionsSet<'_> {
     ///
     /// ```
     /// use icu::properties::{script, Script};
-    /// let payload =
+    /// let data =
     ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let swe = data.as_borrowed();
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('௫' as u32) // U+0BEB TAMIL DIGIT FIVE
@@ -226,59 +222,56 @@ impl ScriptExtensionsSet<'_> {
     pub fn iter(&self) -> impl DoubleEndedIterator<Item = Script> + '_ {
         ZeroSlice::iter(&*self.values)
     }
-}
 
-/// A data structure that represents the data for both Script and
-/// Script_Extensions properties in an efficient way. This structure matches
-/// the data and data structures that are stored in the corresponding ICU data
-/// file for these properties.
-#[cfg_attr(feature = "serde", derive(Deserialize))]
-#[cfg_attr(
-    feature = "datagen",
-    derive(Serialize, databake::Bake),
-    databake(path = icu_properties::script),
-)]
-#[derive(Clone, Debug, Eq, PartialEq, yoke::Yokeable, zerofrom::ZeroFrom)]
-pub struct ScriptWithExtensions<'data> {
-    /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
-    /// higher order bits 11..10 will indicate how to deduce the Script value and
-    /// Script_Extensions value, nearly matching the representation
-    /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
-    ///
-    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
-    /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
-    /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
-    /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
-    /// | 1                       | Script=Common                                          | Entire sub-array, index given by lower 10 bits                 |
-    /// | 0                       | Value in lower 10 bits                                 | `[ Script value ]` single-element array                        |
-    ///
-    /// When the lower 10 bits of the value are used as an index, that index is
-    /// used for the outer-level vector of the nested `extensions` structure.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    #[doc(hidden)] // #2417
-    pub trie: CodePointTrie<'data, ScriptWithExt>,
-
-    /// This companion structure stores Script_Extensions values, which are
-    /// themselves arrays / vectors. This structure only stores the values for
-    /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
-    /// sub-vector represents the Script_Extensions array value for a code point,
-    /// and may also indicate Script value, as described for the `trie` field.
-    #[cfg_attr(feature = "serde", serde(borrow))]
-    #[doc(hidden)] // #2417
-    pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-}
-
-impl<'data> ScriptWithExtensions<'data> {
-    // This method is intended to be used by constructors of deserialized data
-    // in a data provider.
+    /// For accessing this set as an array instead of an iterator
+    /// only needed for the FFI bindings; shouldn't be used directly from Rust
     #[doc(hidden)]
-    pub fn new(
-        trie: CodePointTrie<'data, ScriptWithExt>,
-        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
-    ) -> ScriptWithExtensions<'data> {
-        ScriptWithExtensions { trie, extensions }
+    pub fn array_len(&self) -> usize {
+        self.values.len()
+    }
+    /// For accessing this set as an array instead of an iterator
+    /// only needed for the FFI bindings; shouldn't be used directly from Rust
+    #[doc(hidden)]
+    pub fn array_get(&self, index: usize) -> Option<Script> {
+        self.values.get(index)
+    }
+}
+/// A wrapper around script extensions data. Can be obtained via [`load_script_with_extensions_unstable()`] and
+/// related getters.
+///
+/// Most useful methods are on [`ScriptWithExtensionsBorrowed`] obtained by calling [`ScriptWithExtensions::as_borrowed()`]
+pub struct ScriptWithExtensions {
+    data: DataPayload<ScriptWithExtensionsPropertyV1Marker>,
+}
+
+/// A borrowed wrapper around script extension data, returned by
+/// [`ScriptWithExtensions::as_borrowed()`]. More efficient to query.
+#[derive(Clone, Copy)]
+pub struct ScriptWithExtensionsBorrowed<'a> {
+    data: &'a ScriptWithExtensionsPropertyV1<'a>,
+}
+
+impl ScriptWithExtensions {
+    /// Construct a borrowed version of this type that can be queried.
+    ///
+    /// This avoids a potential small underlying cost per API call (ex: `contains()`) by consolidating it
+    /// up front.
+    #[inline]
+    pub fn as_borrowed(&self) -> ScriptWithExtensionsBorrowed<'_> {
+        ScriptWithExtensionsBorrowed {
+            data: self.data.get(),
+        }
     }
 
+    /// Construct a new one from loaded data
+    ///
+    /// Typically it is preferable to use getters like [`load_script_with_extensions_unstable()`] instead
+    pub fn from_data(data: DataPayload<ScriptWithExtensionsPropertyV1Marker>) -> Self {
+        Self { data }
+    }
+}
+
+impl<'a> ScriptWithExtensionsBorrowed<'a> {
     /// Returns the `Script` property value for this code point.
     ///
     /// # Examples
@@ -286,9 +279,8 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let swe = data.as_borrowed();
     ///
     /// // U+0640 ARABIC TATWEEL
     /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // main Script value
@@ -315,11 +307,11 @@ impl<'data> ScriptWithExtensions<'data> {
     /// assert_ne!(swe.get_script_val(0xFDF2), Script::Thaana);
     /// ```
     pub fn get_script_val(&self, code_point: u32) -> Script {
-        let sc_with_ext = self.trie.get(code_point);
+        let sc_with_ext = self.data.trie.get32(code_point);
 
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
-            let scx_val = self.extensions.get(ext_idx as usize);
+            let scx_val = self.data.extensions.get(ext_idx as usize);
             let scx_first_sc = scx_val.and_then(|scx| scx.get(0));
 
             let default_sc_val = Script::Unknown;
@@ -334,19 +326,18 @@ impl<'data> ScriptWithExtensions<'data> {
             Script(script_val)
         }
     }
-
     // Returns the Script_Extensions value for a code_point when the trie value
     // is already known.
     // This private helper method exists to prevent code duplication in callers like
     // `get_script_extensions_val`, `get_script_extensions_set`, and `has_script`.
-    fn get_scx_val_using_trie_val<'a>(
-        &'a self,
+    fn get_scx_val_using_trie_val(
+        &self,
         sc_with_ext_ule: &'a <ScriptWithExt as AsULE>::ULE,
     ) -> &'a ZeroSlice<Script> {
         let sc_with_ext = ScriptWithExt::from_unaligned(*sc_with_ext_ule);
         if sc_with_ext.is_other() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
-            let ext_subarray = self.extensions.get(ext_idx as usize);
+            let ext_subarray = self.data.extensions.get(ext_idx as usize);
             // In the OTHER case, where the 2 higher-order bits of the
             // `ScriptWithExt` value in the trie doesn't indicate the Script value,
             // the Script value is copied/inserted into the first position of the
@@ -357,7 +348,7 @@ impl<'data> ScriptWithExtensions<'data> {
             ZeroSlice::from_ule_slice(scx_slice)
         } else if sc_with_ext.is_common() || sc_with_ext.is_inherited() {
             let ext_idx = sc_with_ext.0 & SCRIPT_X_SCRIPT_VAL;
-            let scx_val = self.extensions.get(ext_idx as usize);
+            let scx_val = self.data.extensions.get(ext_idx as usize);
             scx_val.unwrap_or_default()
         } else {
             // Note: `Script` and `ScriptWithExt` are both represented as the same
@@ -366,7 +357,6 @@ impl<'data> ScriptWithExtensions<'data> {
             ZeroSlice::from_ule_slice(script_ule_slice)
         }
     }
-
     /// Return the `Script_Extensions` property value for this code point.
     ///
     /// If `code_point` has Script_Extensions, then return the Script codes in
@@ -383,9 +373,8 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let swe = data.as_borrowed();
     ///
     /// assert_eq!(
     ///     swe.get_script_extensions_val('𐓐' as u32) // U+104D0 OSAGE CAPITAL LETTER KHA
@@ -412,8 +401,8 @@ impl<'data> ScriptWithExtensions<'data> {
     ///     vec![Script::Tamil, Script::Grantha]
     /// );
     /// ```
-    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet {
-        let sc_with_ext_ule = self.trie.get_ule(code_point);
+    pub fn get_script_extensions_val(&self, code_point: u32) -> ScriptExtensionsSet<'a> {
+        let sc_with_ext_ule = self.data.trie.get32_ule(code_point);
 
         ScriptExtensionsSet {
             values: match sc_with_ext_ule {
@@ -422,6 +411,7 @@ impl<'data> ScriptWithExtensions<'data> {
             },
         }
     }
+
     /// Returns whether `script` is contained in the Script_Extensions
     /// property value if the code_point has Script_Extensions, otherwise
     /// if the code point does not have Script_Extensions then returns
@@ -436,11 +426,10 @@ impl<'data> ScriptWithExtensions<'data> {
     /// use icu::properties::{script, Script};
     ///
     /// let provider = icu_testdata::unstable();
-    /// let payload =
+    /// let data =
     ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
     ///         .expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let swe = data.as_borrowed();
     ///
     /// // U+0650 ARABIC KASRA
     /// assert!(!swe.has_script(0x0650, Script::Inherited)); // main Script value
@@ -461,7 +450,7 @@ impl<'data> ScriptWithExtensions<'data> {
     /// assert!(swe.has_script(0xFDF2, Script::Thaana));
     /// ```
     pub fn has_script(&self, code_point: u32, script: Script) -> bool {
-        let sc_with_ext_ule = if let Some(scwe_ule) = self.trie.get_ule(code_point) {
+        let sc_with_ext_ule = if let Some(scwe_ule) = self.data.trie.get32_ule(code_point) {
             scwe_ule
         } else {
             return false;
@@ -486,9 +475,8 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let swe = data.as_borrowed();
     ///
     /// let syriac_script_extensions_ranges = swe.get_script_extensions_ranges(Script::Syriac);
     ///
@@ -525,7 +513,8 @@ impl<'data> ScriptWithExtensions<'data> {
         &self,
         script: Script,
     ) -> impl Iterator<Item = RangeInclusive<u32>> + '_ {
-        self.trie
+        self.data
+            .trie
             .iter_ranges()
             .filter(move |cpm_range| {
                 let sc_with_ext = ScriptWithExt(cpm_range.value.0);
@@ -548,37 +537,32 @@ impl<'data> ScriptWithExtensions<'data> {
     /// ```
     /// use icu::properties::{script, Script};
     ///
-    /// let payload = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
-    /// let data_struct = payload.get();
-    /// let swe = &data_struct.data;
+    /// let data = script::load_script_with_extensions_unstable(&icu_testdata::unstable()).expect("The data should be valid");
+    /// let swe = data.as_borrowed();
     ///
     /// let syriac = swe.get_script_extensions_set(Script::Syriac);
     ///
-    /// assert!(!syriac.contains_u32(0x061E)); // ARABIC TRIPLE DOT PUNCTUATION MARK
-    /// assert!(syriac.contains_u32(0x061F)); // ARABIC QUESTION MARK
-    /// assert!(!syriac.contains_u32(0x0620)); // ARABIC LETTER KASHMIRI YEH
+    /// assert!(!syriac.contains32(0x061E)); // ARABIC TRIPLE DOT PUNCTUATION MARK
+    /// assert!(syriac.contains32(0x061F)); // ARABIC QUESTION MARK
+    /// assert!(!syriac.contains32(0x0620)); // ARABIC LETTER KASHMIRI YEH
     ///
-    /// assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
-    /// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
-    /// assert!(!syriac.contains_u32(0x074B)); // unassigned
-    /// assert!(syriac.contains_u32(0x074F)); // SYRIAC LETTER SOGDIAN FE
-    /// assert!(!syriac.contains_u32(0x0750)); // ARABIC LETTER BEH WITH THREE DOTS HORIZONTALLY BELOW
+    /// assert!(syriac.contains32(0x0700)); // SYRIAC END OF PARAGRAPH
+    /// assert!(syriac.contains32(0x074A)); // SYRIAC BARREKH
+    /// assert!(!syriac.contains32(0x074B)); // unassigned
+    /// assert!(syriac.contains32(0x074F)); // SYRIAC LETTER SOGDIAN FE
+    /// assert!(!syriac.contains32(0x0750)); // ARABIC LETTER BEH WITH THREE DOTS HORIZONTALLY BELOW
     ///
-    /// assert!(syriac.contains_u32(0x1DF8)); // COMBINING DOT ABOVE LEFT
-    /// assert!(!syriac.contains_u32(0x1DF9)); // COMBINING WIDE INVERTED BRIDGE BELOW
-    /// assert!(syriac.contains_u32(0x1DFA)); // COMBINING DOT BELOW LEFT
-    /// assert!(!syriac.contains_u32(0x1DFB)); // COMBINING DELETION MARK
+    /// assert!(syriac.contains32(0x1DF8)); // COMBINING DOT ABOVE LEFT
+    /// assert!(!syriac.contains32(0x1DF9)); // COMBINING WIDE INVERTED BRIDGE BELOW
+    /// assert!(syriac.contains32(0x1DFA)); // COMBINING DOT BELOW LEFT
+    /// assert!(!syriac.contains32(0x1DFB)); // COMBINING DELETION MARK
     /// ```
     pub fn get_script_extensions_set(&self, script: Script) -> CodePointInversionList {
         CodePointInversionList::from_iter(self.get_script_extensions_ranges(script))
     }
 }
 
-/// The return type `Result` for any of the `load_script_with_extensions_`* functions.
-pub type ScriptWithExtensionsResult =
-    Result<DataPayload<ScriptWithExtensionsPropertyV1Marker>, PropertiesError>;
-
-/// Returns a [`ScriptWithExtensions`] struct that represents the data for the Script
+/// Returns a [`ScriptWithExtensionsPropertyV1`] struct that represents the data for the Script
 /// and Script_Extensions properties.
 ///
 /// # Examples
@@ -586,11 +570,10 @@ pub type ScriptWithExtensionsResult =
 /// ```
 /// use icu::properties::{script, Script};
 ///
-/// let payload =
+/// let data =
 ///     script::load_script_with_extensions_unstable(&icu_testdata::unstable())
 ///         .expect("The data should be valid");
-/// let data_struct = payload.get();
-/// let swe = &data_struct.data;
+/// let swe = data.as_borrowed();
 ///
 /// // get the `Script` property value
 /// assert_eq!(swe.get_script_val(0x0640), Script::Common); // U+0640 ARABIC TATWEEL
@@ -631,24 +614,26 @@ pub type ScriptWithExtensionsResult =
 ///
 /// // get a `CodePointInversionList` for when `Script` value is contained in `Script_Extensions` value
 /// let syriac = swe.get_script_extensions_set(Script::Syriac);
-/// assert!(syriac.contains_u32(0x0650)); // ARABIC KASRA
-/// assert!(!syriac.contains_u32(0x0660)); // ARABIC-INDIC DIGIT ZERO
-/// assert!(!syriac.contains_u32(0xFDF2)); // ARABIC LIGATURE ALLAH ISOLATED FORM
-/// assert!(syriac.contains_u32(0x0700)); // SYRIAC END OF PARAGRAPH
-/// assert!(syriac.contains_u32(0x074A)); // SYRIAC BARREKH
+/// assert!(syriac.contains32(0x0650)); // ARABIC KASRA
+/// assert!(!syriac.contains32(0x0660)); // ARABIC-INDIC DIGIT ZERO
+/// assert!(!syriac.contains32(0xFDF2)); // ARABIC LIGATURE ALLAH ISOLATED FORM
+/// assert!(syriac.contains32(0x0700)); // SYRIAC END OF PARAGRAPH
+/// assert!(syriac.contains32(0x074A)); // SYRIAC BARREKH
 /// ```
 pub fn load_script_with_extensions_unstable(
     provider: &(impl DataProvider<ScriptWithExtensionsPropertyV1Marker> + ?Sized),
-) -> ScriptWithExtensionsResult {
-    Ok(provider
-        .load(Default::default())
-        .and_then(DataResponse::take_payload)?)
+) -> Result<ScriptWithExtensions, PropertiesError> {
+    Ok(ScriptWithExtensions::from_data(
+        provider
+            .load(Default::default())
+            .and_then(DataResponse::take_payload)?,
+    ))
 }
 
 icu_provider::gen_any_buffer_constructors!(
     locale: skip,
     options: skip,
-    result: ScriptWithExtensionsResult,
+    result: Result<ScriptWithExtensions, PropertiesError>,
     functions: [
         load_script_with_extensions_unstable,
         load_script_with_extensions_with_any_provider,

@@ -28,7 +28,7 @@ diplomat_result_box_ICU4XCollator_ICU4XError ICU4XCollator_try_new(const ICU4XDa
 
 ICU4XOrdering ICU4XCollator_compare(const ICU4XCollator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
 
-ICU4XOrdering ICU4XCollator_compare_utf8(const ICU4XCollator* self, const uint8_t* left_data, size_t left_len, const uint8_t* right_data, size_t right_len);
+ICU4XOrdering ICU4XCollator_compare_valid_utf8(const ICU4XCollator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
 
 ICU4XOrdering ICU4XCollator_compare_utf16(const ICU4XCollator* self, const uint16_t* left_data, size_t left_len, const uint16_t* right_data, size_t right_len);
 void ICU4XCollator_destroy(ICU4XCollator* self);

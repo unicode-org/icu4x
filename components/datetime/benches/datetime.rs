@@ -13,6 +13,7 @@ use icu_datetime::{time_zone::TimeZoneFormatterOptions, TypedZonedDateTimeFormat
 use icu_locid::Locale;
 use icu_provider::AsDeserializingBufferProvider;
 use icu_timezone::CustomTimeZone;
+use writeable::Writeable;
 
 #[path = "../tests/mock.rs"]
 mod mock;
@@ -131,11 +132,11 @@ fn datetime_benches(c: &mut Criterion) {
                         )
                         .unwrap();
 
-                        let mut result = String::new();
+                        let mut scratch = String::new();
 
                         for dt in &datetimes {
-                            let _ = dtf.format_to_write(&mut result, dt);
-                            result.clear();
+                            let _ = dtf.format(dt).write_to(&mut scratch);
+                            scratch.clear();
                         }
                     }
                 }
@@ -249,11 +250,11 @@ fn datetime_benches(c: &mut Criterion) {
                         )
                         .unwrap();
 
-                        let mut result = String::new();
+                        let mut scratch = String::new();
 
                         for dt in &datetimes {
-                            let _ = dtf.format_to_write(&mut result, &dt.0, &dt.1);
-                            result.clear();
+                            let _ = dtf.format(&dt.0, &dt.1).write_to(&mut scratch);
+                            scratch.clear();
                         }
                     }
                 }

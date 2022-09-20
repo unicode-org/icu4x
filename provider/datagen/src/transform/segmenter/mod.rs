@@ -216,7 +216,7 @@ fn get_line_segmenter_value_from_name(name: &str) -> LineBreak {
 
 fn is_cjk_fullwidth(eaw: maps::CodePointMapDataBorrowed<EastAsianWidth>, codepoint: u32) -> bool {
     matches!(
-        eaw.get_u32(codepoint),
+        eaw.get32(codepoint),
         EastAsianWidth::Ambiguous | EastAsianWidth::Fullwidth | EastAsianWidth::Wide
     )
 }
@@ -231,7 +231,7 @@ impl crate::DatagenProvider {
             .segmenter()?
             .read_and_parse_toml::<SegmenterRuleTable>(&format!(
                 "{}.toml",
-                key.get_path()
+                key.path()
                     .split(&['/', '@'])
                     .nth(1)
                     .expect("DataKey format should be valid!")
@@ -314,7 +314,7 @@ impl crate::DatagenProvider {
                             // Word break property doesn't define SA, but we will use non-UAX29 rules.
                             // SA/CJ property is within 0..U+0x40000
                             for c in 0..0x40000 {
-                                if lb.get_u32(c) == LineBreak::ComplexContext {
+                                if lb.get32(c) == LineBreak::ComplexContext {
                                     properties_map[c as usize] = property_index
                                 } else if let Some(c) = char::from_u32(c) {
                                     match script.get(c) {
@@ -335,7 +335,7 @@ impl crate::DatagenProvider {
 
                         let prop = get_word_segmenter_value_from_name(&*p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if wb.get_u32(c) == prop {
+                            if wb.get32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -358,7 +358,7 @@ impl crate::DatagenProvider {
 
                         let prop = get_grapheme_segmenter_value_from_name(&*p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if gb.get_u32(c) == prop {
+                            if gb.get32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -368,7 +368,7 @@ impl crate::DatagenProvider {
                     "sentence" => {
                         let prop = get_sentence_segmenter_value_from_name(&*p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if sb.get_u32(c) == prop {
+                            if sb.get32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -384,16 +384,16 @@ impl crate::DatagenProvider {
                             || p.name == "PR_EAW"
                         {
                             for i in 0..(CODEPOINT_TABLE_LEN as u32) {
-                                match lb.get_u32(i) {
+                                match lb.get32(i) {
                                     LineBreak::OpenPunctuation => {
                                         if (p.name == "OP_OP30"
-                                            && (eaw.get_u32(i) != EastAsianWidth::Fullwidth
-                                                && eaw.get_u32(i) != EastAsianWidth::Halfwidth
-                                                && eaw.get_u32(i) != EastAsianWidth::Wide))
+                                            && (eaw.get32(i) != EastAsianWidth::Fullwidth
+                                                && eaw.get32(i) != EastAsianWidth::Halfwidth
+                                                && eaw.get32(i) != EastAsianWidth::Wide))
                                             || (p.name == "OP_EA"
-                                                && (eaw.get_u32(i) == EastAsianWidth::Fullwidth
-                                                    || eaw.get_u32(i) == EastAsianWidth::Halfwidth
-                                                    || eaw.get_u32(i) == EastAsianWidth::Wide))
+                                                && (eaw.get32(i) == EastAsianWidth::Fullwidth
+                                                    || eaw.get32(i) == EastAsianWidth::Halfwidth
+                                                    || eaw.get32(i) == EastAsianWidth::Wide))
                                         {
                                             properties_map[i as usize] = property_index;
                                         }
@@ -402,9 +402,9 @@ impl crate::DatagenProvider {
                                     LineBreak::CloseParenthesis => {
                                         // CP_EA is unused on the latest spec.
                                         if p.name == "CP_EA"
-                                            && (eaw.get_u32(i) == EastAsianWidth::Fullwidth
-                                                || eaw.get_u32(i) == EastAsianWidth::Halfwidth
-                                                || eaw.get_u32(i) == EastAsianWidth::Wide)
+                                            && (eaw.get32(i) == EastAsianWidth::Fullwidth
+                                                || eaw.get32(i) == EastAsianWidth::Halfwidth
+                                                || eaw.get32(i) == EastAsianWidth::Wide)
                                         {
                                             properties_map[i as usize] = property_index;
                                         }
@@ -412,7 +412,7 @@ impl crate::DatagenProvider {
 
                                     LineBreak::Ideographic => {
                                         if p.name == "ID_CN"
-                                            && gc.get_u32(i) == GeneralCategory::Unassigned
+                                            && gc.get32(i) == GeneralCategory::Unassigned
                                         {
                                             if let Some(c) = char::from_u32(i) {
                                                 if extended_pictographic.contains(c) {
@@ -442,7 +442,7 @@ impl crate::DatagenProvider {
 
                         let prop = get_line_segmenter_value_from_name(&*p.name);
                         for c in 0..(CODEPOINT_TABLE_LEN as u32) {
-                            if lb.get_u32(c) == prop {
+                            if lb.get32(c) == prop {
                                 properties_map[c as usize] = property_index;
                             }
                         }
@@ -601,11 +601,11 @@ impl crate::DatagenProvider {
             //     0xe0100..=0xe01ef => CM,
             //     _ => XX,
             // }
-            debug_assert_eq!(property_trie.get(0x20000), ID);
-            debug_assert_eq!(property_trie.get(0x3fffd), ID);
-            debug_assert_eq!(property_trie.get(0xd0000), XX);
-            debug_assert_eq!(property_trie.get(0xe0001), CM);
-            debug_assert_eq!(property_trie.get(0xe0020), CM);
+            debug_assert_eq!(property_trie.get32(0x20000), ID);
+            debug_assert_eq!(property_trie.get32(0x3fffd), ID);
+            debug_assert_eq!(property_trie.get32(0xd0000), XX);
+            debug_assert_eq!(property_trie.get32(0xe0001), CM);
+            debug_assert_eq!(property_trie.get32(0xe0020), CM);
         }
 
         Ok(RuleBreakDataV1 {

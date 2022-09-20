@@ -34,9 +34,7 @@ pub mod ffi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
         pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ICU4XError> {
-            use icu_provider::serde::AsDeserializingBufferProvider;
-            let provider = provider.0.as_deserializing();
-            maps::load_bidi_class(&provider)
+            maps::load_bidi_class(&provider.0)
                 .map(|bidi| Box::new(ICU4XBidi(bidi)))
                 .map_err(Into::into)
                 .into()
@@ -46,7 +44,11 @@ pub mod ffi {
         ///
         /// Takes in a Level for the default level, if it is an invalid value it will default to LTR
         #[diplomat::rust_link(unicode_bidi::BidiInfo::new_with_data_source, FnInStruct)]
-        #[diplomat::rust_link(icu::properties::BidiClassAdapter::bidi_class, FnInStruct, hidden)]
+        #[diplomat::rust_link(
+            icu::properties::bidi::BidiClassAdapter::bidi_class,
+            FnInStruct,
+            hidden
+        )]
         pub fn for_text<'text>(
             &self,
             text: &'text str,

@@ -2,13 +2,10 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use crate::{calendar, options::length, raw};
-use alloc::string::String;
-
-use icu_provider::prelude::*;
-
 use crate::provider::calendar::*;
+use crate::{calendar, options::length, raw};
 use crate::{input::DateInput, DateTimeFormatterError, FormattedDateTime};
+use alloc::string::String;
 use icu_calendar::any_calendar::{AnyCalendar, AnyCalendarKind};
 use icu_calendar::provider::{
     JapaneseErasV1Marker, JapaneseExtendedErasV1Marker, WeekDataV1Marker,
@@ -16,7 +13,9 @@ use icu_calendar::provider::{
 use icu_calendar::Date;
 use icu_decimal::provider::DecimalSymbolsV1Marker;
 use icu_plurals::provider::OrdinalV1Marker;
+use icu_provider::prelude::*;
 use icu_provider::DataLocale;
+use writeable::Writeable;
 
 /// [`DateFormatter`] is a formatter capable of formatting
 /// dates from any calendar, selected at runtime. For the difference between this and [`TypedDateFormatter`](crate::TypedDateFormatter),
@@ -37,6 +36,7 @@ use icu_provider::DataLocale;
 /// use icu::datetime::{options::length, DateFormatter};
 /// use icu::locid::locale;
 /// use std::str::FromStr;
+/// use writeable::assert_writeable_eq;
 ///
 /// let length = length::Date::Medium;
 ///
@@ -47,10 +47,9 @@ use icu_provider::DataLocale;
 ///     .expect("Failed to construct Date.");
 /// let any_date = date.to_any();
 ///
-/// let value = df
-///     .format_to_string(&any_date)
-///     .expect("Calendars should match");
-/// assert_eq!(value, "Sep 1, 2020");
+/// assert_writeable_eq!(df
+///     .format(&any_date)
+///     .expect("Calendars should match"), "Sep 1, 2020");
 /// ```
 ///
 /// This model replicates that of `ICU` and `ECMA402`.
@@ -106,6 +105,7 @@ impl DateFormatter {
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
@@ -121,10 +121,9 @@ impl DateFormatter {
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = df
-    ///     .format_to_string(&any_datetime)
-    ///     .expect("Calendars should match");
-    /// assert_eq!(value, "Sep 1, 2020");
+    /// assert_writeable_eq!(df
+    ///     .format(&any_datetime)
+    ///     .expect("Calendars should match"), "Sep 1, 2020");
     /// ```
     #[inline]
     #[cfg(feature = "serde")]
@@ -158,6 +157,7 @@ impl DateFormatter {
     /// use icu::locid::locale;
     /// use icu_provider::any::DynamicDataProviderAnyMarkerWrap;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let length = length::Date::Medium;
     /// let locale = locale!("en-u-ca-gregory");
@@ -173,10 +173,9 @@ impl DateFormatter {
     ///     .expect("Failed to construct Date.");
     /// let any_datetime = datetime.to_any();
     ///
-    /// let value = df
-    ///     .format_to_string(&any_datetime)
-    ///     .expect("Calendars should match");
-    /// assert_eq!(value, "Sep 1, 2020");
+    /// assert_writeable_eq!(df
+    ///     .format(&any_datetime)
+    ///     .expect("Calendars should match"), "Sep 1, 2020");
     /// ```
     #[inline(never)]
     pub fn try_new_unstable<P>(
@@ -222,6 +221,7 @@ impl DateFormatter {
             calendar,
         ))
     }
+
     /// Takes a [`DateInput`] implementer and returns an instance of a [`FormattedDateTime`]
     /// that contains all information necessary to display a formatted date and operate on it.
     ///
@@ -243,26 +243,6 @@ impl DateFormatter {
         }
     }
 
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateInput`] implementer and populates the buffer with a formatted value.
-    ///
-    /// This function will fail if the date passed in uses a different calendar than that of the
-    /// AnyCalendar. Please convert dates before passing them in if necessary. This function
-    /// will automatically convert and format dates that are associated with the ISO calendar.
-    #[inline]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl DateInput<Calendar = AnyCalendar>,
-    ) -> Result<(), DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            self.0.format_to_write(w, &converted)?;
-        } else {
-            self.0.format_to_write(w, value)?;
-        }
-        Ok(())
-    }
-
     /// Takes a [`DateInput`] implementer and returns it formatted as a string.
     ///
     /// This function will fail if the date passed in uses a different calendar than that of the
@@ -273,11 +253,7 @@ impl DateFormatter {
         &self,
         value: &impl DateInput<Calendar = AnyCalendar>,
     ) -> Result<String, DateTimeFormatterError> {
-        if let Some(converted) = self.convert_if_necessary(value)? {
-            Ok(self.0.format_to_string(&converted))
-        } else {
-            Ok(self.0.format_to_string(value))
-        }
+        Ok(self.format(value)?.write_to_string().into_owned())
     }
 
     /// Converts a date to the correct calendar if necessary

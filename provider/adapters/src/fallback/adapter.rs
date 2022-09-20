@@ -51,7 +51,8 @@ pub struct LocaleFallbackProvider<P> {
 impl<P> LocaleFallbackProvider<P>
 where
     P: DataProvider<LocaleFallbackLikelySubtagsV1Marker>
-        + DataProvider<LocaleFallbackParentsV1Marker>,
+        + DataProvider<LocaleFallbackParentsV1Marker>
+        + DataProvider<CollationFallbackSupplementV1Marker>,
 {
     /// Create a [`LocaleFallbackProvider`] by wrapping another data provider and then loading
     /// fallback data from it.
@@ -244,7 +245,7 @@ where
 impl<P, M> DynamicDataProvider<M> for LocaleFallbackProvider<P>
 where
     P: DynamicDataProvider<M>,
-    M: KeyedDataMarker,
+    M: DataMarker,
 {
     fn load_data(&self, key: DataKey, base_req: DataRequest) -> Result<DataResponse<M>, DataError> {
         self.run_fallback(

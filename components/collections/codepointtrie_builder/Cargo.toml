@@ -50,3 +50,6 @@ features = [
     # We don't need real filesystem access, so use mem-fs
     "mem-fs"
 ]
+
+[dev-dependencies]
+icu = { path = "../../icu" }

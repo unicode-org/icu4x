@@ -205,7 +205,7 @@ mod test {
         "y", "yM", "yMdEEEE", "yMdE", "yMM", "yMMM", "yMMMdEEEE", "yMMMdE", "yMMMM", "yMMMMdEEEE",
         "yMMMMdE", "yMMMMdcccc", "yMMMMd", "yMMMd", "yMMdd", "yMd", "yw",
         "Gy", "GyM", "GyMMM", "GyMMMdEEEE", "GyMMMdE", "GyMMMM", "GyMMMMdE", "GyMMMMd", "GyMMMd",
-        // Timezones
+        // Time zones
         "HHmmZ", "Hmsv", "Hmsvvvv", "Hmv", "Hmvvvv", "hmsv", "hmsvvvv", "hmv", "hmvvvv",
     ];
 
@@ -389,12 +389,12 @@ mod test {
         assert_pattern_to_skeleton("S", "S", "Seconds pass through");
         assert_pattern_to_skeleton("A", "A", "Seconds pass through");
 
-        assert_pattern_to_skeleton("z", "z", "Timezones get passed through");
-        assert_pattern_to_skeleton("Z", "Z", "Timezones get passed through");
-        assert_pattern_to_skeleton("O", "O", "Timezones get passed through");
-        assert_pattern_to_skeleton("v", "v", "Timezones get passed through");
-        assert_pattern_to_skeleton("V", "V", "Timezones get passed through");
-        assert_pattern_to_skeleton("X", "X", "Timezones get passed through");
-        assert_pattern_to_skeleton("x", "x", "Timezones get passed through");
+        assert_pattern_to_skeleton("z", "z", "Time zones get passed through");
+        assert_pattern_to_skeleton("Z", "Z", "Time zones get passed through");
+        assert_pattern_to_skeleton("O", "O", "Time zones get passed through");
+        assert_pattern_to_skeleton("v", "v", "Time zones get passed through");
+        assert_pattern_to_skeleton("V", "V", "Time zones get passed through");
+        assert_pattern_to_skeleton("X", "X", "Time zones get passed through");
+        assert_pattern_to_skeleton("x", "x", "Time zones get passed through");
     }
 }

@@ -24,7 +24,7 @@ extern "C" {
 
 uint8_t ICU4XCodePointMapData8_get(const ICU4XCodePointMapData8* self, char32_t cp);
 
-uint8_t ICU4XCodePointMapData8_get_u32(const ICU4XCodePointMapData8* self, uint32_t cp);
+uint8_t ICU4XCodePointMapData8_get32(const ICU4XCodePointMapData8* self, uint32_t cp);
 
 ICU4XCodePointSetData* ICU4XCodePointMapData8_get_set_for_value(const ICU4XCodePointMapData8* self, uint8_t value);
 

@@ -10,6 +10,8 @@
 
         Creates a time zone from an offset string.
 
+        See the `Rust documentation for from_str <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str>`__ for more information.
+
 
     .. js:staticfunction:: create_empty()
 
@@ -123,35 +125,35 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.TimeZoneBcp47Id.html>`__
 
 
-    .. js:function:: try_set_meta_zone_id(id)
+    .. js:function:: try_set_metazone_id(id)
 
-        Sets the ``meta_zone_id`` field from a string.
+        Sets the ``metazone_id`` field from a string.
 
-        Errors if the string is not a valid BCP-47 meta zone ID.
+        Errors if the string is not a valid BCP-47 metazone ID.
 
-        See the `Rust documentation for meta_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id>`__ for more information.
+        See the `Rust documentation for metazone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
-
-
-    .. js:function:: clear_meta_zone_id()
-
-        Clears the ``meta_zone_id`` field.
-
-        See the `Rust documentation for meta_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id>`__ for more information.
-
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
 
 
-    .. js:function:: meta_zone_id()
+    .. js:function:: clear_metazone_id()
 
-        Writes the value of the ``meta_zone_id`` field as a string.
+        Clears the ``metazone_id`` field.
 
-        Errors if the ``meta_zone_id`` field is empty.
+        See the `Rust documentation for metazone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
 
-        See the `Rust documentation for meta_zone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id>`__ for more information.
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html>`__
+
+    .. js:function:: metazone_id()
+
+        Writes the value of the ``metazone_id`` field as a string.
+
+        Errors if the ``metazone_id`` field is empty.
+
+        See the `Rust documentation for metazone_id <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id>`__ for more information.
+
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html>`__
 
 
     .. js:function:: try_set_zone_variant(id)
@@ -225,21 +227,21 @@
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.zone_variant>`__
 
 
-    .. js:function:: maybe_calculate_meta_zone(metazone_calculator, local_datetime)
+    .. js:function:: maybe_calculate_metazone(metazone_calculator, local_datetime)
 
-        Sets the meta zone based on the time zone and the local timestamp.
+        Sets the metazone based on the time zone and the local timestamp.
 
-        See the `Rust documentation for maybe_calculate_meta_zone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone>`__ for more information.
+        See the `Rust documentation for maybe_calculate_metazone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone>`__ for more information.
 
-        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone>`__
+        Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone>`__
 
 
-.. js:class:: ICU4XMetaZoneCalculator
+.. js:class:: ICU4XMetazoneCalculator
 
-    See the `Rust documentation for MetaZoneCalculator <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html>`__ for more information.
+    See the `Rust documentation for MetazoneCalculator <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html>`__ for more information.
 
 
     .. js:staticfunction:: try_new(provider)
 
-        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.try_new_unstable>`__ for more information.
+        See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable>`__ for more information.
 

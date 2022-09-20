@@ -4,11 +4,11 @@
 
 use crate::transform::cldr::cldr_serde;
 use cldr_serde::time_zones::bcp47_tzid::Bcp47TzidAliasData;
-use cldr_serde::time_zones::meta_zones::MetaZoneAliasData;
+use cldr_serde::time_zones::meta_zones::MetazoneAliasData;
 use cldr_serde::time_zones::meta_zones::ZonePeriod;
 use cldr_serde::time_zones::time_zone_names::TimeZoneNames;
 use icu_datetime::provider::time_zones::*;
-use icu_datetime::provider::time_zones::{MetaZoneId, TimeZoneBcp47Id};
+use icu_datetime::provider::time_zones::{MetazoneId, TimeZoneBcp47Id};
 use icu_provider::datagen::IterableDataProvider;
 use icu_provider::prelude::*;
 use icu_timezone::provider::*;
@@ -20,7 +20,7 @@ mod convert;
 struct CldrTimeZonesData<'a> {
     pub time_zone_names_resource: &'a TimeZoneNames,
     pub bcp47_tzids_resource: &'a HashMap<TimeZoneBcp47Id, Bcp47TzidAliasData>,
-    pub meta_zone_ids_resource: &'a HashMap<MetaZoneId, MetaZoneAliasData>,
+    pub meta_zone_ids_resource: &'a HashMap<MetazoneId, MetazoneAliasData>,
     pub meta_zone_periods_resource: &'a HashMap<String, ZonePeriod>,
 }
 
@@ -79,8 +79,8 @@ macro_rules! impl_data_provider {
 
             impl IterableDataProvider<$marker> for crate::DatagenProvider {
                 fn supported_locales(&self) -> Result<Vec<DataLocale>, DataError> {
-                    if <$marker>::KEY == MetaZonePeriodV1Marker::KEY {
-                        // MetaZonePeriodV1 does not require localized time zone data
+                    if <$marker>::KEY == MetazonePeriodV1Marker::KEY {
+                        // MetazonePeriodV1 does not require localized time zone data
                         Ok(vec![Default::default()])
                     } else {
 
@@ -102,11 +102,11 @@ macro_rules! impl_data_provider {
 impl_data_provider!(
     TimeZoneFormatsV1Marker,
     ExemplarCitiesV1Marker,
-    MetaZoneGenericNamesLongV1Marker,
-    MetaZoneGenericNamesShortV1Marker,
-    MetaZoneSpecificNamesLongV1Marker,
-    MetaZoneSpecificNamesShortV1Marker,
-    MetaZonePeriodV1Marker
+    MetazoneGenericNamesLongV1Marker,
+    MetazoneGenericNamesShortV1Marker,
+    MetazoneSpecificNamesLongV1Marker,
+    MetazoneSpecificNamesShortV1Marker,
+    MetazonePeriodV1Marker
 );
 
 #[cfg(test)]
@@ -149,7 +149,7 @@ mod tests {
                 .unwrap()
         );
 
-        let generic_names_long: DataPayload<MetaZoneGenericNamesLongV1Marker> = provider
+        let generic_names_long: DataPayload<MetazoneGenericNamesLongV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 metadata: Default::default(),
@@ -162,7 +162,7 @@ mod tests {
             generic_names_long
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "aucw")))
+                .get(&MetazoneId(tinystr!(4, "aucw")))
                 .unwrap()
         );
         assert_eq!(
@@ -174,7 +174,7 @@ mod tests {
                 .unwrap()
         );
 
-        let specific_names_long: DataPayload<MetaZoneSpecificNamesLongV1Marker> = provider
+        let specific_names_long: DataPayload<MetazoneSpecificNamesLongV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 metadata: Default::default(),
@@ -187,7 +187,7 @@ mod tests {
             specific_names_long
                 .get()
                 .defaults
-                .get_2d(&MetaZoneId(tinystr!(4, "aucw")), &ZoneVariant::standard())
+                .get_2d(&MetazoneId(tinystr!(4, "aucw")), &ZoneVariant::standard())
                 .unwrap()
         );
         assert_eq!(
@@ -202,7 +202,7 @@ mod tests {
                 .unwrap()
         );
 
-        let generic_names_short: DataPayload<MetaZoneGenericNamesShortV1Marker> = provider
+        let generic_names_short: DataPayload<MetazoneGenericNamesShortV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 metadata: Default::default(),
@@ -215,7 +215,7 @@ mod tests {
             generic_names_short
                 .get()
                 .defaults
-                .get(&MetaZoneId(tinystr!(4, "ampa")))
+                .get(&MetazoneId(tinystr!(4, "ampa")))
                 .unwrap()
         );
         assert_eq!(
@@ -227,7 +227,7 @@ mod tests {
                 .unwrap()
         );
 
-        let specific_names_short: DataPayload<MetaZoneSpecificNamesShortV1Marker> = provider
+        let specific_names_short: DataPayload<MetazoneSpecificNamesShortV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 metadata: Default::default(),
@@ -240,7 +240,7 @@ mod tests {
             specific_names_short
                 .get()
                 .defaults
-                .get_2d(&MetaZoneId(tinystr!(4, "ampa")), &ZoneVariant::daylight())
+                .get_2d(&MetazoneId(tinystr!(4, "ampa")), &ZoneVariant::daylight())
                 .unwrap()
         );
         assert_eq!(
@@ -255,7 +255,7 @@ mod tests {
                 .unwrap()
         );
 
-        let metazone_period: DataPayload<MetaZonePeriodV1Marker> = provider
+        let metazone_period: DataPayload<MetazonePeriodV1Marker> = provider
             .load(DataRequest {
                 locale: &langid!("en").into(),
                 metadata: Default::default(),
@@ -264,7 +264,7 @@ mod tests {
             .take_payload()
             .unwrap();
         assert_eq!(
-            Some(MetaZoneId(tinystr!(4, "mgmt"))),
+            Some(MetazoneId(tinystr!(4, "mgmt"))),
             metazone_period
                 .get()
                 .0

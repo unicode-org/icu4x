@@ -49,7 +49,7 @@ impl DataProvider<::icu_calendar::provider::WeekDataV1Marker> for BakedDataProvi
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::week_data_v1_r::DATA
+                *datetime::week_data_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::WeekDataV1Marker::KEY, req))?,
             ))),
@@ -75,7 +75,7 @@ impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for BakedData
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::data_v1_c_u_co::DATA
+                *collator::data_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDataV1Marker::KEY, req))?,
             ))),
@@ -88,7 +88,7 @@ impl DataProvider<::icu_collator::provider::CollationDiacriticsV1Marker> for Bak
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::dia_v1_c_u_co::DATA
+                *collator::dia_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDiacriticsV1Marker::KEY, req))?,
             ))),
@@ -114,7 +114,7 @@ impl DataProvider<::icu_collator::provider::CollationMetadataV1Marker> for Baked
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::meta_v1_c_u_co::DATA
+                *collator::meta_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationMetadataV1Marker::KEY, req))?,
             ))),
@@ -127,7 +127,7 @@ impl DataProvider<::icu_collator::provider::CollationReorderingV1Marker> for Bak
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::reord_v1_c_u_co::DATA
+                *collator::reord_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationReorderingV1Marker::KEY, req))?,
             ))),
@@ -209,7 +209,7 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Mark
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::skeletons_v1_u_ca::DATA
+                *datetime::skeletons_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
                         DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY, req)
@@ -404,60 +404,60 @@ impl DataProvider<::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker> 
     }
 }
 #[cfg(feature = "icu_datetime")]
-impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *time_zone::generic_long_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker::KEY, req)
                     })?,
             ))),
         })
     }
 }
 #[cfg(feature = "icu_datetime")]
-impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *time_zone::generic_short_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker::KEY, req)
                     })?,
             ))),
         })
     }
 }
 #[cfg(feature = "icu_datetime")]
-impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *time_zone::specific_long_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker::KEY, req)
                     })?,
             ))),
         })
     }
 }
 #[cfg(feature = "icu_datetime")]
-impl DataProvider<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker>, DataError> {
+impl DataProvider<::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *time_zone::specific_short_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
-                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY, req)
+                        DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker::KEY, req)
                     })?,
             ))),
         })
@@ -482,7 +482,7 @@ impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedData
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *decimal::symbols_v1_u_nu::DATA
+                *decimal::symbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_decimal::provider::DecimalSymbolsV1Marker::KEY, req))?,
             ))),
@@ -1462,6 +1462,24 @@ impl DataProvider<::icu_provider::hello_world::HelloWorldV1Marker> for BakedData
         })
     }
 }
+impl DataProvider<::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker> for BakedDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *fallback::supplement::co_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale
+                            .with_req(::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY, req)
+                    })?,
+            ))),
+        })
+    }
+}
 impl DataProvider<::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker> for BakedDataProvider {
     fn load(
         &self,
@@ -1573,14 +1591,14 @@ impl DataProvider<::icu_segmenter::provider::WordBreakDataV1Marker> for BakedDat
     }
 }
 #[cfg(feature = "icu_timezone")]
-impl DataProvider<::icu_timezone::provider::MetaZonePeriodV1Marker> for BakedDataProvider {
-    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_timezone::provider::MetaZonePeriodV1Marker>, DataError> {
+impl DataProvider<::icu_timezone::provider::MetazonePeriodV1Marker> for BakedDataProvider {
+    fn load(&self, req: DataRequest) -> Result<DataResponse<::icu_timezone::provider::MetazonePeriodV1Marker>, DataError> {
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
                 *time_zone::metazone_period_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
-                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_timezone::provider::MetaZonePeriodV1Marker::KEY, req))?,
+                    .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_timezone::provider::MetazonePeriodV1Marker::KEY, req))?,
             ))),
         })
     }

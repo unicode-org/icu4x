@@ -63,10 +63,11 @@ where
 ///
 /// ```
 /// use icu::calendar::DateTime;
-/// use icu::timezone::{CustomTimeZone, MetaZoneCalculator};
+/// use icu::timezone::{CustomTimeZone, MetazoneCalculator};
 /// use icu_datetime::TimeZoneFormatter;
 /// use icu_locid::locale;
 /// use tinystr::tinystr;
+/// use writeable::assert_writeable_eq;
 ///
 /// // Set up the time zone. Note: the inputs here are
 /// //   1. The GMT offset
@@ -74,11 +75,11 @@ where
 /// //   3. A datetime (for metazone resolution)
 /// let mut time_zone = "-0600".parse::<CustomTimeZone>().unwrap();
 /// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
-/// let mzc = MetaZoneCalculator::try_new_unstable(&icu_testdata::unstable())
+/// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
 ///     .unwrap();
 /// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
-/// time_zone.maybe_calculate_meta_zone(&mzc, &datetime);
+/// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 ///
 /// // Set up the formatter:
 /// let mut tzf = TimeZoneFormatter::try_new_unstable(
@@ -90,8 +91,8 @@ where
 /// tzf.load_generic_non_location_long(&icu_testdata::unstable()).unwrap();
 ///
 /// // Check the result:
-/// assert_eq!(
-///     tzf.format_to_string(&time_zone),
+/// assert_writeable_eq!(
+///     tzf.format(&time_zone),
 ///     "Central Time"
 /// );
 /// ```
@@ -113,16 +114,16 @@ pub(super) struct TimeZoneDataPayloads {
     pub(super) exemplar_cities: Option<DataPayload<provider::time_zones::ExemplarCitiesV1Marker>>,
     /// The generic long metazone names, e.g. Pacific Time
     pub(super) mz_generic_long:
-        Option<DataPayload<provider::time_zones::MetaZoneGenericNamesLongV1Marker>>,
+        Option<DataPayload<provider::time_zones::MetazoneGenericNamesLongV1Marker>>,
     /// The generic short metazone names, e.g. PT
     pub(super) mz_generic_short:
-        Option<DataPayload<provider::time_zones::MetaZoneGenericNamesShortV1Marker>>,
+        Option<DataPayload<provider::time_zones::MetazoneGenericNamesShortV1Marker>>,
     /// The specific long metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_long:
-        Option<DataPayload<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>>,
+        Option<DataPayload<provider::time_zones::MetazoneSpecificNamesLongV1Marker>>,
     /// The specific short metazone names, e.g. Pacific Daylight Time
     pub(super) mz_specific_short:
-        Option<DataPayload<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>>,
+        Option<DataPayload<provider::time_zones::MetazoneSpecificNamesShortV1Marker>>,
 }
 
 impl TimeZoneFormatter {
@@ -137,10 +138,10 @@ impl TimeZoneFormatter {
     where
         ZP: DataProvider<provider::time_zones::TimeZoneFormatsV1Marker>
             + DataProvider<provider::time_zones::ExemplarCitiesV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker>
-            + DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker>
+            + DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker>
+            + DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker>
             + ?Sized,
     {
         let format_units = SmallVec::<[TimeZoneFormatterUnit; 3]>::new();
@@ -369,7 +370,7 @@ impl TimeZoneFormatter {
     /// use icu::timezone::CustomTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
-    ///
+    /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -379,8 +380,8 @@ impl TimeZoneFormatter {
     ///
     /// let time_zone = "-0700".parse::<CustomTimeZone>().unwrap();
     ///
-    /// assert_eq!(
-    ///     tzf.format_to_string(&time_zone),
+    /// assert_writeable_eq!(
+    ///     tzf.format(&time_zone),
     ///     "GMT-07:00"
     /// );
     /// ```
@@ -426,7 +427,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: DataProvider<provider::time_zones::MetaZoneGenericNamesLongV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetazoneGenericNamesLongV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_generic_long == None {
             load(
@@ -448,7 +449,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: DataProvider<provider::time_zones::MetaZoneGenericNamesShortV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetazoneGenericNamesShortV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_generic_short == None {
             load(
@@ -470,7 +471,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: DataProvider<provider::time_zones::MetaZoneSpecificNamesLongV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetazoneSpecificNamesLongV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_specific_long == None {
             load(
@@ -492,7 +493,7 @@ impl TimeZoneFormatter {
         zone_provider: &ZP,
     ) -> Result<&mut TimeZoneFormatter, DateTimeFormatterError>
     where
-        ZP: DataProvider<provider::time_zones::MetaZoneSpecificNamesShortV1Marker> + ?Sized,
+        ZP: DataProvider<provider::time_zones::MetazoneSpecificNamesShortV1Marker> + ?Sized,
     {
         if self.data_payloads.mz_specific_short == None {
             load(
@@ -594,18 +595,6 @@ impl TimeZoneFormatter {
 
     /// Takes a [`TimeZoneInput`] implementer and returns an instance of a [`FormattedTimeZone`]
     /// that contains all information necessary to display a formatted time zone and operate on it.
-    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
-    where
-        T: TimeZoneInput,
-    {
-        FormattedTimeZone {
-            time_zone_format: self,
-            time_zone: value,
-        }
-    }
-
-    /// Takes a mutable reference to anything that implements the [`Write`](std::fmt::Write)
-    /// trait and a [`TimeZoneInput`] implementer that populates the buffer with a formatted value.
     ///
     /// # Examples
     ///
@@ -613,6 +602,7 @@ impl TimeZoneFormatter {
     /// use icu::timezone::CustomTimeZone;
     /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
     /// use icu_locid::locale;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -623,25 +613,21 @@ impl TimeZoneFormatter {
     ///
     /// let time_zone = CustomTimeZone::utc();
     ///
-    /// let mut buffer = String::new();
-    /// tzf.format_to_write(&mut buffer, &time_zone)
-    ///     .expect("Failed to write to a buffer.");
-    ///
-    /// assert_eq!("GMT", buffer);
+    /// assert_writeable_eq!(tzf.format(&time_zone), "GMT");
     /// ```
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl TimeZoneInput,
-    ) -> fmt::Result {
-        self.format(value).write_to(w)
+    pub fn format<'l, T>(&'l self, value: &'l T) -> FormattedTimeZone<'l, T>
+    where
+        T: TimeZoneInput,
+    {
+        FormattedTimeZone {
+            time_zone_format: self,
+            time_zone: value,
+        }
     }
 
     /// Takes a [`TimeZoneInput`] implementer and returns a string with the formatted value.
     pub fn format_to_string(&self, value: &impl TimeZoneInput) -> String {
-        let mut s = String::new();
-        let _ = self.format_to_write(&mut s, value);
-        s
+        self.format(value).write_to_string().into_owned()
     }
 
     /// Formats a time segment with optional zero-padding.
@@ -906,7 +892,7 @@ impl FormatTimeZone for GenericNonLocationLongFormat {
                     .map(|p| p.get())
                     .and_then(|metazones| {
                         time_zone
-                            .meta_zone_id()
+                            .metazone_id()
                             .and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
@@ -944,7 +930,7 @@ impl FormatTimeZone for GenericNonLocationShortFormat {
                     .map(|p| p.get())
                     .and_then(|metazones| {
                         time_zone
-                            .meta_zone_id()
+                            .metazone_id()
                             .and_then(|mz| metazones.defaults.get(&mz))
                     })
             });
@@ -983,7 +969,7 @@ impl FormatTimeZone for SpecificNonLocationShortFormat {
                     .as_ref()
                     .map(|p| p.get())
                     .and_then(|metazones| {
-                        time_zone.meta_zone_id().and_then(|mz| {
+                        time_zone.metazone_id().and_then(|mz| {
                             time_zone
                                 .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))
@@ -1025,7 +1011,7 @@ impl FormatTimeZone for SpecificNonLocationLongFormat {
                     .as_ref()
                     .map(|p| p.get())
                     .and_then(|metazones| {
-                        time_zone.meta_zone_id().and_then(|mz| {
+                        time_zone.metazone_id().and_then(|mz| {
                             time_zone
                                 .zone_variant()
                                 .and_then(|variant| metazones.defaults.get_2d(&mz, &variant))

@@ -28,7 +28,7 @@ export class ICU4XTimeFormatter {
 
    * Formats a {@link ICU4XTime `ICU4XTime`} to a string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format Rust documentation for `format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_time(value: ICU4XTime): string | never;
@@ -37,7 +37,7 @@ export class ICU4XTimeFormatter {
 
    * Formats a {@link ICU4XDateTime `ICU4XDateTime`} to a string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format Rust documentation for `format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_datetime(value: ICU4XDateTime): string | never;
@@ -46,7 +46,7 @@ export class ICU4XTimeFormatter {
 
    * Formats a {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} to a string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html#method.format Rust documentation for `format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_iso_datetime(value: ICU4XIsoDateTime): string | never;

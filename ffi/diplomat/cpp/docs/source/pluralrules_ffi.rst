@@ -43,6 +43,8 @@
 
         See the `Rust documentation for from_tr35_string <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html#method.from_tr35_string>`__ for more information.
 
+        See the `Rust documentation for from_tr35_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html#method.from_tr35_bytes>`__ for more information.
+
 
 .. cpp:struct:: ICU4XPluralOperands
 

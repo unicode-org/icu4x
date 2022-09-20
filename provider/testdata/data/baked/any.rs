@@ -3,358 +3,359 @@ impl AnyProvider for BakedDataProvider {
     fn load_any(&self, key: DataKey, req: DataRequest) -> Result<AnyResponse, DataError> {
         #[cfg(feature = "icu_calendar")]
         const JAPANESEERASV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_calendar::provider::JapaneseErasV1Marker::KEY.get_hash();
+            ::icu_calendar::provider::JapaneseErasV1Marker::KEY.hashed();
         #[cfg(feature = "icu_calendar")]
         const JAPANESEEXTENDEDERASV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY.get_hash();
+            ::icu_calendar::provider::JapaneseExtendedErasV1Marker::KEY.hashed();
         #[cfg(feature = "icu_calendar")]
         const WEEKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_calendar::provider::WeekDataV1Marker::KEY.get_hash();
+            ::icu_calendar::provider::WeekDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_casemapping")]
         const CASEMAPPINGV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_casemapping::provider::CaseMappingV1Marker::KEY.get_hash();
+            ::icu_casemapping::provider::CaseMappingV1Marker::KEY.hashed();
         #[cfg(feature = "icu_collator")]
         const COLLATIONDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_collator::provider::CollationDataV1Marker::KEY.get_hash();
+            ::icu_collator::provider::CollationDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_collator")]
         const COLLATIONDIACRITICSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_collator::provider::CollationDiacriticsV1Marker::KEY.get_hash();
+            ::icu_collator::provider::CollationDiacriticsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_collator")]
         const COLLATIONJAMOV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_collator::provider::CollationJamoV1Marker::KEY.get_hash();
+            ::icu_collator::provider::CollationJamoV1Marker::KEY.hashed();
         #[cfg(feature = "icu_collator")]
         const COLLATIONMETADATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_collator::provider::CollationMetadataV1Marker::KEY.get_hash();
+            ::icu_collator::provider::CollationMetadataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_collator")]
         const COLLATIONREORDERINGV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_collator::provider::CollationReorderingV1Marker::KEY.get_hash();
+            ::icu_collator::provider::CollationReorderingV1Marker::KEY.hashed();
         #[cfg(feature = "icu_collator")]
         const COLLATIONSPECIALPRIMARIESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.get_hash();
+            ::icu_collator::provider::CollationSpecialPrimariesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const BUDDHISTDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::BuddhistDateLengthsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const BUDDHISTDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::BuddhistDateSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const COPTICDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::CopticDateLengthsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::CopticDateLengthsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const COPTICDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::CopticDateSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime_experimental")]
         const DATESKELETONPATTERNSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const ETHIOPIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::EthiopianDateLengthsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const ETHIOPIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::EthiopianDateSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const GREGORIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::GregorianDateLengthsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const GREGORIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::GregorianDateSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const INDIANDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::IndianDateLengthsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::IndianDateLengthsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const INDIANDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::IndianDateSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const JAPANESEDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::JapaneseDateLengthsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const JAPANESEDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::JapaneseDateSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const JAPANESEEXTENDEDDATELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::JapaneseExtendedDateLengthsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const JAPANESEEXTENDEDDATESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::JapaneseExtendedDateSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const TIMELENGTHSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::TimeLengthsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const TIMESYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::calendar::TimeSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const EXEMPLARCITIESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::time_zones::ExemplarCitiesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONEGENERICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneGenericNamesLongV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::time_zones::MetazoneGenericNamesLongV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONEGENERICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneGenericNamesShortV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::time_zones::MetazoneGenericNamesShortV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONESPECIFICNAMESLONGV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesLongV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::time_zones::MetazoneSpecificNamesLongV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const METAZONESPECIFICNAMESSHORTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::MetaZoneSpecificNamesShortV1Marker::KEY
-                .get_hash();
+            ::icu_datetime::provider::time_zones::MetazoneSpecificNamesShortV1Marker::KEY.hashed();
         #[cfg(feature = "icu_datetime")]
         const TIMEZONEFORMATSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.get_hash();
+            ::icu_datetime::provider::time_zones::TimeZoneFormatsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_decimal")]
         const DECIMALSYMBOLSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.get_hash();
+            ::icu_decimal::provider::DecimalSymbolsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_list")]
         const ANDLISTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_list::provider::AndListV1Marker::KEY.get_hash();
+            ::icu_list::provider::AndListV1Marker::KEY.hashed();
         #[cfg(feature = "icu_list")]
         const ORLISTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_list::provider::OrListV1Marker::KEY.get_hash();
+            ::icu_list::provider::OrListV1Marker::KEY.hashed();
         #[cfg(feature = "icu_list")]
         const UNITLISTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_list::provider::UnitListV1Marker::KEY.get_hash();
+            ::icu_list::provider::UnitListV1Marker::KEY.hashed();
         #[cfg(feature = "icu_locid_transform")]
         const ALIASESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_locid_transform::provider::AliasesV1Marker::KEY.get_hash();
+            ::icu_locid_transform::provider::AliasesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_locid_transform")]
         const LIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.get_hash();
+            ::icu_locid_transform::provider::LikelySubtagsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const CANONICALCOMPOSITIONSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.get_hash();
+            ::icu_normalizer::provider::CanonicalCompositionsV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const CANONICALDECOMPOSITIONDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY.get_hash();
+            ::icu_normalizer::provider::CanonicalDecompositionDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const CANONICALDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY.get_hash();
+            ::icu_normalizer::provider::CanonicalDecompositionTablesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const COMPATIBILITYDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY
-                .get_hash();
+            ::icu_normalizer::provider::CompatibilityDecompositionSupplementV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const COMPATIBILITYDECOMPOSITIONTABLESV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.get_hash();
+            ::icu_normalizer::provider::CompatibilityDecompositionTablesV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const NONRECURSIVEDECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.get_hash();
+            ::icu_normalizer::provider::NonRecursiveDecompositionSupplementV1Marker::KEY.hashed();
         #[cfg(feature = "icu_normalizer")]
         const UTS46DECOMPOSITIONSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY.get_hash();
+            ::icu_normalizer::provider::Uts46DecompositionSupplementV1Marker::KEY.hashed();
         #[cfg(feature = "icu_plurals")]
         const CARDINALV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_plurals::provider::CardinalV1Marker::KEY.get_hash();
+            ::icu_plurals::provider::CardinalV1Marker::KEY.hashed();
         #[cfg(feature = "icu_plurals")]
         const ORDINALV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_plurals::provider::OrdinalV1Marker::KEY.get_hash();
+            ::icu_plurals::provider::OrdinalV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const ALPHABETICV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::AlphabeticV1Marker::KEY.get_hash();
+            ::icu_properties::provider::AlphabeticV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const ASCIIHEXDIGITV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::AsciiHexDigitV1Marker::KEY.get_hash();
+            ::icu_properties::provider::AsciiHexDigitV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const BIDICLASSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::BidiClassV1Marker::KEY.get_hash();
+            ::icu_properties::provider::BidiClassV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const BIDICONTROLV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::BidiControlV1Marker::KEY.get_hash();
+            ::icu_properties::provider::BidiControlV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const BIDIMIRROREDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::BidiMirroredV1Marker::KEY.get_hash();
+            ::icu_properties::provider::BidiMirroredV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const CANONICALCOMBININGCLASSV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY.get_hash();
+            ::icu_properties::provider::CanonicalCombiningClassV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const CASEIGNORABLEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::CaseIgnorableV1Marker::KEY.get_hash();
+            ::icu_properties::provider::CaseIgnorableV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const CASEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::CasedV1Marker::KEY.get_hash();
+            ::icu_properties::provider::CasedV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const CHANGESWHENCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ChangesWhenCasefoldedV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const CHANGESWHENLOWERCASEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ChangesWhenLowercasedV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const CHANGESWHENNFKCCASEFOLDEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ChangesWhenNfkcCasefoldedV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const CHANGESWHENTITLECASEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ChangesWhenTitlecasedV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const CHANGESWHENUPPERCASEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ChangesWhenUppercasedV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const DASHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::DashV1Marker::KEY.get_hash();
+            ::icu_properties::provider::DashV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const DEFAULTIGNORABLECODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::DefaultIgnorableCodePointV1Marker::KEY.get_hash();
+            ::icu_properties::provider::DefaultIgnorableCodePointV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const DEPRECATEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::DeprecatedV1Marker::KEY.get_hash();
+            ::icu_properties::provider::DeprecatedV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const DIACRITICV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::DiacriticV1Marker::KEY.get_hash();
+            ::icu_properties::provider::DiacriticV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const EASTASIANWIDTHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::EastAsianWidthV1Marker::KEY.get_hash();
+            ::icu_properties::provider::EastAsianWidthV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const EMOJICOMPONENTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::EmojiComponentV1Marker::KEY.get_hash();
+            ::icu_properties::provider::EmojiComponentV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const EMOJIMODIFIERBASEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::EmojiModifierBaseV1Marker::KEY.get_hash();
+            ::icu_properties::provider::EmojiModifierBaseV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const EMOJIMODIFIERV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::EmojiModifierV1Marker::KEY.get_hash();
+            ::icu_properties::provider::EmojiModifierV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const EMOJIPRESENTATIONV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::EmojiPresentationV1Marker::KEY.get_hash();
+            ::icu_properties::provider::EmojiPresentationV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const EMOJIV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::EmojiV1Marker::KEY.get_hash();
+            ::icu_properties::provider::EmojiV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const EXTENDEDPICTOGRAPHICV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ExtendedPictographicV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const EXTENDERV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ExtenderV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ExtenderV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const GENERALCATEGORYV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::GeneralCategoryV1Marker::KEY.get_hash();
+            ::icu_properties::provider::GeneralCategoryV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const GRAPHEMEBASEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::GraphemeBaseV1Marker::KEY.get_hash();
+            ::icu_properties::provider::GraphemeBaseV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const GRAPHEMECLUSTERBREAKV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY.get_hash();
+            ::icu_properties::provider::GraphemeClusterBreakV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const GRAPHEMEEXTENDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::GraphemeExtendV1Marker::KEY.get_hash();
+            ::icu_properties::provider::GraphemeExtendV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const HEXDIGITV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::HexDigitV1Marker::KEY.get_hash();
+            ::icu_properties::provider::HexDigitV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const IDCONTINUEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::IdContinueV1Marker::KEY.get_hash();
+            ::icu_properties::provider::IdContinueV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const IDSTARTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::IdStartV1Marker::KEY.get_hash();
+            ::icu_properties::provider::IdStartV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const IDEOGRAPHICV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::IdeographicV1Marker::KEY.get_hash();
+            ::icu_properties::provider::IdeographicV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const IDSBINARYOPERATORV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::IdsBinaryOperatorV1Marker::KEY.get_hash();
+            ::icu_properties::provider::IdsBinaryOperatorV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const IDSTRINARYOPERATORV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY.get_hash();
+            ::icu_properties::provider::IdsTrinaryOperatorV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const JOINCONTROLV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::JoinControlV1Marker::KEY.get_hash();
+            ::icu_properties::provider::JoinControlV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const LINEBREAKV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::LineBreakV1Marker::KEY.get_hash();
+            ::icu_properties::provider::LineBreakV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const LOGICALORDEREXCEPTIONV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::LogicalOrderExceptionV1Marker::KEY.get_hash();
+            ::icu_properties::provider::LogicalOrderExceptionV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const LOWERCASEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::LowercaseV1Marker::KEY.get_hash();
+            ::icu_properties::provider::LowercaseV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const MATHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::MathV1Marker::KEY.get_hash();
+            ::icu_properties::provider::MathV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const NONCHARACTERCODEPOINTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::NoncharacterCodePointV1Marker::KEY.get_hash();
+            ::icu_properties::provider::NoncharacterCodePointV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const PATTERNSYNTAXV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::PatternSyntaxV1Marker::KEY.get_hash();
+            ::icu_properties::provider::PatternSyntaxV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const PATTERNWHITESPACEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY.get_hash();
+            ::icu_properties::provider::PatternWhiteSpaceV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const QUOTATIONMARKV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::QuotationMarkV1Marker::KEY.get_hash();
+            ::icu_properties::provider::QuotationMarkV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const RADICALV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::RadicalV1Marker::KEY.get_hash();
+            ::icu_properties::provider::RadicalV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const REGIONALINDICATORV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::RegionalIndicatorV1Marker::KEY.get_hash();
+            ::icu_properties::provider::RegionalIndicatorV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const SCRIPTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ScriptV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ScriptV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const SCRIPTWITHEXTENSIONSPROPERTYV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY.get_hash();
+            ::icu_properties::provider::ScriptWithExtensionsPropertyV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const SENTENCEBREAKV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::SentenceBreakV1Marker::KEY.get_hash();
+            ::icu_properties::provider::SentenceBreakV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const SENTENCETERMINALV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::SentenceTerminalV1Marker::KEY.get_hash();
+            ::icu_properties::provider::SentenceTerminalV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const SOFTDOTTEDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::SoftDottedV1Marker::KEY.get_hash();
+            ::icu_properties::provider::SoftDottedV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const TERMINALPUNCTUATIONV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::TerminalPunctuationV1Marker::KEY.get_hash();
+            ::icu_properties::provider::TerminalPunctuationV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const UNIFIEDIDEOGRAPHV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::UnifiedIdeographV1Marker::KEY.get_hash();
+            ::icu_properties::provider::UnifiedIdeographV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const UPPERCASEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::UppercaseV1Marker::KEY.get_hash();
+            ::icu_properties::provider::UppercaseV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const VARIATIONSELECTORV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::VariationSelectorV1Marker::KEY.get_hash();
+            ::icu_properties::provider::VariationSelectorV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const WHITESPACEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::WhiteSpaceV1Marker::KEY.get_hash();
+            ::icu_properties::provider::WhiteSpaceV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const WORDBREAKV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::WordBreakV1Marker::KEY.get_hash();
+            ::icu_properties::provider::WordBreakV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const XIDCONTINUEV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::XidContinueV1Marker::KEY.get_hash();
+            ::icu_properties::provider::XidContinueV1Marker::KEY.hashed();
         #[cfg(feature = "icu_properties")]
         const XIDSTARTV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_properties::provider::XidStartV1Marker::KEY.get_hash();
+            ::icu_properties::provider::XidStartV1Marker::KEY.hashed();
         const HELLOWORLDV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_provider::hello_world::HelloWorldV1Marker::KEY.get_hash();
+            ::icu_provider::hello_world::HelloWorldV1Marker::KEY.hashed();
+        const COLLATIONFALLBACKSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY
+                .hashed();
         const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY
-                .get_hash();
+                .hashed();
         const LOCALEFALLBACKPARENTSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackParentsV1Marker::KEY
-                .get_hash();
+                .hashed();
         #[cfg(feature = "icu_segmenter")]
         const GRAPHEMECLUSTERBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.get_hash();
+            ::icu_segmenter::provider::GraphemeClusterBreakDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_segmenter")]
         const LINEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_segmenter::provider::LineBreakDataV1Marker::KEY.get_hash();
+            ::icu_segmenter::provider::LineBreakDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_segmenter")]
         const LSTMDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_segmenter::provider::LstmDataV1Marker::KEY.get_hash();
+            ::icu_segmenter::provider::LstmDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_segmenter")]
         const SENTENCEBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY.get_hash();
+            ::icu_segmenter::provider::SentenceBreakDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_segmenter")]
         const UCHARDICTIONARYBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY.get_hash();
+            ::icu_segmenter::provider::UCharDictionaryBreakDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_segmenter")]
         const WORDBREAKDATAV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.get_hash();
+            ::icu_segmenter::provider::WordBreakDataV1Marker::KEY.hashed();
         #[cfg(feature = "icu_timezone")]
         const METAZONEPERIODV1MARKER: ::icu_provider::DataKeyHash =
-            ::icu_timezone::provider::MetaZonePeriodV1Marker::KEY.get_hash();
+            ::icu_timezone::provider::MetazonePeriodV1Marker::KEY.hashed();
         Ok(AnyResponse {
-            payload: Some(match key.get_hash() {
+            payload: Some(match key.hashed() {
                 #[cfg(feature = "icu_calendar")]
                 JAPANESEERASV1MARKER => calendar::japanese_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
@@ -366,7 +367,7 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_calendar")]
-                WEEKDATAV1MARKER => datetime::week_data_v1_r::DATA
+                WEEKDATAV1MARKER => datetime::week_data_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -376,12 +377,12 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONDATAV1MARKER => collator::data_v1_c_u_co::DATA
+                COLLATIONDATAV1MARKER => collator::data_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONDIACRITICSV1MARKER => collator::dia_v1_c_u_co::DATA
+                COLLATIONDIACRITICSV1MARKER => collator::dia_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -391,12 +392,12 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONMETADATAV1MARKER => collator::meta_v1_c_u_co::DATA
+                COLLATIONMETADATAV1MARKER => collator::meta_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONREORDERINGV1MARKER => collator::reord_v1_c_u_co::DATA
+                COLLATIONREORDERINGV1MARKER => collator::reord_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -426,7 +427,7 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_datetime_experimental")]
-                DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1_u_ca::DATA
+                DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(|&data| {
                         AnyPayload::from_rcwrap_payload::<
@@ -526,7 +527,7 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_decimal")]
-                DECIMALSYMBOLSV1MARKER => decimal::symbols_v1_u_nu::DATA
+                DECIMALSYMBOLSV1MARKER => decimal::symbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -896,6 +897,10 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 HELLOWORLDV1MARKER => core::helloworld_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .copied()
+                    .map(AnyPayload::from_static_ref),
+                COLLATIONFALLBACKSUPPLEMENTV1MARKER => fallback::supplement::co_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),

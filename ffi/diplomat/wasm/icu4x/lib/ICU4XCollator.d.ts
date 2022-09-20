@@ -7,7 +7,7 @@ import { ICU4XOrdering } from "./ICU4XOrdering";
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_collator/struct.Collator.html Rust documentation for `Collator`} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html Rust documentation for `Collator`} for more information.
  */
 export class ICU4XCollator {
 
@@ -22,25 +22,27 @@ export class ICU4XCollator {
 
   /**
 
-   * Compare guaranteed well-formed UTF-8 strings.
+   * Compare potentially ill-formed UTF-8 strings.
 
-   * Note: passing ill-formed UTF-8 strings is undefined behavior (and may be memory-unsafe to do so, too).
+   * Ill-formed input is compared as if errors had been replaced with REPLACEMENT CHARACTERs according to the WHATWG Encoding Standard.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare Rust documentation for `compare`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8 Rust documentation for `compare_utf8`} for more information.
    */
   compare(left: string, right: string): ICU4XOrdering;
 
   /**
 
-   * Compare potentially ill-formed UTF-8 strings.
+   * Compare guaranteed well-formed UTF-8 strings.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf8 Rust documentation for `compare_utf8`} for more information.
+   * Note: In C++, passing ill-formed UTF-8 strings is undefined behavior (and may be memory-unsafe to do so, too).
+
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare Rust documentation for `compare`} for more information.
    */
-  compare_utf8(left: Uint8Array, right: Uint8Array): ICU4XOrdering;
+  compare_valid_utf8(left: string, right: string): ICU4XOrdering;
 
   /**
 
-   * Compare potentially ill-formed UTF-16 strings.
+   * Compare potentially ill-formed UTF-16 strings, with unpaired surrogates compared as REPLACEMENT CHARACTER.
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html#method.compare_utf16 Rust documentation for `compare_utf16`} for more information.
    */

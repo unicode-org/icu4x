@@ -62,6 +62,16 @@ pub trait BufferProvider {
     ) -> Result<DataResponse<BufferMarker>, DataError>;
 }
 
+impl<T: BufferProvider + ?Sized> BufferProvider for alloc::boxed::Box<T> {
+    fn load_buffer(
+        &self,
+        key: DataKey,
+        req: DataRequest,
+    ) -> Result<DataResponse<BufferMarker>, DataError> {
+        (**self).load_buffer(key, req)
+    }
+}
+
 /// An enum expressing all Serde formats known to ICU4X.
 #[derive(Debug, PartialEq, Eq, Hash, Copy, Clone)]
 #[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
@@ -85,7 +95,7 @@ impl BufferFormat {
             #[cfg(feature = "deserialize_bincode_1")]
             BufferFormat::Bincode1 => Ok(()),
 
-            #[cfg(feature = "deserialize_postcard_07")]
+            #[cfg(feature = "deserialize_postcard_1")]
             BufferFormat::Postcard1 => Ok(()),
 
             // Allowed for cases in which all features are enabled

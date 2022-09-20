@@ -32,7 +32,7 @@ $ cargo run --bin --features=bin icu4x-testdata-datagen
 ## Examples
 
 ```rust
-use icu_locid::locale;
+use icu::locid::locale;
 use icu_provider::hello_world::*;
 use icu_provider::prelude::*;
 

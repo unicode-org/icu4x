@@ -196,10 +196,10 @@ impl<'data> CodePointInversionList<'data> {
     ///     .collect();
     ///
     /// let bmp = &codepointinversionlists.get(0).unwrap();
-    /// assert!(bmp.contains_u32(0xFFFF));
-    /// assert!(!bmp.contains_u32(0x10000));
+    /// assert!(bmp.contains32(0xFFFF));
+    /// assert!(!bmp.contains32(0x10000));
     ///
-    /// assert!(!&codepointinversionlists.iter().any(|set| set.contains_u32(0x40000)));
+    /// assert!(!&codepointinversionlists.iter().any(|set| set.contains32(0x40000)));
     /// ```
     pub fn clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, CodePointSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::alloc_from_slice(inv_list);
@@ -405,10 +405,10 @@ impl<'data> CodePointInversionList<'data> {
     /// use icu_collections::codepointinvlist::CodePointInversionList;
     /// let example_list = [0x41, 0x43, 0x44, 0x45];
     /// let example = CodePointInversionList::from_inversion_list_slice(&example_list).unwrap();
-    /// assert!(example.contains_u32(0x41));
-    /// assert!(!example.contains_u32(0x43));
+    /// assert!(example.contains32(0x41));
+    /// assert!(!example.contains32(0x43));
     /// ```
-    pub fn contains_u32(&self, query: u32) -> bool {
+    pub fn contains32(&self, query: u32) -> bool {
         self.contains_query(query).is_some()
     }
 

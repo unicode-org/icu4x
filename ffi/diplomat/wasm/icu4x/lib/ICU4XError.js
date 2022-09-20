@@ -18,6 +18,7 @@ export const ICU4XError_js_to_rust = {
   "DataCustomError": 266,
   "DataIoError": 267,
   "DataUnavailableBufferFormatError": 268,
+  "DataMismatchedAnyBufferError": 269,
   "LocaleUndefinedSubtagError": 512,
   "LocaleParserLanguageError": 513,
   "LocaleParserSubtagError": 514,
@@ -51,6 +52,8 @@ export const ICU4XError_js_to_rust = {
   "TimeZoneOffsetOutOfBoundsError": 2560,
   "TimeZoneInvalidOffsetError": 2561,
   "TimeZoneMissingInputError": 2562,
+  "NormalizerFutureExtensionError": 2816,
+  "NormalizerValidationError": 2817,
 };
 
 export const ICU4XError_rust_to_js = {
@@ -70,6 +73,7 @@ export const ICU4XError_rust_to_js = {
   [266]: "DataCustomError",
   [267]: "DataIoError",
   [268]: "DataUnavailableBufferFormatError",
+  [269]: "DataMismatchedAnyBufferError",
   [512]: "LocaleUndefinedSubtagError",
   [513]: "LocaleParserLanguageError",
   [514]: "LocaleParserSubtagError",
@@ -103,6 +107,8 @@ export const ICU4XError_rust_to_js = {
   [2560]: "TimeZoneOffsetOutOfBoundsError",
   [2561]: "TimeZoneInvalidOffsetError",
   [2562]: "TimeZoneMissingInputError",
+  [2816]: "NormalizerFutureExtensionError",
+  [2817]: "NormalizerValidationError",
 };
 
 export const ICU4XError = {
@@ -122,6 +128,7 @@ export const ICU4XError = {
   "DataCustomError": "DataCustomError",
   "DataIoError": "DataIoError",
   "DataUnavailableBufferFormatError": "DataUnavailableBufferFormatError",
+  "DataMismatchedAnyBufferError": "DataMismatchedAnyBufferError",
   "LocaleUndefinedSubtagError": "LocaleUndefinedSubtagError",
   "LocaleParserLanguageError": "LocaleParserLanguageError",
   "LocaleParserSubtagError": "LocaleParserSubtagError",
@@ -155,4 +162,6 @@ export const ICU4XError = {
   "TimeZoneOffsetOutOfBoundsError": "TimeZoneOffsetOutOfBoundsError",
   "TimeZoneInvalidOffsetError": "TimeZoneInvalidOffsetError",
   "TimeZoneMissingInputError": "TimeZoneMissingInputError",
+  "NormalizerFutureExtensionError": "NormalizerFutureExtensionError",
+  "NormalizerValidationError": "NormalizerValidationError",
 };

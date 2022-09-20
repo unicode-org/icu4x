@@ -7,12 +7,12 @@
 //! Sample file:
 //! <https://github.com/unicode-org/cldr-json/blob/main/cldr-json/cldr-core/supplemental/metaZones.json>
 
-use icu_datetime::provider::time_zones::MetaZoneId;
+use icu_datetime::provider::time_zones::MetazoneId;
 use serde::Deserialize;
 use std::collections::HashMap;
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetaZoneAliasData {
+pub struct MetazoneAliasData {
     #[serde(rename = "_longId")]
     pub long_id: String,
     #[serde(rename = "_since")]
@@ -20,10 +20,10 @@ pub struct MetaZoneAliasData {
 }
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct MetaZoneIds(pub HashMap<MetaZoneId, MetaZoneAliasData>);
+pub struct MetazoneIds(pub HashMap<MetazoneId, MetazoneAliasData>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct UsesMetaZone {
+pub struct UsesMetazone {
     #[serde(rename = "_mzone")]
     pub mzone: String,
     #[serde(rename = "_from")]
@@ -33,22 +33,22 @@ pub struct UsesMetaZone {
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetaZoneForPeriod {
+pub struct MetazoneForPeriod {
     #[serde(rename = "usesMetazone")]
-    pub uses_meta_zone: UsesMetaZone,
+    pub uses_meta_zone: UsesMetazone,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum MetaLocationOrSubRegion {
-    Location(Vec<MetaZoneForPeriod>),
-    SubRegion(HashMap<String, Vec<MetaZoneForPeriod>>),
+    Location(Vec<MetazoneForPeriod>),
+    SubRegion(HashMap<String, Vec<MetazoneForPeriod>>),
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
 #[serde(untagged)]
 pub enum ZonePeriod {
-    Region(Vec<MetaZoneForPeriod>),
+    Region(Vec<MetazoneForPeriod>),
     LocationOrSubRegion(HashMap<String, MetaLocationOrSubRegion>),
 }
 
@@ -56,7 +56,7 @@ pub enum ZonePeriod {
 pub struct TimeZonePeriod(pub HashMap<String, ZonePeriod>);
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetaZoneInfo {
+pub struct MetazoneInfo {
     #[serde(rename = "timezone")]
     pub time_zone: TimeZonePeriod,
 }
@@ -72,28 +72,28 @@ pub struct MapZone {
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetaZoneTerritory {
+pub struct MetazoneTerritory {
     #[serde(rename = "mapZone")]
     pub map_zone: MapZone,
 }
 
 #[derive(PartialEq, Debug, Clone, Deserialize)]
-pub struct MetaZonesTerritory(pub Vec<MetaZoneTerritory>);
+pub struct MetazonesTerritory(pub Vec<MetazoneTerritory>);
 
 #[derive(Debug, Clone, Deserialize)]
-pub struct MetaZones {
+pub struct Metazones {
     #[serde(rename = "metazoneInfo")]
-    pub meta_zone_info: MetaZoneInfo,
+    pub meta_zone_info: MetazoneInfo,
     #[serde(rename = "metazones")]
-    pub meta_zones_territory: MetaZonesTerritory,
+    pub meta_zones_territory: MetazonesTerritory,
     #[serde(rename = "metazoneIds")]
-    pub meta_zone_ids: MetaZoneIds,
+    pub meta_zone_ids: MetazoneIds,
 }
 
 #[derive(Debug, Clone, Deserialize)]
 pub struct Supplemental {
     #[serde(rename = "metaZones")]
-    pub meta_zones: MetaZones,
+    pub meta_zones: Metazones,
 }
 
 #[derive(Debug, Clone, Deserialize)]

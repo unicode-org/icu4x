@@ -16,7 +16,12 @@ use icu_provider::prelude::*;
 /// A struct with the ability to convert characters and strings to uppercase or lowercase,
 /// or fold them to a normalized form for case-insensitive comparison.
 ///
-/// TODO: Expand documentation
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
+/// </div>
 #[derive(Clone)]
 pub struct CaseMapping {
     internals: DataPayload<CaseMappingV1Marker>,

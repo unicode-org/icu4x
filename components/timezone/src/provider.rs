@@ -62,33 +62,33 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for TimeZoneBcp47Id {
     type OwnedType = TimeZoneBcp47Id;
 }
 
-/// MetaZone ID in a compact format
+/// Metazone ID in a compact format
 #[repr(transparent)]
 #[derive(Debug, Clone, Copy, Eq, Ord, PartialEq, PartialOrd, yoke::Yokeable, ULE, Hash)]
 #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
-pub struct MetaZoneId(pub TinyAsciiStr<4>);
+pub struct MetazoneId(pub TinyAsciiStr<4>);
 
-impl From<TinyAsciiStr<4>> for MetaZoneId {
+impl From<TinyAsciiStr<4>> for MetazoneId {
     fn from(s: TinyAsciiStr<4>) -> Self {
         Self(s)
     }
 }
 
-impl From<MetaZoneId> for TinyAsciiStr<4> {
-    fn from(other: MetaZoneId) -> Self {
+impl From<MetazoneId> for TinyAsciiStr<4> {
+    fn from(other: MetazoneId) -> Self {
         other.0
     }
 }
 
-impl FromStr for MetaZoneId {
+impl FromStr for MetazoneId {
     type Err = tinystr::TinyStrError;
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         TinyAsciiStr::from_str(s).map(Into::into)
     }
 }
 
-impl AsULE for MetaZoneId {
+impl AsULE for MetazoneId {
     type ULE = Self;
 
     #[inline]
@@ -102,16 +102,16 @@ impl AsULE for MetaZoneId {
     }
 }
 
-impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
-    type Container = ZeroVec<'a, MetaZoneId>;
-    type Slice = ZeroSlice<MetaZoneId>;
-    type GetType = MetaZoneId;
-    type OwnedType = MetaZoneId;
+impl<'a> zerovec::maps::ZeroMapKV<'a> for MetazoneId {
+    type Container = ZeroVec<'a, MetazoneId>;
+    type Slice = ZeroSlice<MetazoneId>;
+    type GetType = MetazoneId;
+    type OwnedType = MetazoneId;
 }
 
 /// An ICU4X mapping to the metazones at a given period.
 /// See CLDR-JSON metaZones.json for more context.
-#[icu_provider::data_struct(MetaZonePeriodV1Marker = "time_zone/metazone_period@1")]
+#[icu_provider::data_struct(MetazonePeriodV1Marker = "time_zone/metazone_period@1")]
 #[derive(PartialEq, Debug, Clone, Default)]
 #[cfg_attr(
     feature = "datagen",
@@ -120,8 +120,8 @@ impl<'a> zerovec::maps::ZeroMapKV<'a> for MetaZoneId {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 #[yoke(prove_covariance_manually)]
-pub struct MetaZonePeriodV1<'data>(
+pub struct MetazonePeriodV1<'data>(
     /// The default mapping between period and metazone id. The second level key is a wall-clock time represented as the number of minutes since the local unix epoch. It represents when the metazone started to be used.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub ZeroMap2d<'data, TimeZoneBcp47Id, i32, Option<MetaZoneId>>,
+    pub ZeroMap2d<'data, TimeZoneBcp47Id, i32, Option<MetazoneId>>,
 );

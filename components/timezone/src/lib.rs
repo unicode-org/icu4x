@@ -10,7 +10,7 @@
 //!
 //! 1. The offset from GMT
 //! 2. The time zone ID
-//! 3. The meta zone ID
+//! 3. The metazone ID
 //! 4. The zone variant (standard or daylight time)
 //!
 //! ## GMT Offset
@@ -32,15 +32,15 @@
 //!
 //! ICU4X uses BCP-47 time zone IDs for all of its APIs.
 //!
-//! ## Meta Zone
+//! ## Metazone
 //!
-//! A meta zone is a collection of multiple time zones that share the same localized formatting
+//! A metazone is a collection of multiple time zones that share the same localized formatting
 //! at a particular date and time.
 //!
 //! For example, "America/Chicago" and "America/Indiana/Knox" both map to US Central Time, or
 //! `"America_Central"`.
 //!
-//! The mapping from time zone to meta zone depends on the date. For example, from 1991 to 2006,
+//! The mapping from time zone to metazone depends on the date. For example, from 1991 to 2006,
 //! "America/Indiana/Knox" mapped to US Eastern Time instead of US Central Time.
 //!
 //! As with time zone IDs, there are two interchangeable forms:
@@ -50,9 +50,13 @@
 //!
 //! ICU4X uses the short form.
 //!
+//! Note: in ICU4X, "metazone" is one word and "time zone" is two words, except for this crate
+//! and module name, where "timezone" is used with no separators. See
+//! <https://github.com/unicode-org/icu4x/issues/2507>.
+//!
 //! ## Zone Variant
 //!
-//! Many meta zones use different names and offsets in the summer than in the winter. In ICU4X,
+//! Many metazones use different names and offsets in the summer than in the winter. In ICU4X,
 //! this is called the _zone variant_. There are two zone variants:
 //!
 //! 1. `"dt"` = daylight or summer time
@@ -65,17 +69,17 @@
 //!
 //! The following calculations are currently supported or will be supported:
 //!
-//! 1. Time Zone + Local DateTime → Meta Zone ([`MetaZoneCalculator`])
+//! 1. Time Zone + Local DateTime → Meta Zone ([`MetazoneCalculator`])
 //! 2. Time Zone + Absolute Time → Offset + Zone Variant (not yet supported)
 //!
 //! # Examples
 //!
 //! Create a time zone for which the offset and time zone ID are already known, and calculate
-//! the meta zone based on a certain local datetime:
+//! the metazone based on a certain local datetime:
 //!
 //! ```
 //! use icu_timezone::CustomTimeZone;
-//! use icu_timezone::MetaZoneCalculator;
+//! use icu_timezone::MetazoneCalculator;
 //! use icu_timezone::GmtOffset;
 //! use icu_calendar::DateTime;
 //! use tinystr::TinyAsciiStr;
@@ -85,12 +89,12 @@
 //! time_zone.gmt_offset = "-0600".parse::<GmtOffset>().ok();
 //! time_zone.time_zone_id = "uschi".parse::<TinyAsciiStr<8>>().ok().map(Into::into);
 //!
-//! // Compute the meta zone at January 1, 2022:
-//! let mzc = MetaZoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
+//! // Compute the metazone at January 1, 2022:
+//! let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable()).unwrap();
 //! let datetime = DateTime::new_iso_datetime(2022, 1, 1, 0, 0, 0).unwrap();
-//! time_zone.maybe_calculate_meta_zone(&mzc, &datetime);
+//! time_zone.maybe_calculate_metazone(&mzc, &datetime);
 //!
-//! assert_eq!("amce", time_zone.meta_zone_id.unwrap().0.as_str());
+//! assert_eq!("amce", time_zone.metazone_id.unwrap().0.as_str());
 //! ```
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
@@ -117,7 +121,7 @@ mod time_zone;
 mod types;
 
 pub use error::TimeZoneError;
-pub use metazone::MetaZoneCalculator;
-pub use provider::{MetaZoneId, TimeZoneBcp47Id};
+pub use metazone::MetazoneCalculator;
+pub use provider::{MetazoneId, TimeZoneBcp47Id};
 pub use time_zone::CustomTimeZone;
 pub use types::{GmtOffset, ZoneVariant};

@@ -161,7 +161,7 @@ export function setup(dataProvider: ICU4XDataProvider): void {
     // We instead get the current datetime and recast it to a date that is the current datetime
     // when represented in UTC
     let now = new Date();
-    const offset = now.getTimezoneOffset();
+    const offset = now.getTimeZoneOffset();
     now.setMinutes(now.getMinutes() - offset);
     const nowISO = now.toISOString().slice(0,16);
     if (inputDateTime != undefined) {

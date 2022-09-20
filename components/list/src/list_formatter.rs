@@ -80,6 +80,15 @@ impl ListFormatter {
             values,
         }
     }
+
+    /// Returns a [`String`] composed of the input [`Writeable`]s and the language-dependent
+    /// formatting.
+    pub fn format_to_string<W: Writeable, I: Iterator<Item = W> + Clone>(
+        &self,
+        values: I,
+    ) -> alloc::string::String {
+        self.format(values).write_to_string().into_owned()
+    }
 }
 
 /// The [`Part`]s used by [`ListFormatter`].
@@ -188,14 +197,14 @@ impl<'a, W: Writeable + 'a, I: Iterator<Item = W> + Clone + 'a> Writeable
         }
     }
 
-    fn write_len(&self) -> LengthHint {
+    fn writeable_length_hint(&self) -> LengthHint {
         let mut count = 0;
         let item_length = self
             .values
             .clone()
             .map(|w| {
                 count += 1;
-                w.write_len()
+                w.writeable_length_hint()
             })
             .sum::<LengthHint>();
         item_length

@@ -72,7 +72,7 @@ fn main() {
         Some(&locales),
         &icu_datagen::all_keys()
             .into_iter()
-            .filter(|k| !IGNORED_KEYS.contains(&k.get_path()))
+            .filter(|k| !IGNORED_KEYS.contains(&&*k.path()))
             .chain(core::iter::once(
                 icu_provider::hello_world::HelloWorldV1Marker::KEY,
             ))
@@ -84,7 +84,7 @@ fn main() {
 
     icu_datagen::datagen(
         Some(&[langid!("en"), langid!("bn")]),
-        &icu_datagen::keys(&["decimal/symbols@1[u-nu]"]),
+        &icu_datagen::keys(&["decimal/symbols@1"]),
         &source_data,
         vec![Out::Blob(Box::new(
             File::create(paths::data_root().join("decimal-bn-en.postcard")).unwrap(),

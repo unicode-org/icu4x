@@ -7,6 +7,13 @@ use displaydoc::Display;
 use icu_collections::codepointtrie::CodePointTrieError;
 
 /// A list of possible errors for the [`CaseMapping`](crate::CaseMapping) struct
+///
+/// <div class="stab unstable">
+/// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+/// including in SemVer minor releases. It can be enabled with the "experimental" feature
+/// of the icu meta-crate. Use with caution.
+/// <a href="https://github.com/unicode-org/icu4x/issues/2535">#2535</a>
+/// </div>
 #[derive(Clone, Display, Debug, PartialEq)]
 pub enum Error {
     /// An error occurred while building and validating the data

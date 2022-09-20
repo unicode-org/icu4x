@@ -411,9 +411,7 @@ impl LocaleCanonicalizer {
                 }
 
                 if !modified.is_empty() {
-                    for variant in unmodified {
-                        modified.push(variant);
-                    }
+                    modified.extend(unmodified);
                     modified.sort();
                     modified.dedup();
                     locale.id.variants = Variants::from_vec_unchecked(modified);

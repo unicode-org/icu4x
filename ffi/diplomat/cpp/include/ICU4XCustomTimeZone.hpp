@@ -13,7 +13,7 @@
 
 class ICU4XCustomTimeZone;
 #include "ICU4XError.hpp"
-class ICU4XMetaZoneCalculator;
+class ICU4XMetazoneCalculator;
 class ICU4XIsoDateTime;
 
 /**
@@ -35,6 +35,8 @@ class ICU4XCustomTimeZone {
 
   /**
    * Creates a time zone from an offset string.
+   * 
+   * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
    */
   static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s);
 
@@ -162,46 +164,46 @@ class ICU4XCustomTimeZone {
   diplomat::result<std::string, ICU4XError> time_zone_id() const;
 
   /**
-   * Sets the `meta_zone_id` field from a string.
+   * Sets the `metazone_id` field from a string.
    * 
-   * Errors if the string is not a valid BCP-47 meta zone ID.
+   * Errors if the string is not a valid BCP-47 metazone ID.
    * 
-   * See the [Rust documentation for `meta_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * See the [Rust documentation for `metazone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html)
    */
-  diplomat::result<std::monostate, ICU4XError> try_set_meta_zone_id(const std::string_view id);
+  diplomat::result<std::monostate, ICU4XError> try_set_metazone_id(const std::string_view id);
 
   /**
-   * Clears the `meta_zone_id` field.
+   * Clears the `metazone_id` field.
    * 
-   * See the [Rust documentation for `meta_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * See the [Rust documentation for `metazone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html)
    */
-  void clear_meta_zone_id();
+  void clear_metazone_id();
 
   /**
-   * Writes the value of the `meta_zone_id` field as a string.
+   * Writes the value of the `metazone_id` field as a string.
    * 
-   * Errors if the `meta_zone_id` field is empty.
+   * Errors if the `metazone_id` field is empty.
    * 
-   * See the [Rust documentation for `meta_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * See the [Rust documentation for `metazone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html)
    */
-  template<typename W> diplomat::result<std::monostate, ICU4XError> meta_zone_id_to_writeable(W& write) const;
+  template<typename W> diplomat::result<std::monostate, ICU4XError> metazone_id_to_writeable(W& write) const;
 
   /**
-   * Writes the value of the `meta_zone_id` field as a string.
+   * Writes the value of the `metazone_id` field as a string.
    * 
-   * Errors if the `meta_zone_id` field is empty.
+   * Errors if the `metazone_id` field is empty.
    * 
-   * See the [Rust documentation for `meta_zone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.meta_zone_id) for more information.
+   * See the [Rust documentation for `metazone_id`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#structfield.metazone_id) for more information.
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneId.html)
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneId.html)
    */
-  diplomat::result<std::string, ICU4XError> meta_zone_id() const;
+  diplomat::result<std::string, ICU4XError> metazone_id() const;
 
   /**
    * Sets the `zone_variant` field from a string.
@@ -286,13 +288,13 @@ class ICU4XCustomTimeZone {
   diplomat::result<bool, ICU4XError> is_daylight_time() const;
 
   /**
-   * Sets the meta zone based on the time zone and the local timestamp.
+   * Sets the metazone based on the time zone and the local timestamp.
    * 
-   * See the [Rust documentation for `maybe_calculate_meta_zone`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_meta_zone) for more information.
+   * See the [Rust documentation for `maybe_calculate_metazone`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.maybe_calculate_metazone) for more information.
    * 
-   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetaZoneCalculator.html#method.compute_metazone_from_timezone)
+   *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.compute_metazone_from_time_zone)
    */
-  void maybe_calculate_meta_zone(const ICU4XMetaZoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime);
+  void maybe_calculate_metazone(const ICU4XMetazoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime);
   inline const capi::ICU4XCustomTimeZone* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XCustomTimeZone* AsFFIMut() { return this->inner.get(); }
   inline ICU4XCustomTimeZone(capi::ICU4XCustomTimeZone* i) : inner(i) {}
@@ -303,7 +305,7 @@ class ICU4XCustomTimeZone {
   std::unique_ptr<capi::ICU4XCustomTimeZone, ICU4XCustomTimeZoneDeleter> inner;
 };
 
-#include "ICU4XMetaZoneCalculator.hpp"
+#include "ICU4XMetazoneCalculator.hpp"
 #include "ICU4XIsoDateTime.hpp"
 
 inline diplomat::result<ICU4XCustomTimeZone, ICU4XError> ICU4XCustomTimeZone::create_from_str(const std::string_view s) {
@@ -421,8 +423,8 @@ inline diplomat::result<std::string, ICU4XError> ICU4XCustomTimeZone::time_zone_
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
 }
-inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_meta_zone_id(const std::string_view id) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_meta_zone_id(this->inner.get(), id.data(), id.size());
+inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set_metazone_id(const std::string_view id) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_try_set_metazone_id(this->inner.get(), id.data(), id.size());
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
@@ -431,12 +433,12 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::try_set
   }
   return diplomat_result_out_value;
 }
-inline void ICU4XCustomTimeZone::clear_meta_zone_id() {
-  capi::ICU4XCustomTimeZone_clear_meta_zone_id(this->inner.get());
+inline void ICU4XCustomTimeZone::clear_metazone_id() {
+  capi::ICU4XCustomTimeZone_clear_metazone_id(this->inner.get());
 }
-template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::meta_zone_id_to_writeable(W& write) const {
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCustomTimeZone::metazone_id_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
-  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_meta_zone_id(this->inner.get(), &write_writer);
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_metazone_id(this->inner.get(), &write_writer);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
@@ -445,10 +447,10 @@ template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XCu
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<std::string, ICU4XError> ICU4XCustomTimeZone::meta_zone_id() const {
+inline diplomat::result<std::string, ICU4XError> ICU4XCustomTimeZone::metazone_id() const {
   std::string diplomat_writeable_string;
   capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
-  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_meta_zone_id(this->inner.get(), &diplomat_writeable_out);
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_metazone_id(this->inner.get(), &diplomat_writeable_out);
   diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok(std::monostate());
@@ -519,7 +521,7 @@ inline diplomat::result<bool, ICU4XError> ICU4XCustomTimeZone::is_daylight_time(
   }
   return diplomat_result_out_value;
 }
-inline void ICU4XCustomTimeZone::maybe_calculate_meta_zone(const ICU4XMetaZoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime) {
-  capi::ICU4XCustomTimeZone_maybe_calculate_meta_zone(this->inner.get(), metazone_calculator.AsFFI(), local_datetime.AsFFI());
+inline void ICU4XCustomTimeZone::maybe_calculate_metazone(const ICU4XMetazoneCalculator& metazone_calculator, const ICU4XIsoDateTime& local_datetime) {
+  capi::ICU4XCustomTimeZone_maybe_calculate_metazone(this->inner.get(), metazone_calculator.AsFFI(), local_datetime.AsFFI());
 }
 #endif

@@ -9,13 +9,16 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
-use crate::script::ScriptWithExtensions;
+use crate::script::ScriptWithExt;
+use crate::Script;
+
 use core::ops::RangeInclusive;
 use icu_collections::codepointinvlist::CodePointInversionList;
 use icu_collections::codepointtrie::{CodePointMapRange, CodePointTrie, TrieValue};
 use icu_provider::prelude::*;
 use zerofrom::ZeroFrom;
-use zerovec::ZeroVecError;
+
+use zerovec::{VarZeroVec, ZeroSlice, ZeroVecError};
 
 /// A set of characters with a particular property.
 ///
@@ -67,9 +70,42 @@ pub enum PropertyCodePointMapV1<'data, T: TrieValue> {
 )]
 #[cfg_attr(feature = "serde", derive(serde::Deserialize))]
 pub struct ScriptWithExtensionsPropertyV1<'data> {
-    /// A special data structure for `Script` and `Script_Extensions`.
+    /// Note: The `ScriptWithExt` values in this array will assume a 12-bit layout. The 2
+    /// higher order bits 11..10 will indicate how to deduce the Script value and
+    /// Script_Extensions value, nearly matching the representation
+    /// [in ICU](https://github.com/unicode-org/icu/blob/main/icu4c/source/common/uprops.h):
+    ///
+    /// | High order 2 bits value | Script                                                 | Script_Extensions                                              |
+    /// |-------------------------|--------------------------------------------------------|----------------------------------------------------------------|
+    /// | 3                       | First value in sub-array, index given by lower 10 bits | Sub-array excluding first value, index given by lower 10 bits  |
+    /// | 2                       | Script=Inherited                                       | Entire sub-array, index given by lower 10 bits                 |
+    /// | 1                       | Script=Common                                          | Entire sub-array, index given by lower 10 bits                 |
+    /// | 0                       | Value in lower 10 bits                                 | `[ Script value ]` single-element array                        |
+    ///
+    /// When the lower 10 bits of the value are used as an index, that index is
+    /// used for the outer-level vector of the nested `extensions` structure.
     #[cfg_attr(feature = "serde", serde(borrow))]
-    pub data: ScriptWithExtensions<'data>,
+    pub trie: CodePointTrie<'data, ScriptWithExt>,
+
+    /// This companion structure stores Script_Extensions values, which are
+    /// themselves arrays / vectors. This structure only stores the values for
+    /// cases in which `scx(cp) != [ sc(cp) ]`. Each sub-vector is distinct. The
+    /// sub-vector represents the Script_Extensions array value for a code point,
+    /// and may also indicate Script value, as described for the `trie` field.
+    #[cfg_attr(feature = "serde", serde(borrow))]
+    pub extensions: VarZeroVec<'data, ZeroSlice<Script>>,
+}
+
+impl<'data> ScriptWithExtensionsPropertyV1<'data> {
+    // This method is intended to be used by constructors of deserialized data
+    // in a data provider.
+    #[doc(hidden)]
+    pub fn new(
+        trie: CodePointTrie<'data, ScriptWithExt>,
+        extensions: VarZeroVec<'data, ZeroSlice<Script>>,
+    ) -> ScriptWithExtensionsPropertyV1<'data> {
+        ScriptWithExtensionsPropertyV1 { trie, extensions }
+    }
 }
 
 // See CodePointSetData for documentation of these functions
@@ -82,9 +118,9 @@ impl<'data> PropertyCodePointSetV1<'data> {
     }
 
     #[inline]
-    pub(crate) fn contains_u32(&self, ch: u32) -> bool {
+    pub(crate) fn contains32(&self, ch: u32) -> bool {
         match *self {
-            Self::InversionList(ref l) => l.contains_u32(ch),
+            Self::InversionList(ref l) => l.contains32(ch),
         }
     }
 
@@ -121,9 +157,9 @@ impl<'data> PropertyCodePointSetV1<'data> {
 // See CodePointMapData for documentation of these functions
 impl<'data, T: TrieValue> PropertyCodePointMapV1<'data, T> {
     #[inline]
-    pub(crate) fn get_u32(&self, ch: u32) -> T {
+    pub(crate) fn get32(&self, ch: u32) -> T {
         match *self {
-            Self::CodePointTrie(ref t) => t.get(ch),
+            Self::CodePointTrie(ref t) => t.get32(ch),
         }
     }
 

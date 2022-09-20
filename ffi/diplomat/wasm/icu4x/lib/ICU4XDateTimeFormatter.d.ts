@@ -28,7 +28,7 @@ export class ICU4XDateTimeFormatter {
 
    * Formats a {@link ICU4XDateTime `ICU4XDateTime`} to a string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format Rust documentation for `format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_datetime(value: ICU4XDateTime): string | never;
@@ -39,7 +39,7 @@ export class ICU4XDateTimeFormatter {
 
    * Will convert to this formatter's calendar first
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.format Rust documentation for `format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_iso_datetime(value: ICU4XIsoDateTime): string | never;

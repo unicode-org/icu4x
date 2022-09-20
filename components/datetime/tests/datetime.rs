@@ -16,8 +16,8 @@ use icu_calendar::{
     AsCalendar, DateTime, Gregorian, Iso,
 };
 use icu_datetime::provider::time_zones::{
-    ExemplarCitiesV1Marker, MetaZoneGenericNamesLongV1Marker, MetaZoneGenericNamesShortV1Marker,
-    MetaZoneId, MetaZoneSpecificNamesLongV1Marker, MetaZoneSpecificNamesShortV1Marker,
+    ExemplarCitiesV1Marker, MetazoneGenericNamesLongV1Marker, MetazoneGenericNamesShortV1Marker,
+    MetazoneId, MetazoneSpecificNamesLongV1Marker, MetazoneSpecificNamesShortV1Marker,
     TimeZoneBcp47Id, TimeZoneFormatsV1Marker,
 };
 use icu_datetime::{
@@ -43,9 +43,9 @@ use patterns::{
         time_zones::{TimeZoneConfig, TimeZoneExpectation},
     },
 };
-use std::fmt::Write;
 use std::str::FromStr;
 use tinystr::tinystr;
+use writeable::{assert_writeable_eq, Writeable};
 
 mod mock;
 
@@ -216,33 +216,21 @@ fn assert_fixture_element<A>(
         )
     };
 
-    let result = dtf.format_to_string(input_value);
+    assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
 
-    assert_eq!(result, output_value, "{}", description);
-
-    let result = any_dtf.format_to_string(&any_input).unwrap();
-
-    assert_eq!(result, output_value, "(DateTimeFormatter) {}", description);
-
-    let result = any_dtf.format_to_string(&iso_any_input).unwrap();
-
-    assert_eq!(
-        result, output_value,
-        "(DateTimeFormatter iso conversion) {}",
+    assert_writeable_eq!(
+        any_dtf.format(&any_input).unwrap(),
+        output_value,
+        "(DateTimeFormatter) {}",
         description
     );
 
-    let mut s = String::new();
-    dtf.format_to_write(&mut s, input_value).unwrap();
-    assert_eq!(s, output_value, "{}", description);
-
-    let fdt = dtf.format(input_value);
-    let s = fdt.to_string();
-    assert_eq!(s, output_value, "{}", description);
-
-    let mut s = String::new();
-    write!(s, "{}", fdt).unwrap();
-    assert_eq!(s, output_value, "{}", description);
+    assert_writeable_eq!(
+        any_dtf.format(&iso_any_input).unwrap(),
+        output_value,
+        "(DateTimeFormatter iso conversion) {}",
+        description
+    );
 
     if let DateTimeFormatterOptions::Length(bag) = options {
         if bag.date.is_some() && bag.time.is_some() {
@@ -260,21 +248,7 @@ fn assert_fixture_element<A>(
             .unwrap();
 
             let dtf = TypedDateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
-            let result = dtf.format_to_string(input_value);
-
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            dtf.format_to_write(&mut s, input_value).unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = dtf.format(input_value);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            assert_writeable_eq!(dtf.format(input_value), output_value, "{}", description);
         } else if bag.date.is_some() {
             let df = TypedDateFormatter::<A::Calendar>::try_new_unstable(
                 &icu_testdata::unstable(),
@@ -282,21 +256,8 @@ fn assert_fixture_element<A>(
                 bag.date.unwrap(),
             )
             .unwrap();
-            let result = df.format_to_string(input_value);
 
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            df.format_to_write(&mut s, input_value).unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = df.format(input_value);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            assert_writeable_eq!(df.format(input_value), output_value, "{}", description);
         } else if bag.time.is_some() {
             let tf = TimeFormatter::try_new_unstable(
                 &icu_testdata::unstable(),
@@ -305,21 +266,7 @@ fn assert_fixture_element<A>(
             )
             .unwrap();
 
-            let result = tf.format_to_string(input_value);
-
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            tf.format_to_write(&mut s, input_value).unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = tf.format(input_value);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            assert_writeable_eq!(tf.format(input_value), output_value, "{}", description);
         }
     }
 }
@@ -340,7 +287,7 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
         let (input_date, mut time_zone) =
             mock::parse_zoned_gregorian_from_str(&fx.input.value).unwrap();
         time_zone.time_zone_id = config.time_zone_id.map(TimeZoneBcp47Id);
-        time_zone.meta_zone_id = config.meta_zone_id.map(MetaZoneId);
+        time_zone.metazone_id = config.metazone_id.map(MetazoneId);
         time_zone.zone_variant = config.zone_variant.map(ZoneVariant);
 
         let description = match fx.description {
@@ -374,22 +321,12 @@ fn test_fixture_with_time_zones(fixture_name: &str, config: TimeZoneConfig) {
                 )
                 .unwrap()
             };
-            let result = dtf.format_to_string(&input_date, &time_zone);
-
-            assert_eq!(result, output_value, "{}", description);
-
-            let mut s = String::new();
-            dtf.format_to_write(&mut s, &input_date, &time_zone)
-                .unwrap();
-            assert_eq!(s, output_value, "{}", description);
-
-            let fdt = dtf.format(&input_date, &time_zone);
-            let s = fdt.to_string();
-            assert_eq!(s, output_value, "{}", description);
-
-            let mut s = String::new();
-            write!(s, "{}", fdt).unwrap();
-            assert_eq!(s, output_value, "{}", description);
+            assert_writeable_eq!(
+                dtf.format(&input_date, &time_zone),
+                output_value,
+                "{}",
+                description
+            );
         }
     }
 }
@@ -468,35 +405,28 @@ fn test_dayperiod_patterns() {
                             data.time_h23_h24.long = new_pattern2;
                         });
                         let local_provider = MultiForkByKeyProvider::new(vec![
-                            AnyPayloadProvider {
-                                key: GregorianDateSymbolsV1Marker::KEY,
-                                data: date_symbols_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: TimeSymbolsV1Marker::KEY,
-                                data: time_symbols_data.clone().wrap_into_any_payload(),
-                            },
+                            AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
+                                date_symbols_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<TimeSymbolsV1Marker>(
+                                time_symbols_data.clone(), //
+                            ),
                             #[cfg(feature = "experimental")]
-                            AnyPayloadProvider {
-                                key: DateSkeletonPatternsV1Marker::KEY,
-                                data: skeleton_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: GregorianDateLengthsV1Marker::KEY,
-                                data: date_patterns_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: TimeLengthsV1Marker::KEY,
-                                data: time_patterns_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: WeekDataV1Marker::KEY,
-                                data: week_data.clone().wrap_into_any_payload(),
-                            },
-                            AnyPayloadProvider {
-                                key: DecimalSymbolsV1Marker::KEY,
-                                data: decimal_data.clone().wrap_into_any_payload(),
-                            },
+                            AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
+                                skeleton_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
+                                date_patterns_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
+                                time_patterns_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
+                                week_data.clone(), //
+                            ),
+                            AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(
+                                decimal_data.clone(), //
+                            ),
                         ]);
                         let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(
                             &local_provider.as_downcasting(),
@@ -504,8 +434,8 @@ fn test_dayperiod_patterns() {
                             Default::default(),
                         )
                         .unwrap();
-                        assert_eq!(
-                            dtf.format(&datetime).to_string(),
+                        assert_writeable_eq!(
+                            dtf.format(&datetime),
                             *expected,
                             "\n\
                             locale:   `{}`,\n\
@@ -529,7 +459,7 @@ fn test_time_zone_format_configs() {
         let mut config = test.config;
         let (_, mut time_zone) = mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        time_zone.meta_zone_id = config.meta_zone_id.take().map(MetaZoneId);
+        time_zone.metazone_id = config.metazone_id.take().map(MetazoneId);
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
         for TimeZoneExpectation {
             patterns: _,
@@ -547,10 +477,8 @@ fn test_time_zone_format_configs() {
                     )
                     .unwrap();
                     config_input.set_on_formatter(&mut tzf).unwrap();
-                    let mut buffer = String::new();
-                    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
-                    assert_eq!(
-                        buffer.to_string(),
+                    assert_writeable_eq!(
+                        tzf.format(&time_zone),
                         *expect,
                         "\n\
                     locale:   `{}`,\n\
@@ -576,7 +504,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
     let time_zone = CustomTimeZone {
         gmt_offset: None,
         time_zone_id: Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-        meta_zone_id: Some(MetaZoneId(tinystr!(4, "ampa"))),
+        metazone_id: Some(MetazoneId(tinystr!(4, "ampa"))),
         zone_variant: Some(ZoneVariant::daylight()),
     };
     let tzf = TimeZoneFormatter::try_new_unstable(
@@ -585,8 +513,7 @@ fn test_time_zone_format_gmt_offset_not_set_debug_assert_panic() {
         Default::default(),
     )
     .unwrap();
-    let mut buffer = String::new();
-    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
+    tzf.format(&time_zone).write_to_string();
 }
 
 #[test]
@@ -595,7 +522,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
     let time_zone = MockTimeZone::new(
         None,
         Some(TimeZoneBcp47Id(tinystr!(8, "uslax"))),
-        Some(MetaZoneId(tinystr!(4, "ampa"))),
+        Some(MetazoneId(tinystr!(4, "ampa"))),
         Some(tinystr!(8, "daylight")),
     );
     let tzf = TimeZoneFormatter::try_new_unstable(
@@ -604,9 +531,7 @@ fn test_time_zone_format_gmt_offset_not_set_no_debug_assert() {
         Default::default(),
     )
     .unwrap();
-    let mut buffer = String::new();
-    tzf.format_to_write(&mut buffer, &time_zone).unwrap();
-    assert_eq!(buffer.to_string(), "GMT+?".to_string());
+    assert_writeable_eq!(tzf.format(&time_zone).unwrap(), "GMT+?".to_string());
 }
 
 #[test]
@@ -627,7 +552,7 @@ fn test_time_zone_patterns() {
         let (datetime, mut time_zone) =
             mock::parse_zoned_gregorian_from_str(&test.datetime).unwrap();
         time_zone.time_zone_id = config.time_zone_id.take().map(TimeZoneBcp47Id);
-        time_zone.meta_zone_id = config.meta_zone_id.take().map(MetaZoneId);
+        time_zone.metazone_id = config.metazone_id.take().map(MetazoneId);
         time_zone.zone_variant = config.zone_variant.take().map(ZoneVariant);
 
         let mut date_patterns_data: DataPayload<GregorianDateLengthsV1Marker> =
@@ -668,25 +593,25 @@ fn test_time_zone_patterns() {
             .unwrap()
             .take_payload()
             .unwrap();
-        let meta_zone_specific_short_data: DataPayload<MetaZoneSpecificNamesShortV1Marker> =
+        let metazone_specific_short_data: DataPayload<MetazoneSpecificNamesShortV1Marker> =
             icu_testdata::unstable()
                 .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
-        let meta_zone_specific_long_data: DataPayload<MetaZoneSpecificNamesLongV1Marker> =
+        let metazone_specific_long_data: DataPayload<MetazoneSpecificNamesLongV1Marker> =
             icu_testdata::unstable()
                 .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
-        let meta_zone_generic_short_data: DataPayload<MetaZoneGenericNamesShortV1Marker> =
+        let metazone_generic_short_data: DataPayload<MetazoneGenericNamesShortV1Marker> =
             icu_testdata::unstable()
                 .load(req)
                 .unwrap()
                 .take_payload()
                 .unwrap();
-        let meta_zone_generic_long_data: DataPayload<MetaZoneGenericNamesLongV1Marker> =
+        let metazone_generic_long_data: DataPayload<MetazoneGenericNamesLongV1Marker> =
             icu_testdata::unstable()
                 .load(req)
                 .unwrap()
@@ -717,57 +642,43 @@ fn test_time_zone_patterns() {
                     data.time_h23_h24.long = new_pattern2;
                 });
                 let local_provider = MultiForkByKeyProvider::new(vec![
-                    AnyPayloadProvider {
-                        key: GregorianDateSymbolsV1Marker::KEY,
-                        data: symbols_data.clone().wrap_into_any_payload(),
-                    },
+                    AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
+                        symbols_data.clone(), //
+                    ),
                     #[cfg(feature = "experimental")]
-                    AnyPayloadProvider {
-                        key: DateSkeletonPatternsV1Marker::KEY,
-                        data: skeleton_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: GregorianDateLengthsV1Marker::KEY,
-                        data: date_patterns_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: TimeLengthsV1Marker::KEY,
-                        data: time_patterns_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: WeekDataV1Marker::KEY,
-                        data: week_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: DecimalSymbolsV1Marker::KEY,
-                        data: decimal_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: TimeZoneFormatsV1Marker::KEY,
-                        data: time_zone_formats_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: MetaZoneSpecificNamesShortV1Marker::KEY,
-                        data: meta_zone_specific_short_data
-                            .clone()
-                            .wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: MetaZoneSpecificNamesLongV1Marker::KEY,
-                        data: meta_zone_specific_long_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: MetaZoneGenericNamesShortV1Marker::KEY,
-                        data: meta_zone_generic_short_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: MetaZoneGenericNamesLongV1Marker::KEY,
-                        data: meta_zone_generic_long_data.clone().wrap_into_any_payload(),
-                    },
-                    AnyPayloadProvider {
-                        key: ExemplarCitiesV1Marker::KEY,
-                        data: exemplar_cities_data.clone().wrap_into_any_payload(),
-                    },
+                    AnyPayloadProvider::from_payload::<DateSkeletonPatternsV1Marker>(
+                        skeleton_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<GregorianDateLengthsV1Marker>(
+                        date_patterns_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<TimeLengthsV1Marker>(
+                        time_patterns_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<WeekDataV1Marker>(
+                        week_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<DecimalSymbolsV1Marker>(
+                        decimal_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<TimeZoneFormatsV1Marker>(
+                        time_zone_formats_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<MetazoneSpecificNamesShortV1Marker>(
+                        metazone_specific_short_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<MetazoneSpecificNamesLongV1Marker>(
+                        metazone_specific_long_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<MetazoneGenericNamesShortV1Marker>(
+                        metazone_generic_short_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<MetazoneGenericNamesLongV1Marker>(
+                        metazone_generic_long_data.clone(), //
+                    ),
+                    AnyPayloadProvider::from_payload::<ExemplarCitiesV1Marker>(
+                        exemplar_cities_data.clone(), //
+                    ),
                 ]);
 
                 for (&fallback_format, expect) in fallback_formats.iter().zip(expected.iter()) {
@@ -779,8 +690,8 @@ fn test_time_zone_patterns() {
                     )
                     .unwrap();
 
-                    assert_eq!(
-                        dtf.format(&datetime, &time_zone).to_string(),
+                    assert_writeable_eq!(
+                        dtf.format(&datetime, &time_zone),
                         *expect,
                         "\n\
                     locale:   `{}`,\n\
@@ -806,7 +717,7 @@ fn test_length_fixtures() {
     test_fixture_with_time_zones(
         "lengths_with_zones_from_pdt",
         TimeZoneConfig {
-            meta_zone_id: Some(tinystr!(4, "ampa")),
+            metazone_id: Some(tinystr!(4, "ampa")),
             zone_variant: Some(tinystr!(2, "dt")),
             ..TimeZoneConfig::default()
         },
@@ -913,8 +824,8 @@ fn test_vertical_fallback_disabled() {
     .unwrap();
 
     // This should work for length bag. It doesn't currently work for components bag.
-    assert_eq!(
+    assert_writeable_eq!(
+        dtf.format(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap()),
         "mardi 5 avril 2022 à 12:33",
-        dtf.format_to_string(&DateTime::new_gregorian_datetime(2022, 4, 5, 12, 33, 44).unwrap())
     );
 }

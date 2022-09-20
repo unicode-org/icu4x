@@ -44,23 +44,23 @@ class ICU4XGraphemeClusterBreakSegmenter {
   static diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
-   * Segments a UTF-8 string.
+   * Segments a (potentially ill-formed) UTF-8 string.
    * 
-   * See the [Rust documentation for `segment_str`](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_str) for more information.
+   * See the [Rust documentation for `segment_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf8) for more information.
    */
   ICU4XGraphemeClusterBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 
   /**
    * Segments a UTF-16 string.
    * 
-   * See the [Rust documentation for `segment_utf16`](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf16) for more information.
+   * See the [Rust documentation for `segment_utf16`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf16) for more information.
    */
   ICU4XGraphemeClusterBreakIteratorUtf16 segment_utf16(const diplomat::span<uint16_t> input) const;
 
   /**
    * Segments a Latin-1 string.
    * 
-   * See the [Rust documentation for `segment_latin1`](https://unicode-org.github.io/icu4x-docs/doc/icu_segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_latin1) for more information.
+   * See the [Rust documentation for `segment_latin1`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_latin1) for more information.
    */
   ICU4XGraphemeClusterBreakIteratorLatin1 segment_latin1(const diplomat::span<uint8_t> input) const;
   inline const capi::ICU4XGraphemeClusterBreakSegmenter* AsFFI() const { return this->inner.get(); }
