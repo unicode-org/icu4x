@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663596856842,
+  "lastUpdate": 1663685997114,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -51628,6 +51628,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 99,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4ee18e9da5834190f7c5648fd3c7e9504541951c",
+          "message": "Rename postcard feature for 1.0 (#2584)",
+          "timestamp": "2022-09-20T16:46:26+02:00",
+          "tree_id": "288cd054bc8cdc2d847385de8da3c7394288bf3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/4ee18e9da5834190f7c5648fd3c7e9504541951c"
+        },
+        "date": 1663685944891,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116848,
+            "range": "± 388",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20585,
+            "range": "± 56",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 55419,
+            "range": "± 269",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 166,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 67,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 73,
             "range": "± 0",
             "unit": "ns/iter"
           }
