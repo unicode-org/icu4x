@@ -56,7 +56,9 @@ pub struct BlobDataProvider {
 }
 
 impl BlobDataProvider {
-    /// Create a [`BlobDataProvider`] from a blob of ICU4X data.
+    /// Create a [`BlobDataProvider`] from a blob of data. The data will be transformed into
+    /// a `Rc<[u8]>`/`Arc<[u8]>` (per the `"sync"` feature), which will allocate unless the
+    /// blob is already of that shape.
     pub fn try_new_from_blob<B: Into<RcWrap<[u8]>>>(blob: B) -> Result<Self, DataError> {
         Ok(Self {
             data: Yoke::try_attach_to_cart(blob.into(), |bytes| {
@@ -66,7 +68,9 @@ impl BlobDataProvider {
         })
     }
 
-    #[doc(hidden)]
+
+    /// Create a [`BlobDataProvider`] from a static blob. This is a special case of
+    /// [`try_new_from_blob`] and is allocation-free.
     pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
         Ok(Self {
             data: Yoke::new_owned(BlobSchema::deserialize_v1(
