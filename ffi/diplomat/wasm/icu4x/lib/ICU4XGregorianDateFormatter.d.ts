@@ -21,7 +21,7 @@ export class ICU4XGregorianDateFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XDateLength): ICU4XGregorianDateFormatter | never;
+  static create_with_length(provider: ICU4XDataProvider, locale: ICU4XLocale, length: ICU4XDateLength): ICU4XGregorianDateFormatter | never;
 
   /**
 

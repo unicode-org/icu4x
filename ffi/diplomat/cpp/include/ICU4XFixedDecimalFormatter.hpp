@@ -41,7 +41,7 @@ class ICU4XFixedDecimalFormatter {
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> try_new_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+  static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> create_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 
   /**
    * Creates a new [`ICU4XFixedDecimalFormatter`] from preconstructed locale data in the form of an [`ICU4XDataStruct`]
@@ -50,7 +50,7 @@ class ICU4XFixedDecimalFormatter {
    * The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
    * Passing a consumed struct to this method will return an error.
    */
-  static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> try_new_from_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
+  static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> create_with_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy);
 
   /**
    * Formats a [`ICU4XFixedDecimal`] to a string.
@@ -80,8 +80,8 @@ class ICU4XFixedDecimalFormatter {
 #include "ICU4XDataStruct.hpp"
 #include "ICU4XFixedDecimal.hpp"
 
-inline diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> ICU4XFixedDecimalFormatter::try_new_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormatter_try_new_with_grouping_strategy(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(grouping_strategy));
+inline diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> ICU4XFixedDecimalFormatter::create_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormatter_create_with_grouping_strategy(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(grouping_strategy));
   diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XFixedDecimalFormatter>(std::move(ICU4XFixedDecimalFormatter(diplomat_result_raw_out_value.ok)));
@@ -90,8 +90,8 @@ inline diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> ICU4XFixedDecima
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> ICU4XFixedDecimalFormatter::try_new_from_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormatter_try_new_from_decimal_symbols_v1(data_struct.AsFFI(), static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(grouping_strategy));
+inline diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> ICU4XFixedDecimalFormatter::create_with_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimalFormatter_create_with_decimal_symbols_v1(data_struct.AsFFI(), static_cast<capi::ICU4XFixedDecimalGroupingStrategy>(grouping_strategy));
   diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XFixedDecimalFormatter>(std::move(ICU4XFixedDecimalFormatter(diplomat_result_raw_out_value.ok)));

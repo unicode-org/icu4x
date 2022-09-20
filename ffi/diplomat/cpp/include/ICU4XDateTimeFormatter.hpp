@@ -43,7 +43,7 @@ class ICU4XDateTimeFormatter {
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
+  static diplomat::result<ICU4XDateTimeFormatter, ICU4XError> create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
 
   /**
    * Formats a [`ICU4XDateTime`] to a string.
@@ -91,8 +91,8 @@ class ICU4XDateTimeFormatter {
 #include "ICU4XDateTime.hpp"
 #include "ICU4XIsoDateTime.hpp"
 
-inline diplomat::result<ICU4XDateTimeFormatter, ICU4XError> ICU4XDateTimeFormatter::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDateTimeFormatter_try_new(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XDateLength>(date_length), static_cast<capi::ICU4XTimeLength>(time_length));
+inline diplomat::result<ICU4XDateTimeFormatter, ICU4XError> ICU4XDateTimeFormatter::create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDateTimeFormatter_create_with_lengths(provider.AsFFI(), locale.AsFFI(), static_cast<capi::ICU4XDateLength>(date_length), static_cast<capi::ICU4XTimeLength>(time_length));
   diplomat::result<ICU4XDateTimeFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDateTimeFormatter>(std::move(ICU4XDateTimeFormatter(diplomat_result_raw_out_value.ok)));

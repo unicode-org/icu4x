@@ -21,7 +21,7 @@ export class ICU4XCanonicalDecomposition {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/properties/struct.CanonicalDecomposition.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(provider: ICU4XDataProvider): ICU4XCanonicalDecomposition | never;
+  static create(provider: ICU4XDataProvider): ICU4XCanonicalDecomposition | never;
 
   /**
 

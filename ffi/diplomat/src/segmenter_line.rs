@@ -43,7 +43,7 @@ pub mod ffi {
     }
 
     #[diplomat::rust_link(icu::segmenter::LineBreakOptions, Struct)]
-    pub struct ICU4XLineBreakOptions {
+    pub struct ICU4XLineBreakOptionsV1 {
         pub line_break_rule: ICU4XLineBreakRule,
         pub word_break_rule: ICU4XWordBreakRule,
         pub ja_zh: bool,
@@ -61,7 +61,7 @@ pub mod ffi {
     impl ICU4XLineBreakSegmenter {
         /// Construct a [`ICU4XLineBreakSegmenter`] with default options.
         #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::try_new, FnInStruct)]
-        pub fn try_new(
+        pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
             Self::try_new_impl(&provider.0)
@@ -82,9 +82,9 @@ pub mod ffi {
 
         /// Construct a [`ICU4XLineBreakSegmenter`] with custom options.
         #[diplomat::rust_link(icu::segmenter::LineBreakSegmenter::try_new_with_options, FnInStruct)]
-        pub fn try_new_with_options(
+        pub fn create_with_options_v1(
             provider: &ICU4XDataProvider,
-            options: ICU4XLineBreakOptions,
+            options: ICU4XLineBreakOptionsV1,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError> {
             Self::try_new_with_options_impl(&provider.0, options)
         }

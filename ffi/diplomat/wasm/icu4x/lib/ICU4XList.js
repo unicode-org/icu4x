@@ -15,12 +15,12 @@ export class ICU4XList {
     }
   }
 
-  static new() {
-    return new ICU4XList(wasm.ICU4XList_new(), true, []);
+  static create() {
+    return new ICU4XList(wasm.ICU4XList_create(), true, []);
   }
 
-  static with_capacity(arg_capacity) {
-    return new ICU4XList(wasm.ICU4XList_with_capacity(arg_capacity), true, []);
+  static create_with_capacity(arg_capacity) {
+    return new ICU4XList(wasm.ICU4XList_create_with_capacity(arg_capacity), true, []);
   }
 
   push(arg_val) {

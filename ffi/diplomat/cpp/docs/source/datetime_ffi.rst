@@ -8,21 +8,21 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar)
+    .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar)
 
         Creates a new :cpp:class:`ICU4XDateTime` representing the ISO date and time given but in a given calendar
 
         See the `Rust documentation for new_from_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_from_iso>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar)
+    .. cpp:function:: static diplomat::result<ICU4XDateTime, ICU4XError> create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar)
 
         Creates a new :cpp:class:`ICU4XDateTime` from the given codes, which are interpreted in the given calendar system
 
         See the `Rust documentation for new_from_codes <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes>`__ for more information.
 
 
-    .. cpp:function:: static ICU4XDateTime new_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time)
+    .. cpp:function:: static ICU4XDateTime create_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time)
 
         Creates a new :cpp:class:`ICU4XDateTime` from an :cpp:class:`ICU4XDate` and :cpp:class:`ICU4XTime` object
 
@@ -194,21 +194,21 @@
     See the `Rust documentation for DateTime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond)
+    .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> create(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond)
 
         Creates a new :cpp:class:`ICU4XIsoDateTime` from the specified date and time.
 
         See the `Rust documentation for new_iso_datetime <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime>`__ for more information.
 
 
-    .. cpp:function:: static ICU4XIsoDateTime new_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time)
+    .. cpp:function:: static ICU4XIsoDateTime crate_from_date_and_time(const ICU4XIsoDate& date, const ICU4XTime& time)
 
         Creates a new :cpp:class:`ICU4XIsoDateTime` from an :cpp:class:`ICU4XIsoDate` and :cpp:class:`ICU4XTime` object
 
         See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> from_minutes_since_local_unix_epoch(int32_t minutes)
+    .. cpp:function:: static diplomat::result<ICU4XIsoDateTime, ICU4XError> create_from_minutes_since_local_unix_epoch(int32_t minutes)
 
         Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 

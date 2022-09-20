@@ -8,7 +8,7 @@ import { ICU4XCollatorMaxVariable_js_to_rust, ICU4XCollatorMaxVariable_rust_to_j
 import { ICU4XCollatorNumeric_js_to_rust, ICU4XCollatorNumeric_rust_to_js } from "./ICU4XCollatorNumeric.js"
 import { ICU4XCollatorStrength_js_to_rust, ICU4XCollatorStrength_rust_to_js } from "./ICU4XCollatorStrength.js"
 
-export class ICU4XCollatorOptions {
+export class ICU4XCollatorOptionsV1 {
   constructor(underlying) {
     this.strength = ICU4XCollatorStrength_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying)];
     this.alternate_handling = ICU4XCollatorAlternateHandling_rust_to_js[diplomatRuntime.enumDiscriminant(wasm, underlying + 4)];
