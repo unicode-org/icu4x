@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663713445131,
+  "lastUpdate": 1663717162850,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27653,6 +27653,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/a2efa18f7b05c00e9947044e4ceaf86af433f43b"
         },
         "date": 1663713388802,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7bffd2fd4299b98f2a1c614587569d2f622ba152",
+          "message": "Improve docs for enum properties without changing API (#2597)",
+          "timestamp": "2022-09-20T16:36:50-07:00",
+          "tree_id": "b458a78994e710f86bf87fcc5f72d5fc1054c9f9",
+          "url": "https://github.com/unicode-org/icu4x/commit/7bffd2fd4299b98f2a1c614587569d2f622ba152"
+        },
+        "date": 1663717099558,
         "tool": "ndjson",
         "benches": [
           {
