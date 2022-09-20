@@ -31,7 +31,7 @@ struct ICU4XCollatorOptionsDeleter {
 /**
  * 
  * 
- * See the [Rust documentation for `CollatorOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu_collator/struct.CollatorOptions.html) for more information.
+ * See the [Rust documentation for `CollatorOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.CollatorOptions.html) for more information.
  */
 struct ICU4XCollatorOptions {
  public:

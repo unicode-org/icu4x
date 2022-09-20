@@ -108,7 +108,7 @@ impl BufferProvider for StaticDataProvider {
         let idx = self
             .data
             .keys
-            .get0(&key.get_hash())
+            .get0(&key.hashed())
             .ok_or(DataErrorKind::MissingDataKey)
             .and_then(|cursor| {
                 cursor

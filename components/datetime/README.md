@@ -11,16 +11,16 @@ used to quickly format any date and time provided. There are variants of these t
 including [`TypedDateFormatter`] & [`DateFormatter`], [`TypedZonedDateTimeFormatter`] & [`ZonedDateTimeFormatter`], [`TimeFormatter`],
 and [`TimeZoneFormatter`]
 
-These formatters work with types from the [`icu_calendar`] crate, like [`Date`], [`DateTime`], and [`Time`],
-and [`icu_timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
+These formatters work with types from the [`calendar`] module, like [`Date`], [`DateTime`], and [`Time`],
+and [`timezone::CustomTimeZone`], however other types may be used provided they implement the traits from the [`input`] module.
 
 Each instance of a date-related formatter (i.e. not [`TimeFormatter`] or [`TimeZoneFormatter`]
-is associated with a particular [calendar](icu_calendar::Calendar).
+is associated with a particular [`Calendar`].
 The "Typed" vs untyped formatter distinction is to help with this. For example, if you know at compile time that you
 will only be formatting Gregorian dates, you can use [`TypedDateTimeFormatter<Gregorian>`](TypedDateTimeFormatter) and the
 APIs will make sure that only Gregorian [`DateTime`]s are used with the calendar. On the other hand, if you want to be able to select
 the calendar at runtime, you can use [`DateTimeFormatter`] with the calendar specified in the locale, and use it with
-[`DateTime`](icu_calendar::DateTime)[`<AnyCalendar>`](icu_calendar::any_calendar::AnyCalendar). These formatters still require dates associated
+[`DateTime`],[`AnyCalendar`]. These formatters still require dates associated
 with the appropriate calendar (though they will convert ISO dates to the calendar if provided), they just do not force the
 programmer to pick the calendar at compile time.
 
@@ -98,9 +98,12 @@ we expect to add more ways to customize the output, like skeletons, and componen
 [data provider]: icu_provider
 [`ICU4X`]: ../icu/index.html
 [`Length`]: options::length
-[`DateTime`]: icu_calendar::DateTime
-[`Date`]: icu_calendar::Date
-[`Time`]: icu_calendar::types::Time
+[`DateTime`]: calendar::{DateTime}
+[`Date`]: calendar::{Date}
+[`Time`]: calendar::types::{Time}
+[`Calendar`]: calendar::{Calendar}
+[`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
+[`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
 
 ## More Information
 

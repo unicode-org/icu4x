@@ -256,7 +256,9 @@ impl FlexZeroSlice {
 
     /// Gets an iterator over the elements of the slice as `usize`.
     #[inline]
-    pub fn iter(&self) -> impl DoubleEndedIterator<Item = usize> + '_ {
+    pub fn iter(
+        &self,
+    ) -> impl DoubleEndedIterator<Item = usize> + '_ + ExactSizeIterator<Item = usize> {
         let w = self.get_width();
         self.data
             .chunks_exact(w)

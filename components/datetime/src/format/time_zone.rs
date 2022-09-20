@@ -82,7 +82,6 @@ where
     /// use icu_datetime::{TimeZoneFormatter, DateTimeFormatterError};
     /// use icu_locid::locale;
     /// use tinystr::tinystr;
-    /// use writeable::Writeable;
     ///
     /// let mut tzf = TimeZoneFormatter::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -90,40 +89,36 @@ where
     ///     Default::default(),
     /// )
     /// .unwrap();
+    /// let mut buf = String::new();
     ///
     /// let mut time_zone = "Z".parse::<CustomTimeZone>().unwrap();
     /// time_zone.time_zone_id = Some(tinystr!(8, "gblon").into());
-    /// let mut sink = String::new();
     ///
     /// // There are no non-fallback formats enabled:
     /// assert!(matches!(
-    ///     tzf.format(&time_zone).write_no_fallback(&mut sink),
+    ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
     ///     Err(DateTimeFormatterError::UnsupportedOptions)
     /// ));
-    /// assert!(sink.is_empty());
+    /// assert!(buf.is_empty());
     ///
     /// // Enable a non-fallback format:
     /// tzf.load_generic_location_format(&icu_testdata::unstable()).unwrap();
     /// assert!(matches!(
-    ///     tzf.format(&time_zone).write_no_fallback(&mut sink),
+    ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
     ///     Ok(Ok(_))
     /// ));
-    /// assert_eq!("London Time", sink);
+    /// assert_eq!("London Time", buf);
     ///
     /// // Errors still occur if the time zone is not supported:
-    /// sink.clear();
+    /// buf.clear();
     /// time_zone.time_zone_id = Some(tinystr!(8, "zzzzz").into());
     /// assert!(matches!(
-    ///     tzf.format(&time_zone).write_no_fallback(&mut sink),
+    ///     tzf.format(&time_zone).write_no_fallback(&mut buf),
     ///     Err(DateTimeFormatterError::UnsupportedOptions)
     /// ));
     ///
-    /// // Use `write` instead to enable infallible formatting:
-    /// assert!(matches!(
-    ///     tzf.format(&time_zone).write_to(&mut sink),
-    ///     Ok(_)
-    /// ));
-    /// assert_eq!("GMT", sink);
+    /// // Use the `Writable` trait instead to enable infallible formatting:
+    /// writeable::assert_writeable_eq!(tzf.format(&time_zone), "GMT");
     /// ```
     pub fn write_no_fallback<W>(&self, w: &mut W) -> Result<fmt::Result, Error>
     where

@@ -248,13 +248,17 @@ impl PluralCategory {
 
     /// Returns the PluralCategory coresponding to given TR35 string.
     pub fn from_tr35_string(category: &str) -> Option<PluralCategory> {
+        Self::from_tr35_bytes(category.as_bytes())
+    }
+    /// Returns the PluralCategory coresponding to given TR35 string as bytes
+    pub fn from_tr35_bytes(category: &[u8]) -> Option<PluralCategory> {
         match category {
-            "zero" => Some(PluralCategory::Zero),
-            "one" => Some(PluralCategory::One),
-            "two" => Some(PluralCategory::Two),
-            "few" => Some(PluralCategory::Few),
-            "many" => Some(PluralCategory::Many),
-            "other" => Some(PluralCategory::Other),
+            b"zero" => Some(PluralCategory::Zero),
+            b"one" => Some(PluralCategory::One),
+            b"two" => Some(PluralCategory::Two),
+            b"few" => Some(PluralCategory::Few),
+            b"many" => Some(PluralCategory::Many),
+            b"other" => Some(PluralCategory::Other),
             _ => None,
         }
     }
@@ -511,7 +515,7 @@ impl PluralRules {
     }
 
     /// Returns all [`Plural Categories`] appropriate for a [`PluralRules`] object
-    /// based on the [`LanguageIdentifier`](icu_locid::LanguageIdentifier) and [`PluralRuleType`].
+    /// based on the [`LanguageIdentifier`](icu::locid::{LanguageIdentifier}) and [`PluralRuleType`].
     ///
     /// The [`Plural Categories`] are returned in UTS 35 sorted order.
     ///

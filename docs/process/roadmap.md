@@ -12,7 +12,7 @@ The following timeline is derived from [ICU4X 1.0 PRD](./prd.md) and is optimize
 			* [x] Likely Subtags (#417)
 		* [x] DateTime
 			* [x] Day Periods (#435)
-			* [x] Timezones (#418)
+			* [x] Time zones (#418)
 			* [x] Components Bag (#481)
 		* [x] UnicodeSet
 			* [x] L3a (#478)

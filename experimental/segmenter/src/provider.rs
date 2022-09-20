@@ -6,6 +6,9 @@
 //!
 //! Read more about data providers: [`icu_provider`]
 
+// Provider structs must be stable
+#![allow(clippy::exhaustive_structs, clippy::exhaustive_enums)]
+
 use alloc::borrow::Cow;
 use icu_collections::codepointtrie::CodePointTrie;
 use icu_provider::prelude::*;

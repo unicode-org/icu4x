@@ -16,6 +16,7 @@ typedef struct ICU4XLocale ICU4XLocale;
 #endif
 #include "diplomat_result_box_ICU4XLocale_ICU4XError.h"
 #include "diplomat_result_void_ICU4XError.h"
+#include "ICU4XOrdering.h"
 #ifdef __cplusplus
 namespace capi {
 extern "C" {
@@ -47,7 +48,13 @@ diplomat_result_void_ICU4XError ICU4XLocale_script(const ICU4XLocale* self, Dipl
 
 diplomat_result_void_ICU4XError ICU4XLocale_set_script(ICU4XLocale* self, const char* bytes_data, size_t bytes_len);
 
+diplomat_result_void_ICU4XError ICU4XLocale_canonicalize(const char* bytes_data, size_t bytes_len, DiplomatWriteable* write);
+
 diplomat_result_void_ICU4XError ICU4XLocale_to_string(const ICU4XLocale* self, DiplomatWriteable* write);
+
+bool ICU4XLocale_normalizing_eq(const ICU4XLocale* self, const char* other_data, size_t other_len);
+
+ICU4XOrdering ICU4XLocale_strict_cmp(const ICU4XLocale* self, const char* other_data, size_t other_len);
 void ICU4XLocale_destroy(ICU4XLocale* self);
 
 #ifdef __cplusplus

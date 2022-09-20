@@ -20,7 +20,7 @@ use zerofrom::ZeroFrom;
 /// use std::borrow::Cow;
 ///
 /// let provider =
-///     AnyPayloadProvider::new_static::<HelloWorldV1Marker>(&HelloWorldV1 {
+///     AnyPayloadProvider::from_static::<HelloWorldV1Marker>(&HelloWorldV1 {
 ///         message: Cow::Borrowed("hello world"),
 ///     });
 ///
@@ -44,14 +44,14 @@ use zerofrom::ZeroFrom;
 pub struct AnyPayloadProvider {
     /// The [`DataKey`] for which to provide data. All others will receive a
     /// [`DataErrorKind::MissingDataKey`].
-    pub key: DataKey,
+    key: DataKey,
     /// The [`AnyPayload`] to return on matching requests.
-    pub data: AnyPayload,
+    data: AnyPayload,
 }
 
 impl AnyPayloadProvider {
     /// Creates an `AnyPayloadProvider` with an owned (allocated) payload of the given data.
-    pub fn new_owned<M: KeyedDataMarker + 'static>(data: M::Yokeable) -> Self
+    pub fn from_owned<M: KeyedDataMarker + 'static>(data: M::Yokeable) -> Self
     where
         M::Yokeable: icu_provider::RcWrapBounds,
     {
@@ -64,10 +64,29 @@ impl AnyPayloadProvider {
     }
 
     /// Creates an `AnyPayloadProvider` with a statically borrowed payload of the given data.
-    pub fn new_static<M: KeyedDataMarker>(data: &'static M::Yokeable) -> Self {
+    pub fn from_static<M: KeyedDataMarker>(data: &'static M::Yokeable) -> Self {
         AnyPayloadProvider {
             key: M::KEY,
             data: AnyPayload::from_static_ref(data),
+        }
+    }
+
+    /// Creates an `AnyPayloadProvider` from an existing [`DataPayload`].
+    pub fn from_payload<M: KeyedDataMarker + 'static>(payload: DataPayload<M>) -> Self
+    where
+        M::Yokeable: icu_provider::RcWrapBounds,
+    {
+        AnyPayloadProvider {
+            key: M::KEY,
+            data: payload.wrap_into_any_payload(),
+        }
+    }
+
+    /// Creates an `AnyPayloadProvider` from an existing [`AnyPayload`].
+    pub fn from_any_payload<M: KeyedDataMarker + 'static>(payload: AnyPayload) -> Self {
+        AnyPayloadProvider {
+            key: M::KEY,
+            data: payload,
         }
     }
 
@@ -77,7 +96,7 @@ impl AnyPayloadProvider {
         M::Yokeable: Default,
         M::Yokeable: icu_provider::RcWrapBounds,
     {
-        Self::new_owned::<M>(M::Yokeable::default())
+        Self::from_owned::<M>(M::Yokeable::default())
     }
 }
 

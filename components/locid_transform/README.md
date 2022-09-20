@@ -20,8 +20,8 @@ This minimize method returns a new Locale that is the result of running the
 ## Examples
 
 ```rust
-use icu_locid::Locale;
-use icu_locid_transform::{LocaleCanonicalizer, TransformResult};
+use icu::locid::Locale;
+use icu::locid_transform::{LocaleCanonicalizer, TransformResult};
 
 let lc = LocaleCanonicalizer::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");
@@ -34,8 +34,8 @@ assert_eq!(locale.to_string(), "ja-Latn-alalc97-fonipa");
 ```
 
 ```rust
-use icu_locid::Locale;
-use icu_locid_transform::{LocaleExpander, TransformResult};
+use icu::locid::Locale;
+use icu::locid_transform::{LocaleExpander, TransformResult};
 
 let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");
@@ -50,8 +50,8 @@ assert_eq!(locale.to_string(), "zh-Hant-TW");
 ```
 
 ```rust
-use icu_locid::Locale;
-use icu_locid_transform::{LocaleExpander, TransformResult};
+use icu::locid::Locale;
+use icu::locid_transform::{LocaleExpander, TransformResult};
 
 let lc = LocaleExpander::try_new_unstable(&icu_testdata::unstable())
     .expect("create failed");

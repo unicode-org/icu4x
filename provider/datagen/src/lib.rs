@@ -14,7 +14,7 @@
 //!
 //! ```no_run
 //! use icu_datagen::*;
-//! use icu_locid::langid;
+//! use icu::locid::langid;
 //! use std::fs::File;
 //! use std::path::PathBuf;
 //!
@@ -122,8 +122,8 @@ impl AnyProvider for DatagenProvider {
 /// assert_eq!(
 ///     icu_datagen::keys(&["list/and@1", "list/or@1"]),
 ///     vec![
-///         icu_list::provider::AndListV1Marker::KEY,
-///         icu_list::provider::OrListV1Marker::KEY,
+///         icu::list::provider::AndListV1Marker::KEY,
+///         icu::list::provider::OrListV1Marker::KEY,
 ///     ],
 /// );
 /// ```
@@ -131,7 +131,7 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
     let keys = strings.iter().map(AsRef::as_ref).collect::<HashSet<&str>>();
     all_keys()
         .into_iter()
-        .filter(|k| keys.contains(k.get_path()))
+        .filter(|k| keys.contains(&*k.path()))
         .collect()
 }
 
@@ -155,8 +155,8 @@ pub fn keys<S: AsRef<str>>(strings: &[S]) -> Vec<DataKey> {
 /// assert_eq!(
 ///     icu_datagen::keys_from_file("keys.txt")?,
 ///     vec![
-///         icu_list::provider::AndListV1Marker::KEY,
-///         icu_list::provider::OrListV1Marker::KEY,
+///         icu::list::provider::AndListV1Marker::KEY,
+///         icu::list::provider::OrListV1Marker::KEY,
 ///     ],
 /// );
 /// # Ok(())
@@ -168,7 +168,7 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
         .collect::<std::io::Result<HashSet<String>>>()?;
     Ok(all_keys()
         .into_iter()
-        .filter(|k| keys.contains(k.get_path()))
+        .filter(|k| keys.contains(&*k.path()))
         .collect())
 }
 
@@ -186,8 +186,8 @@ pub fn keys_from_file<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> 
 /// assert_eq!(
 ///     icu_datagen::keys_from_bin("target/release/my-app")?,
 ///     vec![
-///         icu_list::provider::AndListV1Marker::KEY,
-///         icu_list::provider::OrListV1Marker::KEY,
+///         icu::list::provider::AndListV1Marker::KEY,
+///         icu::list::provider::OrListV1Marker::KEY,
 ///     ],
 /// );
 /// # Ok(())
@@ -215,7 +215,7 @@ pub fn keys_from_bin<P: AsRef<Path>>(path: P) -> std::io::Result<Vec<DataKey>> {
 
     Ok(all_keys()
         .into_iter()
-        .filter(|k| candidates.contains(k.get_path().as_bytes()))
+        .filter(|k| candidates.contains(k.path().as_bytes()))
         .collect())
 }
 
@@ -390,7 +390,7 @@ fn test_keys_from_file() {
 
 #[test]
 fn test_keys_from_bin() {
-    // File obtained by changing work_log.rs to use `icu_testdata::smaller_buffer`
+    // File obtained by changing work_log.rs to use `try_new_with_buffer_provider` & `icu_testdata::small_buffer`
     // and running `cargo +nightly-2022-04-05 wasm-build-release --examples -p icu_datetime --features serde \
     // && cp target/wasm32-unknown-unknown/release-opt-size/examples/work_log.wasm provider/datagen/tests/data/`
     assert_eq!(

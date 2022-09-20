@@ -11,7 +11,7 @@ command-line utility.
 
 ```rust
 use icu_datagen::*;
-use icu_locid::langid;
+use icu::locid::langid;
 use std::fs::File;
 use std::path::PathBuf;
 

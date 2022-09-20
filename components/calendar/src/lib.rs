@@ -6,7 +6,6 @@
 //!
 //! This module is published as its own crate ([`icu_calendar`](https://docs.rs/icu_calendar/latest/icu_calendar/))
 //! and as part of the [`icu`](https://docs.rs/icu/latest/icu/) crate. See the latter for more details on the ICU4X project.
-//!
 //! The [`types`] module has a lot of common types for dealing with dates and times.
 //!
 //! [`Calendar`] is a trait that allows one to define custom calendars, and [`Date`]
@@ -29,7 +28,7 @@
 //! as well as the calendar type.
 //!
 //! ```rust
-//! use icu_calendar::{types::IsoWeekday, Date};
+//! use icu::calendar::{types::IsoWeekday, Date};
 //!
 //! // Creating ISO date: 1992-09-02.
 //! let mut date_iso = Date::new_iso_date(1992, 9, 2)
@@ -48,7 +47,7 @@
 //! Example of converting an ISO date across Indian and Buddhist calendars.
 //!
 //! ```rust
-//! use icu_calendar::{buddhist::Buddhist, indian::Indian, Date};
+//! use icu::calendar::{buddhist::Buddhist, indian::Indian, Date};
 //!
 //! // Creating ISO date: 1992-09-02.
 //! let mut date_iso = Date::new_iso_date(1992, 9, 2)
@@ -77,7 +76,7 @@
 //! `Time` object, including granularity of hour, minute, second, and nanosecond.
 //!
 //! ```rust
-//! use icu_calendar::{types::IsoWeekday, types::Time, DateTime};
+//! use icu::calendar::{types::IsoWeekday, types::Time, DateTime};
 //!
 //! // Creating ISO date: 1992-09-02 8:59
 //! let mut datetime_iso = DateTime::new_iso_datetime(1992, 9, 2, 8, 59, 0)

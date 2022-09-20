@@ -27,7 +27,7 @@ export class ICU4XGregorianDateFormatter {
 
    * Formats a {@link ICU4XIsoDate `ICU4XIsoDate`} to a string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format Rust documentation for `format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_iso_date(value: ICU4XIsoDate): string | never;
@@ -36,7 +36,7 @@ export class ICU4XGregorianDateFormatter {
 
    * Formats a {@link ICU4XIsoDateTime `ICU4XIsoDateTime`} to a string.
 
-   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format_to_write Rust documentation for `format_to_write`} for more information.
+   * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html#method.format Rust documentation for `format`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
   format_iso_datetime(value: ICU4XIsoDateTime): string | never;

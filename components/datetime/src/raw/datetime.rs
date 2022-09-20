@@ -22,7 +22,6 @@ use crate::{
     },
     DateTimeFormatterError, FormattedDateTime,
 };
-use alloc::string::String;
 
 use icu_calendar::provider::WeekDataV1Marker;
 use icu_decimal::{
@@ -121,36 +120,6 @@ impl TimeFormatter {
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
         }
-    }
-
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`IsoTimeInput`] implementer and populates the buffer with a formatted value.
-    #[inline(never)]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl IsoTimeInput,
-    ) -> core::fmt::Result {
-        let extracted = ExtractedDateTimeInput::extract_from_time(value);
-        datetime::write_pattern_plurals(
-            &self.patterns.get().0,
-            None,
-            self.symbols.as_ref().map(|s| s.get()),
-            &extracted,
-            None,
-            None,
-            &self.fixed_decimal_format,
-            w,
-        )
-        .map_err(|_| core::fmt::Error)
-    }
-
-    /// Takes a [`IsoTimeInput`] implementer and returns it formatted as a string.
-    #[inline]
-    pub fn format_to_string(&self, value: &impl IsoTimeInput) -> String {
-        let mut s = String::new();
-        let _ = self.format_to_write(&mut s, value);
-        s
     }
 }
 
@@ -269,36 +238,6 @@ impl DateFormatter {
             ordinal_rules: None,
             fixed_decimal_format: &self.fixed_decimal_format,
         }
-    }
-
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateInput`] implementer and populates the buffer with a formatted value.
-    #[inline(never)]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl DateInput,
-    ) -> core::fmt::Result {
-        let extracted = ExtractedDateTimeInput::extract_from_date(value);
-        datetime::write_pattern_plurals(
-            &self.patterns.get().0,
-            self.symbols.as_ref().map(|s| s.get()),
-            None,
-            &extracted,
-            None,
-            None,
-            &self.fixed_decimal_format,
-            w,
-        )
-        .map_err(|_| core::fmt::Error)
-    }
-
-    /// Takes a [`DateInput`] implementer and returns it formatted as a string.
-    #[inline]
-    pub fn format_to_string(&self, value: &impl DateInput) -> String {
-        let mut s = String::new();
-        let _ = self.format_to_write(&mut s, value);
-        s
     }
 }
 
@@ -463,35 +402,6 @@ impl DateTimeFormatter {
             ordinal_rules: self.ordinal_rules.as_ref(),
             fixed_decimal_format: &self.fixed_decimal_format,
         }
-    }
-
-    /// Takes a mutable reference to anything that implements [`Write`](std::fmt::Write) trait
-    /// and a [`DateTimeInput`] implementer and populates the buffer with a formatted value.
-    #[inline(never)]
-    pub fn format_to_write(
-        &self,
-        w: &mut impl core::fmt::Write,
-        value: &impl DateTimeInput,
-    ) -> core::fmt::Result {
-        datetime::write_pattern_plurals(
-            &self.patterns.get().0,
-            self.date_symbols.as_ref().map(|s| s.get()),
-            self.time_symbols.as_ref().map(|s| s.get()),
-            value,
-            self.week_data.as_ref().map(|s| s.get()),
-            self.ordinal_rules.as_ref(),
-            &self.fixed_decimal_format,
-            w,
-        )
-        .map_err(|_| core::fmt::Error)
-    }
-
-    /// Takes a [`DateTimeInput`] implementer and returns it formatted as a string.
-    #[inline]
-    pub fn format_to_string(&self, value: &impl DateTimeInput) -> String {
-        let mut s = String::new();
-        let _ = self.format_to_write(&mut s, value);
-        s
     }
 
     /// Returns a [`components::Bag`] that represents the resolved components for the

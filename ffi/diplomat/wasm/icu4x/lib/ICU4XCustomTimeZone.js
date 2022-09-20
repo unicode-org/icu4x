@@ -193,11 +193,11 @@ export class ICU4XCustomTimeZone {
     });
   }
 
-  try_set_meta_zone_id(arg_id) {
+  try_set_metazone_id(arg_id) {
     const buf_arg_id = diplomatRuntime.DiplomatBuf.str(wasm, arg_id);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCustomTimeZone_try_set_meta_zone_id(diplomat_receive_buffer, this.underlying, buf_arg_id.ptr, buf_arg_id.size);
+      wasm.ICU4XCustomTimeZone_try_set_metazone_id(diplomat_receive_buffer, this.underlying, buf_arg_id.ptr, buf_arg_id.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = {};
@@ -213,15 +213,15 @@ export class ICU4XCustomTimeZone {
     return diplomat_out;
   }
 
-  clear_meta_zone_id() {
-    wasm.ICU4XCustomTimeZone_clear_meta_zone_id(this.underlying);
+  clear_metazone_id() {
+    wasm.ICU4XCustomTimeZone_clear_metazone_id(this.underlying);
   }
 
-  meta_zone_id() {
+  metazone_id() {
     return diplomatRuntime.withWriteable(wasm, (writeable) => {
       return (() => {
         const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-        wasm.ICU4XCustomTimeZone_meta_zone_id(diplomat_receive_buffer, this.underlying, writeable);
+        wasm.ICU4XCustomTimeZone_metazone_id(diplomat_receive_buffer, this.underlying, writeable);
         const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
         if (is_ok) {
           const ok_value = {};
@@ -321,7 +321,7 @@ export class ICU4XCustomTimeZone {
     })();
   }
 
-  maybe_calculate_meta_zone(arg_metazone_calculator, arg_local_datetime) {
-    wasm.ICU4XCustomTimeZone_maybe_calculate_meta_zone(this.underlying, arg_metazone_calculator.underlying, arg_local_datetime.underlying);
+  maybe_calculate_metazone(arg_metazone_calculator, arg_local_datetime) {
+    wasm.ICU4XCustomTimeZone_maybe_calculate_metazone(this.underlying, arg_metazone_calculator.underlying, arg_local_datetime.underlying);
   }
 }

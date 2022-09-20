@@ -27,6 +27,7 @@ typedef enum ICU4XError {
   ICU4XError_DataCustomError = 266,
   ICU4XError_DataIoError = 267,
   ICU4XError_DataUnavailableBufferFormatError = 268,
+  ICU4XError_DataMismatchedAnyBufferError = 269,
   ICU4XError_LocaleUndefinedSubtagError = 512,
   ICU4XError_LocaleParserLanguageError = 513,
   ICU4XError_LocaleParserSubtagError = 514,
@@ -60,6 +61,8 @@ typedef enum ICU4XError {
   ICU4XError_TimeZoneOffsetOutOfBoundsError = 2560,
   ICU4XError_TimeZoneInvalidOffsetError = 2561,
   ICU4XError_TimeZoneMissingInputError = 2562,
+  ICU4XError_NormalizerFutureExtensionError = 2816,
+  ICU4XError_NormalizerValidationError = 2817,
 } ICU4XError;
 #ifdef __cplusplus
 } // namespace capi

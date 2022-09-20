@@ -143,11 +143,11 @@ registry!(
     LogicalOrderExceptionV1Marker,
     LowercaseV1Marker,
     MathV1Marker,
-    MetaZoneGenericNamesLongV1Marker,
-    MetaZoneGenericNamesShortV1Marker,
-    MetaZonePeriodV1Marker,
-    MetaZoneSpecificNamesLongV1Marker,
-    MetaZoneSpecificNamesShortV1Marker,
+    MetazoneGenericNamesLongV1Marker,
+    MetazoneGenericNamesShortV1Marker,
+    MetazonePeriodV1Marker,
+    MetazoneSpecificNamesLongV1Marker,
+    MetazoneSpecificNamesShortV1Marker,
     NfcInertV1Marker,
     NfdInertV1Marker,
     NfkcInertV1Marker,
@@ -202,12 +202,12 @@ fn no_key_collisions() {
     let mut map = std::collections::BTreeMap::new();
     let mut failed = false;
     for key in all_keys() {
-        if let Some(colliding_key) = map.insert(key.get_hash(), key) {
+        if let Some(colliding_key) = map.insert(key.hashed(), key) {
             println!(
                 "{:?} and {:?} collide at {:?}",
-                key.get_path(),
-                colliding_key.get_path(),
-                key.get_hash()
+                key.path(),
+                colliding_key.path(),
+                key.hashed()
             );
             failed = true;
         }

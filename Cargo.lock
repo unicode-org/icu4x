@@ -1355,7 +1355,6 @@ dependencies = [
  "displaydoc",
  "icu",
  "icu_benchmark_macros",
- "icu_calendar",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1377,8 +1376,10 @@ dependencies = [
  "icu_collections",
  "icu_datetime",
  "icu_decimal",
+ "icu_list",
  "icu_locid",
  "icu_locid_transform",
+ "icu_normalizer",
  "icu_plurals",
  "icu_properties",
  "icu_provider",
@@ -1431,6 +1432,7 @@ dependencies = [
 name = "icu_codepointtrie_builder"
 version = "0.3.3"
 dependencies = [
+ "icu",
  "icu_collections",
  "lazy_static",
  "toml",
@@ -1446,6 +1448,7 @@ dependencies = [
  "atoi",
  "databake",
  "displaydoc",
+ "icu",
  "icu_collections",
  "icu_locid",
  "icu_normalizer",
@@ -1491,6 +1494,7 @@ dependencies = [
  "displaydoc",
  "elsa",
  "eyre",
+ "icu",
  "icu_calendar",
  "icu_casemapping",
  "icu_codepointtrie_builder",
@@ -1611,6 +1615,7 @@ dependencies = [
  "databake",
  "deduplicating_array",
  "displaydoc",
+ "icu",
  "icu_benchmark_macros",
  "icu_locid",
  "icu_provider",
@@ -1648,6 +1653,7 @@ version = "1.0.0-beta1"
 dependencies = [
  "criterion",
  "databake",
+ "icu",
  "icu_locid",
  "icu_provider",
  "icu_testdata",
@@ -1798,7 +1804,7 @@ dependencies = [
 name = "icu_provider_macros"
 version = "1.0.0-beta1"
 dependencies = [
- "icu_locid",
+ "icu",
  "icu_provider",
  "proc-macro2",
  "quote",
@@ -1811,6 +1817,7 @@ version = "1.0.0-alpha1"
 dependencies = [
  "criterion",
  "databake",
+ "icu",
  "icu_collections",
  "icu_locid",
  "icu_provider",
@@ -1821,6 +1828,7 @@ dependencies = [
  "serde-json-core",
  "serde_json",
  "unicode-segmentation",
+ "utf8_iter",
  "zerovec 0.8.1",
 ]
 
@@ -1834,6 +1842,7 @@ dependencies = [
  "displaydoc",
  "eyre",
  "futures",
+ "icu",
  "icu_calendar",
  "icu_casemapping",
  "icu_collator",
@@ -3672,9 +3681,9 @@ checksum = "6a246759e66403993abca5a7165eebc0735d7781e178f03fe9ab255fae1747b5"
 
 [[package]]
 name = "utf8_iter"
-version = "1.0.1"
+version = "1.0.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "59e6dbc4923e5a3d7b88c78500d0e389fd202601a671b4914580071bdb931188"
+checksum = "64a8922555b9500e3d865caed19330172cd67cbf82203f1a3311d8c305cc9f33"
 
 [[package]]
 name = "vcell"

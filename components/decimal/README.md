@@ -15,7 +15,7 @@ follow [icu4x#275](https://github.com/unicode-org/icu4x/issues/275).
 ```rust
 use icu::decimal::FixedDecimalFormatter;
 use icu::locid::locale;
-use writeable::Writeable;
+use writeable::assert_writeable_eq;
 
 let fdf = FixedDecimalFormatter::try_new_unstable(
     &icu_testdata::unstable(),
@@ -25,10 +25,8 @@ let fdf = FixedDecimalFormatter::try_new_unstable(
 .expect("Data should load successfully");
 
 let fixed_decimal = 1000007.into();
-let formatted_value = fdf.format(&fixed_decimal);
-let formatted_str = formatted_value.write_to_string();
 
-assert_eq!("১০,০০,০০৭", formatted_str);
+assert_writeable_eq!(fdf.format(&fixed_decimal), "১০,০০,০০৭");
 ```
 
 ### Format a number with digits after the decimal separator
@@ -37,7 +35,7 @@ assert_eq!("১০,০০,০০৭", formatted_str);
 use fixed_decimal::FixedDecimal;
 use icu::decimal::FixedDecimalFormatter;
 use icu::locid::Locale;
-use writeable::Writeable;
+use writeable::assert_writeable_eq;
 
 let fdf = FixedDecimalFormatter::try_new_unstable(
     &icu_testdata::unstable(),
@@ -48,7 +46,7 @@ let fdf = FixedDecimalFormatter::try_new_unstable(
 
 let fixed_decimal = FixedDecimal::from(200050).multiplied_pow10(-2);
 
-assert_eq!("2,000.50", fdf.format(&fixed_decimal).write_to_string());
+assert_writeable_eq!(fdf.format(&fixed_decimal), "2,000.50");
 ```
 
 #### Format a number using an alternative numbering system
@@ -58,22 +56,19 @@ symbols for that numbering system.
 
 ```rust
 use icu::decimal::FixedDecimalFormatter;
-use icu::locid::Locale;
-use writeable::Writeable;
+use icu::locid::locale;
+use writeable::assert_writeable_eq;
 
-let locale = "th-u-nu-thai".parse::<Locale>().unwrap();
 let fdf = FixedDecimalFormatter::try_new_unstable(
     &icu_testdata::unstable(),
-    &locale.into(),
+    &locale!("th-u-nu-thai").into(),
     Default::default(),
 )
 .expect("Data should load successfully");
 
 let fixed_decimal = 1000007.into();
-let formatted_value = fdf.format(&fixed_decimal);
-let formatted_str = formatted_value.write_to_string();
 
-assert_eq!("๑,๐๐๐,๐๐๗", formatted_str);
+assert_writeable_eq!(fdf.format(&fixed_decimal), "๑,๐๐๐,๐๐๗");
 ```
 
 [`FixedDecimalFormatter`]: FixedDecimalFormatter

@@ -60,7 +60,7 @@ fn test_grouper() {
     use icu_locid::LanguageIdentifier;
     use icu_provider::prelude::*;
     use icu_provider_adapters::any_payload::AnyPayloadProvider;
-    use writeable::Writeable;
+    use writeable::assert_writeable_eq;
 
     let western_sizes = GroupingSizesV1 {
         min_grouping: 1,
@@ -155,7 +155,7 @@ fn test_grouper() {
     for cas in &cases {
         for i in 0..4 {
             let dec = FixedDecimal::from(1).multiplied_pow10((i as i16) + 3);
-            let provider = AnyPayloadProvider::new_owned::<DecimalSymbolsV1Marker>(
+            let provider = AnyPayloadProvider::from_owned::<DecimalSymbolsV1Marker>(
                 crate::provider::DecimalSymbolsV1 {
                     grouping_sizes: cas.sizes,
                     ..Default::default()
@@ -172,7 +172,7 @@ fn test_grouper() {
             )
             .unwrap();
             let actual = fdf.format(&dec);
-            assert_eq!(cas.expected[i], actual.write_to_string(), "{:?}", cas);
+            assert_writeable_eq!(actual, cas.expected[i], "{:?}", cas);
         }
     }
 }

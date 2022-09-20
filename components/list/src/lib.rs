@@ -12,8 +12,8 @@
 //! ## Formatting *and* lists in Spanish
 //!
 //! ```
-//! # use icu_list::{ListFormatter, ListStyle};
-//! # use icu_locid::locale;
+//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_and_unstable(
@@ -38,8 +38,8 @@
 //! ## Formatting *or* lists in Thai
 //!
 //! ```
-//! # use icu_list::{ListFormatter, ListStyle};
-//! # use icu_locid::locale;
+//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_or_unstable(
@@ -56,8 +56,8 @@
 //! ## Formatting unit lists in English
 //!
 //! ```
-//! # use icu_list::{ListFormatter, ListStyle};
-//! # use icu_locid::locale;
+//! # use icu::list::{ListFormatter, ListStyle};
+//! # use icu::locid::locale;
 //! # use writeable::*;
 //! #
 //! let list_formatter = ListFormatter::try_new_unit_unstable(

@@ -66,24 +66,24 @@ mod tests;
 /// // Note: FooV1Marker implements `DataMarker` but not `KeyedDataMarker`.
 /// // The other two implement `KeyedDataMarker`.
 ///
-/// assert_eq!(BarV1Marker::KEY.get_path(), "demo/bar@1");
+/// assert_eq!(&*BarV1Marker::KEY.path(), "demo/bar@1");
 /// assert_eq!(
-///     BarV1Marker::KEY.get_metadata().fallback_priority,
+///     BarV1Marker::KEY.metadata().fallback_priority,
 ///     icu_provider::FallbackPriority::Language
 /// );
 /// assert_eq!(
-///     BarV1Marker::KEY.get_metadata().extension_key,
+///     BarV1Marker::KEY.metadata().extension_key,
 ///     None
 /// );
 ///
-/// assert_eq!(BazV1Marker::KEY.get_path(), "demo/baz@1[R][u-ca]");
+/// assert_eq!(&*BazV1Marker::KEY.path(), "demo/baz@1[R][u-ca]");
 /// assert_eq!(
-///     BazV1Marker::KEY.get_metadata().fallback_priority,
+///     BazV1Marker::KEY.metadata().fallback_priority,
 ///     icu_provider::FallbackPriority::Region
 /// );
 /// assert_eq!(
-///     BazV1Marker::KEY.get_metadata().extension_key,
-///     Some(icu_locid::extensions_unicode_key!("ca"))
+///     BazV1Marker::KEY.metadata().extension_key,
+///     Some(icu::locid::extensions_unicode_key!("ca"))
 /// );
 /// ```
 ///

@@ -8,7 +8,7 @@ import { ICU4XCollatorStrength } from "./ICU4XCollatorStrength";
 
 /**
 
- * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu_collator/struct.CollatorOptions.html Rust documentation for `CollatorOptions`} for more information.
+ * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.CollatorOptions.html Rust documentation for `CollatorOptions`} for more information.
  */
 export class ICU4XCollatorOptions {
   strength: ICU4XCollatorStrength;

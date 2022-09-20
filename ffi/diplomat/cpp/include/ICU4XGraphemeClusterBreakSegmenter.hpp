@@ -44,9 +44,9 @@ class ICU4XGraphemeClusterBreakSegmenter {
   static diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
 
   /**
-   * Segments a UTF-8 string.
+   * Segments a (potentially ill-formed) UTF-8 string.
    * 
-   * See the [Rust documentation for `segment_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_str) for more information.
+   * See the [Rust documentation for `segment_utf8`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.segment_utf8) for more information.
    */
   ICU4XGraphemeClusterBreakIteratorUtf8 segment_utf8(const std::string_view input) const;
 

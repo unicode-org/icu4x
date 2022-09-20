@@ -13,6 +13,7 @@
 
 class ICU4XLocale;
 #include "ICU4XError.hpp"
+#include "ICU4XOrdering.hpp"
 
 /**
  * A destruction policy for using ICU4XLocale with std::unique_ptr.
@@ -50,6 +51,8 @@ class ICU4XLocale {
 
   /**
    * Construct a default undefined [`ICU4XLocale`] "und".
+   * 
+   * See the [Rust documentation for `UND`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
    */
   static ICU4XLocale und();
 
@@ -154,6 +157,24 @@ class ICU4XLocale {
   diplomat::result<std::monostate, ICU4XError> set_script(const std::string_view bytes);
 
   /**
+   * Best effort locale canonicalizer that doesn't need any data
+   * 
+   * Use ICU4XLocaleCanonicalizer for better control and functionality
+   * 
+   * See the [Rust documentation for `canonicalize`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.canonicalize) for more information.
+   */
+  template<typename W> static diplomat::result<std::monostate, ICU4XError> canonicalize_to_writeable(const std::string_view bytes, W& write);
+
+  /**
+   * Best effort locale canonicalizer that doesn't need any data
+   * 
+   * Use ICU4XLocaleCanonicalizer for better control and functionality
+   * 
+   * See the [Rust documentation for `canonicalize`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.canonicalize) for more information.
+   */
+  static diplomat::result<std::string, ICU4XError> canonicalize(const std::string_view bytes);
+
+  /**
    * Write a string representation of [`ICU4XLocale`] to `write`
    * 
    * See the [Rust documentation for `write_to`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to) for more information.
@@ -166,6 +187,20 @@ class ICU4XLocale {
    * See the [Rust documentation for `write_to`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.write_to) for more information.
    */
   diplomat::result<std::string, ICU4XError> to_string() const;
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `normalizing_eq`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.normalizing_eq) for more information.
+   */
+  bool normalizing_eq(const std::string_view other) const;
+
+  /**
+   * 
+   * 
+   * See the [Rust documentation for `strict_cmp`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.strict_cmp) for more information.
+   */
+  ICU4XOrdering strict_cmp(const std::string_view other) const;
   inline const capi::ICU4XLocale* AsFFI() const { return this->inner.get(); }
   inline capi::ICU4XLocale* AsFFIMut() { return this->inner.get(); }
   inline ICU4XLocale(capi::ICU4XLocale* i) : inner(i) {}
@@ -344,6 +379,29 @@ inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::set_script(cons
   }
   return diplomat_result_out_value;
 }
+template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::canonicalize_to_writeable(const std::string_view bytes, W& write) {
+  capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_canonicalize(bytes.data(), bytes.size(), &write_writer);
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value;
+}
+inline diplomat::result<std::string, ICU4XError> ICU4XLocale::canonicalize(const std::string_view bytes) {
+  std::string diplomat_writeable_string;
+  capi::DiplomatWriteable diplomat_writeable_out = diplomat::WriteableFromString(diplomat_writeable_string);
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_canonicalize(bytes.data(), bytes.size(), &diplomat_writeable_out);
+  diplomat::result<std::monostate, ICU4XError> diplomat_result_out_value;
+  if (diplomat_result_raw_out_value.is_ok) {
+    diplomat_result_out_value = diplomat::Ok(std::monostate());
+  } else {
+    diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
+  }
+  return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+}
 template<typename W> inline diplomat::result<std::monostate, ICU4XError> ICU4XLocale::to_string_to_writeable(W& write) const {
   capi::DiplomatWriteable write_writer = diplomat::WriteableTrait<W>::Construct(write);
   auto diplomat_result_raw_out_value = capi::ICU4XLocale_to_string(this->inner.get(), &write_writer);
@@ -366,5 +424,11 @@ inline diplomat::result<std::string, ICU4XError> ICU4XLocale::to_string() const 
     diplomat_result_out_value = diplomat::Err<ICU4XError>(std::move(static_cast<ICU4XError>(diplomat_result_raw_out_value.err)));
   }
   return diplomat_result_out_value.replace_ok(std::move(diplomat_writeable_string));
+}
+inline bool ICU4XLocale::normalizing_eq(const std::string_view other) const {
+  return capi::ICU4XLocale_normalizing_eq(this->inner.get(), other.data(), other.size());
+}
+inline ICU4XOrdering ICU4XLocale::strict_cmp(const std::string_view other) const {
+  return static_cast<ICU4XOrdering>(capi::ICU4XLocale_strict_cmp(this->inner.get(), other.data(), other.size()));
 }
 #endif
