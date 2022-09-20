@@ -9,7 +9,7 @@
 
 int main() {
     ICU4XLogger_init_simple_logger();
-    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create("bn", 2);
+    diplomat_result_box_ICU4XLocale_ICU4XError locale_result = ICU4XLocale_create_from_string("bn", 2);
     if (!locale_result.is_ok) {
         return 1;
     }

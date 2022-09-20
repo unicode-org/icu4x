@@ -91,7 +91,7 @@ pub mod ffi {
 
         fn try_new_with_options_impl<D>(
             provider: &D,
-            options: ICU4XLineBreakOptions,
+            options: ICU4XLineBreakOptionsV1,
         ) -> DiplomatResult<Box<ICU4XLineBreakSegmenter>, ICU4XError>
         where
             D: DataProvider<LineBreakDataV1Marker>
@@ -190,8 +190,8 @@ impl From<ffi::ICU4XWordBreakRule> for WordBreakRule {
     }
 }
 
-impl From<ffi::ICU4XLineBreakOptions> for LineBreakOptions {
-    fn from(other: ffi::ICU4XLineBreakOptions) -> Self {
+impl From<ffi::ICU4XLineBreakOptionsV1> for LineBreakOptions {
+    fn from(other: ffi::ICU4XLineBreakOptionsV1) -> Self {
         let mut options = LineBreakOptions::default();
         options.line_break_rule = other.line_break_rule.into();
         options.word_break_rule = other.word_break_rule.into();
