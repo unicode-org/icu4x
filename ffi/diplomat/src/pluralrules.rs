@@ -126,7 +126,7 @@ pub mod ffi {
             FixedDecimal::try_from(s)
                 .as_ref()
                 .map(PluralOperands::from)
-                .map(|ops| ICU4XPluralOperands(ops))
+                .map(ICU4XPluralOperands)
                 // XXX should this have its own errors?
                 .map_err(|_| ICU4XError::PluralParserError)
                 .into()
