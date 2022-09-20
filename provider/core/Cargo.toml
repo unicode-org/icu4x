@@ -46,7 +46,7 @@ log_error_context = ["log"]
 # Features for specific serde formats
 deserialize_json = ["serde", "serde_json"]
 deserialize_bincode_1 = ["serde", "bincode", "std"]
-deserialize_postcard_07 = ["serde", "postcard"]
+deserialize_postcard_1 = ["serde", "postcard"]
 
 # Dependencies for running data generation
 datagen = ["dhat", "serde", "erased-serde", "databake", "std", "serde_json", "sync", "yoke/serde"]
