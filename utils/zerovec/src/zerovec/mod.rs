@@ -627,8 +627,8 @@ where
     T: AsULE,
 {
     /// Mutates each element according to a given function, meant to be
-    /// a more convenient version of calling `.iter_mut()` on
-    /// [`ZeroVec::to_mut()`] which serves fewer use cases.
+    /// a more convenient version of calling `.iter_mut()` with
+    /// [`ZeroVec::with_mut()`] which serves fewer use cases.
     ///
     /// This will convert the ZeroVec into an owned ZeroVec if not already the case.
     ///
