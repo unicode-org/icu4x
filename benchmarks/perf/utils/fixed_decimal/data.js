@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663714101906,
+  "lastUpdate": 1663717819779,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -51922,6 +51922,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "to_string/write_to/908070605040302010",
             "value": 76,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "7bffd2fd4299b98f2a1c614587569d2f622ba152",
+          "message": "Improve docs for enum properties without changing API (#2597)",
+          "timestamp": "2022-09-20T16:36:50-07:00",
+          "tree_id": "b458a78994e710f86bf87fcc5f72d5fc1054c9f9",
+          "url": "https://github.com/unicode-org/icu4x/commit/7bffd2fd4299b98f2a1c614587569d2f622ba152"
+        },
+        "date": 1663717767279,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 116712,
+            "range": "± 431",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23569,
+            "range": "± 145",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63219,
+            "range": "± 262",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 188,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 77,
             "range": "± 0",
             "unit": "ns/iter"
           },
