@@ -79,12 +79,11 @@ impl crate::DatagenProvider {
                 .map_err(|e| DataError::custom("Era codes").with_display_context(&e))?;
             if start_date.year >= 1868 || japanext {
                 ret.dates_to_eras
-                    .to_mut()
-                    .push((start_date, code).to_unaligned());
+                    .with_mut(|v| v.push((start_date, code).to_unaligned()));
             }
         }
 
-        ret.dates_to_eras.to_mut().sort_unstable();
+        ret.dates_to_eras.with_mut(|v| v.sort_unstable());
 
         // Integrity check
         //

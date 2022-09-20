@@ -47,12 +47,13 @@ pub fn maybe_replace(pattern: &mut Pattern, f: impl Fn(&PatternItem) -> Option<P
         .find_map(|(i, item)| f(&item).map(|result| (i, result)));
     #[allow(clippy::indexing_slicing)] // i was produced by enumerate
     if let Some((i, result)) = result {
-        let owned = pattern.items.to_mut();
-        owned[i] = result.to_unaligned();
-        owned.iter_mut().skip(i).for_each(|item| {
-            if let Some(new_item) = f(&PatternItem::from_unaligned(*item)) {
-                *item = new_item.to_unaligned();
-            }
+        pattern.items.with_mut(|owned| {
+            owned[i] = result.to_unaligned();
+            owned.iter_mut().skip(i).for_each(|item| {
+                if let Some(new_item) = f(&PatternItem::from_unaligned(*item)) {
+                    *item = new_item.to_unaligned();
+                }
+            });
         });
     }
 }
