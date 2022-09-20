@@ -1,4 +1,3 @@
-import { u64, usize } from "./diplomat-runtime"
 import { FFIError } from "./diplomat-runtime"
 import { ICU4XError } from "./ICU4XError";
 
@@ -9,12 +8,6 @@ import { ICU4XError } from "./ICU4XError";
  * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html Rust documentation for `PluralOperands`} for more information.
  */
 export class ICU4XPluralOperands {
-  i: u64;
-  v: usize;
-  w: usize;
-  f: u64;
-  t: u64;
-  c: usize;
 
   /**
 

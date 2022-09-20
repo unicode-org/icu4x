@@ -80,7 +80,7 @@ pub mod ffi {
 
         /// Get the category for a given number represented as operands
         #[diplomat::rust_link(icu::plurals::PluralRules::category_for, FnInStruct)]
-        pub fn category_for(&self, op: ICU4XPluralOperands) -> ICU4XPluralCategory {
+        pub fn category_for(&self, op: &ICU4XPluralOperands) -> ICU4XPluralCategory {
             let res = self.0.category_for(op.0);
 
             res.into()
@@ -121,7 +121,7 @@ pub mod ffi {
     impl ICU4XPluralOperands {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
-        pub fn create(s: &str) -> DiplomatResult<ICU4XPluralOperands, ICU4XError> {
+        pub fn create(s: &str) -> DiplomatResult<Box<ICU4XPluralOperands>, ICU4XError> {
             let s = s.as_bytes(); // #2520
             FixedDecimal::try_from(s)
                 .as_ref()
@@ -129,6 +129,7 @@ pub mod ffi {
                 .map(ICU4XPluralOperands)
                 // XXX should this have its own errors?
                 .map_err(|_| ICU4XError::PluralParserError)
+                .map(Box::new)
                 .into()
         }
     }

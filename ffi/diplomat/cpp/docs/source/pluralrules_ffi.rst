@@ -46,24 +46,12 @@
         See the `Rust documentation for from_tr35_bytes <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/enum.PluralCategory.html#method.from_tr35_bytes>`__ for more information.
 
 
-.. cpp:struct:: ICU4XPluralOperands
+.. cpp:class:: ICU4XPluralOperands
 
     FFI version of ``PluralOperands``.
 
     See the `Rust documentation for PluralOperands <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html>`__ for more information.
 
-
-    .. cpp:member:: uint64_t i
-
-    .. cpp:member:: size_t v
-
-    .. cpp:member:: size_t w
-
-    .. cpp:member:: uint64_t f
-
-    .. cpp:member:: uint64_t t
-
-    .. cpp:member:: size_t c
 
     .. cpp:function:: static diplomat::result<ICU4XPluralOperands, ICU4XError> create(const std::string_view s)
 
@@ -93,7 +81,7 @@
         See the `Rust documentation for try_new_ordinal_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.try_new_ordinal_unstable>`__ for more information.
 
 
-    .. cpp:function:: ICU4XPluralCategory category_for(ICU4XPluralOperands op) const
+    .. cpp:function:: ICU4XPluralCategory category_for(const ICU4XPluralOperands& op) const
 
         Get the category for a given number represented as operands
 
