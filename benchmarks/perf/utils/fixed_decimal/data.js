@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663706414707,
+  "lastUpdate": 1663713815215,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -51809,6 +51809,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 94,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e8a90e4b8273e098f75a0dc6d0510f9c32bafb13",
+          "message": "Remove re-export of FormattedFixedDecimal (#2595)",
+          "timestamp": "2022-09-20T15:28:35-07:00",
+          "tree_id": "a440a26677300ff041752db12328f491e742f6a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/e8a90e4b8273e098f75a0dc6d0510f9c32bafb13"
+        },
+        "date": 1663713762374,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117457,
+            "range": "± 409",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23500,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 63105,
+            "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 187,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 76,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
             "unit": "ns/iter"
           }
         ]
