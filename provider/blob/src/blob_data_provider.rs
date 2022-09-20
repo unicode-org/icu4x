@@ -68,7 +68,6 @@ impl BlobDataProvider {
         })
     }
 
-
     /// Create a [`BlobDataProvider`] from a static blob. This is a special case of
     /// [`try_new_from_blob`] and is allocation-free.
     pub fn try_new_from_static_blob(blob: &'static [u8]) -> Result<Self, DataError> {
