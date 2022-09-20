@@ -61,9 +61,9 @@ mod test {
     fn test_zerovec() {
         let mut vec = ZeroVec::<TinyAsciiStr<7>>::new();
 
-        vec.to_mut().push("foobar".parse().unwrap());
-        vec.to_mut().push("baz".parse().unwrap());
-        vec.to_mut().push("quux".parse().unwrap());
+        vec.with_mut(|v| v.push("foobar".parse().unwrap()));
+        vec.with_mut(|v| v.push("baz".parse().unwrap()));
+        vec.with_mut(|v| v.push("quux".parse().unwrap()));
 
         let bytes = vec.as_bytes();
 
