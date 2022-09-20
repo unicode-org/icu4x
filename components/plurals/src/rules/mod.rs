@@ -108,7 +108,7 @@
 //!
 //! # Summary
 //!
-//! For [`PluralRuleType::Cardinal`] in English, we can restart the rule's logic as:
+//! For [`PluralRuleType::Cardinal`] in English, we can restate the rule's logic as:
 //!
 //! When the `PluralOperands::i` is `1` and `PluralOperands::v` is `0` (or equivalent thereof), [`PluralCategory::One`]
 //! should be used, otherwise [`PluralCategory::Other`] should be used.
