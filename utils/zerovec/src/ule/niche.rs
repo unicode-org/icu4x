@@ -2,11 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use core::mem::size_of;
-use core::{
-    marker::Copy,
-    ops::{Deref, DerefMut},
-};
+use core::{marker::Copy, mem::size_of};
 
 use super::{AsULE, ULE};
 
@@ -156,20 +152,6 @@ impl<U, const N: usize> Default for NichedOption<U, N> {
 impl<U, const N: usize> From<Option<U>> for NichedOption<U, N> {
     fn from(o: Option<U>) -> Self {
         Self(o)
-    }
-}
-
-impl<T: AsULE, const N: usize> Deref for NichedOption<T, N> {
-    type Target = Option<T>;
-
-    fn deref(&self) -> &Self::Target {
-        &self.0
-    }
-}
-
-impl<T: AsULE, const N: usize> DerefMut for NichedOption<T, N> {
-    fn deref_mut(&mut self) -> &mut Self::Target {
-        &mut self.0
     }
 }
 
