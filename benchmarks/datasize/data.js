@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663713408234,
+  "lastUpdate": 1663713445131,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27623,6 +27623,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/e8a90e4b8273e098f75a0dc6d0510f9c32bafb13"
         },
         "date": 1663713345442,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a2efa18f7b05c00e9947044e4ceaf86af433f43b",
+          "message": "DateTime: Change default length to medium and add tests for Default (#2596)",
+          "timestamp": "2022-09-20T15:28:52-07:00",
+          "tree_id": "a9a4745a6105dcf6c90c6fa03484d92f2a11486a",
+          "url": "https://github.com/unicode-org/icu4x/commit/a2efa18f7b05c00e9947044e4ceaf86af433f43b"
+        },
+        "date": 1663713388802,
         "tool": "ndjson",
         "benches": [
           {
