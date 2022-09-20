@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663705780777,
+  "lastUpdate": 1663713408234,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27593,6 +27593,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/16c90be4247f0d35852ee6cd55c63e5c4c2680a6"
         },
         "date": 1663705722150,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "e8a90e4b8273e098f75a0dc6d0510f9c32bafb13",
+          "message": "Remove re-export of FormattedFixedDecimal (#2595)",
+          "timestamp": "2022-09-20T15:28:35-07:00",
+          "tree_id": "a440a26677300ff041752db12328f491e742f6a3",
+          "url": "https://github.com/unicode-org/icu4x/commit/e8a90e4b8273e098f75a0dc6d0510f9c32bafb13"
+        },
+        "date": 1663713345442,
         "tool": "ndjson",
         "benches": [
           {
