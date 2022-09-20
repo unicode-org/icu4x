@@ -91,7 +91,9 @@ where
     buf: *mut [T::ULE],
     /// Borrowed if zero. Capacity of buffer above if not
     capacity: usize,
-    /// Marker type
+    /// Marker type, signalling variance and dropck behavior
+    /// by containing all potential types this type represents
+    #[allow(clippy::type_complexity)] // needed to get correct marker type behavior
     marker: PhantomData<(Vec<T::ULE>, &'a [T::ULE])>,
 }
 
