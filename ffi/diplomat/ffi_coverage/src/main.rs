@@ -236,7 +236,6 @@ lazy_static::lazy_static! {
         "icu::datetime::FormattedDateTime",
         "icu::datetime::FormattedZonedDateTime",
         "icu::decimal::FormattedFixedDecimal",
-        "icu::decimal::format::FormattedFixedDecimal",
 
         // Rust-specific power user API for rules ASTS and such
         // could be exposed in the future but it's complicated
