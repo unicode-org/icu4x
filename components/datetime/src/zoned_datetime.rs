@@ -51,10 +51,11 @@ use crate::{
 /// use icu::datetime::TimeZoneFormatterOptions;
 /// use icu::timezone::CustomTimeZone;
 /// use std::str::FromStr;
+/// use writeable::assert_writeable_eq;
 ///
 /// let options = length::Bag::from_date_time_style(
 ///     length::Date::Medium,
-///     length::Time::Short,
+///     length::Time::Long,
 /// );
 /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
 ///     &icu_testdata::unstable(),
@@ -67,7 +68,9 @@ use crate::{
 /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
 ///
-/// let value = zdtf.format(&datetime, &time_zone);
+/// let formatted_date = zdtf.format(&datetime, &time_zone);
+///
+/// assert_writeable_eq!(formatted_date, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
 /// ```
 pub struct TypedZonedDateTimeFormatter<C>(raw::ZonedDateTimeFormatter, PhantomData<C>);
 
