@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663685342202,
+  "lastUpdate": 1663687596346,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27538,6 +27538,36 @@ window.BENCHMARK_DATA = {
           {
             "name": "provider/testdata/data/testdata.postcard",
             "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "9cb743f8445210db627ba8effd7da6f5ec1312d1",
+          "message": "Remove metadata from path and add FallbackSupplement (#2567)",
+          "timestamp": "2022-09-20T10:24:03-05:00",
+          "tree_id": "03ada325295547c8f11ab8edb7549e92a51de418",
+          "url": "https://github.com/unicode-org/icu4x/commit/9cb743f8445210db627ba8effd7da6f5ec1312d1"
+        },
+        "date": 1663687532791,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
             "unit": "bytes",
             "biggerIsBetter": false
           }
