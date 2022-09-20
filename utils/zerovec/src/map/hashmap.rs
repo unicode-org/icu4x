@@ -11,19 +11,14 @@ use alloc::vec::Vec;
 use core::hash::{Hash, Hasher};
 
 #[inline]
-fn create_hasher_with_seed(seed: u128) -> AHasher {
-    AHasher::new_with_keys(seed, 0xaabbccdd)
-}
-
-#[inline]
-fn compute_hash<K: Hash>(seed: u32, k: K, m: usize) -> usize {
-    let mut hasher = create_hasher_with_seed(seed.into());
+fn compute_hash<K: Hash>(seed: u32, k: &K, m: usize) -> usize {
+    let mut hasher = AHasher::new_with_keys(seed.into(), 0xaabbccdd);
     k.hash(&mut hasher);
     hasher.finish() as usize % m
 }
 
 #[derive(Debug)]
-pub struct HashIndex<'a> {
+struct HashIndex<'a> {
     displacements: FlexZeroVec<'a>,
     reverse_mapping: FlexZeroVec<'a>,
 }
@@ -35,19 +30,6 @@ impl<'a> HashIndex<'a> {
         A: Borrow<K>,
         K: 'b + ?Sized + Hash,
         I: ExactSizeIterator<Item = A>,
-    {
-        HashIndex::build_from_exact_iter_with_hash_fn(keys, |seed, k, len| {
-            compute_hash(seed, k, len)
-        })
-    }
-
-    #[inline]
-    pub fn build_from_exact_iter_with_hash_fn<'b, K, I, A, H>(keys: I, h: H) -> Self
-    where
-        A: Borrow<K>,
-        K: 'b + ?Sized,
-        I: ExactSizeIterator<Item = A>,
-        H: Fn(u32, &K, usize) -> usize,
     {
         let len = keys.len();
 
@@ -61,7 +43,7 @@ impl<'a> HashIndex<'a> {
         for (i, k) in keys.enumerate() {
             // Compute first level hash of the key bytes.
             // First level uses a seed value of 0.
-            let l1 = h(0x00, k.borrow(), len);
+            let l1 = compute_hash(0x00, &k.borrow(), len);
             if let Some(v) = bucket_sizes.get_mut(l1 as usize) {
                 *v += 1;
             }
@@ -104,10 +86,10 @@ impl<'a> HashIndex<'a> {
         while start < len {
             // Bucket span with the same first level hash
             #[allow(clippy::indexing_slicing)] // start is always within bounds of `bucket_flatten`
-            let l1 = bucket_flatten[start].0 as usize;
+            let l1 = bucket_flatten[start].0;
             #[allow(clippy::indexing_slicing)] // l1 is always within bounds of `bucket_sizes`
             let end = start + bucket_sizes[l1];
-            #[allow(clippy::indexing_slicing)] // start, end are always within bounds of
+            #[allow(clippy::indexing_slicing)] // start, end - 1 are always within bounds of
             // `bucket_sizes`
             let buckets = &bucket_flatten[start..end];
 
@@ -116,7 +98,7 @@ impl<'a> HashIndex<'a> {
                 generation += 1;
 
                 for (_, (k, _)) in buckets {
-                    let displacement_idx = h(seed, k.borrow(), len) as usize;
+                    let displacement_idx = compute_hash(seed, &k.borrow(), len);
                     #[allow(clippy::indexing_slicing)] // displacement_idx is always within bounds
                     if occupied[displacement_idx] || assignments[displacement_idx] == generation {
                         continue 'seed;
@@ -209,13 +191,14 @@ where
 {
     #[inline]
     pub fn get<'b>(&'b self, key: &'b K) -> Option<&'b V::GetType> {
-        self.index
-            .index(&key)
-            .and_then(|i| {
-                #[allow(clippy::unwrap_used)] // i is in 0..self.keys.len()
-                K::Container::zvl_get_as_t(self.keys.zvl_get(i).unwrap(), |k| key.eq(k)).then(|| i)
-            })
-            .and_then(|i| self.values.zvl_get(i))
+        let i = self.index.index(&key)?;
+        #[allow(clippy::unwrap_used)] // i is in 0..self.keys.len()
+        let found = self.keys.zvl_get(i).unwrap();
+        if K::Container::zvl_get_as_t(found, |found| found == key) {
+            self.values.zvl_get(i)
+        } else {
+            None
+        }
     }
 
     /// Build a [`ZeroHashMapStatic`] from an iterator returning (K, V) tuples.
