@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663688182115,
+  "lastUpdate": 1663706375695,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -71201,6 +71201,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 4650,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "35614614+pdogr@users.noreply.github.com",
+            "name": "Pawan Dogra",
+            "username": "pdogr"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "16c90be4247f0d35852ee6cd55c63e5c4c2680a6",
+          "message": "Add NicheBytes trait and NichedOptionULE (#2501)\n\n* Add NicheBytes trait, NichedOption, NichedOptionULE\r\n\r\n* Add ULE types for NonZeroU8, NonZeroI8",
+          "timestamp": "2022-09-20T20:27:15Z",
+          "tree_id": "7d23cd5982d146c6d09390f0cd7b0f4199bf2856",
+          "url": "https://github.com/unicode-org/icu4x/commit/16c90be4247f0d35852ee6cd55c63e5c4c2680a6"
+        },
+        "date": 1663706317734,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 64207,
+            "range": "± 286",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 107994,
+            "range": "± 1164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 60507,
+            "range": "± 98",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 68576,
+            "range": "± 89",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 64501,
+            "range": "± 125",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 72027,
+            "range": "± 99",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 103126,
+            "range": "± 3084",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 115987,
+            "range": "± 214",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 108192,
+            "range": "± 154",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 119535,
+            "range": "± 187",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5133,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
