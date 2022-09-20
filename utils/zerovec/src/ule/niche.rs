@@ -24,8 +24,8 @@ pub trait NicheBytes<const N: usize> {
 /// [`ULE`] type for [`NichedOption<U,N>`] where U implements [`NicheBytes`].
 /// The invalid bit pattern is used as the niche.
 ///
-/// This uses 1 byte less than [`crate::ule::OptionULE<U>`] to represent [`NichedOption<U,N>`]
-/// which Derefs to [`Option<U>`].
+/// This uses 1 byte less than [`crate::ule::OptionULE<U>`] to represent [`NichedOption<U,N>`].
+///
 /// # Example
 ///
 /// ```
