@@ -212,6 +212,7 @@ pub struct ZeroVecAttrs {
     pub serialize: bool,
     pub deserialize: bool,
     pub debug: bool,
+    pub hash: bool,
 }
 
 /// Removes all known zerovec:: attributes from attrs and validates them
@@ -243,6 +244,8 @@ pub fn extract_attributes_common(
             attrs.deserialize = true;
         } else if ident == "Debug" {
             attrs.debug = true;
+        } else if ident == "Hash" {
+            attrs.hash = true;
         } else {
             return Err(Error::new(
                 ident.span(),

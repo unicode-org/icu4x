@@ -37,7 +37,7 @@ use core::convert::TryFrom;
 /// CharULE::parse_byte_slice(bytes).expect_err("Invalid bytes");
 /// ```
 #[repr(transparent)]
-#[derive(Debug, PartialEq, Eq, Clone, Copy)]
+#[derive(Debug, PartialEq, Eq, Clone, Copy, Hash)]
 pub struct CharULE([u8; 3]);
 
 // Safety (based on the safety checklist on the ULE trait):

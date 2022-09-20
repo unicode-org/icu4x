@@ -8,7 +8,7 @@ use criterion::{black_box, criterion_group, criterion_main, Criterion};
 
 use zerovec::maps::ZeroMapKV;
 use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};
-use zerovec::ZeroMap;
+use zerovec::{ZeroHashMapStatic, ZeroMap};
 
 const DATA: [(&str, &str); 16] = [
     ("ar", "Arabic"),
@@ -92,6 +92,9 @@ fn overview_bench(c: &mut Criterion) {
     bench_lookup(c);
     bench_lookup_large(c);
 
+    bench_zerohashmap_lookup(c);
+    bench_zerohashmap_lookup_large(c);
+
     bench_hashmap(c);
 
     #[cfg(feature = "generate")]
@@ -166,6 +169,49 @@ fn read_large_zeromap_postcard_bytes() -> Vec<u8> {
         "/benches/testdata/large_zeromap.postcard"
     );
     fs::read(path).unwrap()
+}
+
+fn bench_zerohashmap_lookup(c: &mut Criterion) {
+    let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
+    let keys = map.iter();
+    let zero_hash_map: ZeroHashMapStatic<Index32Str, Index32Str> =
+        ZeroHashMapStatic::from_exact_iter(keys);
+
+    c.bench_function("zerohashmap/lookup/small", |b| {
+        b.iter(|| {
+            assert_eq!(
+                zero_hash_map.get(black_box(indexify("iu"))).map(|x| &x.0),
+                Some("Inuktitut")
+            );
+            assert_eq!(
+                zero_hash_map.get(black_box(indexify("zz"))).map(|x| &x.0),
+                None
+            );
+        });
+    });
+}
+
+fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
+    let buf = read_large_zeromap_postcard_bytes();
+    let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
+    let keys = map.iter();
+    let zero_hash_map: ZeroHashMapStatic<Index32Str, Index32Str> =
+        ZeroHashMapStatic::from_exact_iter(keys);
+
+    c.bench_function("zerohashmap/lookup/large", |b| {
+        b.iter(|| {
+            assert_eq!(
+                zero_hash_map
+                    .get(black_box(indexify("iu3333")))
+                    .map(|x| &x.0),
+                Some("Inuktitut")
+            );
+            assert_eq!(
+                zero_hash_map.get(black_box(indexify("zz"))).map(|x| &x.0),
+                None
+            );
+        });
+    });
 }
 
 fn bench_hashmap(c: &mut Criterion) {
@@ -256,7 +302,7 @@ criterion_main!(benches);
 #[zerovec::make_varule(Index32Str)]
 #[zerovec::skip_derive(ZeroMapKV)]
 #[derive(Eq, PartialEq, Ord, PartialOrd, serde::Serialize, serde::Deserialize)]
-#[zerovec::derive(Serialize, Deserialize)]
+#[zerovec::derive(Serialize, Deserialize, Hash)]
 pub(crate) struct Index32StrBorrowed<'a>(#[serde(borrow)] pub &'a str);
 
 impl<'a> ZeroMapKV<'a> for Index32Str {

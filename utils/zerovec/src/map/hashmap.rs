@@ -4,7 +4,6 @@
 
 use super::*;
 use crate::flexzerovec::{FlexZeroVec, FlexZeroVecOwned};
-use crate::ule::AsULE;
 use ahash::AHasher;
 use alloc::borrow::Borrow;
 use alloc::vec;
@@ -31,10 +30,10 @@ pub struct HashIndex<'a> {
 
 impl<'a> HashIndex<'a> {
     #[inline]
-    pub fn build_from_exact_iter<K, I, A>(keys: I) -> Self
+    pub fn build_from_exact_iter<'b, K, I, A>(keys: I) -> Self
     where
         A: Borrow<K>,
-        K: 'a + ?Sized + Hash,
+        K: 'b + ?Sized + Hash,
         I: ExactSizeIterator<Item = A>,
     {
         HashIndex::build_from_exact_iter_with_hash_fn(keys, |seed, k, len| {
@@ -43,10 +42,10 @@ impl<'a> HashIndex<'a> {
     }
 
     #[inline]
-    pub fn build_from_exact_iter_with_hash_fn<K, I, A, H>(keys: I, h: H) -> Self
+    pub fn build_from_exact_iter_with_hash_fn<'b, K, I, A, H>(keys: I, h: H) -> Self
     where
         A: Borrow<K>,
-        K: 'a + ?Sized,
+        K: 'b + ?Sized,
         I: ExactSizeIterator<Item = A>,
         H: Fn(u32, &K, usize) -> usize,
     {
@@ -179,16 +178,19 @@ impl<'a> HashIndex<'a> {
     }
 }
 
-pub struct ZeroHashMapStatic<'a, V>
+pub struct ZeroHashMapStatic<'a, K, V>
 where
+    K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
 {
     index: HashIndex<'a>,
+    keys: K::Container,
     values: V::Container,
 }
 
-impl<'a, V> ZeroHashMapStatic<'a, V>
+impl<'a, K, V> ZeroHashMapStatic<'a, K, V>
 where
+    K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
 {
     pub fn len(&self) -> usize {
@@ -200,19 +202,20 @@ where
     }
 }
 
-impl<'a, V> ZeroHashMapStatic<'a, V>
+impl<'a, K, V> ZeroHashMapStatic<'a, K, V>
 where
+    K: ZeroMapKV<'a> + ?Sized + Hash + 'static + Eq,
     V: ZeroMapKV<'a> + ?Sized,
 {
     #[inline]
-    pub fn get<'b, K>(&'b self, key: &'b K) -> Option<&'b V::GetType>
-    where
-        K: Hash + AsULE + ?Sized,
-    {
-        self.index.index(key).map(|i| {
-            #[allow(clippy::unwrap_used)] // i is in 0..values.len() and there is a value at i
-            self.values.zvl_get(i as usize).unwrap()
-        })
+    pub fn get<'b>(&'b self, key: &'b K) -> Option<&'b V::GetType> {
+        self.index
+            .index(&key)
+            .and_then(|i| {
+                #[allow(clippy::unwrap_used)] // i is in 0..self.keys.len()
+                K::Container::zvl_get_as_t(self.keys.zvl_get(i).unwrap(), |k| key.eq(k)).then(|| i)
+            })
+            .and_then(|i| self.values.zvl_get(i))
     }
 
     /// Build a [`ZeroHashMapStatic`] from an iterator returning (K, V) tuples.
@@ -222,33 +225,39 @@ where
     /// use zerovec::ZeroHashMapStatic;
     ///
     /// let kv: Vec<(i32, &str)> = vec![(1,"a"), (2, "b"),(3, "c"),(4 , "d")];
-    /// let hashmap: ZeroHashMapStatic<str> = ZeroHashMapStatic::from_exact_iter(kv.into_iter());
+    /// let hashmap: ZeroHashMapStatic<i32, str> = ZeroHashMapStatic::from_exact_iter(kv.into_iter());
     /// assert_eq!(hashmap.get(&1), Some("a"));
     /// assert_eq!(hashmap.get(&2), Some("b"));
     /// assert_eq!(hashmap.get(&3), Some("c"));
     /// assert_eq!(hashmap.get(&4), Some("d"));
     /// ```
-    pub fn from_exact_iter<A, B, I, K>(iter: I) -> Self
+    pub fn from_exact_iter<A, B, I>(iter: I) -> Self
     where
         A: Borrow<K>,
         B: Borrow<V>,
-        K: Hash + AsULE + ?Sized + 'a,
         I: ExactSizeIterator<Item = (A, B)>,
     {
-        let mut keys = Vec::with_capacity(iter.len());
+        let mut keys_vec = Vec::with_capacity(iter.len());
+        let mut keys = K::Container::zvl_with_capacity(iter.len());
         let mut values = V::Container::zvl_with_capacity(iter.len());
         for (k, v) in iter {
-            keys.push(k);
+            keys.zvl_push(k.borrow());
+            keys_vec.push(k);
             values.zvl_push(v.borrow());
         }
-        let index = HashIndex::build_from_exact_iter::<K, _, _>(keys.into_iter());
-        Self { index, values }
+        let index = HashIndex::build_from_exact_iter::<K, _, _>(keys_vec.into_iter());
+        Self {
+            index,
+            values,
+            keys,
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use crate::ule::AsULE;
     use rand::{distributions::Standard, Rng, SeedableRng};
     use rand_pcg::Lcg64Xsh32;
 
@@ -259,7 +268,7 @@ mod tests {
         let rng = Lcg64Xsh32::seed_from_u64(seed);
         let kv: Vec<(u64, u64)> = rng.sample_iter(&Standard).take(N).collect();
         let kv_copy = kv.clone();
-        let hashmap: ZeroHashMapStatic<u64> =
+        let hashmap: ZeroHashMapStatic<u64, u64> =
             ZeroHashMapStatic::from_exact_iter(kv_copy.into_iter());
         for (k, v) in kv {
             assert_eq!(
