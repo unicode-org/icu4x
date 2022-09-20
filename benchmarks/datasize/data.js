@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663596140980,
+  "lastUpdate": 1663685342202,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27503,6 +27503,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/3cfc9cdb1e186b14aeeeef8d180237232f510c2c"
         },
         "date": 1663596086059,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3918971,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "4ee18e9da5834190f7c5648fd3c7e9504541951c",
+          "message": "Rename postcard feature for 1.0 (#2584)",
+          "timestamp": "2022-09-20T16:46:26+02:00",
+          "tree_id": "288cd054bc8cdc2d847385de8da3c7394288bf3d",
+          "url": "https://github.com/unicode-org/icu4x/commit/4ee18e9da5834190f7c5648fd3c7e9504541951c"
+        },
+        "date": 1663685278366,
         "tool": "ndjson",
         "benches": [
           {
