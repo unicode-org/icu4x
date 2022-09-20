@@ -34,16 +34,16 @@ use fixed_decimal::FixedDecimal;
 /// ```
 /// use icu::plurals::PluralOperands;
 /// assert_eq!(
-///     PluralOperands {
-///         i: 2,
-///         v: 0,
-///         w: 0,
-///         f: 0,
-///         t: 0,
-///         c: 0,
-///     },
+///     PluralOperands::from_ivwftc(
+///         2, // i
+///         0, // v
+///         0, // w
+///         0, // f
+///         0, // t
+///         0, // c
+///     ),
 ///     PluralOperands::from(2_usize)
-/// )
+/// );
 /// ```
 ///
 /// From &str
@@ -51,16 +51,16 @@ use fixed_decimal::FixedDecimal;
 /// ```
 /// use icu::plurals::PluralOperands;
 /// assert_eq!(
-///     Ok(PluralOperands {
-///         i: 123,
-///         v: 2,
-///         w: 2,
-///         f: 45,
-///         t: 45,
-///         c: 0,
-///     }),
+///     Ok(PluralOperands::from_ivwftc(
+///         123, // i
+///         2,   // v
+///         2,   // w
+///         45,  // f
+///         45,  // t
+///         0,   // c
+///     )),
 ///     "123.45".parse()
-/// )
+/// );
 /// ```
 ///
 /// From [`FixedDecimal`]
@@ -69,34 +69,34 @@ use fixed_decimal::FixedDecimal;
 /// use fixed_decimal::FixedDecimal;
 /// use icu::plurals::PluralOperands;
 /// assert_eq!(
-///     PluralOperands {
-///         i: 123,
-///         v: 2,
-///         w: 2,
-///         f: 45,
-///         t: 45,
-///         c: 0,
-///     },
+///     PluralOperands::from_ivwftc(
+///         123, // i
+///         2,   // v
+///         2,   // w
+///         45,  // f
+///         45,  // t
+///         0,   // c
+///     ),
 ///     (&FixedDecimal::from(12345)
 ///         .multiplied_pow10(-2))
 ///         .into()
-/// )
+/// );
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Default)]
 #[allow(clippy::exhaustive_structs)] // mostly stable, new operands may be added at the cadence of ICU's release cycle
 pub struct PluralOperands {
     /// Integer value of input
-    pub i: u64,
+    pub(crate) i: u64,
     /// Number of visible fraction digits with trailing zeros
-    pub v: usize,
+    pub(crate) v: usize,
     /// Number of visible fraction digits without trailing zeros
-    pub w: usize,
+    pub(crate) w: usize,
     /// Visible fraction digits with trailing zeros
-    pub f: u64,
+    pub(crate) f: u64,
     /// Visible fraction digits without trailing zeros
-    pub t: u64,
+    pub(crate) t: u64,
     /// Exponent of the power of 10 used in compact decimal formatting
-    pub c: usize,
+    pub(crate) c: usize,
 }
 
 impl PluralOperands {
@@ -109,6 +109,11 @@ impl PluralOperands {
     pub fn n(&self) -> f64 {
         let fraction = self.t as f64 / 10_f64.powi(self.v as i32);
         self.i as f64 + fraction
+    }
+
+    #[doc(hidden)] // unstable
+    pub fn from_ivwftc(i: u64, v: usize, w: usize, f: u64, t: u64, c: usize) -> PluralOperands {
+        PluralOperands { i, v, w, f, t, c }
     }
 }
 

@@ -108,12 +108,13 @@
 //!
 //! # Summary
 //!
-//! For [`PluralRuleType::Cardinal`] in English, we can summarize the logic as:
+//! For [`PluralRuleType::Cardinal`] in English, we can restart the rule's logic as:
 //!
-//! If [`PluralOperands::i`] is `1` and [`PluralOperands::v`] is `0`, [`PluralCategory::One`]
+//! When the `PluralOperands::i` is `1` and `PluralOperands::v` is `0` (or equivalent thereof), [`PluralCategory::One`]
 //! should be used, otherwise [`PluralCategory::Other`] should be used.
 //!
-//! For other locales, there are more [`PluralCategories`] and more complicated [`Rules`].
+//! For other locales, there are different/more [`PluralCategories`] defined in the `PluralRules` (see [`PluralRules::categories`]),
+//! and possibly more complicated [`Rules`] therein.
 //!
 //! # Difference between Category and Number
 //!
@@ -138,8 +139,7 @@
 //! [`PluralCategory::One`]: super::PluralCategory::One
 //! [`PluralCategory::Other`]: super::PluralCategory::Other
 //! [`PluralOperands`]: super::PluralOperands
-//! [`PluralOperands::i`]: super::PluralOperands::i
-//! [`PluralOperands::v`]: super::PluralOperands::v
+//! [`PluralRules::categories`]: super::PluralRules::categories
 //! [`PluralRuleType::Cardinal`]: super::PluralRuleType::Cardinal
 //! [`Rule`]: super::rules::reference::ast::Rule
 //! [`Rules`]: super::rules::reference::ast::Rule
