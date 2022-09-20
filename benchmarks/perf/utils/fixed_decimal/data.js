@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663713815215,
+  "lastUpdate": 1663714101906,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -51851,6 +51851,66 @@ window.BENCHMARK_DATA = {
             "name": "isize/larger",
             "value": 63105,
             "range": "± 318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 187,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 76,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 83,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "a2efa18f7b05c00e9947044e4ceaf86af433f43b",
+          "message": "DateTime: Change default length to medium and add tests for Default (#2596)",
+          "timestamp": "2022-09-20T15:28:52-07:00",
+          "tree_id": "a9a4745a6105dcf6c90c6fa03484d92f2a11486a",
+          "url": "https://github.com/unicode-org/icu4x/commit/a2efa18f7b05c00e9947044e4ceaf86af433f43b"
+        },
+        "date": 1663714049367,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 117509,
+            "range": "± 349",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23320,
+            "range": "± 120",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 62795,
+            "range": "± 298",
             "unit": "ns/iter"
           },
           {
