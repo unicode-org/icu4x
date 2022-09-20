@@ -57,7 +57,7 @@ impl MixedPatternItemULE {
                     && value.0 == 0b0100_0000
             }
             Some(Tag::Placeholder) => value.0 == 0b1000_0000 && value.1 == 0 && value.2 < 10,
-            None => false
+            None => false,
         }
     }
 }

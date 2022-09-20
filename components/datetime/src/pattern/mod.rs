@@ -15,6 +15,9 @@ pub use hour_cycle::CoarseHourCycle;
 use icu_provider::{yoke, zerofrom};
 pub use item::{GenericPatternItem, PatternItem};
 
+#[cfg(not(feature = "experimental"))]
+pub(crate) use item::MixedPatternItem;
+
 #[cfg(feature = "experimental")]
 pub use item::MixedPatternItem;
 

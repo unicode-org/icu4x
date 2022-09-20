@@ -1,5 +1,5 @@
 [package]
-name = "datetime_bag_v2"
+name = "icu_datetime_bag_v2"
 description = "New components bag API for DateTimeFormatter"
 version = "0.1.0"
 authors = ["The ICU4X Project Developers"]

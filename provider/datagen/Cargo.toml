@@ -48,6 +48,8 @@ icu_timezone = { version = "1.0.0-beta1", path = "../../components/timezone", fe
 # (experimental)
 icu_casemapping = { version = "0.2", path = "../../experimental/casemapping", features = ["datagen"], optional = true }
 icu_segmenter = { version = "1.0.0-alpha1", path = "../../experimental/segmenter", features = ["datagen", "lstm"], optional = true }
+icu_datetime_bag_v2 = { version = "0.1", path = "../../experimental/datetime_bag_v2", features = ["datagen"], optional = true }
+
 
 # ICU provider infrastructure
 icu_provider = { version = "1.0.0-beta1", path = "../core", features = ["std", "log_error_context", "datagen"]}
@@ -93,7 +95,7 @@ icu = { path = "../../components/icu" }
 
 [features]
 default = []
-experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental"]
+experimental = ["icu_casemapping", "icu_segmenter", "icu_datetime/experimental", "icu_datetime_bag_v2"]
 bin = ["clap", "eyre", "simple_logger"]
 
 [[bin]]

@@ -17,6 +17,7 @@ use zerovec::ZeroVec;
     derive(databake::Bake),
     databake(path = icu_datetime::pattern::runtime),
 )]
+#[allow(clippy::exhaustive_structs)]
 pub struct MixedPattern<'data> {
     pub items: ZeroVec<'data, MixedPatternItem>,
 }

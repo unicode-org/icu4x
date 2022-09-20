@@ -16,6 +16,9 @@ use std::str::FromStr;
 mod patterns;
 mod skeletons;
 mod symbols;
+
+#[cfg(feature = "experimental")]
+mod format;
 pub mod week_data;
 
 lazy_static! {

@@ -684,18 +684,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "datetime_bag_v2"
-version = "0.1.0"
-dependencies = [
- "databake",
- "icu_datetime",
- "icu_provider",
- "serde",
- "yoke",
- "zerovec 0.8.1",
-]
-
-[[package]]
 name = "deduplicating_array"
 version = "0.1.2"
 dependencies = [
@@ -1513,6 +1501,7 @@ dependencies = [
  "icu_collator",
  "icu_collections",
  "icu_datetime",
+ "icu_datetime_bag_v2",
  "icu_decimal",
  "icu_list",
  "icu_locid",
@@ -1573,6 +1562,18 @@ dependencies = [
  "smallvec",
  "tinystr 0.6.2",
  "writeable",
+ "zerovec 0.8.1",
+]
+
+[[package]]
+name = "icu_datetime_bag_v2"
+version = "0.1.0"
+dependencies = [
+ "databake",
+ "icu_datetime",
+ "icu_provider",
+ "serde",
+ "yoke",
  "zerovec 0.8.1",
 ]
 

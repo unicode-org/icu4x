@@ -168,6 +168,7 @@ pub mod patterns {
         }
     }
 
+    #[cfg(feature = "experimental")]
     #[icu_provider::data_struct]
     #[derive(Debug, PartialEq, Clone, Default)]
     #[cfg_attr(feature = "datagen", derive(serde::Serialize))]
@@ -175,4 +176,19 @@ pub mod patterns {
     pub struct MixedPatternV1<'data>(
         #[cfg_attr(feature = "serde", serde(borrow))] pub MixedPattern<'data>,
     );
+
+    #[cfg(feature = "experimental")]
+    pub(crate) struct MixedPatternV1Marker;
+
+    #[cfg(feature = "experimental")]
+    impl DataMarker for MixedPatternV1Marker {
+        type Yokeable = MixedPatternV1<'static>;
+    }
+
+    #[cfg(feature = "experimental")]
+    impl<'data> From<MixedPattern<'data>> for MixedPatternV1<'data> {
+        fn from(pattern: MixedPattern<'data>) -> Self {
+            Self(pattern)
+        }
+    }
 }

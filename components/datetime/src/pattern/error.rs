@@ -2,6 +2,8 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
+use core::convert::Infallible;
+
 use crate::fields;
 use displaydoc::Display;
 
@@ -25,6 +27,10 @@ pub enum PatternError {
     UnclosedPlaceholder,
     #[displaydoc("plural pattern variants are only supported for week-of-month and week-of-year")]
     UnsupportedPluralPivot,
+    #[displaydoc("placeholders are only supported in generic and mixed patterns")]
+    UnsupportedPlaceholder,
+    #[displaydoc("fields are only supported in plain and mixed patterns")]
+    UnsupportedFields,
 }
 
 #[cfg(feature = "std")]
@@ -35,5 +41,11 @@ impl From<fields::Error> for PatternError {
         match input {
             fields::Error::InvalidLength(symbol) => Self::FieldLengthInvalid(symbol),
         }
+    }
+}
+
+impl From<Infallible> for PatternError {
+    fn from(x: Infallible) -> Self {
+        match x {}
     }
 }
