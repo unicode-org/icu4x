@@ -49,7 +49,7 @@ impl DataProvider<::icu_calendar::provider::WeekDataV1Marker> for BakedDataProvi
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::week_data_v1_r::DATA
+                *datetime::week_data_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_calendar::provider::WeekDataV1Marker::KEY, req))?,
             ))),
@@ -75,7 +75,7 @@ impl DataProvider<::icu_collator::provider::CollationDataV1Marker> for BakedData
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::data_v1_c_u_co::DATA
+                *collator::data_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDataV1Marker::KEY, req))?,
             ))),
@@ -88,7 +88,7 @@ impl DataProvider<::icu_collator::provider::CollationDiacriticsV1Marker> for Bak
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::dia_v1_c_u_co::DATA
+                *collator::dia_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationDiacriticsV1Marker::KEY, req))?,
             ))),
@@ -114,7 +114,7 @@ impl DataProvider<::icu_collator::provider::CollationMetadataV1Marker> for Baked
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::meta_v1_c_u_co::DATA
+                *collator::meta_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationMetadataV1Marker::KEY, req))?,
             ))),
@@ -127,7 +127,7 @@ impl DataProvider<::icu_collator::provider::CollationReorderingV1Marker> for Bak
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *collator::reord_v1_c_u_co::DATA
+                *collator::reord_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_collator::provider::CollationReorderingV1Marker::KEY, req))?,
             ))),
@@ -209,7 +209,7 @@ impl DataProvider<::icu_datetime::provider::calendar::DateSkeletonPatternsV1Mark
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *datetime::skeletons_v1_u_ca::DATA
+                *datetime::skeletons_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| {
                         DataErrorKind::MissingLocale.with_req(::icu_datetime::provider::calendar::DateSkeletonPatternsV1Marker::KEY, req)
@@ -482,7 +482,7 @@ impl DataProvider<::icu_decimal::provider::DecimalSymbolsV1Marker> for BakedData
         Ok(DataResponse {
             metadata: Default::default(),
             payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
-                *decimal::symbols_v1_u_nu::DATA
+                *decimal::symbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_decimal::provider::DecimalSymbolsV1Marker::KEY, req))?,
             ))),
@@ -1458,6 +1458,24 @@ impl DataProvider<::icu_provider::hello_world::HelloWorldV1Marker> for BakedData
                 *core::helloworld_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .ok_or_else(|| DataErrorKind::MissingLocale.with_req(::icu_provider::hello_world::HelloWorldV1Marker::KEY, req))?,
+            ))),
+        })
+    }
+}
+impl DataProvider<::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker> for BakedDataProvider {
+    fn load(
+        &self,
+        req: DataRequest,
+    ) -> Result<DataResponse<::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker>, DataError> {
+        Ok(DataResponse {
+            metadata: Default::default(),
+            payload: Some(DataPayload::from_owned(zerofrom::ZeroFrom::zero_from(
+                *fallback::supplement::co_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .ok_or_else(|| {
+                        DataErrorKind::MissingLocale
+                            .with_req(::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY, req)
+                    })?,
             ))),
         })
     }
