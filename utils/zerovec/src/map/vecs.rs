@@ -152,6 +152,11 @@ pub trait MutableZeroVecLike<'a, T: ?Sized>: ZeroVecLike<T> {
     fn zvl_clear(&mut self);
     /// Reserve space for `addl` additional elements
     fn zvl_reserve(&mut self, addl: usize);
+    /// Applies the permutation such that `before.zvl_get(permutation[i]) == after.zvl_get(i)`.
+    ///
+    /// # Panics
+    /// If `permutation` is not a valid permutation of length `zvl_len()`.
+    fn zvl_permute(&mut self, permutation: &mut [usize]);
 
     /// Convert an owned value to a borrowed T
     fn owned_as_t(o: &Self::OwnedType) -> &T;
@@ -328,6 +333,27 @@ where
             None
         }
     }
+
+    #[allow(clippy::indexing_slicing)] // documented panic
+    fn zvl_permute(&mut self, permutation: &mut [usize]) {
+        assert_eq!(permutation.len(), self.zvl_len());
+
+        let vec = self.to_mut();
+
+        for cycle_start in 0..permutation.len() {
+            let mut curr = cycle_start;
+            let mut next = permutation[curr];
+
+            while next != cycle_start {
+                vec.swap(curr, next);
+                // Make curr a self-cycle so we don't use it as a cycle_start later
+                permutation[curr] = curr;
+                curr = next;
+                next = permutation[next];
+            }
+            permutation[curr] = curr;
+        }
+    }
 }
 
 impl<'a, T, F> ZeroVecLike<T> for VarZeroVec<'a, T, F>
@@ -490,6 +516,17 @@ where
             None
         }
     }
+
+    #[allow(clippy::unwrap_used)] // documented panic
+    fn zvl_permute(&mut self, permutation: &mut [usize]) {
+        assert_eq!(permutation.len(), self.zvl_len());
+
+        let mut result = VarZeroVecOwned::new();
+        for &i in permutation.iter() {
+            result.push(self.get(i).unwrap());
+        }
+        *self = VarZeroVec::Owned(result);
+    }
 }
 
 impl<'a> ZeroVecLike<usize> for FlexZeroVec<'a> {
@@ -629,6 +666,12 @@ impl<'a> MutableZeroVecLike<'a, usize> for FlexZeroVec<'a> {
             None
         }
     }
+
+    #[allow(clippy::unwrap_used)] // documented panic
+    fn zvl_permute(&mut self, permutation: &mut [usize]) {
+        assert_eq!(permutation.len(), self.zvl_len());
+        *self = permutation.iter().map(|&i| self.get(i).unwrap()).collect();
+    }
 }
 
 #[cfg(test)]
@@ -658,5 +701,29 @@ mod test {
         // Out-of-bounds
         assert_eq!(zv.zvl_binary_search_in_range(&44, 0..100), None);
         assert_eq!(zv.zvl_binary_search_in_range(&44, 100..200), None);
+    }
+
+    #[test]
+    fn test_permute() {
+        let mut zv: ZeroVec<u16> = ZeroVec::from_slice_or_alloc(&[11, 22, 33, 44, 55, 66, 77]);
+        let mut permutation = vec![3, 2, 1, 0, 6, 5, 4];
+        zv.zvl_permute(&mut permutation);
+        assert_eq!(&zv, &[44, 33, 22, 11, 77, 66, 55]);
+
+        let mut vzv: VarZeroVec<str> = VarZeroVec::Owned(
+            VarZeroVecOwned::try_from_elements(&["11", "22", "33", "44", "55", "66", "77"])
+                .unwrap(),
+        );
+        let mut permutation = vec![3, 2, 1, 0, 6, 5, 4];
+        vzv.zvl_permute(&mut permutation);
+        assert_eq!(&vzv, &["44", "33", "22", "11", "77", "66", "55"]);
+
+        let mut fzv: FlexZeroVec = [11, 22, 33, 44, 55, 66, 77].into_iter().collect();
+        let mut permutation = vec![3, 2, 1, 0, 6, 5, 4];
+        fzv.zvl_permute(&mut permutation);
+        assert_eq!(
+            fzv.iter().collect::<Vec<_>>(),
+            [44, 33, 22, 11, 77, 66, 55].into_iter().collect::<Vec<_>>()
+        );
     }
 }
