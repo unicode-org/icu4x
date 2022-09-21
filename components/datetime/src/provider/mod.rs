@@ -10,5 +10,5 @@
 //! Read more about data providers: [`icu_provider`]
 
 pub mod calendar;
-pub mod time_zones;
 pub(crate) mod date_time;
+pub mod time_zones;
