@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663741610985,
+  "lastUpdate": 1663762878131,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -52048,6 +52048,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 82,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fbd829c8ad0094db44af41a1b32cea38ee540c5b",
+          "message": "Add permutation to ZVL containers (#2605)",
+          "timestamp": "2022-09-21T14:08:10+02:00",
+          "tree_id": "c3352c9888f60000fa33675e0a186e66034ba241",
+          "url": "https://github.com/unicode-org/icu4x/commit/fbd829c8ad0094db44af41a1b32cea38ee540c5b"
+        },
+        "date": 1663762809893,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 143499,
+            "range": "± 5237",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 28075,
+            "range": "± 238",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 76306,
+            "range": "± 2133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 226,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 92,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 99,
             "range": "± 0",
             "unit": "ns/iter"
           }
