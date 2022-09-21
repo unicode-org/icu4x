@@ -257,6 +257,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
+    /// use writeable::assert_writeable_eq;
     ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
@@ -271,7 +272,10 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// let formatted_date = zdtf.format(&datetime, &time_zone);
     ///
-    /// let _ = format!("Date: {}", formatted_date);
+    /// assert_writeable_eq!(
+    ///     formatted_date,
+    ///     "September 12, 2020 at 12:34:28 PM GMT-07:00"
+    /// );
     /// ```
     #[inline]
     pub fn format<'l>(
@@ -304,7 +308,9 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     ///
-    /// let _ = zdtf.format_to_string(&datetime, &time_zone);
+    /// let formatted_string = zdtf.format_to_string(&datetime, &time_zone);
+    ///
+    /// assert_eq!(formatted_string, "September 12, 2020 at 12:34:28 PM GMT-07:00");
     /// ```
     #[inline]
     pub fn format_to_string(
