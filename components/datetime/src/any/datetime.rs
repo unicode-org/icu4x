@@ -581,4 +581,24 @@ mod tests {
             "5 เมษายน ค.ศ. 2022 12:33",
         );
     }
+
+    #[test]
+    #[cfg(feature = "serde")]
+    fn works_with_default_options() {
+        assert_eq!(
+            DateTimeFormatter::try_new_with_buffer_provider(
+                &icu_testdata::buffer(),
+                Default::default(),
+                Default::default(),
+            )
+            .unwrap()
+            .format_to_string(
+                &DateTime::new_iso_datetime(2022, 9, 20, 0, 0, 0)
+                    .unwrap()
+                    .to_any()
+            )
+            .unwrap(),
+            "2022 M09 20 00:00:00"
+        );
+    }
 }

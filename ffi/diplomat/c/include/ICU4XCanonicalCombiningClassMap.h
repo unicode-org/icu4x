@@ -21,7 +21,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XCanonicalCombiningClassMap_ICU4XError ICU4XCanonicalCombiningClassMap_try_new(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XCanonicalCombiningClassMap_ICU4XError ICU4XCanonicalCombiningClassMap_create(const ICU4XDataProvider* provider);
 
 uint8_t ICU4XCanonicalCombiningClassMap_get(const ICU4XCanonicalCombiningClassMap* self, char32_t ch);
 

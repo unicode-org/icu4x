@@ -141,6 +141,9 @@ exec --fail-on-error make
 cd ../fixeddecimal_wasm
 rm ../../../../../target/debug/libicu_capi_staticlib_test.a
 exec --fail-on-error make test-host
+cd ../locale
+rm ../../../../../target/debug/libicu_capi_staticlib_test.a
+exec --fail-on-error make
 '''
 
 [tasks.test-cppdoc]

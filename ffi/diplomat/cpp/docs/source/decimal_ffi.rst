@@ -8,14 +8,14 @@
     See the `Rust documentation for FixedDecimalFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> try_new_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> create_with_grouping_strategy(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XFixedDecimalGroupingStrategy grouping_strategy)
 
         Creates a new :cpp:class:`ICU4XFixedDecimalFormatter` from locale data.
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> try_new_from_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimalFormatter, ICU4XError> create_with_decimal_symbols_v1(const ICU4XDataStruct& data_struct, ICU4XFixedDecimalGroupingStrategy grouping_strategy)
 
         Creates a new :cpp:class:`ICU4XFixedDecimalFormatter` from preconstructed locale data in the form of an :cpp:class:`ICU4XDataStruct` constructed from ``ICU4XDataStruct::create_decimal_symbols()``.
 

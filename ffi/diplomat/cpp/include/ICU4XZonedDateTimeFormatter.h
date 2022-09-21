@@ -29,9 +29,9 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XZonedDateTimeFormatter_ICU4XError ICU4XZonedDateTimeFormatter_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
+diplomat_result_box_ICU4XZonedDateTimeFormatter_ICU4XError ICU4XZonedDateTimeFormatter_create_with_lengths(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length);
 
-diplomat_result_box_ICU4XZonedDateTimeFormatter_ICU4XError ICU4XZonedDateTimeFormatter_try_new_with_iso_8601_time_zone_fallback(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XIsoTimeZoneOptions zone_options);
+diplomat_result_box_ICU4XZonedDateTimeFormatter_ICU4XError ICU4XZonedDateTimeFormatter_create_with_lengths_and_iso_8601_time_zone_fallback(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XIsoTimeZoneOptions zone_options);
 
 diplomat_result_void_ICU4XError ICU4XZonedDateTimeFormatter_format_datetime_with_custom_time_zone(const ICU4XZonedDateTimeFormatter* self, const ICU4XDateTime* datetime, const ICU4XCustomTimeZone* time_zone, DiplomatWriteable* write);
 

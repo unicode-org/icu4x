@@ -29,7 +29,7 @@ pub mod ffi {
     impl ICU4XIsoDateTime {
         /// Creates a new [`ICU4XIsoDateTime`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::DateTime::new_iso_datetime, FnInStruct)]
-        pub fn try_new(
+        pub fn create(
             year: i32,
             month: u8,
             day: u8,
@@ -50,7 +50,7 @@ pub mod ffi {
 
         /// Creates a new [`ICU4XIsoDateTime`] from an [`ICU4XIsoDate`] and [`ICU4XTime`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
-        pub fn new_from_date_and_time(
+        pub fn crate_from_date_and_time(
             date: &ICU4XIsoDate,
             time: &ICU4XTime,
         ) -> Box<ICU4XIsoDateTime> {
@@ -63,7 +63,7 @@ pub mod ffi {
             icu::calendar::DateTime::from_minutes_since_local_unix_epoch,
             FnInStruct
         )]
-        pub fn from_minutes_since_local_unix_epoch(
+        pub fn create_from_minutes_since_local_unix_epoch(
             minutes: i32,
         ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
             DateTime::from_minutes_since_local_unix_epoch(minutes)
@@ -211,7 +211,7 @@ pub mod ffi {
         /// given but in a given calendar
         #[diplomat::rust_link(icu::DateTime::new_from_iso, FnInStruct)]
         #[allow(clippy::too_many_arguments)]
-        pub fn try_new_from_iso_in_calendar(
+        pub fn create_from_iso_in_calendar(
             year: i32,
             month: u8,
             day: u8,
@@ -234,7 +234,7 @@ pub mod ffi {
         /// Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
         #[diplomat::rust_link(icu::calendar::DateTime::new_from_codes, FnInStruct)]
         #[allow(clippy::too_many_arguments)]
-        pub fn try_new_from_codes_in_calendar(
+        pub fn create_from_codes_in_calendar(
             era_code: &str,
             year: i32,
             month_code: &str,
@@ -267,7 +267,7 @@ pub mod ffi {
         }
         /// Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
         #[diplomat::rust_link(icu::calendar::DateTime::new, FnInStruct)]
-        pub fn new_from_date_and_time(date: &ICU4XDate, time: &ICU4XTime) -> Box<ICU4XDateTime> {
+        pub fn create_from_date_and_time(date: &ICU4XDate, time: &ICU4XTime) -> Box<ICU4XDateTime> {
             let dt = DateTime::new(date.0.clone(), time.0);
             Box::new(ICU4XDateTime(dt))
         }

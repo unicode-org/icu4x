@@ -37,7 +37,7 @@ class ICU4XLocale {
    * 
    * See the [Rust documentation for `from_bytes`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes) for more information.
    */
-  static diplomat::result<ICU4XLocale, ICU4XError> create(const std::string_view name);
+  static diplomat::result<ICU4XLocale, ICU4XError> create_from_string(const std::string_view name);
 
   /**
    * Construct an [`ICU4XLocale`] for the English language.
@@ -54,7 +54,7 @@ class ICU4XLocale {
    * 
    * See the [Rust documentation for `UND`](https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND) for more information.
    */
-  static ICU4XLocale und();
+  static ICU4XLocale create_und();
 
   /**
    * Clones the [`ICU4XLocale`].
@@ -212,8 +212,8 @@ class ICU4XLocale {
 };
 
 
-inline diplomat::result<ICU4XLocale, ICU4XError> ICU4XLocale::create(const std::string_view name) {
-  auto diplomat_result_raw_out_value = capi::ICU4XLocale_create(name.data(), name.size());
+inline diplomat::result<ICU4XLocale, ICU4XError> ICU4XLocale::create_from_string(const std::string_view name) {
+  auto diplomat_result_raw_out_value = capi::ICU4XLocale_create_from_string(name.data(), name.size());
   diplomat::result<ICU4XLocale, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XLocale>(std::move(ICU4XLocale(diplomat_result_raw_out_value.ok)));
@@ -228,8 +228,8 @@ inline ICU4XLocale ICU4XLocale::create_en() {
 inline ICU4XLocale ICU4XLocale::create_bn() {
   return ICU4XLocale(capi::ICU4XLocale_create_bn());
 }
-inline ICU4XLocale ICU4XLocale::und() {
-  return ICU4XLocale(capi::ICU4XLocale_und());
+inline ICU4XLocale ICU4XLocale::create_und() {
+  return ICU4XLocale(capi::ICU4XLocale_create_und());
 }
 inline ICU4XLocale ICU4XLocale::clone() const {
   return ICU4XLocale(capi::ICU4XLocale_clone(this->inner.get()));

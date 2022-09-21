@@ -22,7 +22,7 @@
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
 
-.. cpp:struct:: ICU4XLineBreakOptions
+.. cpp:struct:: ICU4XLineBreakOptionsV1
 
     See the `Rust documentation for LineBreakOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakOptions.html>`__ for more information.
 
@@ -53,14 +53,14 @@
     See the `Rust documentation for LineBreakSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> create(const ICU4XDataProvider& provider)
 
         Construct a :cpp:class:`ICU4XLineBreakSegmenter` with default options.
 
         See the `Rust documentation for try_new <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> try_new_with_options(const ICU4XDataProvider& provider, ICU4XLineBreakOptions options)
+    .. cpp:function:: static diplomat::result<ICU4XLineBreakSegmenter, ICU4XError> create_with_options_v1(const ICU4XDataProvider& provider, ICU4XLineBreakOptionsV1 options)
 
         Construct a :cpp:class:`ICU4XLineBreakSegmenter` with custom options.
 

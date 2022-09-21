@@ -96,7 +96,7 @@
 extern crate alloc;
 
 mod error;
-pub mod format;
+mod format;
 mod grouper;
 pub mod options;
 pub mod provider;

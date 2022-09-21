@@ -8,7 +8,7 @@
     See the `Rust documentation for TypedZonedDateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianZonedDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
+    .. cpp:function:: static diplomat::result<ICU4XGregorianZonedDateTimeFormatter, ICU4XError> create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
 
         Creates a new :cpp:class:`ICU4XGregorianZonedDateTimeFormatter` from locale data.
 
@@ -17,7 +17,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianZonedDateTimeFormatter, ICU4XError> try_new_with_iso_8601_time_zone_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XIsoTimeZoneOptions zone_options)
+    .. cpp:function:: static diplomat::result<ICU4XGregorianZonedDateTimeFormatter, ICU4XError> create_with_lengths_and_iso_8601_time_zone_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XIsoTimeZoneOptions zone_options)
 
         Creates a new :cpp:class:`ICU4XGregorianZonedDateTimeFormatter` from locale data.
 
@@ -47,7 +47,7 @@
     See the `Rust documentation for ZonedDateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XZonedDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
+    .. cpp:function:: static diplomat::result<ICU4XZonedDateTimeFormatter, ICU4XError> create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
 
         Creates a new :cpp:class:`ICU4XZonedDateTimeFormatter` from locale data.
 
@@ -56,7 +56,7 @@
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.ZonedDateTimeFormatter.html#method.try_new_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XZonedDateTimeFormatter, ICU4XError> try_new_with_iso_8601_time_zone_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XIsoTimeZoneOptions zone_options)
+    .. cpp:function:: static diplomat::result<ICU4XZonedDateTimeFormatter, ICU4XError> create_with_lengths_and_iso_8601_time_zone_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length, ICU4XIsoTimeZoneOptions zone_options)
 
         Creates a new :cpp:class:`ICU4XZonedDateTimeFormatter` from locale data.
 

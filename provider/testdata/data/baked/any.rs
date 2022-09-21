@@ -324,6 +324,9 @@ impl AnyProvider for BakedDataProvider {
             ::icu_properties::provider::XidStartV1Marker::KEY.hashed();
         const HELLOWORLDV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider::hello_world::HelloWorldV1Marker::KEY.hashed();
+        const COLLATIONFALLBACKSUPPLEMENTV1MARKER: ::icu_provider::DataKeyHash =
+            ::icu_provider_adapters::fallback::provider::CollationFallbackSupplementV1Marker::KEY
+                .hashed();
         const LOCALEFALLBACKLIKELYSUBTAGSV1MARKER: ::icu_provider::DataKeyHash =
             ::icu_provider_adapters::fallback::provider::LocaleFallbackLikelySubtagsV1Marker::KEY
                 .hashed();
@@ -364,7 +367,7 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_calendar")]
-                WEEKDATAV1MARKER => datetime::week_data_v1_r::DATA
+                WEEKDATAV1MARKER => datetime::week_data_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -374,12 +377,12 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONDATAV1MARKER => collator::data_v1_c_u_co::DATA
+                COLLATIONDATAV1MARKER => collator::data_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONDIACRITICSV1MARKER => collator::dia_v1_c_u_co::DATA
+                COLLATIONDIACRITICSV1MARKER => collator::dia_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -389,12 +392,12 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONMETADATAV1MARKER => collator::meta_v1_c_u_co::DATA
+                COLLATIONMETADATAV1MARKER => collator::meta_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_collator")]
-                COLLATIONREORDERINGV1MARKER => collator::reord_v1_c_u_co::DATA
+                COLLATIONREORDERINGV1MARKER => collator::reord_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -424,7 +427,7 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_datetime_experimental")]
-                DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1_u_ca::DATA
+                DATESKELETONPATTERNSV1MARKER => datetime::skeletons_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .map(|&data| {
                         AnyPayload::from_rcwrap_payload::<
@@ -524,7 +527,7 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 #[cfg(feature = "icu_decimal")]
-                DECIMALSYMBOLSV1MARKER => decimal::symbols_v1_u_nu::DATA
+                DECIMALSYMBOLSV1MARKER => decimal::symbols_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),
@@ -894,6 +897,10 @@ impl AnyProvider for BakedDataProvider {
                     .copied()
                     .map(AnyPayload::from_static_ref),
                 HELLOWORLDV1MARKER => core::helloworld_v1::DATA
+                    .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
+                    .copied()
+                    .map(AnyPayload::from_static_ref),
+                COLLATIONFALLBACKSUPPLEMENTV1MARKER => fallback::supplement::co_v1::DATA
                     .get_by(|k| req.locale.strict_cmp(k.as_bytes()).reverse())
                     .copied()
                     .map(AnyPayload::from_static_ref),

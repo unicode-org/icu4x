@@ -24,7 +24,7 @@ pub mod ffi {
         /// Construct an [`ICU4XLocale`] from an locale identifier.
         #[diplomat::rust_link(icu::locid::Locale::from_bytes, FnInStruct)]
         #[diplomat::rust_link(icu::locid::Locale::from_str, FnInStruct, hidden)]
-        pub fn create(name: &str) -> DiplomatResult<Box<ICU4XLocale>, ICU4XError> {
+        pub fn create_from_string(name: &str) -> DiplomatResult<Box<ICU4XLocale>, ICU4XError> {
             let name = name.as_bytes(); // #2520
             Locale::from_bytes(name)
                 .map_err(ICU4XError::from)
@@ -44,7 +44,7 @@ pub mod ffi {
 
         /// Construct a default undefined [`ICU4XLocale`] "und".
         #[diplomat::rust_link(icu::locid::Locale::UND, AssociatedConstantInStruct)]
-        pub fn und() -> Box<ICU4XLocale> {
+        pub fn create_und() -> Box<ICU4XLocale> {
             Box::new(ICU4XLocale(Locale::UND))
         }
 

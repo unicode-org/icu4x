@@ -25,11 +25,11 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_try_new_and(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListStyle style);
+diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_create_and_with_style(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListStyle style);
 
-diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_try_new_or(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListStyle style);
+diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_create_or_with_style(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListStyle style);
 
-diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_try_new_unit(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListStyle style);
+diplomat_result_box_ICU4XListFormatter_ICU4XError ICU4XListFormatter_create_unit_with_style(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XListStyle style);
 
 diplomat_result_void_ICU4XError ICU4XListFormatter_format(const ICU4XListFormatter* self, const ICU4XList* list, DiplomatWriteable* write);
 void ICU4XListFormatter_destroy(ICU4XListFormatter* self);

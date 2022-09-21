@@ -1,0 +1,15 @@
+{
+  "parents": {
+    "yue": [
+      "zh",
+      "Hant",
+      null
+    ]
+  },
+  "unicode_extension_defaults": {
+    "co": {
+      "zh": "pinyin",
+      "zh-Hant": "stroke"
+    }
+  }
+}

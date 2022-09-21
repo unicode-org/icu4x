@@ -70,7 +70,7 @@
         See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
-    .. js:staticfunction:: create_from_str(v)
+    .. js:staticfunction:: create_from_string(v)
 
         Construct an :js:class:`ICU4XFixedDecimal` from a string.
 

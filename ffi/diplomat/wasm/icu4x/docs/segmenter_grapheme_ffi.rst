@@ -29,7 +29,7 @@
     See the `Rust documentation for GraphemeClusterBreakSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(provider)
+    .. js:staticfunction:: create(provider)
 
         Construct an :js:class:`ICU4XGraphemeClusterBreakSegmenter`.
 

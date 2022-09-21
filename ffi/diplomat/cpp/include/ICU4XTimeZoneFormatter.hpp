@@ -44,7 +44,7 @@ class ICU4XTimeZoneFormatter {
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.FallbackFormat.html)
    */
-  static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> try_new_with_localized_gmt_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> create_with_localized_gmt_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * Creates a new [`ICU4XTimeZoneFormatter`] from locale data.
@@ -55,7 +55,7 @@ class ICU4XTimeZoneFormatter {
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/time_zone/enum.FallbackFormat.html)
    */
-  static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> try_new_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneOptions options);
+  static diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> create_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneOptions options);
 
   /**
    * Loads generic non-location long format. Example: "Pacific Time"
@@ -138,8 +138,8 @@ class ICU4XTimeZoneFormatter {
 #include "ICU4XIsoTimeZoneOptions.hpp"
 #include "ICU4XCustomTimeZone.hpp"
 
-inline diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> ICU4XTimeZoneFormatter::try_new_with_localized_gmt_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_try_new_with_localized_gmt_fallback(provider.AsFFI(), locale.AsFFI());
+inline diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> ICU4XTimeZoneFormatter::create_with_localized_gmt_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(provider.AsFFI(), locale.AsFFI());
   diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XTimeZoneFormatter>(std::move(ICU4XTimeZoneFormatter(diplomat_result_raw_out_value.ok)));
@@ -148,9 +148,9 @@ inline diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> ICU4XTimeZoneFormatt
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> ICU4XTimeZoneFormatter::try_new_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneOptions options) {
+inline diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> ICU4XTimeZoneFormatter::create_with_iso_8601_fallback(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XIsoTimeZoneOptions options) {
   ICU4XIsoTimeZoneOptions diplomat_wrapped_struct_options = options;
-  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_try_new_with_iso_8601_fallback(provider.AsFFI(), locale.AsFFI(), capi::ICU4XIsoTimeZoneOptions{ .format = static_cast<capi::ICU4XIsoTimeZoneFormat>(diplomat_wrapped_struct_options.format), .minutes = static_cast<capi::ICU4XIsoTimeZoneMinuteDisplay>(diplomat_wrapped_struct_options.minutes), .seconds = static_cast<capi::ICU4XIsoTimeZoneSecondDisplay>(diplomat_wrapped_struct_options.seconds) });
+  auto diplomat_result_raw_out_value = capi::ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(provider.AsFFI(), locale.AsFFI(), capi::ICU4XIsoTimeZoneOptions{ .format = static_cast<capi::ICU4XIsoTimeZoneFormat>(diplomat_wrapped_struct_options.format), .minutes = static_cast<capi::ICU4XIsoTimeZoneMinuteDisplay>(diplomat_wrapped_struct_options.minutes), .seconds = static_cast<capi::ICU4XIsoTimeZoneSecondDisplay>(diplomat_wrapped_struct_options.seconds) });
   diplomat::result<ICU4XTimeZoneFormatter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XTimeZoneFormatter>(std::move(ICU4XTimeZoneFormatter(diplomat_result_raw_out_value.ok)));

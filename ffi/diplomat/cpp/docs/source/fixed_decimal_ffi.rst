@@ -70,7 +70,7 @@
         See the `Rust documentation for DoublePrecision <https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/enum.DoublePrecision.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_str(const std::string_view v)
+    .. cpp:function:: static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_string(const std::string_view v)
 
         Construct an :cpp:class:`ICU4XFixedDecimal` from a string.
 

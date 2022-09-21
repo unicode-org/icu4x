@@ -39,14 +39,14 @@ class ICU4XWeekCalculator {
    * 
    * See the [Rust documentation for `try_new_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#method.try_new_unstable) for more information.
    */
-  static diplomat::result<ICU4XWeekCalculator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
+  static diplomat::result<ICU4XWeekCalculator, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale);
 
   /**
    * 
    * 
    *  Additional information: [1](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday), [2](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days)
    */
-  static ICU4XWeekCalculator new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
+  static ICU4XWeekCalculator create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
 
   /**
    * Returns the weekday that starts the week for this object's locale
@@ -75,8 +75,8 @@ class ICU4XWeekCalculator {
 #include "ICU4XDataProvider.hpp"
 #include "ICU4XLocale.hpp"
 
-inline diplomat::result<ICU4XWeekCalculator, ICU4XError> ICU4XWeekCalculator::try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
-  auto diplomat_result_raw_out_value = capi::ICU4XWeekCalculator_try_new(provider.AsFFI(), locale.AsFFI());
+inline diplomat::result<ICU4XWeekCalculator, ICU4XError> ICU4XWeekCalculator::create(const ICU4XDataProvider& provider, const ICU4XLocale& locale) {
+  auto diplomat_result_raw_out_value = capi::ICU4XWeekCalculator_create(provider.AsFFI(), locale.AsFFI());
   diplomat::result<ICU4XWeekCalculator, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XWeekCalculator>(std::move(ICU4XWeekCalculator(diplomat_result_raw_out_value.ok)));
@@ -85,8 +85,8 @@ inline diplomat::result<ICU4XWeekCalculator, ICU4XError> ICU4XWeekCalculator::tr
   }
   return diplomat_result_out_value;
 }
-inline ICU4XWeekCalculator ICU4XWeekCalculator::new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days) {
-  return ICU4XWeekCalculator(capi::ICU4XWeekCalculator_new_with_first_day_of_week_and_min_week_days(static_cast<capi::ICU4XIsoWeekday>(first_weekday), min_week_days));
+inline ICU4XWeekCalculator ICU4XWeekCalculator::create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days) {
+  return ICU4XWeekCalculator(capi::ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(static_cast<capi::ICU4XIsoWeekday>(first_weekday), min_week_days));
 }
 inline ICU4XIsoWeekday ICU4XWeekCalculator::first_weekday() const {
   return static_cast<ICU4XIsoWeekday>(capi::ICU4XWeekCalculator_first_weekday(this->inner.get()));

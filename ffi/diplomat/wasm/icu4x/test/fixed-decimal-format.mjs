@@ -6,9 +6,9 @@ import test from 'ava';
 
 import { ICU4XFixedDecimal, ICU4XLocale, ICU4XDataProvider, ICU4XFixedDecimalFormatter } from "../lib/index.js"
 
-const locale = ICU4XLocale.create("bn");
+const locale = ICU4XLocale.create_from_string("bn");
 const dataProvider = ICU4XDataProvider.create_test();
-const format = ICU4XFixedDecimalFormatter.try_new_with_grouping_strategy(dataProvider, locale, "Auto");
+const format = ICU4XFixedDecimalFormatter.create_with_grouping_strategy(dataProvider, locale, "Auto");
 
 test("format a simple decimal", t => {
   const decimal = ICU4XFixedDecimal.create_from_i32(1234);

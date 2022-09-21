@@ -37,14 +37,14 @@ class ICU4XDecomposingNormalizer {
    * 
    * See the [Rust documentation for `try_new_nfd_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable) for more information.
    */
-  static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> try_new_nfd(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfd(const ICU4XDataProvider& provider);
 
   /**
    * Construct a new ICU4XDecomposingNormalizer instance for NFKC
    * 
    * See the [Rust documentation for `try_new_nfkd_unstable`](https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfkd_unstable) for more information.
    */
-  static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> try_new_nfkd(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfkd(const ICU4XDataProvider& provider);
 
   /**
    * Normalize a (potentially ill-formed) UTF8 string
@@ -84,8 +84,8 @@ class ICU4XDecomposingNormalizer {
 
 #include "ICU4XDataProvider.hpp"
 
-inline diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> ICU4XDecomposingNormalizer::try_new_nfd(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDecomposingNormalizer_try_new_nfd(provider.AsFFI());
+inline diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> ICU4XDecomposingNormalizer::create_nfd(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDecomposingNormalizer_create_nfd(provider.AsFFI());
   diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDecomposingNormalizer>(std::move(ICU4XDecomposingNormalizer(diplomat_result_raw_out_value.ok)));
@@ -94,8 +94,8 @@ inline diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> ICU4XDecomposing
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> ICU4XDecomposingNormalizer::try_new_nfkd(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDecomposingNormalizer_try_new_nfkd(provider.AsFFI());
+inline diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> ICU4XDecomposingNormalizer::create_nfkd(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDecomposingNormalizer_create_nfkd(provider.AsFFI());
   diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDecomposingNormalizer>(std::move(ICU4XDecomposingNormalizer(diplomat_result_raw_out_value.ok)));

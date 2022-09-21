@@ -8,7 +8,7 @@
     See the `Rust documentation for BidiClassAdapter <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XBidi, ICU4XError> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XBidi, ICU4XError> create(const ICU4XDataProvider& provider)
 
         Creates a new :cpp:class:`ICU4XBidi` from locale data.
 

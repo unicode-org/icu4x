@@ -72,7 +72,7 @@ where
             Ok(data.0)
         }
 
-        #[cfg(feature = "deserialize_postcard_07")]
+        #[cfg(feature = "deserialize_postcard_1")]
         BufferFormat::Postcard1 => {
             let mut d = postcard::Deserializer::from_bytes(bytes);
             let data = YokeTraitHack::<<M::Yokeable as Yokeable>::Output>::deserialize(&mut d)?;
