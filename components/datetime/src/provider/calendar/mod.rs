@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-//! Data struct definitions for calendar-specific symbols and patterns.
+//! Data structs for calendar-specific symbols and patterns.
 
 #[cfg(feature = "experimental_skeleton_matching")]
 mod skeletons;
