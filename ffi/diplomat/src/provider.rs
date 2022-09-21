@@ -114,14 +114,14 @@ pub mod ffi {
             panic!("Requires feature 'any_provider' or 'buffer_provider'");
 
             #[cfg(all(feature = "provider_test", feature = "any_provider"))]
-            convert_any_provider(icu_testdata::any());
+            return convert_any_provider(icu_testdata::any());
 
             #[cfg(all(
                 feature = "provider_test",
                 feature = "buffer_provider",
                 not(feature = "any_provider")
             ))]
-            convert_buffer_provider(icu_testdata::buffer())
+            return convert_buffer_provider(icu_testdata::buffer());
         }
 
         /// Constructs a `BlobDataProvider` and returns it as an [`ICU4XDataProvider`].
