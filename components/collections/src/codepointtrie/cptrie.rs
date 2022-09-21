@@ -1106,8 +1106,8 @@ mod tests {
         assert_eq!(&trie.index, &trie_deserialized.index);
         assert_eq!(&trie.data, &trie_deserialized.data);
 
-        assert!(trie_deserialized.index.is_owned());
-        assert!(trie_deserialized.data.is_owned());
+        assert!(!trie_deserialized.index.is_owned());
+        assert!(!trie_deserialized.data.is_owned());
 
         Ok(())
     }
