@@ -213,7 +213,7 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
             .unwrap()
         };
     }
-    POSTCARD.clone()
+    *POSTCARD
 }
 
 #[doc(hidden)]
