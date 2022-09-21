@@ -648,12 +648,10 @@ where
     /// ```
     #[inline]
     pub fn for_each_mut(&mut self, mut f: impl FnMut(&mut T)) {
-        self.with_mut(|v| {
-            v.iter_mut().for_each(|item| {
-                let mut aligned = T::from_unaligned(*item);
-                f(&mut aligned);
-                *item = aligned.to_unaligned()
-            })
+        self.to_mut_slice().iter_mut().for_each(|item| {
+            let mut aligned = T::from_unaligned(*item);
+            f(&mut aligned);
+            *item = aligned.to_unaligned()
         })
     }
 
@@ -682,13 +680,11 @@ where
         &mut self,
         mut f: impl FnMut(&mut T) -> Result<(), E>,
     ) -> Result<(), E> {
-        self.with_mut(|v| {
-            v.iter_mut().try_for_each(|item| {
-                let mut aligned = T::from_unaligned(*item);
-                f(&mut aligned)?;
-                *item = aligned.to_unaligned();
-                Ok(())
-            })
+        self.to_mut_slice().iter_mut().try_for_each(|item| {
+            let mut aligned = T::from_unaligned(*item);
+            f(&mut aligned)?;
+            *item = aligned.to_unaligned();
+            Ok(())
         })
     }
 
