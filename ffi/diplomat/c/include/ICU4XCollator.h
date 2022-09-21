@@ -16,7 +16,7 @@ typedef struct ICU4XCollator ICU4XCollator;
 #endif
 #include "ICU4XDataProvider.h"
 #include "ICU4XLocale.h"
-#include "ICU4XCollatorOptions.h"
+#include "ICU4XCollatorOptionsV1.h"
 #include "diplomat_result_box_ICU4XCollator_ICU4XError.h"
 #include "ICU4XOrdering.h"
 #ifdef __cplusplus
@@ -24,7 +24,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XCollator_ICU4XError ICU4XCollator_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XCollatorOptions options);
+diplomat_result_box_ICU4XCollator_ICU4XError ICU4XCollator_create_v1(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XCollatorOptionsV1 options);
 
 ICU4XOrdering ICU4XCollator_compare(const ICU4XCollator* self, const char* left_data, size_t left_len, const char* right_data, size_t right_len);
 

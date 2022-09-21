@@ -19,7 +19,7 @@ export class ICU4XBidi {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html#method.new Rust documentation for `new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(provider: ICU4XDataProvider): ICU4XBidi | never;
+  static create(provider: ICU4XDataProvider): ICU4XBidi | never;
 
   /**
 

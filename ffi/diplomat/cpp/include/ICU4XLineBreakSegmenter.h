@@ -16,7 +16,7 @@ typedef struct ICU4XLineBreakSegmenter ICU4XLineBreakSegmenter;
 #endif
 #include "ICU4XDataProvider.h"
 #include "diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError.h"
-#include "ICU4XLineBreakOptions.h"
+#include "ICU4XLineBreakOptionsV1.h"
 #include "ICU4XLineBreakIteratorUtf8.h"
 #include "ICU4XLineBreakIteratorUtf16.h"
 #include "ICU4XLineBreakIteratorLatin1.h"
@@ -25,9 +25,9 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError ICU4XLineBreakSegmenter_try_new(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError ICU4XLineBreakSegmenter_create(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError ICU4XLineBreakSegmenter_try_new_with_options(const ICU4XDataProvider* provider, ICU4XLineBreakOptions options);
+diplomat_result_box_ICU4XLineBreakSegmenter_ICU4XError ICU4XLineBreakSegmenter_create_with_options_v1(const ICU4XDataProvider* provider, ICU4XLineBreakOptionsV1 options);
 
 ICU4XLineBreakIteratorUtf8* ICU4XLineBreakSegmenter_segment_utf8(const ICU4XLineBreakSegmenter* self, const char* input_data, size_t input_len);
 

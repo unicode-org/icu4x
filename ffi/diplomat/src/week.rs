@@ -35,7 +35,7 @@ pub mod ffi {
     impl ICU4XWeekCalculator {
         /// Creates a new [`ICU4XWeekCalculator`] from locale data.
         #[diplomat::rust_link(icu::calendar::week::WeekCalculator::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XWeekCalculator>, ICU4XError> {
@@ -57,7 +57,7 @@ pub mod ffi {
             StructField,
             compact
         )]
-        pub fn new_with_first_day_of_week_and_min_week_days(
+        pub fn create_from_first_day_of_week_and_min_week_days(
             first_weekday: ICU4XIsoWeekday,
             min_week_days: u8,
         ) -> Box<ICU4XWeekCalculator> {

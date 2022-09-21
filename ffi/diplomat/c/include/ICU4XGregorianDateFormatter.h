@@ -26,7 +26,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XGregorianDateFormatter_ICU4XError ICU4XGregorianDateFormatter_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength length);
+diplomat_result_box_ICU4XGregorianDateFormatter_ICU4XError ICU4XGregorianDateFormatter_create_with_length(const ICU4XDataProvider* provider, const ICU4XLocale* locale, ICU4XDateLength length);
 
 diplomat_result_void_ICU4XError ICU4XGregorianDateFormatter_format_iso_date(const ICU4XGregorianDateFormatter* self, const ICU4XIsoDate* value, DiplomatWriteable* write);
 

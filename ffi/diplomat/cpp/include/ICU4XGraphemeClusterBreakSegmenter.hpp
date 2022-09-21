@@ -41,7 +41,7 @@ class ICU4XGraphemeClusterBreakSegmenter {
    * 
    * See the [Rust documentation for `try_new`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.try_new) for more information.
    */
-  static diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider);
+  static diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> create(const ICU4XDataProvider& provider);
 
   /**
    * Segments a (potentially ill-formed) UTF-8 string.
@@ -78,8 +78,8 @@ class ICU4XGraphemeClusterBreakSegmenter {
 #include "ICU4XGraphemeClusterBreakIteratorUtf16.hpp"
 #include "ICU4XGraphemeClusterBreakIteratorLatin1.hpp"
 
-inline diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> ICU4XGraphemeClusterBreakSegmenter::try_new(const ICU4XDataProvider& provider) {
-  auto diplomat_result_raw_out_value = capi::ICU4XGraphemeClusterBreakSegmenter_try_new(provider.AsFFI());
+inline diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> ICU4XGraphemeClusterBreakSegmenter::create(const ICU4XDataProvider& provider) {
+  auto diplomat_result_raw_out_value = capi::ICU4XGraphemeClusterBreakSegmenter_create(provider.AsFFI());
   diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XGraphemeClusterBreakSegmenter>(std::move(ICU4XGraphemeClusterBreakSegmenter(diplomat_result_raw_out_value.ok)));

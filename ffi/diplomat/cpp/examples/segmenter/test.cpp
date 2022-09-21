@@ -42,7 +42,7 @@ void iterate_breakpoints(Iterator& iterator) {
 
 void test_line(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
-    const auto segmenter = ICU4XLineBreakSegmenter::try_new(provider).ok().value();
+    const auto segmenter = ICU4XLineBreakSegmenter::create(provider).ok().value();
     cout << "Finding line breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
@@ -54,7 +54,7 @@ void test_line(const std::string_view& str) {
 
 void test_grapheme(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
-    const auto segmenter = ICU4XGraphemeClusterBreakSegmenter::try_new(provider).ok().value();
+    const auto segmenter = ICU4XGraphemeClusterBreakSegmenter::create(provider).ok().value();
     cout << "Finding grapheme cluster breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
@@ -66,7 +66,7 @@ void test_grapheme(const std::string_view& str) {
 
 void test_word(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
-    const auto segmenter = ICU4XWordBreakSegmenter::try_new(provider).ok().value();
+    const auto segmenter = ICU4XWordBreakSegmenter::create(provider).ok().value();
     cout << "Finding word breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());
@@ -78,7 +78,7 @@ void test_word(const std::string_view& str) {
 
 void test_sentence(const std::string_view& str) {
     const auto provider = ICU4XDataProvider::create_test();
-    const auto segmenter = ICU4XSentenceBreakSegmenter::try_new(provider).ok().value();
+    const auto segmenter = ICU4XSentenceBreakSegmenter::create(provider).ok().value();
     cout << "Finding sentence breakpoints in string:" << endl
          << str << endl;
     print_ruler(str.size());

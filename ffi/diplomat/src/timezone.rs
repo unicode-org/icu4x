@@ -30,7 +30,7 @@ pub mod ffi {
         /// Creates a time zone from an offset string.
         #[diplomat::rust_link(icu::timezone::CustomTimeZone::from_str, FnInStruct)]
         #[diplomat::rust_link(icu::timezone::GmtOffset::from_str, FnInStruct, hidden)]
-        pub fn create_from_str(s: &str) -> DiplomatResult<Box<ICU4XCustomTimeZone>, ICU4XError> {
+        pub fn create_from_string(s: &str) -> DiplomatResult<Box<ICU4XCustomTimeZone>, ICU4XError> {
             // TODO(#2543): Use a byte parsing API once available in CustomTimeZone (also #2520)
             if str::from_utf8(s.as_bytes()).is_err() {
                 return Err(ICU4XError::TimeZoneInvalidOffsetError).into();
@@ -335,7 +335,7 @@ pub mod ffi {
 
     impl ICU4XMetazoneCalculator {
         #[diplomat::rust_link(icu::timezone::MetazoneCalculator::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XMetazoneCalculator>, ICU4XError> {
             MetazoneCalculator::try_new_unstable(&provider.0)

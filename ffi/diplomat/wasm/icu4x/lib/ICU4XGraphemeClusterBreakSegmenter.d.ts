@@ -20,7 +20,7 @@ export class ICU4XGraphemeClusterBreakSegmenter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(provider: ICU4XDataProvider): ICU4XGraphemeClusterBreakSegmenter | never;
+  static create(provider: ICU4XDataProvider): ICU4XGraphemeClusterBreakSegmenter | never;
 
   /**
 

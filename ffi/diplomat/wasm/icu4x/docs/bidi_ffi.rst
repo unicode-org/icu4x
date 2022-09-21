@@ -8,7 +8,7 @@
     See the `Rust documentation for BidiClassAdapter <https://unicode-org.github.io/icu4x-docs/doc/icu/properties/bidi/struct.BidiClassAdapter.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(provider)
+    .. js:staticfunction:: create(provider)
 
         Creates a new :js:class:`ICU4XBidi` from locale data.
 

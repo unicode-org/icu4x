@@ -17,10 +17,10 @@ export class ICU4XCalendar {
     }
   }
 
-  static try_new_for_locale(arg_provider, arg_locale) {
+  static create_for_locale(arg_provider, arg_locale) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCalendar_try_new_for_locale(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      wasm.ICU4XCalendar_create_for_locale(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCalendar(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -34,10 +34,10 @@ export class ICU4XCalendar {
     })();
   }
 
-  static try_new_for_kind(arg_provider, arg_kind) {
+  static create_for_kind(arg_provider, arg_kind) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCalendar_try_new_for_kind(diplomat_receive_buffer, arg_provider.underlying, ICU4XAnyCalendarKind_js_to_rust[arg_kind]);
+      wasm.ICU4XCalendar_create_for_kind(diplomat_receive_buffer, arg_provider.underlying, ICU4XAnyCalendarKind_js_to_rust[arg_kind]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCalendar(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

@@ -1,5 +1,5 @@
-#ifndef ICU4XLineBreakOptions_HPP
-#define ICU4XLineBreakOptions_HPP
+#ifndef ICU4XLineBreakOptionsV1_HPP
+#define ICU4XLineBreakOptionsV1_HPP
 #include <stdint.h>
 #include <stddef.h>
 #include <stdbool.h>
@@ -9,17 +9,17 @@
 #include <optional>
 #include "diplomat_runtime.hpp"
 
-#include "ICU4XLineBreakOptions.h"
+#include "ICU4XLineBreakOptionsV1.h"
 
 #include "ICU4XLineBreakRule.hpp"
 #include "ICU4XWordBreakRule.hpp"
 
 /**
- * A destruction policy for using ICU4XLineBreakOptions with std::unique_ptr.
+ * A destruction policy for using ICU4XLineBreakOptionsV1 with std::unique_ptr.
  */
-struct ICU4XLineBreakOptionsDeleter {
-  void operator()(capi::ICU4XLineBreakOptions* l) const noexcept {
-    capi::ICU4XLineBreakOptions_destroy(l);
+struct ICU4XLineBreakOptionsV1Deleter {
+  void operator()(capi::ICU4XLineBreakOptionsV1* l) const noexcept {
+    capi::ICU4XLineBreakOptionsV1_destroy(l);
   }
 };
 
@@ -28,7 +28,7 @@ struct ICU4XLineBreakOptionsDeleter {
  * 
  * See the [Rust documentation for `LineBreakOptions`](https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakOptions.html) for more information.
  */
-struct ICU4XLineBreakOptions {
+struct ICU4XLineBreakOptionsV1 {
  public:
   ICU4XLineBreakRule line_break_rule;
   ICU4XWordBreakRule word_break_rule;

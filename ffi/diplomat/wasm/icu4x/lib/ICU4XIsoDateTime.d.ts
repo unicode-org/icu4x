@@ -24,7 +24,7 @@ export class ICU4XIsoDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_iso_datetime Rust documentation for `new_iso_datetime`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XIsoDateTime | never;
+  static create(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XIsoDateTime | never;
 
   /**
 
@@ -32,7 +32,7 @@ export class ICU4XIsoDateTime {
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new Rust documentation for `new`} for more information.
    */
-  static new_from_date_and_time(date: ICU4XIsoDate, time: ICU4XTime): ICU4XIsoDateTime;
+  static crate_from_date_and_time(date: ICU4XIsoDate, time: ICU4XTime): ICU4XIsoDateTime;
 
   /**
 
@@ -41,7 +41,7 @@ export class ICU4XIsoDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch Rust documentation for `from_minutes_since_local_unix_epoch`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static from_minutes_since_local_unix_epoch(minutes: i32): ICU4XIsoDateTime | never;
+  static create_from_minutes_since_local_unix_epoch(minutes: i32): ICU4XIsoDateTime | never;
 
   /**
 

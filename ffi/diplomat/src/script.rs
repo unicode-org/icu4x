@@ -27,7 +27,7 @@ pub mod ffi {
 
     impl ICU4XScriptWithExtensions {
         #[diplomat::rust_link(icu::properties::script::load_script_with_extensions_unstable, Fn)]
-        pub fn load(
+        pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XScriptWithExtensions>, ICU4XError> {
             script::load_script_with_extensions_unstable(&provider.0)

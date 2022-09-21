@@ -38,7 +38,7 @@ class ICU4XCustomTimeZone {
    * 
    * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str) for more information.
    */
-  static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s);
+  static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_string(const std::string_view s);
 
   /**
    * Creates a time zone with no information.
@@ -308,8 +308,8 @@ class ICU4XCustomTimeZone {
 #include "ICU4XMetazoneCalculator.hpp"
 #include "ICU4XIsoDateTime.hpp"
 
-inline diplomat::result<ICU4XCustomTimeZone, ICU4XError> ICU4XCustomTimeZone::create_from_str(const std::string_view s) {
-  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_create_from_str(s.data(), s.size());
+inline diplomat::result<ICU4XCustomTimeZone, ICU4XError> ICU4XCustomTimeZone::create_from_string(const std::string_view s) {
+  auto diplomat_result_raw_out_value = capi::ICU4XCustomTimeZone_create_from_string(s.data(), s.size());
   diplomat::result<ICU4XCustomTimeZone, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XCustomTimeZone>(std::move(ICU4XCustomTimeZone(diplomat_result_raw_out_value.ok)));

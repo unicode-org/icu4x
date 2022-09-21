@@ -16,10 +16,10 @@ export class ICU4XComposingNormalizer {
     }
   }
 
-  static try_new_nfc(arg_provider) {
+  static create_nfc(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XComposingNormalizer_try_new_nfc(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XComposingNormalizer_create_nfc(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XComposingNormalizer(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -33,10 +33,10 @@ export class ICU4XComposingNormalizer {
     })();
   }
 
-  static try_new_nfkc(arg_provider) {
+  static create_nfkc(arg_provider) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XComposingNormalizer_try_new_nfkc(diplomat_receive_buffer, arg_provider.underlying);
+      wasm.ICU4XComposingNormalizer_create_nfkc(diplomat_receive_buffer, arg_provider.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XComposingNormalizer(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

@@ -34,14 +34,14 @@
     See the `Rust documentation for AnyCalendar <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_for_locale(provider, locale)
+    .. js:staticfunction:: create_for_locale(provider, locale)
 
         Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
 
         See the `Rust documentation for try_new_for_locale_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/enum.AnyCalendar.html#method.try_new_for_locale_unstable>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_for_kind(provider, kind)
+    .. js:staticfunction:: create_for_kind(provider, kind)
 
         Creates a new :js:class:`ICU4XCalendar` from the specified date and time.
 
