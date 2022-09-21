@@ -22,7 +22,7 @@
         Finds the next breakpoint. Returns -1 if at the end of the string or if the index is out of range of a 32-bit signed integer.
 
 
-.. js:class:: ICU4XLineBreakOptions
+.. js:class:: ICU4XLineBreakOptionsV1
 
     See the `Rust documentation for LineBreakOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakOptions.html>`__ for more information.
 
@@ -45,14 +45,14 @@
     See the `Rust documentation for LineBreakSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(provider)
+    .. js:staticfunction:: create(provider)
 
         Construct a :js:class:`ICU4XLineBreakSegmenter` with default options.
 
         See the `Rust documentation for try_new <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new>`__ for more information.
 
 
-    .. js:staticfunction:: try_new_with_options(provider, options)
+    .. js:staticfunction:: create_with_options_v1(provider, options)
 
         Construct a :js:class:`ICU4XLineBreakSegmenter` with custom options.
 

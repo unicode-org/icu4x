@@ -46,7 +46,7 @@ databake = { version = "0.1.0", path = "../../utils/databake", optional = true, 
 zerofrom = { version = "0.1.0", path = "../../utils/zerofrom" }
 
 [dev-dependencies]
-icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer"] }
+icu_testdata = { path = "../../provider/testdata", default-features = false, features = ["icu_normalizer", "icu_properties"] }
 atoi = "1.0.0"
 arraystring = "0.3.0"
 arrayvec = "0.7.2"

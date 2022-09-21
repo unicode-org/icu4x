@@ -6,7 +6,7 @@
     See the `Rust documentation for Collator <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XCollator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptions options)
+    .. cpp:function:: static diplomat::result<ICU4XCollator, ICU4XError> create_v1(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XCollatorOptionsV1 options)
 
         Construct a new Collator instance.
 
@@ -110,7 +110,7 @@
 
     .. cpp:enumerator:: On
 
-.. cpp:struct:: ICU4XCollatorOptions
+.. cpp:struct:: ICU4XCollatorOptionsV1
 
     See the `Rust documentation for CollatorOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.CollatorOptions.html>`__ for more information.
 

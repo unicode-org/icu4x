@@ -32,7 +32,7 @@ static bool test_string(std::string_view actualString,
 
 int main() {
   ICU4XLogger::init_simple_logger();
-  ICU4XLocale locale = ICU4XLocale::create("es-ES").ok().value();
+  ICU4XLocale locale = ICU4XLocale::create_from_string("es-ES").ok().value();
   if (!test_locale(locale, "es-ES", "Created a locale")) {
     return 1;
   }
@@ -88,7 +88,7 @@ int main() {
     return 1;
   }
 
-  locale = ICU4XLocale::create("en-US-u-hc-h12").value();
+  locale = ICU4XLocale::create_from_string("en-US-u-hc-h12").ok().value();
   if (!test_string(locale.get_unicode_extension("hc").ok().value(), "h12",
                    "The unicode extension can be accessed")) {
     return 1;
@@ -98,7 +98,7 @@ int main() {
     return 1;
   }
 
-  locale = ICU4XLocale::und();
+  locale = ICU4XLocale::create_und();
   if (!test_locale(locale, "und", "Created an undefined locale")) {
     return 1;
   }

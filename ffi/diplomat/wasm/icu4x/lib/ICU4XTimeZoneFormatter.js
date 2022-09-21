@@ -19,10 +19,10 @@ export class ICU4XTimeZoneFormatter {
     }
   }
 
-  static try_new_with_localized_gmt_fallback(arg_provider, arg_locale) {
+  static create_with_localized_gmt_fallback(arg_provider, arg_locale) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XTimeZoneFormatter_try_new_with_localized_gmt_fallback(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
+      wasm.ICU4XTimeZoneFormatter_create_with_localized_gmt_fallback(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XTimeZoneFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -36,13 +36,13 @@ export class ICU4XTimeZoneFormatter {
     })();
   }
 
-  static try_new_with_iso_8601_fallback(arg_provider, arg_locale, arg_options) {
+  static create_with_iso_8601_fallback(arg_provider, arg_locale, arg_options) {
     const field_format_arg_options = arg_options["format"];
     const field_minutes_arg_options = arg_options["minutes"];
     const field_seconds_arg_options = arg_options["seconds"];
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XTimeZoneFormatter_try_new_with_iso_8601_fallback(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XIsoTimeZoneFormat_js_to_rust[field_format_arg_options], ICU4XIsoTimeZoneMinuteDisplay_js_to_rust[field_minutes_arg_options], ICU4XIsoTimeZoneSecondDisplay_js_to_rust[field_seconds_arg_options]);
+      wasm.ICU4XTimeZoneFormatter_create_with_iso_8601_fallback(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XIsoTimeZoneFormat_js_to_rust[field_format_arg_options], ICU4XIsoTimeZoneMinuteDisplay_js_to_rust[field_minutes_arg_options], ICU4XIsoTimeZoneSecondDisplay_js_to_rust[field_seconds_arg_options]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XTimeZoneFormatter(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

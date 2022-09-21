@@ -42,14 +42,14 @@ class ICU4XDate {
    * 
    * See the [Rust documentation for `new_from_iso`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_iso) for more information.
    */
-  static diplomat::result<ICU4XDate, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar);
+  static diplomat::result<ICU4XDate, ICU4XError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar);
 
   /**
    * Creates a new [`ICU4XDate`] from the given codes, which are interpreted in the given calendar system
    * 
    * See the [Rust documentation for `new_from_codes`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_codes) for more information.
    */
-  static diplomat::result<ICU4XDate, ICU4XError> try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar);
+  static diplomat::result<ICU4XDate, ICU4XError> create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar);
 
   /**
    * Convert this date to one in a different calendar
@@ -190,8 +190,8 @@ class ICU4XDate {
 #include "ICU4XWeekCalculator.hpp"
 #include "ICU4XWeekOf.hpp"
 
-inline diplomat::result<ICU4XDate, ICU4XError> ICU4XDate::try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDate_try_new_from_iso_in_calendar(year, month, day, calendar.AsFFI());
+inline diplomat::result<ICU4XDate, ICU4XError> ICU4XDate::create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDate_create_from_iso_in_calendar(year, month, day, calendar.AsFFI());
   diplomat::result<ICU4XDate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDate>(std::move(ICU4XDate(diplomat_result_raw_out_value.ok)));
@@ -200,8 +200,8 @@ inline diplomat::result<ICU4XDate, ICU4XError> ICU4XDate::try_new_from_iso_in_ca
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XDate, ICU4XError> ICU4XDate::try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDate_try_new_from_codes_in_calendar(era_code.data(), era_code.size(), year, month_code.data(), month_code.size(), day, calendar.AsFFI());
+inline diplomat::result<ICU4XDate, ICU4XError> ICU4XDate::create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDate_create_from_codes_in_calendar(era_code.data(), era_code.size(), year, month_code.data(), month_code.size(), day, calendar.AsFFI());
   diplomat::result<ICU4XDate, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDate>(std::move(ICU4XDate(diplomat_result_raw_out_value.ok)));

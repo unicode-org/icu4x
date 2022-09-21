@@ -42,7 +42,7 @@ pub mod ffi {
     impl ICU4XTimeFormatter {
         /// Creates a new [`ICU4XTimeFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::TimeFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             length: ICU4XTimeLength,
@@ -128,7 +128,7 @@ pub mod ffi {
     impl ICU4XGregorianDateFormatter {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::TypedDateFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             length: ICU4XDateLength,
@@ -195,7 +195,7 @@ pub mod ffi {
     impl ICU4XGregorianDateTimeFormatter {
         /// Creates a new [`ICU4XGregorianDateFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::TypedDateTimeFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create_with_lengths(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -244,7 +244,7 @@ pub mod ffi {
     impl ICU4XDateFormatter {
         /// Creates a new [`ICU4XDateFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::DateFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create_with_length(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -342,7 +342,7 @@ pub mod ffi {
     impl ICU4XDateTimeFormatter {
         /// Creates a new [`ICU4XDateTimeFormatter`] from locale data.
         #[diplomat::rust_link(icu::datetime::DateTimeFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create_with_lengths(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,

@@ -8,14 +8,14 @@
     See the `Rust documentation for WeekCalculator <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XWeekCalculator, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+    .. cpp:function:: static diplomat::result<ICU4XWeekCalculator, ICU4XError> create(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
         Creates a new :cpp:class:`ICU4XWeekCalculator` from locale data.
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#method.try_new_unstable>`__ for more information.
 
 
-    .. cpp:function:: static ICU4XWeekCalculator new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days)
+    .. cpp:function:: static ICU4XWeekCalculator create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days)
 
         Additional information: `1 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.first_weekday>`__, `2 <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/week/struct.WeekCalculator.html#structfield.min_week_days>`__
 

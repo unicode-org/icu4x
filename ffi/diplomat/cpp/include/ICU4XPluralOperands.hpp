@@ -42,12 +42,12 @@ struct ICU4XPluralOperands {
    * 
    * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html#method.from_str) for more information.
    */
-  static diplomat::result<ICU4XPluralOperands, ICU4XError> create(const std::string_view s);
+  static diplomat::result<ICU4XPluralOperands, ICU4XError> create_from_string(const std::string_view s);
 };
 
 
-inline diplomat::result<ICU4XPluralOperands, ICU4XError> ICU4XPluralOperands::create(const std::string_view s) {
-  auto diplomat_result_raw_out_value = capi::ICU4XPluralOperands_create(s.data(), s.size());
+inline diplomat::result<ICU4XPluralOperands, ICU4XError> ICU4XPluralOperands::create_from_string(const std::string_view s) {
+  auto diplomat_result_raw_out_value = capi::ICU4XPluralOperands_create_from_string(s.data(), s.size());
   diplomat::result<ICU4XPluralOperands, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
   capi::ICU4XPluralOperands diplomat_raw_struct_out_value = diplomat_result_raw_out_value.ok;

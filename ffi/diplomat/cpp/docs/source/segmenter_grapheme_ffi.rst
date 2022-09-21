@@ -29,7 +29,7 @@
     See the `Rust documentation for GraphemeClusterBreakSegmenter <https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.GraphemeClusterBreakSegmenter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XGraphemeClusterBreakSegmenter, ICU4XError> create(const ICU4XDataProvider& provider)
 
         Construct an :cpp:class:`ICU4XGraphemeClusterBreakSegmenter`.
 

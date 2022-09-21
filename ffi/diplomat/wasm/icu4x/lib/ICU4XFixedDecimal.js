@@ -102,11 +102,11 @@ export class ICU4XFixedDecimal {
     })();
   }
 
-  static create_from_str(arg_v) {
+  static create_from_string(arg_v) {
     const buf_arg_v = diplomatRuntime.DiplomatBuf.str(wasm, arg_v);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XFixedDecimal_create_from_str(diplomat_receive_buffer, buf_arg_v.ptr, buf_arg_v.size);
+      wasm.ICU4XFixedDecimal_create_from_string(diplomat_receive_buffer, buf_arg_v.ptr, buf_arg_v.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XFixedDecimal(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

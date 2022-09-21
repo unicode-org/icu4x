@@ -8,7 +8,7 @@
     See the `Rust documentation for Time <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTime, ICU4XError> try_new(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond)
+    .. cpp:function:: static diplomat::result<ICU4XTime, ICU4XError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond)
 
         Creates a new :cpp:class:`ICU4XTime` given field values
 

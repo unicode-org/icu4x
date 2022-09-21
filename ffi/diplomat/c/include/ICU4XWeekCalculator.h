@@ -23,9 +23,9 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XWeekCalculator_ICU4XError ICU4XWeekCalculator_try_new(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XWeekCalculator_ICU4XError ICU4XWeekCalculator_create(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-ICU4XWeekCalculator* ICU4XWeekCalculator_new_with_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
+ICU4XWeekCalculator* ICU4XWeekCalculator_create_from_first_day_of_week_and_min_week_days(ICU4XIsoWeekday first_weekday, uint8_t min_week_days);
 
 ICU4XIsoWeekday ICU4XWeekCalculator_first_weekday(const ICU4XWeekCalculator* self);
 

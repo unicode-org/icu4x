@@ -22,7 +22,7 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalCombiningClassMap::try_new_unstable,
             FnInStruct
         )]
-        pub fn try_new(
+        pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCanonicalCombiningClassMap>, ICU4XError> {
             CanonicalCombiningClassMap::try_new_unstable(&provider.0)
@@ -70,7 +70,7 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalComposition::try_new_unstable,
             FnInStruct
         )]
-        pub fn try_new(
+        pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCanonicalComposition>, ICU4XError> {
             CanonicalComposition::try_new_unstable(&provider.0)
@@ -112,7 +112,7 @@ pub mod ffi {
             icu::normalizer::properties::CanonicalDecomposition::try_new_unstable,
             FnInStruct
         )]
-        pub fn try_new(
+        pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XCanonicalDecomposition>, ICU4XError> {
             CanonicalDecomposition::try_new_unstable(&provider.0)

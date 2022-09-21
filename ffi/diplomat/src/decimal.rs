@@ -38,7 +38,7 @@ pub mod ffi {
     impl ICU4XFixedDecimalFormatter {
         /// Creates a new [`ICU4XFixedDecimalFormatter`] from locale data.
         #[diplomat::rust_link(icu::decimal::FixedDecimalFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new_with_grouping_strategy(
+        pub fn create_with_grouping_strategy(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
@@ -51,7 +51,7 @@ pub mod ffi {
         ///
         /// The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed.
         /// Passing a consumed struct to this method will return an error.
-        pub fn try_new_from_decimal_symbols_v1(
+        pub fn create_with_decimal_symbols_v1(
             data_struct: &ICU4XDataStruct,
             grouping_strategy: ICU4XFixedDecimalGroupingStrategy,
         ) -> DiplomatResult<Box<ICU4XFixedDecimalFormatter>, ICU4XError> {

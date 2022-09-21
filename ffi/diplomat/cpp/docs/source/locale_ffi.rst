@@ -8,7 +8,7 @@
     See the `Rust documentation for Locale <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XLocale, ICU4XError> create(const std::string_view name)
+    .. cpp:function:: static diplomat::result<ICU4XLocale, ICU4XError> create_from_string(const std::string_view name)
 
         Construct an :cpp:class:`ICU4XLocale` from an locale identifier.
 
@@ -25,7 +25,7 @@
         Construct an :cpp:class:`ICU4XLocale` for the Bangla language.
 
 
-    .. cpp:function:: static ICU4XLocale und()
+    .. cpp:function:: static ICU4XLocale create_und()
 
         Construct a default undefined :cpp:class:`ICU4XLocale` "und".
 

@@ -8,7 +8,7 @@
     See the `Rust documentation for Locale <https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html>`__ for more information.
 
 
-    .. js:staticfunction:: create(name)
+    .. js:staticfunction:: create_from_string(name)
 
         Construct an :js:class:`ICU4XLocale` from an locale identifier.
 
@@ -25,7 +25,7 @@
         Construct an :js:class:`ICU4XLocale` for the Bangla language.
 
 
-    .. js:staticfunction:: und()
+    .. js:staticfunction:: create_und()
 
         Construct a default undefined :js:class:`ICU4XLocale` "und".
 

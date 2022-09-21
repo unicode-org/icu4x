@@ -4,7 +4,7 @@ import { ICU4XError } from "./ICU4XError";
 import { ICU4XLineBreakIteratorLatin1 } from "./ICU4XLineBreakIteratorLatin1";
 import { ICU4XLineBreakIteratorUtf16 } from "./ICU4XLineBreakIteratorUtf16";
 import { ICU4XLineBreakIteratorUtf8 } from "./ICU4XLineBreakIteratorUtf8";
-import { ICU4XLineBreakOptions } from "./ICU4XLineBreakOptions";
+import { ICU4XLineBreakOptionsV1 } from "./ICU4XLineBreakOptionsV1";
 
 /**
 
@@ -21,7 +21,7 @@ export class ICU4XLineBreakSegmenter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new Rust documentation for `try_new`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(provider: ICU4XDataProvider): ICU4XLineBreakSegmenter | never;
+  static create(provider: ICU4XDataProvider): ICU4XLineBreakSegmenter | never;
 
   /**
 
@@ -30,7 +30,7 @@ export class ICU4XLineBreakSegmenter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/segmenter/struct.LineBreakSegmenter.html#method.try_new_with_options Rust documentation for `try_new_with_options`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_with_options(provider: ICU4XDataProvider, options: ICU4XLineBreakOptions): ICU4XLineBreakSegmenter | never;
+  static create_with_options_v1(provider: ICU4XDataProvider, options: ICU4XLineBreakOptionsV1): ICU4XLineBreakSegmenter | never;
 
   /**
 

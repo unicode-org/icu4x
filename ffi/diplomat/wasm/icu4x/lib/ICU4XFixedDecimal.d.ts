@@ -93,7 +93,7 @@ export class ICU4XFixedDecimal {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.from_str Rust documentation for `from_str`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create_from_str(v: string): ICU4XFixedDecimal | never;
+  static create_from_string(v: string): ICU4XFixedDecimal | never;
 
   /**
 

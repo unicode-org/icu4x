@@ -26,7 +26,7 @@ pub mod ffi {
 
     #[diplomat::rust_link(icu::collator::CollatorOptions, Struct)]
     #[diplomat::rust_link(icu::collator::CollatorOptions::new, FnInStruct, hidden)]
-    pub struct ICU4XCollatorOptions {
+    pub struct ICU4XCollatorOptionsV1 {
         pub strength: ICU4XCollatorStrength,
         pub alternate_handling: ICU4XCollatorAlternateHandling,
         pub case_first: ICU4XCollatorCaseFirst,
@@ -94,10 +94,10 @@ pub mod ffi {
     impl ICU4XCollator {
         /// Construct a new Collator instance.
         #[diplomat::rust_link(icu::collator::Collator::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create_v1(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
-            options: ICU4XCollatorOptions,
+            options: ICU4XCollatorOptionsV1,
         ) -> DiplomatResult<Box<ICU4XCollator>, ICU4XError> {
             let locale = locale.to_datalocale();
             let options = CollatorOptions::from(options);
@@ -223,8 +223,8 @@ impl From<ffi::ICU4XCollatorBackwardSecondLevel> for Option<BackwardSecondLevel>
     }
 }
 
-impl From<ffi::ICU4XCollatorOptions> for CollatorOptions {
-    fn from(options: ffi::ICU4XCollatorOptions) -> CollatorOptions {
+impl From<ffi::ICU4XCollatorOptionsV1> for CollatorOptions {
+    fn from(options: ffi::ICU4XCollatorOptionsV1) -> CollatorOptions {
         let mut result = CollatorOptions::new();
         result.strength = options.strength.into();
         result.alternate_handling = options.alternate_handling.into();

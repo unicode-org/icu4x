@@ -20,10 +20,10 @@ export class ICU4XIsoDate {
     }
   }
 
-  static try_new(arg_year, arg_month, arg_day) {
+  static create(arg_year, arg_month, arg_day) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XIsoDate_try_new(diplomat_receive_buffer, arg_year, arg_month, arg_day);
+      wasm.ICU4XIsoDate_create(diplomat_receive_buffer, arg_year, arg_month, arg_day);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XIsoDate(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

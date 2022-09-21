@@ -6,7 +6,7 @@
     See the `Rust documentation for Collator <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.Collator.html>`__ for more information.
 
 
-    .. js:staticfunction:: try_new(provider, locale, options)
+    .. js:staticfunction:: create_v1(provider, locale, options)
 
         Construct a new Collator instance.
 
@@ -72,7 +72,7 @@
     See the `Rust documentation for Numeric <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/enum.Numeric.html>`__ for more information.
 
 
-.. js:class:: ICU4XCollatorOptions
+.. js:class:: ICU4XCollatorOptionsV1
 
     See the `Rust documentation for CollatorOptions <https://unicode-org.github.io/icu4x-docs/doc/icu/collator/struct.CollatorOptions.html>`__ for more information.
 

@@ -10,13 +10,13 @@ export class ICU4XList {
 
    * Create a new list of strings
    */
-  static new(): ICU4XList;
+  static create(): ICU4XList;
 
   /**
 
    * Create a new list of strings with preallocated space to hold at least `capacity` elements
    */
-  static with_capacity(capacity: usize): ICU4XList;
+  static create_with_capacity(capacity: usize): ICU4XList;
 
   /**
 
