@@ -40,13 +40,13 @@ fn create_baked_data_provider() -> baked::BakedDataProvider {
 
 fn providers_bench(c: &mut Criterion) {
     c.bench_function("provider/construct/static", |b| {
-        b.iter(|| create_static_data_provider());
+        b.iter(create_static_data_provider);
     });
     c.bench_function("provider/construct/blob", |b| {
-        b.iter(|| create_blob_data_provider());
+        b.iter(create_blob_data_provider);
     });
     c.bench_function("provider/construct/baked", |b| {
-        b.iter(|| create_baked_data_provider());
+        b.iter(create_baked_data_provider);
     });
 
     c.bench_function("provider/load/static", |b| {

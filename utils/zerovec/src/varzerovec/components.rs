@@ -319,6 +319,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// This method is NOT allowed to call any other methods on VarZeroVecComponents since all other methods
     /// assume that the slice has been passed through check_indices_and_things
     #[inline]
+    #[allow(clippy::len_zero)] // more explicit to enforce safety invariants
     fn check_indices_and_things(self) -> Result<(), ZeroVecError> {
         assert_eq!(self.len(), self.indices_slice().len());
         assert!(self.len() > 0);
