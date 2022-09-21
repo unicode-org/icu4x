@@ -2038,7 +2038,7 @@ impl ComposingNormalizer {
         ]
     );
 
-    /// UTS 46 constructor
+    /// 🚧 \[Experimental\] UTS 46 constructor
     ///
     /// This is a special building block normalization for IDNA that implements parts of the Map
     /// step and the following Normalize step. The caller is responsible for performing the
@@ -2061,6 +2061,13 @@ impl ComposingNormalizer {
     ///
     /// NOTE: This method remains experimental until suitability of this feature as part of
     /// IDNA processing has been demonstrated.
+    ///
+    /// <div class="stab unstable">
+    /// 🚧 This code is experimental; it may change at any time, in breaking or non-breaking ways,
+    /// including in SemVer minor releases. It can be enabled with the "experimental" feature
+    /// of the icu meta-crate. Use with caution.
+    /// <a href="https://github.com/unicode-org/icu4x/issues/1317">#1317</a>
+    /// </div>
     #[cfg(feature = "experimental")]
     pub fn try_new_uts46_without_ignored_and_disallowed_unstable<D>(
         data_provider: &D,
@@ -2087,18 +2094,6 @@ impl ComposingNormalizer {
             canonical_compositions,
         })
     }
-
-    #[cfg(feature = "experimental")]
-    icu_provider::gen_any_buffer_constructors!(
-        locale: skip,
-        options: skip,
-        error: NormalizerError,
-        functions: [
-            Self::try_new_uts46_without_ignored_and_disallowed_unstable,
-            try_new_uts46_without_ignored_and_disallowed_with_any_provider,
-            try_new_uts46_without_ignored_and_disallowed_with_buffer_provider
-        ]
-    );
 
     /// Wraps a delegate iterator into a composing iterator
     /// adapter by using the data already held by this normalizer.
