@@ -3,7 +3,6 @@
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
 use icu_datagen::*;
-use icu_locid::langid;
 use icu_provider::KeyedDataMarker;
 use icu_provider_fs::export::serializers::{json, postcard};
 use icu_testdata::{metadata, paths};
