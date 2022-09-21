@@ -8,7 +8,7 @@
     See the `Rust documentation for DateFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDateFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length)
+    .. cpp:function:: static diplomat::result<ICU4XDateFormatter, ICU4XError> create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length)
 
         Creates a new :cpp:class:`ICU4XDateFormatter` from locale data.
 
@@ -99,7 +99,7 @@
     See the `Rust documentation for DateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.DateTimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
+    .. cpp:function:: static diplomat::result<ICU4XDateTimeFormatter, ICU4XError> create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
 
         Creates a new :cpp:class:`ICU4XDateTimeFormatter` from locale data.
 
@@ -145,7 +145,7 @@
     See the `Rust documentation for TypedDateFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length)
+    .. cpp:function:: static diplomat::result<ICU4XGregorianDateFormatter, ICU4XError> create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength length)
 
         Creates a new :cpp:class:`ICU4XGregorianDateFormatter` from locale data.
 
@@ -187,7 +187,7 @@
     See the `Rust documentation for TypedDateTimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TypedDateTimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
+    .. cpp:function:: static diplomat::result<ICU4XGregorianDateTimeFormatter, ICU4XError> create_with_lengths(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XDateLength date_length, ICU4XTimeLength time_length)
 
         Creates a new :cpp:class:`ICU4XGregorianDateFormatter` from locale data.
 
@@ -215,7 +215,7 @@
     See the `Rust documentation for TimeFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/datetime/struct.TimeFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XTimeFormatter, ICU4XError> try_new(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length)
+    .. cpp:function:: static diplomat::result<ICU4XTimeFormatter, ICU4XError> create_with_length(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XTimeLength length)
 
         Creates a new :cpp:class:`ICU4XTimeFormatter` from locale data.
 

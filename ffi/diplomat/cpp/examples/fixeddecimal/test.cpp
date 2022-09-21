@@ -14,7 +14,7 @@ int main() {
     ICU4XLocale locale = ICU4XLocale::create_bn();
     std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
     ICU4XDataProvider dp = ICU4XDataProvider::create_test();
-    ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::try_new_with_grouping_strategy(
+    ICU4XFixedDecimalFormatter fdf = ICU4XFixedDecimalFormatter::create_with_grouping_strategy(
         dp, locale, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
     ICU4XFixedDecimal decimal = ICU4XFixedDecimal::create_from_u64(1000007);
@@ -94,7 +94,7 @@ int main() {
 
     auto data = ICU4XDataStruct::create_decimal_symbols_v1("+", "", "-", "", "/", "_", 4, 2, 4, digits).ok().value();
 
-    fdf = ICU4XFixedDecimalFormatter::try_new_from_decimal_symbols_v1(data, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
+    fdf = ICU4XFixedDecimalFormatter::create_with_decimal_symbols_v1(data, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
     decimal = ICU4XFixedDecimal::create_from_f64_with_floating_precision(123456.8901).ok().value();
     out = fdf.format(decimal).ok().value();
@@ -111,9 +111,9 @@ int main() {
         return 1;
     }
 
-    locale = ICU4XLocale::create("th-u-nu-thai").ok().value();
+    locale = ICU4XLocale::create_from_string("th-u-nu-thai").ok().value();
     std::cout << "Running test for locale " << locale.to_string().ok().value() << std::endl;
-    fdf = ICU4XFixedDecimalFormatter::try_new_with_grouping_strategy(
+    fdf = ICU4XFixedDecimalFormatter::create_with_grouping_strategy(
         dp, locale, ICU4XFixedDecimalGroupingStrategy::Auto).ok().value();
 
     decimal = ICU4XFixedDecimal::create_from_f64_with_floating_precision(123456.8901).ok().value();

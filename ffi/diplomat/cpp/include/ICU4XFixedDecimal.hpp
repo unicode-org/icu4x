@@ -103,7 +103,7 @@ class ICU4XFixedDecimal {
    * 
    * See the [Rust documentation for `from_str`](https://unicode-org.github.io/icu4x-docs/doc/fixed_decimal/struct.FixedDecimal.html#method.from_str) for more information.
    */
-  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_str(const std::string_view v);
+  static diplomat::result<ICU4XFixedDecimal, ICU4XError> create_from_string(const std::string_view v);
 
   /**
    * 
@@ -361,8 +361,8 @@ inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_str(const std::string_view v) {
-  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_str(v.data(), v.size());
+inline diplomat::result<ICU4XFixedDecimal, ICU4XError> ICU4XFixedDecimal::create_from_string(const std::string_view v) {
+  auto diplomat_result_raw_out_value = capi::ICU4XFixedDecimal_create_from_string(v.data(), v.size());
   diplomat::result<ICU4XFixedDecimal, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XFixedDecimal>(std::move(ICU4XFixedDecimal(diplomat_result_raw_out_value.ok)));

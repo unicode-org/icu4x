@@ -33,7 +33,7 @@ pub mod ffi {
     impl ICU4XBidi {
         /// Creates a new [`ICU4XBidi`] from locale data.
         #[diplomat::rust_link(icu::properties::bidi::BidiClassAdapter::new, FnInStruct)]
-        pub fn try_new(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ICU4XError> {
+        pub fn create(provider: &ICU4XDataProvider) -> DiplomatResult<Box<ICU4XBidi>, ICU4XError> {
             maps::load_bidi_class(&provider.0)
                 .map(|bidi| Box::new(ICU4XBidi(bidi)))
                 .map_err(Into::into)

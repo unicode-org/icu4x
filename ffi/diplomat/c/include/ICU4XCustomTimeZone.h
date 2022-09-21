@@ -25,7 +25,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XCustomTimeZone_ICU4XError ICU4XCustomTimeZone_create_from_str(const char* s_data, size_t s_len);
+diplomat_result_box_ICU4XCustomTimeZone_ICU4XError ICU4XCustomTimeZone_create_from_string(const char* s_data, size_t s_len);
 
 ICU4XCustomTimeZone* ICU4XCustomTimeZone_create_empty();
 

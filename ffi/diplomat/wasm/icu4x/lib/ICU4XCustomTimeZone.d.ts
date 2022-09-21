@@ -17,7 +17,7 @@ export class ICU4XCustomTimeZone {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html#method.from_str Rust documentation for `from_str`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create_from_str(s: string): ICU4XCustomTimeZone | never;
+  static create_from_string(s: string): ICU4XCustomTimeZone | never;
 
   /**
 

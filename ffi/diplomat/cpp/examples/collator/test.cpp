@@ -20,9 +20,9 @@ int main() {
   std::string_view manna{ "manna" };
   std::string_view manana{ "mañana" };
 
-  ICU4XLocale locale = ICU4XLocale::create("en").ok().value();
-  ICU4XCollatorOptions options = {};
-  ICU4XCollator collator = ICU4XCollator::try_new(dp, locale, options).ok().value();
+  ICU4XLocale locale = ICU4XLocale::create_from_string("en").ok().value();
+  ICU4XCollatorOptionsV1 options = {};
+  ICU4XCollator collator = ICU4XCollator::create_v1(dp, locale, options).ok().value();
   ICU4XOrdering actual = collator.compare(manna, manana);
 
   if (actual != ICU4XOrdering::Greater) {
@@ -30,8 +30,8 @@ int main() {
     return 1;
   }
 
-  locale = ICU4XLocale::create("es").ok().value();
-  collator = ICU4XCollator::try_new(dp, locale, options).ok().value();
+  locale = ICU4XLocale::create_from_string("es").ok().value();
+  collator = ICU4XCollator::create_v1(dp, locale, options).ok().value();
   actual = collator.compare(manna, manana);
 
   if (actual != ICU4XOrdering::Less) {
@@ -44,9 +44,9 @@ int main() {
   std::string_view as{ "as" };
   std::string_view graveAs{ "às" };
 
-  locale = ICU4XLocale::create("en").ok().value();
+  locale = ICU4XLocale::create_from_string("en").ok().value();
   options.strength = ICU4XCollatorStrength::Primary;
-  collator = ICU4XCollator::try_new(dp, locale, options).ok().value();
+  collator = ICU4XCollator::create_v1(dp, locale, options).ok().value();
   actual = collator.compare(as, graveAs);
 
   if (actual != ICU4XOrdering::Equal) {
@@ -55,7 +55,7 @@ int main() {
   }
 
   options.strength = ICU4XCollatorStrength::Secondary;
-  collator = ICU4XCollator::try_new(dp, locale, options).ok().value();
+  collator = ICU4XCollator::create_v1(dp, locale, options).ok().value();
   actual = collator.compare(as, graveAs);
 
   if (actual != ICU4XOrdering::Less) {

@@ -25,7 +25,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XIsoDate_ICU4XError ICU4XIsoDate_try_new(int32_t year, uint8_t month, uint8_t day);
+diplomat_result_box_ICU4XIsoDate_ICU4XError ICU4XIsoDate_create(int32_t year, uint8_t month, uint8_t day);
 
 ICU4XDate* ICU4XIsoDate_to_calendar(const ICU4XIsoDate* self, const ICU4XCalendar* calendar);
 

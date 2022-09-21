@@ -44,21 +44,21 @@ class ICU4XDateTime {
    * 
    * See the [Rust documentation for `new_from_iso`](https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_from_iso) for more information.
    */
-  static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
+  static diplomat::result<ICU4XDateTime, ICU4XError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
 
   /**
    * Creates a new [`ICU4XDateTime`] from the given codes, which are interpreted in the given calendar system
    * 
    * See the [Rust documentation for `new_from_codes`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes) for more information.
    */
-  static diplomat::result<ICU4XDateTime, ICU4XError> try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
+  static diplomat::result<ICU4XDateTime, ICU4XError> create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar);
 
   /**
    * Creates a new [`ICU4XDateTime`] from an [`ICU4XDate`] and [`ICU4XTime`] object
    * 
    * See the [Rust documentation for `new`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new) for more information.
    */
-  static ICU4XDateTime new_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time);
+  static ICU4XDateTime create_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time);
 
   /**
    * Gets a copy of the date contained in this object
@@ -239,8 +239,8 @@ class ICU4XDateTime {
 #include "ICU4XWeekCalculator.hpp"
 #include "ICU4XWeekOf.hpp"
 
-inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_try_new_from_iso_in_calendar(year, month, day, hour, minute, second, nanosecond, calendar.AsFFI());
+inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_create_from_iso_in_calendar(year, month, day, hour, minute, second, nanosecond, calendar.AsFFI());
   diplomat::result<ICU4XDateTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDateTime>(std::move(ICU4XDateTime(diplomat_result_raw_out_value.ok)));
@@ -249,8 +249,8 @@ inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::try_new_from_i
   }
   return diplomat_result_out_value;
 }
-inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
-  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_try_new_from_codes_in_calendar(era_code.data(), era_code.size(), year, month_code.data(), month_code.size(), day, hour, minute, second, nanosecond, calendar.AsFFI());
+inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond, const ICU4XCalendar& calendar) {
+  auto diplomat_result_raw_out_value = capi::ICU4XDateTime_create_from_codes_in_calendar(era_code.data(), era_code.size(), year, month_code.data(), month_code.size(), day, hour, minute, second, nanosecond, calendar.AsFFI());
   diplomat::result<ICU4XDateTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XDateTime>(std::move(ICU4XDateTime(diplomat_result_raw_out_value.ok)));
@@ -259,8 +259,8 @@ inline diplomat::result<ICU4XDateTime, ICU4XError> ICU4XDateTime::try_new_from_c
   }
   return diplomat_result_out_value;
 }
-inline ICU4XDateTime ICU4XDateTime::new_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time) {
-  return ICU4XDateTime(capi::ICU4XDateTime_new_from_date_and_time(date.AsFFI(), time.AsFFI()));
+inline ICU4XDateTime ICU4XDateTime::create_from_date_and_time(const ICU4XDate& date, const ICU4XTime& time) {
+  return ICU4XDateTime(capi::ICU4XDateTime_create_from_date_and_time(date.AsFFI(), time.AsFFI()));
 }
 inline ICU4XDate ICU4XDateTime::date() const {
   return ICU4XDate(capi::ICU4XDateTime_date(this->inner.get()));

@@ -36,7 +36,7 @@ class ICU4XTime {
    * 
    * See the [Rust documentation for `Time`](https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html) for more information.
    */
-  static diplomat::result<ICU4XTime, ICU4XError> try_new(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+  static diplomat::result<ICU4XTime, ICU4XError> create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
   /**
    * Returns the hour in this time
@@ -76,8 +76,8 @@ class ICU4XTime {
 };
 
 
-inline diplomat::result<ICU4XTime, ICU4XError> ICU4XTime::try_new(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
-  auto diplomat_result_raw_out_value = capi::ICU4XTime_try_new(hour, minute, second, nanosecond);
+inline diplomat::result<ICU4XTime, ICU4XError> ICU4XTime::create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond) {
+  auto diplomat_result_raw_out_value = capi::ICU4XTime_create(hour, minute, second, nanosecond);
   diplomat::result<ICU4XTime, ICU4XError> diplomat_result_out_value;
   if (diplomat_result_raw_out_value.is_ok) {
     diplomat_result_out_value = diplomat::Ok<ICU4XTime>(std::move(ICU4XTime(diplomat_result_raw_out_value.ok)));

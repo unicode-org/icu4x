@@ -17,7 +17,7 @@ export class ICU4XLocale {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#method.from_bytes Rust documentation for `from_bytes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create(name: string): ICU4XLocale | never;
+  static create_from_string(name: string): ICU4XLocale | never;
 
   /**
 
@@ -37,7 +37,7 @@ export class ICU4XLocale {
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/locid/struct.Locale.html#associatedconstant.UND Rust documentation for `UND`} for more information.
    */
-  static und(): ICU4XLocale;
+  static create_und(): ICU4XLocale;
 
   /**
 

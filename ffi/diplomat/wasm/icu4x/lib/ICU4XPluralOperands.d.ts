@@ -23,5 +23,5 @@ export class ICU4XPluralOperands {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html#method.from_str Rust documentation for `from_str`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static create(s: string): ICU4XPluralOperands | never;
+  static create_from_string(s: string): ICU4XPluralOperands | never;
 }

@@ -24,7 +24,7 @@ export class ICU4XCollator {
     }
   }
 
-  static try_new(arg_provider, arg_locale, arg_options) {
+  static create_v1(arg_provider, arg_locale, arg_options) {
     const field_strength_arg_options = arg_options["strength"];
     const field_alternate_handling_arg_options = arg_options["alternate_handling"];
     const field_case_first_arg_options = arg_options["case_first"];
@@ -34,7 +34,7 @@ export class ICU4XCollator {
     const field_backward_second_level_arg_options = arg_options["backward_second_level"];
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XCollator_try_new(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XCollatorStrength_js_to_rust[field_strength_arg_options], ICU4XCollatorAlternateHandling_js_to_rust[field_alternate_handling_arg_options], ICU4XCollatorCaseFirst_js_to_rust[field_case_first_arg_options], ICU4XCollatorMaxVariable_js_to_rust[field_max_variable_arg_options], ICU4XCollatorCaseLevel_js_to_rust[field_case_level_arg_options], ICU4XCollatorNumeric_js_to_rust[field_numeric_arg_options], ICU4XCollatorBackwardSecondLevel_js_to_rust[field_backward_second_level_arg_options]);
+      wasm.ICU4XCollator_create_v1(diplomat_receive_buffer, arg_provider.underlying, arg_locale.underlying, ICU4XCollatorStrength_js_to_rust[field_strength_arg_options], ICU4XCollatorAlternateHandling_js_to_rust[field_alternate_handling_arg_options], ICU4XCollatorCaseFirst_js_to_rust[field_case_first_arg_options], ICU4XCollatorMaxVariable_js_to_rust[field_max_variable_arg_options], ICU4XCollatorCaseLevel_js_to_rust[field_case_level_arg_options], ICU4XCollatorNumeric_js_to_rust[field_numeric_arg_options], ICU4XCollatorBackwardSecondLevel_js_to_rust[field_backward_second_level_arg_options]);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XCollator(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
