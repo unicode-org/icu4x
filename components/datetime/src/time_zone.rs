@@ -23,6 +23,9 @@ use crate::{
 use icu_provider::prelude::*;
 use writeable::Writeable;
 
+#[cfg(doc)]
+use crate::ZonedDateTimeFormatter;
+
 /// Loads a resource into its destination if the destination has not already been filled.
 fn load<D, P>(
     locale: &DataLocale,
@@ -46,6 +49,10 @@ where
     Ok(())
 }
 
+/// [`TimeZoneFormatter`] is available for users who need to separately control the formatting of time
+/// zones.  Note: most users might prefer [`ZonedDateTimeFormatter`], which includes default time zone
+/// formatting according to the calendar.
+///
 /// [`TimeZoneFormatter`] uses data from the [data provider] and the selected locale
 /// to format time zones into that locale.
 ///
