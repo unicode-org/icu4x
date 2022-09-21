@@ -95,7 +95,7 @@ impl BufferFormat {
             #[cfg(feature = "deserialize_bincode_1")]
             BufferFormat::Bincode1 => Ok(()),
 
-            #[cfg(feature = "deserialize_postcard_07")]
+            #[cfg(feature = "deserialize_postcard_1")]
             BufferFormat::Postcard1 => Ok(()),
 
             // Allowed for cases in which all features are enabled

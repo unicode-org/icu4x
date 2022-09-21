@@ -352,7 +352,7 @@ fn test_dayperiod_patterns() {
                 .take_payload()
                 .unwrap();
         date_patterns_data.with_mut(|data| {
-            data.length_combinations.long = "{0}".parse().unwrap();
+            data.length_combinations.medium = "{0}".parse().unwrap();
         });
         let mut time_patterns_data: DataPayload<TimeLengthsV1Marker> = icu_testdata::unstable()
             .load(req)
@@ -360,7 +360,7 @@ fn test_dayperiod_patterns() {
             .take_payload()
             .unwrap();
         date_patterns_data.with_mut(|data| {
-            data.length_combinations.long = "{0}".parse().unwrap();
+            data.length_combinations.medium = "{0}".parse().unwrap();
         });
         let date_symbols_data: DataPayload<GregorianDateSymbolsV1Marker> = icu_testdata::unstable()
             .load(req)
@@ -401,8 +401,8 @@ fn test_dayperiod_patterns() {
                         let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
                         let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
                         time_patterns_data.with_mut(move |data| {
-                            data.time_h11_h12.long = new_pattern1;
-                            data.time_h23_h24.long = new_pattern2;
+                            data.time_h11_h12.medium = new_pattern1;
+                            data.time_h23_h24.medium = new_pattern2;
                         });
                         let local_provider = MultiForkByKeyProvider::new(vec![
                             AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(
@@ -624,7 +624,7 @@ fn test_time_zone_patterns() {
             .unwrap();
 
         date_patterns_data.with_mut(|data| {
-            data.length_combinations.long = "{0}".parse().unwrap();
+            data.length_combinations.medium = "{0}".parse().unwrap();
         });
 
         for TimeZoneExpectation {
@@ -638,8 +638,8 @@ fn test_time_zone_patterns() {
                 let new_pattern1: runtime::Pattern = pattern_input.parse().unwrap();
                 let new_pattern2: runtime::Pattern = pattern_input.parse().unwrap();
                 time_patterns_data.with_mut(move |data| {
-                    data.time_h11_h12.long = new_pattern1;
-                    data.time_h23_h24.long = new_pattern2;
+                    data.time_h11_h12.medium = new_pattern1;
+                    data.time_h23_h24.medium = new_pattern2;
                 });
                 let local_provider = MultiForkByKeyProvider::new(vec![
                     AnyPayloadProvider::from_payload::<GregorianDateSymbolsV1Marker>(

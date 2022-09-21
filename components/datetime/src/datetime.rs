@@ -654,3 +654,25 @@ where {
         self.0.resolve_components()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use icu_calendar::DateTime;
+    use icu_calendar::Gregorian;
+
+    #[test]
+    #[cfg(feature = "serde")]
+    fn works_with_default_options() {
+        assert_eq!(
+            TypedDateTimeFormatter::<Gregorian>::try_new_with_buffer_provider(
+                &icu_testdata::buffer(),
+                Default::default(),
+                Default::default(),
+            )
+            .unwrap()
+            .format_to_string(&DateTime::new_gregorian_datetime(2022, 9, 20, 0, 0, 0).unwrap()),
+            "2022 M09 20 00:00:00"
+        );
+    }
+}

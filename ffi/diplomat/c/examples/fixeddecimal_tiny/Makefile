@@ -27,7 +27,7 @@ LLD := lld-14
 	RUSTFLAGS="-Clinker-plugin-lto -Clinker=$(CLANG) -Ccodegen-units=1 -Clink-arg=-flto -Cpanic=abort" cargo +nightly-2022-04-05 panic-abort-build -p icu_capi_staticlib --target x86_64-unknown-linux-gnu --no-default-features --features x86tiny --profile=release-opt-size
 
 decimal-bn-en.postcard:
-	cargo run -p icu_datagen --features bin -- --locales en bn --keys "decimal/symbols@1[u-nu]" --cldr-root ../../../../../provider/testdata/data/cldr/ --format blob --out decimal-bn-en.postcard
+	cargo run -p icu_datagen --features bin -- --locales en bn --keys "decimal/symbols@1" --cldr-root ../../../../../provider/testdata/data/cldr/ --format blob --out decimal-bn-en.postcard
 
 decimal_bn_en.h: ../../../../../provider/testdata/data/decimal-bn-en.postcard
 	xxd -i -n decimal_bn_en decimal-bn-en.postcard > decimal_bn_en.h

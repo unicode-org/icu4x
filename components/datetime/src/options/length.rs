@@ -82,11 +82,11 @@ pub struct Bag {
 }
 
 impl Default for Bag {
-    /// Constructs a Bag with long date and time options
+    /// Constructs a Bag with medium date and time options
     fn default() -> Self {
         Self {
-            date: Some(Date::Long),
-            time: Some(Time::Long),
+            date: Some(Date::Medium),
+            time: Some(Time::Medium),
         }
     }
 }
@@ -94,7 +94,7 @@ impl Default for Bag {
 impl Bag {
     /// Constructs a Bag with all fields set to None
     ///
-    /// Note that the [`Default`] implementation returns long date and time options
+    /// Note that the [`Default`] implementation returns medium date and time options
     pub fn empty() -> Self {
         Self {
             date: None,

@@ -7,7 +7,10 @@
 
 use super::*;
 use crate::ZeroSlice;
-use core::mem;
+use core::{
+    mem,
+    num::{NonZeroI8, NonZeroU8},
+};
 
 /// A u8 array of little-endian data with infallible conversions to and from &[u8].
 #[repr(transparent)]
@@ -202,6 +205,44 @@ impl AsULE for u8 {
 unsafe impl EqULE for u8 {}
 
 // Safety (based on the safety checklist on the ULE trait):
+//  1. NonZeroU8 does not include any uninitialized or padding bytes.
+//  2. NonZeroU8 is aligned to 1 byte.
+//  3. The impl of validate_byte_slice() returns an error if any byte is not valid (0x00).
+//  4. The impl of validate_byte_slice() returns an error if there are leftover bytes (never).
+//  5. The other ULE methods use the default impl.
+//  6. NonZeroU8 byte equality is semantic equality
+unsafe impl ULE for NonZeroU8 {
+    #[inline]
+    fn validate_byte_slice(bytes: &[u8]) -> Result<(), ZeroVecError> {
+        bytes.iter().try_for_each(|b| {
+            if *b == 0x00 {
+                Err(ZeroVecError::parse::<Self>())
+            } else {
+                Ok(())
+            }
+        })
+    }
+}
+
+impl AsULE for NonZeroU8 {
+    type ULE = Self;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        self
+    }
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        unaligned
+    }
+}
+
+unsafe impl EqULE for NonZeroU8 {}
+
+impl NicheBytes<1> for NonZeroU8 {
+    const NICHE_BIT_PATTERN: [u8; 1] = [0x00];
+}
+
+// Safety (based on the safety checklist on the ULE trait):
 //  1. i8 does not include any uninitialized or padding bytes.
 //  2. i8 is aligned to 1 byte.
 //  3. The impl of validate_byte_slice() returns an error if any byte is not valid (never).
@@ -229,6 +270,21 @@ impl AsULE for i8 {
 
 // EqULE is true because i8 is its own ULE.
 unsafe impl EqULE for i8 {}
+
+impl AsULE for NonZeroI8 {
+    type ULE = NonZeroU8;
+    #[inline]
+    fn to_unaligned(self) -> Self::ULE {
+        // Safety: NonZeroU8 and NonZeroI8 have same size
+        unsafe { core::mem::transmute(self) }
+    }
+
+    #[inline]
+    fn from_unaligned(unaligned: Self::ULE) -> Self {
+        // Safety: NonZeroU8 and NonZeroI8 have same size
+        unsafe { core::mem::transmute(unaligned) }
+    }
+}
 
 // These impls are actually safe and portable due to Rust always using IEEE 754, see the documentation
 // on f32::from_bits: https://doc.rust-lang.org/stable/std/primitive.f32.html#method.from_bits
