@@ -8,6 +8,7 @@
 use crate::blob_schema::*;
 use icu_provider::datagen::*;
 use icu_provider::prelude::*;
+use zerovec::vecs::FlexZeroVec;
 use std::collections::HashMap;
 use std::sync::Mutex;
 use writeable::Writeable;
@@ -105,16 +106,22 @@ impl DataExporter for BlobExporter<'_> {
             })
             .collect::<ZeroMap2d<_, _, _>>();
 
-        // Convert the sorted list to a VarZeroVec
-        let vzv: VarZeroVec<[u8], Index32> = {
-            let buffers: Vec<Vec<u8>> = sorted.into_iter().map(|(blob, _)| blob).collect();
-            buffers.as_slice().into()
-        };
+        // Convert the sorted list to a VarZeroVec-like structure
+        let mut indices_vec = Vec::with_capacity(sorted.len());
+        let mut buffer_vec = Vec::with_capacity(sorted.iter().map(|(buf, _)| buf.len()).sum());
+        let mut prev_index = 0;
+        for (buf, _) in sorted {
+            indices_vec.push(prev_index);
+            buffer_vec.extend_from_slice(&buf);
+            prev_index += buf.len();
+        }
+        let indices_fzv: FlexZeroVec = indices_vec.into_iter().collect();
 
         if !zm.is_empty() {
             let blob = BlobSchema::V001(BlobSchemaV1 {
                 keys: zm.as_borrowed(),
-                buffers: &vzv,
+                indices: &indices_fzv,
+                buffer: &buffer_vec,
             });
             log::info!("Serializing blob to output stream...");
 

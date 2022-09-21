@@ -100,8 +100,7 @@ impl BufferProvider for BlobDataProvider {
                                 .ok_or(DataErrorKind::MissingLocale)
                         })
                         .map_err(|kind| kind.with_req(key, req))?;
-                    blob.buffers
-                        .get(idx)
+                    blob.get_buffer(idx)
                         .ok_or_else(|| DataError::custom("Invalid blob bytes").with_req(key, req))
                 })?,
             )),

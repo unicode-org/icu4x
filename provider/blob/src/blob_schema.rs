@@ -5,7 +5,7 @@
 use alloc::boxed::Box;
 use icu_provider::prelude::*;
 use zerovec::maps::{ZeroMap2dBorrowed, ZeroMapKV};
-use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec};
+use zerovec::vecs::{Index32, VarZeroSlice, VarZeroVec, FlexZeroSlice};
 /// A versioned Serde schema for ICU4X data blobs.
 #[derive(serde::Deserialize)]
 #[cfg_attr(feature = "export", derive(serde::Serialize))]
@@ -24,16 +24,20 @@ pub(crate) struct BlobSchemaV1<'data> {
     /// Weak invariant: there is at least one value for every integer in 0..self.buffers.len()
     #[serde(borrow)]
     pub keys: ZeroMap2dBorrowed<'data, DataKeyHash, Index32U8, usize>,
-    /// Vector of buffers
+    /// Indices into the buffer slice
     #[serde(borrow)]
-    pub buffers: &'data VarZeroSlice<[u8], Index32>,
+    pub indices: &'data FlexZeroSlice,
+    /// Buffer slice
+    #[serde(borrow)]
+    pub buffer: &'data [u8],
 }
 
 impl Default for BlobSchemaV1<'_> {
     fn default() -> Self {
         Self {
             keys: ZeroMap2dBorrowed::new(),
-            buffers: VarZeroSlice::new_empty(),
+            indices: FlexZeroSlice::new_empty(),
+            buffer: &[],
         }
     }
 }
@@ -43,7 +47,7 @@ impl<'data> BlobSchemaV1<'data> {
     #[cfg(debug_assertions)]
     pub(crate) fn check_invariants(&self) {
         use zerovec::maps::ZeroVecLike;
-        if self.keys.is_empty() && self.buffers.is_empty() {
+        if self.keys.is_empty() && self.indices.is_empty() {
             return;
         }
         // Note: We could check that every index occurs at least once, but that's a more expensive
@@ -57,17 +61,23 @@ impl<'data> BlobSchemaV1<'data> {
                 #[allow(clippy::unwrap_used)]
                 // `zvl_get_as_t` guarantees that the callback is invoked
                 let idx = result.unwrap();
-                debug_assert!(idx < self.buffers.len());
+                debug_assert!(idx < self.indices.len());
                 if idx == 0 {
                     seen_min = true;
                 }
-                if idx + 1 == self.buffers.len() {
+                if idx + 1 == self.indices.len() {
                     seen_max = true;
                 }
             }
         }
         debug_assert!(seen_min);
         debug_assert!(seen_max);
+    }
+
+    pub(crate) fn get_buffer(&self, idx: usize) -> Option<&'data [u8]> {
+        let start = self.indices.get(idx)?;
+        let end = self.indices.get(idx + 1).unwrap_or(self.buffer.len());
+        self.buffer.get(start..end)
     }
 }
 

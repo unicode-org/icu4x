@@ -55,9 +55,9 @@
 //! let response: DataPayload<HelloWorldV1Marker> = provider
 //!     .as_deserializing()
 //!     .load(req)
-//!     .unwrap()
+//!     .expect("should deserialize")
 //!     .take_payload()
-//!     .unwrap();
+//!     .expect("should be present");
 //!
 //! assert_eq!(response.get(), payload.get(),);
 //! ```
