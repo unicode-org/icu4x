@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663777327396,
+  "lastUpdate": 1663786129700,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -71921,6 +71921,96 @@ window.BENCHMARK_DATA = {
             "name": "pattern/parse",
             "value": 6050,
             "range": "± 224",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "manishsmail@gmail.com",
+            "name": "Manish Goregaokar",
+            "username": "Manishearth"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "0e395d9c03f8d98bd3c37a0bba7bced4d5511529",
+          "message": "Turn ZeroVec into a struct (#2599)\n\n* Add alternate owned/borrowed ZeroVec methods\n\n* Use everywhere\n\n* Replace with internal pointer\n\n* fix\n\n* fix\n\n* rm old docs\n\n* clip\n\n* fix\n\n* oops\n\n* Add to_mut_slice()\n\n* fix\n\n* merge fix",
+          "timestamp": "2022-09-21T11:36:04-07:00",
+          "tree_id": "3cc1befc84d22a4b67f1f3fcd3b3b356f0c74d8d",
+          "url": "https://github.com/unicode-org/icu4x/commit/0e395d9c03f8d98bd3c37a0bba7bced4d5511529"
+        },
+        "date": 1663786078899,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "datetime/datetime_lengths",
+            "value": 57821,
+            "range": "± 1753",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/zoned_datetime_overview",
+            "value": 96814,
+            "range": "± 254",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_write",
+            "value": 52875,
+            "range": "± 186",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedDateTimeFormatter/format_to_string",
+            "value": 60153,
+            "range": "± 279",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/format",
+            "value": 57557,
+            "range": "± 116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedDateTime/to_string",
+            "value": 63938,
+            "range": "± 158",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_write",
+            "value": 93005,
+            "range": "± 337",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/TypedZonedDateTimeFormatter/format_to_string",
+            "value": 104360,
+            "range": "± 380",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/format",
+            "value": 97119,
+            "range": "± 251",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "datetime/FormattedZonedDateTime/to_string",
+            "value": 108157,
+            "range": "± 362",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "pattern/parse",
+            "value": 5107,
+            "range": "± 262",
             "unit": "ns/iter"
           }
         ]
