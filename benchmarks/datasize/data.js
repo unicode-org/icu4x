@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663717162850,
+  "lastUpdate": 1663740959979,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27683,6 +27683,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/7bffd2fd4299b98f2a1c614587569d2f622ba152"
         },
         "date": 1663717099558,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "871bcd5d744bcf9ec752df7f84f4be058817b9c8",
+          "message": "Normalizer: Mark function as experimental and fix feature (#2594)",
+          "timestamp": "2022-09-20T23:13:35-07:00",
+          "tree_id": "1b1438afb385f7ea5490a76f6470260749091689",
+          "url": "https://github.com/unicode-org/icu4x/commit/871bcd5d744bcf9ec752df7f84f4be058817b9c8"
+        },
+        "date": 1663740899065,
         "tool": "ndjson",
         "benches": [
           {
