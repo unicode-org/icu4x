@@ -336,7 +336,7 @@ where
     fn zvl_permute(&mut self, permutation: &mut [usize]) {
         assert_eq!(permutation.len(), self.zvl_len());
 
-        let vec = self.to_mut();
+        let vec = self.to_mut_slice();
 
         for cycle_start in 0..permutation.len() {
             let mut curr = cycle_start;
