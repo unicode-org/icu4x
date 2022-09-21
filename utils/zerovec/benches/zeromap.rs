@@ -175,7 +175,7 @@ fn bench_zerohashmap_lookup(c: &mut Criterion) {
     let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
     let keys = map.iter();
     let zero_hash_map: ZeroHashMapStatic<Index32Str, Index32Str> =
-        ZeroHashMapStatic::from_exact_iter(keys);
+        ZeroHashMapStatic::build_from_iter(keys);
 
     c.bench_function("zerohashmap/lookup/small", |b| {
         b.iter(|| {
@@ -196,7 +196,7 @@ fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
     let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
     let keys = map.iter();
     let zero_hash_map: ZeroHashMapStatic<Index32Str, Index32Str> =
-        ZeroHashMapStatic::from_exact_iter(keys);
+        ZeroHashMapStatic::build_from_iter(keys);
 
     c.bench_function("zerohashmap/lookup/large", |b| {
         b.iter(|| {

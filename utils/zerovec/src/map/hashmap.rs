@@ -14,24 +14,27 @@ use core::hash::{Hash, Hasher};
 fn compute_hash<K: Hash>(seed: u32, k: &K, m: usize) -> usize {
     let mut hasher = AHasher::new_with_keys(seed.into(), 0xaabbccdd);
     k.hash(&mut hasher);
-    hasher.finish() as usize % m
+    (hasher.finish() as usize % m) as usize
 }
 
 #[derive(Debug)]
 struct HashIndex<'a> {
     displacements: FlexZeroVec<'a>,
-    reverse_mapping: FlexZeroVec<'a>,
 }
 
 impl<'a> HashIndex<'a> {
+    /// Build the hashIndex and permute keys, values according to the hash.
     #[inline]
-    pub fn build_from_exact_iter<'b, K, I, A>(keys: I) -> Self
+    #[allow(clippy::indexing_slicing, clippy::unwrap_used)] // proper documentation at each occurence
+    pub fn build_from_kv_containers<'b, K, V>(
+        keys: &mut K::Container,
+        values: &mut V::Container,
+    ) -> Self
     where
-        A: Borrow<K>,
-        K: 'b + ?Sized + Hash,
-        I: ExactSizeIterator<Item = A>,
+        K: ZeroMapKV<'a> + 'b + ?Sized + Hash,
+        V: ZeroMapKV<'a> + ?Sized,
     {
-        let len = keys.len();
+        let len = keys.zvl_len();
 
         // A vector to track the size of buckets for sorting.
         let mut bucket_sizes = vec![0; len];
@@ -40,19 +43,23 @@ impl<'a> HashIndex<'a> {
         let mut bucket_flatten = Vec::with_capacity(len);
 
         // Compute initial displacement and bucket sizes
-        for (i, k) in keys.enumerate() {
+        for i in 0..len {
             // Compute first level hash of the key bytes.
             // First level uses a seed value of 0.
-            let l1 = compute_hash(0x00, &k.borrow(), len);
-            if let Some(v) = bucket_sizes.get_mut(l1 as usize) {
-                *v += 1;
-            }
-            bucket_flatten.push((l1, (k, i)));
+            let l1 = K::Container::zvl_get_as_t(
+                // 0 <= i < keys.len()
+                keys.zvl_get(i).unwrap(),
+                |k| compute_hash(0x00, &k, len),
+            );
+
+            // 0 <= l1 < keys.len()
+            bucket_sizes[l1] += 1;
+            bucket_flatten.push((l1, i));
         }
 
         // Sort by decreasing order of bucket_sizes.
         bucket_flatten.sort_by(|&(ha, _), &(hb, _)| {
-            #[allow(clippy::indexing_slicing)] // ha, hb are always within bounds of `bucket_sizes`
+            // ha, hb are always within bounds of `bucket_sizes`
             (bucket_sizes[hb as usize], hb).cmp(&(bucket_sizes[ha as usize], ha))
         });
 
@@ -85,59 +92,56 @@ impl<'a> HashIndex<'a> {
         let mut start = 0;
         while start < len {
             // Bucket span with the same first level hash
-            #[allow(clippy::indexing_slicing)] // start is always within bounds of `bucket_flatten`
+            // start is always within bounds of `bucket_flatten`
             let l1 = bucket_flatten[start].0;
-            #[allow(clippy::indexing_slicing)] // l1 is always within bounds of `bucket_sizes`
+            // l1 is always within bounds of `bucket_sizes`
             let end = start + bucket_sizes[l1];
-            #[allow(clippy::indexing_slicing)] // start, end - 1 are always within bounds of
-            // `bucket_sizes`
+            // start, end - 1 are always within bounds of `bucket_sizes`
             let buckets = &bucket_flatten[start..end];
 
             'seed: for seed in 0x1u32.. {
                 current_displacements.clear();
                 generation += 1;
 
-                for (_, (k, _)) in buckets {
-                    let displacement_idx = compute_hash(seed, &k.borrow(), len);
-                    #[allow(clippy::indexing_slicing)] // displacement_idx is always within bounds
+                for (_, i) in buckets {
+                    let displacement_idx = K::Container::zvl_get_as_t(
+                        //  0 <= i < keys.len()
+                        keys.zvl_get(*i).unwrap(),
+                        |k| compute_hash(seed, &k, len),
+                    );
+
+                    // displacement_idx is always within bounds
                     if occupied[displacement_idx] || assignments[displacement_idx] == generation {
                         continue 'seed;
                     }
+                    assignments[displacement_idx] = generation;
+
                     current_displacements.push(displacement_idx);
-                    if let Some(v) = assignments.get_mut(displacement_idx) {
-                        *v = generation;
-                    }
                 }
 
                 // Successfully found a seed, store it as index l1.
-                if let Some(v) = displacements.get_mut(l1) {
-                    *v = seed as usize;
-                }
+                // l1 < displacements.len() due to modulo operation
+                displacements[l1] = seed as usize;
 
                 for (i, displacement_idx) in current_displacements.iter().enumerate() {
-                    #[allow(clippy::indexing_slicing)] // `current_displacements` has same size as
-                    // `buckets`
-                    let (_, (_, original_idx)) = &buckets[i];
+                    // `current_displacements` has same size as `buckets`
+                    let (_, idx) = &buckets[i];
 
-                    // Make clippy happy
-                    if let Some(v) = occupied.get_mut(*displacement_idx) {
-                        *v = true;
-                    }
-                    if let Some(v) = reverse_mapping.get_mut(*displacement_idx) {
-                        *v = *original_idx;
-                    }
+                    // displacement_idx is always within bounds
+                    occupied[*displacement_idx] = true;
+                    reverse_mapping[*displacement_idx] = *idx;
                 }
                 break;
             }
             start = end;
         }
 
+        keys.zvl_permute(&mut reverse_mapping.clone());
+        values.zvl_permute(&mut reverse_mapping);
+
         Self {
             displacements: FlexZeroVec::Owned(FlexZeroVecOwned::from_iter(
                 displacements.into_iter(),
-            )),
-            reverse_mapping: FlexZeroVec::Owned(FlexZeroVecOwned::from_iter(
-                reverse_mapping.into_iter(),
             )),
         }
     }
@@ -154,8 +158,7 @@ impl<'a> HashIndex<'a> {
         if seed == 0 {
             None
         } else {
-            let hash = compute_hash(seed as u32, k, self.displacements.len());
-            self.reverse_mapping.get(hash).map(|i| i as usize)
+            Some(compute_hash(seed as u32, k, self.displacements.len()))
         }
     }
 }
@@ -186,7 +189,7 @@ where
 
 impl<'a, K, V> ZeroHashMapStatic<'a, K, V>
 where
-    K: ZeroMapKV<'a> + ?Sized + Hash + 'static + Eq,
+    K: ZeroMapKV<'a> + ?Sized + Hash + Eq,
     V: ZeroMapKV<'a> + ?Sized,
 {
     #[inline]
@@ -214,21 +217,24 @@ where
     /// assert_eq!(hashmap.get(&3), Some("c"));
     /// assert_eq!(hashmap.get(&4), Some("d"));
     /// ```
-    pub fn from_exact_iter<A, B, I>(iter: I) -> Self
+    pub fn build_from_iter<A, B, I>(iter: I) -> Self
     where
         A: Borrow<K>,
         B: Borrow<V>,
-        I: ExactSizeIterator<Item = (A, B)>,
+        I: Iterator<Item = (A, B)>,
     {
-        let mut keys_vec = Vec::with_capacity(iter.len());
-        let mut keys = K::Container::zvl_with_capacity(iter.len());
-        let mut values = V::Container::zvl_with_capacity(iter.len());
+        let size_hint = match iter.size_hint() {
+            (_, Some(upper)) => upper,
+            (lower, None) => lower,
+        };
+
+        let mut keys = K::Container::zvl_with_capacity(size_hint);
+        let mut values = V::Container::zvl_with_capacity(size_hint);
         for (k, v) in iter {
             keys.zvl_push(k.borrow());
-            keys_vec.push(k);
             values.zvl_push(v.borrow());
         }
-        let index = HashIndex::build_from_exact_iter::<K, _, _>(keys_vec.into_iter());
+        let index = HashIndex::build_from_kv_containers::<K, V>(&mut keys, &mut values);
         Self {
             index,
             values,
@@ -250,9 +256,8 @@ mod tests {
         let seed = u64::from_le_bytes(*b"testseed");
         let rng = Lcg64Xsh32::seed_from_u64(seed);
         let kv: Vec<(u64, u64)> = rng.sample_iter(&Standard).take(N).collect();
-        let kv_copy = kv.clone();
         let hashmap: ZeroHashMapStatic<u64, u64> =
-            ZeroHashMapStatic::from_exact_iter(kv_copy.into_iter());
+            ZeroHashMapStatic::build_from_iter(kv.iter().map(|e| (&e.0, &e.1)));
         for (k, v) in kv {
             assert_eq!(
                 hashmap.get(&k).copied().map(<u64 as AsULE>::from_unaligned),
