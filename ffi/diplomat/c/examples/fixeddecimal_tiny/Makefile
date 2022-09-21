@@ -30,7 +30,7 @@ decimal-bn-en.postcard:
 	cargo run -p icu_datagen --features bin -- --locales en bn --keys "decimal/symbols@1" --cldr-root ../../../../../provider/testdata/data/cldr/ --format blob --out decimal-bn-en.postcard
 
 decimal_bn_en.h: decimal-bn-en.postcard
-	xxd -i -C decimal-bn-en.postcard > decimal_bn_en.h 
+	xxd -i -C decimal-bn-en.postcard > decimal_bn_en.h
 
 # Naive target: no optimizations, full std
 optim0.elf: ../../../../../target/debug/libicu_capi_staticlib.a $(ALL_HEADERS) test.c decimal_bn_en.h
