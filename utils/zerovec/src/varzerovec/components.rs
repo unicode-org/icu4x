@@ -69,12 +69,15 @@ unsafe impl VarZeroVecFormat for Index16 {
     const INDEX_WIDTH: usize = 2;
     const MAX_VALUE: u32 = u16::MAX as u32;
     type RawBytes = RawBytesULE<2>;
+    #[inline]
     fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
         raw.as_unsigned_int() as usize
     }
+    #[inline]
     fn usize_to_rawbytes(u: usize) -> Self::RawBytes {
         (u as u16).to_unaligned()
     }
+    #[inline]
     fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes] {
         Self::RawBytes::from_byte_slice_unchecked_mut(bytes)
     }
@@ -84,12 +87,15 @@ unsafe impl VarZeroVecFormat for Index32 {
     const INDEX_WIDTH: usize = 4;
     const MAX_VALUE: u32 = u32::MAX as u32;
     type RawBytes = RawBytesULE<4>;
+    #[inline]
     fn rawbytes_to_usize(raw: Self::RawBytes) -> usize {
         raw.as_unsigned_int() as usize
     }
+    #[inline]
     fn usize_to_rawbytes(u: usize) -> Self::RawBytes {
         (u as u32).to_unaligned()
     }
+    #[inline]
     fn rawbytes_from_byte_slice_unchecked_mut(bytes: &mut [u8]) -> &mut [Self::RawBytes] {
         Self::RawBytes::from_byte_slice_unchecked_mut(bytes)
     }
@@ -198,9 +204,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
             marker: PhantomData,
         };
 
-        for thing in borrowed.iter_checked() {
-            let _ = thing?;
-        }
+        borrowed.check_indices_and_things()?;
 
         Ok(borrowed)
     }
@@ -304,7 +308,7 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
         range.start + offset..range.end + offset
     }
 
-    /// Create an iterator over the Ts contained in VarZeroVecComponents, checking internal invariants:
+    /// Check the internal invariants of VarZeroVecComponents:
     ///
     /// - `indices[i]..indices[i+1]` must index into a valid section of
     ///   `things`, such that it parses to a `T::VarULE`
@@ -313,27 +317,35 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     /// - `indices` is monotonically increasing
     ///
     /// This method is NOT allowed to call any other methods on VarZeroVecComponents since all other methods
-    /// assume that the slice has been passed through iter_checked
+    /// assume that the slice has been passed through check_indices_and_things
     #[inline]
-    fn iter_checked(self) -> impl Iterator<Item = Result<&'a T, ZeroVecError>> {
-        self.indices_slice()
-            .iter()
-            .copied()
-            .map(F::rawbytes_to_usize)
-            .zip(
-                self.indices_slice()
-                    .iter()
-                    .copied()
-                    .map(F::rawbytes_to_usize)
-                    .skip(1)
-                    .chain(core::iter::once(self.things.len())),
-            )
-            .map(move |(start, end)| {
-                self.things
-                    .get(start..end)
-                    .ok_or(ZeroVecError::VarZeroVecFormatError)
-            })
-            .map(|bytes_result| bytes_result.and_then(|bytes| T::parse_byte_slice(bytes)))
+    fn check_indices_and_things(self) -> Result<(), ZeroVecError> {
+        assert_eq!(self.len(), self.indices_slice().len());
+        assert!(self.len() > 0);
+        // Safety: i is in bounds (assertion above)
+        let mut start = F::rawbytes_to_usize(unsafe { *self.indices_slice().get_unchecked(0) });
+        if start != 0 {
+            return Err(ZeroVecError::VarZeroVecFormatError);
+        }
+        for i in 0..self.len() {
+            let end = if i == self.len() - 1 {
+                self.things.len()
+            } else {
+                // Safety: i+1 is in bounds (assertion above)
+                F::rawbytes_to_usize(unsafe { *self.indices_slice().get_unchecked(i + 1) })
+            };
+            if start > end {
+                return Err(ZeroVecError::VarZeroVecFormatError);
+            }
+            if end > self.things.len() {
+                return Err(ZeroVecError::VarZeroVecFormatError);
+            }
+            // Safety: start..end is a valid range in self.things
+            let bytes = unsafe { self.things.get_unchecked(start..end) };
+            T::parse_byte_slice(bytes)?;
+            start = end;
+        }
+        Ok(())
     }
 
     /// Create an iterator over the Ts contained in VarZeroVecComponents
