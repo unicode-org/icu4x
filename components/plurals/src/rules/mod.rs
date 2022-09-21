@@ -27,10 +27,10 @@
 //! category which matches.
 //!
 //! In our example, the user provided an input value `1`.
-//! That value expanded into [`PluralOperands`] looks like this:
+//! That value expanded into [`PluralOperands`] might look something like this, in its
+//! internal representation of plural operand values, or something logically equivalent:
 //!
-//! ```
-//! use icu::plurals::PluralOperands;
+//! ```text
 //! PluralOperands {
 //!     i: 1,
 //!     v: 0,
