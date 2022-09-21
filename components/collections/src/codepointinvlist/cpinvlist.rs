@@ -823,7 +823,7 @@ mod tests {
             postcard::from_bytes::<CodePointInversionList>(&set_serialized)?;
 
         assert_eq!(&set, &set_deserialized);
-        assert!(matches!(set_deserialized.inv_list, ZeroVec::Borrowed(_)));
+        assert!(!set_deserialized.inv_list.is_owned());
 
         Ok(())
     }

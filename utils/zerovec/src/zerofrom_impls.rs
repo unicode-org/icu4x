@@ -14,7 +14,7 @@ where
 {
     #[inline]
     fn zero_from(other: &'zf ZeroVec<'_, T>) -> Self {
-        ZeroVec::Borrowed(other.as_ule_slice())
+        ZeroVec::new_borrowed(other.as_ule_slice())
     }
 }
 
@@ -24,7 +24,7 @@ where
 {
     #[inline]
     fn zero_from(other: &'zf ZeroSlice<T>) -> Self {
-        ZeroVec::Borrowed(other.as_ule_slice())
+        ZeroVec::new_borrowed(other.as_ule_slice())
     }
 }
 
