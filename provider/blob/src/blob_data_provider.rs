@@ -8,10 +8,10 @@ use icu_provider::prelude::*;
 use icu_provider::RcWrap;
 use yoke::*;
 
-/// A data provider loading data from blobs dynamically created at runtime.
+/// A data provider that reads from serialized blobs of data.
 ///
-/// This enables data blobs to be read from the filesystem or from an HTTP request dynamically
-/// at runtime, so that the code and data can be shipped separately.
+/// This enables data blobs to be read from arbitrary sources at runtime, allowing code and data
+/// to be separated. Alternatively, blobs can also be statically included at compile time.
 ///
 /// # `Sync + Send`
 ///
@@ -20,13 +20,15 @@ use yoke::*;
 ///
 /// # Examples
 ///
-/// ```
-/// use icu_locid::locale;
-/// use icu_provider::hello_world::*;
-/// use icu_provider::prelude::*;
-/// use icu_provider_blob::BlobDataProvider;
-/// use std::fs;
+/// ## Dynamic loading
 ///
+/// ```
+/// # use icu_locid::locale;
+/// # use icu_provider::hello_world::*;
+/// # use icu_provider::prelude::*;
+/// # use icu_provider_blob::BlobDataProvider;
+/// # use std::fs;
+/// #
 /// // Read an ICU4X data blob dynamically:
 /// let blob = fs::read(concat!(
 ///     env!("CARGO_MANIFEST_DIR"),
@@ -36,6 +38,38 @@ use yoke::*;
 ///
 /// // Create a DataProvider from it:
 /// let provider = BlobDataProvider::try_new_from_blob(blob).expect("Deserialization should succeed");
+///
+/// // Check that it works:
+/// let response: DataPayload<HelloWorldV1Marker> = provider
+///     .as_deserializing()
+///     .load(DataRequest {
+///         locale: &locale!("la").into(),
+///         metadata: Default::default(),
+///     })
+///     .expect("Data should be valid")
+///     .take_payload()
+///     .expect("Data should be present");
+///
+/// assert_eq!(response.get().message, "Ave, munde");
+/// ```
+///
+/// ## Static loading
+///
+/// ```
+/// # use icu_locid::locale;
+/// # use icu_provider::hello_world::*;
+/// # use icu_provider::prelude::*;
+/// # use icu_provider_blob::BlobDataProvider;
+/// # use std::fs;
+/// #
+/// // Read an ICU4X data blob statically:
+/// static BLOB: &[u8] = include_bytes!(concat!(
+///     env!("CARGO_MANIFEST_DIR"),
+///     "/tests/data/hello_world.postcard",
+/// ));
+///
+/// // Create a DataProvider from it:
+/// let provider = BlobDataProvider::try_new_from_static_blob(BLOB).expect("Deserialization should succeed");
 ///
 /// // Check that it works:
 /// let response: DataPayload<HelloWorldV1Marker> = provider
