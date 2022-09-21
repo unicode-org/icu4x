@@ -334,6 +334,11 @@ make_map_property! {
     func:
     /// Return a [`CodePointMapData`] for the Script Unicode enumerated property. See [`Script`].
     ///
+    /// **Note:** Some code points are associated with multiple scripts. If you are trying to
+    /// determine whether a code point belongs to a certain script, you should use
+    /// [`load_script_with_extensions_unstable`] and [`ScriptWithExtensionsBorrowed::has_script`]
+    /// instead of this function.
+    ///
     /// # Example
     ///
     /// ```
@@ -349,6 +354,8 @@ make_map_property! {
     /// ```
     ///
     /// [`CodePointTrie`]: icu_collections::codepointtrie::CodePointTrie
+    /// [`load_script_with_extensions_unstable`]: crate::script::load_script_with_extensions_unstable
+    /// [`ScriptWithExtensionsBorrowed::has_script`]: crate::script::ScriptWithExtensionsBorrowed::has_script
     pub fn load_script();
 }
 
@@ -386,6 +393,8 @@ make_map_property! {
     /// Return a [`CodePointMapData`] for the Line_Break Unicode enumerated
     /// property. See [`LineBreak`].
     ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
     /// # Example
     ///
     /// ```
@@ -410,6 +419,8 @@ make_map_property! {
     func:
     /// Return a [`CodePointMapData`] for the Grapheme_Cluster_Break Unicode enumerated
     /// property. See [`GraphemeClusterBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
     ///
     /// # Example
     ///
@@ -436,6 +447,8 @@ make_map_property! {
     /// Return a [`CodePointMapData`] for the Word_Break Unicode enumerated
     /// property. See [`WordBreak`].
     ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
+    ///
     /// # Example
     ///
     /// ```
@@ -460,6 +473,8 @@ make_map_property! {
     func:
     /// Return a [`CodePointMapData`] for the Sentence_Break Unicode enumerated
     /// property. See [`SentenceBreak`].
+    ///
+    /// **Note:** Use `icu::segmenter` for an all-in-one break iterator implementation.
     ///
     /// # Example
     ///
@@ -486,7 +501,7 @@ make_map_property! {
     /// Return a [`CodePointMapData`] for the Canonical_Combining_Class Unicode property. See
     /// [`CanonicalCombiningClass`].
     ///
-    /// See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
+    /// **Note:** See `icu_normalizer::CanonicalCombiningClassMap` for the preferred API
     /// to look up the Canonical_Combining_Class property by scalar value.
     ///
     /// # Example

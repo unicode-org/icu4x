@@ -8,14 +8,14 @@
     See the `Rust documentation for Date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDate, ICU4XError> try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar)
+    .. cpp:function:: static diplomat::result<ICU4XDate, ICU4XError> create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar& calendar)
 
         Creates a new :cpp:class:`ICU4XDate` representing the ISO date and time given but in a given calendar
 
         See the `Rust documentation for new_from_iso <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html#method.new_from_iso>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDate, ICU4XError> try_new_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar)
+    .. cpp:function:: static diplomat::result<ICU4XDate, ICU4XError> create_from_codes_in_calendar(const std::string_view era_code, int32_t year, const std::string_view month_code, uint8_t day, const ICU4XCalendar& calendar)
 
         Creates a new :cpp:class:`ICU4XDate` from the given codes, which are interpreted in the given calendar system
 
@@ -149,7 +149,7 @@
     See the `Rust documentation for Date <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.Date.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XIsoDate, ICU4XError> try_new(int32_t year, uint8_t month, uint8_t day)
+    .. cpp:function:: static diplomat::result<ICU4XIsoDate, ICU4XError> create(int32_t year, uint8_t month, uint8_t day)
 
         Creates a new :cpp:class:`ICU4XIsoDate` from the specified date and time.
 

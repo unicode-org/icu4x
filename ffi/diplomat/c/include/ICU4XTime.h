@@ -20,7 +20,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_try_new(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
+diplomat_result_box_ICU4XTime_ICU4XError ICU4XTime_create(uint8_t hour, uint8_t minute, uint8_t second, uint32_t nanosecond);
 
 uint8_t ICU4XTime_hour(const ICU4XTime* self);
 

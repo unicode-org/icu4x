@@ -39,7 +39,7 @@ pub mod ffi {
             icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable,
             FnInStruct
         )]
-        pub fn try_new(
+        pub fn create_with_lengths(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -66,7 +66,7 @@ pub mod ffi {
             icu::datetime::TypedZonedDateTimeFormatter::try_new_unstable,
             FnInStruct
         )]
-        pub fn try_new_with_iso_8601_time_zone_fallback(
+        pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -122,7 +122,7 @@ pub mod ffi {
         /// This function has `date_length` and `time_length` arguments and uses default options
         /// for the time zone.
         #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new(
+        pub fn create_with_lengths(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,
@@ -146,7 +146,7 @@ pub mod ffi {
         /// This function has `date_length` and `time_length` arguments and uses an ISO-8601 style
         /// fallback for the time zone with the given configurations.
         #[diplomat::rust_link(icu::datetime::ZonedDateTimeFormatter::try_new_unstable, FnInStruct)]
-        pub fn try_new_with_iso_8601_time_zone_fallback(
+        pub fn create_with_lengths_and_iso_8601_time_zone_fallback(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
             date_length: ICU4XDateLength,

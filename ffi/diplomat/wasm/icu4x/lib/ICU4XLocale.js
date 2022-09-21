@@ -17,11 +17,11 @@ export class ICU4XLocale {
     }
   }
 
-  static create(arg_name) {
+  static create_from_string(arg_name) {
     const buf_arg_name = diplomatRuntime.DiplomatBuf.str(wasm, arg_name);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XLocale_create(diplomat_receive_buffer, buf_arg_name.ptr, buf_arg_name.size);
+      wasm.ICU4XLocale_create_from_string(diplomat_receive_buffer, buf_arg_name.ptr, buf_arg_name.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XLocale(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -45,8 +45,8 @@ export class ICU4XLocale {
     return new ICU4XLocale(wasm.ICU4XLocale_create_bn(), true, []);
   }
 
-  static und() {
-    return new ICU4XLocale(wasm.ICU4XLocale_und(), true, []);
+  static create_und() {
+    return new ICU4XLocale(wasm.ICU4XLocale_create_und(), true, []);
   }
 
   clone() {

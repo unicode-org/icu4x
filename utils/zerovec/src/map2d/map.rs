@@ -235,14 +235,14 @@ where
     /// Removes key0_index from the keys0 array and the joiner array
     fn remove_key0_index(&mut self, key0_index: usize) {
         self.keys0.zvl_remove(key0_index);
-        self.joiner.to_mut().remove(key0_index);
+        self.joiner.with_mut(|v| v.remove(key0_index));
     }
 
     /// Shifts all joiner ranges from key0_index onward one index up
     fn joiner_expand(&mut self, key0_index: usize) {
         #[allow(clippy::expect_used)] // slice overflow
         self.joiner
-            .to_mut()
+            .to_mut_slice()
             .iter_mut()
             .skip(key0_index)
             .for_each(|ref mut v| {
@@ -252,16 +252,16 @@ where
                     .checked_add(1)
                     .expect("Attempted to add more than 2^32 elements to a ZeroMap2d")
                     .to_unaligned()
-            });
+            })
     }
 
     /// Shifts all joiner ranges from key0_index onward one index down
     fn joiner_shrink(&mut self, key0_index: usize) {
         self.joiner
-            .to_mut()
+            .to_mut_slice()
             .iter_mut()
             .skip(key0_index)
-            .for_each(|ref mut v| **v = (v.as_unsigned_int() - 1).to_unaligned());
+            .for_each(|ref mut v| **v = (v.as_unsigned_int() - 1).to_unaligned())
     }
 }
 
@@ -386,7 +386,7 @@ where
     ) -> Option<(&'b K0, &'b K1, &'b V)> {
         if self.is_empty() {
             self.keys0.zvl_push(key0);
-            self.joiner.to_mut().push(1u32.to_unaligned());
+            self.joiner.with_mut(|v| v.push(1u32.to_unaligned()));
             self.keys1.zvl_push(key1);
             self.values.zvl_push(value);
             return None;
@@ -426,10 +426,11 @@ where
         #[allow(clippy::unwrap_used)]
         if key0_cmp == Ordering::Greater {
             self.keys0.zvl_push(key0);
-            self.joiner.to_mut().push(joiner_value.to_unaligned());
+            self.joiner
+                .with_mut(|v| v.push(joiner_value.to_unaligned()));
         } else {
             // This unwrap is protected because we are not empty
-            *self.joiner.to_mut().last_mut().unwrap() = joiner_value.to_unaligned();
+            *self.joiner.to_mut_slice().last_mut().unwrap() = joiner_value.to_unaligned();
         }
         self.keys1.zvl_push(key1);
         self.values.zvl_push(value);
@@ -553,8 +554,7 @@ where
                 };
                 self.keys0.zvl_insert(key0_index, key0);
                 self.joiner
-                    .to_mut()
-                    .insert(key0_index, joiner_value.to_unaligned());
+                    .with_mut(|v| v.insert(key0_index, joiner_value.to_unaligned()));
                 (key0_index, (joiner_value as usize)..(joiner_value as usize))
             }
         }
@@ -704,13 +704,16 @@ mod test {
     fn stress_test() {
         let mut zm2d = ZeroMap2d::<u16, str, str>::new();
 
-        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Borrowed([]), joiner: ZeroVec::Borrowed([]), keys1: [], values: [] }");
+        assert_eq!(
+            format!("{:?}", zm2d),
+            "ZeroMap2d { keys0: ZeroVec([]), joiner: ZeroVec([]), keys1: [], values: [] }"
+        );
         assert_eq!(zm2d.get0(&0), None);
 
         let result = zm2d.try_append(&3, "ccc", "CCC");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec([3]), joiner: ZeroVec([1]), keys1: [\"ccc\"], values: [\"CCC\"] }");
         assert_eq!(zm2d.get0(&0), None);
         assert_eq!(zm2d.get0(&3).unwrap().get1(""), None);
         assert_eq!(zm2d.get_2d(&3, "ccc"), Some("CCC"));
@@ -719,7 +722,7 @@ mod test {
         let result = zm2d.try_append(&3, "eee", "EEE");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3]), joiner: ZeroVec::Owned([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec([3]), joiner: ZeroVec([2]), keys1: [\"ccc\", \"eee\"], values: [\"CCC\", \"EEE\"] }");
         assert_eq!(zm2d.get0(&0), None);
         assert_eq!(zm2d.get0(&3).unwrap().get1(""), None);
         assert_eq!(zm2d.get_2d(&3, "ccc"), Some("CCC"));
@@ -743,7 +746,7 @@ mod test {
         let result = zm2d.try_append(&9, "yyy", "YYY");
         assert!(matches!(result, None));
 
-        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 7, 9]), joiner: ZeroVec::Owned([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec([3, 5, 7, 9]), joiner: ZeroVec([2, 3, 6, 7]), keys1: [\"ccc\", \"eee\", \"ddd\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"DD1\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
         assert_eq!(zm2d.get0(&0), None);
         assert_eq!(zm2d.get0(&3).unwrap().get1(""), None);
         assert_eq!(zm2d.get_2d(&3, "ccc"), Some("CCC"));
@@ -774,7 +777,7 @@ mod test {
         zm2d.insert(&6, "mmm", "MM1");
         zm2d.insert(&6, "nnn", "NNN");
 
-        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 5, 6, 7, 9]), joiner: ZeroVec::Owned([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec([3, 5, 6, 7, 9]), joiner: ZeroVec([3, 4, 7, 10, 11]), keys1: [\"ccc\", \"eee\", \"mmm\", \"ddd\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\", \"yyy\"], values: [\"CCC\", \"EEE\", \"MM0\", \"DD1\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\", \"YYY\"] }");
         assert_eq!(zm2d.get0(&0), None);
         assert_eq!(zm2d.get0(&3).unwrap().get1(""), None);
         assert_eq!(zm2d.get_2d(&3, "ccc"), Some("CCC"));
@@ -814,6 +817,6 @@ mod test {
         let result = zm2d.remove(&9, "yyy"); // last element
         assert_eq!(result, Some(String::from("YYY").into_boxed_str()));
 
-        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec::Owned([3, 6, 7]), joiner: ZeroVec::Owned([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }");
+        assert_eq!(format!("{:?}", zm2d), "ZeroMap2d { keys0: ZeroVec([3, 6, 7]), joiner: ZeroVec([1, 4, 7]), keys1: [\"eee\", \"ddd\", \"mmm\", \"nnn\", \"ddd\", \"eee\", \"www\"], values: [\"EEE\", \"DD3\", \"MM1\", \"NNN\", \"DD2\", \"EEE\", \"WWW\"] }");
     }
 }

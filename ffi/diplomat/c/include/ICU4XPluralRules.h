@@ -25,9 +25,9 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_try_new_cardinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_create_cardinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
-diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_try_new_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
+diplomat_result_box_ICU4XPluralRules_ICU4XError ICU4XPluralRules_create_ordinal(const ICU4XDataProvider* provider, const ICU4XLocale* locale);
 
 ICU4XPluralCategory ICU4XPluralRules_category_for(const ICU4XPluralRules* self, const ICU4XPluralOperands* op);
 

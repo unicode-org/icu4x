@@ -16,11 +16,11 @@ export class ICU4XPluralOperands {
     }
   }
 
-  static create(arg_s) {
+  static create_from_string(arg_s) {
     const buf_arg_s = diplomatRuntime.DiplomatBuf.str(wasm, arg_s);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XPluralOperands_create(diplomat_receive_buffer, buf_arg_s.ptr, buf_arg_s.size);
+      wasm.ICU4XPluralOperands_create_from_string(diplomat_receive_buffer, buf_arg_s.ptr, buf_arg_s.size);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XPluralOperands(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

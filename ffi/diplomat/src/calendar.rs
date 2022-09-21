@@ -88,7 +88,7 @@ pub mod ffi {
     impl ICU4XCalendar {
         /// Creates a new [`ICU4XCalendar`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_for_locale_unstable, FnInEnum)]
-        pub fn try_new_for_locale(
+        pub fn create_for_locale(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XCalendar>, ICU4XError> {
@@ -102,7 +102,7 @@ pub mod ffi {
 
         /// Creates a new [`ICU4XCalendar`] from the specified date and time.
         #[diplomat::rust_link(icu::calendar::AnyCalendar::try_new_unstable, FnInEnum)]
-        pub fn try_new_for_kind(
+        pub fn create_for_kind(
             provider: &ICU4XDataProvider,
             kind: ICU4XAnyCalendarKind,
         ) -> DiplomatResult<Box<ICU4XCalendar>, ICU4XError> {

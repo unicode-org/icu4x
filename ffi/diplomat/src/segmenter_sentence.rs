@@ -35,7 +35,7 @@ pub mod ffi {
     impl ICU4XSentenceBreakSegmenter {
         /// Construct an [`ICU4XSentenceBreakSegmenter`].
         #[diplomat::rust_link(icu::segmenter::SentenceBreakSegmenter::try_new, FnInStruct)]
-        pub fn try_new(
+        pub fn create(
             provider: &ICU4XDataProvider,
         ) -> DiplomatResult<Box<ICU4XSentenceBreakSegmenter>, ICU4XError> {
             Self::try_new_impl(&provider.0)

@@ -6,14 +6,14 @@
     See the `Rust documentation for ComposingNormalizer <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XComposingNormalizer, ICU4XError> try_new_nfc(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XComposingNormalizer, ICU4XError> create_nfc(const ICU4XDataProvider& provider)
 
         Construct a new ICU4XComposingNormalizer instance for NFC
 
         See the `Rust documentation for try_new_nfc_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ComposingNormalizer.html#method.try_new_nfc_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XComposingNormalizer, ICU4XError> try_new_nfkc(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XComposingNormalizer, ICU4XError> create_nfkc(const ICU4XDataProvider& provider)
 
         Construct a new ICU4XComposingNormalizer instance for NFKC
 
@@ -52,14 +52,14 @@
     See the `Rust documentation for DecomposingNormalizer <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> try_new_nfd(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfd(const ICU4XDataProvider& provider)
 
         Construct a new ICU4XDecomposingNormalizer instance for NFC
 
         See the `Rust documentation for try_new_nfd_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> try_new_nfkd(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XDecomposingNormalizer, ICU4XError> create_nfkd(const ICU4XDataProvider& provider)
 
         Construct a new ICU4XDecomposingNormalizer instance for NFKC
 

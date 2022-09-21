@@ -15,7 +15,7 @@ export class ICU4XDecomposingNormalizer {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfd_unstable Rust documentation for `try_new_nfd_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_nfd(provider: ICU4XDataProvider): ICU4XDecomposingNormalizer | never;
+  static create_nfd(provider: ICU4XDataProvider): ICU4XDecomposingNormalizer | never;
 
   /**
 
@@ -24,7 +24,7 @@ export class ICU4XDecomposingNormalizer {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.DecomposingNormalizer.html#method.try_new_nfkd_unstable Rust documentation for `try_new_nfkd_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_nfkd(provider: ICU4XDataProvider): ICU4XDecomposingNormalizer | never;
+  static create_nfkd(provider: ICU4XDataProvider): ICU4XDecomposingNormalizer | never;
 
   /**
 

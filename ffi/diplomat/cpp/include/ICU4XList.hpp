@@ -31,13 +31,13 @@ class ICU4XList {
   /**
    * Create a new list of strings
    */
-  static ICU4XList new_();
+  static ICU4XList create();
 
   /**
    * Create a new list of strings with preallocated space to hold
    * at least `capacity` elements
    */
-  static ICU4XList with_capacity(size_t capacity);
+  static ICU4XList create_with_capacity(size_t capacity);
 
   /**
    * Push a string to the list
@@ -62,11 +62,11 @@ class ICU4XList {
 };
 
 
-inline ICU4XList ICU4XList::new_() {
-  return ICU4XList(capi::ICU4XList_new());
+inline ICU4XList ICU4XList::create() {
+  return ICU4XList(capi::ICU4XList_create());
 }
-inline ICU4XList ICU4XList::with_capacity(size_t capacity) {
-  return ICU4XList(capi::ICU4XList_with_capacity(capacity));
+inline ICU4XList ICU4XList::create_with_capacity(size_t capacity) {
+  return ICU4XList(capi::ICU4XList_create_with_capacity(capacity));
 }
 inline void ICU4XList::push(const std::string_view val) {
   capi::ICU4XList_push(this->inner.get(), val.data(), val.size());

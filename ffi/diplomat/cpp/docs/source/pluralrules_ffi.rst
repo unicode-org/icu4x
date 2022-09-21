@@ -37,7 +37,7 @@
 
     .. cpp:enumerator:: Other
 
-    .. cpp:function:: static diplomat::result<ICU4XPluralCategory, std::monostate> from_tr35_string(const std::string_view s)
+    .. cpp:function:: static diplomat::result<ICU4XPluralCategory, std::monostate> create_from_tr35_string(const std::string_view s)
 
         Construct from a string in the format `specified in TR35 <https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules>`__
 
@@ -53,7 +53,7 @@
     See the `Rust documentation for PluralOperands <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralOperands.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XPluralOperands, ICU4XError> create(const std::string_view s)
+    .. cpp:function:: static diplomat::result<ICU4XPluralOperands, ICU4XError> create_from_string(const std::string_view s)
 
         Construct for a given string representing a number
 
@@ -67,14 +67,14 @@
     See the `Rust documentation for PluralRules <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> create_cardinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
         Construct an :cpp:class:`ICU4XPluralRules` for the given locale, for cardinal numbers
 
         See the `Rust documentation for try_new_cardinal_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/plurals/struct.PluralRules.html#method.try_new_cardinal_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> try_new_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
+    .. cpp:function:: static diplomat::result<ICU4XPluralRules, ICU4XError> create_ordinal(const ICU4XDataProvider& provider, const ICU4XLocale& locale)
 
         Construct an :cpp:class:`ICU4XPluralRules` for the given locale, for ordinal numbers
 

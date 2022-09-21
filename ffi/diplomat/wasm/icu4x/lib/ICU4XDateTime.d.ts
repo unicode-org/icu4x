@@ -24,7 +24,7 @@ export class ICU4XDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/struct.DateTime.html#method.new_from_iso Rust documentation for `new_from_iso`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_from_iso_in_calendar(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32, calendar: ICU4XCalendar): ICU4XDateTime | never;
+  static create_from_iso_in_calendar(year: i32, month: u8, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32, calendar: ICU4XCalendar): ICU4XDateTime | never;
 
   /**
 
@@ -33,7 +33,7 @@ export class ICU4XDateTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new_from_codes Rust documentation for `new_from_codes`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_from_codes_in_calendar(era_code: string, year: i32, month_code: string, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32, calendar: ICU4XCalendar): ICU4XDateTime | never;
+  static create_from_codes_in_calendar(era_code: string, year: i32, month_code: string, day: u8, hour: u8, minute: u8, second: u8, nanosecond: u32, calendar: ICU4XCalendar): ICU4XDateTime | never;
 
   /**
 
@@ -41,7 +41,7 @@ export class ICU4XDateTime {
 
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new Rust documentation for `new`} for more information.
    */
-  static new_from_date_and_time(date: ICU4XDate, time: ICU4XTime): ICU4XDateTime;
+  static create_from_date_and_time(date: ICU4XDate, time: ICU4XTime): ICU4XDateTime;
 
   /**
 

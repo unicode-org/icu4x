@@ -21,10 +21,10 @@ export class ICU4XDate {
     }
   }
 
-  static try_new_from_iso_in_calendar(arg_year, arg_month, arg_day, arg_calendar) {
+  static create_from_iso_in_calendar(arg_year, arg_month, arg_day, arg_calendar) {
     return (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XDate_try_new_from_iso_in_calendar(diplomat_receive_buffer, arg_year, arg_month, arg_day, arg_calendar.underlying);
+      wasm.ICU4XDate_create_from_iso_in_calendar(diplomat_receive_buffer, arg_year, arg_month, arg_day, arg_calendar.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XDate(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);
@@ -38,12 +38,12 @@ export class ICU4XDate {
     })();
   }
 
-  static try_new_from_codes_in_calendar(arg_era_code, arg_year, arg_month_code, arg_day, arg_calendar) {
+  static create_from_codes_in_calendar(arg_era_code, arg_year, arg_month_code, arg_day, arg_calendar) {
     const buf_arg_era_code = diplomatRuntime.DiplomatBuf.str(wasm, arg_era_code);
     const buf_arg_month_code = diplomatRuntime.DiplomatBuf.str(wasm, arg_month_code);
     const diplomat_out = (() => {
       const diplomat_receive_buffer = wasm.diplomat_alloc(5, 4);
-      wasm.ICU4XDate_try_new_from_codes_in_calendar(diplomat_receive_buffer, buf_arg_era_code.ptr, buf_arg_era_code.size, arg_year, buf_arg_month_code.ptr, buf_arg_month_code.size, arg_day, arg_calendar.underlying);
+      wasm.ICU4XDate_create_from_codes_in_calendar(diplomat_receive_buffer, buf_arg_era_code.ptr, buf_arg_era_code.size, arg_year, buf_arg_month_code.ptr, buf_arg_month_code.size, arg_day, arg_calendar.underlying);
       const is_ok = diplomatRuntime.resultFlag(wasm, diplomat_receive_buffer, 4);
       if (is_ok) {
         const ok_value = new ICU4XDate(diplomatRuntime.ptrRead(wasm, diplomat_receive_buffer), true, []);

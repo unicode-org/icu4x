@@ -26,9 +26,9 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XDate_ICU4XError ICU4XDate_try_new_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar* calendar);
+diplomat_result_box_ICU4XDate_ICU4XError ICU4XDate_create_from_iso_in_calendar(int32_t year, uint8_t month, uint8_t day, const ICU4XCalendar* calendar);
 
-diplomat_result_box_ICU4XDate_ICU4XError ICU4XDate_try_new_from_codes_in_calendar(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, const ICU4XCalendar* calendar);
+diplomat_result_box_ICU4XDate_ICU4XError ICU4XDate_create_from_codes_in_calendar(const char* era_code_data, size_t era_code_len, int32_t year, const char* month_code_data, size_t month_code_len, uint8_t day, const ICU4XCalendar* calendar);
 
 ICU4XDate* ICU4XDate_to_calendar(const ICU4XDate* self, const ICU4XCalendar* calendar);
 

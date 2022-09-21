@@ -22,7 +22,7 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XBidi_ICU4XError ICU4XBidi_try_new(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XBidi_ICU4XError ICU4XBidi_create(const ICU4XDataProvider* provider);
 
 ICU4XBidiInfo* ICU4XBidi_for_text(const ICU4XBidi* self, const char* text_data, size_t text_len, uint8_t default_level);
 

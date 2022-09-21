@@ -33,7 +33,7 @@ pub mod ffi {
         /// [specified in TR35](https://unicode.org/reports/tr35/tr35-numbers.html#Language_Plural_Rules)
         #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_string, FnInEnum)]
         #[diplomat::rust_link(icu::plurals::PluralCategory::from_tr35_bytes, FnInEnum)]
-        pub fn from_tr35_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
+        pub fn create_from_tr35_string(s: &str) -> DiplomatResult<ICU4XPluralCategory, ()> {
             let s = s.as_bytes(); // #2520
             PluralCategory::from_tr35_bytes(s)
                 .map(Into::into)
@@ -52,7 +52,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_cardinal_unstable, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_unstable, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
-        pub fn try_new_cardinal(
+        pub fn create_cardinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
@@ -67,7 +67,7 @@ pub mod ffi {
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_ordinal_unstable, FnInStruct)]
         #[diplomat::rust_link(icu::plurals::PluralRules::try_new_unstable, FnInStruct, hidden)]
         #[diplomat::rust_link(icu::plurals::PluralRuleType, Enum, hidden)]
-        pub fn try_new_ordinal(
+        pub fn create_ordinal(
             provider: &ICU4XDataProvider,
             locale: &ICU4XLocale,
         ) -> DiplomatResult<Box<ICU4XPluralRules>, ICU4XError> {
@@ -121,7 +121,7 @@ pub mod ffi {
     impl ICU4XPluralOperands {
         /// Construct for a given string representing a number
         #[diplomat::rust_link(icu::plurals::PluralOperands::from_str, FnInStruct)]
-        pub fn create(s: &str) -> DiplomatResult<Box<ICU4XPluralOperands>, ICU4XError> {
+        pub fn create_from_string(s: &str) -> DiplomatResult<Box<ICU4XPluralOperands>, ICU4XError> {
             let s = s.as_bytes(); // #2520
             FixedDecimal::try_from(s)
                 .as_ref()

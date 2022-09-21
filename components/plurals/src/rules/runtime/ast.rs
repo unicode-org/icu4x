@@ -476,7 +476,7 @@ mod test {
                     operand: Operand::I,
                 },
                 modulo: 0,
-                range_list: ZeroVec::Borrowed(&[RangeOrValue::Value(1).to_unaligned()])
+                range_list: ZeroVec::new_borrowed(&[RangeOrValue::Value(1).to_unaligned()])
             }
         );
 

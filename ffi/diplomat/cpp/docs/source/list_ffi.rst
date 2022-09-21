@@ -6,12 +6,12 @@
     A list of strings
 
 
-    .. cpp:function:: static ICU4XList new_()
+    .. cpp:function:: static ICU4XList create()
 
         Create a new list of strings
 
 
-    .. cpp:function:: static ICU4XList with_capacity(size_t capacity)
+    .. cpp:function:: static ICU4XList create_with_capacity(size_t capacity)
 
         Create a new list of strings with preallocated space to hold at least ``capacity`` elements
 
@@ -33,21 +33,21 @@
     See the `Rust documentation for ListFormatter <https://unicode-org.github.io/icu4x-docs/doc/icu/list/struct.ListFormatter.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XListFormatter, ICU4XError> try_new_and(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListStyle style)
+    .. cpp:function:: static diplomat::result<ICU4XListFormatter, ICU4XError> create_and_with_style(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListStyle style)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
         See the `Rust documentation for try_new_and_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_and_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XListFormatter, ICU4XError> try_new_or(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListStyle style)
+    .. cpp:function:: static diplomat::result<ICU4XListFormatter, ICU4XError> create_or_with_style(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListStyle style)
 
         Construct a new ICU4XListFormatter instance for And patterns
 
         See the `Rust documentation for try_new_or_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_or_unstable>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XListFormatter, ICU4XError> try_new_unit(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListStyle style)
+    .. cpp:function:: static diplomat::result<ICU4XListFormatter, ICU4XError> create_unit_with_style(const ICU4XDataProvider& provider, const ICU4XLocale& locale, ICU4XListStyle style)
 
         Construct a new ICU4XListFormatter instance for And patterns
 

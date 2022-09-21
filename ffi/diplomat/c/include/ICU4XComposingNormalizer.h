@@ -22,9 +22,9 @@ namespace capi {
 extern "C" {
 #endif
 
-diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_try_new_nfc(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_create_nfc(const ICU4XDataProvider* provider);
 
-diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_try_new_nfkc(const ICU4XDataProvider* provider);
+diplomat_result_box_ICU4XComposingNormalizer_ICU4XError ICU4XComposingNormalizer_create_nfkc(const ICU4XDataProvider* provider);
 
 diplomat_result_void_ICU4XError ICU4XComposingNormalizer_normalize(const ICU4XComposingNormalizer* self, const char* s_data, size_t s_len, DiplomatWriteable* write);
 

@@ -17,7 +17,7 @@ export class ICU4XTime {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/types/struct.Time.html Rust documentation for `Time`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new(hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XTime | never;
+  static create(hour: u8, minute: u8, second: u8, nanosecond: u32): ICU4XTime | never;
 
   /**
 

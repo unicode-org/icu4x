@@ -6,7 +6,7 @@
     See the `Rust documentation for CustomTimeZone <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.CustomTimeZone.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_str(const std::string_view s)
+    .. cpp:function:: static diplomat::result<ICU4XCustomTimeZone, ICU4XError> create_from_string(const std::string_view s)
 
         Creates a time zone from an offset string.
 
@@ -274,7 +274,7 @@
     See the `Rust documentation for MetazoneCalculator <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html>`__ for more information.
 
 
-    .. cpp:function:: static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> try_new(const ICU4XDataProvider& provider)
+    .. cpp:function:: static diplomat::result<ICU4XMetazoneCalculator, ICU4XError> create(const ICU4XDataProvider& provider)
 
         See the `Rust documentation for try_new_unstable <https://unicode-org.github.io/icu4x-docs/doc/icu/timezone/struct.MetazoneCalculator.html#method.try_new_unstable>`__ for more information.
 

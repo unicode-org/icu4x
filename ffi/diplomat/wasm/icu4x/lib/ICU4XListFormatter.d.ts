@@ -18,7 +18,7 @@ export class ICU4XListFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_and_unstable Rust documentation for `try_new_and_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_and(provider: ICU4XDataProvider, locale: ICU4XLocale, style: ICU4XListStyle): ICU4XListFormatter | never;
+  static create_and_with_style(provider: ICU4XDataProvider, locale: ICU4XLocale, style: ICU4XListStyle): ICU4XListFormatter | never;
 
   /**
 
@@ -27,7 +27,7 @@ export class ICU4XListFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_or_unstable Rust documentation for `try_new_or_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_or(provider: ICU4XDataProvider, locale: ICU4XLocale, style: ICU4XListStyle): ICU4XListFormatter | never;
+  static create_or_with_style(provider: ICU4XDataProvider, locale: ICU4XLocale, style: ICU4XListStyle): ICU4XListFormatter | never;
 
   /**
 
@@ -36,7 +36,7 @@ export class ICU4XListFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/normalizer/struct.ListFormatter.html#method.try_new_unit_unstable Rust documentation for `try_new_unit_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_unit(provider: ICU4XDataProvider, locale: ICU4XLocale, style: ICU4XListStyle): ICU4XListFormatter | never;
+  static create_unit_with_style(provider: ICU4XDataProvider, locale: ICU4XLocale, style: ICU4XListStyle): ICU4XListFormatter | never;
 
   /**
 

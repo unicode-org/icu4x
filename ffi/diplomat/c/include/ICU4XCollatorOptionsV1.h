@@ -1,5 +1,5 @@
-#ifndef ICU4XCollatorOptions_H
-#define ICU4XCollatorOptions_H
+#ifndef ICU4XCollatorOptionsV1_H
+#define ICU4XCollatorOptionsV1_H
 #include <stdio.h>
 #include <stdint.h>
 #include <stddef.h>
@@ -17,7 +17,7 @@
 namespace capi {
 #endif
 
-typedef struct ICU4XCollatorOptions {
+typedef struct ICU4XCollatorOptionsV1 {
     ICU4XCollatorStrength strength;
     ICU4XCollatorAlternateHandling alternate_handling;
     ICU4XCollatorCaseFirst case_first;
@@ -25,7 +25,7 @@ typedef struct ICU4XCollatorOptions {
     ICU4XCollatorCaseLevel case_level;
     ICU4XCollatorNumeric numeric;
     ICU4XCollatorBackwardSecondLevel backward_second_level;
-} ICU4XCollatorOptions;
+} ICU4XCollatorOptionsV1;
 #ifdef __cplusplus
 } // namespace capi
 #endif
@@ -41,7 +41,7 @@ namespace capi {
 extern "C" {
 #endif
 
-void ICU4XCollatorOptions_destroy(ICU4XCollatorOptions* self);
+void ICU4XCollatorOptionsV1_destroy(ICU4XCollatorOptionsV1* self);
 
 #ifdef __cplusplus
 } // extern "C"

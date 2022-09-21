@@ -21,7 +21,7 @@ export class ICU4XFixedDecimalFormatter {
    * See the {@link https://unicode-org.github.io/icu4x-docs/doc/icu/decimal/struct.FixedDecimalFormatter.html#method.try_new_unstable Rust documentation for `try_new_unstable`} for more information.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_with_grouping_strategy(provider: ICU4XDataProvider, locale: ICU4XLocale, grouping_strategy: ICU4XFixedDecimalGroupingStrategy): ICU4XFixedDecimalFormatter | never;
+  static create_with_grouping_strategy(provider: ICU4XDataProvider, locale: ICU4XLocale, grouping_strategy: ICU4XFixedDecimalGroupingStrategy): ICU4XFixedDecimalFormatter | never;
 
   /**
 
@@ -30,7 +30,7 @@ export class ICU4XFixedDecimalFormatter {
    * The contents of the data struct will be consumed: if you wish to use the struct again it will have to be reconstructed. Passing a consumed struct to this method will return an error.
    * @throws {@link FFIError}<{@link ICU4XError}>
    */
-  static try_new_from_decimal_symbols_v1(data_struct: ICU4XDataStruct, grouping_strategy: ICU4XFixedDecimalGroupingStrategy): ICU4XFixedDecimalFormatter | never;
+  static create_with_decimal_symbols_v1(data_struct: ICU4XDataStruct, grouping_strategy: ICU4XFixedDecimalGroupingStrategy): ICU4XFixedDecimalFormatter | never;
 
   /**
 
