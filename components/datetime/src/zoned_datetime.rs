@@ -255,16 +255,18 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::TypedZonedDateTimeFormatter;
+    /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;
     ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
-    ///     Default::default(),
+    ///     options.into(),
     ///     Default::default(),
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
@@ -276,7 +278,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// assert_writeable_eq!(
     ///     formatted_date,
-    ///     "September 12, 2020 at 12:34:28 PM GMT-07:00"
+    ///     "Sep 12, 2020, 12:34:28 PM GMT-07:00"
     /// );
     /// ```
     #[inline]
@@ -294,15 +296,17 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// ```
     /// use icu::calendar::{DateTime, Gregorian};
-    /// use icu::datetime::TypedZonedDateTimeFormatter;
+    /// use icu::datetime::{options::length, TypedZonedDateTimeFormatter};
     /// use icu::locid::locale;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     ///
+    /// let options = length::Bag::from_date_time_style(length::Date::Medium, length::Time::Long);
+    ///
     /// let zdtf = TypedZonedDateTimeFormatter::<Gregorian>::try_new_unstable(
     ///     &icu_testdata::unstable(),
     ///     &locale!("en").into(),
-    ///     Default::default(),
+    ///     options.into(),
     ///     Default::default(),
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
@@ -312,7 +316,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///
     /// let formatted_string = zdtf.format_to_string(&datetime, &time_zone);
     ///
-    /// assert_eq!(formatted_string, "September 12, 2020 at 12:34:28 PM GMT-07:00");
+    /// assert_eq!(formatted_string, "Sep 12, 2020, 12:34:28 PM GMT-07:00");
     /// ```
     #[inline]
     pub fn format_to_string(
