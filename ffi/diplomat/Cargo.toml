@@ -31,10 +31,9 @@ all-features = true
 # Omit most optional dependency features from permutation testing
 skip_optional_dependencies = true
 # Bench feature gets tested separately and is only relevant for CI.
-# smaller_test gets tested on the FFI job anyway
 # logging enables a feature of a dependency that has no externally visible API changes
 # serde enables dependency features but buffer_provider affects the actual code
-denylist = ["bench", "serde", "smaller_test", "logging"]
+denylist = ["bench", "serde", "logging"]
 
 # Please keep the features list in sync with the icu_capi_staticlib crate
 [features]
@@ -57,7 +56,6 @@ serde = [
 buffer_provider = ["serde", "icu_provider_adapters/serde", "icu_testdata?/buffer"]
 provider_fs = ["icu_provider_fs", "buffer_provider"]
 provider_test = ["icu_testdata"]
-smaller_test = ["provider_test", "buffer_provider"]
 logging = ["icu_provider/log_error_context", "log"]
 # Use the env_logger functionality to log based on environment variables
 simple_logger = ["dep:simple_logger"]
