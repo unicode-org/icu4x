@@ -322,7 +322,13 @@ impl<'a, T: VarULE + ?Sized, F: VarZeroVecFormat> VarZeroVecComponents<'a, T, F>
     #[allow(clippy::len_zero)] // more explicit to enforce safety invariants
     fn check_indices_and_things(self) -> Result<(), ZeroVecError> {
         assert_eq!(self.len(), self.indices_slice().len());
-        assert!(self.len() > 0);
+        if self.len() == 0 {
+            if self.things.len() > 0 {
+                return Err(ZeroVecError::VarZeroVecFormatError);
+            } else {
+                return Ok(());
+            }
+        }
         // Safety: i is in bounds (assertion above)
         let mut start = F::rawbytes_to_usize(unsafe { *self.indices_slice().get_unchecked(0) });
         if start != 0 {
