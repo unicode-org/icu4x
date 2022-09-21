@@ -11,7 +11,7 @@
 //! in ICU:
 //! * [`unstable`], [`unstable_no_fallback`]
 //! * [`any`], [`any_no_fallback`]
-//! * [`buffer`], [`buffer_no_fallback`], [`small_buffer`] (`buffer` feature)
+//! * [`buffer`], [`buffer_no_fallback`] (`buffer` feature)
 //!
 //!
 //! Additionally, the `metadata` feature exposes the [`metadata`] module which contains information
@@ -214,25 +214,6 @@ pub fn buffer_no_fallback() -> impl BufferProvider {
         };
     }
     POSTCARD.clone()
-}
-
-/// A smaller [`BufferProvider`] backed by a Postcard blob.
-///
-/// This provider only contains the `decimal/symbols@1[u-nu]` key for `en` and `bn`.
-#[cfg(feature = "buffer")]
-pub fn small_buffer() -> impl BufferProvider {
-    lazy_static::lazy_static! {
-        static ref SMALLER_POSTCARD: icu_provider_blob::BlobDataProvider = {
-            // The statically compiled data file is valid.
-            #[allow(clippy::unwrap_used)]
-            icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
-                env!("CARGO_MANIFEST_DIR"),
-                "/data/decimal-bn-en.postcard"
-            )))
-            .unwrap()
-        };
-    }
-    SMALLER_POSTCARD.clone()
 }
 
 #[doc(hidden)]
