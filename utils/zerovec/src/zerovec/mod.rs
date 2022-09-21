@@ -717,7 +717,8 @@ where
     }
 
     /// Allows the ZeroVec to be mutated by converting it to an owned variant, and producing
-    /// a mutable vector of ULEs.
+    /// a mutable vector of ULEs. If you only need a mutable slice, consider using [`Self::to_mut_slice()`]
+    /// instead.
     ///
     /// # Example
     ///
@@ -745,6 +746,30 @@ where
         ret
     }
 
+    /// Allows the ZeroVec to be mutated by converting it to an owned variant (if necessary)
+    /// and returning a slice to its backing buffer. [`Self::with_mut()`] allows for mutation
+    /// of the vector itself.
+    ///
+    /// # Example
+    ///
+    /// ```rust,ignore
+    /// # use crate::zerovec::ule::AsULE;
+    /// use zerovec::ZeroVec;
+    ///
+    /// let bytes: &[u8] = &[0xD3, 0x00, 0x19, 0x01, 0xA5, 0x01, 0xCD, 0x01];
+    /// let mut zerovec: ZeroVec<u16> = ZeroVec::parse_byte_slice(bytes).expect("infallible");
+    /// assert!(!zerovec.is_owned());
+    ///
+    /// zerovec.to_mut_slice().push(12_u16.to_unaligned());
+    /// assert!(zerovec.is_owned());
+    /// ```
+    pub fn to_mut_slice(&mut self) -> &mut [T::ULE] {
+        if !self.is_owned() {
+            let slice = unsafe { &*self.buf };
+            *self = ZeroVec::new_owned(slice.into());
+        }
+        unsafe { &mut *self.buf }
+    }
     /// Remove all elements from this ZeroVec and reset it to an empty borrowed state.
     pub fn clear(&mut self) {
         *self = Self::new_borrowed(&[])

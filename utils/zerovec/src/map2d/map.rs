@@ -241,8 +241,11 @@ where
     /// Shifts all joiner ranges from key0_index onward one index up
     fn joiner_expand(&mut self, key0_index: usize) {
         #[allow(clippy::expect_used)] // slice overflow
-        self.joiner.with_mut(|v| {
-            v.iter_mut().skip(key0_index).for_each(|ref mut v| {
+        self.joiner
+            .to_mut_slice()
+            .iter_mut()
+            .skip(key0_index)
+            .for_each(|ref mut v| {
                 // TODO(#1410): Make this fallible
                 **v = v
                     .as_unsigned_int()
@@ -250,16 +253,15 @@ where
                     .expect("Attempted to add more than 2^32 elements to a ZeroMap2d")
                     .to_unaligned()
             })
-        });
     }
 
     /// Shifts all joiner ranges from key0_index onward one index down
     fn joiner_shrink(&mut self, key0_index: usize) {
-        self.joiner.with_mut(|v| {
-            v.iter_mut()
-                .skip(key0_index)
-                .for_each(|ref mut v| **v = (v.as_unsigned_int() - 1).to_unaligned())
-        });
+        self.joiner
+            .to_mut_slice()
+            .iter_mut()
+            .skip(key0_index)
+            .for_each(|ref mut v| **v = (v.as_unsigned_int() - 1).to_unaligned())
     }
 }
 
@@ -428,9 +430,7 @@ where
                 .with_mut(|v| v.push(joiner_value.to_unaligned()));
         } else {
             // This unwrap is protected because we are not empty
-            self.joiner.with_mut(|v| {
-                *v.last_mut().unwrap() = joiner_value.to_unaligned();
-            });
+            *self.joiner.to_mut_slice().last_mut().unwrap() = joiner_value.to_unaligned();
         }
         self.keys1.zvl_push(key1);
         self.values.zvl_push(value);

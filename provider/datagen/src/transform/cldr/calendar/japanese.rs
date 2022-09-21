@@ -83,7 +83,7 @@ impl crate::DatagenProvider {
             }
         }
 
-        ret.dates_to_eras.with_mut(|v| v.sort_unstable());
+        ret.dates_to_eras.to_mut_slice().sort_unstable();
 
         // Integrity check
         //
