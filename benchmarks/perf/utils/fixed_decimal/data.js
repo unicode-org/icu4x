@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663776256577,
+  "lastUpdate": 1663777368546,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -52169,6 +52169,66 @@ window.BENCHMARK_DATA = {
             "name": "from_string/1000000001",
             "value": 72,
             "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f53a87eaed760170e328dffb8705bcdda41657ea",
+          "message": "Less building in CI (#2606)",
+          "timestamp": "2022-09-21T18:07:56+02:00",
+          "tree_id": "eeef469c9992c6fe65fb9f1135532852521a6a77",
+          "url": "https://github.com/unicode-org/icu4x/commit/f53a87eaed760170e328dffb8705bcdda41657ea"
+        },
+        "date": 1663777306162,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 108223,
+            "range": "± 5655",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 23641,
+            "range": "± 1359",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 66828,
+            "range": "± 7184",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 205,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 86,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 79,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
