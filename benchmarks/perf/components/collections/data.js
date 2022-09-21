@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663741699014,
+  "lastUpdate": 1663762953577,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -18232,6 +18232,126 @@ window.BENCHMARK_DATA = {
           {
             "name": "uniset/contains_range/best",
             "value": 2,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "fbd829c8ad0094db44af41a1b32cea38ee540c5b",
+          "message": "Add permutation to ZVL containers (#2605)",
+          "timestamp": "2022-09-21T14:08:10+02:00",
+          "tree_id": "c3352c9888f60000fa33675e0a186e66034ba241",
+          "url": "https://github.com/unicode-org/icu4x/commit/fbd829c8ad0094db44af41a1b32cea38ee540c5b"
+        },
+        "date": 1663762887962,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "cpt/overview",
+            "value": 856,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/eng",
+            "value": 582,
+            "range": "± 83",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/pcd",
+            "value": 581,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ukr",
+            "value": 678,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/yue",
+            "value": 1218,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/small/ccp",
+            "value": 1300,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/eng",
+            "value": 556,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/pcd",
+            "value": 559,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ukr",
+            "value": 688,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/yue",
+            "value": 654,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "cpt/get/fast/ccp",
+            "value": 1314,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/overview",
+            "value": 45173446,
+            "range": "± 1316308",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/best",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains/worst",
+            "value": 3,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "uniset/contains_range/best",
+            "value": 3,
             "range": "± 0",
             "unit": "ns/iter"
           },
