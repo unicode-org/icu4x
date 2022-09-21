@@ -71,8 +71,8 @@ where
 /// ```
 /// use icu::calendar::DateTime;
 /// use icu::timezone::{CustomTimeZone, MetazoneCalculator};
-/// use icu_datetime::TimeZoneFormatter;
-/// use icu_locid::locale;
+/// use icu::datetime::time_zone::TimeZoneFormatter;
+/// use icu::locid::locale;
 /// use tinystr::tinystr;
 /// use writeable::assert_writeable_eq;
 ///
@@ -375,8 +375,8 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
-    /// use icu_locid::locale;
+    /// use icu::datetime::time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions};
+    /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(
@@ -607,8 +607,8 @@ impl TimeZoneFormatter {
     ///
     /// ```
     /// use icu::timezone::CustomTimeZone;
-    /// use icu_datetime::{TimeZoneFormatter, TimeZoneFormatterOptions};
-    /// use icu_locid::locale;
+    /// use icu::datetime::time_zone::{TimeZoneFormatter, TimeZoneFormatterOptions};
+    /// use icu::locid::locale;
     /// use writeable::assert_writeable_eq;
     ///
     /// let tzf = TimeZoneFormatter::try_new_unstable(

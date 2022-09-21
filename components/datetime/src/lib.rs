@@ -106,6 +106,7 @@
 //! [`Calendar`]: calendar::{Calendar}
 //! [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
 //! [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
+//! [`TimeZoneFormatter`]: time_zone::TimeZoneFormatter
 
 // https://github.com/unicode-org/icu4x/blob/main/docs/process/boilerplate.md#library-annotations
 #![cfg_attr(not(any(test, feature = "std")), no_std)]
@@ -153,6 +154,4 @@ pub use format::datetime::FormattedDateTime;
 pub use format::time_zone::FormattedTimeZone;
 pub use format::zoned_datetime::FormattedZonedDateTime;
 pub use options::DateTimeFormatterOptions;
-pub use time_zone::TimeZoneFormatter;
-pub use time_zone::TimeZoneFormatterOptions;
 pub use zoned_datetime::TypedZonedDateTimeFormatter;

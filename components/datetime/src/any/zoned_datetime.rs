@@ -25,7 +25,7 @@ use writeable::Writeable;
 /// please read the [crate root docs][crate].
 ///
 /// This is equivalently the composition of
-/// [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`](crate::TimeZoneFormatter).
+/// [`DateTimeFormatter`](crate::DateTimeFormatter) and [`TimeZoneFormatter`].
 ///
 /// [`ZonedDateTimeFormatter`] uses data from the [data provider]s, the selected [`DataLocale`], and the
 /// provided pattern to collect all data necessary to format a datetime with time zones into that locale.
@@ -72,6 +72,8 @@ use writeable::Writeable;
 ///       .expect("Calendars should match"),
 ///     "Sep 1, 2020, 12:34:28 PM GMT+05:00");
 /// ```
+///
+/// [`TimeZoneFormatter`]: crate::time_zone::TimeZoneFormatter
 pub struct ZonedDateTimeFormatter(raw::ZonedDateTimeFormatter, AnyCalendar);
 
 impl ZonedDateTimeFormatter {
@@ -213,7 +215,7 @@ impl ZonedDateTimeFormatter {
     /// use icu::datetime::options::length;
     /// use icu::datetime::{DateTimeFormatterOptions, ZonedDateTimeFormatter};
     /// use icu::locid::locale;
-    /// use icu::datetime::TimeZoneFormatterOptions;
+    /// use icu::datetime::time_zone::TimeZoneFormatterOptions;
     /// use icu::timezone::CustomTimeZone;
     /// use std::str::FromStr;
     /// use writeable::assert_writeable_eq;

@@ -104,6 +104,7 @@ we expect to add more ways to customize the output, like skeletons, and componen
 [`Calendar`]: calendar::{Calendar}
 [`AnyCalendar`]: calendar::any_calendar::{AnyCalendar}
 [`timezone::CustomTimeZone`]: icu::timezone::{CustomTimeZone}
+[`TimeZoneFormatter`]: time_zone::TimeZoneFormatter
 
 ## More Information
 
