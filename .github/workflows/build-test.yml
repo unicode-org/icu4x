@@ -86,11 +86,6 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-    - name: Build
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: build
-        args: --all-targets --all-features
     - name: Run `cargo make ci-job-test`
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -171,11 +166,6 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-    - name: Build
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: build
-        args: --all-targets --all-features
     - name: Run `cargo make ci-job-test-docs`
       uses: actions-rs/cargo@v1.0.1
       with:
@@ -269,11 +259,6 @@ jobs:
       with:
         crate: cargo-make
         version: latest
-    - name: Build
-      uses: actions-rs/cargo@v1.0.1
-      with:
-        command: build
-        args: --all-targets --all-features
     - name: Run `cargo make ci-job-ffi`
       uses: actions-rs/cargo@v1.0.1
       with:
