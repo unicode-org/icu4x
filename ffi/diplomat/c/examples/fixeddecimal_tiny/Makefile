@@ -29,7 +29,7 @@ LLD := lld-14
 decimal-bn-en.postcard:
 	cargo run -p icu_datagen --features bin -- --locales en bn --keys "decimal/symbols@1" --cldr-root ../../../../../provider/testdata/data/cldr/ --format blob --out decimal-bn-en.postcard
 
-decimal_bn_en.h: ../../../../../provider/testdata/data/decimal-bn-en.postcard
+decimal_bn_en.h: decimal-bn-en.postcard
 	xxd -i -n decimal_bn_en decimal-bn-en.postcard > decimal_bn_en.h
 
 # Naive target: no optimizations, full std
