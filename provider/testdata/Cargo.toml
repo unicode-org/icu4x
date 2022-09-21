@@ -342,7 +342,7 @@ default = [
 icu_datetime_experimental = [
     "icu_datetime/experimental",
 ]
-buffer = ["icu_provider_blob", "icu_provider_adapters/serde", "lazy_static"]
+buffer = ["icu_provider_blob", "icu_provider/sync", "icu_provider_adapters/serde", "lazy_static"]
 std = []
 bin = [
     "bytes",

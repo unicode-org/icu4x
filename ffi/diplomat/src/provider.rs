@@ -140,7 +140,7 @@ pub mod ffi {
                 .into()
         }
 
-        /// Constructs an empty `StaticDataProvider` and returns it as an [`ICU4XDataProvider`].
+        /// Constructs an empty [`ICU4XDataProvider`].
         #[diplomat::rust_link(icu_provider_adapters::empty::EmptyDataProvider, Struct)]
         #[diplomat::rust_link(
             icu_provider_adapters::empty::EmptyDataProvider::new,

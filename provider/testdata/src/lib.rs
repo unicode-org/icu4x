@@ -203,17 +203,17 @@ pub fn buffer() -> impl BufferProvider {
 #[cfg(feature = "buffer")]
 pub fn buffer_no_fallback() -> impl BufferProvider {
     lazy_static::lazy_static! {
-        static ref POSTCARD: icu_provider_blob::StaticDataProvider = {
+        static ref POSTCARD: icu_provider_blob::BlobDataProvider = {
             // The statically compiled data file is valid.
             #[allow(clippy::unwrap_used)]
-            icu_provider_blob::StaticDataProvider::try_new_from_static_blob(include_bytes!(concat!(
+            icu_provider_blob::BlobDataProvider::try_new_from_static_blob(include_bytes!(concat!(
                 env!("CARGO_MANIFEST_DIR"),
                 "/data/testdata.postcard"
             )))
             .unwrap()
         };
     }
-    *POSTCARD
+    POSTCARD.clone()
 }
 
 #[doc(hidden)]

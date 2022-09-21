@@ -43,7 +43,7 @@
 
     .. cpp:function:: static ICU4XDataProvider create_empty()
 
-        Constructs an empty ``StaticDataProvider`` and returns it as an :cpp:class:`ICU4XDataProvider`.
+        Constructs an empty :cpp:class:`ICU4XDataProvider`.
 
         See the `Rust documentation for EmptyDataProvider <https://unicode-org.github.io/icu4x-docs/doc/icu_provider_adapters/empty/struct.EmptyDataProvider.html>`__ for more information.
 
