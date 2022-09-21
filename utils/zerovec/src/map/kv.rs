@@ -52,10 +52,12 @@ macro_rules! impl_sized_kv {
     };
 }
 
+impl_sized_kv!(u8);
 impl_sized_kv!(u16);
 impl_sized_kv!(u32);
 impl_sized_kv!(u64);
 impl_sized_kv!(u128);
+impl_sized_kv!(i8);
 impl_sized_kv!(i16);
 impl_sized_kv!(i32);
 impl_sized_kv!(i64);
