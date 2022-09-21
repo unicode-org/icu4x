@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663775659498,
+  "lastUpdate": 1663776638068,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Benchmark": [
@@ -27773,6 +27773,36 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/unicode-org/icu4x/commit/f6fe4c49e6e89f03c9372d78f67065c4784690bd"
         },
         "date": 1663775602880,
+        "tool": "ndjson",
+        "benches": [
+          {
+            "name": "provider/testdata/data/testdata.postcard",
+            "value": 3919062,
+            "unit": "bytes",
+            "biggerIsBetter": false
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "robertbastian@users.noreply.github.com",
+            "name": "Robert Bastian",
+            "username": "robertbastian"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f53a87eaed760170e328dffb8705bcdda41657ea",
+          "message": "Less building in CI (#2606)",
+          "timestamp": "2022-09-21T18:07:56+02:00",
+          "tree_id": "eeef469c9992c6fe65fb9f1135532852521a6a77",
+          "url": "https://github.com/unicode-org/icu4x/commit/f53a87eaed760170e328dffb8705bcdda41657ea"
+        },
+        "date": 1663776572189,
         "tool": "ndjson",
         "benches": [
           {
