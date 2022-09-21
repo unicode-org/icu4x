@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1663762878131,
+  "lastUpdate": 1663776256577,
   "repoUrl": "https://github.com/unicode-org/icu4x",
   "entries": {
     "Rust Benchmark": [
@@ -52108,6 +52108,66 @@ window.BENCHMARK_DATA = {
           {
             "name": "from_string/1000000001",
             "value": 99,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "shane@unicode.org",
+            "name": "Shane F. Carr",
+            "username": "sffc"
+          },
+          "committer": {
+            "email": "noreply@github.com",
+            "name": "GitHub",
+            "username": "web-flow"
+          },
+          "distinct": true,
+          "id": "f6fe4c49e6e89f03c9372d78f67065c4784690bd",
+          "message": "Rename FFI constructors (#2601)",
+          "timestamp": "2022-09-21T08:52:03-07:00",
+          "tree_id": "c1d8d970cb69954a23874673190f01c8aff1a518",
+          "url": "https://github.com/unicode-org/icu4x/commit/f6fe4c49e6e89f03c9372d78f67065c4784690bd"
+        },
+        "date": 1663776200131,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "fixed_decimal/overview",
+            "value": 100019,
+            "range": "± 8717",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/smaller",
+            "value": 20959,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "isize/larger",
+            "value": 65908,
+            "range": "± 634",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/to_string/908070605040302010",
+            "value": 166,
+            "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "to_string/write_to/908070605040302010",
+            "value": 65,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "from_string/1000000001",
+            "value": 72,
             "range": "± 0",
             "unit": "ns/iter"
           }
