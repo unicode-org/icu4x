@@ -2,7 +2,7 @@
 // called LICENSE at the top level of the ICU4X source tree
 // (online at: https://github.com/unicode-org/icu4x/blob/main/LICENSE ).
 
-use super::*;
+use super::{MutableZeroVecLike, ZeroMapKV, ZeroVecLike};
 use crate::flexzerovec::{FlexZeroVec, FlexZeroVecOwned};
 use ahash::AHasher;
 use alloc::borrow::Borrow;
@@ -14,11 +14,13 @@ use core::hash::{Hash, Hasher};
 fn compute_hash<K: Hash>(seed: u32, k: &K, m: usize) -> usize {
     let mut hasher = AHasher::new_with_keys(seed.into(), 0xaabbccdd);
     k.hash(&mut hasher);
-    (hasher.finish() as usize % m) as usize
+    hasher.finish() as usize % m
 }
 
 #[derive(Debug)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 struct HashIndex<'a> {
+    #[cfg_attr(feature = "serde", serde(borrow))]
     displacements: FlexZeroVec<'a>,
 }
 
@@ -163,11 +165,13 @@ impl<'a> HashIndex<'a> {
     }
 }
 
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
 pub struct ZeroHashMapStatic<'a, K, V>
 where
     K: ZeroMapKV<'a> + ?Sized,
     V: ZeroMapKV<'a> + ?Sized,
 {
+    #[cfg_attr(feature = "serde", serde(borrow))]
     index: HashIndex<'a>,
     keys: K::Container,
     values: V::Container,

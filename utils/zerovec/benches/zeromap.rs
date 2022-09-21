@@ -56,6 +56,22 @@ const POSTCARD_HASHMAP: [u8; 176] = [
     114, 97, 98, 105, 99,
 ];
 
+const POSTCARD_ZEROHASHMAP: [u8; 300] = [
+    17, 1, 0, 0, 0, 0, 4, 1, 19, 0, 7, 1, 11, 0, 4, 1, 0, 1, 102, 16, 0, 0, 0, 0, 0, 0, 0, 2, 0, 0,
+    0, 4, 0, 0, 0, 6, 0, 0, 0, 8, 0, 0, 0, 11, 0, 0, 0, 13, 0, 0, 0, 15, 0, 0, 0, 17, 0, 0, 0, 19,
+    0, 0, 0, 21, 0, 0, 0, 23, 0, 0, 0, 26, 0, 0, 0, 28, 0, 0, 0, 30, 0, 0, 0, 32, 0, 0, 0, 101,
+    110, 116, 114, 122, 104, 97, 114, 99, 99, 112, 114, 117, 102, 114, 101, 115, 98, 110, 101, 108,
+    116, 104, 99, 104, 114, 101, 111, 106, 97, 115, 114, 105, 117, 177, 1, 16, 0, 0, 0, 0, 0, 0, 0,
+    7, 0, 0, 0, 14, 0, 0, 0, 21, 0, 0, 0, 27, 0, 0, 0, 33, 0, 0, 0, 40, 0, 0, 0, 46, 0, 0, 0, 53,
+    0, 0, 0, 59, 0, 0, 0, 64, 0, 0, 0, 68, 0, 0, 0, 76, 0, 0, 0, 85, 0, 0, 0, 93, 0, 0, 0, 100, 0,
+    0, 0, 69, 110, 103, 108, 105, 115, 104, 84, 117, 114, 107, 105, 115, 104, 67, 104, 105, 110,
+    101, 115, 101, 65, 114, 97, 98, 105, 99, 67, 104, 97, 107, 109, 97, 82, 117, 115, 115, 105, 97,
+    110, 70, 114, 101, 110, 99, 104, 83, 112, 97, 110, 105, 115, 104, 66, 97, 110, 103, 108, 97,
+    71, 114, 101, 101, 107, 84, 104, 97, 105, 67, 104, 101, 114, 111, 107, 101, 101, 69, 115, 112,
+    101, 114, 97, 110, 116, 111, 74, 97, 112, 97, 110, 101, 115, 101, 83, 101, 114, 98, 105, 97,
+    110, 73, 110, 117, 107, 116, 105, 116, 117, 116,
+];
+
 /// Run this function to print new data to the console. Requires the optional `serde` feature.
 #[allow(dead_code)]
 fn generate() {
@@ -72,6 +88,14 @@ fn generate_hashmap() {
     println!("{:?}", buf);
 }
 
+/// Run this function to print new data to the console. Requires the optional `serde` feature.
+#[allow(dead_code)]
+fn generate_zerohashmap() {
+    let map = build_zerohashmap(false);
+    let buf = postcard::to_stdvec(&map).unwrap();
+    println!("{:?}", buf);
+}
+
 #[cfg(feature = "generate")]
 fn generate_test_data() {
     let zeromap = build_zeromap(true);
@@ -81,6 +105,10 @@ fn generate_test_data() {
     let hashmap = build_hashmap(true);
     let hashmap_bytes = postcard::to_stdvec(&hashmap).unwrap();
     fs::write("large_hashmap.postcard", &hashmap_bytes).unwrap();
+
+    let zerohashmap = build_zerohashmap(true);
+    let zerohashmap_bytes = postcard::to_stdvec(&zerohashmap).unwrap();
+    fs::write("large_zerohashmap.postcard", &zerohashmap_bytes).unwrap();
 }
 
 fn overview_bench(c: &mut Criterion) {
@@ -92,10 +120,9 @@ fn overview_bench(c: &mut Criterion) {
     bench_lookup(c);
     bench_lookup_large(c);
 
-    bench_zerohashmap_lookup(c);
-    bench_zerohashmap_lookup_large(c);
-
     bench_hashmap(c);
+
+    bench_zerohashmap(c);
 
     #[cfg(feature = "generate")]
     generate_test_data();
@@ -171,49 +198,6 @@ fn read_large_zeromap_postcard_bytes() -> Vec<u8> {
     fs::read(path).unwrap()
 }
 
-fn bench_zerohashmap_lookup(c: &mut Criterion) {
-    let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(black_box(&POSTCARD)).unwrap();
-    let keys = map.iter();
-    let zero_hash_map: ZeroHashMapStatic<Index32Str, Index32Str> =
-        ZeroHashMapStatic::build_from_iter(keys);
-
-    c.bench_function("zerohashmap/lookup/small", |b| {
-        b.iter(|| {
-            assert_eq!(
-                zero_hash_map.get(black_box(indexify("iu"))).map(|x| &x.0),
-                Some("Inuktitut")
-            );
-            assert_eq!(
-                zero_hash_map.get(black_box(indexify("zz"))).map(|x| &x.0),
-                None
-            );
-        });
-    });
-}
-
-fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
-    let buf = read_large_zeromap_postcard_bytes();
-    let map: ZeroMap<Index32Str, Index32Str> = postcard::from_bytes(&buf).unwrap();
-    let keys = map.iter();
-    let zero_hash_map: ZeroHashMapStatic<Index32Str, Index32Str> =
-        ZeroHashMapStatic::build_from_iter(keys);
-
-    c.bench_function("zerohashmap/lookup/large", |b| {
-        b.iter(|| {
-            assert_eq!(
-                zero_hash_map
-                    .get(black_box(indexify("iu3333")))
-                    .map(|x| &x.0),
-                Some("Inuktitut")
-            );
-            assert_eq!(
-                zero_hash_map.get(black_box(indexify("zz"))).map(|x| &x.0),
-                None
-            );
-        });
-    });
-}
-
 fn bench_hashmap(c: &mut Criterion) {
     // Uncomment the following line to re-generate the binary data.
     // generate_hashmap();
@@ -283,6 +267,77 @@ fn read_large_hashmap_postcard_bytes() -> Vec<u8> {
     let path = concat!(
         env!("CARGO_MANIFEST_DIR"),
         "/benches/testdata/large_hashmap.postcard"
+    );
+    fs::read(path).unwrap()
+}
+
+fn bench_zerohashmap(c: &mut Criterion) {
+    bench_zerohashmap_lookup(c);
+    bench_zerohashmap_lookup_large(c);
+}
+
+fn build_zerohashmap(large: bool) -> ZeroHashMapStatic<'static, Index32Str, Index32Str> {
+    let mut kv = match large {
+        true => Vec::with_capacity(8192 * DATA.len()),
+        false => Vec::with_capacity(DATA.len()),
+    };
+
+    for (key, value) in DATA.iter() {
+        if large {
+            for n in 0..8192 {
+                kv.push((format!("{}{}", key, n), indexify(value)));
+            }
+        } else {
+            kv.push((key.to_string(), indexify(value)));
+        }
+    }
+
+    ZeroHashMapStatic::build_from_iter(kv.iter().map(|kv| (indexify(&kv.0), kv.1)))
+}
+
+fn bench_zerohashmap_lookup(c: &mut Criterion) {
+    let zero_hashmap: ZeroHashMapStatic<Index32Str, Index32Str> =
+        postcard::from_bytes(black_box(&POSTCARD_ZEROHASHMAP)).unwrap();
+
+    c.bench_function("zerohashmap/lookup/small", |b| {
+        b.iter(|| {
+            assert_eq!(
+                zero_hashmap.get(black_box(indexify("iu"))).map(|x| &x.0),
+                Some("Inuktitut")
+            );
+            assert_eq!(
+                zero_hashmap.get(black_box(indexify("zz"))).map(|x| &x.0),
+                None
+            );
+        });
+    });
+}
+
+fn bench_zerohashmap_lookup_large(c: &mut Criterion) {
+    let buf = read_large_zerohashmap_postcard_bytes();
+    let zero_hashmap: ZeroHashMapStatic<Index32Str, Index32Str> =
+        postcard::from_bytes(&buf).unwrap();
+
+    c.bench_function("zerohashmap/lookup/large", |b| {
+        b.iter(|| {
+            assert_eq!(
+                zero_hashmap
+                    .get(black_box(indexify("iu3333")))
+                    .map(|x| &x.0),
+                Some("Inuktitut")
+            );
+            assert_eq!(
+                zero_hashmap.get(black_box(indexify("zz"))).map(|x| &x.0),
+                None
+            );
+        });
+    });
+}
+
+fn read_large_zerohashmap_postcard_bytes() -> Vec<u8> {
+    let path = concat!(
+        env!("CARGO_MANIFEST_DIR"),
+        "/benches/testdata/large_zerohashmap.postcard"
     );
     fs::read(path).unwrap()
 }
