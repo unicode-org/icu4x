@@ -194,11 +194,11 @@
         See the `Rust documentation for new <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.new>`__ for more information.
 
 
-    .. js:staticfunction:: create_from_minutes_since_local_unix_epoch(minutes)
+    .. js:staticfunction:: create_try_from_minutes_since_local_unix_epoch(minutes)
 
         Construct from the minutes since the local unix epoch for this date (Jan 1 1970, 00:00)
 
-        See the `Rust documentation for from_minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.from_minutes_since_local_unix_epoch>`__ for more information.
+        See the `Rust documentation for try_from_minutes_since_local_unix_epoch <https://unicode-org.github.io/icu4x-docs/doc/icu/calendar/struct.DateTime.html#method.try_from_minutes_since_local_unix_epoch>`__ for more information.
 
 
     .. js:function:: date()

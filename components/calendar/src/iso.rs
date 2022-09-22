@@ -287,14 +287,14 @@ impl DateTime<Iso> {
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
     /// assert_eq!(
-    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///             DateTime::try_from_minutes_since_local_unix_epoch(26382240),
     ///             Ok(today)
     ///         );
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::try_from_minutes_since_local_unix_epoch(0), Ok(today));
     /// ```
     pub fn minutes_since_local_unix_epoch(&self) -> i32 {
         let minutes_a_hour = 60;
@@ -320,16 +320,16 @@ impl DateTime<Iso> {
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 26382240);
     /// assert_eq!(
-    ///             DateTime::from_minutes_since_local_unix_epoch(26382240),
+    ///             DateTime::try_from_minutes_since_local_unix_epoch(26382240),
     ///             Ok(today)
     ///         );
     ///
     /// let today = DateTime::try_new_iso_datetime(1970, 1, 1, 0, 0, 0).unwrap();
     ///
     /// assert_eq!(today.minutes_since_local_unix_epoch(), 0);
-    /// assert_eq!(DateTime::from_minutes_since_local_unix_epoch(0), Ok(today));
+    /// assert_eq!(DateTime::try_from_minutes_since_local_unix_epoch(0), Ok(today));
     /// ```
-    pub fn from_minutes_since_local_unix_epoch(
+    pub fn try_from_minutes_since_local_unix_epoch(
         minute: i32,
     ) -> Result<DateTime<Iso>, DateTimeError> {
         let minutes_a_hour = 60;
