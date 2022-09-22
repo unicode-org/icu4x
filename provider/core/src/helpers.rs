@@ -197,7 +197,7 @@ macro_rules! gen_any_buffer_docs {
             "::AnyProvider).\n\n",
             "For details on the behavior of this function, see: [`",
             stringify!($see_also),
-            "`]"
+            "`]",
             "[📚 Help choosing a constructor](",
             stringify!($krate),
             "::constructors)\n\n",
@@ -211,7 +211,7 @@ macro_rules! gen_any_buffer_docs {
             "::BufferProvider).\n\n",
             "For details on the behavior of this function, see: [`",
             stringify!($see_also),
-            "`]"
+            "`]",
             "[📚 Help choosing a constructor](",
             stringify!($krate),
             "::constructors)\n\n",
