@@ -182,7 +182,7 @@ impl<'data> CodePointInversionList<'data> {
     /// use std::vec::Vec;
     ///
     /// fn inv_list_to_owned_codepointinversionlist(inv_list: &[u32]) -> CodePointInversionList {
-    ///     CodePointInversionList::clone_try_from_inversion_list_slice(inv_list).unwrap()
+    ///     CodePointInversionList::try_clone_from_inversion_list_slice(inv_list).unwrap()
     /// }
     ///
     /// let bmp_list: [u32; 2] = [0x0, 0x10000];
@@ -201,7 +201,7 @@ impl<'data> CodePointInversionList<'data> {
     ///
     /// assert!(!&codepointinversionlists.iter().any(|set| set.contains32(0x40000)));
     /// ```
-    pub fn clone_try_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, CodePointSetError> {
+    pub fn try_clone_from_inversion_list_slice(inv_list: &[u32]) -> Result<Self, CodePointSetError> {
         let inv_list_zv: ZeroVec<u32> = ZeroVec::alloc_from_slice(inv_list);
         CodePointInversionList::try_from_inversion_list(inv_list_zv)
     }
