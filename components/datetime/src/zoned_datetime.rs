@@ -64,7 +64,7 @@ use crate::{
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+/// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
 /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
 ///
 /// let value = zdtf.format(&datetime, &time_zone);
@@ -108,7 +108,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///     TimeZoneFormatterOptions::default(),
     /// ).unwrap();
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
@@ -185,7 +185,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     ///     TimeZoneFormatterOptions::default(),
     /// ).unwrap();
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(
     ///     zdtf.format(&datetime, &CustomTimeZone::utc()),
@@ -263,7 +263,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     ///
     /// let formatted_date = zdtf.format(&datetime, &time_zone);
@@ -298,7 +298,7 @@ impl<C: CldrCalendar> TypedZonedDateTimeFormatter<C> {
     /// )
     /// .expect("Failed to create TypedZonedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 12, 12, 34, 28).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     ///
     /// let _ = zdtf.format_to_string(&datetime, &time_zone);

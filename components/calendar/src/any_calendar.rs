@@ -60,13 +60,13 @@ use core::fmt;
 ///
 ///
 /// // construct another datetime by converting from ISO
-/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let iso_datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct ISO DateTime.");
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
 /// // Construct a datetime in the appropriate typed calendar and convert
 /// let japanese_calendar = Japanese::try_new_unstable(&icu_testdata::unstable()).unwrap();
-/// let japanese_datetime = DateTime::new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
+/// let japanese_datetime = DateTime::try_new_japanese_datetime("heisei".parse().unwrap(), 15, 3, 28,
 ///                                                         12, 33, 12, japanese_calendar).unwrap();
 /// // This is a DateTime<AnyCalendar>
 /// let any_japanese_datetime = japanese_datetime.to_any();

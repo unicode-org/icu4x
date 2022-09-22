@@ -94,7 +94,7 @@ impl<'a, C> Deref for Ref<'a, C> {
 /// use icu::calendar::Date;
 ///
 /// // Example: creation of ISO date from integers.
-/// let date_iso = Date::new_iso_date(1970, 1, 2)
+/// let date_iso = Date::try_new_iso_date(1970, 1, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// assert_eq!(date_iso.year().number, 1970);
@@ -241,7 +241,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::types::WeekOfMonth;
     /// use icu::calendar::types::IsoWeekday;
     ///
-    /// let date = Date::new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
+    /// let date = Date::try_new_iso_date(2022, 8, 10).unwrap(); // second Wednesday
     ///
     /// // The following info is usually locale-specific
     /// let first_weekday = IsoWeekday::Sunday;
@@ -270,7 +270,7 @@ impl<A: AsCalendar> Date<A> {
     /// use icu::calendar::week::RelativeUnit;
     /// use icu::calendar::week::WeekOf;
     ///
-    /// let date = Date::new_iso_date(2022, 8, 26).unwrap();
+    /// let date = Date::try_new_iso_date(2022, 8, 26).unwrap();
     ///
     /// // The following info is usually locale-specific
     /// let week_calculator = WeekCalculator::default();

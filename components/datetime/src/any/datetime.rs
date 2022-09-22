@@ -52,7 +52,7 @@ use writeable::Writeable;
 /// )
 /// .expect("Failed to create DateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
@@ -90,7 +90,7 @@ use writeable::Writeable;
 ///
 ///
 /// // construct another datetime by converting from ISO
-/// let iso_datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let iso_datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct ISO DateTime.");
 /// let iso_converted = iso_datetime.to_calendar(calendar);
 ///
@@ -171,7 +171,7 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -224,7 +224,7 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -314,7 +314,7 @@ impl DateTimeFormatter {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -407,7 +407,7 @@ impl DateTimeFormatter {
     ///
     /// let dtf = DateTimeFormatter::try_from_date_and_time(df, tf).unwrap();
     ///
-    /// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     /// let any_datetime = datetime.to_any();
     ///
@@ -558,7 +558,7 @@ mod tests {
     #[test]
     fn test_fallback() {
         // We can rely on the code's ability to convert ISO datetimes
-        let datetime = DateTime::new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
+        let datetime = DateTime::try_new_iso_datetime(2022, 4, 5, 12, 33, 44).unwrap();
         let datetime = datetime.to_any();
         // fr with unspecified and nonsense calendars falls back to gregorian
         test_format(&datetime, locale!("fr"), "5 avril 2022 à 12:33");

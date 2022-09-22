@@ -35,13 +35,13 @@ pub mod ffi {
 
     impl ICU4XIsoDate {
         /// Creates a new [`ICU4XIsoDate`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::Date::new_iso_date, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::Date::try_new_iso_date, FnInStruct)]
         pub fn create(
             year: i32,
             month: u8,
             day: u8,
         ) -> DiplomatResult<Box<ICU4XIsoDate>, ICU4XError> {
-            Date::new_iso_date(year, month, day)
+            Date::try_new_iso_date(year, month, day)
                 .map(|dt| Box::new(ICU4XIsoDate(dt)))
                 .map_err(Into::into)
                 .into()
@@ -150,7 +150,7 @@ pub mod ffi {
             calendar: &ICU4XCalendar,
         ) -> DiplomatResult<Box<ICU4XDate>, ICU4XError> {
             let cal = calendar.0.clone();
-            Date::new_iso_date(year, month, day)
+            Date::try_new_iso_date(year, month, day)
                 .map(|dt| Box::new(ICU4XDate(dt.to_calendar(cal))))
                 .map_err(Into::into)
                 .into()

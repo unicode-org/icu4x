@@ -59,7 +59,7 @@ use writeable::Writeable;
 /// )
 /// .expect("Failed to create ZonedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_iso_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_iso_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 /// let any_datetime = datetime.to_any();
 ///
@@ -120,7 +120,7 @@ impl ZonedDateTimeFormatter {
     ///     Default::default(),
     /// ).expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -228,7 +228,7 @@ impl ZonedDateTimeFormatter {
     ///     TimeZoneFormatterOptions::default(),
     /// ).expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -338,7 +338,7 @@ impl ZonedDateTimeFormatter {
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///
@@ -396,7 +396,7 @@ impl ZonedDateTimeFormatter {
     /// )
     /// .expect("Construction should succeed");
     ///
-    /// let datetime = DateTime::new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
+    /// let datetime = DateTime::try_new_iso_datetime(2021, 04, 08, 16, 12, 37).unwrap();
     /// let time_zone = CustomTimeZone::from_str("-07:00").unwrap();
     /// let any_datetime = datetime.to_any();
     ///

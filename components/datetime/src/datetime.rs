@@ -52,7 +52,7 @@ use crate::options::components;
 /// )
 /// .expect("Failed to create TimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
@@ -129,7 +129,7 @@ impl TimeFormatter {
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// assert_writeable_eq!(tf.format(&datetime), "12:34 PM");
@@ -157,7 +157,7 @@ impl TimeFormatter {
     /// )
     /// .expect("Failed to create TimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// assert_eq!(tf.format_to_string(&datetime), "12:34 PM");
@@ -195,7 +195,7 @@ impl TimeFormatter {
 /// )
 /// .expect("Failed to create TypedDateFormatter instance.");
 ///
-/// let date = Date::new_gregorian_date(2020, 9, 1)
+/// let date = Date::try_new_gregorian_date(2020, 9, 1)
 ///     .expect("Failed to construct Date.");
 ///
 /// assert_writeable_eq!(df.format(&date), "Tuesday, September 1, 2020");
@@ -227,7 +227,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// .unwrap();
     ///
     /// assert_writeable_eq!(
-    ///     formatter.format(&Date::new_gregorian_date(2022, 8, 29).unwrap()),
+    ///     formatter.format(&Date::try_new_gregorian_date(2022, 8, 29).unwrap()),
     ///     "Monday, August 29, 2022",
     /// );
     /// ```
@@ -252,7 +252,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     ///
     /// // Indian format from type wins over locale keyword
     /// assert_writeable_eq!(
-    ///     formatter.format(&Date::new_indian_date(1944, 6, 7).unwrap()),
+    ///     formatter.format(&Date::try_new_indian_date(1944, 6, 7).unwrap()),
     ///     "Monday, Bhadra 7, 1944 Saka",
     /// );
     /// ```
@@ -308,7 +308,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// )
     /// .expect("Failed to create TypedDateFormatter instance.");
     ///
-    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    /// let date = Date::try_new_gregorian_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     ///
     /// assert_writeable_eq!(df.format(&date), "Tuesday, September 1, 2020");
@@ -336,7 +336,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
     /// )
     /// .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let date = Date::new_gregorian_date(2020, 9, 1)
+    /// let date = Date::try_new_gregorian_date(2020, 9, 1)
     ///     .expect("Failed to construct Date.");
     ///
     /// assert_eq!(df.format_to_string(&date), "9/1/20");
@@ -380,7 +380,7 @@ impl<C: CldrCalendar> TypedDateFormatter<C> {
 /// )
 /// .expect("Failed to create TypedDateTimeFormatter instance.");
 ///
-/// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+/// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
 ///     .expect("Failed to construct DateTime.");
 ///
 /// assert_writeable_eq!(dtf.format(&datetime), "Sep 1, 2020, 12:34 PM");
@@ -463,7 +463,7 @@ where {
     /// )
     /// .unwrap();
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "August 2022");
     /// ```
@@ -525,7 +525,7 @@ where {
     /// )
     /// .unwrap();
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
+    /// let datetime = DateTime::try_new_gregorian_datetime(2022, 8, 31, 1, 2, 3).unwrap();
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "Aug 31, 2022, 1:02:03 AM");
     /// ```
@@ -584,7 +584,7 @@ where {
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// assert_writeable_eq!(dtf.format(&datetime), "12:34:28 PM");
@@ -609,7 +609,7 @@ where {
     /// let dtf = TypedDateTimeFormatter::<Gregorian>::try_new_unstable(&icu_testdata::unstable(), &locale!("en").into(), options.into())
     ///     .expect("Failed to create TypedDateTimeFormatter instance.");
     ///
-    /// let datetime = DateTime::new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
+    /// let datetime = DateTime::try_new_gregorian_datetime(2020, 9, 1, 12, 34, 28)
     ///     .expect("Failed to construct DateTime.");
     ///
     /// assert_eq!(dtf.format_to_string(&datetime), "12:34:28 PM");

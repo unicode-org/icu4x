@@ -107,7 +107,7 @@ impl WeekCalculator {
     /// )
     /// .expect("Data exists");
     ///
-    /// let iso_date = Date::new_iso_date(2022, 8, 26).unwrap();
+    /// let iso_date = Date::try_new_iso_date(2022, 8, 26).unwrap();
     ///
     /// // Friday August 26 is in week 34 of year 2022:
     /// assert_eq!(
@@ -483,7 +483,7 @@ mod tests {
         let month = ((yyyymmdd / 100) % 100) as u8;
         let day = (yyyymmdd % 100) as u8;
 
-        let date = Date::new_iso_date(year, month, day)?;
+        let date = Date::try_new_iso_date(year, month, day)?;
         let previous_month = date.added(DateDuration::new(0, -1, 0, 0));
 
         week_of(

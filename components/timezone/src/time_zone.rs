@@ -102,7 +102,7 @@ impl CustomTimeZone {
     /// };
     /// tz.maybe_calculate_metazone(
     ///     &mzc,
-    ///     &DateTime::new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
+    ///     &DateTime::try_new_iso_datetime(1971, 10, 31, 2, 0, 0).unwrap(),
     /// );
     /// assert_eq!(tz.metazone_id, Some(MetazoneId(tinystr!(4, "guam"))));
     /// ```

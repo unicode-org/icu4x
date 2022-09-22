@@ -75,7 +75,7 @@ where
 /// time_zone.time_zone_id = Some(tinystr!(8, "uschi").into());
 /// let mzc = MetazoneCalculator::try_new_unstable(&icu_testdata::unstable())
 ///     .unwrap();
-/// let datetime = DateTime::new_iso_datetime(2022, 8, 29, 0, 0, 0)
+/// let datetime = DateTime::try_new_iso_datetime(2022, 8, 29, 0, 0, 0)
 ///     .unwrap();
 /// time_zone.maybe_calculate_metazone(&mzc, &datetime);
 ///

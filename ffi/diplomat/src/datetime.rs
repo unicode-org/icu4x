@@ -28,7 +28,7 @@ pub mod ffi {
 
     impl ICU4XIsoDateTime {
         /// Creates a new [`ICU4XIsoDateTime`] from the specified date and time.
-        #[diplomat::rust_link(icu::calendar::DateTime::new_iso_datetime, FnInStruct)]
+        #[diplomat::rust_link(icu::calendar::DateTime::try_new_iso_datetime, FnInStruct)]
         pub fn create(
             year: i32,
             month: u8,
@@ -39,7 +39,7 @@ pub mod ffi {
             nanosecond: u32,
         ) -> DiplomatResult<Box<ICU4XIsoDateTime>, ICU4XError> {
             let nanosecond = try_icu4x!(nanosecond.try_into());
-            DateTime::new_iso_datetime(year, month, day, hour, minute, second)
+            DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)
                 .map(|mut dt| {
                     dt.time.nanosecond = nanosecond;
                     Box::new(ICU4XIsoDateTime(dt))
@@ -223,7 +223,7 @@ pub mod ffi {
         ) -> DiplomatResult<Box<ICU4XDateTime>, ICU4XError> {
             let cal = calendar.0.clone();
             let nanosecond = try_icu4x!(nanosecond.try_into());
-            DateTime::new_iso_datetime(year, month, day, hour, minute, second)
+            DateTime::try_new_iso_datetime(year, month, day, hour, minute, second)
                 .map(|mut dt| {
                     dt.time.nanosecond = nanosecond;
                     Box::new(ICU4XDateTime(dt.to_calendar(cal)))

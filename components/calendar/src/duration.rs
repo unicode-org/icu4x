@@ -16,7 +16,7 @@ use core::marker::PhantomData;
 /// use icu_calendar::{types::IsoWeekday, Date, DateDuration, DateDurationUnit};
 ///
 /// // Creating ISO date: 1992-09-02.
-/// let mut date_iso = Date::new_iso_date(1992, 9, 2)
+/// let mut date_iso = Date::try_new_iso_date(1992, 9, 2)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// assert_eq!(date_iso.day_of_week(), IsoWeekday::Wednesday);
@@ -41,7 +41,7 @@ use core::marker::PhantomData;
 /// assert_eq!(date_iso.day_of_month().0, 2);
 ///
 /// // Creating ISO date: 2022-01-30.
-/// let newer_date_iso = Date::new_iso_date(2022, 1, 30)
+/// let newer_date_iso = Date::try_new_iso_date(2022, 1, 30)
 ///     .expect("Failed to initialize ISO Date instance.");
 ///
 /// // Comparing dates: 2022-01-30 and 1992-09-02.
