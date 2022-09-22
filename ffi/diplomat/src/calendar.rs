@@ -45,7 +45,7 @@ pub mod ffi {
         pub fn from_locale(
             locale: &ICU4XLocale,
         ) -> DiplomatResult<ICU4XAnyCalendarKind, ICU4XError> {
-            AnyCalendarKind::from_locale(&locale.0)
+            AnyCalendarKind::try_from_locale(&locale.0)
                 .map(Into::into)
                 .map_err(ICU4XError::from)
                 .into()
@@ -57,9 +57,9 @@ pub mod ffi {
         #[diplomat::rust_link(icu::calendar::AnyCalendarKind::from_bcp47_bytes, FnInEnum, hidden)]
         pub fn from_bcp47(s: &str) -> DiplomatResult<ICU4XAnyCalendarKind, ICU4XError> {
             let s = s.as_bytes(); // #2520
-            AnyCalendarKind::from_bcp47_bytes(s)
+            AnyCalendarKind::try_from_bcp47_bytes(s)
                 .map(Into::into)
-                .ok_or(ICU4XError::DateTimeUnknownAnyCalendarKindError)
+                .map_err(Into::into)
                 .into()
         }
 

@@ -671,7 +671,7 @@ mod tests {
                 Default::default(),
             )
             .unwrap()
-            .format_to_string(&DateTime::new_gregorian_datetime(2022, 9, 20, 0, 0, 0).unwrap()),
+            .format_to_string(&DateTime::try_new_gregorian_datetime(2022, 9, 20, 0, 0, 0).unwrap()),
             "2022 M09 20 00:00:00"
         );
     }

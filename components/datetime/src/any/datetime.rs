@@ -593,7 +593,7 @@ mod tests {
             )
             .unwrap()
             .format_to_string(
-                &DateTime::new_iso_datetime(2022, 9, 20, 0, 0, 0)
+                &DateTime::try_new_iso_datetime(2022, 9, 20, 0, 0, 0)
                     .unwrap()
                     .to_any()
             )
