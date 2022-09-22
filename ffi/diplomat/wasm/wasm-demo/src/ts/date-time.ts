@@ -20,8 +20,8 @@ export class DateTimeDemo {
         this.#displayFn = displayFn;
         this.#dataProvider = dataProvider;
 
-        this.#locale = Ok(ICU4XLocale.create("en-u-ca-gregory"));
-        this.#calendar = Ok(ICU4XCalendar.try_new_for_locale(dataProvider, unwrap(this.#locale)));
+        this.#locale = Ok(ICU4XLocale.create_from_string("en-u-ca-gregory"));
+        this.#calendar = Ok(ICU4XCalendar.create_for_locale(dataProvider, unwrap(this.#locale)));
         this.#dateLength = ICU4XDateLength.Short;
         this.#timeLength = ICU4XTimeLength.Short;
         this.#dateTime = null;
@@ -47,8 +47,8 @@ export class DateTimeDemo {
         const locid = (this.#calendarStr == "from-locale") ?
             this.#localeStr :
             `${this.#localeStr}-u-ca-${this.#calendarStr}`;
-        this.#locale = result(() => ICU4XLocale.create(locid));
-        this.#calendar = result(() => ICU4XCalendar.try_new_for_locale(this.#dataProvider, unwrap(this.#locale) ));
+        this.#locale = result(() => ICU4XLocale.create_from_string(locid));
+        this.#calendar = result(() => ICU4XCalendar.create_for_locale(this.#dataProvider, unwrap(this.#locale) ));
         this.#updateDateTime();
     }
 
@@ -71,7 +71,7 @@ export class DateTimeDemo {
     #updateDateTime(): void {
         const date = new Date(this.#dateTimeStr);
 
-        this.#dateTime = result(() => ICU4XDateTime.try_new_from_iso_in_calendar(
+        this.#dateTime = result(() => ICU4XDateTime.create_from_iso_in_calendar(
             date.getFullYear(),
             date.getMonth() + 1,
             date.getDate(),
@@ -84,7 +84,7 @@ export class DateTimeDemo {
     }
 
     #updateFormatter(): void {
-        this.#formatter = result(() => ICU4XDateTimeFormatter.try_new(
+        this.#formatter = result(() => ICU4XDateTimeFormatter.create_with_lengths(
             this.#dataProvider,
             unwrap(this.#locale),
             this.#dateLength,
@@ -161,7 +161,7 @@ export function setup(dataProvider: ICU4XDataProvider): void {
     // We instead get the current datetime and recast it to a date that is the current datetime
     // when represented in UTC
     let now = new Date();
-    const offset = now.getTimeZoneOffset();
+    const offset = now.getTimezoneOffset();
     now.setMinutes(now.getMinutes() - offset);
     const nowISO = now.toISOString().slice(0,16);
     if (inputDateTime != undefined) {
